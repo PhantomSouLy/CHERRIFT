@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <title>GaCherry Roguelike 0.1</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <canvas id="gameCanvas"></canvas>
+
+    <section id="loadingScreen" class="screen loading-screen">
+      <div class="loading-card">
+        <div class="logo">GaCherry</div>
+        <div class="subtitle">SURVIVE. EVOLVE. BLOOM.</div>
+        <div class="loading-bar"><span id="loadingFill"></span></div>
+        <div id="loadingText" class="small-text">Assetek betöltése...</div>
+      </div>
+    </section>
+
+    <section id="mainMenu" class="screen main-menu hidden">
+      <div class="menu-left">
+        <div class="version">v0.1.0</div>
+        <div class="game-title">GaCherry</div>
+        <div class="game-tagline">SURVIVE. EVOLVE. BLOOM.</div>
+
+        <button id="playButton" class="menu-button primary"><span>⌖</span> PLAY <b>›</b></button>
+        <button class="menu-button locked"><span>🐰</span> CHERRY <em>COMING SOON</em> 🔒</button>
+        <button class="menu-button locked"><span>⚔</span> GEAR <em>COMING SOON</em> 🔒</button>
+        <button class="menu-button locked"><span>📖</span> COLLECTION <em>COMING SOON</em> 🔒</button>
+        <button class="menu-button locked"><span>🛒</span> SHOP <em>COMING SOON</em> 🔒</button>
+        <button class="menu-button locked"><span>📋</span> MISSIONS <em>COMING SOON</em> 🔒</button>
+        <button class="menu-button locked"><span>🎁</span> EVENTS <em>COMING SOON</em> 🔒</button>
+        <button class="menu-button locked"><span>🏆</span> ACHIEVEMENTS <em>COMING SOON</em> 🔒</button>
+        <button id="settingsButton" class="menu-button"><span>⚙</span> SETTINGS <em>basic</em></button>
+      </div>
+
+      <div class="menu-right">
+        <div class="profile-card">
+          <img src="assets/ui/avatar_guest.png" alt="Guest avatar" />
+          <div>
+            <strong id="profileName">Guest</strong>
+            <p>Login később Discorddal. Most local mentés.</p>
+          </div>
+        </div>
+        <div class="panel-card">
+          <h3>Daily Missions</h3>
+          <span class="soon">COMING SOON 🔒</span>
+          <p>Küldetések, rewardok és napi reset később.</p>
+        </div>
+        <div class="panel-card">
+          <h3>Season Event</h3>
+          <span class="soon">COMING SOON 🔒</span>
+          <p>Event rendszer előkészítve, de 0.1-ben még zárva.</p>
+        </div>
+        <div class="panel-card stats-card">
+          <h3>Guest Stats</h3>
+          <p>Best time: <b id="bestTimeText">00:00</b></p>
+          <p>Best kills: <b id="bestKillsText">0</b></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="hud" class="hud hidden">
+      <div class="hud-left">
+        <div class="bar hp"><span id="hpFill"></span><label id="hpText">HP</label></div>
+        <div class="bar xp"><span id="xpFill"></span><label id="xpText">LV 1</label></div>
+      </div>
+      <div class="hud-center">
+        <div id="timerText">00:00</div>
+        <div id="killsText">0 kills</div>
+      </div>
+      <div class="hud-right">
+        <button id="pauseButton" class="round-button">Ⅱ</button>
+      </div>
+    </section>
+
+    <section id="touchControls" class="touch-controls hidden">
+      <div id="joystickBase" class="joystick-base"><div id="joystickKnob" class="joystick-knob"></div></div>
+      <button id="skillButton" class="skill-button"><span id="skillCooldownText">✦</span></button>
+    </section>
+
+    <section id="levelUpModal" class="modal hidden">
+      <div class="modal-card level-card">
+        <h2>LEVEL UP!</h2>
+        <p>Válassz egy fejlesztést:</p>
+        <div id="upgradeChoices" class="upgrade-choices"></div>
+      </div>
+    </section>
+
+    <section id="gameOverModal" class="modal hidden">
+      <div class="modal-card">
+        <h2>GAME OVER</h2>
+        <div id="runStats" class="run-stats"></div>
+        <div class="modal-actions">
+          <button id="retryButton" class="menu-button primary">RETRY</button>
+          <button id="backMenuButton" class="menu-button">MAIN MENU</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="pauseModal" class="modal hidden">
+      <div class="modal-card">
+        <h2>PAUSE</h2>
+        <div class="modal-actions">
+          <button id="resumeButton" class="menu-button primary">RESUME</button>
+          <button id="pauseMenuButton" class="menu-button">MAIN MENU</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="settingsModal" class="modal hidden">
+      <div class="modal-card">
+        <h2>Settings</h2>
+        <label class="settings-row">Master Volume <input id="volumeSlider" type="range" min="0" max="100" value="60"></label>
+        <label class="settings-row"><input id="fullscreenToggle" type="checkbox"> Fullscreen próba</label>
+        <p class="small-text">Hangrendszer előkészítve. A 0.1-ben még nincs külön zene/hang asset.</p>
+        <button id="closeSettingsButton" class="menu-button primary">OK</button>
+      </div>
+    </section>
+  </div>
+
+  <script src="src/config.js" defer></script>
+  <script src="src/storage.js" defer></script>
+  <script src="src/profile.js" defer></script>
+  <script src="src/input.js" defer></script>
+  <script src="src/game.js" defer></script>
+  <script src="src/main.js" defer></script>
+</body>
+</html>
