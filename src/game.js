@@ -446,12 +446,17 @@ class GaCherryGame {
     const img = this.assets.images.player;
     const spec = GC_CONFIG.assetSpec.player;
     const moving = Math.hypot(this.input.getMoveVector().x, this.input.getMoveVector().y) > 0.08;
-    const frame = moving ? Math.floor(this.animTime * 8) % spec.columns : 0;
-    const row = spec.rows[p.lastDir] ?? 0;
+    const dir = p.lastDir || "down";
+    const anim = spec.animations || { idle: spec.rows || {}, walk: spec.rows || {} };
+    const row = moving ? (anim.walk?.[dir] ?? 0) : (anim.idle?.[dir] ?? 0);
+    const fps = moving ? (spec.walkFps || 8) : (spec.idleFps || 3);
+    const frame = moving ? Math.floor(this.animTime * fps) % spec.columns : Math.floor(this.animTime * fps) % spec.columns;
+    const dw = spec.displayWidth || 96;
+    const dh = spec.displayHeight || 96;
     const s = this.worldToScreen(p.x, p.y);
     c.save();
     if (p.invuln > 0) c.globalAlpha = 0.65;
-    if (img) c.drawImage(img, frame*spec.frameWidth, row*spec.frameHeight, spec.frameWidth, spec.frameHeight, s.x-48, s.y-82, 96, 96);
+    if (img) c.drawImage(img, frame * spec.frameWidth, row * spec.frameHeight, spec.frameWidth, spec.frameHeight, s.x - dw / 2, s.y - dh * 0.85, dw, dh);
     else { c.fillStyle="#ff77b9"; c.beginPath(); c.arc(s.x,s.y,22,0,Math.PI*2); c.fill(); }
     c.restore();
   }
@@ -459,11 +464,14 @@ class GaCherryGame {
   _drawEnemy(c, e) {
     const img = this.assets.images.slime;
     const spec = GC_CONFIG.assetSpec.slime;
-    const frame = Math.floor((this.animTime + e.animOff) * 7) % spec.columns;
+    const frame = Math.floor((this.animTime + e.animOff) * (spec.fps || 7)) % spec.columns;
+    const row = spec.rows.move ?? 0;
+    const dw = spec.displayWidth || 76;
+    const dh = spec.displayHeight || 76;
     const s = this.worldToScreen(e.x, e.y);
     c.save();
     if (e.hitFlash > 0) c.filter = "brightness(1.8)";
-    if (img) c.drawImage(img, frame*spec.frameWidth, spec.rows.move*spec.frameHeight, spec.frameWidth, spec.frameHeight, s.x-38, s.y-50, 76, 76);
+    if (img) c.drawImage(img, frame * spec.frameWidth, row * spec.frameHeight, spec.frameWidth, spec.frameHeight, s.x - dw / 2, s.y - dh * 0.68, dw, dh);
     else { c.fillStyle="#ff75b5"; c.beginPath(); c.arc(s.x,s.y,22,0,Math.PI*2); c.fill(); }
     c.restore();
     // hp line
