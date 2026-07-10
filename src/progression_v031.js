@@ -340,9 +340,8 @@
     document.querySelectorAll('[data-open="worlds"]').forEach(b => b.onclick = () => this.open("worlds"));
     document.getElementById("mobilePlayBtn")?.addEventListener("click", () => this.game.start());
     document.getElementById("mobileModeBtn")?.addEventListener("click", () => this.open("worlds"));
+    document.getElementById("worldPlaySelectedBtn")?.addEventListener("click", () => this.game.start());
     document.getElementById("nextStageBtn")?.addEventListener("click", () => {
-      const stage = stageById(this.save.selectedStageId);
-      if (stage.next) this.save.selectedStageId = stage.next;
       CherriftStorage.save(this.save);
       this.hideStageClear();
       this.refreshMenu();
@@ -355,6 +354,8 @@
 
   UI.open = function patchedOpen(id) {
     document.body.classList.remove("is-playing");
+    ["hud", "skill", "pauseModal", "gameOver", "levelModal", "stageClearModal"].forEach(x => document.getElementById(x)?.classList.add("hidden"));
+    this.hideStageHUD?.();
     ["menu", "skins", "gear", "chests", "settings", "worlds"].forEach(x => document.getElementById(x)?.classList.toggle("hidden", x !== id));
     if (id === "menu") this.refreshMenu();
     if (id === "skins") this.renderSkinCarousel();
@@ -365,10 +366,21 @@
   const originalShowGame = UI.showGame.bind(UI);
   UI.showGame = function patchedShowGame() {
     originalShowGame();
+
+    // Original v0.2.x showGame did not know about the new Worlds panel.
+    // Without this, mobile could show only the skill button while the Worlds panel stayed on top.
+    ["worlds", "stageClearModal"].forEach(id => document.getElementById(id)?.classList.add("hidden"));
+    ["menu", "skins", "gear", "chests", "settings", "gameOver", "pauseModal", "levelModal"].forEach(id => document.getElementById(id)?.classList.add("hidden"));
+
+    document.getElementById("hud")?.classList.remove("hidden");
+    document.getElementById("skill")?.classList.remove("hidden");
+    document.body.classList.add("is-playing");
+
     this.showStageHUD(this.game);
   };
 
   UI.showStageHUD = function(game) {
+    if (!game?.stage && game?.mode !== "playing") return;
     document.getElementById("stageHud")?.classList.remove("hidden");
     this.updateStageHUD(game);
   };
@@ -446,7 +458,10 @@
     const ov3 = document.getElementById("worldCurrentStage");
     if (ov1) ov1.textContent = `${(this.save.unlockedStages || []).length} unlocked`;
     if (ov2) ov2.textContent = `${Object.keys(this.save.clearedStages || {}).length} cleared`;
-    if (ov3) ov3.textContent = stageById(this.save.selectedStageId).name;
+    const selectedStage = stageById(this.save.selectedStageId);
+    if (ov3) ov3.textContent = selectedStage.name;
+    const selectedInfo = document.getElementById("worldSelectedInfo");
+    if (selectedInfo) selectedInfo.textContent = `${selectedStage.name} · ${selectedStage.title} · ${selectedStage.goalKills} enemies`;
 
     Object.entries(groupedWorlds).forEach(([world, list]) => {
       const group = document.createElement("section");
