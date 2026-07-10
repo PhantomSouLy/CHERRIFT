@@ -1,5 +1,5 @@
 window.CHERRIFT_DATA = {
-  version: "0.2.2",
+  version: "0.2.3",
   slots: ["Weapon","Helmet","Armor","Gloves","Boots","Ring","Necklace"],
   slotIcons: { Weapon:"🗡️", Helmet:"⛑️", Armor:"🛡️", Gloves:"🧤", Boots:"👢", Ring:"💍", Necklace:"📿" },
   gearTypes: {

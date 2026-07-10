@@ -28,8 +28,13 @@ class CherriftInput {
 
   _touchStart(e) {
     if (!this.touchMode) return;
-    if (e.target.closest("button, input, .panel, .modal, .menu-screen")) return;
+
+    // Never steal taps/clicks from UI.
+    if (e.target.closest("#app button, #app input, .panel, .modal, .menu-screen, .hud, .skill")) return;
+
+    // Touch movement only on the left / middle gameplay area.
     if (e.clientX > window.innerWidth * 0.72) return;
+
     e.preventDefault();
     this.touch = { id:e.pointerId, sx:e.clientX, sy:e.clientY, x:e.clientX, y:e.clientY };
   }
