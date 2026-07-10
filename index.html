@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-  <title>CHERRIFT v0.2.6 BEASTCLAW</title>
+  <title>CHERRIFT v0.3.1 EARLY BUILD</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="menu_v026.css" />
+  <link rel="stylesheet" href="menu_v031.css" />
 </head>
 <body>
   <canvas id="game"></canvas>
@@ -14,13 +14,51 @@
     <section id="menu" class="screen menu-screen mainmenu-v026">
       <div class="menu-bg" aria-hidden="true"></div>
 
+      <div class="mobile-home-v031" aria-label="Mobile home">
+        <div class="mobile-topbar">
+          <div class="mobile-pill"><span>Energy</span><b id="mobileEnergyValue">5</b></div>
+          <div class="mobile-pill"><span>Coins</span><b id="mobileCoinsValue">0</b></div>
+          <div class="mobile-pill"><span>Keys</span><b id="mobileKeysValue">3</b></div>
+        </div>
+
+        <section class="mobile-stage-card">
+          <div class="mobile-stage-head">
+            <div class="stage-chip" id="mobileStageChip">World 1-1</div>
+            <div class="season-chip">Early Build</div>
+          </div>
+          <h2 class="mobile-stage-title" id="mobileStageTitle">Blooming Meadow</h2>
+          <p class="mobile-stage-sub" id="mobileStageSub">Ready to clear</p>
+          <div class="mobile-stage-preview">
+            <div class="mobile-stage-art" id="mobileStageArt"></div>
+          </div>
+          <div class="mobile-stage-meta">
+            <div class="meta-box"><span>Objective</span><b id="mobileObjectiveValue">28 enemies</b></div>
+            <div class="mobile-reward-box"><span>Repeat Reward</span><b id="mobileRewardValue">+14 coins</b></div>
+          </div>
+          <div class="mobile-reward-box" style="margin-top:10px;"><span>First Clear Reward</span><b id="mobileFirstRewardValue">+28 coins · +1 key</b></div>
+          <div class="mobile-action-row">
+            <button id="mobileModeBtn" class="mobile-mode-btn"><span>🗺️</span>World Select</button>
+            <button id="mobilePlayBtn" class="mobile-play-btn">Play <small id="mobilePlayCost">⚡ x5</small></button>
+          </div>
+        </section>
+
+        <nav class="mobile-bottom-nav" aria-label="Mobile bottom navigation">
+          <button data-open="chests"><span>📦</span><b>Chest</b></button>
+          <button data-open="gear"><span>🛡️</span><b>Gear</b></button>
+          <button data-open="worlds" class="active-mid"><span>⬆</span><b>World</b></button>
+          <button data-open="skins"><span>🐰</span><b>Cherry</b></button>
+          <button data-open="settings"><span>🎯</span><b>More</b></button>
+        </nav>
+      </div>
+
       <main class="menu-left glass-soft">
-        <div class="version">v0.2.6</div>
+        <div class="version" id="menuBuildVersion">v0.3.1 EARLY BUILD</div>
         <h1 class="game-logo">GaCherry</h1>
         <p class="tagline">SURVIVE. EVOLVE. BLOOM.</p>
 
         <nav class="menu-buttons main-nav" aria-label="Main menu">
           <button id="playBtn" class="menu-btn primary"><span>⌖</span><i>PLAY</i><b>›</b></button>
+          <button data-open="worlds" class="menu-btn"><span>🗺️</span><i>WORLDS</i><em>STAGE SELECT</em><b>›</b></button>
           <button data-open="skins" class="menu-btn"><span>🐰</span><i>CHERRY</i><em>SKINS</em><b>›</b></button>
           <button data-open="gear" class="menu-btn"><span>⚔</span><i>GEAR</i><em>LOADOUT</em><b>›</b></button>
           <button data-open="chests" class="menu-btn"><span>📖</span><i>COLLECTION</i><em>CHESTS</em><b>›</b></button>
@@ -65,8 +103,8 @@
         </div>
 
         <div class="side-card glass patch-card">
-          <header><h3>Patch Notes</h3><span>v0.2.6</span></header>
-          <p>Beastclaw Cherry added: Rare melee skin, claw attack and Savage Rend skill.</p>
+          <header><h3>Patch Notes</h3><span>v0.3.1</span></header>
+          <p>Progression update: Worlds, raids, stage unlocks, night stages and mobile menu polish.</p>
           <div class="side-art">☷</div>
         </div>
 
@@ -75,7 +113,7 @@
           <div class="news-row">
             <div class="news-thumb">🐺</div>
             <div>
-              <p><b id="selectedSkinText">Cherry</b></p>
+              <p><b id="selectedSkinText">Cherry</b></p><p><b id="selectedStageDesktop">World 1-1</b></p>
               <p>Best: <span id="bestRun">00:00 · 0 kills</span></p>
               <p>🪙 <b id="menuCoins">0</b> · 📦 <b id="menuKeys">3</b></p>
             </div>
@@ -189,6 +227,27 @@
       </div>
     </section>
 
+    
+
+    <section id="worlds" class="panel hidden">
+      <header class="panel-head">
+        <button class="back">←</button>
+        <div>
+          <h2>Worlds & Stages</h2>
+          <p>Clear stages to unlock the next one. Raid bursts and first-clear rewards are active in v0.3.1.</p>
+        </div>
+      </header>
+
+      <div class="world-layout">
+        <div class="world-overview">
+          <div class="world-summary-card glass"><h3>Unlocked</h3><p id="worldUnlockedCount">1 unlocked</p></div>
+          <div class="world-summary-card glass"><h3>Cleared</h3><p id="worldClearCount">0 cleared</p></div>
+          <div class="world-summary-card glass"><h3>Current</h3><p id="worldCurrentStage">World 1-1</p></div>
+        </div>
+        <div id="worldGroups" class="world-stage-groups"></div>
+      </div>
+    </section>
+
     <section id="settings" class="panel hidden">
       <header class="panel-head">
         <button class="back">←</button>
@@ -248,6 +307,19 @@
       <button id="pause" class="pause-btn">Ⅱ</button>
     </section>
 
+
+    <aside id="stageHud" class="stage-hud hidden">
+      <div class="stage-box">
+        <div class="tiny">Current Stage</div>
+        <b id="stageHudName">World 1-1 · Blooming Meadow</b>
+        <small id="stageHudGoal">0 / 28 defeated</small>
+      </div>
+      <div id="raidBox" class="raid-box hidden">
+        <div class="tiny" id="raidTitle">Raid</div>
+        <b id="raidText">Raid Incoming</b>
+      </div>
+    </aside>
+
     <button id="skill" class="skill hidden"><span>✦</span><small id="cooldown"></small></button>
 
     <section id="levelModal" class="modal hidden">
@@ -275,6 +347,34 @@
       </div>
     </section>
 
+    
+
+    <section id="stageClearModal" class="modal hidden">
+      <div class="modal-card">
+        <h2 id="stageClearTitle">Stage Clear!</h2>
+        <p id="stageClearSubtitle">Rewards incoming.</p>
+        <div class="stage-clear-summary">
+          <div class="glass" style="padding:14px;">
+            <h3>Repeat reward</h3>
+            <div id="stageRewardsRepeat" class="stage-reward-list"></div>
+          </div>
+          <div class="glass" style="padding:14px;">
+            <h3>First clear reward</h3>
+            <div id="stageRewardsFirst" class="stage-reward-list"></div>
+          </div>
+          <div class="glass" style="padding:14px;">
+            <h3>Unlock</h3>
+            <div id="stageUnlockText">Next stage unlocked</div>
+          </div>
+        </div>
+        <div class="stage-clear-actions">
+          <button id="nextStageBtn" class="menu-btn primary center">NEXT STAGE</button>
+          <button id="replayStageBtn" class="menu-btn center">REPLAY</button>
+          <button id="stageClearToMenuBtn" class="menu-btn center">MAIN MENU</button>
+        </div>
+      </div>
+    </section>
+
     <div id="toast"></div>
   </div>
 
@@ -285,6 +385,7 @@
   <script src="src/game.js"></script>
   <script src="src/beastclaw.js"></script>
   <script src="src/ui.js"></script>
+  <script src="src/progression_v031.js"></script>
   <script src="src/main.js"></script>
 </body>
 </html>
