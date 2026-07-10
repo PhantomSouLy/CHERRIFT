@@ -40,6 +40,8 @@ class ImageAssets {
       ["burst", c.effects.burst]
     );
 
+    (c.effects.baseHit || []).forEach((src, i) => items.push([`baseHit${i + 1}`, src]));
+
     await Promise.all(items.map(([key, src]) => this.loadImage(key, src)));
     this.ready = true;
   }
@@ -54,10 +56,12 @@ class CherriftGame {
     this.input = input;
     this.save = save;
     this.mode = "menu";
-    this.dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+    this.dpr = Math.max(1, Math.min(CHERRIFT_CONFIG.performance?.renderScaleMax || 1.5, window.devicePixelRatio || 1));
     this.w = 0;
     this.h = 0;
     this.last = performance.now();
+    this.hitFx = 0;
+    this.fpsLimit = this.save?.settings?.fpsLimit || CHERRIFT_CONFIG.performance?.defaultFpsLimit || 60;
     this.camera = { x:0, y:0 };
     this.t = 0;
     this.assets = new ImageAssets();
@@ -84,6 +88,8 @@ class CherriftGame {
     this.canvas.width = Math.floor(this.w * this.dpr);
     this.canvas.height = Math.floor(this.h * this.dpr);
     this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+    this.ctx.imageSmoothingEnabled = true;
+    this.ctx.imageSmoothingQuality = "medium";
   }
 
   activeSkinData() {
@@ -166,7 +172,14 @@ class CherriftGame {
   }
 
   loop(now) {
-    const dt = Math.min(.033, (now - this.last) / 1000 || 0);
+    const fps = Math.max(30, Math.min(60, +(this.save?.settings?.fpsLimit || CHERRIFT_CONFIG.performance?.defaultFpsLimit || 60)));
+    const minFrameMs = 1000 / fps;
+    if (now - this.last < minFrameMs - 0.5) {
+      requestAnimationFrame(n => this.loop(n));
+      return;
+    }
+
+    const dt = Math.min(.05, (now - this.last) / 1000 || 0);
     this.last = now;
     this.t += dt;
     if (this.mode === "playing") this.update(dt);
@@ -307,7 +320,8 @@ class CherriftGame {
           let dmg = b.dmg;
           if (Math.random() < this.player.crit) { dmg *= this.player.critDamage; this.effects.push({ type:"crit", x:e.x, y:e.y, t:0, life:.35 }); }
           this.damageEnemy(e, dmg);
-          this.effects.push({ type:"hit", x:b.x, y:b.y, t:0, life:.18, style:b.style });
+          this.hitFx = (this.hitFx % 3) + 1;
+          this.effects.push({ type:"hit", x:b.x, y:b.y, t:0, life:.22, style:b.style, imgKey:`baseHit${this.hitFx}` });
           break;
         }
       }
@@ -443,22 +457,27 @@ class CherriftGame {
   drawWorld(c) {
     c.fillStyle = "#1f7d45";
     c.fillRect(0, 0, this.w, this.h);
+    const zoom = CHERRIFT_CONFIG.performance?.cameraZoom || 1;
     c.save();
-    c.translate(-this.camera.x + this.w / 2, -this.camera.y + this.h / 2);
-    this.drawGround(c);
+    c.translate(this.w / 2, this.h / 2);
+    c.scale(zoom, zoom);
+    c.translate(-this.camera.x, -this.camera.y);
+    this.drawGround(c, zoom);
     const drawables = [...this.obstacles, ...this.pickups, ...this.enemies, ...(this.player ? [this.player] : []), ...this.bullets, ...this.effects];
     drawables.sort((a, b) => (a.y || 0) - (b.y || 0));
     for (const o of drawables) this.drawObj(c, o);
     c.restore();
   }
 
-  drawGround(c) {
+  drawGround(c, zoom = 1) {
     const tile = this.assets.get("grass");
     const size = 128;
-    const startX = Math.floor((this.camera.x - this.w / 2) / size) - 1;
-    const endX = Math.floor((this.camera.x + this.w / 2) / size) + 1;
-    const startY = Math.floor((this.camera.y - this.h / 2) / size) - 1;
-    const endY = Math.floor((this.camera.y + this.h / 2) / size) + 1;
+    const viewW = this.w / zoom;
+    const viewH = this.h / zoom;
+    const startX = Math.floor((this.camera.x - viewW / 2) / size) - 1;
+    const endX = Math.floor((this.camera.x + viewW / 2) / size) + 1;
+    const startY = Math.floor((this.camera.y - viewH / 2) / size) - 1;
+    const endY = Math.floor((this.camera.y + viewH / 2) / size) + 1;
     for (let gx=startX; gx<=endX; gx++) for (let gy=startY; gy<=endY; gy++) {
       const x = gx * size, y = gy * size;
       if (tile) c.drawImage(tile, x, y, size, size);
@@ -509,15 +528,27 @@ class CherriftGame {
     const state = skin.states[stateName];
     const img = this.assets.get(`player_${p.skin}_${stateName}_${dir}`);
     if (img) {
+      const cfg = CHERRIFT_CONFIG.player;
+      const realFrames = Math.max(1, Math.floor(img.width / cfg.frameWidth));
+      const frameCount = Math.max(1, Math.min(state.frames || realFrames, realFrames));
       let frame = 0;
       if (stateName === "skill") {
         const elapsed = Math.max(0, (p.skillCastDuration || state.duration || .4) - (p.skillCastTimer || 0));
-        frame = Math.min((state.frames || 1) - 1, Math.floor(elapsed * (state.fps || 12)));
+        frame = Math.min(frameCount - 1, Math.floor(elapsed * (state.fps || 12)));
       } else {
-        frame = Math.floor(this.t * (state.fps || 6)) % (state.frames || 1);
+        frame = Math.floor(this.t * (state.fps || 6)) % frameCount;
       }
-      const cfg = CHERRIFT_CONFIG.player;
-      c.drawImage(img, frame * cfg.frameWidth, 0, cfg.frameWidth, cfg.frameHeight, p.x - cfg.displayWidth/2, p.y - cfg.displayHeight + 34, cfg.displayWidth, cfg.displayHeight);
+
+      const dw = cfg.displayWidth || 116;
+      const dh = cfg.displayHeight || 116;
+      c.drawImage(
+        img,
+        frame * cfg.frameWidth, 0,
+        cfg.frameWidth, cfg.frameHeight,
+        Math.round(p.x - dw / 2),
+        Math.round(p.y - dh + 34),
+        dw, dh
+      );
       return;
     }
     c.fillStyle = "rgba(0,0,0,.25)"; c.beginPath(); c.ellipse(p.x, p.y+24, 28, 10, 0, 0, Math.PI*2); c.fill();
@@ -568,15 +599,39 @@ class CherriftGame {
   drawEffect(c, e) {
     const a = 1 - e.t / e.life;
     const x = e.x, y = e.y;
+
+    if (e.type === "hit") {
+      const img = e.imgKey ? this.assets.get(e.imgKey) : null;
+      if (img) {
+        c.save();
+        c.globalAlpha = Math.max(0, a);
+        const size = 74 * (1 + (1 - a) * .18);
+        c.drawImage(img, x - size / 2, y - size / 2, size, size);
+        c.restore();
+        return;
+      }
+    }
+
     if (e.type === "burst") {
       const img = this.assets.get("burst");
-      if (img) { c.save(); c.globalAlpha = Math.max(0, a); const size = 170 * (1.15 - a * .15); c.drawImage(img, x - size/2, y - size/2, size, size); c.restore(); return; }
+      if (img) {
+        c.save();
+        c.globalAlpha = Math.max(0, a);
+        const size = 170 * (1.15 - a * .15);
+        c.drawImage(img, x - size/2, y - size/2, size, size);
+        c.restore();
+        return;
+      }
     }
-    c.save(); c.globalAlpha = Math.max(0, a);
+
+    c.save();
+    c.globalAlpha = Math.max(0, a);
     if (["hit", "death", "crit", "burst", "dash"].includes(e.type)) {
       c.strokeStyle = e.type === "crit" ? "#fff176" : "#ff8ccc";
       c.lineWidth = e.type === "dash" ? 6 : 4;
-      c.beginPath(); c.arc(x, y, (1-a) * (e.type === "dash" ? 80 : 55) + 8, 0, Math.PI*2); c.stroke();
+      c.beginPath();
+      c.arc(x, y, (1-a) * (e.type === "dash" ? 80 : 55) + 8, 0, Math.PI*2);
+      c.stroke();
     }
     c.restore();
   }

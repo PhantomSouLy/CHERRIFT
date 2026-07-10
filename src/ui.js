@@ -41,6 +41,17 @@ window.UI = {
     touch.checked = this.save.settings.touchMode;
     touch.onchange = () => { this.save.settings.touchMode = touch.checked; this.game.input.touchMode = touch.checked; CherriftStorage.save(this.save); };
     this.game.input.touchMode = this.save.settings.touchMode;
+
+    const fpsLimit = document.getElementById("fpsLimit");
+    if (fpsLimit) {
+      fpsLimit.value = String(this.save.settings.fpsLimit || 60);
+      fpsLimit.onchange = () => {
+        this.save.settings.fpsLimit = +fpsLimit.value;
+        this.game.fpsLimit = this.save.settings.fpsLimit;
+        CherriftStorage.save(this.save);
+        this.toast(`${this.save.settings.fpsLimit} FPS limit set`);
+      };
+    }
   },
 
   open(id) {
@@ -109,6 +120,17 @@ window.UI = {
   },
 
   renderGear() {
+    const inv = document.getElementById("inventory");
+
+    if (inv) {
+      inv.ondragover = e => e.preventDefault();
+      inv.ondrop = e => {
+        e.preventDefault();
+        const slot = e.dataTransfer.getData("slot");
+        if (slot) this.unequipGear(slot);
+      };
+    }
+
     document.querySelectorAll(".gear-slot").forEach(btn => {
       const slot = btn.dataset.slot;
       const g = this.save.equipped[slot];
@@ -116,16 +138,56 @@ window.UI = {
       btn.dataset.short = slot.slice(0, 3).toUpperCase();
       btn.innerHTML = g ? `<span>${this.gearEmoji(g)}</span>` : "";
       btn.onclick = () => { if (g) this.showGearDetails(g, "equipped"); else this.showEmptySlot(slot); this.highlightGear(g?.id); };
+
+      btn.draggable = !!g;
+      btn.ondragstart = e => {
+        if (!g) return;
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("slot", slot);
+        e.dataTransfer.setData("gearId", g.id);
+        btn.classList.add("dragging");
+      };
+      btn.ondragend = () => btn.classList.remove("dragging", "drop-target", "bad-drop");
+      btn.ondragover = e => {
+        e.preventDefault();
+        const id = e.dataTransfer.getData("gearId");
+        const item = this.save.inventory.find(x => x.id === id);
+        btn.classList.toggle("bad-drop", !!item && item.slot !== slot);
+        btn.classList.toggle("drop-target", !!item && item.slot === slot);
+      };
+      btn.ondragleave = () => btn.classList.remove("drop-target", "bad-drop");
+      btn.ondrop = e => {
+        e.preventDefault();
+        btn.classList.remove("drop-target", "bad-drop");
+        const id = e.dataTransfer.getData("gearId");
+        const item = this.save.inventory.find(x => x.id === id);
+        if (!item) return;
+        if (item.slot !== slot) {
+          this.toast(`${item.slot} item nem rakható ${slot} slotra`);
+          return;
+        }
+        this.equipGear(id);
+      };
     });
-    const inv = document.getElementById("inventory");
+
     inv.innerHTML = "";
     this.save.inventory.forEach(g => {
       const el = document.createElement("button");
       el.className = `inv-item rarity-${g.rarity.toLowerCase()} ${this.selectedGear && this.selectedGear.id === g.id ? "selected" : ""}`;
+      el.draggable = true;
+      el.dataset.gearId = g.id;
       el.innerHTML = `<span>${this.gearEmoji(g)}</span><small>${g.slot}</small>`;
       el.onclick = () => { this.showGearDetails(g, "inventory"); this.highlightGear(g.id); };
+      el.ondragstart = e => {
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("gearId", g.id);
+        el.classList.add("dragging");
+        this.showGearDetails(g, "inventory");
+      };
+      el.ondragend = () => el.classList.remove("dragging");
       inv.appendChild(el);
     });
+
     document.getElementById("inventoryCount").textContent = `${this.save.inventory.length} items`;
     const stats = this.totalGearStats(this.save);
     document.getElementById("totalStats").innerHTML = "<h3>Total Stats</h3>" + (Object.keys(stats).length ? Object.entries(stats).map(([k,v]) => `<div class="stat-line"><span>${k}</span><b>+${Math.round(v*10)/10}</b></div>`).join("") : "<p>No gear equipped.</p>");
@@ -135,7 +197,7 @@ window.UI = {
 
   showEmptySlot(slot) {
     this.selectedGear = null;
-    document.getElementById("gearDetails").innerHTML = `<div class="gear-details-empty"><b>${slot}</b> slot üres.<br>Válassz az inventoryból egy ${slot} itemet.</div>`;
+    document.getElementById("gearDetails").innerHTML = `<div class="gear-details-empty"><b>${slot}</b> slot üres.<br>Húzz ide az inventoryból egy ${slot} itemet.</div>`;
   },
 
   showGearDetails(g, source) {

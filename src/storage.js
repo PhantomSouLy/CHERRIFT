@@ -1,5 +1,5 @@
 window.CherriftStorage = {
-  key: "cherrift_save_v024_fixed",
+  key: "cherrift_save_v025_polish",
   defaults() {
     return {
       coins: 0,
@@ -9,7 +9,7 @@ window.CherriftStorage = {
       inventory: [],
       equipped: {},
       best: { time:0, kills:0 },
-      settings: { volume:60, touchMode:true }
+      settings: { volume:60, touchMode:true, fpsLimit:60 }
     };
   },
   load() {
@@ -20,6 +20,7 @@ window.CherriftStorage = {
       const save = { ...d, ...data };
       save.best = { ...d.best, ...(data.best || {}) };
       save.settings = { ...d.settings, ...(data.settings || {}) };
+      save.settings.fpsLimit = [30, 60].includes(+save.settings.fpsLimit) ? +save.settings.fpsLimit : 60;
       save.equipped = data.equipped || {};
       save.inventory = Array.isArray(data.inventory) ? data.inventory : [];
       save.unlockedSkins = Array.isArray(data.unlockedSkins) ? data.unlockedSkins : [...d.unlockedSkins];

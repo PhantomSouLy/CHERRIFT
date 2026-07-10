@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-  <title>CHERRIFT v0.2.4 FIXED</title>
+  <title>CHERRIFT v0.2.5 POLISH</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -14,7 +14,7 @@
       <div class="menu-bg" aria-hidden="true"></div>
 
       <main class="menu-left glass-soft">
-        <div class="version">v0.2.4 FIXED</div>
+        <div class="version">v0.2.5 POLISH</div>
         <h1 class="game-logo">CHERRIFT</h1>
         <p class="tagline">SURVIVE. EVOLVE. BLOOM.</p>
 
@@ -63,7 +63,7 @@
         </div>
 
         <div class="side-card glass news">
-          <header><h3>News</h3><span>v0.2.4</span></header>
+          <header><h3>News</h3><span>v0.2.5</span></header>
           <p><b id="selectedSkinText">Cherry</b></p>
           <p id="bestRun">00:00 · 0 kills</p>
         </div>
@@ -146,7 +146,7 @@
 
         <aside class="details-panel glass">
           <h3>Details</h3>
-          <div id="gearDetails" class="gear-details-empty">Kattints egy equipped ikonra vagy inventory itemre.</div>
+          <div id="gearDetails" class="gear-details-empty">Húzd az inventory itemet a megfelelő body slotra, vagy kattints rá a részletekhez.</div>
         </aside>
       </div>
     </section>
@@ -194,6 +194,18 @@
             <span>Full-screen touch movement</span>
           </label>
           <p class="hint">Játék közben a képernyő üres részén húzással mozogsz.</p>
+        </div>
+
+        <div class="settings-card glass">
+          <h3>Performance</h3>
+          <label class="setting-row">
+            <span>FPS limit</span>
+            <select id="fpsLimit" class="fps-select">
+              <option value="30">30 FPS</option>
+              <option value="60">60 FPS</option>
+            </select>
+          </label>
+          <p class="hint">Ha lassúnak érzed mobilon vagy böngészőben, tedd 30 FPS-re. PC-n maradhat 60 FPS.</p>
         </div>
 
         <div class="settings-card glass">

@@ -17,7 +17,7 @@ button { color:inherit; cursor:pointer; border:0; }
 .glass { border:1px solid var(--line); background:linear-gradient(135deg,rgba(20,12,30,.72),rgba(5,4,10,.66)); border-radius:18px; box-shadow:0 18px 45px rgba(0,0,0,.28),inset 0 0 0 1px rgba(255,255,255,.035); backdrop-filter:blur(13px); }
 .glass-soft { border:1px solid rgba(255,161,210,.16); background:rgba(10,7,17,.15); border-radius:22px; }
 .screen,.panel,.modal { position:absolute; inset:0; z-index:10; }
-.menu-screen { display:grid; grid-template-columns:minmax(330px,480px) 1fr minmax(310px,390px); gap:22px; padding:max(22px,env(safe-area-inset-top)) max(26px,env(safe-area-inset-right)) max(18px,env(safe-area-inset-bottom)) max(26px,env(safe-area-inset-left)); background:radial-gradient(circle at 30% 20%,rgba(255,91,172,.20),transparent 28%), radial-gradient(circle at 74% 72%,rgba(119,231,255,.10),transparent 32%), linear-gradient(135deg,rgba(5,3,11,.98),rgba(22,9,34,.94),rgba(5,3,11,.98)); overflow:hidden; }
+.menu-screen { display:grid; grid-template-columns:minmax(330px,480px) 1fr minmax(310px,390px); gap:22px; padding:max(22px,env(safe-area-inset-top)) max(26px,env(safe-area-inset-right)) max(18px,env(safe-area-inset-bottom)) max(26px,env(safe-area-inset-left)); background:linear-gradient(90deg,rgba(5,3,11,.82) 0%,rgba(5,3,11,.44) 45%,rgba(5,3,11,.72) 100%),url("assets/ui/mainmenu.png?v=025") center center/cover no-repeat,radial-gradient(circle at 30% 20%,rgba(255,91,172,.20),transparent 28%),linear-gradient(135deg,rgba(5,3,11,.98),rgba(22,9,34,.94),rgba(5,3,11,.98)); overflow:hidden; }
 .menu-bg { position:absolute; inset:0; z-index:0; pointer-events:none; background:radial-gradient(circle at 12% 10%,rgba(255,91,172,.18),transparent 22%), radial-gradient(circle at 87% 4%,rgba(255,91,172,.12),transparent 20%), repeating-linear-gradient(90deg,rgba(255,255,255,.014) 0 1px,transparent 1px 90px); }
 .menu-left,.menu-right,.menu-footer { position:relative; z-index:50; }
 .menu-left { padding:6px; align-self:start; }
@@ -148,3 +148,58 @@ button,input,.menu-left,.menu-right,.menu-buttons,.menu-buttons *,.panel,.panel 
 @media (max-width:1120px) { .menu-screen { grid-template-columns:minmax(320px,430px) 1fr; } .menu-right { display:none; } .gear-screen { grid-template-columns:minmax(300px,420px) 1fr; } .details-panel { grid-column:1 / -1; } }
 @media (max-width:820px) { .menu-screen { grid-template-columns:1fr!important; overflow:auto; } .login-card { margin-top:18px; } .skin-carousel { grid-template-columns:44px 1fr 44px; padding:12px; } .skin-display { grid-template-columns:1fr; } .skin-splash { min-height:290px; } .skin-portrait { height:240px; font-size:110px; } .gear-screen { grid-template-columns:1fr; } .body-wrap { min-height:430px; height:430px; } .menu-left,.menu-buttons,.menu-buttons * { position:relative; z-index:80; } }
 @media (max-width:560px) { .menu-screen { padding:18px 14px 46px; } .game-logo { font-size:62px; letter-spacing:-3px; } .menu-btn { min-height:56px; } .menu-btn.primary { min-height:66px; } .hud { grid-template-columns:1fr auto auto; } .hud-bars { width:52vw; } .run-box { min-width:94px; padding:6px 10px; } .run-box b { font-size:18px; } .pause-btn { width:46px; height:46px; } .skill { width:92px; height:92px; } .panel { padding:max(16px,env(safe-area-inset-top)) 12px 16px; } .panel-head { gap:10px; } .back { width:48px; height:48px; } .inventory-grid { grid-template-columns:repeat(auto-fill,minmax(66px,1fr)); } }
+
+
+/* v0.2.5 polish fixes */
+.fps-select {
+  min-width: 120px;
+  min-height: 42px;
+  border-radius: 12px;
+  color: #fff;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.18);
+  padding: 0 12px;
+  outline: none;
+}
+
+.fps-select option { color:#111; }
+
+.inv-item,
+.gear-slot {
+  touch-action: none;
+  user-select: none;
+}
+
+.inv-item[draggable="true"],
+.gear-slot[draggable="true"] {
+  cursor: grab;
+}
+
+.inv-item.dragging,
+.gear-slot.dragging {
+  opacity: .58;
+  transform: scale(.96);
+}
+
+.gear-slot.drop-target {
+  border-color: #9dffb0 !important;
+  box-shadow: 0 0 26px rgba(110,255,158,.34), inset 0 0 0 1px rgba(255,255,255,.12) !important;
+}
+
+.gear-slot.bad-drop {
+  border-color: #ff6c9e !important;
+  box-shadow: 0 0 22px rgba(255,80,140,.32), inset 0 0 0 1px rgba(255,255,255,.10) !important;
+}
+
+.menu-screen {
+  background:
+    linear-gradient(90deg, rgba(5,3,11,.82) 0%, rgba(5,3,11,.44) 45%, rgba(5,3,11,.72) 100%),
+    url("assets/ui/mainmenu.png?v=025") center center / cover no-repeat,
+    radial-gradient(circle at 30% 20%, rgba(255,91,172,.20), transparent 28%),
+    linear-gradient(135deg, rgba(5,3,11,.98), rgba(22,9,34,.94), rgba(5,3,11,.98)) !important;
+}
+
+#game { pointer-events:none!important; }
+#app { pointer-events:none!important; }
+#app > *, .screen, .panel, .modal, .hud, .skill, button, input, select { pointer-events:auto!important; }
+.menu-bg, .menu-footer { pointer-events:none!important; }
