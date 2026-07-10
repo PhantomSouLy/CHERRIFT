@@ -34,10 +34,65 @@
     return parts.join(" · ") || "-";
   }
 
+  function cleanButton(id) {
+    const el = document.getElementById(id);
+    if (!el) return null;
+    const clone = el.cloneNode(true);
+    el.replaceWith(clone);
+    return clone;
+  }
+
+  function forceGameViewport(game) {
+    const canvas = game?.canvas || document.getElementById("game");
+    const app = document.getElementById("app");
+    const vv = window.visualViewport;
+    const w = Math.max(320, Math.floor(vv?.width || window.innerWidth || document.documentElement.clientWidth || screen.width || 360));
+    const h = Math.max(240, Math.floor(vv?.height || window.innerHeight || document.documentElement.clientHeight || screen.height || 640));
+
+    if (canvas) {
+      canvas.style.position = "fixed";
+      canvas.style.inset = "0";
+      canvas.style.width = `${w}px`;
+      canvas.style.height = `${h}px`;
+      canvas.style.display = "block";
+      canvas.style.visibility = "visible";
+      canvas.style.opacity = "1";
+    }
+    if (app) {
+      app.style.position = "fixed";
+      app.style.inset = "0";
+      app.style.width = `${w}px`;
+      app.style.height = `${h}px`;
+      app.style.background = "transparent";
+    }
+
+    try { game?.resize?.(); } catch (_) {}
+    try { game?.render?.(); } catch (_) {}
+  }
+
+  function hideAllGamePanels() {
+    ["worlds", "menu", "skins", "gear", "chests", "settings", "stageClearModal", "gameOver", "pauseModal", "levelModal"].forEach(id => {
+      document.getElementById(id)?.classList.add("hidden");
+    });
+  }
+
+  function showOnlyGameUI(game) {
+    hideAllGamePanels();
+    document.body.classList.add("is-playing");
+    document.getElementById("hud")?.classList.remove("hidden");
+    document.getElementById("skill")?.classList.remove("hidden");
+    if (game?.stage) document.getElementById("stageHud")?.classList.remove("hidden");
+    forceGameViewport(game);
+    requestAnimationFrame(() => forceGameViewport(game));
+    setTimeout(() => forceGameViewport(game), 80);
+    setTimeout(() => forceGameViewport(game), 220);
+    setTimeout(() => forceGameViewport(game), 520);
+  }
+
   const oldInit = UI.init.bind(UI);
   UI.init = function patchedCarouselInit(save, game) {
     ensureSave(save);
-    this.worldCarouselIndex = 0; // mindig az 1. pályáról indul a World Select
+    this.worldCarouselIndex = 0;
     oldInit(save, game);
     this.installWorldCarouselSwipe();
   };
@@ -46,48 +101,72 @@
   UI.bind = function patchedCarouselBind() {
     oldBind();
 
-    const openWorld = () => this.openWorldSelect();
-    const launch = () => this.launchSelectedWorld();
+    const playBtn = cleanButton("playBtn");
+    const mobilePlayBtn = cleanButton("mobilePlayBtn");
+    const worldPrevBtn = cleanButton("worldPrevBtn");
+    const worldNextBtn = cleanButton("worldNextBtn");
+    const worldLaunchBtn = cleanButton("worldLaunchBtn");
+    const worldBackBtn = cleanButton("worldBackBtn");
 
-    const playBtn = document.getElementById("playBtn");
-    if (playBtn) playBtn.onclick = openWorld;
+    const openWorld = e => {
+      e?.preventDefault?.();
+      e?.stopImmediatePropagation?.();
+      this.openWorldSelect();
+    };
+    const launch = e => {
+      e?.preventDefault?.();
+      e?.stopImmediatePropagation?.();
+      this.launchSelectedWorld();
+    };
 
-    const mobilePlayBtn = document.getElementById("mobilePlayBtn");
-    if (mobilePlayBtn) mobilePlayBtn.onclick = openWorld;
+    playBtn?.addEventListener("click", openWorld);
+    mobilePlayBtn?.addEventListener("click", openWorld, { capture:true });
 
-    const mobileModeBtn = document.getElementById("mobileModeBtn");
-    if (mobileModeBtn) mobileModeBtn.onclick = openWorld;
+    // A külön World gombok nem kellenek, de ha marad régi cache-ben ilyen gomb, ugyanoda nyisson.
+    document.querySelectorAll('[data-open="worlds"]').forEach(btn => {
+      btn.onclick = openWorld;
+      btn.addEventListener("click", openWorld, { capture:true });
+    });
 
-    document.querySelectorAll('[data-open="worlds"]').forEach(btn => btn.onclick = openWorld);
-
-    document.getElementById("worldPrevBtn")?.addEventListener("click", () => this.moveWorldCarousel(-1));
-    document.getElementById("worldNextBtn")?.addEventListener("click", () => this.moveWorldCarousel(1));
-    document.getElementById("worldLaunchBtn")?.addEventListener("click", launch);
-    document.getElementById("worldBackBtn")?.addEventListener("click", () => this.open("menu"));
-
-    const oldWorldPlay = document.getElementById("worldPlaySelectedBtn");
-    if (oldWorldPlay) oldWorldPlay.onclick = launch;
+    worldPrevBtn?.addEventListener("click", () => this.moveWorldCarousel(-1));
+    worldNextBtn?.addEventListener("click", () => this.moveWorldCarousel(1));
+    worldLaunchBtn?.addEventListener("click", launch, { capture:true });
+    worldBackBtn?.addEventListener("click", e => { e?.preventDefault?.(); this.open("menu"); });
   };
 
   UI.openWorldSelect = function openWorldSelect() {
     ensureSave(this.save);
     this.worldCarouselIndex = 0;
+    document.body.classList.remove("is-playing");
+    ["hud", "skill", "stageHud", "pauseModal", "gameOver", "levelModal", "stageClearModal"].forEach(id => document.getElementById(id)?.classList.add("hidden"));
     this.open("worlds");
     this.renderWorldPanel();
   };
 
-  UI.launchSelectedWorld = function launchSelectedWorld() {
+  UI.launchSelectedWorld = async function launchSelectedWorld() {
+    if (this.__launchingStage) return;
     ensureSave(this.save);
-    const stage = STAGES[this.worldCarouselIndex] || STAGES[0];
+    const stage = STAGES[this.worldCarouselIndex || 0] || STAGES[0];
     if (!unlocked(this.save, stage.id)) {
       this.toast?.("Ez a pálya még locked");
       return;
     }
 
-    this.save.selectedStageId = stage.id;
-    CherriftStorage.save(this.save);
-    ["worlds", "menu", "skins", "gear", "chests", "settings", "stageClearModal"].forEach(id => document.getElementById(id)?.classList.add("hidden"));
-    this.game.start();
+    this.__launchingStage = true;
+    try {
+      this.save.selectedStageId = stage.id;
+      CherriftStorage.save(this.save);
+      hideAllGamePanels();
+      document.body.classList.add("is-playing");
+      forceGameViewport(this.game);
+      await this.game.start();
+      showOnlyGameUI(this.game);
+    } catch (err) {
+      console.error("Stage launch failed", err);
+      this.toast?.("Stage start hiba");
+    } finally {
+      this.__launchingStage = false;
+    }
   };
 
   UI.moveWorldCarousel = function moveWorldCarousel(dir) {

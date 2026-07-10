@@ -1,71 +1,52 @@
 (() => {
-  if (!window.CherriftGame || !window.UI) return;
+  if (!window.UI) return;
 
-  const queueViewportFix = game => {
+  const fitViewport = game => {
     const g = game || window.UI?.game;
-    const run = () => {
-      const canvas = g?.canvas || document.getElementById("game");
-      if (!canvas) return;
+    const canvas = g?.canvas || document.getElementById("game");
+    const app = document.getElementById("app");
+    const vv = window.visualViewport;
+    const w = Math.max(320, Math.floor(vv?.width || window.innerWidth || document.documentElement.clientWidth || screen.width || 360));
+    const h = Math.max(240, Math.floor(vv?.height || window.innerHeight || document.documentElement.clientHeight || screen.height || 640));
 
+    if (canvas) {
       canvas.style.position = "fixed";
       canvas.style.inset = "0";
-      canvas.style.width = "100vw";
-      canvas.style.height = "100vh";
-      canvas.style.minWidth = "100vw";
-      canvas.style.minHeight = "100vh";
+      canvas.style.width = `${w}px`;
+      canvas.style.height = `${h}px`;
       canvas.style.display = "block";
       canvas.style.visibility = "visible";
       canvas.style.opacity = "1";
-
-      try { g?.resize?.(); } catch (_) {}
-      try { g?.render?.(); } catch (_) {}
-    };
-
-    requestAnimationFrame(run);
-    setTimeout(run, 50);
-    setTimeout(run, 160);
-    setTimeout(run, 360);
-    setTimeout(run, 700);
+    }
+    if (app) {
+      app.style.position = "fixed";
+      app.style.inset = "0";
+      app.style.width = `${w}px`;
+      app.style.height = `${h}px`;
+    }
+    try { g?.resize?.(); } catch (_) {}
+    try { if (g?.mode === "playing") g.render?.(); } catch (_) {}
   };
 
-  if (!CherriftGame.prototype.__fullscreenMobileStartFix) {
-    const originalStart = CherriftGame.prototype.start;
-    CherriftGame.prototype.start = async function fullscreenMobileStartFix(...args) {
-      const result = await originalStart.apply(this, args);
-      queueViewportFix(this);
-      return result;
-    };
-    CherriftGame.prototype.__fullscreenMobileStartFix = true;
-  }
-
-  if (!UI.__fullscreenMobileLaunchFix && typeof UI.launchSelectedWorld === "function") {
-    const originalLaunchSelectedWorld = UI.launchSelectedWorld.bind(UI);
-    UI.launchSelectedWorld = function fullscreenMobileLaunchFix(...args) {
-      ["worlds", "menu", "skins", "gear", "chests", "settings", "stageClearModal"].forEach(id => {
-        document.getElementById(id)?.classList.add("hidden");
-      });
-
-      const result = originalLaunchSelectedWorld(...args);
-      queueViewportFix(this.game);
-      return result;
-    };
-    UI.__fullscreenMobileLaunchFix = true;
-  }
+  const queueFit = () => {
+    requestAnimationFrame(() => fitViewport(window.UI?.game));
+    setTimeout(() => fitViewport(window.UI?.game), 80);
+    setTimeout(() => fitViewport(window.UI?.game), 220);
+    setTimeout(() => fitViewport(window.UI?.game), 520);
+  };
 
   if (!UI.__fullscreenButtonViewportFix && typeof UI.fullscreen === "function") {
     const originalFullscreen = UI.fullscreen.bind(UI);
     UI.fullscreen = function fullscreenButtonViewportFix(...args) {
       const result = originalFullscreen(...args);
-      queueViewportFix(this.game);
+      queueFit();
       return result;
     };
     UI.__fullscreenButtonViewportFix = true;
   }
 
-  ["resize", "orientationchange", "fullscreenchange", "webkitfullscreenchange"].forEach(eventName => {
-    window.addEventListener(eventName, () => queueViewportFix(window.UI?.game), { passive: true });
-    document.addEventListener(eventName, () => queueViewportFix(window.UI?.game), { passive: true });
+  ["resize", "orientationchange", "fullscreenchange", "webkitfullscreenchange", "pageshow"].forEach(eventName => {
+    window.addEventListener(eventName, queueFit, { passive: true });
+    document.addEventListener(eventName, queueFit, { passive: true });
   });
-
-  window.addEventListener("pageshow", () => queueViewportFix(window.UI?.game), { passive: true });
 })();
