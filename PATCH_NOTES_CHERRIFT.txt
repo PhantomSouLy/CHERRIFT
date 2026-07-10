@@ -1,0 +1,33 @@
+CHERRIFT v0.3.2 Early Build Patch Notes
+
+[Changed]
+- Stage progression is longer and less empty.
+- World 1-1 now requires 120 enemy defeats instead of a very small early number.
+- Later stages now scale upward into 135 / 155 / 175 / 210+ enemy clears.
+- World 2 stages also use larger enemy defeat goals.
+- Normal spawn speed is increased.
+- Normal max alive enemy count is increased.
+- Raid waves now start earlier and contain more mobs.
+- Raid wave spawn speed is faster, so raids should actually feel like raid moments.
+
+[Added]
+- In-game fullscreen toggle added to the Pause menu.
+- During a run, press Pause, then use the FULLSCREEN button to enter/exit fullscreen.
+- Added src/progression_fullscreen_patch_v032.js for the in-game fullscreen binding.
+
+[Fixed / Kept]
+- Level-up freeze fix remains included.
+- Loading freeze fix remains included.
+- CHERRIFT branding remains correct.
+- World Select flow remains: Main Play -> World Select -> Play -> Loading -> Stage.
+- PC main menu layout is preserved.
+
+[Files changed]
+- index.html
+- menu_v031.css
+- src/progression_v031.js
+- src/world_select_carousel_v031.js
+- src/progression_fullscreen_patch_v032.js
+
+[Notes]
+- From now on patch notes are kept in this single PATCH_NOTES_CHERRIFT.txt file instead of multiple md files.

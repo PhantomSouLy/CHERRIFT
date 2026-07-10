@@ -1133,3 +1133,17 @@ body.is-levelup .upgrade-card {
     padding: 14px;
   }
 }
+
+
+/* v0.3.2 progression + in-game fullscreen */
+#pauseFullscreen {
+  border-color: rgba(119, 231, 255, .38);
+}
+@media (max-width: 820px) {
+  #pauseModal .modal-card {
+    width: min(540px, 94vw);
+  }
+  #pauseFullscreen {
+    min-height: 58px;
+  }
+}
