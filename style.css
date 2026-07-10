@@ -469,3 +469,80 @@ button { color: inherit; cursor: pointer; border: 0; }
   .back { width:48px; height:48px; }
   .inventory-grid { grid-template-columns: repeat(auto-fill, minmax(66px, 1fr)); }
 }
+
+
+/* v0.2.3 CLICK FIX
+   Decorative layers must never capture touches/clicks.
+   Real interactive UI is explicitly raised above them. */
+#app {
+  pointer-events: auto !important;
+}
+
+#game {
+  pointer-events: none !important;
+}
+
+.menu-vignette,
+.menu-screen::before,
+.ambient-petals,
+.ambient-petals *,
+.hero-splash,
+.hero-splash *,
+.menu-footer {
+  pointer-events: none !important;
+}
+
+.menu-screen,
+.panel,
+.modal,
+.hud,
+.skill,
+#toast {
+  pointer-events: auto !important;
+}
+
+.menu-left,
+.menu-right,
+.menu-buttons,
+.menu-buttons *,
+.panel *,
+.modal *,
+.hud *,
+.skill,
+.top-icons,
+.top-icons *,
+.login-card,
+.login-card *,
+.glass,
+.glass *,
+.back,
+.carousel-arrow,
+.gear-slot,
+.inv-item,
+button,
+input {
+  pointer-events: auto !important;
+}
+
+.menu-left,
+.menu-right,
+.panel-head,
+.menu-buttons,
+.login-card,
+.top-icons,
+.side-card,
+.panel > *,
+.modal-card {
+  position: relative;
+  z-index: 200 !important;
+}
+
+.ambient-petals {
+  z-index: 1 !important;
+}
+
+.menu-vignette,
+.menu-screen::before {
+  z-index: 0 !important;
+}
+

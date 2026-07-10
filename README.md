@@ -48,3 +48,11 @@ Majd böngészőben:
 ```text
 http://localhost:8000
 ```
+
+
+## v0.2.3 click fix
+
+- Decorative overlay layers now cannot capture clicks/touches.
+- Menu/buttons/panels are forced above decorative layers.
+- Canvas cannot block UI clicks.
+- Mobile touch movement no longer swallows taps on menu/panels/buttons.
