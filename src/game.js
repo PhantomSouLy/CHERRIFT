@@ -1,5 +1,6 @@
 class AssetLoader {
   constructor() { this.images = {}; }
+
   loadImage(key, src) {
     return new Promise((resolve) => {
       const img = new Image();
@@ -8,6 +9,7 @@ class AssetLoader {
       img.src = src;
     });
   }
+
   async loadAll(onProgress) {
     const items = [
       ["player", GC_CONFIG.assetSpec.player.src],
@@ -24,6 +26,7 @@ class AssetLoader {
       ["xpBig", "assets/pickups/xp_big.png"],
       ["burst", "assets/effects/pink_burst.png"]
     ];
+
     let done = 0;
     for (const [key, src] of items) {
       await this.loadImage(key, src);
@@ -42,7 +45,8 @@ class GaCherryGame {
     this.assets = new AssetLoader();
     this.mode = "loading";
     this.dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
-    this.width = 0; this.height = 0;
+    this.width = 0;
+    this.height = 0;
     this.camera = { x: 0, y: 0 };
     this.last = performance.now();
     this.animTime = 0;
@@ -71,7 +75,7 @@ class GaCherryGame {
   }
 
   _initMenuPetals() {
-    this.menuPetals = Array.from({ length: 42 }, (_, i) => ({
+    this.menuPetals = Array.from({ length: 42 }, () => ({
       x: Math.random() * this.width,
       y: Math.random() * this.height,
       s: 0.6 + Math.random() * 1.8,
@@ -123,6 +127,7 @@ class GaCherryGame {
       { key: "treeSmall", r: 42, count: 14 },
       { key: "treeBig", r: 58, count: 8 }
     ];
+
     const obs = [];
     const world = GC_CONFIG.balance.worldSize;
     for (const t of types) {
@@ -156,7 +161,11 @@ class GaCherryGame {
 
     const mv = this.input.getMoveVector();
     this._movePlayer(mv, dt);
-    if (mv.x || mv.y) this.player.lastDir = Math.abs(mv.x) > Math.abs(mv.y) ? (mv.x < 0 ? "left" : "right") : (mv.y < 0 ? "up" : "down");
+    if (mv.x || mv.y) {
+      this.player.lastDir = Math.abs(mv.x) > Math.abs(mv.y)
+        ? (mv.x < 0 ? "left" : "right")
+        : (mv.y < 0 ? "up" : "down");
+    }
 
     if (this.input.consumeSkill()) this.useSkill();
     this._spawnUpdate(dt);
@@ -174,12 +183,15 @@ class GaCherryGame {
   _movePlayer(mv, dt) {
     const p = this.player;
     const world = GC_CONFIG.balance.worldSize / 2;
+
     const tryMove = (dx, dy) => {
-      p.x += dx; p.y += dy;
+      p.x += dx;
+      p.y += dy;
       p.x = Math.max(-world, Math.min(world, p.x));
       p.y = Math.max(-world, Math.min(world, p.y));
       if (this._playerHitsObstacle()) { p.x -= dx; p.y -= dy; }
     };
+
     tryMove(mv.x * p.speed * dt, 0);
     tryMove(0, mv.y * p.speed * dt);
   }
@@ -195,6 +207,7 @@ class GaCherryGame {
     const maxEnemies = b.maxEnemiesBase + Math.floor(this.time / 9);
     this.spawnTimer -= dt;
     const spawnEvery = Math.max(0.22, b.enemySpawnEvery / difficulty);
+
     if (this.spawnTimer <= 0 && this.enemies.length < maxEnemies) {
       this.spawnTimer = spawnEvery;
       const count = 1 + Math.floor(this.time / 55);
@@ -208,7 +221,12 @@ class GaCherryGame {
     const x = this.player.x + Math.cos(angle) * dist;
     const y = this.player.y + Math.sin(angle) * dist;
     const hp = GC_CONFIG.balance.enemyBaseHp * (1 + this.time / 120);
-    this.enemies.push({ x, y, r: 24, hp, maxHp: hp, speed: GC_CONFIG.balance.enemyBaseSpeed * (0.9 + Math.random() * 0.35) * Math.min(2.1, difficulty), hitFlash: 0, animOff: Math.random() * 10 });
+    this.enemies.push({
+      x, y, r: 24, hp, maxHp: hp,
+      speed: GC_CONFIG.balance.enemyBaseSpeed * (0.9 + Math.random() * 0.35) * Math.min(2.1, difficulty),
+      hitFlash: 0,
+      animOff: Math.random() * 10
+    });
   }
 
   _nearestEnemy(maxRange = 999999) {
@@ -228,11 +246,23 @@ class GaCherryGame {
     p.fireTimer = p.fireInterval;
     const dx = target.x - p.x, dy = target.y - p.y;
     const len = Math.hypot(dx, dy) || 1;
-    this.bullets.push({ x: p.x, y: p.y - 8, vx: dx / len * p.bulletSpeed, vy: dy / len * p.bulletSpeed, r: 7, damage: p.damage, life: 1.35 });
+    this.bullets.push({
+      x: p.x, y: p.y - 8,
+      vx: dx / len * p.bulletSpeed,
+      vy: dy / len * p.bulletSpeed,
+      r: 7,
+      damage: p.damage,
+      life: 1.35
+    });
   }
 
   _updateBullets(dt) {
-    for (const b of this.bullets) { b.x += b.vx * dt; b.y += b.vy * dt; b.life -= dt; }
+    for (const b of this.bullets) {
+      b.x += b.vx * dt;
+      b.y += b.vy * dt;
+      b.life -= dt;
+    }
+
     for (const b of this.bullets) {
       if (b.dead) continue;
       for (const e of this.enemies) {
@@ -244,6 +274,7 @@ class GaCherryGame {
         }
       }
     }
+
     this.bullets = this.bullets.filter(b => !b.dead && b.life > 0);
   }
 
@@ -316,6 +347,7 @@ class GaCherryGame {
       { id: "bulletSpeed", title: "Swift Petals", desc: "+18% lövedék sebesség", apply: () => this.player.bulletSpeed *= 1.18 },
       { id: "skill", title: "Cherry Burst Cooldown", desc: "Special skill cooldown -15%", apply: () => this.player.skillCooldown *= 0.85 }
     ];
+
     const choices = [];
     while (choices.length < 3 && pool.length) {
       const idx = Math.floor(Math.random() * pool.length);
@@ -348,9 +380,26 @@ class GaCherryGame {
     this.effects = this.effects.filter(fx => fx.t < fx.life);
   }
 
-  pause() { if (this.mode === "playing") { this.mode = "paused"; UI.showPause(); } }
-  resume() { if (this.mode === "paused") { this.mode = "playing"; UI.hidePause(); this.last = performance.now(); } }
-  backToMenu() { this.mode = "menu"; UI.showMenu(this.profile); }
+  pause() {
+    if (this.mode === "playing") {
+      this.mode = "paused";
+      UI.showPause();
+    }
+  }
+
+  resume() {
+    if (this.mode === "paused") {
+      this.mode = "playing";
+      UI.hidePause();
+      this.last = performance.now();
+    }
+  }
+
+  backToMenu() {
+    this.mode = "menu";
+    UI.showMenu(this.profile);
+  }
+
   gameOver() {
     this.mode = "gameover";
     this.stats.time = this.time;
@@ -360,7 +409,9 @@ class GaCherryGame {
     UI.showGameOver(this.stats, this.profile);
   }
 
-  worldToScreen(x, y) { return { x: x - this.camera.x + this.width / 2, y: y - this.camera.y + this.height / 2 }; }
+  worldToScreen(x, y) {
+    return { x: x - this.camera.x + this.width / 2, y: y - this.camera.y + this.height / 2 };
+  }
 
   render(dt) {
     this.ctx.clearRect(0, 0, this.width, this.height);
@@ -371,31 +422,48 @@ class GaCherryGame {
   _renderMenuBackdrop(dt) {
     const c = this.ctx;
     const g = c.createRadialGradient(this.width * .55, this.height * .45, 20, this.width * .55, this.height * .45, Math.max(this.width, this.height));
-    g.addColorStop(0, "#362047"); g.addColorStop(.42, "#171025"); g.addColorStop(1, "#05030b");
-    c.fillStyle = g; c.fillRect(0, 0, this.width, this.height);
+    g.addColorStop(0, "#362047");
+    g.addColorStop(.42, "#171025");
+    g.addColorStop(1, "#05030b");
+    c.fillStyle = g;
+    c.fillRect(0, 0, this.width, this.height);
+
     c.fillStyle = "rgba(255,120,185,.75)";
     for (const p of this.menuPetals) {
-      p.x += p.vx * dt; p.y += p.vy * dt; p.rot += dt;
-      if (p.x < -20 || p.y > this.height + 20) { p.x = this.width + Math.random()*80; p.y = -20 + Math.random()*this.height*.4; }
-      c.save(); c.translate(p.x,p.y); c.rotate(p.rot); c.beginPath(); c.ellipse(0,0,4*p.s,9*p.s,0,0,Math.PI*2); c.fill(); c.restore();
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      p.rot += dt;
+      if (p.x < -20 || p.y > this.height + 20) {
+        p.x = this.width + Math.random() * 80;
+        p.y = -20 + Math.random() * this.height * .4;
+      }
+      c.save();
+      c.translate(p.x, p.y);
+      c.rotate(p.rot);
+      c.beginPath();
+      c.ellipse(0, 0, 4 * p.s, 9 * p.s, 0, 0, Math.PI * 2);
+      c.fill();
+      c.restore();
     }
-    // simple background silhouette
+
     c.fillStyle = "rgba(0,0,0,.35)";
     c.fillRect(0, this.height * .78, this.width, this.height * .22);
-    for (let i=0;i<12;i++) {
-      const x = (i/12)*this.width;
-      c.fillRect(x, this.height*.62 - (i%5)*22, 32 + (i%4)*12, this.height*.2 + (i%5)*22);
+    for (let i = 0; i < 12; i++) {
+      const x = (i / 12) * this.width;
+      c.fillRect(x, this.height * .62 - (i % 5) * 22, 32 + (i % 4) * 12, this.height * .2 + (i % 5) * 22);
     }
   }
 
   _renderGame() {
     const c = this.ctx;
     this._drawGrass(c);
+
     const drawables = [];
     for (const o of this.obstacles) drawables.push({ y: o.y, type: "ob", obj: o });
     for (const e of this.enemies) drawables.push({ y: e.y + 20, type: "enemy", obj: e });
     drawables.push({ y: this.player.y + 30, type: "player", obj: this.player });
-    drawables.sort((a,b) => a.y - b.y);
+    drawables.sort((a, b) => a.y - b.y);
+
     this._drawPickups(c);
     this._drawBullets(c);
     for (const d of drawables) {
@@ -410,13 +478,17 @@ class GaCherryGame {
   _drawGrass(c) {
     const img = this.assets.images.grass;
     const tile = 128;
-    const startX = Math.floor((this.camera.x - this.width/2) / tile) * tile;
-    const startY = Math.floor((this.camera.y - this.height/2) / tile) * tile;
-    for (let x = startX; x < this.camera.x + this.width/2 + tile; x += tile) {
-      for (let y = startY; y < this.camera.y + this.height/2 + tile; y += tile) {
+    const startX = Math.floor((this.camera.x - this.width / 2) / tile) * tile;
+    const startY = Math.floor((this.camera.y - this.height / 2) / tile) * tile;
+
+    for (let x = startX; x < this.camera.x + this.width / 2 + tile; x += tile) {
+      for (let y = startY; y < this.camera.y + this.height / 2 + tile; y += tile) {
         const s = this.worldToScreen(x, y);
         if (img) c.drawImage(img, s.x, s.y, tile, tile);
-        else { c.fillStyle = "#4d8f4b"; c.fillRect(s.x, s.y, tile, tile); }
+        else {
+          c.fillStyle = "#4d8f4b";
+          c.fillRect(s.x, s.y, tile, tile);
+        }
       }
     }
   }
@@ -435,9 +507,12 @@ class GaCherryGame {
     if (img) {
       const scale = o.key.includes("Big") ? 1.18 : 1;
       const w = img.width * scale, h = img.height * scale;
-      c.drawImage(img, s.x - w/2, s.y - h*0.72, w, h);
+      c.drawImage(img, s.x - w / 2, s.y - h * 0.72, w, h);
     } else {
-      c.fillStyle = "#477744"; c.beginPath(); c.arc(s.x,s.y,o.r,0,Math.PI*2); c.fill();
+      c.fillStyle = "#477744";
+      c.beginPath();
+      c.arc(s.x, s.y, o.r, 0, Math.PI * 2);
+      c.fill();
     }
   }
 
@@ -445,19 +520,51 @@ class GaCherryGame {
     const p = this.player;
     const img = this.assets.images.player;
     const spec = GC_CONFIG.assetSpec.player;
-    const moving = Math.hypot(this.input.getMoveVector().x, this.input.getMoveVector().y) > 0.08;
+    const mv = this.input.getMoveVector();
+    const moving = Math.hypot(mv.x, mv.y) > 0.08;
     const dir = p.lastDir || "down";
     const anim = spec.animations || { idle: spec.rows || {}, walk: spec.rows || {} };
     const row = moving ? (anim.walk?.[dir] ?? 0) : (anim.idle?.[dir] ?? 0);
-    const fps = moving ? (spec.walkFps || 8) : (spec.idleFps || 3);
-    const frame = moving ? Math.floor(this.animTime * fps) % spec.columns : Math.floor(this.animTime * fps) % spec.columns;
-    const dw = spec.displayWidth || 96;
-    const dh = spec.displayHeight || 96;
+
+    // FIX: idle-ben nem valt frame-et, mindig az elso frame-et hasznalja.
+    // Igy Cherry nem fog allas kozben jobbra-balra ugralni.
+    const fps = spec.walkFps || 8;
+    const frame = moving ? Math.floor(this.animTime * fps) % spec.columns : 0;
+
+    const crop = spec.crop || {};
+    const cropLeft = crop.left || 0;
+    const cropTop = crop.top || 0;
+    const cropRight = crop.right || 0;
+    const cropBottom = crop.bottom || 0;
+
+    const sx = frame * spec.frameWidth + cropLeft;
+    const sy = row * spec.frameHeight + cropTop;
+    const sw = spec.frameWidth - cropLeft - cropRight;
+    const sh = spec.frameHeight - cropTop - cropBottom;
+
+    const dw = spec.displayWidth || 84;
+    const dh = spec.displayHeight || 84;
     const s = this.worldToScreen(p.x, p.y);
+
     c.save();
     if (p.invuln > 0) c.globalAlpha = 0.65;
-    if (img) c.drawImage(img, frame * spec.frameWidth, row * spec.frameHeight, spec.frameWidth, spec.frameHeight, s.x - dw / 2, s.y - dh * 0.85, dw, dh);
-    else { c.fillStyle="#ff77b9"; c.beginPath(); c.arc(s.x,s.y,22,0,Math.PI*2); c.fill(); }
+
+    if (img) {
+      c.drawImage(
+        img,
+        sx, sy, sw, sh,
+        s.x - dw / 2,
+        s.y - dh * 0.86,
+        dw,
+        dh
+      );
+    } else {
+      c.fillStyle = "#ff77b9";
+      c.beginPath();
+      c.arc(s.x, s.y, 22, 0, Math.PI * 2);
+      c.fill();
+    }
+
     c.restore();
   }
 
@@ -469,25 +576,41 @@ class GaCherryGame {
     const dw = spec.displayWidth || 76;
     const dh = spec.displayHeight || 76;
     const s = this.worldToScreen(e.x, e.y);
+
     c.save();
     if (e.hitFlash > 0) c.filter = "brightness(1.8)";
     if (img) c.drawImage(img, frame * spec.frameWidth, row * spec.frameHeight, spec.frameWidth, spec.frameHeight, s.x - dw / 2, s.y - dh * 0.68, dw, dh);
-    else { c.fillStyle="#ff75b5"; c.beginPath(); c.arc(s.x,s.y,22,0,Math.PI*2); c.fill(); }
+    else {
+      c.fillStyle = "#ff75b5";
+      c.beginPath();
+      c.arc(s.x, s.y, 22, 0, Math.PI * 2);
+      c.fill();
+    }
     c.restore();
-    // hp line
+
     if (e.hp < e.maxHp) {
-      c.fillStyle = "rgba(0,0,0,.45)"; c.fillRect(s.x-24, s.y-44, 48, 5);
-      c.fillStyle = "#ff4e8d"; c.fillRect(s.x-24, s.y-44, 48 * Math.max(0,e.hp/e.maxHp), 5);
+      c.fillStyle = "rgba(0,0,0,.45)";
+      c.fillRect(s.x - 24, s.y - 44, 48, 5);
+      c.fillStyle = "#ff4e8d";
+      c.fillRect(s.x - 24, s.y - 44, 48 * Math.max(0, e.hp / e.maxHp), 5);
     }
   }
 
   _drawBullets(c) {
     for (const b of this.bullets) {
       const s = this.worldToScreen(b.x, b.y);
-      const grd = c.createRadialGradient(s.x,s.y,1,s.x,s.y,12);
-      grd.addColorStop(0,"#fff"); grd.addColorStop(.35,"#ffd0ea"); grd.addColorStop(1,"rgba(255,76,166,0)");
-      c.fillStyle = grd; c.beginPath(); c.arc(s.x,s.y,12,0,Math.PI*2); c.fill();
-      c.fillStyle = "#ff57aa"; c.beginPath(); c.arc(s.x,s.y,5,0,Math.PI*2); c.fill();
+      const grd = c.createRadialGradient(s.x, s.y, 1, s.x, s.y, 12);
+      grd.addColorStop(0, "#fff");
+      grd.addColorStop(.35, "#ffd0ea");
+      grd.addColorStop(1, "rgba(255,76,166,0)");
+      c.fillStyle = grd;
+      c.beginPath();
+      c.arc(s.x, s.y, 12, 0, Math.PI * 2);
+      c.fill();
+      c.fillStyle = "#ff57aa";
+      c.beginPath();
+      c.arc(s.x, s.y, 5, 0, Math.PI * 2);
+      c.fill();
     }
   }
 
@@ -496,8 +619,13 @@ class GaCherryGame {
       const img = this.assets.images[o.value > 3 ? "xpBig" : "xpSmall"];
       const s = this.worldToScreen(o.x, o.y);
       const size = o.value > 3 ? 30 : 22;
-      if (img) c.drawImage(img, s.x-size/2, s.y-size/2, size, size);
-      else { c.fillStyle="#67dfff"; c.beginPath(); c.arc(s.x,s.y,o.r,0,Math.PI*2); c.fill(); }
+      if (img) c.drawImage(img, s.x - size / 2, s.y - size / 2, size, size);
+      else {
+        c.fillStyle = "#67dfff";
+        c.beginPath();
+        c.arc(s.x, s.y, o.r, 0, Math.PI * 2);
+        c.fill();
+      }
     }
   }
 
@@ -505,20 +633,35 @@ class GaCherryGame {
     for (const fx of this.effects) {
       const s = this.worldToScreen(fx.x, fx.y);
       const t = fx.t / fx.life;
+
       if (fx.type === "burst") {
-        c.save(); c.globalAlpha = 1 - t;
-        c.strokeStyle = "#ff73bb"; c.lineWidth = 5;
-        c.beginPath(); c.arc(s.x,s.y,fx.r*t,0,Math.PI*2); c.stroke();
-        c.fillStyle = "rgba(255,95,175,.12)"; c.beginPath(); c.arc(s.x,s.y,fx.r*t,0,Math.PI*2); c.fill();
+        c.save();
+        c.globalAlpha = 1 - t;
+        c.strokeStyle = "#ff73bb";
+        c.lineWidth = 5;
+        c.beginPath();
+        c.arc(s.x, s.y, fx.r * t, 0, Math.PI * 2);
+        c.stroke();
+        c.fillStyle = "rgba(255,95,175,.12)";
+        c.beginPath();
+        c.arc(s.x, s.y, fx.r * t, 0, Math.PI * 2);
+        c.fill();
         c.restore();
       } else if (fx.type === "hit") {
-        c.fillStyle = `rgba(255,255,255,${1-t})`;
-        c.beginPath(); c.arc(s.x,s.y,18*t,0,Math.PI*2); c.fill();
+        c.fillStyle = `rgba(255,255,255,${1 - t})`;
+        c.beginPath();
+        c.arc(s.x, s.y, 18 * t, 0, Math.PI * 2);
+        c.fill();
       } else if (fx.type === "death") {
-        c.fillStyle = `rgba(255,100,180,${1-t})`;
-        for (let i=0;i<6;i++) { c.beginPath(); c.arc(s.x+Math.cos(i)*28*t, s.y+Math.sin(i)*20*t, 4,0,Math.PI*2); c.fill(); }
+        c.fillStyle = `rgba(255,100,180,${1 - t})`;
+        for (let i = 0; i < 6; i++) {
+          c.beginPath();
+          c.arc(s.x + Math.cos(i) * 28 * t, s.y + Math.sin(i) * 20 * t, 4, 0, Math.PI * 2);
+          c.fill();
+        }
       }
     }
   }
 }
+
 window.GaCherryGame = GaCherryGame;
