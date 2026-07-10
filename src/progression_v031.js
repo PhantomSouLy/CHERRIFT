@@ -6,16 +6,16 @@
   CHERRIFT_DATA.version = VERSION;
 
   const STAGES = [
-    { id:"world_1_1", world:1, index:1, name:"World 1-1", title:"Blooming Meadow", theme:"forest_day", goalKills:28, maxAlive:6, energy:5, pool:["green_slime"], raids:[{atKills:10,count:6,pool:["green_slime"]},{atKills:20,count:8,pool:["green_slime","pink_slime"]}], repeatReward:{coins:14}, firstClearReward:{coins:28,keys:1}, next:"world_1_2" },
-    { id:"world_1_2", world:1, index:2, name:"World 1-2", title:"Petal Trail", theme:"forest_day", goalKills:34, maxAlive:7, energy:5, pool:["green_slime","pink_slime"], raids:[{atKills:12,count:8,pool:["green_slime","pink_slime"]},{atKills:26,count:9,pool:["green_slime","blue_slime"]}], repeatReward:{coins:16}, firstClearReward:{coins:30}, next:"world_1_3" },
-    { id:"world_1_3", world:1, index:3, name:"World 1-3", title:"Clover Crossing", theme:"forest_day", goalKills:40, maxAlive:8, energy:5, pool:["green_slime","blue_slime"], raids:[{atKills:14,count:8,pool:["blue_slime"]},{atKills:30,count:10,pool:["green_slime","blue_slime","pink_slime"]}], repeatReward:{coins:18}, firstClearReward:{coins:34}, next:"world_1_4" },
-    { id:"world_1_4", world:1, index:4, name:"World 1-4", title:"Rooted Hollow", theme:"forest_day", goalKills:46, maxAlive:9, energy:5, pool:["green_slime","blue_slime","big_slime","pink_slime"], raids:[{atKills:15,count:10,pool:["blue_slime","pink_slime"]},{atKills:34,count:12,pool:["big_slime","blue_slime"]}], repeatReward:{coins:22}, firstClearReward:{coins:40,keys:1}, next:"world_1_5" },
-    { id:"world_1_5", world:1, index:5, name:"World 1-5", title:"Slime Nest", theme:"forest_day", goalKills:54, maxAlive:9, energy:5, pool:["green_slime","blue_slime","big_slime","pink_slime"], raids:[{atKills:18,count:12,pool:["pink_slime","blue_slime"]},{atKills:38,count:14,pool:["big_slime","blue_slime"]}], boss:"slime_king", repeatReward:{coins:28}, firstClearReward:{coins:55,keys:1}, next:"world_2_1" },
-    { id:"world_2_1", world:2, index:1, name:"World 2-1", title:"Night Bloom", theme:"forest_night", goalKills:34, maxAlive:7, energy:5, pool:["spider","beetle"], raids:[{atKills:12,count:8,pool:["spider"]},{atKills:24,count:8,pool:["spider","beetle"]}], repeatReward:{coins:20}, firstClearReward:{coins:36}, next:"world_2_2" },
-    { id:"world_2_2", world:2, index:2, name:"World 2-2", title:"Moonlit Grove", theme:"forest_night", goalKills:40, maxAlive:8, energy:5, pool:["spider","beetle","moth"], raids:[{atKills:14,count:10,pool:["spider","moth"]},{atKills:30,count:10,pool:["beetle","moth"]}], repeatReward:{coins:22}, firstClearReward:{coins:40}, next:"world_2_3" },
-    { id:"world_2_3", world:2, index:3, name:"World 2-3", title:"Shadow Thicket", theme:"forest_night", goalKills:46, maxAlive:8, energy:5, pool:["spider","beetle","moth","crawler"], raids:[{atKills:16,count:10,pool:["moth","crawler"]},{atKills:34,count:12,pool:["spider","beetle","crawler"]}], repeatReward:{coins:24}, firstClearReward:{coins:44}, next:"world_2_4" },
-    { id:"world_2_4", world:2, index:4, name:"World 2-4", title:"Echo Burrow", theme:"forest_night", goalKills:52, maxAlive:9, energy:5, pool:["spider","beetle","crawler"], raids:[{atKills:18,count:12,pool:["spider","crawler"]},{atKills:38,count:14,pool:["beetle","crawler"]}], repeatReward:{coins:28}, firstClearReward:{coins:48,keys:1}, next:"world_2_5" },
-    { id:"world_2_5", world:2, index:5, name:"World 2-5", title:"Midnight Den", theme:"forest_night", goalKills:58, maxAlive:9, energy:5, pool:["spider","beetle","moth","crawler"], raids:[{atKills:20,count:14,pool:["spider","crawler"]},{atKills:42,count:16,pool:["beetle","moth","crawler"]}], boss:"night_queen", repeatReward:{coins:32}, firstClearReward:{coins:58,keys:1}, next:null }
+    { id:"world_1_1", world:1, index:1, name:"World 1-1", title:"Blooming Meadow", theme:"forest_day", goalKills:120, maxAlive:14, energy:5, pool:["green_slime","pink_slime"], raids:[{atKills:20,count:18,pool:["green_slime","pink_slime"]},{atKills:55,count:26,pool:["green_slime","blue_slime","pink_slime"]},{atKills:92,count:34,pool:["blue_slime","pink_slime"]}], repeatReward:{coins:28}, firstClearReward:{coins:55,keys:1}, next:"world_1_2" },
+    { id:"world_1_2", world:1, index:2, name:"World 1-2", title:"Petal Trail", theme:"forest_day", goalKills:135, maxAlive:15, energy:5, pool:["green_slime","pink_slime","blue_slime"], raids:[{atKills:25,count:22,pool:["green_slime","pink_slime"]},{atKills:70,count:30,pool:["blue_slime","pink_slime"]},{atKills:108,count:38,pool:["green_slime","blue_slime","pink_slime"]}], repeatReward:{coins:32}, firstClearReward:{coins:62}, next:"world_1_3" },
+    { id:"world_1_3", world:1, index:3, name:"World 1-3", title:"Clover Crossing", theme:"forest_day", goalKills:155, maxAlive:16, energy:5, pool:["green_slime","blue_slime","pink_slime"], raids:[{atKills:30,count:26,pool:["blue_slime","pink_slime"]},{atKills:82,count:36,pool:["green_slime","blue_slime","pink_slime"]},{atKills:125,count:44,pool:["blue_slime","big_slime","pink_slime"]}], repeatReward:{coins:36}, firstClearReward:{coins:70}, next:"world_1_4" },
+    { id:"world_1_4", world:1, index:4, name:"World 1-4", title:"Rooted Hollow", theme:"forest_day", goalKills:175, maxAlive:17, energy:5, pool:["green_slime","blue_slime","big_slime","pink_slime"], raids:[{atKills:35,count:30,pool:["blue_slime","pink_slime"]},{atKills:92,count:42,pool:["big_slime","blue_slime"]},{atKills:142,count:50,pool:["big_slime","blue_slime","pink_slime"]}], repeatReward:{coins:42}, firstClearReward:{coins:82,keys:1}, next:"world_1_5" },
+    { id:"world_1_5", world:1, index:5, name:"World 1-5", title:"Slime Nest", theme:"forest_day", goalKills:210, maxAlive:18, energy:5, pool:["green_slime","blue_slime","big_slime","pink_slime"], raids:[{atKills:40,count:36,pool:["pink_slime","blue_slime"]},{atKills:105,count:50,pool:["big_slime","blue_slime"]},{atKills:168,count:62,pool:["big_slime","blue_slime","pink_slime"]}], boss:"slime_king", repeatReward:{coins:52}, firstClearReward:{coins:110,keys:1}, next:"world_2_1" },
+    { id:"world_2_1", world:2, index:1, name:"World 2-1", title:"Night Bloom", theme:"forest_night", goalKills:145, maxAlive:15, energy:5, pool:["spider","beetle"], raids:[{atKills:28,count:24,pool:["spider"]},{atKills:76,count:34,pool:["spider","beetle"]},{atKills:116,count:42,pool:["spider","beetle"]}], repeatReward:{coins:38}, firstClearReward:{coins:72}, next:"world_2_2" },
+    { id:"world_2_2", world:2, index:2, name:"World 2-2", title:"Moonlit Grove", theme:"forest_night", goalKills:165, maxAlive:16, energy:5, pool:["spider","beetle","moth"], raids:[{atKills:34,count:30,pool:["spider","moth"]},{atKills:88,count:42,pool:["beetle","moth"]},{atKills:132,count:52,pool:["spider","beetle","moth"]}], repeatReward:{coins:44}, firstClearReward:{coins:84}, next:"world_2_3" },
+    { id:"world_2_3", world:2, index:3, name:"World 2-3", title:"Shadow Thicket", theme:"forest_night", goalKills:185, maxAlive:17, energy:5, pool:["spider","beetle","moth","crawler"], raids:[{atKills:38,count:34,pool:["moth","crawler"]},{atKills:98,count:48,pool:["spider","beetle","crawler"]},{atKills:148,count:58,pool:["spider","moth","crawler"]}], repeatReward:{coins:50}, firstClearReward:{coins:96}, next:"world_2_4" },
+    { id:"world_2_4", world:2, index:4, name:"World 2-4", title:"Echo Burrow", theme:"forest_night", goalKills:205, maxAlive:18, energy:5, pool:["spider","beetle","crawler"], raids:[{atKills:42,count:38,pool:["spider","crawler"]},{atKills:108,count:54,pool:["beetle","crawler"]},{atKills:165,count:66,pool:["spider","beetle","crawler"]}], repeatReward:{coins:58}, firstClearReward:{coins:110,keys:1}, next:"world_2_5" },
+    { id:"world_2_5", world:2, index:5, name:"World 2-5", title:"Midnight Den", theme:"forest_night", goalKills:240, maxAlive:19, energy:5, pool:["spider","beetle","moth","crawler"], raids:[{atKills:50,count:46,pool:["spider","crawler"]},{atKills:124,count:64,pool:["beetle","moth","crawler"]},{atKills:192,count:78,pool:["spider","beetle","moth","crawler"]}], boss:"night_queen", repeatReward:{coins:68}, firstClearReward:{coins:135,keys:1}, next:null }
   ];
 
   const STAGE_MAP = Object.fromEntries(STAGES.map(s => [s.id, s]));
@@ -168,7 +168,7 @@
       activeRaid = s.raidQueue[0] || null;
     }
 
-    const activeLimit = (activeRaid ? Math.max(s.maxAlive + 2, 8) : s.maxAlive);
+    const activeLimit = (activeRaid ? Math.max(s.maxAlive + 8, 18) : s.maxAlive);
     if (this.enemies.length >= activeLimit) return;
 
     if (s.boss && !s.bossSpawned && remainingGoal <= 1 && this.enemies.length === 0) {
@@ -184,7 +184,7 @@
     if (activeRaid) {
       activeRaid.timer -= dt;
       if (activeRaid.timer <= 0 && activeRaid.spawned < activeRaid.count && s.spawned < s.goalKills) {
-        activeRaid.timer = .18;
+        activeRaid.timer = .11;
         this.spawnEnemyOfType(this.pickEnemyPool(activeRaid.pool));
         activeRaid.spawned++;
       }
@@ -193,7 +193,7 @@
 
     this.spawnTimer -= dt;
     if (this.spawnTimer <= 0 && s.spawned < s.goalKills) {
-      this.spawnTimer = Math.max(.24, 1.08 - this.kills * .01);
+      this.spawnTimer = Math.max(.14, 0.62 - this.kills * .0018);
       this.spawnEnemyOfType(this.pickEnemyPool(s.pool));
     }
   };

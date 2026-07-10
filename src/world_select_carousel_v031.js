@@ -2,16 +2,16 @@
   if (!window.UI || !window.CherriftStorage) return;
 
   const STAGES = [
-    { id:"world_1_1", world:1, index:1, name:"World 1-1", title:"Blooming Meadow", theme:"forest_day", goalKills:28, energy:5, repeatReward:{coins:14}, firstClearReward:{coins:28,keys:1}, desc:"Az első pálya. Slimeok, könnyű raid hullámok, alap progression." },
-    { id:"world_1_2", world:1, index:2, name:"World 1-2", title:"Petal Trail", theme:"forest_day", goalKills:34, energy:5, repeatReward:{coins:16}, firstClearReward:{coins:30}, desc:"Kicsit több ellenfél és gyorsabb ritmus." },
-    { id:"world_1_3", world:1, index:3, name:"World 1-3", title:"Clover Crossing", theme:"forest_day", goalKills:40, energy:5, repeatReward:{coins:18}, firstClearReward:{coins:34}, desc:"Belépnek az erősebb slime típusok." },
-    { id:"world_1_4", world:1, index:4, name:"World 1-4", title:"Rooted Hollow", theme:"forest_day", goalKills:46, energy:5, repeatReward:{coins:22}, firstClearReward:{coins:40,keys:1}, desc:"Nagyobb raid hullámok és tankosabb ellenfelek." },
-    { id:"world_1_5", world:1, index:5, name:"World 1-5", title:"Slime Nest", theme:"forest_day", goalKills:54, energy:5, repeatReward:{coins:28}, firstClearReward:{coins:55,keys:1}, desc:"World 1 záró pálya mini boss-szal." },
-    { id:"world_2_1", world:2, index:1, name:"World 2-1", title:"Night Bloom", theme:"forest_night", goalKills:34, energy:5, repeatReward:{coins:20}, firstClearReward:{coins:36}, desc:"Az első sötét pálya. Új rovar/pók enemy pool." },
-    { id:"world_2_2", world:2, index:2, name:"World 2-2", title:"Moonlit Grove", theme:"forest_night", goalKills:40, energy:5, repeatReward:{coins:22}, firstClearReward:{coins:40}, desc:"Éjszakai raid hullámok, gyorsabb mozgású ellenfelekkel." },
-    { id:"world_2_3", world:2, index:3, name:"World 2-3", title:"Shadow Thicket", theme:"forest_night", goalKills:46, energy:5, repeatReward:{coins:24}, firstClearReward:{coins:44}, desc:"Sűrűbb spawn, agresszívebb rovarok." },
-    { id:"world_2_4", world:2, index:4, name:"World 2-4", title:"Echo Burrow", theme:"forest_night", goalKills:52, energy:5, repeatReward:{coins:28}, firstClearReward:{coins:48,keys:1}, desc:"Erős éjszakai raid pálya." },
-    { id:"world_2_5", world:2, index:5, name:"World 2-5", title:"Midnight Den", theme:"forest_night", goalKills:58, energy:5, repeatReward:{coins:32}, firstClearReward:{coins:58,keys:1}, desc:"World 2 záró pálya mini boss-szal." }
+    { id:"world_1_1", world:1, index:1, name:"World 1-1", title:"Blooming Meadow", theme:"forest_day", goalKills:120, energy:5, repeatReward:{coins:28}, firstClearReward:{coins:55,keys:1}, desc:"Az első pálya már igazi progression: több mob, több raid, hosszabb clear." },
+    { id:"world_1_2", world:1, index:2, name:"World 1-2", title:"Petal Trail", theme:"forest_day", goalKills:135, energy:5, repeatReward:{coins:32}, firstClearReward:{coins:62}, desc:"Gyorsabb spawn, több slime típus és erősebb raid hullámok." },
+    { id:"world_1_3", world:1, index:3, name:"World 1-3", title:"Clover Crossing", theme:"forest_day", goalKills:155, energy:5, repeatReward:{coins:36}, firstClearReward:{coins:70}, desc:"Blue slime és mixed raid hullámok erősebben jelennek meg." },
+    { id:"world_1_4", world:1, index:4, name:"World 1-4", title:"Rooted Hollow", theme:"forest_day", goalKills:175, energy:5, repeatReward:{coins:42}, firstClearReward:{coins:82,keys:1}, desc:"Tankosabb slimeok, nagyobb raid nyomás." },
+    { id:"world_1_5", world:1, index:5, name:"World 1-5", title:"Slime Nest", theme:"forest_day", goalKills:210, energy:5, repeatReward:{coins:52}, firstClearReward:{coins:110,keys:1}, desc:"World 1 záró pálya mini boss-szal és nagy raid hullámokkal." },
+    { id:"world_2_1", world:2, index:1, name:"World 2-1", title:"Night Bloom", theme:"forest_night", goalKills:145, energy:5, repeatReward:{coins:38}, firstClearReward:{coins:72}, desc:"Az első sötét pálya. Új rovar/pók enemy pool." },
+    { id:"world_2_2", world:2, index:2, name:"World 2-2", title:"Moonlit Grove", theme:"forest_night", goalKills:165, energy:5, repeatReward:{coins:44}, firstClearReward:{coins:84}, desc:"Éjszakai raid hullámok, gyorsabb mozgású ellenfelekkel." },
+    { id:"world_2_3", world:2, index:3, name:"World 2-3", title:"Shadow Thicket", theme:"forest_night", goalKills:185, energy:5, repeatReward:{coins:50}, firstClearReward:{coins:96}, desc:"Sűrűbb spawn, agresszívebb rovarok." },
+    { id:"world_2_4", world:2, index:4, name:"World 2-4", title:"Echo Burrow", theme:"forest_night", goalKills:205, energy:5, repeatReward:{coins:58}, firstClearReward:{coins:110,keys:1}, desc:"Erős éjszakai raid pálya." },
+    { id:"world_2_5", world:2, index:5, name:"World 2-5", title:"Midnight Den", theme:"forest_night", goalKills:240, energy:5, repeatReward:{coins:68}, firstClearReward:{coins:135,keys:1}, desc:"World 2 záró pálya mini boss-szal." }
   ];
 
   const byId = Object.fromEntries(STAGES.map((stage, index) => [stage.id, { ...stage, carouselIndex:index }]));
