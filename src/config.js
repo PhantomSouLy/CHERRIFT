@@ -1,58 +1,42 @@
-window.GC_CONFIG = {
-  version: "0.1.4",
-  assetSpec: {
-    player: {
-      src: "assets/player/cherry_sprite_sheet.png?v=4x8-mirror-right-fix",
-      frameWidth: 192,
-      frameHeight: 192,
-      columns: 4,
-
-      // Idle kozben mindig az elso frame-et rajzoljuk, igy nem fog ugralni.
-      idleFps: 0,
-      walkFps: 8,
-
-      // Kicsit kisebb megjelenites, hogy ne logjon ki.
-      displayWidth: 84,
-      displayHeight: 84,
-
-      // Alul par pixelt levagunk a forras frame-bol, ha a sheetben lent maradna apro szemet / atlogas.
-      crop: { top: 0, right: 0, bottom: 14, left: 0 },
-
-      animations: {
-        // A jobb iranyt a game.js tukrozi, ezert itt left/right ugyanarra a sorra mutat.
-        idle: { down: 0, up: 2, left: 4, right: 4 },
-        walk: { down: 1, up: 3, left: 5, right: 5 }
-      }
-    },
-    slime: {
-      src: "assets/enemies/slime_sprite_sheet.png",
-      frameWidth: 384,
-      frameHeight: 384,
-      rows: { idle: 0, move: 1, death: 2 },
-      columns: 4,
-      fps: 7,
-      displayWidth: 76,
-      displayHeight: 76
+window.CHERRIFT_CONFIG = {
+  player: {
+    src: "assets/player/cherry_sprite_sheet.png",
+    frameWidth: 192,
+    frameHeight: 192,
+    columns: 6,
+    displayWidth: 96,
+    displayHeight: 96,
+    rows: {
+      idleDown: 0, walkDown: 1,
+      idleUp: 2, walkUp: 3,
+      idleLeft: 4, walkLeft: 5,
+      idleRight: 6, walkRight: 7
     }
   },
-  baseStats: {
-    playerSpeed: 235,
-    playerRadius: 18,
-    maxHp: 100,
-    bulletDamage: 20,
-    bulletSpeed: 560,
-    fireInterval: 0.42,
-    pickupRadius: 24,
-    magnetRadius: 110,
-    skillCooldown: 8.0
+  slime: {
+    src: "assets/enemies/slime_sprite_sheet.png",
+    frameWidth: 384,
+    frameHeight: 384,
+    columns: 4,
+    displayWidth: 76,
+    displayHeight: 76,
+    rows: { idle: 0, move: 1, death: 2 }
   },
-  balance: {
-    worldSize: 4200,
-    enemyBaseHp: 42,
-    enemyBaseSpeed: 66,
-    enemyDamagePerSecond: 15,
-    enemySpawnEvery: 1.35,
-    maxEnemiesBase: 18,
-    xpToNextBase: 18
+  map: {
+    grass: "assets/map/grass_tile.png",
+    rockSmall: "assets/map/rock_small.png",
+    rockBig: "assets/map/rock_big.png",
+    bush1: "assets/map/bush_01.png",
+    bush2: "assets/map/bush_02.png",
+    log: "assets/map/log.png",
+    treeSmall: "assets/map/tree_small.png",
+    treeBig: "assets/map/tree_big.png"
+  },
+  pickups: {
+    xpSmall: "assets/pickups/xp_small.png",
+    xpBig: "assets/pickups/xp_big.png"
+  },
+  effects: {
+    burst: "assets/effects/pink_burst.png"
   }
 };

@@ -1,6 +1,7 @@
 window.CHERRIFT_DATA = {
-  version: "0.2.1",
+  version: "0.2.2",
   slots: ["Weapon","Helmet","Armor","Gloves","Boots","Ring","Necklace"],
+  slotIcons: { Weapon:"🗡️", Helmet:"⛑️", Armor:"🛡️", Gloves:"🧤", Boots:"👢", Ring:"💍", Necklace:"📿" },
   gearTypes: {
     Crimson: { label:"Crimson", role:"Offensive", emoji:"🔴", stats:["damage","crit","critDamage","attackSpeed"] },
     Azure: { label:"Azure", role:"Defensive", emoji:"🔵", stats:["maxHp","armor","regen"] },
@@ -15,20 +16,23 @@ window.CHERRIFT_DATA = {
     {
       id:"cherry_default", name:"Cherry", rarity:"Common", emoji:"🐰",
       weapon:"Pink Bloom Orb", skill:"Bloom Dash",
-      desc:"Alap pink lövedék. Skill: rövid dash és kis sebzés körülötted.",
-      stats:{ damage:0, speed:0 }
+      desc:"Alap CHERRIFT skin. Pink orb lövés, rövid dash és kis körsebzés.",
+      stats:{ damage:0, speed:0 },
+      gradient:["#ff73b9","#281226"]
     },
     {
       id:"sakura_cherry", name:"Sakura Cherry", rarity:"Common", emoji:"🌸",
       weapon:"Petal Shot", skill:"Petal Burst",
-      desc:"Virágszirom lövés. Skill: körkörös szirom robbanás.",
-      stats:{ damage:-1, speed:10 }
+      desc:"Virágszirom lövés. Skill: körkörös sziromrobbanás több irányba.",
+      stats:{ damage:-1, speed:10 },
+      gradient:["#ff9ccf","#38204b"]
     },
     {
       id:"bunny_rare", name:"Bunny Cherry", rarity:"Rare", emoji:"🐇",
       weapon:"Bunny Bolt", skill:"Haste Bloom",
-      desc:"Gyorsabb lövés. Skill: rövid attack speed buff.",
-      stats:{ damage:2, speed:16 }
+      desc:"Gyorsabb lövés és mozgás. Skill: rövid attack speed buff.",
+      stats:{ damage:2, speed:16 },
+      gradient:["#ffffff","#ff68b3"]
     }
   ],
   upgrades: [
