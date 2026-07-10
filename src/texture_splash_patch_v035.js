@@ -13,8 +13,8 @@
   };
 
   const WORLD_SPLASH = {
-    1: "assets/map/World1.png",
-    2: "assets/map/World2.png"
+    1: "assets/map/world1.png",
+    2: "assets/map/world2.png"
   };
 
   function setSkinSplash() {
