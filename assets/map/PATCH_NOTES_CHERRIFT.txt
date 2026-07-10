@@ -1,0 +1,21 @@
+CHERRIFT v0.3.5a Texture Splash Path Fix
+
+[Fixed]
+- Corrected skin splash art paths.
+
+[Correct paths]
+- Base Cherry:
+  assets/player/skins/base_cherry/cherry_splash_art.png
+- Fairy Cherry:
+  assets/player/skins/fairy_cherry/fairy_cherry_splash_art.png
+- Beastclaw Cherry:
+  assets/player/skins/beastclaw_cherry/beastclaw_cherry_splash_art.png
+
+[Kept]
+- World 1 and World 2 splash art paths remain:
+  assets/map/World1.png
+  assets/map/World2.png
+
+[Files changed]
+- src/texture_splash_patch_v035.js
+- PATCH_NOTES_CHERRIFT.txt
