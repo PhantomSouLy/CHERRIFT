@@ -3,73 +3,93 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-  <title>CHERRIFT v0.2.5 POLISH</title>
+  <title>CHERRIFT v0.2.6 BEASTCLAW</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="menu_v026.css" />
 </head>
 <body>
   <canvas id="game"></canvas>
 
   <div id="app">
-    <section id="menu" class="screen menu-screen">
+    <section id="menu" class="screen menu-screen mainmenu-v026">
       <div class="menu-bg" aria-hidden="true"></div>
 
       <main class="menu-left glass-soft">
-        <div class="version">v0.2.5 POLISH</div>
-        <h1 class="game-logo">CHERRIFT</h1>
+        <div class="version">v0.2.6</div>
+        <h1 class="game-logo">GaCherry</h1>
         <p class="tagline">SURVIVE. EVOLVE. BLOOM.</p>
 
-        <nav class="menu-buttons">
-          <button id="playBtn" class="menu-btn primary"><span>⌖</span> PLAY <b>›</b></button>
-          <button data-open="skins" class="menu-btn"><span>🐰</span> CHARACTERS & SKINS <b>›</b></button>
-          <button data-open="gear" class="menu-btn"><span>⚔</span> GEAR <b>›</b></button>
-          <button data-open="chests" class="menu-btn"><span>📦</span> CHESTS <b>›</b></button>
-          <button data-open="settings" class="menu-btn"><span>⚙</span> SETTINGS <b>›</b></button>
+        <nav class="menu-buttons main-nav" aria-label="Main menu">
+          <button id="playBtn" class="menu-btn primary"><span>⌖</span><i>PLAY</i><b>›</b></button>
+          <button data-open="skins" class="menu-btn"><span>🐰</span><i>CHERRY</i><em>SKINS</em><b>›</b></button>
+          <button data-open="gear" class="menu-btn"><span>⚔</span><i>GEAR</i><em>LOADOUT</em><b>›</b></button>
+          <button data-open="chests" class="menu-btn"><span>📖</span><i>COLLECTION</i><em>CHESTS</em><b>›</b></button>
+          <button class="menu-btn locked" disabled><span>🛒</span><i>SHOP</i><em>COMING SOON</em><b>🔒</b></button>
+          <button class="menu-btn locked" disabled><span>📋</span><i>MISSIONS</i><em>COMING SOON</em><b>🔒</b></button>
+          <button class="menu-btn locked" disabled><span>🎁</span><i>EVENTS</i><em>COMING SOON</em><b>🔒</b></button>
+          <button class="menu-btn locked" disabled><span>🏆</span><i>ACHIEVEMENTS</i><em>COMING SOON</em><b>🔒</b></button>
+          <button data-open="settings" class="menu-btn"><span>⚙</span><i>SETTINGS</i><em>OPTIONS</em><b>›</b></button>
         </nav>
 
-        <div class="login-card glass">
+        <div class="login-card glass login-card-v026">
           <div class="avatar-badge">🐰</div>
-          <div>
+          <div class="login-copy">
             <strong>Guest</strong>
-            <p>Local save aktív. Discord login később.</p>
+            <p>Login to save your progress later.</p>
+            <button class="discord-login" type="button">💬 DISCORD LOGIN</button>
           </div>
         </div>
       </main>
 
+      <div class="menu-hero-space" aria-hidden="true"></div>
+
       <aside class="menu-right">
         <div class="top-icons">
           <button title="Discord">💬</button>
-          <button title="Gift">🎁</button>
+          <button data-open="chests" title="Gifts">🎁</button>
           <button title="News">📣</button>
           <button title="Mail">✉</button>
           <button data-open="settings" title="Settings">⚙</button>
         </div>
 
-        <div class="side-card glass">
+        <div class="side-card glass mission-card">
           <header><h3>Daily Missions</h3><span>COMING SOON 🔒</span></header>
           <p>Complete missions to earn rewards.</p>
           <div class="side-art">🧰</div>
         </div>
 
-        <div class="side-card glass">
+        <div class="side-card glass event-card">
           <header><h3>Season Event</h3><span>COMING SOON 🔒</span></header>
-          <p>Limited skins and special rewards later.</p>
-          <div class="side-art">🎀</div>
+          <p>Join the event and get exclusive rewards.</p>
+          <div class="side-art silhouette-art">❔</div>
         </div>
 
-        <div class="side-card glass">
-          <header><h3>Resources</h3></header>
-          <p>🪙 <b id="menuCoins">0</b> coins</p>
-          <p>📦 <b id="menuKeys">3</b> chest keys</p>
+        <div class="side-card glass patch-card">
+          <header><h3>Patch Notes</h3><span>v0.2.6</span></header>
+          <p>Beastclaw Cherry added: Rare melee skin, claw attack and Savage Rend skill.</p>
+          <div class="side-art">☷</div>
         </div>
 
-        <div class="side-card glass news">
-          <header><h3>News</h3><span>v0.2.5</span></header>
-          <p><b id="selectedSkinText">Cherry</b></p>
-          <p id="bestRun">00:00 · 0 kills</p>
+        <div class="side-card glass news-card">
+          <header><h3>News</h3><span>LIVE</span></header>
+          <div class="news-row">
+            <div class="news-thumb">🐺</div>
+            <div>
+              <p><b id="selectedSkinText">Cherry</b></p>
+              <p>Best: <span id="bestRun">00:00 · 0 kills</span></p>
+              <p>🪙 <b id="menuCoins">0</b> · 📦 <b id="menuKeys">3</b></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="social-row" aria-label="Social links">
+          <button title="Discord">💬</button>
+          <button title="X / Twitter">🐦</button>
+          <button title="Website">🌐</button>
         </div>
       </aside>
 
-      <footer class="menu-footer">© 2026 CHERRIFT · prototype build</footer>
+      <footer class="menu-footer">© 2026 GaCherry. All rights reserved.</footer>
     </section>
 
     <section id="skins" class="panel hidden">
@@ -77,7 +97,7 @@
         <button class="back">←</button>
         <div>
           <h2>Characters & Skins</h2>
-          <p>Skin = kinézet + lövés + aktív skill. Gear csak statot ad.</p>
+          <p>Skin = kinézet + lövés / melee támadás + aktív skill. Gear csak statot ad.</p>
         </div>
       </header>
 
@@ -155,8 +175,8 @@
       <header class="panel-head">
         <button class="back">←</button>
         <div>
-          <h2>Chests</h2>
-          <p>Gear garantált. Kis eséllyel skin unlock is eshet.</p>
+          <h2>Collection</h2>
+          <p>Chest nyitás, gear és skin unlock prototípus.</p>
         </div>
       </header>
 
@@ -263,6 +283,7 @@
   <script src="src/storage.js"></script>
   <script src="src/input.js"></script>
   <script src="src/game.js"></script>
+  <script src="src/beastclaw.js"></script>
   <script src="src/ui.js"></script>
   <script src="src/main.js"></script>
 </body>

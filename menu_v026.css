@@ -1,0 +1,351 @@
+/* CHERRIFT / GaCherry main menu v0.2.6 responsive polish */
+.mainmenu-v026 {
+  --menu-panel: rgba(8, 6, 15, .66);
+  --menu-line: rgba(255, 181, 222, .34);
+  --menu-muted: rgba(255, 218, 238, .66);
+  grid-template-columns: minmax(350px, 500px) minmax(260px, 1fr) minmax(330px, 430px) !important;
+  gap: clamp(12px, 2vw, 28px) !important;
+  align-items: start;
+  min-height: 100dvh;
+  padding: max(24px, env(safe-area-inset-top)) max(28px, env(safe-area-inset-right)) max(22px, env(safe-area-inset-bottom)) max(28px, env(safe-area-inset-left)) !important;
+  background:
+    linear-gradient(90deg, rgba(4, 2, 9, .90) 0%, rgba(4, 2, 9, .34) 44%, rgba(4, 2, 9, .82) 100%),
+    url("assets/ui/mainmenu.png?v=026") center center / cover no-repeat,
+    radial-gradient(circle at 32% 18%, rgba(255, 91, 172, .22), transparent 31%),
+    linear-gradient(135deg, rgba(5, 3, 11, .98), rgba(22, 9, 34, .94), rgba(5, 3, 11, .98)) !important;
+}
+
+.mainmenu-v026 .menu-left {
+  width: min(100%, 500px);
+  padding: 0 !important;
+  border: 0;
+  background: transparent;
+}
+
+.mainmenu-v026 .version {
+  margin: 0 0 10px 2px;
+  font-size: 14px;
+  letter-spacing: 1.2px;
+  color: rgba(255, 255, 255, .54);
+}
+
+.mainmenu-v026 .game-logo {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(58px, 7vw, 104px);
+  letter-spacing: -3px;
+  text-transform: none;
+}
+
+.mainmenu-v026 .tagline {
+  margin: 10px 0 28px;
+  font-size: clamp(13px, 1.35vw, 19px);
+}
+
+.mainmenu-v026 .main-nav {
+  gap: 8px;
+}
+
+.mainmenu-v026 .menu-btn {
+  position: relative;
+  min-height: 51px;
+  padding: 0 14px;
+  gap: 12px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, rgba(7, 6, 13, .83), rgba(7, 6, 13, .60));
+  border-color: rgba(255, 255, 255, .14);
+  text-align: left;
+}
+
+.mainmenu-v026 .menu-btn.primary {
+  min-height: 70px;
+  margin-bottom: 8px;
+  font-size: clamp(22px, 2vw, 27px);
+  border-radius: 11px;
+}
+
+.mainmenu-v026 .menu-btn span {
+  width: 36px;
+  font-size: 24px;
+  filter: drop-shadow(0 0 8px rgba(255, 91, 172, .38));
+}
+
+.mainmenu-v026 .menu-btn i {
+  font-style: normal;
+  font-weight: 1000;
+  letter-spacing: .4px;
+  min-width: 0;
+}
+
+.mainmenu-v026 .menu-btn em {
+  margin-left: auto;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 900;
+  color: var(--menu-muted);
+  white-space: nowrap;
+}
+
+.mainmenu-v026 .menu-btn b {
+  min-width: 24px;
+  margin-left: 6px;
+  text-align: right;
+  font-size: 26px;
+}
+
+.mainmenu-v026 .menu-btn.locked {
+  opacity: .62;
+  cursor: default;
+  filter: saturate(.75);
+}
+
+.mainmenu-v026 .login-card-v026 {
+  margin-top: 18px;
+  padding: 14px 16px;
+  gap: 14px;
+  background: linear-gradient(135deg, rgba(10, 7, 17, .76), rgba(10, 7, 17, .48));
+}
+
+.mainmenu-v026 .login-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.mainmenu-v026 .discord-login {
+  width: 100%;
+  min-height: 50px;
+  margin-top: 12px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(255, 82, 166, .96), rgba(255, 163, 207, .84));
+  border: 1px solid rgba(255, 235, 246, .82);
+  box-shadow: 0 0 24px rgba(255, 47, 150, .30), inset 0 0 0 1px rgba(255, 255, 255, .17);
+  color: #fff;
+  font-weight: 1000;
+}
+
+.mainmenu-v026 .menu-hero-space {
+  min-height: 1px;
+  align-self: stretch;
+  pointer-events: none !important;
+}
+
+.mainmenu-v026 .menu-right {
+  display: grid;
+  gap: 14px;
+  width: min(100%, 430px);
+  justify-self: end;
+}
+
+.mainmenu-v026 .top-icons,
+.mainmenu-v026 .social-row {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.mainmenu-v026 .top-icons button,
+.mainmenu-v026 .social-row button {
+  width: 54px;
+  height: 54px;
+  border-radius: 11px;
+  background: rgba(10, 7, 17, .64);
+  border: 1px solid rgba(255, 255, 255, .16);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .035), 0 10px 22px rgba(0, 0, 0, .22);
+  backdrop-filter: blur(10px);
+  font-size: 22px;
+}
+
+.mainmenu-v026 .side-card {
+  min-height: 122px;
+  padding: 16px 116px 16px 16px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(10, 7, 17, .78), rgba(10, 7, 17, .55));
+}
+
+.mainmenu-v026 .side-card h3 {
+  font-size: 17px;
+}
+
+.mainmenu-v026 .side-card p {
+  margin: 12px 0 0;
+  font-size: 14px;
+}
+
+.mainmenu-v026 .side-art {
+  width: 78px;
+  height: 72px;
+  right: 18px;
+  bottom: 16px;
+  border-radius: 12px;
+  font-size: 42px;
+}
+
+.mainmenu-v026 .silhouette-art {
+  color: rgba(255, 91, 172, .78);
+  text-shadow: 0 0 26px rgba(255, 91, 172, .42);
+}
+
+.mainmenu-v026 .news-card {
+  padding-right: 16px;
+}
+
+.mainmenu-v026 .news-row {
+  display: grid;
+  grid-template-columns: 94px 1fr;
+  gap: 14px;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.mainmenu-v026 .news-row p {
+  margin: 2px 0;
+}
+
+.mainmenu-v026 .news-thumb {
+  width: 94px;
+  aspect-ratio: 1.35;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: radial-gradient(circle at 50% 34%, rgba(255, 255, 255, .16), rgba(255, 91, 172, .16) 38%, rgba(0, 0, 0, .22));
+  border: 1px solid rgba(255, 255, 255, .13);
+  font-size: 40px;
+}
+
+.mainmenu-v026 .social-row {
+  margin-top: 6px;
+}
+
+.mainmenu-v026 .menu-footer {
+  left: 50% !important;
+  right: auto;
+  bottom: 10px !important;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: calc(100% - 32px);
+  text-align: center;
+}
+
+@media (max-width: 1180px) {
+  .mainmenu-v026 {
+    grid-template-columns: minmax(330px, 470px) 1fr !important;
+  }
+
+  .mainmenu-v026 .menu-hero-space {
+    display: none;
+  }
+
+  .mainmenu-v026 .menu-right {
+    display: grid !important;
+  }
+
+  .mainmenu-v026 .side-card.patch-card {
+    display: none;
+  }
+}
+
+@media (max-width: 860px) {
+  .mainmenu-v026 {
+    grid-template-columns: 1fr !important;
+    align-content: start;
+    overflow: auto !important;
+    padding: max(16px, env(safe-area-inset-top)) 14px max(58px, env(safe-area-inset-bottom)) !important;
+    background-position: 58% center !important;
+  }
+
+  .mainmenu-v026 .menu-left,
+  .mainmenu-v026 .menu-right {
+    width: 100%;
+    max-width: 560px;
+    justify-self: center;
+  }
+
+  .mainmenu-v026 .game-logo {
+    font-size: clamp(54px, 16vw, 78px);
+    letter-spacing: -2px;
+  }
+
+  .mainmenu-v026 .tagline {
+    margin-bottom: 16px;
+  }
+
+  .mainmenu-v026 .menu-btn,
+  .mainmenu-v026 .menu-btn.primary {
+    min-height: 54px;
+  }
+
+  .mainmenu-v026 .menu-btn.primary {
+    font-size: 22px;
+  }
+
+  .mainmenu-v026 .login-card-v026 {
+    margin-top: 12px;
+  }
+
+  .mainmenu-v026 .top-icons {
+    order: -1;
+    justify-content: space-between;
+  }
+
+  .mainmenu-v026 .top-icons button,
+  .mainmenu-v026 .social-row button {
+    width: 48px;
+    height: 48px;
+  }
+
+  .mainmenu-v026 .menu-right {
+    gap: 10px;
+  }
+
+  .mainmenu-v026 .side-card {
+    min-height: 100px;
+    padding: 14px 96px 14px 14px;
+  }
+
+  .mainmenu-v026 .mission-card,
+  .mainmenu-v026 .event-card {
+    display: none;
+  }
+
+  .mainmenu-v026 .patch-card {
+    display: block !important;
+  }
+
+  .mainmenu-v026 .social-row {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 430px) {
+  .mainmenu-v026 .menu-btn {
+    padding: 0 10px;
+    gap: 9px;
+  }
+
+  .mainmenu-v026 .menu-btn span {
+    width: 30px;
+    font-size: 20px;
+  }
+
+  .mainmenu-v026 .menu-btn em {
+    display: none;
+  }
+
+  .mainmenu-v026 .login-card-v026 {
+    align-items: flex-start;
+  }
+
+  .mainmenu-v026 .avatar-badge {
+    width: 56px;
+    height: 56px;
+    font-size: 28px;
+  }
+
+  .mainmenu-v026 .news-row {
+    grid-template-columns: 76px 1fr;
+  }
+
+  .mainmenu-v026 .news-thumb {
+    width: 76px;
+    font-size: 32px;
+  }
+}
