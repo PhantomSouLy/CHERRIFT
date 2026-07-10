@@ -1,307 +1,456 @@
-class ImageAssets {
-  constructor() {
-    this.images = {};
-    this.ready = false;
-  }
+class AssetLoader {
+  constructor() { this.images = {}; }
 
   loadImage(key, src) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const img = new Image();
       img.onload = () => { this.images[key] = img; resolve(true); };
-      img.onerror = () => resolve(false);
+      img.onerror = () => { console.warn("Asset missing:", src); resolve(false); };
       img.src = src;
     });
   }
 
-  async loadAll() {
-    const c = CHERRIFT_CONFIG;
-    const items = [
-      ["player", c.player.src],
-      ["slime", c.slime.src],
-      ["grass", c.map.grass],
-      ["rockSmall", c.map.rockSmall],
-      ["rockBig", c.map.rockBig],
-      ["bush1", c.map.bush1],
-      ["bush2", c.map.bush2],
-      ["log", c.map.log],
-      ["treeSmall", c.map.treeSmall],
-      ["treeBig", c.map.treeBig],
-      ["xpSmall", c.pickups.xpSmall],
-      ["xpBig", c.pickups.xpBig],
-      ["burst", c.effects.burst]
-    ];
-    await Promise.all(items.map(([key, src]) => this.loadImage(key, src)));
-    this.ready = true;
-  }
+  async loadAll(onProgress) {
+    const items = [];
 
-  get(key) { return this.images[key] || null; }
+    // Skin selector update:
+    // Betöltjük az összes skin összes idle/walk/skill irányát, hogy a menüben
+    // azonnal lehessen váltani Base Cherry és Fairy Cherry között.
+    const playerSpec = GC_CONFIG.assetSpec.player || {};
+    const skins = playerSpec.skins || {};
+
+    if (Object.keys(skins).length) {
+      for (const [skinId, skinSpec] of Object.entries(skins)) {
+        const states = skinSpec.states || {};
+        for (const [stateName, stateSpec] of Object.entries(states)) {
+          for (const [dirName, src] of Object.entries(stateSpec.dirs || {})) {
+            items.push([`player_${skinId}_${stateName}_${dirName}`, src]);
+          }
+        }
+      }
+    } else {
+      // Régi fallback: ha valamiért nincs skins config, marad az egy skines rendszer.
+      const playerStates = playerSpec.states || {};
+      for (const [stateName, stateSpec] of Object.entries(playerStates)) {
+        for (const [dirName, src] of Object.entries(stateSpec.dirs || {})) {
+          items.push([`player_${stateName}_${dirName}`, src]);
+        }
+      }
+    }
+
+    items.push(
+      ["slime", GC_CONFIG.assetSpec.slime.src],
+      ["grass", "assets/map/grass_tile.png"],
+      ["rockSmall", "assets/map/rock_small.png"],
+      ["rockBig", "assets/map/rock_big.png"],
+      ["bush1", "assets/map/bush_01.png"],
+      ["bush2", "assets/map/bush_02.png"],
+      ["log", "assets/map/log.png"],
+      ["treeSmall", "assets/map/tree_small.png"],
+      ["treeBig", "assets/map/tree_big.png"],
+      ["xpSmall", "assets/pickups/xp_small.png"],
+      ["xpBig", "assets/pickups/xp_big.png"],
+      ["burst", "assets/effects/pink_burst.png"]
+    );
+
+    let done = 0;
+    for (const [key, src] of items) {
+      await this.loadImage(key, src);
+      done++;
+      onProgress?.(done / items.length);
+    }
+  }
 }
 
-class CherriftGame {
-  constructor(canvas, input, save) {
+class GaCherryGame {
+  constructor(canvas, input, profile) {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
     this.input = input;
-    this.save = save;
-    this.mode = "menu";
+    this.profile = profile;
+    this.assets = new AssetLoader();
+    this.mode = "loading";
     this.dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
-    this.w = 0;
-    this.h = 0;
+    this.width = 0;
+    this.height = 0;
+    this.camera = { x: 0, y: 0 };
     this.last = performance.now();
-    this.camera = { x:0, y:0 };
-    this.t = 0;
-
-    this.assets = new ImageAssets();
-    this.assetReady = this.assets.loadAll();
-
-    this.player = null;
-    this.obstacles = [];
-    this.enemies = [];
-    this.bullets = [];
-    this.pickups = [];
-    this.effects = [];
-    this.runCoins = 0;
-    this.time = 0;
-    this.kills = 0;
-
-    this.resize();
-    window.addEventListener("resize", () => this.resize());
-    requestAnimationFrame(n => this.loop(n));
+    this.animTime = 0;
+    this.menuPetals = [];
+    this._resize();
+    window.addEventListener("resize", () => this._resize());
+    document.addEventListener("visibilitychange", () => { this.last = performance.now(); });
   }
 
-  resize() {
-    const r = this.canvas.getBoundingClientRect();
-    this.w = Math.max(320, r.width || innerWidth);
-    this.h = Math.max(240, r.height || innerHeight);
-    this.canvas.width = Math.floor(this.w * this.dpr);
-    this.canvas.height = Math.floor(this.h * this.dpr);
+  async init() {
+    await this.assets.loadAll((p) => {
+      const loadingFill = document.getElementById("loadingFill");
+      if (loadingFill) loadingFill.style.width = `${Math.floor(p * 100)}%`;
+    });
+
+    this.selectedSkinId = this.getSelectedSkinId();
+    this._initMenuPetals();
+    this._createSkinSelector();
+    this.mode = "menu";
+    this.loop(performance.now());
+  }
+
+  _resize() {
+    const rect = this.canvas.getBoundingClientRect();
+    this.width = Math.max(320, rect.width || window.innerWidth);
+    this.height = Math.max(240, rect.height || window.innerHeight);
+    this.canvas.width = Math.floor(this.width * this.dpr);
+    this.canvas.height = Math.floor(this.height * this.dpr);
     this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
   }
 
-  async start() {
-    await this.assetReady;
-    const skin = CHERRIFT_DATA.skins.find(s => s.id === this.save.selectedSkin) || CHERRIFT_DATA.skins[0];
-    const gear = UI.totalGearStats(this.save);
 
+  getSelectedSkinId() {
+    const playerSpec = GC_CONFIG.assetSpec.player || {};
+    const skins = playerSpec.skins || {};
+    const key = playerSpec.skinStorageKey || "gc_selected_skin_v1";
+    const saved = localStorage.getItem(key);
+    if (saved && skins[saved]) return saved;
+    return playerSpec.defaultSkin || Object.keys(skins)[0] || "base_cherry";
+  }
+
+  getActiveSkinSpec() {
+    const playerSpec = GC_CONFIG.assetSpec.player || {};
+    const skins = playerSpec.skins || {};
+    const id = this.selectedSkinId || this.getSelectedSkinId();
+    return skins[id] || skins[playerSpec.defaultSkin] || Object.values(skins)[0] || playerSpec;
+  }
+
+  getPlayerStateSpec(stateName) {
+    const skin = this.getActiveSkinSpec();
+    return skin.states?.[stateName] || GC_CONFIG.assetSpec.player.states?.[stateName];
+  }
+
+  setSkin(skinId) {
+    const playerSpec = GC_CONFIG.assetSpec.player || {};
+    const skins = playerSpec.skins || {};
+    if (!skins[skinId]) return;
+
+    this.selectedSkinId = skinId;
+    const key = playerSpec.skinStorageKey || "gc_selected_skin_v1";
+    localStorage.setItem(key, skinId);
+
+    if (this.profile) this.profile.skinId = skinId;
+    this._updateSkinSelectorUI();
+  }
+
+  _dirVector(dir) {
+    if (dir === "left") return { x: -1, y: 0 };
+    if (dir === "right") return { x: 1, y: 0 };
+    if (dir === "up") return { x: 0, y: -1 };
+    return { x: 0, y: 1 };
+  }
+
+  _createSkinSelector() {
+    if (document.getElementById("gcSkinSelector")) {
+      this.skinSelectorEl = document.getElementById("gcSkinSelector");
+      this._updateSkinSelectorUI();
+      return;
+    }
+
+    const playerSpec = GC_CONFIG.assetSpec.player || {};
+    const skins = playerSpec.skins || {};
+    const skinIds = Object.keys(skins);
+    if (!skinIds.length) return;
+
+    const style = document.createElement("style");
+    style.textContent = `
+      #gcSkinSelector {
+        position: fixed;
+        left: 50%;
+        bottom: 18px;
+        transform: translateX(-50%);
+        z-index: 80;
+        width: min(92vw, 520px);
+        padding: 10px;
+        border-radius: 18px;
+        background: rgba(20, 26, 34, 0.78);
+        border: 1px solid rgba(255,255,255,0.18);
+        box-shadow: 0 12px 32px rgba(0,0,0,0.28);
+        backdrop-filter: blur(10px);
+        color: white;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      #gcSkinSelector .gc-skin-title {
+        font-weight: 800;
+        font-size: 13px;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        opacity: .9;
+        margin: 0 0 8px;
+        text-align: center;
+      }
+      #gcSkinSelector .gc-skin-buttons {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+      #gcSkinSelector button {
+        border: 1px solid rgba(255,255,255,0.18);
+        border-radius: 14px;
+        padding: 10px 8px;
+        background: rgba(255,255,255,0.10);
+        color: white;
+        font-weight: 800;
+        cursor: pointer;
+      }
+      #gcSkinSelector button.active {
+        background: linear-gradient(135deg, #ff5dad, #ff9bc8);
+        border-color: rgba(255,255,255,0.65);
+        color: #fff;
+        box-shadow: 0 0 0 2px rgba(255, 141, 196, .22);
+      }
+      #gcSkinSelector .gc-skin-desc {
+        display: block;
+        margin-top: 3px;
+        font-size: 11px;
+        font-weight: 600;
+        opacity: .78;
+      }
+      @media (max-width: 520px) {
+        #gcSkinSelector { bottom: 10px; padding: 8px; }
+        #gcSkinSelector button { font-size: 12px; padding: 8px 6px; }
+      }
+    `;
+    document.head.appendChild(style);
+
+    const el = document.createElement("div");
+    el.id = "gcSkinSelector";
+    el.innerHTML = `
+      <div class="gc-skin-title">Skin választó</div>
+      <div class="gc-skin-buttons"></div>
+    `;
+
+    const buttonBox = el.querySelector(".gc-skin-buttons");
+    for (const skinId of skinIds) {
+      const skin = skins[skinId];
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.dataset.skinId = skinId;
+      btn.innerHTML = `${skin.name || skinId}<span class="gc-skin-desc">${skin.description || ""}</span>`;
+      btn.addEventListener("click", () => this.setSkin(skinId));
+      buttonBox.appendChild(btn);
+    }
+
+    document.body.appendChild(el);
+    this.skinSelectorEl = el;
+    this._updateSkinSelectorUI();
+  }
+
+  _updateSkinSelectorUI() {
+    if (!this.skinSelectorEl) return;
+    const selected = this.selectedSkinId || this.getSelectedSkinId();
+    this.skinSelectorEl.querySelectorAll("button[data-skin-id]").forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.skinId === selected);
+    });
+  }
+
+  _updateSkinSelectorVisibility() {
+    if (!this.skinSelectorEl) return;
+    const visible = this.mode === "menu" || this.mode === "paused" || this.mode === "gameover";
+    this.skinSelectorEl.style.display = visible ? "block" : "none";
+  }
+
+  _initMenuPetals() {
+    this.menuPetals = Array.from({ length: 42 }, () => ({
+      x: Math.random() * this.width,
+      y: Math.random() * this.height,
+      s: 0.6 + Math.random() * 1.8,
+      vx: -18 - Math.random() * 20,
+      vy: 14 + Math.random() * 22,
+      rot: Math.random() * 6.28
+    }));
+  }
+
+  newRun() {
+    this.selectedSkinId = this.getSelectedSkinId();
+    this._updateSkinSelectorUI();
+    const s = GC_CONFIG.baseStats;
     this.mode = "playing";
-    this.runCoins = 0;
     this.time = 0;
     this.kills = 0;
-
+    this.stats = { time: 0, kills: 0, level: 1, xp: 0 };
     this.player = {
-      x:0, y:0, r:18,
-      hp:100 + (gear.maxHp || 0),
-      maxHp:100 + (gear.maxHp || 0),
-      speed:235 + (skin.stats.speed || 0) + (gear.moveSpeed || 0),
-      damage:20 + (skin.stats.damage || 0) + (gear.damage || 0),
-      fireInterval: Math.max(.18, .42 / (1 + (gear.attackSpeed || 0) / 100)),
-      fireTimer:0,
-      bulletSpeed:560,
-      pickup:110 + (gear.pickup || 0),
-      crit:.05 + (gear.crit || 0) / 100,
-      critDamage:1.5 + (gear.critDamage || 0) / 100,
-      armor: gear.armor || 0,
-      regen: gear.regen || 0,
-      level:1,
-      xp:0,
-      xpNext:18,
-      skillTimer:0,
-      skillCooldown:8,
-      skin: skin.id,
-      skillBuff:0,
-      lastDir:"down",
-      moving:false
+      x: 0, y: 0, r: s.playerRadius,
+      hp: s.maxHp, maxHp: s.maxHp,
+      speed: s.playerSpeed,
+      level: 1, xp: 0, xpNext: GC_CONFIG.balance.xpToNextBase,
+      damage: s.bulletDamage,
+      bulletSpeed: s.bulletSpeed,
+      fireInterval: s.fireInterval,
+      fireTimer: 0,
+      skillCooldown: s.skillCooldown,
+      skillTimer: 0,
+      lastDir: "down",
+      invuln: 0
     };
-
     this.enemies = [];
     this.bullets = [];
-    this.pickups = [];
+    this.xpOrbs = [];
     this.effects = [];
-    this.obstacles = this.generateMap();
+    this.obstacles = this._generateObstacles();
     this.spawnTimer = 0;
-    this.camera = { x:this.player.x, y:this.player.y };
+    this.camera.x = this.player.x;
+    this.camera.y = this.player.y;
     this.last = performance.now();
-
     UI.showGame();
   }
 
-  generateMap() {
-    const obs = [];
-    const add = (kind, count, r, solid=true) => {
-      for (let i=0;i<count;i++) {
-        let x, y, ok = false;
-        for (let t=0;t<90 && !ok;t++) {
-          x = (Math.random() - .5) * 3600;
-          y = (Math.random() - .5) * 3600;
-          ok = Math.hypot(x, y) > 260 && obs.every(o => Math.hypot(o.x - x, o.y - y) > o.r + r + 38);
-        }
-        if (ok) obs.push({ kind, x, y, r, solid, phase:Math.random()*9 });
-      }
-    };
+  _generateObstacles() {
+    const types = [
+      { key: "rockSmall", r: 34, count: 18 },
+      { key: "rockBig", r: 48, count: 10 },
+      { key: "bush1", r: 38, count: 18 },
+      { key: "bush2", r: 42, count: 14 },
+      { key: "log", r: 48, count: 12 },
+      { key: "treeSmall", r: 42, count: 14 },
+      { key: "treeBig", r: 58, count: 8 }
+    ];
 
-    add("treeBig", 8, 74, true);
-    add("treeSmall", 12, 54, true);
-    add("log", 14, 48, true);
-    add("bush1", 14, 42, true);
-    add("bush2", 13, 42, true);
-    add("rockBig", 9, 38, true);
-    add("rockSmall", 16, 30, true);
-    add("flowers", 48, 18, false);
+    const obs = [];
+    const world = GC_CONFIG.balance.worldSize;
+    for (const t of types) {
+      for (let i = 0; i < t.count; i++) {
+        let x, y, ok = false;
+        for (let tries = 0; tries < 60 && !ok; tries++) {
+          x = (Math.random() - 0.5) * world;
+          y = (Math.random() - 0.5) * world;
+          ok = Math.hypot(x, y) > 260 && obs.every(o => Math.hypot(o.x - x, o.y - y) > o.r + t.r + 30);
+        }
+        if (ok) obs.push({ ...t, x, y });
+      }
+    }
     return obs;
   }
 
   loop(now) {
-    const dt = Math.min(.033, (now - this.last) / 1000 || 0);
+    const dt = Math.min(0.033, (now - this.last) / 1000 || 0);
     this.last = now;
-    this.t += dt;
-
+    this.animTime += dt;
     if (this.mode === "playing") this.update(dt);
-    this.render();
-
-    requestAnimationFrame(n => this.loop(n));
+    this.render(dt);
+    requestAnimationFrame((n) => this.loop(n));
   }
 
   update(dt) {
-    const p = this.player;
-    if (!p) return;
-
     this.time += dt;
-    p.fireTimer -= dt;
-    p.skillTimer = Math.max(0, p.skillTimer - dt);
-    p.skillBuff = Math.max(0, (p.skillBuff || 0) - dt);
-    if (p.regen) p.hp = Math.min(p.maxHp, p.hp + p.regen * dt);
+    this.player.fireTimer -= dt;
+    this.player.skillTimer = Math.max(0, this.player.skillTimer - dt);
+    this.player.skillCastTimer = Math.max(0, (this.player.skillCastTimer || 0) - dt);
+    this.player.invuln = Math.max(0, this.player.invuln - dt);
+
+    if ((this.player.dashTimer || 0) > 0) {
+      const dashDir = this._dirVector(this.player.skillDir || this.player.lastDir || "down");
+      const oldSpeed = this.player.speed;
+      this.player.speed = this.player.dashSpeed || 760;
+      this._movePlayer(dashDir, dt);
+      this.player.speed = oldSpeed;
+      this.player.dashTimer = Math.max(0, this.player.dashTimer - dt);
+    }
 
     const mv = this.input.getMoveVector();
-    p.moving = !!(mv.x || mv.y);
-    this.movePlayer(mv, dt);
-
+    this._movePlayer(mv, dt);
     if (mv.x || mv.y) {
-      p.lastDir = Math.abs(mv.x) > Math.abs(mv.y)
+      this.player.lastDir = Math.abs(mv.x) > Math.abs(mv.y)
         ? (mv.x < 0 ? "left" : "right")
         : (mv.y < 0 ? "up" : "down");
     }
 
-    if (this.input.consumeSkill()) this.skill();
-
-    this.spawn(dt);
-    this.autoFire();
-    this.updateBullets(dt);
-    this.updateEnemies(dt);
-    this.updatePickups(dt);
-
-    this.effects.forEach(e => e.t += dt);
-    this.effects = this.effects.filter(e => e.t < e.life);
-
-    this.camera.x += (p.x - this.camera.x) * Math.min(1, dt * 8);
-    this.camera.y += (p.y - this.camera.y) * Math.min(1, dt * 8);
-
+    if (this.input.consumeSkill()) this.useSkill();
+    this._spawnUpdate(dt);
+    this._autoFire();
+    this._updateBullets(dt);
+    this._updateEnemies(dt);
+    this._updatePickups(dt);
+    this._updateEffects(dt);
+    this.camera.x += (this.player.x - this.camera.x) * Math.min(1, dt * 8);
+    this.camera.y += (this.player.y - this.camera.y) * Math.min(1, dt * 8);
     UI.updateHUD(this);
-
-    if (p.hp <= 0) this.gameOver();
+    if (this.player.hp <= 0) this.gameOver();
   }
 
-  movePlayer(mv, dt) {
+  _movePlayer(mv, dt) {
     const p = this.player;
-    const half = 1900;
+    const world = GC_CONFIG.balance.worldSize / 2;
 
     const tryMove = (dx, dy) => {
-      p.x = Math.max(-half, Math.min(half, p.x + dx));
-      p.y = Math.max(-half, Math.min(half, p.y + dy));
-      if (this.hitObstacle()) {
-        p.x -= dx;
-        p.y -= dy;
-      }
+      p.x += dx;
+      p.y += dy;
+      p.x = Math.max(-world, Math.min(world, p.x));
+      p.y = Math.max(-world, Math.min(world, p.y));
+      if (this._playerHitsObstacle()) { p.x -= dx; p.y -= dy; }
     };
 
     tryMove(mv.x * p.speed * dt, 0);
     tryMove(0, mv.y * p.speed * dt);
   }
 
-  hitObstacle() {
+  _playerHitsObstacle() {
     const p = this.player;
-    return this.obstacles.some(o => o.solid && Math.hypot(p.x - o.x, p.y - o.y) < p.r + o.r * .62);
+    return this.obstacles.some(o => Math.hypot(p.x - o.x, p.y - o.y) < p.r + o.r * 0.72);
   }
 
-  spawn(dt) {
+  _spawnUpdate(dt) {
+    const b = GC_CONFIG.balance;
+    const difficulty = 1 + this.time / 70;
+    const maxEnemies = b.maxEnemiesBase + Math.floor(this.time / 9);
     this.spawnTimer -= dt;
-    const max = 22 + Math.floor(this.time / 10);
+    const spawnEvery = Math.max(0.22, b.enemySpawnEvery / difficulty);
 
-    if (this.spawnTimer <= 0 && this.enemies.length < max) {
-      this.spawnTimer = Math.max(.24, 1.18 / (1 + this.time / 80));
-      const count = 1 + Math.floor(this.time / 45);
-      for (let i=0;i<count;i++) this.spawnEnemy();
+    if (this.spawnTimer <= 0 && this.enemies.length < maxEnemies) {
+      this.spawnTimer = spawnEvery;
+      const count = 1 + Math.floor(this.time / 55);
+      for (let i = 0; i < count; i++) this._spawnEnemy(difficulty);
     }
   }
 
-  spawnEnemy() {
-    const a = Math.random() * Math.PI * 2;
-    const d = Math.max(this.w, this.h) * .68 + 120;
-    const roll = Math.random();
-    const type = roll < .62 ? "green" : roll < .86 ? "blue" : "pink";
-    const spec = type === "green"
-      ? { hp:40, speed:70, r:22, xp:3 }
-      : type === "blue"
-        ? { hp:65, speed:58, r:26, xp:5 }
-        : { hp:34, speed:105, r:20, xp:4 };
-
-    const scale = 1 + this.time / 120;
-
+  _spawnEnemy(difficulty) {
+    const angle = Math.random() * Math.PI * 2;
+    const dist = Math.max(this.width, this.height) * 0.65 + 90 + Math.random() * 180;
+    const x = this.player.x + Math.cos(angle) * dist;
+    const y = this.player.y + Math.sin(angle) * dist;
+    const hp = GC_CONFIG.balance.enemyBaseHp * (1 + this.time / 120);
     this.enemies.push({
-      type,
-      x:this.player.x + Math.cos(a) * d,
-      y:this.player.y + Math.sin(a) * d,
-      r:spec.r,
-      hp:spec.hp * scale,
-      maxHp:spec.hp * scale,
-      speed:spec.speed * (1 + this.time / 240),
-      xp:spec.xp,
-      hit:0,
-      phase:Math.random()*9
+      x, y, r: 24, hp, maxHp: hp,
+      speed: GC_CONFIG.balance.enemyBaseSpeed * (0.9 + Math.random() * 0.35) * Math.min(2.1, difficulty),
+      hitFlash: 0,
+      animOff: Math.random() * 10
     });
   }
 
-  nearest(range=720) {
-    let best = null;
-    let bd = range;
-
+  _nearestEnemy(maxRange = 999999) {
+    let best = null, bd = maxRange;
     for (const e of this.enemies) {
       const d = Math.hypot(e.x - this.player.x, e.y - this.player.y);
-      if (d < bd) {
-        bd = d;
-        best = e;
-      }
+      if (d < bd) { bd = d; best = e; }
     }
-
     return best;
   }
 
-  autoFire() {
+  _autoFire() {
     const p = this.player;
-    let interval = p.fireInterval * (p.skillBuff > 0 ? .55 : 1);
     if (p.fireTimer > 0) return;
-
-    const e = this.nearest();
-    if (!e) return;
-
-    p.fireTimer = interval;
-    const dx = e.x - p.x;
-    const dy = e.y - p.y;
-    const l = Math.hypot(dx, dy) || 1;
-    const style = p.skin === "sakura_cherry" ? "petal" : p.skin === "bunny_rare" ? "bolt" : "orb";
-
+    const target = this._nearestEnemy(720);
+    if (!target) return;
+    p.fireTimer = p.fireInterval;
+    const dx = target.x - p.x, dy = target.y - p.y;
+    const len = Math.hypot(dx, dy) || 1;
     this.bullets.push({
-      x:p.x,
-      y:p.y - 10,
-      vx:dx/l * p.bulletSpeed,
-      vy:dy/l * p.bulletSpeed,
-      r:style === "bolt" ? 5 : style === "petal" ? 8 : 7,
-      dmg:p.damage,
-      life:1.45,
-      style
+      x: p.x, y: p.y - 8,
+      vx: dx / len * p.bulletSpeed,
+      vy: dy / len * p.bulletSpeed,
+      r: 7,
+      damage: p.damage,
+      life: 1.35
     });
   }
 
-  updateBullets(dt) {
+  _updateBullets(dt) {
     for (const b of this.bullets) {
       b.x += b.vx * dt;
       b.y += b.vy * dt;
@@ -310,19 +459,11 @@ class CherriftGame {
 
     for (const b of this.bullets) {
       if (b.dead) continue;
-
       for (const e of this.enemies) {
         if (Math.hypot(b.x - e.x, b.y - e.y) < b.r + e.r) {
           b.dead = true;
-          let dmg = b.dmg;
-
-          if (Math.random() < this.player.crit) {
-            dmg *= this.player.critDamage;
-            this.effects.push({ type:"crit", x:e.x, y:e.y, t:0, life:.35 });
-          }
-
-          this.damageEnemy(e, dmg);
-          this.effects.push({ type:"hit", x:b.x, y:b.y, t:0, life:.18, style:b.style });
+          this._damageEnemy(e, b.damage);
+          this.effects.push({ type: "hit", x: b.x, y: b.y, t: 0, life: 0.18 });
           break;
         }
       }
@@ -331,557 +472,452 @@ class CherriftGame {
     this.bullets = this.bullets.filter(b => !b.dead && b.life > 0);
   }
 
-  damageEnemy(e, dmg) {
+  _damageEnemy(e, dmg) {
     e.hp -= dmg;
-    e.hit = .08;
-
+    e.hitFlash = 0.08;
     if (e.hp <= 0 && !e.dead) {
       e.dead = true;
       this.kills++;
-
-      this.pickups.push({ type:"xp", x:e.x, y:e.y, value:e.xp, r:e.xp >= 5 ? 13 : 10 });
-
-      if (Math.random() < .18) {
-        this.pickups.push({
-          type:"coin",
-          x:e.x + (Math.random() - .5) * 24,
-          y:e.y + (Math.random() - .5) * 24,
-          value:1,
-          r:8
-        });
-      }
-
-      if (Math.random() < .018) {
-        this.pickups.push({ type:"key", x:e.x, y:e.y, value:1, r:11 });
-      }
-
-      this.effects.push({ type:"death", x:e.x, y:e.y, t:0, life:.34 });
+      const val = Math.random() < 0.12 ? 5 : 3;
+      this.xpOrbs.push({ x: e.x, y: e.y, r: val > 3 ? 14 : 10, value: val });
+      this.effects.push({ type: "death", x: e.x, y: e.y, t: 0, life: 0.35 });
     }
   }
 
-  updateEnemies(dt) {
+  _updateEnemies(dt) {
     const p = this.player;
-
     for (const e of this.enemies) {
       if (e.dead) continue;
-
-      e.hit = Math.max(0, e.hit - dt);
-      const dx = p.x - e.x;
-      const dy = p.y - e.y;
-      const l = Math.hypot(dx, dy) || 1;
-
-      e.x += dx/l * e.speed * dt;
-      e.y += dy/l * e.speed * dt;
-
-      if (l < e.r + p.r) {
-        const raw = 16 * dt;
-        p.hp -= Math.max(2 * dt, raw * (100 / (100 + p.armor * 4)));
+      e.hitFlash = Math.max(0, e.hitFlash - dt);
+      const dx = p.x - e.x, dy = p.y - e.y;
+      const len = Math.hypot(dx, dy) || 1;
+      e.x += dx / len * e.speed * dt;
+      e.y += dy / len * e.speed * dt;
+      if (len < e.r + p.r) {
+        p.hp -= GC_CONFIG.balance.enemyDamagePerSecond * dt;
+        p.invuln = 0.08;
       }
     }
-
     this.enemies = this.enemies.filter(e => !e.dead);
   }
 
-  updatePickups(dt) {
+  _updatePickups(dt) {
     const p = this.player;
-
-    for (const o of this.pickups) {
-      const d = Math.hypot(o.x - p.x, o.y - p.y);
-
-      if (d < p.pickup) {
-        const sp = 260 + (1 - d / p.pickup) * 520;
-        o.x += (p.x - o.x) / (d || 1) * sp * dt;
-        o.y += (p.y - o.y) / (d || 1) * sp * dt;
+    for (const orb of this.xpOrbs) {
+      const d = Math.hypot(orb.x - p.x, orb.y - p.y);
+      if (d < GC_CONFIG.baseStats.magnetRadius) {
+        const speed = 260 + (1 - d / GC_CONFIG.baseStats.magnetRadius) * 420;
+        orb.x += (p.x - orb.x) / (d || 1) * speed * dt;
+        orb.y += (p.y - orb.y) / (d || 1) * speed * dt;
       }
-
-      if (d < p.r + o.r + 6) {
-        o.dead = true;
-
-        if (o.type === "xp") this.gainXp(o.value);
-        if (o.type === "coin") {
-          this.runCoins += o.value;
-          this.save.coins += o.value;
-          UI.toast("+1 coin");
-        }
-        if (o.type === "key") {
-          this.save.keys += 1;
-          UI.toast("+1 chest key");
-        }
+      if (d < p.r + GC_CONFIG.baseStats.pickupRadius) {
+        orb.picked = true;
+        this._gainXp(orb.value);
       }
     }
-
-    this.pickups = this.pickups.filter(o => !o.dead);
+    this.xpOrbs = this.xpOrbs.filter(o => !o.picked);
   }
 
-  gainXp(v) {
+  _gainXp(value) {
     const p = this.player;
-    p.xp += v;
-
+    p.xp += value;
+    this.stats.xp += value;
     while (p.xp >= p.xpNext) {
       p.xp -= p.xpNext;
       p.level++;
-      p.xpNext = Math.floor(p.xpNext * 1.22 + 9);
-      this.mode = "level";
-      UI.showLevelUp(this);
+      p.xpNext = Math.floor(GC_CONFIG.balance.xpToNextBase * Math.pow(1.28, p.level - 1));
+      this.mode = "levelup";
+      UI.showLevelUp(this._rollUpgrades());
+      break;
     }
   }
 
-  applyUpgrade(up) {
-    up.apply(this.player);
+  _rollUpgrades() {
+    const pool = [
+      { id: "damage", title: "Pink Bullet +Damage", desc: "+20% lövés sebzés", apply: () => this.player.damage *= 1.20 },
+      { id: "rate", title: "Faster Bloom", desc: "+16% gyorsabb automata lövés", apply: () => this.player.fireInterval *= 0.84 },
+      { id: "speed", title: "Bunny Steps", desc: "+12% mozgási sebesség", apply: () => this.player.speed *= 1.12 },
+      { id: "hp", title: "Sweet Heart", desc: "+25 max HP és gyógyítás", apply: () => { this.player.maxHp += 25; this.player.hp = Math.min(this.player.maxHp, this.player.hp + 35); } },
+      { id: "bulletSpeed", title: "Swift Petals", desc: "+18% lövedék sebesség", apply: () => this.player.bulletSpeed *= 1.18 },
+      { id: "skill", title: "Cherry Burst Cooldown", desc: "Special skill cooldown -15%", apply: () => this.player.skillCooldown *= 0.85 }
+    ];
+
+    const choices = [];
+    while (choices.length < 3 && pool.length) {
+      const idx = Math.floor(Math.random() * pool.length);
+      choices.push(pool.splice(idx, 1)[0]);
+    }
+    return choices;
+  }
+
+  chooseUpgrade(upgrade) {
+    upgrade.apply();
     this.mode = "playing";
     UI.hideLevelUp();
+    this.last = performance.now();
   }
 
-  skill() {
+  useSkill() {
     const p = this.player;
-    if (p.skillTimer > 0) return;
+    if (p.skillTimer > 0 || this.mode !== "playing") return;
+
+    const skin = this.getActiveSkinSpec();
+    const skillSpec = this.getPlayerStateSpec("skill") || {};
+    const duration = skillSpec.duration || skin.dashDuration || 0.5;
+    const dir = p.lastDir || "down";
 
     p.skillTimer = p.skillCooldown;
+    p.skillCastTimer = duration;
+    p.skillCastDuration = duration;
+    p.skillDir = dir;
 
-    if (p.skin === "sakura_cherry") {
-      for (let i=0;i<18;i++) {
-        const a = i / 18 * Math.PI * 2;
-        this.bullets.push({
-          x:p.x,
-          y:p.y,
-          vx:Math.cos(a) * 520,
-          vy:Math.sin(a) * 520,
-          r:8,
-          dmg:p.damage * .72,
-          life:.7,
-          style:"petal"
-        });
-      }
-      this.effects.push({ type:"burst", x:p.x, y:p.y, t:0, life:.45 });
-    } else if (p.skin === "bunny_rare") {
-      p.skillBuff = 5.2;
-      this.effects.push({ type:"haste", x:p.x, y:p.y, t:0, life:5.2 });
-      UI.toast("Haste Bloom!");
-    } else {
-      const mv = this.input.getMoveVector();
-      const dx = mv.x || (p.lastDir === "left" ? -1 : p.lastDir === "right" ? 1 : 0);
-      const dy = mv.y || (p.lastDir === "up" ? -1 : p.lastDir === "down" ? 1 : 0);
-      p.x += dx * 165;
-      p.y += dy * 165;
-      this.effects.push({ type:"dash", x:p.x, y:p.y, t:0, life:.32 });
+    if (skin.skillType === "dash") {
+      p.dashTimer = skin.dashDuration || duration;
+      p.dashSpeed = skin.dashSpeed || 760;
+      p.invuln = Math.max(p.invuln || 0, skin.dashInvuln || duration);
 
-      for (const e of this.enemies) {
-        if (Math.hypot(e.x - p.x, e.y - p.y) < 105) this.damageEnemy(e, p.damage * 1.3);
-      }
+      const v = this._dirVector(dir);
+      this.effects.push({
+        type: "dash",
+        x: p.x - v.x * 28,
+        y: p.y - v.y * 28,
+        vx: v.x,
+        vy: v.y,
+        t: 0,
+        life: 0.22
+      });
+      return;
     }
+
+    // Fairy Cherry / magic burst skill.
+    const radius = skin.burstRadius || 185;
+    this.effects.push({ type: "burst", x: p.x, y: p.y, r: radius, t: 0, life: 0.45 });
+    for (const e of this.enemies) {
+      const d = Math.hypot(e.x - p.x, e.y - p.y);
+      if (d < radius + e.r) this._damageEnemy(e, p.damage * 3.2);
+    }
+  }
+
+  _updateEffects(dt) {
+    for (const fx of this.effects) fx.t += dt;
+    this.effects = this.effects.filter(fx => fx.t < fx.life);
+  }
+
+  pause() {
+    if (this.mode === "playing") {
+      this.mode = "paused";
+      UI.showPause();
+    }
+  }
+
+  resume() {
+    if (this.mode === "paused") {
+      this.mode = "playing";
+      UI.hidePause();
+      this.last = performance.now();
+    }
+  }
+
+  backToMenu() {
+    this.mode = "menu";
+    UI.showMenu(this.profile);
   }
 
   gameOver() {
     this.mode = "gameover";
-    if (this.time > this.save.best.time) this.save.best.time = this.time;
-    if (this.kills > this.save.best.kills) this.save.best.kills = this.kills;
-    CherriftStorage.save(this.save);
-    UI.showGameOver(this);
+    this.stats.time = this.time;
+    this.stats.kills = this.kills;
+    this.stats.level = this.player.level;
+    ProfileService.finishRun(this.profile, this.stats);
+    UI.showGameOver(this.stats, this.profile);
   }
 
-  render() {
+  worldToScreen(x, y) {
+    return { x: x - this.camera.x + this.width / 2, y: y - this.camera.y + this.height / 2 };
+  }
+
+  render(dt) {
+    this._updateSkinSelectorVisibility();
+    this.ctx.clearRect(0, 0, this.width, this.height);
+    if (this.mode === "menu" || this.mode === "loading") this._renderMenuBackdrop(dt);
+    else this._renderGame();
+  }
+
+  _renderMenuBackdrop(dt) {
     const c = this.ctx;
-    c.clearRect(0, 0, this.w, this.h);
-
-    if (this.mode === "menu") {
-      this.drawMenuCanvas(c);
-      return;
-    }
-
-    if (this.mode === "playing" || this.mode === "level" || this.mode === "paused" || this.mode === "gameover") {
-      this.drawWorld(c);
-    }
-  }
-
-  drawMenuCanvas(c) {
-    const g = c.createLinearGradient(0, 0, this.w, this.h);
-    g.addColorStop(0, "#13071a");
-    g.addColorStop(.42, "#24103b");
+    const g = c.createRadialGradient(this.width * .55, this.height * .45, 20, this.width * .55, this.height * .45, Math.max(this.width, this.height));
+    g.addColorStop(0, "#362047");
+    g.addColorStop(.42, "#171025");
     g.addColorStop(1, "#05030b");
     c.fillStyle = g;
-    c.fillRect(0, 0, this.w, this.h);
+    c.fillRect(0, 0, this.width, this.height);
 
-    c.save();
-    for (let i=0;i<90;i++) {
-      const x = (i * 137.5 + this.t * 12) % (this.w + 50) - 25;
-      const y = (i * 83.1 + Math.sin(this.t * .4 + i) * 12) % this.h;
-      c.globalAlpha = .18 + (i % 5) * .05;
-      c.fillStyle = i % 3 ? "#ff7fbd" : "#ffffff";
+    c.fillStyle = "rgba(255,120,185,.75)";
+    for (const p of this.menuPetals) {
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      p.rot += dt;
+      if (p.x < -20 || p.y > this.height + 20) {
+        p.x = this.width + Math.random() * 80;
+        p.y = -20 + Math.random() * this.height * .4;
+      }
+      c.save();
+      c.translate(p.x, p.y);
+      c.rotate(p.rot);
       c.beginPath();
-      c.arc(x, y, i % 3 === 0 ? 1.6 : 1.05, 0, Math.PI * 2);
+      c.ellipse(0, 0, 4 * p.s, 9 * p.s, 0, 0, Math.PI * 2);
       c.fill();
+      c.restore();
     }
-    c.restore();
+
+    c.fillStyle = "rgba(0,0,0,.35)";
+    c.fillRect(0, this.height * .78, this.width, this.height * .22);
+    for (let i = 0; i < 12; i++) {
+      const x = (i / 12) * this.width;
+      c.fillRect(x, this.height * .62 - (i % 5) * 22, 32 + (i % 4) * 12, this.height * .2 + (i % 5) * 22);
+    }
   }
 
-  drawWorld(c) {
-    c.fillStyle = "#1f7d45";
-    c.fillRect(0, 0, this.w, this.h);
+  _renderGame() {
+    const c = this.ctx;
+    this._drawGrass(c);
 
-    c.save();
-    c.translate(-this.camera.x + this.w / 2, -this.camera.y + this.h / 2);
+    const drawables = [];
+    for (const o of this.obstacles) drawables.push({ y: o.y, type: "ob", obj: o });
+    for (const e of this.enemies) drawables.push({ y: e.y + 20, type: "enemy", obj: e });
+    drawables.push({ y: this.player.y + 30, type: "player", obj: this.player });
+    drawables.sort((a, b) => a.y - b.y);
 
-    this.drawGround(c);
-
-    const drawables = [
-      ...this.obstacles,
-      ...this.pickups,
-      ...this.enemies,
-      ...(this.player ? [this.player] : []),
-      ...this.bullets,
-      ...this.effects
-    ];
-
-    drawables.sort((a, b) => (a.y || 0) - (b.y || 0));
-    for (const o of drawables) this.drawObj(c, o);
-
-    c.restore();
+    this._drawPickups(c);
+    this._drawBullets(c);
+    for (const d of drawables) {
+      if (d.type === "ob") this._drawObstacle(c, d.obj);
+      if (d.type === "enemy") this._drawEnemy(c, d.obj);
+      if (d.type === "player") this._drawPlayer(c);
+    }
+    this._drawEffects(c);
+    this._drawWorldBorder(c);
   }
 
-  drawGround(c) {
-    const tile = this.assets.get("grass");
-    const size = 128;
-    const startX = Math.floor((this.camera.x - this.w / 2) / size) - 1;
-    const endX = Math.floor((this.camera.x + this.w / 2) / size) + 1;
-    const startY = Math.floor((this.camera.y - this.h / 2) / size) - 1;
-    const endY = Math.floor((this.camera.y + this.h / 2) / size) + 1;
+  _drawGrass(c) {
+    const img = this.assets.images.grass;
+    const tile = 128;
+    const startX = Math.floor((this.camera.x - this.width / 2) / tile) * tile;
+    const startY = Math.floor((this.camera.y - this.height / 2) / tile) * tile;
 
-    for (let gx=startX; gx<=endX; gx++) {
-      for (let gy=startY; gy<=endY; gy++) {
-        const x = gx * size;
-        const y = gy * size;
-
-        if (tile) {
-          c.drawImage(tile, x, y, size, size);
-        } else {
-          c.fillStyle = (gx + gy) % 2 === 0 ? "#2f9d55" : "#2a934f";
-          c.fillRect(x, y, size, size);
-          c.fillStyle = "rgba(255,255,255,.05)";
-          for (let i=0;i<3;i++) c.fillRect(x+15+i*35, y+20+((gx*gy+i*13)%70), 14, 3);
+    for (let x = startX; x < this.camera.x + this.width / 2 + tile; x += tile) {
+      for (let y = startY; y < this.camera.y + this.height / 2 + tile; y += tile) {
+        const s = this.worldToScreen(x, y);
+        if (img) c.drawImage(img, s.x, s.y, tile, tile);
+        else {
+          c.fillStyle = "#4d8f4b";
+          c.fillRect(s.x, s.y, tile, tile);
         }
       }
     }
   }
 
-  drawObj(c, o) {
-    if (o === this.player) return this.drawPlayer(c, o);
-    if (o.kind) return this.drawObstacle(c, o);
-    if (o.type === "xp" || o.type === "coin" || o.type === "key") return this.drawPickup(c, o);
-    if (o.style) return this.drawBullet(c, o);
-    if (o.hp !== undefined) return this.drawEnemy(c, o);
-    if (o.type) return this.drawEffect(c, o);
+  _drawWorldBorder(c) {
+    const half = GC_CONFIG.balance.worldSize / 2;
+    const tl = this.worldToScreen(-half, -half);
+    c.strokeStyle = "rgba(255,255,255,.2)";
+    c.lineWidth = 4;
+    c.strokeRect(tl.x, tl.y, GC_CONFIG.balance.worldSize, GC_CONFIG.balance.worldSize);
   }
 
-  drawImageCentered(c, key, x, y, w, h) {
-    const img = this.assets.get(key);
-    if (!img) return false;
-    c.drawImage(img, x - w/2, y - h/2, w, h);
-    return true;
+  _drawObstacle(c, o) {
+    const img = this.assets.images[o.key];
+    const s = this.worldToScreen(o.x, o.y);
+    if (img) {
+      const scale = o.key.includes("Big") ? 1.18 : 1;
+      const w = img.width * scale, h = img.height * scale;
+      c.drawImage(img, s.x - w / 2, s.y - h * 0.72, w, h);
+    } else {
+      c.fillStyle = "#477744";
+      c.beginPath();
+      c.arc(s.x, s.y, o.r, 0, Math.PI * 2);
+      c.fill();
+    }
   }
 
-  drawObstacle(c, o) {
-    const x = o.x;
-    const y = o.y;
+  _drawPlayer(c) {
+    const p = this.player;
+    const playerSpec = GC_CONFIG.assetSpec.player;
+    const skinId = this.selectedSkinId || this.getSelectedSkinId();
+    const skin = this.getActiveSkinSpec();
 
-    if (o.kind === "treeBig" && this.drawImageCentered(c, "treeBig", x, y-16, 190, 190)) return;
-    if (o.kind === "treeSmall" && this.drawImageCentered(c, "treeSmall", x, y-12, 150, 150)) return;
-    if (o.kind === "bush1" && this.drawImageCentered(c, "bush1", x, y, 116, 98)) return;
-    if (o.kind === "bush2" && this.drawImageCentered(c, "bush2", x, y, 118, 100)) return;
-    if (o.kind === "log" && this.drawImageCentered(c, "log", x, y, 132, 82)) return;
-    if (o.kind === "rockBig" && this.drawImageCentered(c, "rockBig", x, y, 88, 70)) return;
-    if (o.kind === "rockSmall" && this.drawImageCentered(c, "rockSmall", x, y, 70, 54)) return;
+    const mv = this.input.getMoveVector();
+    const moving = Math.hypot(mv.x, mv.y) > 0.08;
 
-    if (o.kind === "treeBig" || o.kind === "treeSmall") {
-      const s = o.kind === "treeBig" ? 1.25 : .86;
-      c.fillStyle = "#8a542a";
+    const skillActive = (p.skillCastTimer || 0) > 0;
+    const dir = skillActive ? (p.skillDir || p.lastDir || "down") : (p.lastDir || "down");
+    const stateName = skillActive ? "skill" : (moving ? "walk" : "idle");
+    const stateSpec = skin.states?.[stateName];
+
+    if (!stateSpec) return;
+
+    const imgKey = `player_${skinId}_${stateName}_${dir}`;
+    const fallbackKey = `player_${stateName}_${dir}`;
+    const img = this.assets.images[imgKey] || this.assets.images[fallbackKey];
+
+    const frameCount = stateSpec.frames || 1;
+    const fps = stateSpec.fps || 1;
+
+    let frame = 0;
+
+    if (stateName === "skill") {
+      const duration = p.skillCastDuration || stateSpec.duration || 0.5;
+      const elapsed = Math.max(0, duration - (p.skillCastTimer || 0));
+      frame = Math.min(frameCount - 1, Math.floor(elapsed * fps));
+    } else if (stateSpec.loop) {
+      frame = Math.floor(this.animTime * fps) % frameCount;
+    }
+
+    const crop = playerSpec.crop || {};
+    const cropLeft = crop.left || 0;
+    const cropTop = crop.top || 0;
+    const cropRight = crop.right || 0;
+    const cropBottom = crop.bottom || 0;
+
+    const sx = frame * playerSpec.frameWidth + cropLeft;
+    const sy = cropTop;
+    const sw = playerSpec.frameWidth - cropLeft - cropRight;
+    const sh = playerSpec.frameHeight - cropTop - cropBottom;
+
+    const dw = playerSpec.displayWidth || 84;
+    const dh = playerSpec.displayHeight || 84;
+    const s = this.worldToScreen(p.x, p.y);
+
+    c.save();
+    if (p.invuln > 0) c.globalAlpha = 0.65;
+
+    if (img) {
+      c.drawImage(
+        img,
+        sx, sy, sw, sh,
+        s.x - dw / 2,
+        s.y - dh * 0.86,
+        dw,
+        dh
+      );
+    } else {
+      c.fillStyle = "#ff77b9";
       c.beginPath();
-      c.roundRect(x-18*s, y-12*s, 36*s, 86*s, 10*s);
+      c.arc(s.x, s.y, 22, 0, Math.PI * 2);
       c.fill();
-      c.fillStyle = "#5b341d";
-      c.fillRect(x-4*s, y+2*s, 8*s, 62*s);
-      this.leafBlob(c, x, y-30*s, 62*s);
-      this.leafBlob(c, x-38*s, y-4*s, 38*s);
-      this.leafBlob(c, x+40*s, y-3*s, 38*s);
-    } else if (o.kind === "bush1" || o.kind === "bush2") {
-      this.leafBlob(c, x, y, 42);
-    } else if (o.kind === "log") {
-      c.save();
-      c.translate(x, y);
-      c.rotate(.08);
-      c.fillStyle = "#9f602f";
+    }
+
+    c.restore();
+  }
+
+  _drawEnemy(c, e) {
+    const img = this.assets.images.slime;
+    const spec = GC_CONFIG.assetSpec.slime;
+    const frame = Math.floor((this.animTime + e.animOff) * (spec.fps || 7)) % spec.columns;
+    const row = spec.rows.move ?? 0;
+    const dw = spec.displayWidth || 76;
+    const dh = spec.displayHeight || 76;
+    const s = this.worldToScreen(e.x, e.y);
+
+    c.save();
+    if (e.hitFlash > 0) c.filter = "brightness(1.8)";
+    if (img) c.drawImage(img, frame * spec.frameWidth, row * spec.frameHeight, spec.frameWidth, spec.frameHeight, s.x - dw / 2, s.y - dh * 0.68, dw, dh);
+    else {
+      c.fillStyle = "#ff75b5";
       c.beginPath();
-      c.roundRect(-58, -18, 116, 36, 17);
+      c.arc(s.x, s.y, 22, 0, Math.PI * 2);
       c.fill();
-      c.strokeStyle = "#62361e";
-      c.lineWidth = 5;
-      c.strokeRect(-48, -16, 86, 32);
-      c.fillStyle = "#f1c27c";
+    }
+    c.restore();
+
+    if (e.hp < e.maxHp) {
+      c.fillStyle = "rgba(0,0,0,.45)";
+      c.fillRect(s.x - 24, s.y - 44, 48, 5);
+      c.fillStyle = "#ff4e8d";
+      c.fillRect(s.x - 24, s.y - 44, 48 * Math.max(0, e.hp / e.maxHp), 5);
+    }
+  }
+
+  _drawBullets(c) {
+    for (const b of this.bullets) {
+      const s = this.worldToScreen(b.x, b.y);
+      const grd = c.createRadialGradient(s.x, s.y, 1, s.x, s.y, 12);
+      grd.addColorStop(0, "#fff");
+      grd.addColorStop(.35, "#ffd0ea");
+      grd.addColorStop(1, "rgba(255,76,166,0)");
+      c.fillStyle = grd;
       c.beginPath();
-      c.arc(-55, 0, 19, 0, Math.PI*2);
+      c.arc(s.x, s.y, 12, 0, Math.PI * 2);
       c.fill();
-      c.restore();
-    } else if (o.kind === "rockBig" || o.kind === "rockSmall") {
-      c.fillStyle = "#8792a2";
+      c.fillStyle = "#ff57aa";
       c.beginPath();
-      c.ellipse(x, y, o.kind==="rockBig"?34:26, o.kind==="rockBig"?25:19, .2, 0, Math.PI*2);
+      c.arc(s.x, s.y, 5, 0, Math.PI * 2);
       c.fill();
-    } else if (o.kind === "flowers") {
-      c.fillStyle = "#ff9cc8";
-      for (let i=0;i<5;i++) {
-        const a = i / 5 * Math.PI * 2;
+    }
+  }
+
+  _drawPickups(c) {
+    for (const o of this.xpOrbs) {
+      const img = this.assets.images[o.value > 3 ? "xpBig" : "xpSmall"];
+      const s = this.worldToScreen(o.x, o.y);
+      const size = o.value > 3 ? 30 : 22;
+      if (img) c.drawImage(img, s.x - size / 2, s.y - size / 2, size, size);
+      else {
+        c.fillStyle = "#67dfff";
         c.beginPath();
-        c.ellipse(x + Math.cos(a)*8, y + Math.sin(a)*8, 6, 10, a, 0, Math.PI*2);
+        c.arc(s.x, s.y, o.r, 0, Math.PI * 2);
         c.fill();
       }
-      c.fillStyle = "#ffe28a";
-      c.beginPath();
-      c.arc(x, y, 5, 0, Math.PI*2);
-      c.fill();
     }
   }
 
-  leafBlob(c, x, y, r) {
-    c.fillStyle = "#184f37";
-    c.beginPath();
-    c.arc(x, y+8, r*.86, 0, Math.PI*2);
-    c.fill();
+  _drawEffects(c) {
+    for (const fx of this.effects) {
+      const s = this.worldToScreen(fx.x, fx.y);
+      const t = fx.t / fx.life;
 
-    c.fillStyle = "#55b747";
-    c.beginPath();
-    c.arc(x, y, r, 0, Math.PI*2);
-    c.fill();
-
-    c.fillStyle = "#9ee957";
-    for (let i=0;i<11;i++) {
-      const a = i / 11 * Math.PI*2 + this.t*.06;
-      c.beginPath();
-      c.ellipse(x + Math.cos(a)*r*.45, y + Math.sin(a)*r*.32, r*.18, r*.11, a, 0, Math.PI*2);
-      c.fill();
-    }
-  }
-
-  drawPlayer(c, p) {
-    const img = this.assets.get("player");
-    if (img) {
-      const cfg = CHERRIFT_CONFIG.player;
-      const dir = p.lastDir || "down";
-      const moving = p.moving;
-      const row = dir === "down"
-        ? (moving ? cfg.rows.walkDown : cfg.rows.idleDown)
-        : dir === "up"
-          ? (moving ? cfg.rows.walkUp : cfg.rows.idleUp)
-          : dir === "left"
-            ? (moving ? cfg.rows.walkLeft : cfg.rows.idleLeft)
-            : (moving ? cfg.rows.walkRight : cfg.rows.idleRight);
-
-      const frame = Math.floor(this.t * (moving ? 8 : 3)) % cfg.columns;
-      c.drawImage(
-        img,
-        frame * cfg.frameWidth,
-        row * cfg.frameHeight,
-        cfg.frameWidth,
-        cfg.frameHeight,
-        p.x - cfg.displayWidth/2,
-        p.y - cfg.displayHeight + 34,
-        cfg.displayWidth,
-        cfg.displayHeight
-      );
-      return;
-    }
-
-    const x = p.x;
-    const y = p.y;
-    const skin = CHERRIFT_DATA.skins.find(s => s.id === p.skin);
-
-    c.fillStyle = "rgba(0,0,0,.25)";
-    c.beginPath();
-    c.ellipse(x, y+24, 28, 10, 0, 0, Math.PI*2);
-    c.fill();
-
-    c.fillStyle = p.skin === "bunny_rare" ? "#fff2fb" : p.skin === "sakura_cherry" ? "#ffd6eb" : "#ffc1dc";
-    c.beginPath();
-    c.arc(x, y, 24, 0, Math.PI*2);
-    c.fill();
-
-    c.fillStyle = "#ff77b9";
-    c.beginPath();
-    c.ellipse(x-11, y-28, 8, 24, -.35, 0, Math.PI*2);
-    c.ellipse(x+11, y-28, 8, 24, .35, 0, Math.PI*2);
-    c.fill();
-
-    c.fillStyle = "#2c2033";
-    c.beginPath();
-    c.arc(x-8, y-2, 3, 0, Math.PI*2);
-    c.arc(x+8, y-2, 3, 0, Math.PI*2);
-    c.fill();
-
-    c.fillStyle = "#fff";
-    c.font = "18px system-ui";
-    c.textAlign = "center";
-    c.fillText(skin?.emoji || "🐰", x, y+42);
-  }
-
-  drawEnemy(c, e) {
-    const img = this.assets.get("slime");
-    if (img) {
-      const cfg = CHERRIFT_CONFIG.slime;
-      const frame = Math.floor((this.t + e.phase) * 7) % cfg.columns;
-      const row = cfg.rows.move;
-      c.save();
-      if (e.hit > 0) c.globalAlpha = .65;
-      c.drawImage(
-        img,
-        frame * cfg.frameWidth,
-        row * cfg.frameHeight,
-        cfg.frameWidth,
-        cfg.frameHeight,
-        e.x - cfg.displayWidth/2,
-        e.y - cfg.displayHeight/2,
-        cfg.displayWidth,
-        cfg.displayHeight
-      );
-      c.restore();
-
-      if (e.type !== "green") {
+      if (fx.type === "burst") {
         c.save();
-        c.globalCompositeOperation = "source-atop";
-        c.globalAlpha = e.type === "blue" ? .22 : .25;
-        c.fillStyle = e.type === "blue" ? "#4ee4ff" : "#ff66b7";
-        c.fillRect(e.x-cfg.displayWidth/2, e.y-cfg.displayHeight/2, cfg.displayWidth, cfg.displayHeight);
+        c.globalAlpha = 1 - t;
+        c.strokeStyle = "#ff73bb";
+        c.lineWidth = 5;
+        c.beginPath();
+        c.arc(s.x, s.y, fx.r * t, 0, Math.PI * 2);
+        c.stroke();
+        c.fillStyle = "rgba(255,95,175,.12)";
+        c.beginPath();
+        c.arc(s.x, s.y, fx.r * t, 0, Math.PI * 2);
+        c.fill();
         c.restore();
-      }
-      return;
-    }
-
-    const x = e.x;
-    const y = e.y;
-
-    c.fillStyle = "rgba(0,0,0,.25)";
-    c.beginPath();
-    c.ellipse(x, y+18, e.r, 8, 0, 0, Math.PI*2);
-    c.fill();
-
-    c.fillStyle = e.type === "green" ? "#7ee65e" : e.type === "blue" ? "#62d9ff" : "#ff79bf";
-    if (e.hit > 0) c.fillStyle = "#fff";
-
-    c.beginPath();
-    c.ellipse(x, y, e.r*1.1, e.r*.82, 0, 0, Math.PI*2);
-    c.fill();
-
-    c.fillStyle = "rgba(255,255,255,.42)";
-    c.beginPath();
-    c.ellipse(x-e.r*.3, y-e.r*.26, e.r*.28, e.r*.16, -.4, 0, Math.PI*2);
-    c.fill();
-
-    c.fillStyle = "#1f2530";
-    c.beginPath();
-    c.arc(x-7, y, 2.5, 0, Math.PI*2);
-    c.arc(x+7, y, 2.5, 0, Math.PI*2);
-    c.fill();
-  }
-
-  drawBullet(c, b) {
-    c.save();
-    c.translate(b.x, b.y);
-
-    if (b.style === "petal") {
-      c.fillStyle = "#ff8fc7";
-      c.rotate(Math.atan2(b.vy, b.vx));
-      c.beginPath();
-      c.ellipse(0, 0, 12, 6, 0, 0, Math.PI*2);
-      c.fill();
-    } else if (b.style === "bolt") {
-      c.fillStyle = "#fef9ff";
-      c.shadowColor = "#ff5db3";
-      c.shadowBlur = 14;
-      c.beginPath();
-      c.arc(0, 0, 6, 0, Math.PI*2);
-      c.fill();
-    } else {
-      c.fillStyle = "#ff65b4";
-      c.shadowColor = "#ff65b4";
-      c.shadowBlur = 16;
-      c.beginPath();
-      c.arc(0, 0, 8, 0, Math.PI*2);
-      c.fill();
-    }
-
-    c.restore();
-  }
-
-  drawPickup(c, o) {
-    if (o.type === "xp") {
-      const key = o.value >= 5 ? "xpBig" : "xpSmall";
-      if (this.drawImageCentered(c, key, o.x, o.y, o.value >= 5 ? 34 : 26, o.value >= 5 ? 34 : 26)) return;
-    }
-
-    c.save();
-    c.translate(o.x, o.y);
-
-    if (o.type === "xp") {
-      c.fillStyle = "#ff90d0";
-      c.shadowColor = "#ff90d0";
-      c.shadowBlur = 14;
-      c.beginPath();
-      c.arc(0, 0, o.r, 0, Math.PI*2);
-      c.fill();
-    }
-
-    if (o.type === "coin") {
-      c.fillStyle = "#ffd65c";
-      c.beginPath();
-      c.arc(0, 0, 9, 0, Math.PI*2);
-      c.fill();
-      c.fillStyle = "#9b6a00";
-      c.fillText("c", -3, 4);
-    }
-
-    if (o.type === "key") {
-      c.fillStyle = "#d19b65";
-      c.font = "20px system-ui";
-      c.fillText("📦", -10, 7);
-    }
-
-    c.restore();
-  }
-
-  drawEffect(c, e) {
-    const a = 1 - e.t / e.life;
-    const x = e.x;
-    const y = e.y;
-
-    if (e.type === "burst") {
-      const img = this.assets.get("burst");
-      if (img) {
+      } else if (fx.type === "dash") {
         c.save();
-        c.globalAlpha = Math.max(0, a);
-        const size = 170 * (1.15 - a * .15);
-        c.drawImage(img, x - size/2, y - size/2, size, size);
+        c.globalAlpha = 1 - t;
+        c.strokeStyle = "rgba(255, 121, 190, .85)";
+        c.lineWidth = 5;
+        c.beginPath();
+        c.moveTo(s.x - (fx.vx || 0) * 38, s.y - (fx.vy || 0) * 38);
+        c.lineTo(s.x - (fx.vx || 0) * 92, s.y - (fx.vy || 0) * 92);
+        c.stroke();
+        c.fillStyle = "rgba(255, 121, 190, .22)";
+        c.beginPath();
+        c.arc(s.x, s.y, 26 * (1 - t), 0, Math.PI * 2);
+        c.fill();
         c.restore();
-        return;
+      } else if (fx.type === "hit") {
+        c.fillStyle = `rgba(255,255,255,${1 - t})`;
+        c.beginPath();
+        c.arc(s.x, s.y, 18 * t, 0, Math.PI * 2);
+        c.fill();
+      } else if (fx.type === "death") {
+        c.fillStyle = `rgba(255,100,180,${1 - t})`;
+        for (let i = 0; i < 6; i++) {
+          c.beginPath();
+          c.arc(s.x + Math.cos(i) * 28 * t, s.y + Math.sin(i) * 20 * t, 4, 0, Math.PI * 2);
+          c.fill();
+        }
       }
     }
-
-    c.save();
-    c.globalAlpha = Math.max(0, a);
-
-    if (["hit","death","crit","burst","dash"].includes(e.type)) {
-      c.strokeStyle = e.type === "crit" ? "#fff176" : "#ff8ccc";
-      c.lineWidth = 4;
-      c.beginPath();
-      c.arc(x, y, (1-a) * 55 + 8, 0, Math.PI*2);
-      c.stroke();
-    }
-
-    if (e.type === "haste") {
-      c.strokeStyle = "#8fffd2";
-      c.lineWidth = 3;
-      c.beginPath();
-      c.arc(x, y, 52 + Math.sin(this.t*8)*5, 0, Math.PI*2);
-      c.stroke();
-    }
-
-    c.restore();
   }
 }
-window.CherriftGame = CherriftGame;
+
+window.GaCherryGame = GaCherryGame;
