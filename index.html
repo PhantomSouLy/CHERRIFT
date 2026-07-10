@@ -3,55 +3,91 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-  <title>CHERRIFT v0.2.1</title>
+  <title>CHERRIFT v0.2.2</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <canvas id="game"></canvas>
 
   <div id="app">
+    <div class="ambient-petals" aria-hidden="true">
+      <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      <i></i><i></i><i></i><i></i><i></i><i></i>
+    </div>
+
     <section id="menu" class="screen menu-screen">
-      <div class="menu-bg-orb"></div>
+      <div class="menu-vignette"></div>
 
       <main class="menu-left">
-        <div class="version">v0.2.1 FIXED</div>
-        <h1>CHERRIFT</h1>
+        <div class="version">v0.2.2</div>
+        <h1 class="game-logo">CHERRIFT</h1>
         <p class="tagline">SURVIVE. EVOLVE. BLOOM.</p>
 
-        <div class="menu-buttons">
+        <nav class="menu-buttons">
           <button id="playBtn" class="menu-btn primary"><span>⌖</span> PLAY <b>›</b></button>
           <button data-open="skins" class="menu-btn"><span>🐰</span> CHARACTERS & SKINS <b>›</b></button>
           <button data-open="gear" class="menu-btn"><span>⚔</span> GEAR <b>›</b></button>
           <button data-open="chests" class="menu-btn"><span>📦</span> CHESTS <b>›</b></button>
           <button data-open="settings" class="menu-btn"><span>⚙</span> SETTINGS <b>›</b></button>
+        </nav>
+
+        <div class="login-card glass">
+          <div class="avatar-badge">🐰</div>
+          <div>
+            <strong>Guest</strong>
+            <p>Local save aktív. Discord login később.</p>
+          </div>
         </div>
       </main>
 
+      <div class="hero-splash">
+        <div class="moon"></div>
+        <div class="splash-character">
+          <div class="bunny-ear left"></div>
+          <div class="bunny-ear right"></div>
+          <div class="hair"></div>
+          <div class="face"></div>
+          <div class="body"></div>
+          <div class="weapon"></div>
+        </div>
+        <div class="mini-bunny">🐰</div>
+      </div>
+
       <aside class="menu-right">
-        <div class="glass profile">
-          <div class="avatar">🐰</div>
-          <div>
-            <strong>Guest</strong>
-            <p>Local save</p>
-          </div>
+        <div class="top-icons">
+          <button title="Discord">💬</button>
+          <button title="Gift">🎁</button>
+          <button title="News">📣</button>
+          <button title="Mail">✉</button>
+          <button data-open="settings" title="Settings">⚙</button>
         </div>
 
-        <div class="glass">
-          <h3>Resources</h3>
+        <div class="side-card glass">
+          <header><h3>Daily Missions</h3><span>COMING SOON 🔒</span></header>
+          <p>Complete missions to earn rewards.</p>
+          <div class="side-art">🧰</div>
+        </div>
+
+        <div class="side-card glass">
+          <header><h3>Season Event</h3><span>COMING SOON 🔒</span></header>
+          <p>Limited skins and special rewards later.</p>
+          <div class="side-art">🎀</div>
+        </div>
+
+        <div class="side-card glass">
+          <header><h3>Resources</h3></header>
           <p>🪙 <b id="menuCoins">0</b> coins</p>
           <p>📦 <b id="menuKeys">3</b> chest keys</p>
         </div>
 
-        <div class="glass">
-          <h3>Selected Skin</h3>
-          <p id="selectedSkinText">Cherry</p>
-        </div>
-
-        <div class="glass">
-          <h3>Best Run</h3>
+        <div class="side-card glass news">
+          <header><h3>News</h3><span>v0.2.2</span></header>
+          <p><b id="selectedSkinText">Cherry</b></p>
           <p id="bestRun">00:00 · 0 kills</p>
         </div>
       </aside>
+
+      <footer class="menu-footer">© 2026 CHERRIFT · prototype build</footer>
     </section>
 
     <section id="skins" class="panel hidden">
@@ -62,7 +98,33 @@
           <p>Skin = kinézet + lövés + aktív skill. Gear csak statot ad.</p>
         </div>
       </header>
-      <div id="skinGrid" class="card-grid"></div>
+
+      <div class="skin-carousel glass">
+        <button id="skinPrev" class="carousel-arrow">‹</button>
+        <div class="skin-display">
+          <div class="skin-splash" id="skinSplash">
+            <div class="skin-portrait" id="skinPortrait">🐰</div>
+          </div>
+          <div class="skin-info">
+            <div class="rarity-pill" id="skinRarity">Common</div>
+            <h3 id="skinName">Cherry</h3>
+            <p id="skinDesc">Default skin.</p>
+
+            <div class="skin-kit">
+              <div><span>Weapon</span><b id="skinWeapon">Pink Bloom Orb</b></div>
+              <div><span>Skill</span><b id="skinSkill">Bloom Dash</b></div>
+            </div>
+
+            <div class="ingame-preview">
+              <span>In-game preview</span>
+              <div class="mini-character-preview" id="skinMini">🐰</div>
+            </div>
+
+            <button id="skinEquip" class="menu-btn primary center">EQUIP</button>
+          </div>
+        </div>
+        <button id="skinNext" class="carousel-arrow">›</button>
+      </div>
     </section>
 
     <section id="gear" class="panel hidden">
@@ -70,19 +132,40 @@
         <button class="back">←</button>
         <div>
           <h2>Gear</h2>
-          <p>Crimson = offenzív, Azure = defenzív, Verdant = hybrid.</p>
+          <p>Crimson = offenzív, Azure = defenzív, Verdant = hybrid. Gear csak statot ad.</p>
         </div>
       </header>
-      <div class="gear-layout">
-        <div class="glass">
+
+      <div class="gear-screen">
+        <div class="paperdoll glass">
           <h3>Equipped</h3>
-          <div id="equipped" class="slots"></div>
+          <div class="body-wrap">
+            <div class="body-silhouette">
+              <div class="head"></div><div class="torso"></div><div class="arm left"></div><div class="arm right"></div><div class="leg left"></div><div class="leg right"></div>
+            </div>
+            <button class="gear-slot weapon" data-slot="Weapon"></button>
+            <button class="gear-slot helmet" data-slot="Helmet"></button>
+            <button class="gear-slot armor" data-slot="Armor"></button>
+            <button class="gear-slot gloves" data-slot="Gloves"></button>
+            <button class="gear-slot boots" data-slot="Boots"></button>
+            <button class="gear-slot ring" data-slot="Ring"></button>
+            <button class="gear-slot necklace" data-slot="Necklace"></button>
+          </div>
           <div id="totalStats" class="stats-box"></div>
         </div>
-        <div class="glass">
-          <h3>Inventory</h3>
-          <div id="inventory" class="card-grid compact"></div>
+
+        <div class="inventory-panel glass">
+          <div class="panel-title-row">
+            <h3>Inventory</h3>
+            <span id="inventoryCount">0 items</span>
+          </div>
+          <div id="inventory" class="inventory-grid"></div>
         </div>
+
+        <aside class="details-panel glass">
+          <h3>Details</h3>
+          <div id="gearDetails" class="gear-details-empty">Kattints egy equipped ikonra vagy inventory itemre.</div>
+        </aside>
       </div>
     </section>
 
@@ -91,13 +174,14 @@
         <button class="back">←</button>
         <div>
           <h2>Chests</h2>
-          <p>Gear garantált. Kis eséllyel skin is eshet.</p>
+          <p>Gear garantált. Kis eséllyel Common vagy Rare skin is eshet.</p>
         </div>
       </header>
+
       <div class="chest-wrap glass">
         <div class="chest-visual">📦</div>
         <h3>Bloom Chest</h3>
-        <p>Common / Uncommon / Rare gear. Ritkán Common vagy Rare skin.</p>
+        <p>Common / Uncommon / Rare gear. Ritkán skin unlock.</p>
         <button id="openChest" class="menu-btn primary center">OPEN · 1 KEY</button>
         <div id="chestResult" class="result"></div>
       </div>
@@ -108,19 +192,32 @@
         <button class="back">←</button>
         <div>
           <h2>Settings</h2>
-          <p>Mobilon nincs látható joystick. A bal oldali nagy terület érzékeli a mozgást.</p>
+          <p>Mobilon a bal oldali nagy képernyőterület mozgat. Nincs látható joystick UI.</p>
         </div>
       </header>
-      <div class="settings-card glass">
-        <label class="setting-row">
-          Master volume
-          <input id="volume" type="range" min="0" max="100" value="60" />
-        </label>
-        <label class="setting-row check">
-          <input id="touchMode" type="checkbox" checked />
-          Full-screen touch movement
-        </label>
-        <button id="fullscreen" class="fullscreen-btn">⛶ FULLSCREEN</button>
+
+      <div class="settings-grid">
+        <div class="settings-card glass">
+          <h3>Audio</h3>
+          <label class="setting-row">
+            <span>Master volume</span>
+            <input id="volume" type="range" min="0" max="100" value="60" />
+          </label>
+        </div>
+
+        <div class="settings-card glass">
+          <h3>Mobile Controls</h3>
+          <label class="setting-row check">
+            <input id="touchMode" type="checkbox" checked />
+            <span>Full-screen touch movement</span>
+          </label>
+          <p class="hint">A bal oldali nagy területen húzással mozogsz. A skill gomb külön marad jobb alul.</p>
+        </div>
+
+        <div class="settings-card glass">
+          <h3>Display</h3>
+          <button id="fullscreen" class="fullscreen-btn">⛶ FULLSCREEN</button>
+        </div>
       </div>
     </section>
 
@@ -167,6 +264,7 @@
     <div id="toast"></div>
   </div>
 
+  <script src="src/config.js"></script>
   <script src="src/data.js"></script>
   <script src="src/storage.js"></script>
   <script src="src/input.js"></script>
