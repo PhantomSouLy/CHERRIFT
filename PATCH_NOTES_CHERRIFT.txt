@@ -1,43 +1,22 @@
-CHERRIFT v0.3.6b Button + Skin Repair
+CHERRIFT v0.3.6c Splash Path Fix
 
 [Fixed]
-- Repaired menu buttons after v0.3.6a.
-- Removed the unsafe JS-based button feedback behavior and switched to safe CSS :active feedback.
-- Rebound core menu controls:
-  - Play
-  - mobile Play
-  - data-open menu buttons
-  - back buttons
-  - skin prev/next/equip
-  - pause/resume/fullscreen/settings
-  - world select controls
-  - stage clear controls
-- Skin carousel now renders from the active CHERRIFT_DATA skin every time.
-- Skin info no longer repeats the wrong description.
-- Skin selector now focuses on:
-  - rarity
-  - combat type
-  - skill name
-  - tap skill for info bubble
-- Splash art loader now tries multiple candidate paths and caches the first working one.
+- Corrected skin splash art paths based on the actual repo filenames.
 
-[Kept from v0.3.6a]
-- Map decor lower layer fix.
-- Small rock visual size fix.
-- Pink slime draw order / sprite fix.
-- Fairy Cherry right-walk flip fix.
-- Stage objective HUD reposition.
-- Button press feedback, now safely CSS-only.
-
-[Important]
-- If Base/Fairy splash art still does not appear, the image files are likely not present at the expected repo paths yet.
-- Expected preferred paths:
-  assets/player/skins/base_cherry/cherry_splash_art.png
-  assets/player/skins/fairy_cherry/fairy_cherry_splash_art.png
+[Actual preferred paths]
+- Base Cherry:
+  assets/player/skins/base_cherry/base_cherry_splash_art.png
+- Fairy Cherry:
+  assets/player/skins/fairy_cherry/fairy_cherry_splash_art.jpg
+- Beastclaw Cherry:
   assets/player/skins/beastclaw_cherry/beastclaw_cherry_splash_art.png
 
-[Files changed]
-- index.html
-- menu_v031.css
-- src/ui_texture_hotfix_v036a.js
-- PATCH_NOTES_CHERRIFT.txt
+[Changed]
+- Splash loader now tries .jpg and .png fallback paths.
+- Base Cherry now tries base_cherry_splash_art.png before cherry_splash_art.png.
+- Fairy Cherry now tries fairy_cherry_splash_art.jpg first.
+
+[Kept]
+- v0.3.6b button repair remains included.
+- Skin panel repair remains included.
+- CSS-only button feedback remains included.
