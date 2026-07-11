@@ -27,3 +27,22 @@ CHERRIFT v0.4.0b Clean CSS / Gear Drag / Zoom
 
 [Version]
 - v0.4.0b CLEAN CSS
+
+
+CHERRIFT v0.4.0c Hotfix
+
+[Fixed]
+- Equipped gear can now be dragged back to inventory even when inventory is empty.
+- Empty inventory now keeps a real drop zone/min-height.
+- Centered gear slots no longer shift on the paperdoll when clicked or dragged.
+- Level-up modal now appears above gameplay instead of being hidden by is-playing CSS.
+- Choosing an upgrade removes the level-up state and resumes the game.
+- PC camera zoom is much closer:
+  - PC browser: 1.42x base
+  - PC fullscreen: 1.34x base
+- Mobile zoom remains pulled back so it should not feel cramped.
+
+[Files changed]
+- menu_v040.css
+- src/cherrift_v040.js
+- index.html title only

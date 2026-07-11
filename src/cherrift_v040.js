@@ -606,3 +606,304 @@
   installGearDragV040b();
   window.CHERRIFT_V040 = { version: VERSION, stages: STAGES, enemies: ENEMIES, css:"clean-v040b" };
 })();
+
+
+/* ============================================================
+   CHERRIFT v0.4.0c HOTFIX
+   - Stronger PC zoom with full drawWorld override
+   - Level-up modal visibility fix
+   - Gear drag v040c captures old drag listeners and handles empty inventory
+   ============================================================ */
+(() => {
+  "use strict";
+
+  if (!window.UI || !window.CherriftGame) return;
+
+  const id = name => document.getElementById(name);
+  const qa = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+  if (window.CHERRIFT_CONFIG) CHERRIFT_CONFIG.version = "0.4.0c-hotfix";
+  if (window.CHERRIFT_DATA) CHERRIFT_DATA.version = "0.4.0c-hotfix";
+
+  function isFullscreen() {
+    return !!(document.fullscreenElement || document.webkitFullscreenElement);
+  }
+
+  function isMobileLike() {
+    const w = window.visualViewport?.width || window.innerWidth || 0;
+    const h = window.visualViewport?.height || window.innerHeight || 0;
+    return Math.min(w, h) <= 820;
+  }
+
+  function zoomV040c(game) {
+    const mobile = isMobileLike();
+    const w = window.visualViewport?.width || window.innerWidth || game.w || 1280;
+    const h = window.visualViewport?.height || window.innerHeight || game.h || 720;
+    const portrait = h >= w;
+    const setting = +(UI?.save?.settings?.viewZoom || 1);
+
+    if (mobile && portrait && !isFullscreen()) return 0.84 * setting;
+    if (mobile && portrait && isFullscreen()) return 0.78 * setting;
+    if (mobile && !portrait && !isFullscreen()) return 0.76 * setting;
+    if (mobile && !portrait && isFullscreen()) return 0.72 * setting;
+
+    if (isFullscreen()) return 1.34 * setting;
+    return 1.42 * setting;
+  }
+
+  CherriftGame.prototype.drawWorld = function drawWorldV040c(c) {
+    c.fillStyle = "#1f7d45";
+    c.fillRect(0, 0, this.w, this.h);
+    this.zoom = zoomV040c(this);
+    const zoom = this.zoom;
+
+    c.save();
+    c.translate(this.w / 2, this.h / 2);
+    c.scale(zoom, zoom);
+    c.translate(-this.camera.x, -this.camera.y);
+
+    this.drawGround(c, zoom);
+
+    const groundDecor = (this.obstacles || []).filter(o => o.kind === "flowers" || o.kind === "mushroom");
+    const solidDecor = (this.obstacles || []).filter(o => !(o.kind === "flowers" || o.kind === "mushroom"));
+    for (const o of groundDecor) this.drawObstacle(c, o);
+
+    const drawables = [
+      ...solidDecor,
+      ...(this.pickups || []),
+      ...(this.enemies || []),
+      ...(this.player ? [this.player] : []),
+      ...(this.bullets || []),
+      ...(this.effects || [])
+    ];
+    drawables.sort((a, b) => (a.y || 0) - (b.y || 0));
+    for (const o of drawables) this.drawObj(c, o);
+
+    c.restore();
+  };
+
+  const startBeforeV040c = CherriftGame.prototype.start;
+  if (!CherriftGame.prototype.__v040cStartPatch) {
+    CherriftGame.prototype.start = async function startV040c(...args) {
+      const result = await startBeforeV040c.apply(this, args);
+      setTimeout(() => {
+        this.zoom = zoomV040c(this);
+        try { this.resize?.(); this.render?.(); } catch (_) {}
+      }, 200);
+      return result;
+    };
+    CherriftGame.prototype.__v040cStartPatch = true;
+  }
+
+  ["resize", "orientationchange", "fullscreenchange", "webkitfullscreenchange"].forEach(ev => {
+    window.addEventListener(ev, () => setTimeout(() => {
+      if (UI?.game) {
+        UI.game.zoom = zoomV040c(UI.game);
+        try { UI.game.resize?.(); UI.game.render?.(); } catch (_) {}
+      }
+    }, 140), { passive: true });
+  });
+
+  const showLevelBeforeV040c = UI.showLevelUp?.bind(UI);
+  UI.showLevelUp = function showLevelUpV040c(game) {
+    document.body.classList.add("is-levelup");
+    const result = showLevelBeforeV040c ? showLevelBeforeV040c(game) : undefined;
+    id("levelModal")?.classList.remove("hidden");
+    return result;
+  };
+
+  const hideLevelBeforeV040c = UI.hideLevelUp?.bind(UI);
+  UI.hideLevelUp = function hideLevelUpV040c(...args) {
+    document.body.classList.remove("is-levelup");
+    return hideLevelBeforeV040c ? hideLevelBeforeV040c(...args) : undefined;
+  };
+
+  const applyBeforeV040c = CherriftGame.prototype.applyUpgrade;
+  CherriftGame.prototype.applyUpgrade = function applyUpgradeV040c(up) {
+    const result = applyBeforeV040c.call(this, up);
+    document.body.classList.remove("is-levelup");
+    this.mode = "playing";
+    return result;
+  };
+
+  let drag = null;
+  let suppressClickUntil = 0;
+
+  function cleanDragV040c() {
+    drag = null;
+    document.body.classList.remove("gear-dragging-v040a", "gear-dragging-v040b", "gear-dragging-v040c");
+    id("inventory")?.classList.remove("drag-target-v040a", "drag-target-v040b", "drag-target-v040c");
+    qa(".inventory-panel").forEach(el => el.classList.remove("drag-target-v040c"));
+    qa(".gear-slot").forEach(el => {
+      el.classList.remove("drag-eligible", "drag-disabled", "drag-eligible-v040c", "drag-disabled-v040c");
+    });
+    qa(".drag-ghost,.drag-ghost-v040a,.drag-ghost-v040b,.drag-ghost-v040c").forEach(el => el.remove());
+  }
+
+  function payloadFromTarget(target) {
+    const item = target.closest?.(".inv-item");
+    if (item) {
+      const gear = UI.save?.inventory?.find(g => g.id === item.dataset.gearId);
+      if (!gear) return null;
+      return { source: "inventory", gear, id: gear.id, slot: gear.slot, emoji: UI.gearEmoji?.(gear) || "💠" };
+    }
+
+    const slot = target.closest?.(".gear-slot");
+    if (slot && slot.dataset.gearId) {
+      const gear = UI.save?.equipped?.[slot.dataset.slot];
+      if (!gear) return null;
+      return { source: "equipped", gear, id: gear.id, slot: gear.slot, emoji: UI.gearEmoji?.(gear) || "💠" };
+    }
+
+    return null;
+  }
+
+  function moveGhost(x, y) {
+    if (!drag?.ghost) return;
+    drag.ghost.style.transform = `translate(${Math.round(x - 36)}px, ${Math.round(y - 36)}px)`;
+  }
+
+  function beginDrag(e) {
+    if (!drag || drag.active) return;
+    drag.active = true;
+    document.body.classList.add("gear-dragging-v040c");
+
+    const ghost = document.createElement("div");
+    ghost.className = "drag-ghost-v040c";
+    ghost.innerHTML = `<span>${drag.payload.emoji}</span>`;
+    document.body.appendChild(ghost);
+    drag.ghost = ghost;
+    moveGhost(e.clientX, e.clientY);
+
+    if (drag.payload.source === "inventory") {
+      qa(".gear-slot").forEach(el => {
+        const ok = el.dataset.slot === drag.payload.slot;
+        el.classList.toggle("drag-eligible-v040c", ok);
+        el.classList.toggle("drag-disabled-v040c", !ok);
+      });
+    } else {
+      id("inventory")?.classList.add("drag-target-v040c");
+      qa(".inventory-panel").forEach(el => el.classList.add("drag-target-v040c"));
+    }
+  }
+
+  function finishDrag(e) {
+    if (!drag || drag.pointerId !== e.pointerId) return;
+
+    const payload = drag.payload;
+    const wasActive = drag.active;
+    const target = document.elementFromPoint(e.clientX, e.clientY);
+
+    cleanDragV040c();
+
+    if (!wasActive) {
+      if (payload.source === "inventory") {
+        UI.showGearDetails?.(payload.gear, "inventory");
+        UI.highlightGear?.(payload.id);
+      } else {
+        UI.showGearDetails?.(payload.gear, "equipped");
+        UI.highlightGear?.(payload.id);
+      }
+      return;
+    }
+
+    suppressClickUntil = Date.now() + 350;
+
+    const slotBtn = target?.closest?.(".gear-slot");
+    const inventoryDrop = target?.closest?.("#inventory,.inventory-grid,.inventory-panel");
+
+    if (payload.source === "inventory" && slotBtn && slotBtn.dataset.slot === payload.slot) {
+      UI.equipGear?.(payload.id);
+    } else if (payload.source === "equipped" && inventoryDrop) {
+      UI.unequipGear?.(payload.slot);
+    } else {
+      UI.renderGear?.();
+    }
+  }
+
+  function installGearDragV040c() {
+    if (UI.__v040cGearDragInstalled) return;
+    UI.__v040cGearDragInstalled = true;
+
+    document.addEventListener("pointerdown", e => {
+      const gearPanel = e.target.closest?.("#gear");
+      if (!gearPanel || gearPanel.classList.contains("hidden")) return;
+
+      const payload = payloadFromTarget(e.target);
+      if (!payload) return;
+
+      e.preventDefault();
+      e.stopImmediatePropagation();
+
+      drag = {
+        pointerId: e.pointerId,
+        payload,
+        startX: e.clientX,
+        startY: e.clientY,
+        active: false,
+        ghost: null
+      };
+
+      try { e.target.setPointerCapture?.(e.pointerId); } catch (_) {}
+    }, true);
+
+    document.addEventListener("pointermove", e => {
+      if (!drag || drag.pointerId !== e.pointerId) return;
+
+      const moved = Math.hypot(e.clientX - drag.startX, e.clientY - drag.startY);
+      if (moved > 9) beginDrag(e);
+
+      if (drag.active) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        moveGhost(e.clientX, e.clientY);
+      }
+    }, true);
+
+    document.addEventListener("pointerup", e => {
+      if (!drag || drag.pointerId !== e.pointerId) return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      finishDrag(e);
+    }, true);
+
+    document.addEventListener("pointercancel", e => {
+      if (drag && drag.pointerId === e.pointerId) cleanDragV040c();
+    }, true);
+
+    document.addEventListener("click", e => {
+      if (Date.now() < suppressClickUntil) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+      }
+    }, true);
+
+    window.addEventListener("blur", cleanDragV040c);
+    document.addEventListener("visibilitychange", () => { if (document.hidden) cleanDragV040c(); });
+  }
+
+  const renderGearBeforeV040c = UI.renderGear?.bind(UI);
+  UI.renderGear = function renderGearV040c(...args) {
+    const result = renderGearBeforeV040c ? renderGearBeforeV040c(...args) : undefined;
+    installGearDragV040c();
+    return result;
+  };
+
+  const openBeforeV040c = UI.open?.bind(UI);
+  UI.open = function openV040c(panel, ...args) {
+    cleanDragV040c();
+    const result = openBeforeV040c ? openBeforeV040c(panel, ...args) : undefined;
+    if (panel === "gear") setTimeout(installGearDragV040c, 0);
+    return result;
+  };
+
+  const refreshBeforeV040c = UI.refreshMenu?.bind(UI);
+  UI.refreshMenu = function refreshMenuV040c(...args) {
+    const result = refreshBeforeV040c ? refreshBeforeV040c(...args) : undefined;
+    const build = id("menuBuildVersion");
+    if (build) build.textContent = "v0.4.0c HOTFIX";
+    return result;
+  };
+
+  installGearDragV040c();
+})();

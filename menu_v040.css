@@ -31,3 +31,79 @@ body.is-playing #game{display:block!important;opacity:1!important;visibility:vis
 @media (max-width:1180px){.mainmenu-v026{grid-template-columns:minmax(330px,470px) 1fr!important}.mainmenu-v026 .menu-hero-space{display:none}.mainmenu-v026 .side-card.patch-card{display:none}}
 @media (max-width:860px){.mainmenu-v026{display:block!important;overflow:auto!important;padding:max(14px,env(safe-area-inset-top)) 12px max(84px,env(safe-area-inset-bottom))!important;background-position:58% center!important}.mainmenu-v026 .menu-left,.mainmenu-v026 .menu-right,.mainmenu-v026 .menu-footer,.mainmenu-v026 .menu-hero-space{display:none!important}.mobile-home-v031{position:relative;z-index:60;display:block;min-height:calc(100dvh - 96px)}.mobile-topbar{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.mobile-pill{min-height:48px;padding:8px 10px;border-radius:16px;background:rgba(10,7,17,.72);border:1px solid rgba(255,255,255,.14);box-shadow:0 10px 24px rgba(0,0,0,.22)}.mobile-pill span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.8px;opacity:.66;font-weight:900}.mobile-pill b{display:block;margin-top:2px;font-size:18px}.mobile-stage-card{padding:16px;border-radius:26px;border:1px solid rgba(255,255,255,.16);background:linear-gradient(135deg,rgba(10,7,17,.80),rgba(10,7,17,.52));box-shadow:0 18px 48px rgba(0,0,0,.32);backdrop-filter:blur(12px)}.mobile-stage-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}.stage-chip,.season-chip{display:inline-flex;align-items:center;min-height:28px;padding:0 10px;border-radius:999px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);color:var(--pink2);font-weight:1000;font-size:11px;text-transform:uppercase;letter-spacing:.7px}.mobile-stage-title{margin:0;font-size:30px;line-height:1}.mobile-stage-sub{margin:7px 0 12px;opacity:.72}.mobile-stage-preview{border-radius:22px;overflow:hidden;border:1px solid rgba(255,255,255,.12);margin-bottom:12px}.mobile-stage-art{min-height:245px;background:radial-gradient(circle at 50% 40%,rgba(255,255,255,.10),transparent 34%),linear-gradient(135deg,rgba(255,91,172,.20),rgba(12,7,18,.88));background-position:center center!important;background-size:cover!important;background-repeat:no-repeat!important}.mobile-stage-meta{display:grid;grid-template-columns:1fr 1fr;gap:10px}.meta-box,.mobile-reward-box{min-width:0;padding:12px;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05)}.meta-box span,.mobile-reward-box span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.8px;opacity:.62;font-weight:900}.meta-box b,.mobile-reward-box b{display:block;margin-top:4px;font-size:14px}.mobile-action-row{margin-top:12px}.mobile-play-btn{width:100%;min-height:74px;border-radius:22px;color:#fff;font-weight:1000;font-size:24px;background:linear-gradient(135deg,rgba(255,82,166,.96),rgba(255,163,207,.82));border:1px solid rgba(255,235,246,.88);box-shadow:0 0 36px rgba(255,47,150,.42),inset 0 0 0 1px rgba(255,255,255,.20)}.mobile-play-btn small{display:block;margin-top:2px;font-size:11px;opacity:.8;letter-spacing:.8px;text-transform:uppercase}.mobile-bottom-nav{position:fixed;left:10px;right:10px;bottom:max(10px,env(safe-area-inset-bottom));z-index:90;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:8px;border-radius:22px;background:rgba(8,5,13,.82);border:1px solid rgba(255,255,255,.14);box-shadow:0 18px 44px rgba(0,0,0,.42);backdrop-filter:blur(14px)}.mobile-bottom-nav button{min-height:58px;border-radius:16px;display:grid;place-items:center;gap:2px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.10)}.mobile-bottom-nav span{font-size:21px}.mobile-bottom-nav b{font-size:11px;opacity:.82}.skin-display,.gear-screen{grid-template-columns:1fr!important}#skins .skin-splash{min-height:min(680px,64vh)}.body-wrap{max-height:none}.world-carousel-shell{grid-template-columns:46px minmax(0,1fr) 46px;gap:8px}.world-arrow{height:72px;border-radius:18px;font-size:40px}.world-stage-image{min-height:260px}.world-card-meta,.world-select-actions,.stage-clear-summary,.stage-clear-actions,.settings-quick-actions{grid-template-columns:1fr}body.is-playing #hud{padding-top:max(10px,env(safe-area-inset-top))!important}body.is-playing .stage-hud{top:max(64px,calc(env(safe-area-inset-top) + 64px))!important;left:10px!important;max-width:calc(100vw - 20px)}.boss-hud-v040{top:max(50px,calc(env(safe-area-inset-top) + 50px));width:min(430px,76vw)}.boss-hud-v040 .boss-name{font-size:12px}.boss-hud-v040 .boss-bar{height:10px}.raid-warning-v040{top:20%;padding:13px 14px}}
 @media (max-width:520px){.panel{padding:max(14px,env(safe-area-inset-top)) 12px max(18px,env(safe-area-inset-bottom))}.panel-head{gap:10px}.back{width:48px;height:48px}.mobile-stage-art{min-height:220px}.inventory-grid{grid-template-columns:repeat(auto-fill,minmax(66px,1fr))}.inv-item{min-height:66px}}
+
+
+/* ============================================================
+   CHERRIFT v0.4.0c HOTFIX
+   Gear drag empty inventory, centered slot transform, level-up visibility
+   ============================================================ */
+
+#inventory,
+.inventory-grid {
+  min-height: 118px !important;
+}
+.inventory-panel {
+  min-height: 190px !important;
+}
+#gear .gear-slot:active {
+  transform: none !important;
+}
+#gear .gear-slot.helmet:active,
+#gear .gear-slot.armor:active,
+#gear .gear-slot.boots:active {
+  transform: translateX(-50%) !important;
+}
+.drag-ghost-v040c {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 72px;
+  height: 72px;
+  z-index: 100000;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.24);
+  background: rgba(22, 14, 30, .88);
+  box-shadow: 0 18px 44px rgba(0,0,0,.42), 0 0 26px rgba(255,91,172,.30);
+  transform: translate(-9999px, -9999px);
+}
+.drag-ghost-v040c span { font-size: 34px; }
+body.gear-dragging-v040c {
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+  touch-action: none !important;
+}
+body.gear-dragging-v040c #gear {
+  touch-action: none !important;
+  overscroll-behavior: none !important;
+}
+#gear .gear-slot.drag-eligible-v040c {
+  border-color: rgba(255, 143, 203, .95) !important;
+  box-shadow: 0 0 24px rgba(255, 91, 172, .42) !important;
+}
+#gear .gear-slot.drag-disabled-v040c {
+  opacity: .34 !important;
+  filter: grayscale(.5) !important;
+}
+#inventory.drag-target-v040c,
+.inventory-panel.drag-target-v040c {
+  outline: 2px dashed rgba(255, 143, 203, .60);
+  outline-offset: 8px;
+  border-radius: 18px;
+}
+body.is-playing #levelModal:not(.hidden),
+body.is-levelup #levelModal:not(.hidden) {
+  display: grid !important;
+  z-index: 380 !important;
+  pointer-events: auto !important;
+}
+body.is-levelup #levelModal .modal-card,
+body.is-levelup #levelModal .upgrade-card,
+body.is-levelup #levelModal button {
+  pointer-events: auto !important;
+}
+body.is-levelup #skill {
+  display: none !important;
+}
