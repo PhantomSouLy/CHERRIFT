@@ -1825,3 +1825,100 @@ body.is-playing .stage-box b,
 body.is-playing .stage-box small {
   font-size: 11px !important;
 }
+
+
+/* CHERRIFT v0.3.7 - preload / gear / world select hotfix */
+.boot-preloader-v037 {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(255,91,172,.22), transparent 34%),
+    linear-gradient(180deg, rgba(7,4,14,.98), rgba(17,6,28,.98));
+}
+.boot-preloader-v037.hidden {
+  display: none !important;
+}
+.boot-preloader-card-v037 {
+  width: min(520px, 92vw);
+  padding: 28px 22px;
+  border-radius: 28px;
+  text-align: center;
+  border: 1px solid rgba(255,190,226,.34);
+  background: rgba(9,5,16,.78);
+  box-shadow: 0 26px 80px rgba(0,0,0,.42);
+}
+.boot-preloader-card-v037 h1 {
+  margin: 0 0 10px;
+  font-size: clamp(42px, 11vw, 72px);
+  line-height: .92;
+  color: #fff9fd;
+  text-shadow: 0 0 12px #fff, 0 0 28px #ff5bac;
+}
+.boot-bar-v037 {
+  height: 16px;
+  margin: 18px 0 10px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+}
+.boot-bar-v037 i {
+  display: block;
+  height: 100%;
+  width: 5%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #ff5bac, #ffd2e9);
+  transition: width .12s ease;
+}
+.boot-text-v037 {
+  opacity: .8;
+  font-weight: 900;
+}
+body.preloading-v037 #app {
+  visibility: hidden;
+}
+body.preloading-v037 #game {
+  visibility: hidden;
+}
+.drag-ghost {
+  pointer-events: none !important;
+  z-index: 10000 !important;
+}
+body.gear-dragging-v037 {
+  overscroll-behavior: none;
+  touch-action: none;
+}
+body.gear-dragging-v037 #gear,
+body.gear-dragging-v037 #inventory,
+body.gear-dragging-v037 .gear-screen {
+  touch-action: none !important;
+  overscroll-behavior: none !important;
+}
+.world-stage-dots-v037 {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.world-stage-dots-v037 button {
+  width: 12px;
+  height: 12px;
+  min-width: 12px;
+  min-height: 12px;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.22);
+  background: rgba(255,255,255,.16);
+}
+.world-stage-dots-v037 button.active {
+  background: #ff8ccc;
+  box-shadow: 0 0 14px rgba(255,91,172,.42);
+}
+.world-stage-dots-v037 button.locked {
+  opacity: .42;
+}
