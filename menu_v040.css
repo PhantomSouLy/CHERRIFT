@@ -107,3 +107,21 @@ body.is-levelup #levelModal button {
 body.is-levelup #skill {
   display: none !important;
 }
+
+
+/* ============================================================
+   CHERRIFT v0.4.0d WORLD FIX
+   assets/map/world1 support + World 2 night mood
+   ============================================================ */
+
+.world-stage-image.night,
+.mobile-stage-art.night {
+  box-shadow:
+    inset 0 0 0 999px rgba(5, 7, 28, .28),
+    inset 0 0 80px rgba(90, 84, 255, .20);
+  filter: saturate(.92) brightness(.82) contrast(1.08);
+}
+
+body.world-night-v040d #game {
+  background: #06081a !important;
+}

@@ -907,3 +907,325 @@
 
   installGearDragV040c();
 })();
+
+
+/* ============================================================
+   CHERRIFT v0.4.0d WORLD FIX
+   - New assets/map/world1 folder paths
+   - World 1 retexture pass
+   - World 2 night mode using tinted tile/decor system
+   ============================================================ */
+(() => {
+  "use strict";
+
+  if (!window.CHERRIFT_CONFIG || !window.CherriftGame || !window.UI) return;
+
+  const id = name => document.getElementById(name);
+
+  CHERRIFT_CONFIG.version = "0.4.0d-world-fix";
+  if (window.CHERRIFT_DATA) CHERRIFT_DATA.version = "0.4.0d-world-fix";
+
+  const W1 = {
+    bush1: "assets/map/world1/bush_01.png",
+    bush2: "assets/map/world1/bush_02.png",
+    flower1: "assets/map/world1/flower1.png",
+    flower2: "assets/map/world1/flower2.png",
+    grassTile: "assets/map/world1/grass_tile.png",
+    grassTile02: "assets/map/world1/grass_tile02.png",
+    log: "assets/map/world1/log.png",
+    mushroom: "assets/map/world1/mushroom.png",
+    rockBig: "assets/map/world1/rock_big.png",
+    rockSmall: "assets/map/world1/rock_small.png",
+    treeBig: "assets/map/world1/tree_big.png",
+    treeSmall: "assets/map/world1/tree_small.png",
+    world1: "assets/map/world1/world1.png",
+    dirtClearing: "assets/map/world1/world1_dirt_clearing.png",
+    grassBasic: "assets/map/world1/world1_grass_basic.png",
+    cloverFlowers: "assets/map/world1/world1_grass_clover_flowers.png",
+    grassDirtMix: "assets/map/world1/world1_grass_dirt_mix.png",
+    flowersRocks: "assets/map/world1/world1_grass_flowers_rocks.png"
+  };
+
+  // Update all known map keys so original loaders and v0.4 loaders use the new folder.
+  Object.assign(CHERRIFT_CONFIG.map, {
+    grass: W1.grassTile,
+    grass2: W1.grassBasic,
+    grassNight: W1.grassTile02,
+    bush1: W1.bush1,
+    bush2: W1.bush2,
+    flower1: W1.flower1,
+    flower2: W1.flower2,
+    mushroom: W1.mushroom,
+    log: W1.log,
+    rockBig: W1.rockBig,
+    rockSmall: W1.rockSmall,
+    treeBig: W1.treeBig,
+    treeSmall: W1.treeSmall,
+    world1: W1.world1,
+
+    // No separate World 2 folder yet. Use World 1 splash as fallback; gameplay gets night tint.
+    world2: W1.world1,
+
+    world1Basic: W1.grassBasic,
+    world1FlowersRocks: W1.flowersRocks,
+    world1DirtClearing: W1.dirtClearing,
+    world1GrassDirtMix: W1.grassDirtMix,
+    world1CloverFlowers: W1.cloverFlowers
+  });
+
+  // Extra asset aliases for the new world1 folder. Missing optional paths do not break boot.
+  if (window.ImageAssets && !ImageAssets.prototype.__v040dWorldAssets) {
+    const oldLoadAll = ImageAssets.prototype.loadAll;
+    ImageAssets.prototype.loadAll = async function loadAllV040d() {
+      await oldLoadAll.call(this);
+      const entries = {
+        grass: W1.grassTile,
+        grassNight: W1.grassTile02,
+        bush1: W1.bush1,
+        bush2: W1.bush2,
+        flower1: W1.flower1,
+        flower2: W1.flower2,
+        mushroom: W1.mushroom,
+        log: W1.log,
+        rockBig: W1.rockBig,
+        rockSmall: W1.rockSmall,
+        treeBig: W1.treeBig,
+        treeSmall: W1.treeSmall,
+        world1: W1.world1,
+        world2: W1.world1,
+
+        w1Base: W1.grassBasic,
+        w1Tile: W1.grassTile,
+        w1Night: W1.grassTile02,
+        w1Mix: W1.grassDirtMix,
+        w1Clover: W1.cloverFlowers,
+        w1Rocks: W1.flowersRocks,
+        w1Dirt: W1.dirtClearing
+      };
+
+      await Promise.all(Object.entries(entries).map(([key, src]) => {
+        if (!src) return Promise.resolve();
+        return this.loadImage(key, src).catch(() => null);
+      }));
+
+      this.ready = true;
+    };
+    ImageAssets.prototype.__v040dWorldAssets = true;
+  }
+
+  function hash2(x, y, seed = 0) {
+    let h = ((x + seed * 131) * 374761393 + (y - seed * 17) * 668265263) >>> 0;
+    h = (h ^ (h >> 13)) >>> 0;
+    h = (h * 1274126177) >>> 0;
+    return ((h ^ (h >> 16)) >>> 0) / 4294967295;
+  }
+
+  function coverCrop(c, img, x, y, size, alpha = 1, cropRatio = .12) {
+    if (!img) {
+      c.fillStyle = "#4aab48";
+      c.fillRect(x, y, size + 1, size + 1);
+      return;
+    }
+
+    const sw = img.naturalWidth || img.width;
+    const sh = img.naturalHeight || img.height;
+    const crop = Math.floor(Math.min(sw, sh) * cropRatio);
+    c.save();
+    c.globalAlpha = alpha;
+    c.drawImage(img, crop, crop, sw - crop * 2, sh - crop * 2, x, y, size + 1, size + 1);
+    c.restore();
+  }
+
+  function drawWorld1Tile(game, c, gx, gy, x, y, size) {
+    const base = game.assets.get("w1Base") || game.assets.get("grass") || game.assets.get("w1Tile");
+    const tile = game.assets.get("w1Tile");
+    const mix = game.assets.get("w1Mix");
+    const clover = game.assets.get("w1Clover");
+    const rocks = game.assets.get("w1Rocks");
+    const dirt = game.assets.get("w1Dirt");
+
+    // Always fill with full grass first to avoid gaps.
+    coverCrop(c, base, x, y, size, 1, .12);
+
+    // Micro variation: old grass tile blended softly over the generated grass.
+    if (tile && hash2(gx, gy, 2) < .58) coverCrop(c, tile, x, y, size, .18, .08);
+
+    const r = hash2(gx, gy, 9);
+    if (r < .20) coverCrop(c, mix, x, y, size, .68, .12);
+    else if (r < .34) coverCrop(c, clover, x, y, size, .54, .12);
+    else if (r < .46) coverCrop(c, rocks, x, y, size, .50, .12);
+    else if (r < .55) coverCrop(c, dirt, x, y, size, .58, .12);
+
+    // Very subtle per-cell tint so it does not look flat/repeated.
+    const t = hash2(gx, gy, 21);
+    if (t > .78) {
+      c.save();
+      c.globalAlpha = .025;
+      c.fillStyle = t > .90 ? "#fff3b2" : "#1b6f2e";
+      c.fillRect(x, y, size + 1, size + 1);
+      c.restore();
+    }
+  }
+
+  function drawWorld2NightTile(game, c, gx, gy, x, y, size) {
+    const base = game.assets.get("w1Night") || game.assets.get("w1Base") || game.assets.get("grass");
+    const mix = game.assets.get("w1Mix");
+    const clover = game.assets.get("w1Clover");
+    const rocks = game.assets.get("w1Rocks");
+    const dirt = game.assets.get("w1Dirt");
+
+    coverCrop(c, base, x, y, size, 1, .10);
+
+    const r = hash2(gx, gy, 44);
+    if (r < .16) coverCrop(c, mix, x, y, size, .32, .12);
+    else if (r < .27) coverCrop(c, rocks, x, y, size, .28, .12);
+    else if (r < .37) coverCrop(c, clover, x, y, size, .22, .12);
+    else if (r < .46) coverCrop(c, dirt, x, y, size, .24, .12);
+
+    // Night palette overlay per tile.
+    c.save();
+    c.globalAlpha = .42;
+    c.fillStyle = "#07102b";
+    c.fillRect(x, y, size + 1, size + 1);
+    c.globalAlpha = .10;
+    c.fillStyle = hash2(gx, gy, 71) > .68 ? "#6248b8" : "#0a2440";
+    c.fillRect(x, y, size + 1, size + 1);
+    c.restore();
+
+    // Small moonlight patches.
+    if (hash2(gx, gy, 91) > .86) {
+      c.save();
+      c.globalAlpha = .045;
+      c.fillStyle = "#d8e9ff";
+      c.beginPath();
+      c.ellipse(x + size * hash2(gx, gy, 92), y + size * hash2(gx, gy, 93), size * .38, size * .24, 0, 0, Math.PI * 2);
+      c.fill();
+      c.restore();
+    }
+  }
+
+  // Retextured World 1 + night World 2 ground.
+  CherriftGame.prototype.drawGround = function drawGroundV040d(c, zoom = 1) {
+    const stage = this.stage || this.getSelectedStage?.();
+    const size = 128;
+    const viewW = this.w / zoom;
+    const viewH = this.h / zoom;
+    const startX = Math.floor((this.camera.x - viewW / 2) / size) - 1;
+    const endX = Math.floor((this.camera.x + viewW / 2) / size) + 1;
+    const startY = Math.floor((this.camera.y - viewH / 2) / size) - 1;
+    const endY = Math.floor((this.camera.y + viewH / 2) / size) + 1;
+    const night = stage?.world === 2 || stage?.theme === "forest_night";
+
+    document.body.classList.toggle("world-night-v040d", !!night);
+
+    for (let gx = startX; gx <= endX; gx++) {
+      for (let gy = startY; gy <= endY; gy++) {
+        const x = gx * size;
+        const y = gy * size;
+        if (night) drawWorld2NightTile(this, c, gx, gy, x, y, size);
+        else drawWorld1Tile(this, c, gx, gy, x, y, size);
+      }
+    }
+  };
+
+  // Slightly different and denser-looking decoration by world.
+  CherriftGame.prototype.generateMap = function generateMapV040d() {
+    const obs = [];
+    const stage = this.stage || this.getSelectedStage?.() || { world: 1 };
+    const night = stage.world === 2 || stage.theme === "forest_night";
+
+    const add = (kind, count, r, solid = true) => {
+      for (let i = 0; i < count; i++) {
+        let x = 0, y = 0, ok = false;
+        for (let t = 0; t < 110 && !ok; t++) {
+          x = (Math.random() - .5) * 3800;
+          y = (Math.random() - .5) * 3800;
+          ok = Math.hypot(x, y) > 260 && obs.every(o => Math.hypot(o.x - x, o.y - y) > (o.r || 20) + r + 30);
+        }
+        if (ok) obs.push({
+          kind, x, y, r, solid,
+          phase: Math.random() * 9,
+          variant: Math.random() > .5 ? "flower2" : "flower1",
+          night
+        });
+      }
+    };
+
+    // World 1: richer meadow without overblocking.
+    // World 2: slightly less flower, more rocks/mushrooms, darker vibe.
+    add("treeBig", night ? 8 : 10, 74, true);
+    add("treeSmall", night ? 14 : 13, 54, true);
+    add("log", night ? 12 : 14, 48, true);
+    add("bush1", night ? 10 : 16, 42, true);
+    add("bush2", night ? 10 : 16, 42, true);
+    add("rockBig", night ? 14 : 10, 38, true);
+    add("rockSmall", night ? 20 : 18, 26, true);
+    add("flowers", night ? 20 : 56, 18, false);
+    add("mushroom", night ? 38 : 18, 22, false);
+    return obs;
+  };
+
+  // Draw the same world1 decor assets, with night tint for World 2.
+  const oldDrawObstacle = CherriftGame.prototype.drawObstacle;
+  CherriftGame.prototype.drawObstacle = function drawObstacleV040d(c, o) {
+    const night = o?.night || this.stage?.world === 2 || this.stage?.theme === "forest_night";
+    c.save();
+    if (night) {
+      c.globalAlpha = .92;
+      c.filter = "brightness(0.72) saturate(0.82) hue-rotate(12deg)";
+    }
+
+    // Reuse existing image drawing logic with the remapped asset keys.
+    oldDrawObstacle.call(this, c, o);
+
+    c.restore();
+
+    if (night && (o.kind === "mushroom" || o.kind === "flowers") && hash2(Math.round(o.x), Math.round(o.y), 7) > .45) {
+      c.save();
+      c.globalAlpha = .16;
+      c.fillStyle = o.kind === "mushroom" ? "#7d72ff" : "#b8e8ff";
+      c.beginPath();
+      c.ellipse(o.x, o.y + 8, (o.r || 18) * 1.2, (o.r || 18) * .42, 0, 0, Math.PI * 2);
+      c.fill();
+      c.restore();
+    }
+  };
+
+  // World select / mobile home should show night style for World 2.
+  const oldRenderWorldPanel = UI.renderWorldPanel?.bind(UI);
+  UI.renderWorldPanel = function renderWorldPanelV040d(...args) {
+    const result = oldRenderWorldPanel ? oldRenderWorldPanel(...args) : undefined;
+    const stage = (window.CHERRIFT_V040?.stages || []).find(s => s.id === this.save?.selectedStageId) || null;
+    const idxStage = (window.CHERRIFT_V040?.stages || [])[this.worldCarouselIndex || 0] || stage;
+    const night = idxStage?.world === 2 || idxStage?.theme === "forest_night";
+    const img = id("carouselStageImage");
+    if (img) {
+      img.classList.toggle("night", !!night);
+      img.style.backgroundImage = `linear-gradient(180deg, rgba(5,3,12,.06), rgba(5,3,12,.42)), url("${CHERRIFT_CONFIG.map.world1}")`;
+    }
+    return result;
+  };
+
+  const oldRefreshMenu = UI.refreshMenu?.bind(UI);
+  UI.refreshMenu = function refreshMenuV040d(...args) {
+    const result = oldRefreshMenu ? oldRefreshMenu(...args) : undefined;
+    const build = id("menuBuildVersion");
+    if (build) build.textContent = "v0.4.0d WORLD FIX";
+
+    // Mobile stage card night tint.
+    const stageId = this.save?.selectedStageId;
+    const stage = (window.CHERRIFT_V040?.stages || []).find(s => s.id === stageId);
+    const art = id("mobileStageArt");
+    if (art && stage) {
+      const night = stage.world === 2 || stage.theme === "forest_night";
+      art.classList.toggle("night", !!night);
+      art.style.backgroundImage = `linear-gradient(180deg, rgba(5,3,12,.06), rgba(5,3,12,.42)), url("${CHERRIFT_CONFIG.map.world1}")`;
+    }
+    return result;
+  };
+
+  if (window.CHERRIFT_V040) {
+    window.CHERRIFT_V040.version = "0.4.0d-world-fix";
+    window.CHERRIFT_V040.worldAssets = W1;
+  }
+})();

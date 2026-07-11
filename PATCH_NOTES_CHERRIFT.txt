@@ -46,3 +46,42 @@ CHERRIFT v0.4.0c Hotfix
 - menu_v040.css
 - src/cherrift_v040.js
 - index.html title only
+
+
+CHERRIFT v0.4.0d World Fix / Retexture
+
+[Fixed]
+- Map asset paths now use the new folder:
+  assets/map/world1/
+- Old flat assets/map/world1_*.png paths are no longer required.
+- World 1 decor paths now point to:
+  assets/map/world1/bush_01.png
+  assets/map/world1/tree_big.png
+  assets/map/world1/rock_big.png
+  etc.
+
+[World 1 Retexture]
+- World 1 ground now uses a richer tile mix:
+  - grass basic base
+  - grass tile micro overlay
+  - grass/dirt mix
+  - clover/flowers
+  - flowers/rocks
+  - dirt clearing
+- Added subtle per-cell tint variation.
+- Decoration density adjusted so the first world is less empty/boring.
+
+[World 2 Night Mode]
+- World 2 now uses the same world1 folder assets as fallback, but with:
+  - darker blue/purple night tint
+  - lower saturation
+  - moonlight patches
+  - more mushrooms/rocks
+  - fewer bright meadow flowers
+- This prepares the code for a future assets/map/world2/ folder later.
+
+[Important]
+- Put your map assets here:
+  assets/map/world1/
+- This ZIP does not need to include those images because you already moved them locally.
+- Keep the filenames exactly as shown in your screenshot.
