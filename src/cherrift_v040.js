@@ -2,7 +2,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "0.4.0-clean";
+  const VERSION = "0.4.0b-clean-css";
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => Array.from(root.querySelectorAll(sel));
   const id = name => document.getElementById(name);
@@ -284,7 +284,7 @@
 
     UI.refreshMenu = function(){
       normalizeSave(this.save);
-      setText("menuBuildVersion","v0.4.0 CLEAN BUILD");
+      setText("menuBuildVersion","v0.4.0b CLEAN CSS");
       setText("menuCoins", this.save.coins); setText("menuKeys", this.save.keys);
       setText("mobileCoinsValue", this.save.coins); setText("mobileKeysValue", this.save.keys); setText("mobileEnergyValue", "5");
       const skin=CHERRIFT_DATA.skins.find(s=>s.id===this.save.selectedSkin)||CHERRIFT_DATA.skins[0];
@@ -463,152 +463,53 @@
     document.addEventListener("fullscreenchange",()=>setTimeout(()=>applyViewportClass(),160),{passive:true});
   }
 
-  patchUI();
-  patchGame();
-  window.CHERRIFT_V040 = { version: VERSION, stages: STAGES, enemies: ENEMIES };
-})();
+  // ---------------------------------------------------------------------------
+  // Gear drag v0.4.0b
+  // Clean pointer-based drag/drop. Native browser drag/drop is not used.
+  // Tap = details. Drag inventory item to matching slot = equip.
+  // Drag equipped item to inventory = unequip.
+  // ---------------------------------------------------------------------------
+  let gearDragV040b = null;
 
-
-/* ============================================================
-   CHERRIFT v0.4.0a HOTFIX
-   - Gear drag returned with pointer system
-   - PC zoom increased
-   - Mobile zoom reduced
-   - PC skin splash layout stabilized
-   ============================================================ */
-(() => {
-  "use strict";
-
-  const VERSION = "0.4.0a-hotfix";
-  const id = name => document.getElementById(name);
-  const qa = (sel, root = document) => Array.from(root.querySelectorAll(sel));
-  const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
-
-  if (!window.UI || !window.CherriftGame || !window.CHERRIFT_CONFIG || !window.CHERRIFT_DATA) return;
-
-  CHERRIFT_CONFIG.version = VERSION;
-  CHERRIFT_DATA.version = VERSION;
-
-  function isFullscreen() {
-    return !!(document.fullscreenElement || document.webkitFullscreenElement);
-  }
-
-  function isMobileLike() {
-    const w = window.visualViewport?.width || window.innerWidth || 0;
-    const h = window.visualViewport?.height || window.innerHeight || 0;
-    return Math.min(w, h) <= 820;
-  }
-
-  function computeZoom040a(game) {
-    const w = window.visualViewport?.width || window.innerWidth || game.w || 1280;
-    const h = window.visualViewport?.height || window.innerHeight || game.h || 720;
-    const mobile = Math.min(w, h) <= 820;
-    const portrait = h >= w;
-    const setting = +(UI?.save?.settings?.viewZoom || 1);
-
-    // PC: zoom in more. Mobile: zoom out compared to v0.4.0.
-    if (mobile && portrait && !isFullscreen()) return 0.88 * setting;
-    if (mobile && portrait && isFullscreen()) return 0.76 * setting;
-    if (mobile) return 0.74 * setting;
-
-    if (isFullscreen()) return 1.08 * setting;
-    return 1.02 * setting;
-  }
-
-  function applyViewportClass040a() {
-    document.body.classList.toggle("mobile-browser-v040", isMobileLike() && !isFullscreen());
-  }
-
-  const oldDrawWorld = CherriftGame.prototype.drawWorld;
-  if (!CherriftGame.prototype.__v040aZoomPatched) {
-    CherriftGame.prototype.drawWorld = function drawWorldV040a(ctx) {
-      this.zoom = computeZoom040a(this);
-      return oldDrawWorld.call(this, ctx);
-    };
-    CherriftGame.prototype.__v040aZoomPatched = true;
-  }
-
-  const oldStart = CherriftGame.prototype.start;
-  if (!CherriftGame.prototype.__v040aStartPatched) {
-    CherriftGame.prototype.start = async function startV040a(...args) {
-      const result = await oldStart.apply(this, args);
-      setTimeout(() => {
-        this.zoom = computeZoom040a(this);
-        try { this.resize?.(); this.render?.(); } catch (_) {}
-      }, 220);
-      return result;
-    };
-    CherriftGame.prototype.__v040aStartPatched = true;
-  }
-
-  ["resize", "orientationchange", "fullscreenchange", "webkitfullscreenchange", "pageshow"].forEach(ev => {
-    window.addEventListener(ev, () => {
-      setTimeout(() => {
-        applyViewportClass040a();
-        if (UI?.game) {
-          UI.game.zoom = computeZoom040a(UI.game);
-          try { UI.game.resize?.(); UI.game.render?.(); } catch (_) {}
-        }
-      }, 140);
-    }, { passive: true });
-    document.addEventListener(ev, () => {
-      setTimeout(() => {
-        applyViewportClass040a();
-        if (UI?.game) {
-          UI.game.zoom = computeZoom040a(UI.game);
-          try { UI.game.resize?.(); UI.game.render?.(); } catch (_) {}
-        }
-      }, 140);
-    }, { passive: true });
-  });
-
-  // ---------------- Gear drag v0.4.0a ----------------
-  let drag = null;
-
-  function cleanDrag() {
-    drag = null;
-    document.body.classList.remove("gear-dragging-v040a");
-    id("inventory")?.classList.remove("drag-target-v040a");
+  function cleanGearDragV040b() {
+    gearDragV040b = null;
+    document.body.classList.remove("gear-dragging-v040b");
+    id("inventory")?.classList.remove("drag-target-v040b");
     qa(".gear-slot").forEach(el => el.classList.remove("drag-eligible", "drag-disabled"));
-    qa(".drag-ghost-v040a,.drag-ghost").forEach(el => el.remove());
+    qa(".drag-ghost-v040b,.drag-ghost").forEach(el => el.remove());
   }
 
-  function gearEmoji(gear) {
-    return UI.gearEmoji ? UI.gearEmoji(gear) : "💠";
-  }
-
-  function getPayloadFromTarget(target) {
+  function gearPayloadFromTargetV040b(target) {
     const item = target.closest?.(".inv-item");
     if (item) {
       const gear = UI.save?.inventory?.find(g => g.id === item.dataset.gearId);
       if (!gear) return null;
-      return { source: "inventory", gear, id: gear.id, slot: gear.slot, emoji: gearEmoji(gear) };
+      return { source:"inventory", gear, id:gear.id, slot:gear.slot, emoji:UI.gearEmoji?.(gear) || "💠" };
     }
-
     const slot = target.closest?.(".gear-slot");
     if (slot && slot.dataset.gearId) {
       const gear = UI.save?.equipped?.[slot.dataset.slot];
       if (!gear) return null;
-      return { source: "equipped", gear, id: gear.id, slot: gear.slot, emoji: gearEmoji(gear) };
+      return { source:"equipped", gear, id:gear.id, slot:gear.slot, emoji:UI.gearEmoji?.(gear) || "💠" };
     }
-
     return null;
   }
 
-  function createGhost(payload) {
+  function createGearGhostV040b(payload, x, y) {
     const ghost = document.createElement("div");
-    ghost.className = "drag-ghost-v040a";
+    ghost.className = "drag-ghost-v040b";
     ghost.innerHTML = `<span>${payload.emoji}</span>`;
     document.body.appendChild(ghost);
+    moveGearGhostV040b(x, y, ghost);
     return ghost;
   }
 
-  function moveGhost(x, y) {
-    if (!drag?.ghost) return;
-    drag.ghost.style.transform = `translate(${Math.round(x - 36)}px, ${Math.round(y - 36)}px)`;
+  function moveGearGhostV040b(x, y, ghost = gearDragV040b?.ghost) {
+    if (!ghost) return;
+    ghost.style.transform = `translate(${Math.round(x - 36)}px, ${Math.round(y - 36)}px)`;
   }
 
-  function highlightTargets(payload) {
+  function highlightGearTargetsV040b(payload) {
     if (payload.source === "inventory") {
       qa(".gear-slot").forEach(el => {
         const ok = el.dataset.slot === payload.slot;
@@ -616,26 +517,24 @@
         el.classList.toggle("drag-disabled", !ok);
       });
     } else {
-      id("inventory")?.classList.add("drag-target-v040a");
+      id("inventory")?.classList.add("drag-target-v040b");
     }
   }
 
-  function beginDragging(e) {
-    if (!drag || drag.active) return;
-    drag.active = true;
-    drag.ghost = createGhost(drag.payload);
-    document.body.classList.add("gear-dragging-v040a");
-    highlightTargets(drag.payload);
-    moveGhost(e.clientX, e.clientY);
+  function beginGearDragV040b(e) {
+    if (!gearDragV040b || gearDragV040b.active) return;
+    gearDragV040b.active = true;
+    document.body.classList.add("gear-dragging-v040b");
+    gearDragV040b.ghost = createGearGhostV040b(gearDragV040b.payload, e.clientX, e.clientY);
+    highlightGearTargetsV040b(gearDragV040b.payload);
   }
 
-  function finishPointer(e) {
-    if (!drag || drag.pointerId !== e.pointerId) return;
-
-    const payload = drag.payload;
-    const wasActive = drag.active;
+  function finishGearDragV040b(e) {
+    if (!gearDragV040b || gearDragV040b.pointerId !== e.pointerId) return;
+    const payload = gearDragV040b.payload;
+    const wasActive = gearDragV040b.active;
     const target = document.elementFromPoint(e.clientX, e.clientY);
-    cleanDrag();
+    cleanGearDragV040b();
 
     if (!wasActive) {
       if (payload.source === "inventory") {
@@ -650,7 +549,6 @@
 
     const slotBtn = target?.closest?.(".gear-slot");
     const inv = target?.closest?.("#inventory");
-
     if (payload.source === "inventory" && slotBtn && slotBtn.dataset.slot === payload.slot) {
       UI.equipGear?.(payload.id);
     } else if (payload.source === "equipped" && inv) {
@@ -660,94 +558,51 @@
     }
   }
 
-  function installGearDrag040a() {
-    if (UI.__v040aGearDragInstalled) return;
-    UI.__v040aGearDragInstalled = true;
-
+  function installGearDragV040b() {
+    if (UI.__v040bGearDragInstalled) return;
+    UI.__v040bGearDragInstalled = true;
     document.addEventListener("pointerdown", e => {
       const gearPanel = e.target.closest?.("#gear");
       if (!gearPanel || gearPanel.classList.contains("hidden")) return;
-
-      const payload = getPayloadFromTarget(e.target);
+      const payload = gearPayloadFromTargetV040b(e.target);
       if (!payload) return;
-
       e.preventDefault();
       e.stopPropagation();
-
-      drag = {
-        pointerId: e.pointerId,
-        payload,
-        startX: e.clientX,
-        startY: e.clientY,
-        active: false,
-        ghost: null
-      };
-
+      gearDragV040b = { pointerId:e.pointerId, payload, startX:e.clientX, startY:e.clientY, active:false, ghost:null };
       try { e.target.setPointerCapture?.(e.pointerId); } catch (_) {}
-    }, { passive: false });
-
+    }, { passive:false });
     document.addEventListener("pointermove", e => {
-      if (!drag || drag.pointerId !== e.pointerId) return;
-
-      const moved = Math.hypot(e.clientX - drag.startX, e.clientY - drag.startY);
-      if (moved > 8) beginDragging(e);
-
-      if (drag.active) {
-        e.preventDefault();
-        e.stopPropagation();
-        moveGhost(e.clientX, e.clientY);
-      }
-    }, { passive: false });
-
+      if (!gearDragV040b || gearDragV040b.pointerId !== e.pointerId) return;
+      const moved = Math.hypot(e.clientX - gearDragV040b.startX, e.clientY - gearDragV040b.startY);
+      if (moved > 9) beginGearDragV040b(e);
+      if (gearDragV040b.active) { e.preventDefault(); e.stopPropagation(); moveGearGhostV040b(e.clientX, e.clientY); }
+    }, { passive:false });
     document.addEventListener("pointerup", e => {
-      if (!drag || drag.pointerId !== e.pointerId) return;
-      e.preventDefault();
-      e.stopPropagation();
-      finishPointer(e);
-    }, { passive: false });
-
-    document.addEventListener("pointercancel", e => {
-      if (drag && drag.pointerId === e.pointerId) cleanDrag();
-    }, { passive: true });
-
-    window.addEventListener("blur", cleanDrag);
-    document.addEventListener("visibilitychange", () => { if (document.hidden) cleanDrag(); });
+      if (!gearDragV040b || gearDragV040b.pointerId !== e.pointerId) return;
+      e.preventDefault(); e.stopPropagation(); finishGearDragV040b(e);
+    }, { passive:false });
+    document.addEventListener("pointercancel", e => { if (gearDragV040b && gearDragV040b.pointerId === e.pointerId) cleanGearDragV040b(); }, { passive:true });
+    window.addEventListener("blur", cleanGearDragV040b);
+    document.addEventListener("visibilitychange", () => { if (document.hidden) cleanGearDragV040b(); });
   }
 
-  const oldRenderGear = UI.renderGear?.bind(UI);
-  UI.renderGear = function renderGearV040a(...args) {
-    const result = oldRenderGear ? oldRenderGear(...args) : undefined;
-    installGearDrag040a();
+  const renderGearBeforeV040b = UI.renderGear?.bind(UI);
+  UI.renderGear = function renderGearV040b(...args) {
+    const result = renderGearBeforeV040b ? renderGearBeforeV040b(...args) : undefined;
+    installGearDragV040b();
     return result;
   };
 
-  const oldOpen = UI.open?.bind(UI);
-  UI.open = function openV040a(panel, ...args) {
-    cleanDrag();
-    const result = oldOpen ? oldOpen(panel, ...args) : undefined;
-    if (panel === "gear") setTimeout(installGearDrag040a, 0);
+  const openBeforeV040b = UI.open?.bind(UI);
+  UI.open = function openV040b(panel, ...args) {
+    cleanGearDragV040b();
+    const result = openBeforeV040b ? openBeforeV040b(panel, ...args) : undefined;
+    if (panel === "gear") setTimeout(installGearDragV040b, 0);
     return result;
   };
 
-  const oldRefresh = UI.refreshMenu?.bind(UI);
-  UI.refreshMenu = function refreshV040a(...args) {
-    const result = oldRefresh ? oldRefresh(...args) : undefined;
-    const build = id("menuBuildVersion");
-    if (build) build.textContent = "v0.4.0a HOTFIX";
-    return result;
-  };
-
-  const oldSkinRender = UI.renderSkinCarousel?.bind(UI);
-  UI.renderSkinCarousel = function renderSkinV040a(...args) {
-    const result = oldSkinRender ? oldSkinRender(...args) : undefined;
-    const splash = id("skinSplash");
-    if (splash && !isMobileLike()) {
-      splash.style.backgroundSize = "contain";
-      splash.style.backgroundPosition = "center center";
-    }
-    return result;
-  };
-
-  installGearDrag040a();
-  applyViewportClass040a();
+  patchUI();
+  patchGame();
+  installGearDragV040b();
+  window.CHERRIFT_V040 = { version: VERSION, stages: STAGES, enemies: ENEMIES, css:"clean-v040b" };
 })();
