@@ -1229,3 +1229,256 @@
     window.CHERRIFT_V040.worldAssets = W1;
   }
 })();
+
+
+/* ============================================================
+   CHERRIFT v0.4.0e GRASS MIX
+   World 1 randomized 4-tile ground system.
+   Expected files:
+   assets/map/world1/world1_grass1.png        main grass
+   assets/map/world1/world1_grass2.png        sparser/drier
+   assets/map/world1/world1_grass_rock.png    pebbly
+   assets/map/world1/world1_grass_flower.png  flowered
+   ============================================================ */
+(() => {
+  "use strict";
+
+  if (!window.CHERRIFT_CONFIG || !window.CherriftGame || !window.UI) return;
+
+  const id = name => document.getElementById(name);
+
+  CHERRIFT_CONFIG.version = "0.4.0e-grass-mix";
+  if (window.CHERRIFT_DATA) CHERRIFT_DATA.version = "0.4.0e-grass-mix";
+
+  const WORLD1_TILES_V040E = {
+    grass1: "assets/map/world1/world1_grass1.png",
+    grass2: "assets/map/world1/world1_grass2.png",
+    rock: "assets/map/world1/world1_grass_rock.png",
+    flower: "assets/map/world1/world1_grass_flower.png",
+
+    // existing decoration folder structure
+    bush1: "assets/map/world1/bush_01.png",
+    bush2: "assets/map/world1/bush_02.png",
+    flower1: "assets/map/world1/flower1.png",
+    flower2: "assets/map/world1/flower2.png",
+    grassNight: "assets/map/world1/grass_tile02.png",
+    log: "assets/map/world1/log.png",
+    mushroom: "assets/map/world1/mushroom.png",
+    rockBig: "assets/map/world1/rock_big.png",
+    rockSmall: "assets/map/world1/rock_small.png",
+    treeBig: "assets/map/world1/tree_big.png",
+    treeSmall: "assets/map/world1/tree_small.png",
+    world1: "assets/map/world1/world1.png"
+  };
+
+  Object.assign(CHERRIFT_CONFIG.map, {
+    grass: WORLD1_TILES_V040E.grass1,
+    grassNight: WORLD1_TILES_V040E.grassNight,
+    bush1: WORLD1_TILES_V040E.bush1,
+    bush2: WORLD1_TILES_V040E.bush2,
+    flower1: WORLD1_TILES_V040E.flower1,
+    flower2: WORLD1_TILES_V040E.flower2,
+    mushroom: WORLD1_TILES_V040E.mushroom,
+    log: WORLD1_TILES_V040E.log,
+    rockBig: WORLD1_TILES_V040E.rockBig,
+    rockSmall: WORLD1_TILES_V040E.rockSmall,
+    treeBig: WORLD1_TILES_V040E.treeBig,
+    treeSmall: WORLD1_TILES_V040E.treeSmall,
+    world1: WORLD1_TILES_V040E.world1,
+
+    world1Grass1: WORLD1_TILES_V040E.grass1,
+    world1Grass2: WORLD1_TILES_V040E.grass2,
+    world1GrassRock: WORLD1_TILES_V040E.rock,
+    world1GrassFlower: WORLD1_TILES_V040E.flower
+  });
+
+  // Load the four new World 1 grass tiles plus remapped decor.
+  if (window.ImageAssets && !ImageAssets.prototype.__v040eGrassTiles) {
+    const oldLoadAll = ImageAssets.prototype.loadAll;
+    ImageAssets.prototype.loadAll = async function loadAllV040e() {
+      await oldLoadAll.call(this);
+
+      const entries = {
+        grass: WORLD1_TILES_V040E.grass1,
+        grassNight: WORLD1_TILES_V040E.grassNight,
+
+        w1Grass1: WORLD1_TILES_V040E.grass1,
+        w1Grass2: WORLD1_TILES_V040E.grass2,
+        w1GrassRock: WORLD1_TILES_V040E.rock,
+        w1GrassFlower: WORLD1_TILES_V040E.flower,
+
+        bush1: WORLD1_TILES_V040E.bush1,
+        bush2: WORLD1_TILES_V040E.bush2,
+        flower1: WORLD1_TILES_V040E.flower1,
+        flower2: WORLD1_TILES_V040E.flower2,
+        mushroom: WORLD1_TILES_V040E.mushroom,
+        log: WORLD1_TILES_V040E.log,
+        rockBig: WORLD1_TILES_V040E.rockBig,
+        rockSmall: WORLD1_TILES_V040E.rockSmall,
+        treeBig: WORLD1_TILES_V040E.treeBig,
+        treeSmall: WORLD1_TILES_V040E.treeSmall,
+        world1: WORLD1_TILES_V040E.world1
+      };
+
+      await Promise.all(Object.entries(entries).map(([key, src]) => {
+        return this.loadImage(key, src).catch(() => null);
+      }));
+
+      this.ready = true;
+    };
+    ImageAssets.prototype.__v040eGrassTiles = true;
+  }
+
+  // Deterministic "random": every tile coordinate always picks the same texture.
+  // That means the map looks random, but does NOT flicker or change while moving.
+  function hash2V040e(x, y, seed = 0) {
+    let h = ((x + seed * 101) * 374761393 + (y - seed * 37) * 668265263) >>> 0;
+    h = (h ^ (h >> 13)) >>> 0;
+    h = (h * 1274126177) >>> 0;
+    return ((h ^ (h >> 16)) >>> 0) / 4294967295;
+  }
+
+  function drawTileCoverV040e(c, img, x, y, size, alpha = 1) {
+    if (!img) {
+      c.save();
+      c.globalAlpha = alpha;
+      c.fillStyle = "#5cac39";
+      c.fillRect(x, y, size + 1, size + 1);
+      c.restore();
+      return;
+    }
+
+    const sw = img.naturalWidth || img.width;
+    const sh = img.naturalHeight || img.height;
+
+    // center crop to square, then draw to the map cell
+    const side = Math.min(sw, sh);
+    const sx = Math.floor((sw - side) / 2);
+    const sy = Math.floor((sh - side) / 2);
+
+    c.save();
+    c.globalAlpha = alpha;
+    c.drawImage(img, sx, sy, side, side, x, y, size + 1, size + 1);
+    c.restore();
+  }
+
+  function pickWorld1GrassV040e(game, gx, gy) {
+    const r = hash2V040e(gx, gy, 5);
+
+    // Recommended World 1 balance:
+    // 60% main grass, 18% sparser, 12% flower, 10% pebbly.
+    if (r < .60) return game.assets.get("w1Grass1") || game.assets.get("grass");
+    if (r < .78) return game.assets.get("w1Grass2") || game.assets.get("w1Grass1") || game.assets.get("grass");
+    if (r < .90) return game.assets.get("w1GrassFlower") || game.assets.get("w1Grass1") || game.assets.get("grass");
+    return game.assets.get("w1GrassRock") || game.assets.get("w1Grass1") || game.assets.get("grass");
+  }
+
+  function drawWorld1GrassCellV040e(game, c, gx, gy, x, y, size) {
+    // 1) The base tile: one of the four actual grass textures.
+    drawTileCoverV040e(c, pickWorld1GrassV040e(game, gx, gy), x, y, size, 1);
+
+    // 2) Soft blend layer from a neighboring category, so it is not hard checkerboard.
+    const blendChance = hash2V040e(gx, gy, 21);
+    if (blendChance > .72) {
+      const blendType = hash2V040e(gx, gy, 22);
+      let overlay = null;
+      if (blendType < .38) overlay = game.assets.get("w1Grass2");
+      else if (blendType < .68) overlay = game.assets.get("w1GrassFlower");
+      else overlay = game.assets.get("w1GrassRock");
+
+      drawTileCoverV040e(c, overlay, x, y, size, .20);
+    }
+
+    // 3) Tiny tint variation to kill repetition.
+    const tint = hash2V040e(gx, gy, 31);
+    if (tint > .80) {
+      c.save();
+      c.globalAlpha = .025;
+      c.fillStyle = tint > .91 ? "#fff0a8" : "#245e28";
+      c.fillRect(x, y, size + 1, size + 1);
+      c.restore();
+    }
+  }
+
+  function drawWorld2NightFallbackV040e(game, c, gx, gy, x, y, size) {
+    // World 2 still uses the four tiles as fallback, but darkened.
+    drawWorld1GrassCellV040e(game, c, gx, gy, x, y, size);
+
+    c.save();
+    c.globalAlpha = .46;
+    c.fillStyle = "#06112c";
+    c.fillRect(x, y, size + 1, size + 1);
+
+    if (hash2V040e(gx, gy, 77) > .86) {
+      c.globalAlpha = .06;
+      c.fillStyle = "#b9ceff";
+      c.beginPath();
+      c.ellipse(
+        x + size * hash2V040e(gx, gy, 78),
+        y + size * hash2V040e(gx, gy, 79),
+        size * .34,
+        size * .20,
+        0,
+        0,
+        Math.PI * 2
+      );
+      c.fill();
+    }
+
+    c.restore();
+  }
+
+  // Override ground draw for World 1/2.
+  CherriftGame.prototype.drawGround = function drawGroundV040e(c, zoom = 1) {
+    const stage = this.stage || this.getSelectedStage?.();
+    const size = 128;
+    const viewW = this.w / zoom;
+    const viewH = this.h / zoom;
+
+    const startX = Math.floor((this.camera.x - viewW / 2) / size) - 1;
+    const endX = Math.floor((this.camera.x + viewW / 2) / size) + 1;
+    const startY = Math.floor((this.camera.y - viewH / 2) / size) - 1;
+    const endY = Math.floor((this.camera.y + viewH / 2) / size) + 1;
+
+    const night = stage?.world === 2 || stage?.theme === "forest_night";
+
+    for (let gx = startX; gx <= endX; gx++) {
+      for (let gy = startY; gy <= endY; gy++) {
+        const x = gx * size;
+        const y = gy * size;
+
+        if (night) drawWorld2NightFallbackV040e(this, c, gx, gy, x, y, size);
+        else drawWorld1GrassCellV040e(this, c, gx, gy, x, y, size);
+      }
+    }
+  };
+
+  // Make menu/world select point at new World 1 image too.
+  const oldRefreshMenu = UI.refreshMenu?.bind(UI);
+  UI.refreshMenu = function refreshMenuV040e(...args) {
+    const result = oldRefreshMenu ? oldRefreshMenu(...args) : undefined;
+    const build = id("menuBuildVersion");
+    if (build) build.textContent = "v0.4.0e GRASS MIX";
+
+    const art = id("mobileStageArt");
+    if (art) {
+      art.style.backgroundImage = `linear-gradient(180deg, rgba(5,3,12,.06), rgba(5,3,12,.42)), url("${WORLD1_TILES_V040E.world1}")`;
+    }
+    return result;
+  };
+
+  const oldRenderWorldPanel = UI.renderWorldPanel?.bind(UI);
+  UI.renderWorldPanel = function renderWorldPanelV040e(...args) {
+    const result = oldRenderWorldPanel ? oldRenderWorldPanel(...args) : undefined;
+    const art = id("carouselStageImage");
+    if (art) {
+      art.style.backgroundImage = `linear-gradient(180deg, rgba(5,3,12,.06), rgba(5,3,12,.42)), url("${WORLD1_TILES_V040E.world1}")`;
+    }
+    return result;
+  };
+
+  if (window.CHERRIFT_V040) {
+    window.CHERRIFT_V040.version = "0.4.0e-grass-mix";
+    window.CHERRIFT_V040.world1GrassTiles = WORLD1_TILES_V040E;
+  }
+})();

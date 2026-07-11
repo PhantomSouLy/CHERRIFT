@@ -85,3 +85,33 @@ CHERRIFT v0.4.0d World Fix / Retexture
   assets/map/world1/
 - This ZIP does not need to include those images because you already moved them locally.
 - Keep the filenames exactly as shown in your screenshot.
+
+
+CHERRIFT v0.4.0e Grass Mix
+
+[World 1 Grass Tile Randomizer]
+Expected files in:
+assets/map/world1/
+
+- world1_grass1.png        main grass, most common
+- world1_grass2.png        sparser / slightly dry grass
+- world1_grass_rock.png    pebbly grass
+- world1_grass_flower.png  flower grass
+
+[Mix Ratio]
+- 60% world1_grass1
+- 18% world1_grass2
+- 12% world1_grass_flower
+- 10% world1_grass_rock
+
+[How it works]
+- The system uses deterministic coordinate hash randomization.
+- Every tile coordinate always picks the same texture.
+- This looks random while staying stable.
+- No flicker, no changing ground while moving.
+- Adds subtle overlay blending on some tiles so it does not look like a checkerboard.
+
+[World 2]
+- World 2 still uses the same four grass tiles as fallback.
+- It gets a dark blue/purple night overlay.
+- Later it can be switched to assets/map/world2/ when separate night tiles exist.
