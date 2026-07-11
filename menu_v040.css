@@ -2126,3 +2126,104 @@ body.mobile-browser-v039b .stage-hud {
     min-height: min(680px, 64vh);
   }
 }
+
+
+/* CHERRIFT v0.3.9c - gear ghost / ground tile / sprite scale hotfix */
+.drag-ghost,
+.drag-ghost.v038,
+.drag-ghost.v039c {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+#gear .inv-item,
+#gear .gear-slot {
+  touch-action: manipulation !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+}
+body.gear-dragging-v037,
+body.gear-dragging-v038,
+body.gear-dragging-v039c {
+  overflow: auto !important;
+  touch-action: auto !important;
+}
+#gear .inv-item:active,
+#gear .gear-slot:active {
+  transform: scale(.96);
+  filter: brightness(1.08);
+}
+
+
+/* ============================================================
+   CHERRIFT v0.4.0 CLEAN BUILD
+   Runtime is consolidated into src/cherrift_v040.js
+   ============================================================ */
+#kills { display:none!important; }
+
+body.preloading-v040 #app, body.preloading-v040 #game { visibility:hidden; }
+.boot-preloader-v040{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;padding:24px;background:radial-gradient(circle at 50% 33%,rgba(255,91,172,.22),transparent 34%),linear-gradient(180deg,rgba(7,4,14,.98),rgba(17,6,28,.98))}
+.boot-preloader-v040.hidden{display:none!important}
+.boot-card-v040{width:min(520px,92vw);padding:28px 22px;border-radius:28px;text-align:center;border:1px solid rgba(255,190,226,.34);background:rgba(9,5,16,.78);box-shadow:0 26px 80px rgba(0,0,0,.42)}
+.boot-card-v040 h1{margin:0 0 10px;font-size:clamp(42px,11vw,72px);line-height:.92;color:#fff9fd;text-shadow:0 0 12px #fff,0 0 28px #ff5bac}
+.boot-bar-v040{height:16px;margin:18px 0 10px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14)}
+.boot-bar-v040 i{display:block;width:5%;height:100%;border-radius:inherit;background:linear-gradient(90deg,#ff5bac,#ffd2e9);transition:width .14s ease}
+.boot-text-v040{opacity:.84;font-weight:900}
+
+body.is-playing #game{display:block!important;opacity:1!important;visibility:visible!important;position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;z-index:0!important}
+html:fullscreen,body:fullscreen,html:-webkit-full-screen,body:-webkit-full-screen{width:100vw!important;height:100vh!important;overflow:hidden!important;background:#05020a!important}
+html:fullscreen #game,body:fullscreen #game,html:-webkit-full-screen #game,body:-webkit-full-screen #game{width:100vw!important;height:100vh!important}
+body.mobile-browser-v040 #hud{transform:scale(1.14)!important;transform-origin:top left!important}
+body.mobile-browser-v040 #skill{transform:scale(1.12)!important;transform-origin:bottom right!important}
+
+body.is-playing .stage-hud{top:max(150px,calc(env(safe-area-inset-top) + 150px))!important;left:22px!important;right:auto!important;transform:none!important;max-width:calc(100vw - 44px)!important;z-index:62!important;pointer-events:none!important}
+body.is-playing .stage-box{display:inline-flex!important;align-items:center!important;justify-content:flex-start!important;gap:6px!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;backdrop-filter:none!important;text-shadow:0 2px 8px rgba(0,0,0,.72),0 0 10px rgba(0,0,0,.5)}
+body.is-playing .stage-box .tiny{display:none!important}
+body.is-playing .stage-box b,body.is-playing .stage-box small{margin:0!important;color:#fff!important;font-size:11px!important;line-height:1.1!important;white-space:nowrap}
+body.is-playing .stage-box b::after{content:" ·"}
+body.is-playing .raid-box{display:none!important}
+
+.raid-warning-v040{position:fixed;left:50%;top:18%;transform:translate(-50%,-50%) scale(.96);z-index:250;min-width:min(520px,82vw);padding:16px 18px;border-radius:22px;text-align:center;pointer-events:none;opacity:0;background:linear-gradient(135deg,rgba(255,47,150,.92),rgba(255,129,190,.70));border:1px solid rgba(255,235,246,.76);box-shadow:0 0 36px rgba(255,47,150,.42),0 20px 60px rgba(0,0,0,.38);transition:opacity .16s ease,transform .16s ease}
+.raid-warning-v040.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.raid-warning-v040 b{display:block;font-size:clamp(28px,7vw,52px);line-height:1;letter-spacing:1px;text-shadow:0 4px 16px rgba(0,0,0,.35)}
+.raid-warning-v040 small{display:block;margin-top:6px;font-weight:900;opacity:.9}
+
+.boss-hud-v040{position:fixed;left:50%;top:max(54px,calc(env(safe-area-inset-top) + 54px));transform:translateX(-50%);z-index:240;width:min(620px,72vw);pointer-events:none;opacity:0;transition:opacity .18s ease}
+.boss-hud-v040.show{opacity:1}
+.boss-hud-v040 .boss-name{text-align:center;font-weight:1000;letter-spacing:.9px;text-transform:uppercase;color:#ffe3f2;text-shadow:0 2px 10px rgba(0,0,0,.75);margin-bottom:5px}
+.boss-hud-v040 .boss-bar{height:13px;border-radius:999px;overflow:hidden;background:rgba(0,0,0,.44);border:1px solid rgba(255,255,255,.22);box-shadow:0 8px 18px rgba(0,0,0,.24)}
+.boss-hud-v040 .boss-bar i{display:block;height:100%;width:100%;border-radius:inherit;background:linear-gradient(90deg,#ff3f9f,#ffd2e9);box-shadow:0 0 18px rgba(255,91,172,.55)}
+
+#skins .skin-splash{background-position:center center!important;background-size:cover!important;background-repeat:no-repeat!important;min-height:min(740px,66vh)}
+#skins .skin-splash.has-splash-art .skin-portrait{opacity:0!important}
+#skins #skinDesc,#skins .ingame-preview,#skins #skinMini{display:none!important}
+.skin-meta-row-v040{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 14px}
+.skin-meta-row-v040 .rarity-pill,.skin-meta-row-v040 .combat-pill-v040{display:inline-flex;align-items:center;min-height:34px;padding:0 14px;border-radius:999px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.09);font-weight:1000}
+.skin-kit-v040{display:grid!important;grid-template-columns:1fr!important;gap:12px!important;margin:18px 0!important}
+.skill-line-v040{min-height:76px;padding:14px 16px;cursor:pointer}
+.skill-line-v040 b{display:flex!important;align-items:center;gap:10px}
+.skill-icon-v040{width:34px;height:34px;display:inline-grid;place-items:center;border-radius:12px;background:linear-gradient(135deg,rgba(255,91,172,.95),rgba(255,210,233,.45))}
+.skill-bubble-v040{margin-top:10px;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);color:rgba(255,245,251,.92);font-weight:750;line-height:1.35}
+.skill-bubble-v040.hidden{display:none!important}
+
+#gear .inv-item,#gear .gear-slot{touch-action:manipulation!important;user-select:none!important;-webkit-user-select:none!important}
+.drag-ghost{display:none!important;pointer-events:none!important}
+.dragging{pointer-events:none!important}
+#gear .inv-item:active,#gear .gear-slot:active,button:active,.menu-btn:active,.carousel-arrow:active,.world-arrow:active,.fullscreen-btn:active,.upgrade-card:active{transform:scale(.965);filter:brightness(1.08)}
+
+.world-stage-dots-v040{display:flex;justify-content:center;flex-wrap:wrap;gap:7px;margin:12px auto 0}
+.world-stage-dots-v040 button{width:13px;height:13px;min-width:13px;min-height:13px;padding:0;border-radius:999px;border:1px solid rgba(255,255,255,.24);background:rgba(255,255,255,.16)}
+.world-stage-dots-v040 button.active{background:#ff8ccc;box-shadow:0 0 14px rgba(255,91,172,.48)}
+.world-stage-dots-v040 button.locked{opacity:.42}
+.world-stage-image.has-world-art,.mobile-stage-art.has-world-art{background-position:center center!important;background-size:cover!important;background-repeat:no-repeat!important}
+.stage-clear-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.stage-clear-actions .menu-btn{width:100%!important;margin:0!important}
+
+@media (max-width:820px){
+  #skins .skin-splash{min-height:min(680px,64vh)}
+  .boss-hud-v040{top:max(50px,calc(env(safe-area-inset-top) + 50px));width:min(430px,76vw)}
+  .boss-hud-v040 .boss-name{font-size:12px}
+  .boss-hud-v040 .boss-bar{height:10px}
+  .raid-warning-v040{top:20%;padding:13px 14px}
+  .stage-clear-actions{grid-template-columns:1fr}
+}

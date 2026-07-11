@@ -1,0 +1,24 @@
+CHERRIFT v0.4 cleanup delete list
+
+Ezeket a régi patch fájlokat törölheted GitHubon, mert v0.4 már nem tölti be őket:
+
+src/beastclaw.js
+src/progression_v031.js
+src/world_select_carousel_v031.js
+src/stage_loading_freeze_fix_v031.js
+src/levelup_freeze_fix_v031.js
+src/progression_fullscreen_patch_v032.js
+src/combat_hud_upgrade_patch_v033.js
+src/pause_settings_polish_v034.js
+src/texture_splash_patch_v035.js
+src/real_texture_assets_patch_v036.js
+src/ui_texture_hotfix_v036a.js
+src/preload_gear_worldselect_patch_v037.js
+src/stability_consolidation_v038.js
+src/sprite_scale_normalizer_v039.js
+src/world1_ground_mix_v039a.js
+src/skin_fullscreen_stability_v039b.js
+src/gear_ground_sprite_hotfix_v039c.js
+menu_v031.css
+src/fullscreen_mobile_fix_v031.js
+src/stage_loading_hud_zoom_fix_v031.js

@@ -1,30 +1,24 @@
-CHERRIFT v0.3.9b Skin / Fullscreen Stability Fix
+CHERRIFT v0.4.0 Clean Build
 
-[Fixed]
-- Skin selector could show mismatched data:
-  - Fairy splash under Beastclaw name
-  - Magic skill under Base / Beastclaw
-  - stale combat type pill
-- Skin selector is now rendered from one exact skin metadata map.
-- Older skin meta rows are removed before rendering the current skin.
-- Splash art is now assigned synchronously by exact skin id, so old async image callbacks cannot overwrite the current selected skin.
-- Skin arrows are rebound after render.
+[Major Cleanup]
+- Runtime patch stack consolidated into one file: src/cherrift_v040.js
+- index.html now loads only the base files + src/cherrift_v040.js.
+- Old patch scripts are no longer loaded.
+- menu_v040.css replaces menu_v031.css at runtime.
 
-[Fixed]
-- Leaving fullscreen on mobile browser could make the entire game feel extremely tiny.
-- Added mobile-browser viewport mode:
-  - non-fullscreen portrait zoom is increased
-  - HUD and skill button scale up slightly
-  - fullscreen portrait still keeps the previous wider view
+[Consolidated Systems]
+- Beastclaw Cherry skin.
+- Stable skin selector with splash art, rarity, combat type, skill bubble.
+- World Select with World 1-1 to 1-5 and World 2-1 to 2-5.
+- Stage progression, raid waves, mini bosses, rewards, first clear rewards.
+- Combat-style upgrades for ranged / melee.
+- Boss HP bar, raid warning, damage numbers, death pop.
+- Pink slime sprite.
+- World 1 mixed ground tiles with cropped fill to avoid grid gaps.
+- World 2 night ground.
+- Gear system stabilized: tap item -> Details -> Equip/Unequip/Sell. Drag is disabled for now.
+- Mobile viewport/fullscreen stabilization.
+- Sprite scale normalizer with one consistent draw scale.
 
-[Kept]
-- World 1 mixed ground tile patch remains.
-- Sprite scale normalizer remains.
-- Stability consolidation remains.
-- CHERRIFT branding remains.
-
-[Files changed]
-- index.html
-- menu_v031.css
-- src/skin_fullscreen_stability_v039b.js
-- PATCH_NOTES_CHERRIFT.txt
+[Cleanup]
+- See CLEANUP_DELETE_LIST.txt for old files that can be deleted from GitHub.
