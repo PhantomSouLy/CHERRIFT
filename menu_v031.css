@@ -2028,3 +2028,101 @@ body.gear-dragging-v038 #gear {
 .skill-bubble-v038.hidden {
   display: none !important;
 }
+
+
+/* CHERRIFT v0.3.9b - skin render + mobile browser viewport fix */
+#skins .skin-splash {
+  background-position: center center !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  min-height: min(740px, 66vh);
+}
+#skins .skin-splash.has-splash-art .skin-portrait {
+  opacity: 0 !important;
+}
+#skins .skin-splash.force-current-skin {
+  transition: none !important;
+}
+#skins .skin-splash.force-current-skin::after,
+#skins .skin-splash.splash-loading::after {
+  content: none !important;
+  display: none !important;
+}
+#skins #skinDesc,
+#skins .ingame-preview,
+#skins #skinMini {
+  display: none !important;
+}
+.skin-meta-row-v039b {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0 14px;
+}
+.skin-meta-row-v039b .rarity-pill,
+.skin-meta-row-v039b .combat-pill-v039b {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(255,255,255,.09);
+  font-weight: 1000;
+}
+.skin-kit-v039b {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 12px !important;
+  margin: 18px 0 !important;
+}
+.skill-line-v039b {
+  min-height: 76px;
+  padding: 14px 16px;
+  cursor: pointer;
+}
+.skill-line-v039b b {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+}
+.skill-icon-v039b {
+  width: 34px;
+  height: 34px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(255,91,172,.95), rgba(255,210,233,.45));
+}
+.skill-bubble-v039b {
+  margin-top: 10px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.13);
+  color: rgba(255,245,251,.92);
+  font-weight: 750;
+  line-height: 1.35;
+}
+.skill-bubble-v039b.hidden {
+  display: none !important;
+}
+
+/* Browser-mode mobile was too zoomed out after leaving fullscreen. */
+body.mobile-browser-v039b #hud {
+  transform: scale(1.22) !important;
+  transform-origin: top left !important;
+}
+body.mobile-browser-v039b #skill {
+  transform: scale(1.18) !important;
+  transform-origin: bottom right !important;
+}
+body.mobile-browser-v039b .stage-hud {
+  transform: none !important;
+  top: max(168px, calc(env(safe-area-inset-top) + 168px)) !important;
+}
+@media (max-width: 820px) {
+  #skins .skin-splash {
+    min-height: min(680px, 64vh);
+  }
+}

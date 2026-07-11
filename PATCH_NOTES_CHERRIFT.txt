@@ -1,23 +1,30 @@
-CHERRIFT v0.3.9 Sprite Scale Normalizer
+CHERRIFT v0.3.9b Skin / Fullscreen Stability Fix
 
 [Fixed]
-- Cherry appeared to visually grow when switching from idle to walk.
-- This was caused by inconsistent visual scale / empty padding between sprite sheet states.
-- Walk frames are now drawn slightly smaller to match idle frames.
-- Attack and skill frames are also slightly normalized.
-- Feet/ground anchor is kept stable so the character does not pop upward/downward during animation changes.
-- Fairy right-walk flip fix remains included.
+- Skin selector could show mismatched data:
+  - Fairy splash under Beastclaw name
+  - Magic skill under Base / Beastclaw
+  - stale combat type pill
+- Skin selector is now rendered from one exact skin metadata map.
+- Older skin meta rows are removed before rendering the current skin.
+- Splash art is now assigned synchronously by exact skin id, so old async image callbacks cannot overwrite the current selected skin.
+- Skin arrows are rebound after render.
 
-[Technical]
-- Added src/sprite_scale_normalizer_v039.js
-- This final drawPlayer patch normalizes state rendering without editing PNG files.
-- State scale defaults:
-  - idle: 1.00
-  - walk: 0.90
-  - attack: 0.94
-  - skill: 0.94
+[Fixed]
+- Leaving fullscreen on mobile browser could make the entire game feel extremely tiny.
+- Added mobile-browser viewport mode:
+  - non-fullscreen portrait zoom is increased
+  - HUD and skill button scale up slightly
+  - fullscreen portrait still keeps the previous wider view
+
+[Kept]
+- World 1 mixed ground tile patch remains.
+- Sprite scale normalizer remains.
+- Stability consolidation remains.
+- CHERRIFT branding remains.
 
 [Files changed]
 - index.html
-- src/sprite_scale_normalizer_v039.js
+- menu_v031.css
+- src/skin_fullscreen_stability_v039b.js
 - PATCH_NOTES_CHERRIFT.txt
