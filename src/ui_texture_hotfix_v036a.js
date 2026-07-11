@@ -1,23 +1,25 @@
 (() => {
   if (!window.UI || !window.CherriftGame) return;
 
-  const VERSION = "0.3.6b-button-skin-repair";
+  const VERSION = "0.3.6c-splash-path-fix";
   if (window.CHERRIFT_CONFIG) CHERRIFT_CONFIG.version = VERSION;
   if (window.CHERRIFT_DATA) CHERRIFT_DATA.version = VERSION;
 
   const SKIN_SPLASH_CANDIDATES = {
     cherry_default: [
-      "assets/player/skins/base_cherry/cherry_splash_art.png",
       "assets/player/skins/base_cherry/base_cherry_splash_art.png",
+      "assets/player/skins/base_cherry/cherry_splash_art.png",
       "assets/player/skins/base_cherry/splash_art.png"
     ],
     base_cherry: [
-      "assets/player/skins/base_cherry/cherry_splash_art.png",
       "assets/player/skins/base_cherry/base_cherry_splash_art.png",
+      "assets/player/skins/base_cherry/cherry_splash_art.png",
       "assets/player/skins/base_cherry/splash_art.png"
     ],
     fairy_cherry: [
+      "assets/player/skins/fairy_cherry/fairy_cherry_splash_art.jpg",
       "assets/player/skins/fairy_cherry/fairy_cherry_splash_art.png",
+      "assets/player/skins/fairy_cherry/splash_art.jpg",
       "assets/player/skins/fairy_cherry/splash_art.png"
     ],
     beastclaw_cherry: [
@@ -40,7 +42,9 @@
     return [
       ...fromMap,
       `assets/player/skins/${folder}/${skin.id}_splash_art.png`,
-      `assets/player/skins/${folder}/splash_art.png`
+      `assets/player/skins/${folder}/${skin.id}_splash_art.jpg`,
+      `assets/player/skins/${folder}/splash_art.png`,
+      `assets/player/skins/${folder}/splash_art.jpg`
     ].filter((v, i, a) => v && a.indexOf(v) === i);
   }
 
@@ -439,7 +443,7 @@
     UI.refreshMenu = function v036bRefreshMenu(...args) {
       const result = oldRefreshMenu(...args);
       const build = byId("menuBuildVersion");
-      if (build) build.textContent = "v0.3.6b REPAIR";
+      if (build) build.textContent = "v0.3.6c HOTFIX";
       setTimeout(repairStaticButtons, 0);
       return result;
     };
