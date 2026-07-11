@@ -1,32 +1,38 @@
-CHERRIFT v0.3.7 Optimize / Gear / World Select Hotfix
+CHERRIFT v0.3.8 Stability Consolidation Patch
+
+[Why]
+- The repo had many patch scripts stacked after each other.
+- Several scripts patched UI.bind / UI.open / renderGear / renderWorldPanel repeatedly.
+- This caused duplicate event listeners, overwritten button handlers, and unstable UI behavior.
 
 [Fixed]
-- Gear drag on mobile/PC now prevents page scrolling while dragging.
-- Gear drag ghost now clears on pointerup, pointercancel, blur, and tab visibility change.
-- Item ghost should no longer remain stuck on the screen.
-- World Select now uses the full 10-stage list:
-  - World 1-1 to World 1-5
-  - World 2-1 to World 2-5
-- World Select now has small stage dots to jump between all stages.
-- World Select now starts from the currently selected stage instead of only first/last edge cases.
+- Added a final stability layer loaded last before main.js.
+- Key buttons are cloned and rebound cleanly after UI.init:
+  - Play / Mobile Play
+  - Skin prev / next / equip
+  - Gear interactions
+  - World Select prev / next / play / back
+  - Pause / resume / fullscreen / settings
+  - Stage clear buttons
+  - Back buttons and data-open menu buttons
+- Gear is now rendered through one stable renderer.
+- Gear drag no longer uses native HTML drag.
+- Gear drag uses pointer events with movement threshold.
+- Gear item ghost clears on pointerup, pointercancel, blur, and tab hidden.
+- World Select always uses the full 10-stage list.
+- World Select stage dots are rebuilt from the same full stage list.
+- Skin panel is rendered from current CHERRIFT_DATA skin each time.
+- Skin splash path/cache logic is preserved.
+- Base/Fairy/Beastclaw skill info is no longer copied wrong between skins.
 
-[Added]
-- First boot preloader.
-- Preloads important art/assets before showing the app:
-  - skin splash art
-  - world splash art
-  - map textures
-  - XP orbs
-  - hit effects
-  - slime sprite sheet
-- This makes the first open slower, but reduces missing/late textures after menu opens.
-
-[Optimization]
-- Added shared image preload cache for core visible assets.
-- Missing optional images do not break the game; loading continues and shows ready.
+[Kept]
+- v0.3.7 preloader remains.
+- v0.3.6 map texture fixes remain.
+- CHERRIFT branding remains.
+- Splash art fixes remain.
 
 [Files changed]
 - index.html
 - menu_v031.css
-- src/preload_gear_worldselect_patch_v037.js
+- src/stability_consolidation_v038.js
 - PATCH_NOTES_CHERRIFT.txt

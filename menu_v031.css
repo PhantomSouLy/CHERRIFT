@@ -1922,3 +1922,109 @@ body.gear-dragging-v037 .gear-screen {
 .world-stage-dots-v037 button.locked {
   opacity: .42;
 }
+
+
+/* CHERRIFT v0.3.8 - stability consolidation */
+#gear .inv-item,
+#gear .gear-slot {
+  touch-action: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+}
+body.gear-dragging-v038,
+body.gear-dragging-v038 * {
+  overscroll-behavior: none !important;
+}
+body.gear-dragging-v038 #gear {
+  touch-action: none !important;
+}
+.drag-ghost.v038 {
+  position: fixed;
+  left: 0;
+  top: 0;
+  pointer-events: none !important;
+  z-index: 100000 !important;
+  transform: translate(-9999px, -9999px);
+}
+.world-stage-dots-v038 {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 12px auto 0;
+}
+.world-stage-dots-v038 button {
+  width: 13px;
+  height: 13px;
+  min-width: 13px;
+  min-height: 13px;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.24);
+  background: rgba(255,255,255,.16);
+}
+.world-stage-dots-v038 button.active {
+  background: #ff8ccc;
+  box-shadow: 0 0 14px rgba(255,91,172,.48);
+}
+.world-stage-dots-v038 button.locked {
+  opacity: .42;
+}
+.skin-kit.skin-kit-v038 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin: 18px 0;
+}
+#skins .ingame-preview,
+#skins #skinDesc {
+  display: none !important;
+}
+.skin-meta-row-v038 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 14px;
+}
+.skin-meta-row-v038 .combat-pill-v038,
+.skin-meta-row-v038 .rarity-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.08);
+  font-weight: 1000;
+}
+.skill-line-v038 {
+  cursor: pointer;
+  min-height: 76px;
+  padding: 14px 16px;
+}
+.skill-line-v038 b {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+}
+.skill-icon-v038 {
+  width: 34px;
+  height: 34px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(255,91,172,.95), rgba(255,210,233,.44));
+}
+.skill-bubble-v038 {
+  margin-top: 10px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.13);
+  color: rgba(255,245,251,.92);
+  font-weight: 750;
+  line-height: 1.35;
+}
+.skill-bubble-v038.hidden {
+  display: none !important;
+}
