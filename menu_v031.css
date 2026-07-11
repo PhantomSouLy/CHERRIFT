@@ -1541,3 +1541,153 @@ body.settings-from-pause #pauseModal.hidden {
   background-position: center center !important;
   background-size: cover !important;
 }
+
+
+/* CHERRIFT v0.3.6a - UI / texture hotfix */
+.skin-splash {
+  transition: opacity .16s ease, filter .16s ease, background-image .12s ease;
+}
+.skin-splash.splash-loading {
+  opacity: .78;
+  filter: saturate(.82);
+}
+.skin-splash.splash-loading::after {
+  content: "Loading art...";
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  z-index: 3;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(0,0,0,.38);
+  color: rgba(255,255,255,.86);
+  font-size: 12px;
+  font-weight: 900;
+}
+.skin-info #skinDesc,
+.skin-info .ingame-preview {
+  display: none !important;
+}
+.skin-kit.skin-kit-clean {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin: 20px 0;
+}
+.skin-kit.skin-kit-clean > div {
+  padding: 14px 16px;
+}
+.skin-meta-row-v036a {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 0;
+}
+.combat-pill-v036a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.08);
+  color: #fff;
+  font-weight: 1000;
+}
+.skill-line-v036a {
+  cursor: pointer;
+  user-select: none;
+  transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease;
+}
+.skill-line-v036a:active {
+  transform: scale(.985);
+}
+.skill-line-v036a b {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+}
+.skill-icon-v036a {
+  width: 34px;
+  height: 34px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(255,91,172,.88), rgba(255,210,233,.42));
+  border: 1px solid rgba(255,255,255,.22);
+  box-shadow: 0 0 18px rgba(255,91,172,.22);
+}
+.skill-bubble-v036a {
+  margin-top: 10px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.075);
+  border: 1px solid rgba(255,255,255,.13);
+  color: rgba(255,245,251,.9);
+  font-weight: 700;
+  line-height: 1.35;
+}
+.skill-bubble-v036a.hidden {
+  display: none !important;
+}
+body.is-playing .stage-hud {
+  top: max(102px, calc(env(safe-area-inset-top) + 102px)) !important;
+  left: max(22px, env(safe-area-inset-left)) !important;
+  right: auto !important;
+  transform: none !important;
+  max-width: 44vw !important;
+}
+body.is-playing .stage-box {
+  justify-content: flex-start !important;
+}
+body.is-playing .stage-box b,
+body.is-playing .stage-box small {
+  font-size: 12px !important;
+}
+body.is-playing .stage-box b::after {
+  content: " ·";
+}
+@media (max-width: 820px) {
+  body.is-playing .stage-hud {
+    top: max(150px, calc(env(safe-area-inset-top) + 150px)) !important;
+    left: 22px !important;
+    max-width: calc(100vw - 44px) !important;
+  }
+  body.is-playing .stage-box b,
+  body.is-playing .stage-box small {
+    font-size: 11px !important;
+  }
+  .skin-kit.skin-kit-clean {
+    margin: 16px 0;
+  }
+}
+
+/* button press feedback */
+button,
+.menu-btn,
+.carousel-arrow,
+.world-arrow,
+.fullscreen-btn,
+.upgrade-card,
+.inv-item,
+.gear-slot {
+  -webkit-tap-highlight-color: transparent;
+}
+button.btn-press-v036a,
+.menu-btn.btn-press-v036a,
+.carousel-arrow.btn-press-v036a,
+.world-arrow.btn-press-v036a,
+.fullscreen-btn.btn-press-v036a,
+.upgrade-card.btn-press-v036a,
+.inv-item.btn-press-v036a,
+.gear-slot.btn-press-v036a {
+  transform: scale(.965);
+  filter: brightness(1.12);
+  box-shadow: 0 0 26px rgba(255,91,172,.34), inset 0 0 0 1px rgba(255,255,255,.12) !important;
+}
+
+/* real decorative props should feel embedded in the ground */
+body.is-playing canvas {
+  image-rendering: auto;
+}

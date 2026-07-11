@@ -1,51 +1,43 @@
-CHERRIFT v0.3.6 Real Texture Assets Patch
-
-[Added]
-- Real map texture support for the new assets in assets/map.
-- Night stages now use grass_tile02.png instead of procedural placeholder ground.
-- Flowers now use flower1.png / flower2.png instead of procedural flower drawing.
-- Mushrooms are now added as decorative map props.
-- Map props are explicitly drawn from real textures when available:
-  - bush_01.png
-  - bush_02.png
-  - flower1.png
-  - flower2.png
-  - grass_tile.png
-  - grass_tile02.png
-  - log.png
-  - mushroom.png
-  - rock_big.png
-  - rock_small.png
-  - tree_big.png
-  - tree_small.png
+CHERRIFT v0.3.6a UI / Texture Hotfix
 
 [Fixed]
-- World Select splash paths now use lowercase:
-  - assets/map/world1.png
-  - assets/map/world2.png
+- Skin splash art now preloads and uses cache.
+- Skin splash art no longer starts a fresh image load every time you change skin.
+- Stale splash loads no longer overwrite the currently selected skin.
+- Ground decoration layer fixed:
+  - flowers
+  - flower1 / flower2
+  - mushroom
+  These now draw under Cherry/enemies instead of above them.
+- Small rock visual size increased to better match collision.
+- Pink slime visibility fixed.
+  Important technical fix: enemies with `style` were being drawn as bullets because drawObj checked `style` before `hp`.
+- Fairy Cherry right-walk direction fixed by flipping the right walk animation.
+- Stage objective HUD moved down/left on mobile so it no longer overlaps HP/XP/timer.
 
-[Confirmed Real Assets]
-- XP orb textures are used:
-  - assets/pickups/xp_small.png
-  - assets/pickups/xp_big.png
-- Hit effects are used:
-  - assets/effects/base_hit_effect_01.png
-  - assets/effects/base_hit_effect_02.png
-  - assets/effects/base_hit_effect_03.png
-- Pink slime now prefers the real slime sprite sheet instead of the procedural placeholder.
+[Changed]
+- Skin selector simplified.
+- Removed long skin description.
+- Removed weapon/info card clutter from the visible layout.
+- Removed in-game preview section.
+- Skin selector now focuses on:
+  - rarity
+  - combat type
+  - skill name
+- Skill row can be tapped to show a small info bubble.
 
-[Still Placeholder]
-- Enemies that do not have provided textures yet remain procedural:
-  - blue slime / big slime variants
-  - spider
-  - beetle
-  - moth
-  - crawler
-  - bosses
+[Added]
+- Button press feedback for most UI buttons.
+- Small press/glow effect added to:
+  - menu buttons
+  - carousel arrows
+  - world arrows
+  - fullscreen buttons
+  - upgrade cards
+  - inventory / gear buttons
 
 [Files changed]
 - index.html
 - menu_v031.css
-- src/texture_splash_patch_v035.js
-- src/real_texture_assets_patch_v036.js
+- src/ui_texture_hotfix_v036a.js
 - PATCH_NOTES_CHERRIFT.txt
