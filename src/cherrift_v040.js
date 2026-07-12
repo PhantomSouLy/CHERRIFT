@@ -1725,3 +1725,338 @@
     }
   }
 })();
+
+
+/* ============================================================
+   CHERRIFT v0.4.0g WORLD FIX
+   - World 2 splash art restored to assets/map/world2.png
+   - World 2-1 force-unlocked for testing
+   - World 1 4-grass mix made visibly stronger
+   - Ground draw uses independent image loader so patch stacking cannot hide variants
+   ============================================================ */
+(() => {
+  "use strict";
+
+  if (!window.CHERRIFT_CONFIG || !window.CherriftGame || !window.UI) return;
+
+  const id = name => document.getElementById(name);
+  const STAGES = window.CHERRIFT_V040?.stages || [];
+
+  const TILES = {
+    grass1: "assets/map/world1/world1_grass1.png",
+    grass2: "assets/map/world1/world1_grass2.png",
+    rock: "assets/map/world1/world1_grass_rock.png",
+    flower: "assets/map/world1/world1_grass_flower.png",
+    world2Splash: "assets/map/world2.png",
+    world1Splash: "assets/map/world1/world1.png"
+  };
+
+  CHERRIFT_CONFIG.version = "0.4.0g-world-fix";
+  CHERRIFT_CONFIG.map.world2 = TILES.world2Splash;
+  CHERRIFT_CONFIG.map.world1 = TILES.world1Splash;
+  CHERRIFT_CONFIG.map.grass = TILES.grass1;
+  CHERRIFT_CONFIG.map.world1Grass1 = TILES.grass1;
+  CHERRIFT_CONFIG.map.world1Grass2 = TILES.grass2;
+  CHERRIFT_CONFIG.map.world1GrassRock = TILES.rock;
+  CHERRIFT_CONFIG.map.world1GrassFlower = TILES.flower;
+  if (window.CHERRIFT_DATA) CHERRIFT_DATA.version = "0.4.0g-world-fix";
+  if (window.CHERRIFT_V040) {
+    CHERRIFT_V040.version = "0.4.0g-world-fix";
+    CHERRIFT_V040.world2Splash = TILES.world2Splash;
+  }
+
+  function normalizeUnlock(save) {
+    if (!save || typeof save !== "object") return save;
+    if (!Array.isArray(save.unlockedStages)) save.unlockedStages = ["world_1_1"];
+    if (!save.unlockedStages.includes("world_1_1")) save.unlockedStages.push("world_1_1");
+    if (!save.unlockedStages.includes("world_2_1")) save.unlockedStages.push("world_2_1");
+    return save;
+  }
+
+  if (window.CherriftStorage && !CherriftStorage.__v040gUnlockPatched) {
+    const oldDefaults = CherriftStorage.defaults?.bind(CherriftStorage);
+    if (oldDefaults) {
+      CherriftStorage.defaults = function defaultsV040g() {
+        return normalizeUnlock(oldDefaults());
+      };
+    }
+    const oldLoad = CherriftStorage.load?.bind(CherriftStorage);
+    if (oldLoad) {
+      CherriftStorage.load = function loadV040g() {
+        return normalizeUnlock(oldLoad());
+      };
+    }
+    CherriftStorage.__v040gUnlockPatched = true;
+  }
+
+  if (UI.save) {
+    normalizeUnlock(UI.save);
+    try { CherriftStorage?.save?.(UI.save); } catch (_) {}
+  }
+
+  const groundImages = {};
+  const groundStatus = {};
+
+  function loadStandalone(key, src) {
+    if (groundImages[key]) return;
+    const img = new Image();
+    groundStatus[key] = "loading";
+    img.onload = () => {
+      groundImages[key] = img;
+      groundStatus[key] = "ok";
+      if (!window.__CHERRIFT_GROUND_LOGGED) {
+        window.__CHERRIFT_GROUND_LOGGED = true;
+        setTimeout(() => console.info("[CHERRIFT v0.4.0g] ground tile status", groundStatus), 500);
+      }
+    };
+    img.onerror = () => {
+      groundStatus[key] = "missing";
+      console.warn("[CHERRIFT v0.4.0g] missing ground tile:", key, src);
+    };
+    img.decoding = "async";
+    img.src = src + "?v=040g";
+  }
+
+  Object.entries({
+    grass1: TILES.grass1,
+    grass2: TILES.grass2,
+    rock: TILES.rock,
+    flower: TILES.flower
+  }).forEach(([k, src]) => loadStandalone(k, src));
+
+  if (window.ImageAssets && !ImageAssets.prototype.__v040gGrassLoadPatch) {
+    const oldLoadAll = ImageAssets.prototype.loadAll;
+    ImageAssets.prototype.loadAll = async function loadAllV040g() {
+      await oldLoadAll.call(this);
+      const entries = {
+        w1Grass1: TILES.grass1,
+        w1Grass2: TILES.grass2,
+        w1GrassRock: TILES.rock,
+        w1GrassFlower: TILES.flower,
+        world2: TILES.world2Splash
+      };
+      await Promise.all(Object.entries(entries).map(([key, src]) => this.loadImage(key, src).catch(() => null)));
+      this.ready = true;
+    };
+    ImageAssets.prototype.__v040gGrassLoadPatch = true;
+  }
+
+  function hash(x, y, seed = 0) {
+    let h = Math.imul((x + 1009), 374761393) ^ Math.imul((y - 173), 668265263) ^ Math.imul(seed + 97, 2246822519);
+    h >>>= 0;
+    h = (h ^ (h >>> 13)) >>> 0;
+    h = Math.imul(h, 1274126177) >>> 0;
+    return ((h ^ (h >>> 16)) >>> 0) / 4294967295;
+  }
+
+  function imgFor(game, key) {
+    if (groundImages[key]) return groundImages[key];
+    if (key === "grass1") return game.assets?.get?.("w1Grass1") || game.assets?.get?.("grass");
+    if (key === "grass2") return game.assets?.get?.("w1Grass2") || game.assets?.get?.("w1Grass1") || game.assets?.get?.("grass");
+    if (key === "flower") return game.assets?.get?.("w1GrassFlower") || game.assets?.get?.("w1Grass1") || game.assets?.get?.("grass");
+    if (key === "rock") return game.assets?.get?.("w1GrassRock") || game.assets?.get?.("w1Grass1") || game.assets?.get?.("grass");
+    return game.assets?.get?.("grass");
+  }
+
+  function drawCover(c, img, x, y, size, alpha = 1) {
+    if (!img) {
+      c.save();
+      c.globalAlpha = alpha;
+      c.fillStyle = "#67aa36";
+      c.fillRect(x, y, size + 1, size + 1);
+      c.restore();
+      return;
+    }
+
+    const sw = img.naturalWidth || img.width || size;
+    const sh = img.naturalHeight || img.height || size;
+    const side = Math.min(sw, sh);
+    const sx = Math.floor((sw - side) / 2);
+    const sy = Math.floor((sh - side) / 2);
+
+    c.save();
+    c.globalAlpha = alpha;
+    c.drawImage(img, sx, sy, side, side, x, y, size + 1, size + 1);
+    c.restore();
+  }
+
+  function pickKey(gx, gy) {
+    const zone = hash(Math.floor(gx / 2), Math.floor(gy / 2), 4);
+    const r = hash(gx, gy, 11);
+    if (zone < .25) return r < .52 ? "grass2" : r < .75 ? "rock" : "grass1";
+    if (zone < .50) return r < .55 ? "flower" : r < .77 ? "grass1" : "grass2";
+    if (zone < .75) return r < .42 ? "rock" : r < .70 ? "grass2" : "flower";
+    return r < .34 ? "grass1" : r < .62 ? "flower" : r < .82 ? "grass2" : "rock";
+  }
+
+  function variantOverlay(c, key, gx, gy, x, y, size, night = false) {
+    c.save();
+
+    if (key === "grass2") {
+      c.globalAlpha = night ? .10 : .105;
+      c.fillStyle = "#b89345";
+      c.fillRect(x, y, size + 1, size + 1);
+    }
+
+    if (key === "flower") {
+      c.globalAlpha = night ? .09 : .12;
+      c.fillStyle = "#79c957";
+      c.fillRect(x, y, size + 1, size + 1);
+      const count = night ? 5 : 9;
+      for (let i = 0; i < count; i++) {
+        const px = x + size * hash(gx, gy, 100 + i * 3);
+        const py = y + size * hash(gx, gy, 101 + i * 3);
+        c.globalAlpha = night ? .15 : .24;
+        c.fillStyle = i % 3 === 0 ? "#ffd86f" : i % 3 === 1 ? "#ffd3ec" : "#f8fff0";
+        c.beginPath();
+        c.arc(px, py, 1.2 + hash(gx, gy, 102 + i) * 1.8, 0, Math.PI * 2);
+        c.fill();
+      }
+    }
+
+    if (key === "rock") {
+      c.globalAlpha = night ? .16 : .20;
+      c.fillStyle = night ? "#8793b8" : "#8c846d";
+      for (let i = 0; i < 8; i++) {
+        const px = x + size * hash(gx, gy, 200 + i * 3);
+        const py = y + size * hash(gx, gy, 201 + i * 3);
+        c.beginPath();
+        c.ellipse(px, py, 2.0 + hash(gx, gy, 202 + i) * 2.4, 1.3 + hash(gx, gy, 220 + i) * 1.8, 0, 0, Math.PI * 2);
+        c.fill();
+      }
+    }
+
+    c.restore();
+  }
+
+  function drawWorld1Cell(game, c, gx, gy, x, y, size) {
+    const key = pickKey(gx, gy);
+    drawCover(c, imgFor(game, key), x, y, size, 1);
+
+    const blend = hash(gx, gy, 31);
+    if (blend > .48) {
+      const keys = ["grass1", "grass2", "flower", "rock"].filter(k => k !== key);
+      const okey = keys[Math.floor(hash(gx, gy, 32) * keys.length)] || "grass1";
+      drawCover(c, imgFor(game, okey), x, y, size, blend > .82 ? .25 : .16);
+    }
+
+    variantOverlay(c, key, gx, gy, x, y, size, false);
+  }
+
+  function drawWorld2Cell(game, c, gx, gy, x, y, size) {
+    const key = pickKey(gx, gy);
+    drawCover(c, imgFor(game, key), x, y, size, 1);
+    if (hash(gx, gy, 40) > .58) {
+      drawCover(c, imgFor(game, hash(gx, gy, 41) > .5 ? "rock" : "grass2"), x, y, size, .17);
+    }
+
+    c.save();
+    c.globalAlpha = .56;
+    c.fillStyle = "#06102a";
+    c.fillRect(x, y, size + 1, size + 1);
+
+    if (hash(gx, gy, 50) > .55) {
+      c.globalAlpha = .105;
+      c.fillStyle = hash(gx, gy, 51) > .5 ? "#8da8ff" : "#7fd8ff";
+      c.beginPath();
+      c.ellipse(
+        x + size * (.15 + hash(gx, gy, 52) * .7),
+        y + size * (.15 + hash(gx, gy, 53) * .7),
+        size * (.15 + hash(gx, gy, 54) * .22),
+        size * (.08 + hash(gx, gy, 55) * .15),
+        0, 0, Math.PI * 2
+      );
+      c.fill();
+    }
+    c.restore();
+
+    variantOverlay(c, key, gx, gy, x, y, size, true);
+  }
+
+  CherriftGame.prototype.drawGround = function drawGroundV040g(c, zoom = 1) {
+    const stage = this.stage || this.getSelectedStage?.();
+    const size = 128;
+    const viewW = this.w / zoom;
+    const viewH = this.h / zoom;
+    const startX = Math.floor((this.camera.x - viewW / 2) / size) - 1;
+    const endX = Math.floor((this.camera.x + viewW / 2) / size) + 1;
+    const startY = Math.floor((this.camera.y - viewH / 2) / size) - 1;
+    const endY = Math.floor((this.camera.y + viewH / 2) / size) + 1;
+    const night = stage?.world === 2 || stage?.theme === "forest_night";
+
+    for (let gx = startX; gx <= endX; gx++) {
+      for (let gy = startY; gy <= endY; gy++) {
+        const x = gx * size;
+        const y = gy * size;
+        if (night) drawWorld2Cell(this, c, gx, gy, x, y, size);
+        else drawWorld1Cell(this, c, gx, gy, x, y, size);
+      }
+    }
+  };
+
+  const oldRefreshMenu = UI.refreshMenu?.bind(UI);
+  UI.refreshMenu = function refreshMenuV040g(...args) {
+    if (this.save) normalizeUnlock(this.save);
+    const result = oldRefreshMenu ? oldRefreshMenu(...args) : undefined;
+
+    const build = id("menuBuildVersion");
+    if (build) build.textContent = "v0.4.0g WORLD FIX";
+
+    const stage = STAGES.find(s => s.id === this.save?.selectedStageId);
+    const art = id("mobileStageArt");
+    if (art && stage) {
+      const night = stage.world === 2 || stage.theme === "forest_night";
+      art.classList.toggle("night", !!night);
+      art.style.backgroundImage = `linear-gradient(180deg, rgba(5,3,12,.06), rgba(5,3,12,.42)), url("${night ? TILES.world2Splash : TILES.world1Splash}")`;
+    }
+    return result;
+  };
+
+  const oldRenderWorldPanel = UI.renderWorldPanel?.bind(UI);
+  UI.renderWorldPanel = function renderWorldPanelV040g(...args) {
+    if (this.save) normalizeUnlock(this.save);
+    const result = oldRenderWorldPanel ? oldRenderWorldPanel(...args) : undefined;
+
+    const stage = STAGES[this.worldCarouselIndex || 0];
+    if (stage) {
+      const night = stage.world === 2 || stage.theme === "forest_night";
+      const img = id("carouselStageImage");
+      if (img) {
+        img.classList.toggle("night", !!night);
+        img.style.backgroundImage = `linear-gradient(180deg, rgba(5,3,12,.06), rgba(5,3,12,.42)), url("${night ? TILES.world2Splash : TILES.world1Splash}")`;
+      }
+
+      if (stage.id === "world_2_1") {
+        const launch = id("worldLaunchBtn");
+        if (launch) {
+          launch.disabled = false;
+          launch.textContent = "PLAY";
+        }
+        const state = id("carouselStageState");
+        if (state) {
+          state.className = "world-state-pill unlocked";
+          state.textContent = "Unlocked";
+        }
+      }
+    }
+    return result;
+  };
+
+  const oldOpenWorldSelect = UI.openWorldSelect?.bind(UI);
+  UI.openWorldSelect = function openWorldSelectV040g(...args) {
+    if (this.save) normalizeUnlock(this.save);
+    return oldOpenWorldSelect ? oldOpenWorldSelect(...args) : undefined;
+  };
+
+  const oldLaunchSelectedWorld = UI.launchSelectedWorld?.bind(UI);
+  UI.launchSelectedWorld = function launchSelectedWorldV040g(...args) {
+    if (this.save) normalizeUnlock(this.save);
+    const stage = STAGES[this.worldCarouselIndex || 0];
+    if (stage && (stage.id === "world_2_1" || this.save?.unlockedStages?.includes(stage.id))) {
+      this.save.selectedStageId = stage.id;
+      try { CherriftStorage?.save?.(this.save); } catch (_) {}
+      return this.game.start();
+    }
+    return oldLaunchSelectedWorld ? oldLaunchSelectedWorld(...args) : undefined;
+  };
+})();

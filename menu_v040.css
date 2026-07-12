@@ -131,3 +131,13 @@ body.world-night-v040d #game {
    CHERRIFT v0.4.0e GRASS MIX
    World 1 uses 4 randomized grass tiles from assets/map/world1/
    ============================================================ */
+
+
+/* ============================================================
+   CHERRIFT v0.4.0g WORLD FIX
+   stronger visible grass mix + World 2 splash restore + test unlock
+   ============================================================ */
+.world-stage-image.night,
+.mobile-stage-art.night {
+  filter: saturate(.92) brightness(.78) contrast(1.08);
+}

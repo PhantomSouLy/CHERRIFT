@@ -123,3 +123,25 @@ CHERRIFT v0.4.0f
 - Improved World 2 night ground shading and moonlit details
 - World 2-1 unlocked by default for testing
 - Extra safe loading for world1 grass tile variants
+
+
+CHERRIFT v0.4.0g World Fix
+
+[Fixed]
+- World 2 splash art restored to assets/map/world2.png.
+- World Select no longer forces World 2 to use World 1 splash.
+- World 2-1 is force-unlocked for testing.
+- World 2-1 Play button bypasses the locked check.
+
+[World 1 Grass Mix]
+- Stronger visible distribution:
+  - roughly 30% grass1
+  - roughly 25% grass2
+  - roughly 25% flower
+  - roughly 20% rock
+- Uses standalone image loader with ?v=040g cache busting.
+- Adds visible fallback overlays so variation is visible even if browser cache or missing files cause fallback.
+
+[World 2 Night]
+- Stronger dark blue night overlay.
+- Blue/lilac moonlight haze patches.
