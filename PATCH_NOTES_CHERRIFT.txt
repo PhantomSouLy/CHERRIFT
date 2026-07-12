@@ -1,160 +1,34 @@
-CHERRIFT v0.4.0b Clean CSS / Gear Drag / Zoom
+CHERRIFT v0.4.0i Clean World + Night Fix
 
-[Clean CSS]
-- menu_v040.css was rebuilt as a clean v0.4-only stylesheet.
-- Old v0.3.x CSS patch blocks were removed from the active CSS file.
-- Kept only needed v0.4 systems: main menu, mobile home, skins, gear, world select, settings, HUD, loading, raid warning, boss HP bar, stage clear.
+[Cleanup]
+- src/cherrift_v040.js ki lett tisztítva.
+- A régi v0.4.0d/e/f/g/h world-ground patch blokkok ki lettek véve.
+- Maradt a stabil v0.4 core + gear/levelup/zoom hotfix, és erre jön egyetlen végleges world rendszer.
 
-[Zoom]
-- Fixed the v0.4.0a zoom conflict by editing the main computeZoom() directly.
-- PC browser and PC fullscreen are closer.
-- Mobile browser and mobile fullscreen are less cramped.
-- View Zoom setting still works: More Map / Balanced / Closer.
-
-[Gear Drag]
-- Gear drag is back with a clean pointer-based system.
-- No native HTML drag/drop.
-- Tap item = Details panel.
-- Drag inventory item to matching gear slot = Equip.
-- Drag equipped item to inventory = Unequip.
-- Wrong target = no action.
-- pointercancel / blur / tab hidden clears the ghost.
-
-[Files changed]
-- index.html
-- menu_v040.css
-- src/cherrift_v040.js
-
-[Version]
-- v0.4.0b CLEAN CSS
-
-
-CHERRIFT v0.4.0c Hotfix
-
-[Fixed]
-- Equipped gear can now be dragged back to inventory even when inventory is empty.
-- Empty inventory now keeps a real drop zone/min-height.
-- Centered gear slots no longer shift on the paperdoll when clicked or dragged.
-- Level-up modal now appears above gameplay instead of being hidden by is-playing CSS.
-- Choosing an upgrade removes the level-up state and resumes the game.
-- PC camera zoom is much closer:
-  - PC browser: 1.42x base
-  - PC fullscreen: 1.34x base
-- Mobile zoom remains pulled back so it should not feel cramped.
-
-[Files changed]
-- menu_v040.css
-- src/cherrift_v040.js
-- index.html title only
-
-
-CHERRIFT v0.4.0d World Fix / Retexture
-
-[Fixed]
-- Map asset paths now use the new folder:
-  assets/map/world1/
-- Old flat assets/map/world1_*.png paths are no longer required.
-- World 1 decor paths now point to:
-  assets/map/world1/bush_01.png
-  assets/map/world1/tree_big.png
-  assets/map/world1/rock_big.png
-  etc.
-
-[World 1 Retexture]
-- World 1 ground now uses a richer tile mix:
-  - grass basic base
-  - grass tile micro overlay
-  - grass/dirt mix
-  - clover/flowers
-  - flowers/rocks
-  - dirt clearing
-- Added subtle per-cell tint variation.
-- Decoration density adjusted so the first world is less empty/boring.
-
-[World 2 Night Mode]
-- World 2 now uses the same world1 folder assets as fallback, but with:
-  - darker blue/purple night tint
-  - lower saturation
-  - moonlight patches
-  - more mushrooms/rocks
-  - fewer bright meadow flowers
-- This prepares the code for a future assets/map/world2/ folder later.
-
-[Important]
-- Put your map assets here:
-  assets/map/world1/
-- This ZIP does not need to include those images because you already moved them locally.
-- Keep the filenames exactly as shown in your screenshot.
-
-
-CHERRIFT v0.4.0e Grass Mix
-
-[World 1 Grass Tile Randomizer]
-Expected files in:
-assets/map/world1/
-
-- world1_grass1.png        main grass, most common
-- world1_grass2.png        sparser / slightly dry grass
-- world1_grass_rock.png    pebbly grass
-- world1_grass_flower.png  flower grass
-
-[Mix Ratio]
-- 60% world1_grass1
-- 18% world1_grass2
-- 12% world1_grass_flower
-- 10% world1_grass_rock
-
-[How it works]
-- The system uses deterministic coordinate hash randomization.
-- Every tile coordinate always picks the same texture.
-- This looks random while staying stable.
-- No flicker, no changing ground while moving.
-- Adds subtle overlay blending on some tiles so it does not look like a checkerboard.
-
-[World 2]
-- World 2 still uses the same four grass tiles as fallback.
-- It gets a dark blue/purple night overlay.
-- Later it can be switched to assets/map/world2/ when separate night tiles exist.
-
-
-CHERRIFT v0.4.0f
-- Stronger World 1 four-grass randomization
-- More visible grass2 / rock / flower variation
-- Improved World 2 night ground shading and moonlit details
-- World 2-1 unlocked by default for testing
-- Extra safe loading for world1 grass tile variants
-
-
-CHERRIFT v0.4.0g World Fix
-
-[Fixed]
-- World 2 splash art restored to assets/map/world2.png.
-- World Select no longer forces World 2 to use World 1 splash.
-- World 2-1 is force-unlocked for testing.
-- World 2-1 Play button bypasses the locked check.
-
-[World 1 Grass Mix]
-- Stronger visible distribution:
-  - roughly 30% grass1
-  - roughly 25% grass2
-  - roughly 25% flower
-  - roughly 20% rock
-- Uses standalone image loader with ?v=040g cache busting.
-- Adds visible fallback overlays so variation is visible even if browser cache or missing files cause fallback.
+[World Ground]
+- World 1 talaj: assets/map/world1/world1_grass_seamless.png
+- World 2 talaj: ugyanaz a seamless texture.
+- Nincs több 4-tile random mix, ezért nem lesz kockás patchwork hatás.
 
 [World 2 Night]
-- Stronger dark blue night overlay.
-- Blue/lilac moonlight haze patches.
+- World 2 stage detection: world === 2, forest_night theme, vagy world_2_ id.
+- World 2-re globális sötét kék/lila night overlay kerül.
+- A dekorok World 2-ben sötétebb filtert kapnak.
+- World 2 splash art marad: assets/map/world2.png
+
+[Testing]
+- World 2-1 továbbra is unlockolva van teszthez.
+
+[Cache]
+- index.html cache-bustot kapott:
+  - menu_v040.css?v=040i
+  - src/cherrift_v040.js?v=040i
 
 
-[0.4.0h SEAMLESS GROUND OVERRIDE]
-- World 1 and World 2 ground now both use only assets/map/world1_grass_seamless.png
-- World 2 remains in night mode using a dark blue overlay and subtle moonlit highlights
-- Ground drawing now uses a repeating canvas pattern fill to avoid visible square tile blocks
-- Does not change World 2 splash art; only the in-game ground rendering
-
-
-CHERRIFT v0.4.0h seamless ground folder fix
-- World 1 ground now uses only assets/map/world1/world1_grass_seamless.png
-- World 2 ground also uses the same seamless texture with night dark/cool overlay
-- Added assets/map/world1/world1_grass_seamless.png to this ZIP
+CHERRIFT v0.4.0j Clean Loading + Night Fix
+- Removed the leftover legacy v0.4.0c start/drawWorld wrapper from src/cherrift_v040.js.
+- Kept one final world/night runtime at the end of the file.
+- Stage loading now has a hard timeout and cannot freeze forever on assetReady.
+- World 1 and World 2 both use assets/map/world1/world1_grass_seamless.png.
+- World 2 gets the final global blue night overlay.
+- index.html now uses cache busting: menu_v040.css?v=040j and src/cherrift_v040.js?v=040j.

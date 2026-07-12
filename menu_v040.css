@@ -141,3 +141,22 @@ body.world-night-v040d #game {
 .mobile-stage-art.night {
   filter: saturate(.92) brightness(.78) contrast(1.08);
 }
+
+
+/* ============================================================
+   CHERRIFT v0.4.0i CLEAN WORLD
+   Final world select/night polish after removing old ground patches.
+   ============================================================ */
+.world-stage-image.night,
+.mobile-stage-art.night{
+  filter:saturate(.86) brightness(.72) contrast(1.08)!important;
+}
+body.is-playing #game{
+  background:#060b18!important;
+}
+
+
+/* CHERRIFT v0.4.0j loading/night guard */
+body:not(.is-loading-stage) #stageLoading{display:none!important;}
+body.is-loading-stage #stageLoading:not(.hidden){display:grid!important;}
+.world-stage-image.night,.mobile-stage-art.night{filter:saturate(.95) brightness(.78) contrast(1.08);}

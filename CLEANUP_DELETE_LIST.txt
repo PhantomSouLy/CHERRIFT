@@ -1,24 +1,20 @@
-CHERRIFT v0.4 cleanup delete list
+CHERRIFT v0.4.0i cleanup
 
-Ezeket a régi patch fájlokat törölheted GitHubon, mert v0.4 már nem tölti be őket:
+A src/cherrift_v040.js már ki lett tisztítva: a régi world/ground patch blokkok nincsenek benne.
 
-src/beastclaw.js
-src/progression_v031.js
-src/world_select_carousel_v031.js
-src/stage_loading_freeze_fix_v031.js
-src/levelup_freeze_fix_v031.js
-src/progression_fullscreen_patch_v032.js
-src/combat_hud_upgrade_patch_v033.js
-src/pause_settings_polish_v034.js
-src/texture_splash_patch_v035.js
-src/real_texture_assets_patch_v036.js
-src/ui_texture_hotfix_v036a.js
-src/preload_gear_worldselect_patch_v037.js
-src/stability_consolidation_v038.js
-src/sprite_scale_normalizer_v039.js
-src/world1_ground_mix_v039a.js
-src/skin_fullscreen_stability_v039b.js
-src/gear_ground_sprite_hotfix_v039c.js
-menu_v031.css
-src/fullscreen_mobile_fix_v031.js
-src/stage_loading_hud_zoom_fix_v031.js
+Kiszedett régi részek a JS-ből:
+- v0.4.0d WORLD FIX
+- v0.4.0e GRASS MIX
+- v0.4.0f WORLD 1 STRONGER MIX + WORLD 2 NIGHT + TEST UNLOCK
+- v0.4.0g WORLD FIX
+- v0.4.0h SEAMLESS GROUND OVERRIDE
+
+Aktív végleges world rendszer:
+- v0.4.0i CLEAN WORLD + NIGHT FIX
+
+Fontos asset:
+- assets/map/world1/world1_grass_seamless.png
+
+
+[v0.4.0j]
+- Old runtime blocks inside cherrift_v040.js were removed where safe; final world/night override is v0.4.0j.
