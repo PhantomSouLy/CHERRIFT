@@ -160,3 +160,9 @@ body.is-playing #game{
 body:not(.is-loading-stage) #stageLoading{display:none!important;}
 body.is-loading-stage #stageLoading:not(.hidden){display:grid!important;}
 .world-stage-image.night,.mobile-stage-art.night{filter:saturate(.95) brightness(.78) contrast(1.08);}
+
+
+/* ============================================================
+   CHERRIFT v0.4.0k GROUND ASSET FIX
+   Ensures assets/map/world1/world1_grass_seamless.png is included.
+   ============================================================ */

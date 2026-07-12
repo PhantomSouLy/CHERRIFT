@@ -2,7 +2,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "0.4.0j-clean-loading-night";
+  const VERSION = "0.4.0k-ground-asset-fix";
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => Array.from(root.querySelectorAll(sel));
   const id = name => document.getElementById(name);
@@ -284,7 +284,7 @@
 
     UI.refreshMenu = function(){
       normalizeSave(this.save);
-      setText("menuBuildVersion","v0.4.0j CLEAN NIGHT");
+      setText("menuBuildVersion","v0.4.0k GROUND FIX");
       setText("menuCoins", this.save.coins); setText("menuKeys", this.save.keys);
       setText("mobileCoinsValue", this.save.coins); setText("mobileKeysValue", this.save.keys); setText("mobileEnergyValue", "5");
       const skin=CHERRIFT_DATA.skins.find(s=>s.id===this.save.selectedSkin)||CHERRIFT_DATA.skins[0];
@@ -611,7 +611,7 @@
 
 
 /* ============================================================
-   CHERRIFT v0.4.0j CLEAN NIGHT + NIGHT FIX
+   CHERRIFT v0.4.0k GROUND FIX + NIGHT FIX
    Clean replacement for old v0.4.0d/e/f/g/h world patches.
 
    Final world rules:
@@ -664,7 +664,7 @@
     CHERRIFT_V040.sharedGround = SHARED_GROUND;
     CHERRIFT_V040.world1Splash = WORLD1_SPLASH;
     CHERRIFT_V040.world2Splash = WORLD2_SPLASH;
-    CHERRIFT_V040.css = "clean-v040j";
+    CHERRIFT_V040.css = "clean-v040k";
   }
 
   function normalizeSaveV040i(save) {
@@ -725,8 +725,8 @@
   let standaloneReady = false;
   standaloneGround.decoding = "async";
   standaloneGround.onload = () => { standaloneReady = true; };
-  standaloneGround.onerror = () => console.warn("[CHERRIFT v0.4.0j] Missing seamless ground:", SHARED_GROUND);
-  standaloneGround.src = `${SHARED_GROUND}?v=040j`;
+  standaloneGround.onerror = () => console.warn("[CHERRIFT v0.4.0k] Missing seamless ground:", SHARED_GROUND);
+  standaloneGround.src = `${SHARED_GROUND}?v=040k`;
 
   function currentStageV040i(save = UI.save) {
     normalizeSaveV040i(save);
@@ -850,7 +850,7 @@
     const stage = currentStageV040i(this.save);
 
     const build = id("menuBuildVersion");
-    if (build) build.textContent = "v0.4.0j CLEAN NIGHT";
+    if (build) build.textContent = "v0.4.0k GROUND FIX";
 
     const desktop = id("selectedStageDesktop");
     if (desktop && stage) desktop.textContent = stage.name;
@@ -860,7 +860,7 @@
       const night = stage.world === 2 || stage.theme === "forest_night";
       art.classList.add("has-world-art");
       art.classList.toggle("night", night);
-      art.style.backgroundImage = `linear-gradient(180deg, rgba(5,3,12,.06), rgba(5,3,12,.42)), url("${night ? WORLD2_SPLASH : WORLD1_SPLASH}?v=040j")`;
+      art.style.backgroundImage = `linear-gradient(180deg, rgba(5,3,12,.06), rgba(5,3,12,.42)), url("${night ? WORLD2_SPLASH : WORLD1_SPLASH}?v=040k")`;
     }
 
     try { CherriftStorage.save(this.save); } catch (_) {}
@@ -896,7 +896,7 @@
     if (img) {
       img.classList.add("has-world-art");
       img.classList.toggle("night", night);
-      img.style.backgroundImage = `linear-gradient(180deg, rgba(5,3,12,.04), rgba(5,3,12,.36)), url("${night ? WORLD2_SPLASH : WORLD1_SPLASH}?v=040j")`;
+      img.style.backgroundImage = `linear-gradient(180deg, rgba(5,3,12,.04), rgba(5,3,12,.36)), url("${night ? WORLD2_SPLASH : WORLD1_SPLASH}?v=040k")`;
     }
 
     const launch = id("worldLaunchBtn");
@@ -930,7 +930,7 @@
 
 
 /* ============================================================
-   CHERRIFT v0.4.0j LOADING / NIGHT FINALIZER
+   CHERRIFT v0.4.0k LOADING / NIGHT FINALIZER
    - No old grass randomizer logic
    - No legacy start wrapper
    - Stage loading cannot freeze permanently
@@ -941,7 +941,7 @@
 
   if (!window.CHERRIFT_CONFIG || !window.CHERRIFT_DATA || !window.CherriftGame || !window.UI) return;
 
-  const VERSION = "0.4.0j-clean-loading-night";
+  const VERSION = "0.4.0k-ground-asset-fix";
   const SHARED_GROUND = "assets/map/world1/world1_grass_seamless.png";
   const WORLD1_SPLASH = "assets/map/world1/world1.png";
   const WORLD2_SPLASH = "assets/map/world2.png";
@@ -964,7 +964,7 @@
     CHERRIFT_V040.sharedGround = SHARED_GROUND;
     CHERRIFT_V040.world1Splash = WORLD1_SPLASH;
     CHERRIFT_V040.world2Splash = WORLD2_SPLASH;
-    CHERRIFT_V040.css = "clean-v040j";
+    CHERRIFT_V040.css = "clean-v040k";
   }
 
   function normalizeSaveJ(save) {
@@ -987,12 +987,12 @@
     return save;
   }
 
-  if (window.CherriftStorage && !CherriftStorage.__v040jSavePatch) {
+  if (window.CherriftStorage && !CherriftStorage.__v040kSavePatch) {
     const oldDefaults = CherriftStorage.defaults?.bind(CherriftStorage);
     const oldLoad = CherriftStorage.load?.bind(CherriftStorage);
-    CherriftStorage.defaults = function defaultsV040j() { return normalizeSaveJ(oldDefaults ? oldDefaults() : {}); };
-    CherriftStorage.load = function loadV040j() { return normalizeSaveJ(oldLoad ? oldLoad() : {}); };
-    CherriftStorage.__v040jSavePatch = true;
+    CherriftStorage.defaults = function defaultsV040k() { return normalizeSaveJ(oldDefaults ? oldDefaults() : {}); };
+    CherriftStorage.load = function loadV040k() { return normalizeSaveJ(oldLoad ? oldLoad() : {}); };
+    CherriftStorage.__v040kSavePatch = true;
   }
 
   if (UI.save) {
@@ -1028,15 +1028,15 @@
     document.body.classList.toggle("is-loading-stage", !!on);
   }
 
-  UI.showStageLoading = function showStageLoadingV040j(stage) { setStageLoading(stage, true); };
-  UI.hideStageLoading = function hideStageLoadingV040j() { setStageLoading(null, false); };
+  UI.showStageLoading = function showStageLoadingV040k(stage) { setStageLoading(stage, true); };
+  UI.hideStageLoading = function hideStageLoadingV040k() { setStageLoading(null, false); };
 
   const oldRefreshMenu = UI.refreshMenu?.bind(UI);
-  UI.refreshMenu = function refreshMenuV040j(...args) {
+  UI.refreshMenu = function refreshMenuV040k(...args) {
     if (this.save) normalizeSaveJ(this.save);
     const result = oldRefreshMenu ? oldRefreshMenu(...args) : undefined;
     const build = id("menuBuildVersion");
-    if (build) build.textContent = "v0.4.0j CLEAN NIGHT";
+    if (build) build.textContent = "v0.4.0k GROUND FIX";
     const stage = selectedStage(this.save);
     const art = id("mobileStageArt");
     if (art && stage) {
@@ -1049,7 +1049,7 @@
   };
 
   const oldRenderWorldPanel = UI.renderWorldPanel?.bind(UI);
-  UI.renderWorldPanel = function renderWorldPanelV040j(...args) {
+  UI.renderWorldPanel = function renderWorldPanelV040k(...args) {
     if (this.save) normalizeSaveJ(this.save);
     const result = oldRenderWorldPanel ? oldRenderWorldPanel(...args) : undefined;
     const stage = stageAtCarousel(this);
@@ -1076,7 +1076,7 @@
     return result;
   };
 
-  UI.launchSelectedWorld = function launchSelectedWorldV040j() {
+  UI.launchSelectedWorld = function launchSelectedWorldV040k() {
     normalizeSaveJ(this.save);
     const stage = stageAtCarousel(this);
     if (!isUnlocked(stage, this.save)) return this.toast?.("Stage locked");
@@ -1089,23 +1089,23 @@
   let groundReady = false;
   groundImage.decoding = "async";
   groundImage.onload = () => { groundReady = true; };
-  groundImage.onerror = () => console.warn("[CHERRIFT v0.4.0j] Missing seamless ground:", SHARED_GROUND);
-  groundImage.src = `${SHARED_GROUND}?v=040j`;
+  groundImage.onerror = () => console.warn("[CHERRIFT v0.4.0k] Missing seamless ground:", SHARED_GROUND);
+  groundImage.src = `${SHARED_GROUND}?v=040k`;
 
-  if (window.ImageAssets && !ImageAssets.prototype.__v040jAssetPatch) {
+  if (window.ImageAssets && !ImageAssets.prototype.__v040kAssetPatch) {
     const oldLoadAll = ImageAssets.prototype.loadAll;
-    ImageAssets.prototype.loadAll = async function loadAllV040j() {
+    ImageAssets.prototype.loadAll = async function loadAllV040k() {
       await oldLoadAll.call(this);
       await Promise.all([
-        this.loadImage("sharedGround", `${SHARED_GROUND}?v=040j`).catch(() => false),
-        this.loadImage("grass", `${SHARED_GROUND}?v=040j`).catch(() => false),
-        this.loadImage("grassNight", `${SHARED_GROUND}?v=040j`).catch(() => false),
-        this.loadImage("world1", `${WORLD1_SPLASH}?v=040j`).catch(() => false),
-        this.loadImage("world2", `${WORLD2_SPLASH}?v=040j`).catch(() => false)
+        this.loadImage("sharedGround", `${SHARED_GROUND}?v=040k`).catch(() => false),
+        this.loadImage("grass", `${SHARED_GROUND}?v=040k`).catch(() => false),
+        this.loadImage("grassNight", `${SHARED_GROUND}?v=040k`).catch(() => false),
+        this.loadImage("world1", `${WORLD1_SPLASH}?v=040k`).catch(() => false),
+        this.loadImage("world2", `${WORLD2_SPLASH}?v=040k`).catch(() => false)
       ]);
       this.ready = true;
     };
-    ImageAssets.prototype.__v040jAssetPatch = true;
+    ImageAssets.prototype.__v040kAssetPatch = true;
   }
 
   function getGroundImage(game) {
@@ -1116,11 +1116,11 @@
     const img = getGroundImage(game);
     if (!img) return null;
     const src = img.currentSrc || img.src || SHARED_GROUND;
-    if (!game.__v040jGroundPattern || game.__v040jGroundPatternSrc !== src) {
-      game.__v040jGroundPattern = c.createPattern(img, "repeat");
-      game.__v040jGroundPatternSrc = src;
+    if (!game.__v040kGroundPattern || game.__v040kGroundPatternSrc !== src) {
+      game.__v040kGroundPattern = c.createPattern(img, "repeat");
+      game.__v040kGroundPatternSrc = src;
     }
-    return game.__v040jGroundPattern;
+    return game.__v040kGroundPattern;
   }
 
   function drawNight(c, startX, startY, width, height, game) {
@@ -1150,11 +1150,11 @@
     c.restore();
   }
 
-  CherriftGame.prototype.getSelectedStage = function getSelectedStageV040j() {
+  CherriftGame.prototype.getSelectedStage = function getSelectedStageV040k() {
     return selectedStage(this.save);
   };
 
-  CherriftGame.prototype.drawGround = function drawGroundV040j(c, zoom = 1) {
+  CherriftGame.prototype.drawGround = function drawGroundV040k(c, zoom = 1) {
     const stage = this.stage || this.getSelectedStage?.();
     const size = 128;
     const viewW = this.w / zoom;
@@ -1183,20 +1183,20 @@
   };
 
   const originalResize = CherriftGame.prototype.resize;
-  CherriftGame.prototype.resize = function resizeV040j(...args) {
+  CherriftGame.prototype.resize = function resizeV040k(...args) {
     const result = originalResize ? originalResize.apply(this, args) : undefined;
-    this.__v040jGroundPattern = null;
+    this.__v040kGroundPattern = null;
     return result;
   };
 
   const originalStart = CherriftGame.prototype.start;
-  CherriftGame.prototype.start = async function startV040j() {
+  CherriftGame.prototype.start = async function startV040k() {
     const stage = this.getSelectedStage?.() || selectedStage(this.save);
     UI.showStageLoading?.(stage);
 
     // Do not let loading freeze forever on a missing/slow asset.
     await Promise.race([
-      Promise.resolve(this.assetReady).catch(err => { console.warn("[CHERRIFT v0.4.0j] assetReady failed:", err); return false; }),
+      Promise.resolve(this.assetReady).catch(err => { console.warn("[CHERRIFT v0.4.0k] assetReady failed:", err); return false; }),
       sleep(900)
     ]);
 
@@ -1254,7 +1254,7 @@
       this.spawnTimer = 0;
       this.camera = { x:this.player.x, y:this.player.y };
       this.last = performance.now();
-      this.__v040jGroundPattern = null;
+      this.__v040kGroundPattern = null;
 
       UI.hideStageLoading?.();
       UI.showGame?.();
@@ -1262,9 +1262,110 @@
       this.resize?.();
       this.render?.();
     } catch (err) {
-      console.error("[CHERRIFT v0.4.0j] start failed; falling back to original start", err);
+      console.error("[CHERRIFT v0.4.0k] start failed; falling back to original start", err);
       UI.hideStageLoading?.();
       try { return originalStart ? originalStart.call(this) : undefined; } catch (fallbackErr) { console.error(fallbackErr); }
     }
+  };
+})();
+
+
+/* ============================================================
+   CHERRIFT v0.4.0k GROUND ASSET FINAL SAFETY
+   - Uses assets/map/world1/world1_grass_seamless.png directly
+   - Does not rely only on canvas pattern
+   - World 2 keeps the night overlay
+   ============================================================ */
+(() => {
+  "use strict";
+
+  if (!window.CherriftGame || !window.CHERRIFT_CONFIG) return;
+
+  const SHARED_GROUND_K = "assets/map/world1/world1_grass_seamless.png";
+  CHERRIFT_CONFIG.map.grass = SHARED_GROUND_K;
+  CHERRIFT_CONFIG.map.grassNight = SHARED_GROUND_K;
+  CHERRIFT_CONFIG.map.world1GrassSeamless = SHARED_GROUND_K;
+
+  const groundK = new Image();
+  let groundKReady = false;
+  groundK.onload = () => { groundKReady = true; console.info("[CHERRIFT v0.4.0k] seamless ground loaded:", SHARED_GROUND_K); };
+  groundK.onerror = () => { console.warn("[CHERRIFT v0.4.0k] seamless ground missing:", SHARED_GROUND_K); };
+  groundK.decoding = "async";
+  groundK.src = SHARED_GROUND_K + "?v=040k";
+
+  function isNight(stage) {
+    return !!stage && (stage.world === 2 || stage.theme === "forest_night");
+  }
+
+  function getImg(game) {
+    return game?.assets?.get?.("sharedGround")
+      || game?.assets?.get?.("grass")
+      || (groundKReady ? groundK : null);
+  }
+
+  function tileDraw(c, img, startX, startY, width, height) {
+    const iw = Math.max(128, img.naturalWidth || img.width || 512);
+    const ih = Math.max(128, img.naturalHeight || img.height || 512);
+    const x0 = Math.floor(startX / iw) * iw;
+    const y0 = Math.floor(startY / ih) * ih;
+    for (let y = y0; y < startY + height + ih; y += ih) {
+      for (let x = x0; x < startX + width + iw; x += iw) {
+        c.drawImage(img, x, y, iw, ih);
+      }
+    }
+  }
+
+  function nightOverlay(c, startX, startY, width, height, game) {
+    c.save();
+    c.globalAlpha = .52;
+    c.fillStyle = "#06102a";
+    c.fillRect(startX, startY, width, height);
+
+    c.globalAlpha = .11;
+    const g = c.createRadialGradient(game.camera.x - width * .22, game.camera.y - height * .20, 10, game.camera.x, game.camera.y, Math.max(width, height) * .82);
+    g.addColorStop(0, "#7e99ff");
+    g.addColorStop(.50, "#26376d");
+    g.addColorStop(1, "rgba(0,0,0,0)");
+    c.fillStyle = g;
+    c.fillRect(startX, startY, width, height);
+
+    c.globalAlpha = .045;
+    c.fillStyle = "#cfe0ff";
+    for (let i = 0; i < 48; i++) {
+      const px = startX + ((i * 57 + 11) % 100) / 100 * width;
+      const py = startY + ((i * 83 + 19) % 100) / 100 * height;
+      c.beginPath();
+      c.arc(px, py, 1.1 + (i % 3) * .45, 0, Math.PI * 2);
+      c.fill();
+    }
+    c.restore();
+  }
+
+  CherriftGame.prototype.drawGround = function drawGroundV040k(c, zoom = 1) {
+    const stage = this.stage || this.getSelectedStage?.();
+    const size = 128;
+    const viewW = this.w / zoom;
+    const viewH = this.h / zoom;
+    const startX = Math.floor((this.camera.x - viewW / 2) / size) * size - size;
+    const startY = Math.floor((this.camera.y - viewH / 2) / size) * size - size;
+    const endX = Math.floor((this.camera.x + viewW / 2) / size) * size + size * 2;
+    const endY = Math.floor((this.camera.y + viewH / 2) / size) * size + size * 2;
+    const width = endX - startX;
+    const height = endY - startY;
+    const night = isNight(stage);
+
+    const img = getImg(this);
+    if (img) {
+      c.save();
+      tileDraw(c, img, startX, startY, width, height);
+      c.restore();
+    } else {
+      c.save();
+      c.fillStyle = night ? "#263d2e" : "#6caf3e";
+      c.fillRect(startX, startY, width, height);
+      c.restore();
+    }
+
+    if (night) nightOverlay(c, startX, startY, width, height, this);
   };
 })();

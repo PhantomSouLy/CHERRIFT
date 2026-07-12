@@ -32,3 +32,27 @@ CHERRIFT v0.4.0j Clean Loading + Night Fix
 - World 1 and World 2 both use assets/map/world1/world1_grass_seamless.png.
 - World 2 gets the final global blue night overlay.
 - index.html now uses cache busting: menu_v040.css?v=040j and src/cherrift_v040.js?v=040j.
+
+
+CHERRIFT v0.4.0k Ground Asset Fix
+
+[Root cause]
+- The deployed repository did not have the exact asset path:
+  assets/map/world1/world1_grass_seamless.png
+- Because that file was missing on GitHub Pages, the game fell back to a solid green/night color.
+
+[Fixed]
+- This ZIP includes:
+  assets/map/world1/world1_grass_seamless.png
+- World 1 and World 2 both use that same seamless texture.
+- World 2 keeps the night overlay.
+- Added a final drawGround safety override:
+  - tries ImageAssets sharedGround/grass
+  - tries a direct Image() loader
+  - draws the image manually as repeated tiles
+  - does not rely only on createPattern()
+
+[Cache]
+- index.html now uses:
+  menu_v040.css?v=040k
+  src/cherrift_v040.js?v=040k
