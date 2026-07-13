@@ -141,3 +141,28 @@ CHERRIFT v0.4.1b Bugfix
 
 [Cache]
 - index.html now uses ?v=041b for JS/CSS.
+
+
+CHERRIFT v0.4.1c Enemy Repo Fix
+
+[Important repo diagnosis]
+- Previous deployed src/cherrift_v040.js still had the old placeholder ENEMIES map.
+- This patch appends a final override after the old v0.4 blocks.
+
+[Fixed]
+- Stage enemy pools now use the new enemy IDs.
+- New enemy sheets are loaded directly with ?v=041c.
+- New sprite enemies no longer draw colored blob placeholders.
+- Exact stage spawn cap: total spawned enemies cannot exceed goalKills.
+- Night map rendering is cheaper.
+- Mobile main menu tap hitboxes are expanded.
+
+[Required enemy files]
+assets/enemies/shadow_bat_sprite_sheet.png
+assets/enemies/blue_slime_sprite_sheet.png
+assets/enemies/tank_blue_slime_sprite_sheet.png
+assets/enemies/ghost_slime_sprite_sheet.png
+assets/enemies/angry_mushroom_sprite_sheet.png
+
+[Note]
+If angry_mushroom_sprite_sheet.png is empty or corrupted on GitHub, mushroom will not show until that PNG is reuploaded.
