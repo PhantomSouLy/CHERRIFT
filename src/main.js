@@ -15,6 +15,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   await loadScript("src/cherrift_v042_completion.js?v=042", "v0.4 completion patch");
   await loadScript("src/cherrift_v050.js?v=050", "v0.5 progression patch");
+  await loadScript("src/cherrift_mobile_v051.js?v=051", "v0.5.1 mobile menu patch");
 
   const save = CherriftStorage.load();
 
