@@ -218,10 +218,10 @@ body.is-loading-stage #stageLoading:not(.hidden){display:grid!important;}
 
 
 /* ============================================================
-   CHERRIFT v0.4.1d GROUND FPS + VICTORY FIX
+   CHERRIFT v0.4.1e PERF + ENEMY + GROUND FIX
    ============================================================ */
 
-.victory-splash-v041d {
+.victory-splash-v041e {
   position: fixed;
   inset: 0;
   z-index: 90000;
@@ -229,10 +229,10 @@ body.is-loading-stage #stageLoading:not(.hidden){display:grid!important;}
   place-items: center;
   pointer-events: none;
   background: radial-gradient(circle at 50% 45%, rgba(255, 91, 172, .20), rgba(4, 2, 10, 0) 42%);
-  animation: victorySplashIn041d .24s ease-out both;
+  animation: victorySplashIn041e .22s ease-out both;
 }
 
-.victory-card-v041d {
+.victory-card-v041e {
   min-width: min(520px, calc(100vw - 42px));
   padding: 26px 30px;
   border-radius: 26px;
@@ -243,7 +243,7 @@ body.is-loading-stage #stageLoading:not(.hidden){display:grid!important;}
   backdrop-filter: blur(12px);
 }
 
-.victory-card-v041d h2 {
+.victory-card-v041e h2 {
   margin: 0;
   font-size: clamp(38px, 7vw, 76px);
   line-height: .95;
@@ -252,13 +252,13 @@ body.is-loading-stage #stageLoading:not(.hidden){display:grid!important;}
   letter-spacing: -1px;
 }
 
-.victory-card-v041d p {
+.victory-card-v041e p {
   margin: 10px 0 0;
   color: rgba(255, 225, 242, .92);
   font-weight: 900;
 }
 
-@keyframes victorySplashIn041d {
+@keyframes victorySplashIn041e {
   from { opacity: 0; transform: scale(.96); }
   to { opacity: 1; transform: scale(1); }
 }

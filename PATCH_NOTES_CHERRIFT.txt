@@ -168,27 +168,39 @@ assets/enemies/angry_mushroom_sprite_sheet.png
 If angry_mushroom_sprite_sheet.png is empty or corrupted on GitHub, mushroom will not show until that PNG is reuploaded.
 
 
-CHERRIFT v0.4.1d Ground + FPS + Victory Fix
+CHERRIFT v0.4.1e Performance + Enemy + Ground Fix
+
+[Major cleanup]
+- Removed the huge embedded base64 ground PNG from src/cherrift_v040.js.
+- This reduces JS size heavily and should fix parsing/loading lag.
 
 [Ground]
-- Final ground renderer uses:
+- Uses only:
   assets/map/world1/world1_grass_seamless.png
-- If the external file fails, it reuses the embedded PNG from the previous embedded-ground patch.
-- The huge source image is converted once into a 512px cached canvas tile.
-- World 1 and World 2 both use the same seamless tile.
-- World 2 keeps night overlay.
+- World 1 and World 2 both use the same ground.
+- World 2 has a cheap night overlay.
+- Ground is rendered through a cached 512px tile canvas + canvas pattern.
+
+[Enemy sprites]
+- Re-added final direct enemy sprite loading for:
+  blue_slime
+  tank_blue_slime
+  ghost_slime
+  angry_mushroom
+  shadow_bat
+- Added cached per-frame canvases for sprite sheets.
+- No colored placeholder fallback for new sprite enemies.
 
 [World 2 FPS]
-- Enemy sprite drawing now uses cached per-frame mini canvases.
-- This avoids cropping huge sprite sheets every frame for every enemy.
-- Night ground overlay is cheaper.
+- Removed embedded base64 parse cost.
+- Cached ground pattern.
+- Cached enemy animation frame canvases.
+- Cheaper night overlay.
 
-[Stage Clear]
-- Stage clear modal is delayed by 3.4 seconds.
-- A VICTORY splash appears first.
-- Enemies/projectiles are cleared during the victory delay.
+[Stage clear]
+- 3.5s VICTORY splash before Stage Cleared modal.
 
 [Cache]
 - index.html now uses:
-  menu_v040.css?v=041d
-  src/cherrift_v040.js?v=041d
+  menu_v040.css?v=041e
+  src/cherrift_v040.js?v=041e
