@@ -23,20 +23,13 @@ window.addEventListener("DOMContentLoaded", async () => {
   await loadScript("src/cherrift_v055c.js?v=055c","v0.5.5c");
   await loadScript("src/cherrift_v0551.js?v=0551","v0.5.5.1");
   await loadScript("src/cherrift_v0552.js?v=0552","v0.5.5.2");
-  await loadScript("src/cherrift_v0553.js?v=0553","v0.5.5.3 skins");
+  await loadScript("src/cherrift_v0553.js?v=0553","v0.5.5.3");
+  await loadScript("src/cherrift_v0554.js?v=0554","v0.5.5.4");
+  await loadScript("src/cherrift_v0555.js?v=0555","v0.5.5.5");
+  await loadScript("src/cherrift_v0556.js?v=0556","v0.5.5.6 Succubus fix");
 
-  const save=CherriftStorage.load();
-
-  if(!save.inventory.length&&!Object.keys(save.equipped||{}).length){
-    save.inventory.push(
-      {id:"starter_1",slot:"Weapon",type:"Crimson",rarity:"Common",itemLevel:1,locked:false,stats:{damage:4}},
-      {id:"starter_2",slot:"Armor",type:"Azure",rarity:"Common",itemLevel:1,locked:false,stats:{maxHp:18,armor:2}},
-      {id:"starter_3",slot:"Boots",type:"Verdant",rarity:"Common",itemLevel:1,locked:false,stats:{moveSpeed:7}}
-    );
-    CherriftStorage.save(save);
-  }
-
-  const input=new CherriftInput();
-  const game=new CherriftGame(document.getElementById("game"),input,save);
-  UI.init(save,game);
+  const save = CherriftStorage.load();
+  const input = new CherriftInput();
+  const game = new CherriftGame(document.getElementById("game"), input, save);
+  UI.init(save, game);
 });
