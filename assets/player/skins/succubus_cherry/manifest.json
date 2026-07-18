@@ -1,0 +1,42 @@
+{
+  "skin": "succubus_cherry",
+  "source_design": "succubus_cherry_splashart(1).png",
+  "format": "RGBA PNG",
+  "cell": {
+    "width": 192,
+    "height": 192
+  },
+  "pivot": {
+    "x": 96,
+    "ground_y": 184
+  },
+  "states": {
+    "idle": {
+      "frames": 4,
+      "fps": 3,
+      "sheet_size": [768, 192]
+    },
+    "walk": {
+      "frames": 6,
+      "fps": 8,
+      "sheet_size": [1152, 192]
+    },
+    "melee": {
+      "frames": 6,
+      "fps": 18,
+      "sheet_size": [1152, 192],
+      "vfx_baked_in": false,
+      "cherrift_alias": "attack"
+    },
+    "ranged": {
+      "frames": 6,
+      "fps": 16,
+      "sheet_size": [1152, 192],
+      "vfx_baked_in": false,
+      "cherrift_alias": "skill"
+    }
+  },
+  "directions": ["down", "up", "left", "right"],
+  "canonical_file_count": 16,
+  "validation": "succubus_cherry_validation.json"
+}

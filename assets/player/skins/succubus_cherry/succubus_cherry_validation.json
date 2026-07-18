@@ -1,0 +1,1240 @@
+{
+  "skin": "succubus_cherry",
+  "cell_size": [
+    192,
+    192
+  ],
+  "pivot": [
+    96,
+    184
+  ],
+  "canonical_files": 16,
+  "missing": [],
+  "valid": true,
+  "files": [
+    {
+      "file": "succubus_cherry_idle_down.png",
+      "frames": 4,
+      "size": [
+        768,
+        192
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "errors": [],
+      "frame_details": [
+        {
+          "frame": 1,
+          "alpha_bbox": [
+            37,
+            6,
+            156,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 2,
+          "alpha_bbox": [
+            28,
+            6,
+            165,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 3,
+          "alpha_bbox": [
+            35,
+            6,
+            158,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 4,
+          "alpha_bbox": [
+            37,
+            6,
+            155,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        }
+      ]
+    },
+    {
+      "file": "succubus_cherry_idle_up.png",
+      "frames": 4,
+      "size": [
+        768,
+        192
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "errors": [],
+      "frame_details": [
+        {
+          "frame": 1,
+          "alpha_bbox": [
+            38,
+            6,
+            155,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 2,
+          "alpha_bbox": [
+            33,
+            6,
+            159,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 3,
+          "alpha_bbox": [
+            41,
+            6,
+            151,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 4,
+          "alpha_bbox": [
+            39,
+            6,
+            153,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        }
+      ]
+    },
+    {
+      "file": "succubus_cherry_idle_left.png",
+      "frames": 4,
+      "size": [
+        768,
+        192
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "errors": [],
+      "frame_details": [
+        {
+          "frame": 1,
+          "alpha_bbox": [
+            42,
+            6,
+            150,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 2,
+          "alpha_bbox": [
+            41,
+            6,
+            151,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 3,
+          "alpha_bbox": [
+            41,
+            6,
+            150,
+            184
+          ],
+          "center_x": 95.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 4,
+          "alpha_bbox": [
+            41,
+            6,
+            150,
+            184
+          ],
+          "center_x": 95.5,
+          "ground_y": 184
+        }
+      ]
+    },
+    {
+      "file": "succubus_cherry_idle_right.png",
+      "frames": 4,
+      "size": [
+        768,
+        192
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "errors": [],
+      "frame_details": [
+        {
+          "frame": 1,
+          "alpha_bbox": [
+            42,
+            6,
+            150,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 2,
+          "alpha_bbox": [
+            41,
+            6,
+            151,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 3,
+          "alpha_bbox": [
+            42,
+            6,
+            151,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 4,
+          "alpha_bbox": [
+            42,
+            6,
+            151,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        }
+      ]
+    },
+    {
+      "file": "succubus_cherry_walk_down.png",
+      "frames": 6,
+      "size": [
+        1152,
+        192
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "errors": [],
+      "frame_details": [
+        {
+          "frame": 1,
+          "alpha_bbox": [
+            40,
+            6,
+            152,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 2,
+          "alpha_bbox": [
+            41,
+            6,
+            152,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 3,
+          "alpha_bbox": [
+            38,
+            6,
+            154,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 4,
+          "alpha_bbox": [
+            42,
+            6,
+            151,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 5,
+          "alpha_bbox": [
+            42,
+            6,
+            150,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 6,
+          "alpha_bbox": [
+            42,
+            6,
+            151,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        }
+      ]
+    },
+    {
+      "file": "succubus_cherry_walk_up.png",
+      "frames": 6,
+      "size": [
+        1152,
+        192
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "errors": [],
+      "frame_details": [
+        {
+          "frame": 1,
+          "alpha_bbox": [
+            40,
+            6,
+            153,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 2,
+          "alpha_bbox": [
+            39,
+            6,
+            154,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 3,
+          "alpha_bbox": [
+            40,
+            6,
+            152,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 4,
+          "alpha_bbox": [
+            40,
+            6,
+            153,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 5,
+          "alpha_bbox": [
+            39,
+            6,
+            153,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 6,
+          "alpha_bbox": [
+            40,
+            6,
+            153,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        }
+      ]
+    },
+    {
+      "file": "succubus_cherry_walk_left.png",
+      "frames": 6,
+      "size": [
+        1152,
+        192
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "errors": [],
+      "frame_details": [
+        {
+          "frame": 1,
+          "alpha_bbox": [
+            43,
+            6,
+            149,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 2,
+          "alpha_bbox": [
+            46,
+            6,
+            146,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 3,
+          "alpha_bbox": [
+            44,
+            6,
+            148,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 4,
+          "alpha_bbox": [
+            49,
+            6,
+            143,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 5,
+          "alpha_bbox": [
+            44,
+            6,
+            147,
+            184
+          ],
+          "center_x": 95.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 6,
+          "alpha_bbox": [
+            43,
+            6,
+            149,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        }
+      ]
+    },
+    {
+      "file": "succubus_cherry_walk_right.png",
+      "frames": 6,
+      "size": [
+        1152,
+        192
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "errors": [],
+      "frame_details": [
+        {
+          "frame": 1,
+          "alpha_bbox": [
+            43,
+            6,
+            149,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 2,
+          "alpha_bbox": [
+            46,
+            6,
+            146,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 3,
+          "alpha_bbox": [
+            44,
+            6,
+            148,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 4,
+          "alpha_bbox": [
+            49,
+            6,
+            143,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 5,
+          "alpha_bbox": [
+            45,
+            6,
+            148,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 6,
+          "alpha_bbox": [
+            43,
+            6,
+            149,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        }
+      ]
+    },
+    {
+      "file": "succubus_cherry_melee_down.png",
+      "frames": 6,
+      "size": [
+        1152,
+        192
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "errors": [],
+      "frame_details": [
+        {
+          "frame": 1,
+          "alpha_bbox": [
+            33,
+            6,
+            159,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 2,
+          "alpha_bbox": [
+            35,
+            6,
+            158,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 3,
+          "alpha_bbox": [
+            32,
+            6,
+            160,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 4,
+          "alpha_bbox": [
+            35,
+            6,
+            158,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 5,
+          "alpha_bbox": [
+            34,
+            6,
+            159,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 6,
+          "alpha_bbox": [
+            34,
+            6,
+            158,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        }
+      ]
+    },
+    {
+      "file": "succubus_cherry_melee_up.png",
+      "frames": 6,
+      "size": [
+        1152,
+        192
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "errors": [],
+      "frame_details": [
+        {
+          "frame": 1,
+          "alpha_bbox": [
+            43,
+            6,
+            150,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 2,
+          "alpha_bbox": [
+            43,
+            6,
+            150,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 3,
+          "alpha_bbox": [
+            31,
+            6,
+            162,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 4,
+          "alpha_bbox": [
+            47,
+            6,
+            146,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 5,
+          "alpha_bbox": [
+            47,
+            6,
+            146,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 6,
+          "alpha_bbox": [
+            43,
+            6,
+            149,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        }
+      ]
+    },
+    {
+      "file": "succubus_cherry_melee_left.png",
+      "frames": 6,
+      "size": [
+        1152,
+        192
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "errors": [],
+      "frame_details": [
+        {
+          "frame": 1,
+          "alpha_bbox": [
+            45,
+            6,
+            147,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 2,
+          "alpha_bbox": [
+            45,
+            6,
+            146,
+            184
+          ],
+          "center_x": 95.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 3,
+          "alpha_bbox": [
+            19,
+            6,
+            172,
+            184
+          ],
+          "center_x": 95.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 4,
+          "alpha_bbox": [
+            42,
+            6,
+            150,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 5,
+          "alpha_bbox": [
+            49,
+            6,
+            143,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 6,
+          "alpha_bbox": [
+            45,
+            6,
+            147,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        }
+      ]
+    },
+    {
+      "file": "succubus_cherry_melee_right.png",
+      "frames": 6,
+      "size": [
+        1152,
+        192
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "errors": [],
+      "frame_details": [
+        {
+          "frame": 1,
+          "alpha_bbox": [
+            45,
+            6,
+            147,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 2,
+          "alpha_bbox": [
+            46,
+            6,
+            147,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 3,
+          "alpha_bbox": [
+            20,
+            6,
+            173,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 4,
+          "alpha_bbox": [
+            42,
+            6,
+            150,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 5,
+          "alpha_bbox": [
+            49,
+            6,
+            143,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 6,
+          "alpha_bbox": [
+            45,
+            6,
+            147,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        }
+      ]
+    },
+    {
+      "file": "succubus_cherry_ranged_down.png",
+      "frames": 6,
+      "size": [
+        1152,
+        192
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "errors": [],
+      "frame_details": [
+        {
+          "frame": 1,
+          "alpha_bbox": [
+            52,
+            6,
+            140,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 2,
+          "alpha_bbox": [
+            51,
+            6,
+            141,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 3,
+          "alpha_bbox": [
+            53,
+            6,
+            140,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 4,
+          "alpha_bbox": [
+            52,
+            6,
+            141,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 5,
+          "alpha_bbox": [
+            49,
+            6,
+            143,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 6,
+          "alpha_bbox": [
+            52,
+            6,
+            140,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        }
+      ]
+    },
+    {
+      "file": "succubus_cherry_ranged_up.png",
+      "frames": 6,
+      "size": [
+        1152,
+        192
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "errors": [],
+      "frame_details": [
+        {
+          "frame": 1,
+          "alpha_bbox": [
+            53,
+            6,
+            139,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 2,
+          "alpha_bbox": [
+            52,
+            6,
+            141,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 3,
+          "alpha_bbox": [
+            40,
+            6,
+            152,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 4,
+          "alpha_bbox": [
+            44,
+            6,
+            149,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 5,
+          "alpha_bbox": [
+            52,
+            6,
+            140,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 6,
+          "alpha_bbox": [
+            52,
+            6,
+            141,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        }
+      ]
+    },
+    {
+      "file": "succubus_cherry_ranged_left.png",
+      "frames": 6,
+      "size": [
+        1152,
+        192
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "errors": [],
+      "frame_details": [
+        {
+          "frame": 1,
+          "alpha_bbox": [
+            44,
+            6,
+            147,
+            184
+          ],
+          "center_x": 95.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 2,
+          "alpha_bbox": [
+            44,
+            6,
+            148,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 3,
+          "alpha_bbox": [
+            38,
+            6,
+            154,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 4,
+          "alpha_bbox": [
+            35,
+            6,
+            156,
+            184
+          ],
+          "center_x": 95.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 5,
+          "alpha_bbox": [
+            43,
+            6,
+            148,
+            184
+          ],
+          "center_x": 95.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 6,
+          "alpha_bbox": [
+            45,
+            6,
+            147,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        }
+      ]
+    },
+    {
+      "file": "succubus_cherry_ranged_right.png",
+      "frames": 6,
+      "size": [
+        1152,
+        192
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "errors": [],
+      "frame_details": [
+        {
+          "frame": 1,
+          "alpha_bbox": [
+            45,
+            6,
+            148,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 2,
+          "alpha_bbox": [
+            44,
+            6,
+            148,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 3,
+          "alpha_bbox": [
+            38,
+            6,
+            154,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        },
+        {
+          "frame": 4,
+          "alpha_bbox": [
+            36,
+            6,
+            157,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 5,
+          "alpha_bbox": [
+            44,
+            6,
+            149,
+            184
+          ],
+          "center_x": 96.5,
+          "ground_y": 184
+        },
+        {
+          "frame": 6,
+          "alpha_bbox": [
+            45,
+            6,
+            147,
+            184
+          ],
+          "center_x": 96.0,
+          "ground_y": 184
+        }
+      ]
+    }
+  ]
+}

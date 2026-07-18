@@ -1,0 +1,123 @@
+{
+  "name": "Warrior Cherry",
+  "version": "1.0.0",
+  "format": "PNG",
+  "colorMode": "RGBA",
+  "backgroundAlpha": 0,
+  "frameSize": {
+    "width": 192,
+    "height": 192
+  },
+  "pivot": {
+    "x": 96,
+    "groundY": 184
+  },
+  "directions": [
+    "down",
+    "up",
+    "left",
+    "right"
+  ],
+  "animations": {
+    "idle": {
+      "frames": 4,
+      "fps": 3,
+      "loop": true,
+      "files": {
+        "down": {
+          "file": "warrior_cherry_idle_down.png",
+          "sha256": "2fcc366e5242aaf18d4cb1410ccb8929c34a82eafc4b7c0eae82e92b1a5ae7b3"
+        },
+        "up": {
+          "file": "warrior_cherry_idle_up.png",
+          "sha256": "67904155a5457c3d51b8f5becfe82e2498fe45a5125f79bb4078801ea13fb40e"
+        },
+        "left": {
+          "file": "warrior_cherry_idle_left.png",
+          "sha256": "0b838c56e4d93043b8a98e9f98f8b1833e285548747dcc6c0e962c0bcf4b165c"
+        },
+        "right": {
+          "file": "warrior_cherry_idle_right.png",
+          "sha256": "9354aae46073f978d5056422c31c48b3c34179de7f10d40352c6feb36dc47c22"
+        }
+      }
+    },
+    "walk": {
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "files": {
+        "down": {
+          "file": "warrior_cherry_walk_down.png",
+          "sha256": "98c841b54be742e17630b83896696f3a5269b9252f42ac55eb20882f49c65d46"
+        },
+        "up": {
+          "file": "warrior_cherry_walk_up.png",
+          "sha256": "544e195cdf0727fb503884683edf818f4740c73cc4fc964e02bd98bb1767ddcd"
+        },
+        "left": {
+          "file": "warrior_cherry_walk_left.png",
+          "sha256": "abc0980bb0d001b8e964d576bfd273393cab0cf472bf74178b68eddac005f8d5"
+        },
+        "right": {
+          "file": "warrior_cherry_walk_right.png",
+          "sha256": "1c4a8190586a952e54d9fa2b2f338dbbaa8483ce39d570246abe689accbd8d5e"
+        }
+      }
+    },
+    "melee": {
+      "frames": 6,
+      "fps": 18,
+      "loop": false,
+      "files": {
+        "down": {
+          "file": "warrior_cherry_melee_down.png",
+          "sha256": "7838f3e1b041e86119b9d8506596fd3776ce5c42013803bb9c72e9f2651e4f8b"
+        },
+        "up": {
+          "file": "warrior_cherry_melee_up.png",
+          "sha256": "f57d1d2293fef657aa614d69b9bb0b80b5627f99499e6e4a3e5583c3f984049d"
+        },
+        "left": {
+          "file": "warrior_cherry_melee_left.png",
+          "sha256": "27d8c2bf91cc5545a16f8a8e5c3a5f75bed279007f09f85eb7a5fd94f69068d6"
+        },
+        "right": {
+          "file": "warrior_cherry_melee_right.png",
+          "sha256": "49d04f935c88d06610ea99235e7373bd87a02169e30e7972a7d04e632de0dbea"
+        }
+      }
+    },
+    "ranged": {
+      "frames": 6,
+      "fps": 16,
+      "loop": false,
+      "files": {
+        "down": {
+          "file": "warrior_cherry_ranged_down.png",
+          "sha256": "7bcd8225fbdb8adc7166bdf4b5a943c8562575dfbe3d775a81b1cb214c9fb904"
+        },
+        "up": {
+          "file": "warrior_cherry_ranged_up.png",
+          "sha256": "981595b6fd8a50a3667eefd6a4e9c144103c8e0e66ab2af340a1d45b6c7a37ef"
+        },
+        "left": {
+          "file": "warrior_cherry_ranged_left.png",
+          "sha256": "a6616180e7a93ff51e5ecd965c21c837fab61d7448e47e64628bc47b61ff728d"
+        },
+        "right": {
+          "file": "warrior_cherry_ranged_right.png",
+          "sha256": "6543e63fae095cc5787f56be628c1abbcc08b1ec6df6df5fbe103540843ea20e"
+        }
+      }
+    }
+  },
+  "projectilePolicy": {
+    "rangedEffect": "separate_asset",
+    "characterSheetsContainVfx": false
+  },
+  "validation": {
+    "status": "passed",
+    "report": "validation.json"
+  }
+}

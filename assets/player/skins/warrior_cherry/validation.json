@@ -1,0 +1,1385 @@
+{
+  "pack": "Warrior Cherry",
+  "format": "PNG RGBA",
+  "cell_size": [
+    192,
+    192
+  ],
+  "pivot": [
+    96,
+    184
+  ],
+  "files_expected": 16,
+  "files_passed": 16,
+  "status": "passed",
+  "files": [
+    {
+      "file": "warrior_cherry_idle_down.png",
+      "mode": "RGBA",
+      "size": [
+        768,
+        192
+      ],
+      "frames": 4,
+      "cell_size": [
+        192,
+        192
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "transparent_pixels": 102974,
+      "partially_transparent_pixels": 11283,
+      "green_spill_pixels": 0,
+      "frames_detail": [
+        {
+          "frame": 1,
+          "bbox": [
+            39,
+            6,
+            153,
+            184
+          ],
+          "visible_pixels": 10393,
+          "touches_edge": false
+        },
+        {
+          "frame": 2,
+          "bbox": [
+            41,
+            6,
+            152,
+            184
+          ],
+          "visible_pixels": 10187,
+          "touches_edge": false
+        },
+        {
+          "frame": 3,
+          "bbox": [
+            39,
+            6,
+            154,
+            184
+          ],
+          "visible_pixels": 10431,
+          "touches_edge": false
+        },
+        {
+          "frame": 4,
+          "bbox": [
+            40,
+            6,
+            153,
+            184
+          ],
+          "visible_pixels": 10309,
+          "touches_edge": false
+        }
+      ],
+      "errors": [],
+      "warnings": [],
+      "status": "passed"
+    },
+    {
+      "file": "warrior_cherry_idle_up.png",
+      "mode": "RGBA",
+      "size": [
+        768,
+        192
+      ],
+      "frames": 4,
+      "cell_size": [
+        192,
+        192
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "transparent_pixels": 106242,
+      "partially_transparent_pixels": 11469,
+      "green_spill_pixels": 0,
+      "frames_detail": [
+        {
+          "frame": 1,
+          "bbox": [
+            41,
+            6,
+            151,
+            184
+          ],
+          "visible_pixels": 9344,
+          "touches_edge": false
+        },
+        {
+          "frame": 2,
+          "bbox": [
+            39,
+            6,
+            153,
+            184
+          ],
+          "visible_pixels": 9575,
+          "touches_edge": false
+        },
+        {
+          "frame": 3,
+          "bbox": [
+            41,
+            6,
+            152,
+            184
+          ],
+          "visible_pixels": 9518,
+          "touches_edge": false
+        },
+        {
+          "frame": 4,
+          "bbox": [
+            41,
+            6,
+            152,
+            184
+          ],
+          "visible_pixels": 9430,
+          "touches_edge": false
+        }
+      ],
+      "errors": [],
+      "warnings": [],
+      "status": "passed"
+    },
+    {
+      "file": "warrior_cherry_idle_left.png",
+      "mode": "RGBA",
+      "size": [
+        768,
+        192
+      ],
+      "frames": 4,
+      "cell_size": [
+        192,
+        192
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "transparent_pixels": 105461,
+      "partially_transparent_pixels": 10712,
+      "green_spill_pixels": 0,
+      "frames_detail": [
+        {
+          "frame": 1,
+          "bbox": [
+            34,
+            6,
+            158,
+            184
+          ],
+          "visible_pixels": 9687,
+          "touches_edge": false
+        },
+        {
+          "frame": 2,
+          "bbox": [
+            34,
+            6,
+            158,
+            184
+          ],
+          "visible_pixels": 9703,
+          "touches_edge": false
+        },
+        {
+          "frame": 3,
+          "bbox": [
+            34,
+            6,
+            158,
+            184
+          ],
+          "visible_pixels": 9685,
+          "touches_edge": false
+        },
+        {
+          "frame": 4,
+          "bbox": [
+            34,
+            6,
+            158,
+            184
+          ],
+          "visible_pixels": 9693,
+          "touches_edge": false
+        }
+      ],
+      "errors": [],
+      "warnings": [],
+      "status": "passed"
+    },
+    {
+      "file": "warrior_cherry_idle_right.png",
+      "mode": "RGBA",
+      "size": [
+        768,
+        192
+      ],
+      "frames": 4,
+      "cell_size": [
+        192,
+        192
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "transparent_pixels": 105959,
+      "partially_transparent_pixels": 10521,
+      "green_spill_pixels": 0,
+      "frames_detail": [
+        {
+          "frame": 1,
+          "bbox": [
+            38,
+            6,
+            154,
+            184
+          ],
+          "visible_pixels": 9595,
+          "touches_edge": false
+        },
+        {
+          "frame": 2,
+          "bbox": [
+            38,
+            6,
+            154,
+            184
+          ],
+          "visible_pixels": 9579,
+          "touches_edge": false
+        },
+        {
+          "frame": 3,
+          "bbox": [
+            38,
+            6,
+            154,
+            184
+          ],
+          "visible_pixels": 9592,
+          "touches_edge": false
+        },
+        {
+          "frame": 4,
+          "bbox": [
+            38,
+            6,
+            154,
+            184
+          ],
+          "visible_pixels": 9561,
+          "touches_edge": false
+        }
+      ],
+      "errors": [],
+      "warnings": [],
+      "status": "passed"
+    },
+    {
+      "file": "warrior_cherry_walk_down.png",
+      "mode": "RGBA",
+      "size": [
+        1152,
+        192
+      ],
+      "frames": 6,
+      "cell_size": [
+        192,
+        192
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "transparent_pixels": 158044,
+      "partially_transparent_pixels": 16940,
+      "green_spill_pixels": 0,
+      "frames_detail": [
+        {
+          "frame": 1,
+          "bbox": [
+            42,
+            6,
+            151,
+            184
+          ],
+          "visible_pixels": 9630,
+          "touches_edge": false
+        },
+        {
+          "frame": 2,
+          "bbox": [
+            41,
+            6,
+            152,
+            184
+          ],
+          "visible_pixels": 10057,
+          "touches_edge": false
+        },
+        {
+          "frame": 3,
+          "bbox": [
+            42,
+            6,
+            151,
+            184
+          ],
+          "visible_pixels": 9661,
+          "touches_edge": false
+        },
+        {
+          "frame": 4,
+          "bbox": [
+            43,
+            6,
+            149,
+            184
+          ],
+          "visible_pixels": 9374,
+          "touches_edge": false
+        },
+        {
+          "frame": 5,
+          "bbox": [
+            39,
+            6,
+            153,
+            184
+          ],
+          "visible_pixels": 10308,
+          "touches_edge": false
+        },
+        {
+          "frame": 6,
+          "bbox": [
+            42,
+            6,
+            150,
+            184
+          ],
+          "visible_pixels": 9454,
+          "touches_edge": false
+        }
+      ],
+      "errors": [],
+      "warnings": [],
+      "status": "passed"
+    },
+    {
+      "file": "warrior_cherry_walk_up.png",
+      "mode": "RGBA",
+      "size": [
+        1152,
+        192
+      ],
+      "frames": 6,
+      "cell_size": [
+        192,
+        192
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "transparent_pixels": 164907,
+      "partially_transparent_pixels": 16963,
+      "green_spill_pixels": 0,
+      "frames_detail": [
+        {
+          "frame": 1,
+          "bbox": [
+            43,
+            6,
+            149,
+            184
+          ],
+          "visible_pixels": 8440,
+          "touches_edge": false
+        },
+        {
+          "frame": 2,
+          "bbox": [
+            44,
+            6,
+            148,
+            184
+          ],
+          "visible_pixels": 8477,
+          "touches_edge": false
+        },
+        {
+          "frame": 3,
+          "bbox": [
+            43,
+            6,
+            149,
+            184
+          ],
+          "visible_pixels": 8402,
+          "touches_edge": false
+        },
+        {
+          "frame": 4,
+          "bbox": [
+            44,
+            6,
+            148,
+            184
+          ],
+          "visible_pixels": 8682,
+          "touches_edge": false
+        },
+        {
+          "frame": 5,
+          "bbox": [
+            44,
+            6,
+            148,
+            184
+          ],
+          "visible_pixels": 8768,
+          "touches_edge": false
+        },
+        {
+          "frame": 6,
+          "bbox": [
+            44,
+            6,
+            148,
+            184
+          ],
+          "visible_pixels": 8583,
+          "touches_edge": false
+        }
+      ],
+      "errors": [],
+      "warnings": [],
+      "status": "passed"
+    },
+    {
+      "file": "warrior_cherry_walk_left.png",
+      "mode": "RGBA",
+      "size": [
+        1152,
+        192
+      ],
+      "frames": 6,
+      "cell_size": [
+        192,
+        192
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "transparent_pixels": 157814,
+      "partially_transparent_pixels": 16306,
+      "green_spill_pixels": 0,
+      "frames_detail": [
+        {
+          "frame": 1,
+          "bbox": [
+            36,
+            6,
+            156,
+            184
+          ],
+          "visible_pixels": 9941,
+          "touches_edge": false
+        },
+        {
+          "frame": 2,
+          "bbox": [
+            37,
+            6,
+            156,
+            184
+          ],
+          "visible_pixels": 9532,
+          "touches_edge": false
+        },
+        {
+          "frame": 3,
+          "bbox": [
+            36,
+            6,
+            156,
+            184
+          ],
+          "visible_pixels": 9619,
+          "touches_edge": false
+        },
+        {
+          "frame": 4,
+          "bbox": [
+            36,
+            6,
+            157,
+            184
+          ],
+          "visible_pixels": 10128,
+          "touches_edge": false
+        },
+        {
+          "frame": 5,
+          "bbox": [
+            37,
+            6,
+            156,
+            184
+          ],
+          "visible_pixels": 9507,
+          "touches_edge": false
+        },
+        {
+          "frame": 6,
+          "bbox": [
+            36,
+            6,
+            157,
+            184
+          ],
+          "visible_pixels": 9971,
+          "touches_edge": false
+        }
+      ],
+      "errors": [],
+      "warnings": [],
+      "status": "passed"
+    },
+    {
+      "file": "warrior_cherry_walk_right.png",
+      "mode": "RGBA",
+      "size": [
+        1152,
+        192
+      ],
+      "frames": 6,
+      "cell_size": [
+        192,
+        192
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "transparent_pixels": 157319,
+      "partially_transparent_pixels": 17536,
+      "green_spill_pixels": 0,
+      "frames_detail": [
+        {
+          "frame": 1,
+          "bbox": [
+            35,
+            6,
+            157,
+            184
+          ],
+          "visible_pixels": 9748,
+          "touches_edge": false
+        },
+        {
+          "frame": 2,
+          "bbox": [
+            36,
+            6,
+            156,
+            184
+          ],
+          "visible_pixels": 9829,
+          "touches_edge": false
+        },
+        {
+          "frame": 3,
+          "bbox": [
+            35,
+            6,
+            157,
+            184
+          ],
+          "visible_pixels": 9861,
+          "touches_edge": false
+        },
+        {
+          "frame": 4,
+          "bbox": [
+            35,
+            6,
+            157,
+            184
+          ],
+          "visible_pixels": 9741,
+          "touches_edge": false
+        },
+        {
+          "frame": 5,
+          "bbox": [
+            36,
+            6,
+            157,
+            184
+          ],
+          "visible_pixels": 9825,
+          "touches_edge": false
+        },
+        {
+          "frame": 6,
+          "bbox": [
+            36,
+            6,
+            157,
+            184
+          ],
+          "visible_pixels": 9920,
+          "touches_edge": false
+        }
+      ],
+      "errors": [],
+      "warnings": [],
+      "status": "passed"
+    },
+    {
+      "file": "warrior_cherry_melee_down.png",
+      "mode": "RGBA",
+      "size": [
+        1152,
+        192
+      ],
+      "frames": 6,
+      "cell_size": [
+        192,
+        192
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "transparent_pixels": 158251,
+      "partially_transparent_pixels": 15419,
+      "green_spill_pixels": 0,
+      "frames_detail": [
+        {
+          "frame": 1,
+          "bbox": [
+            41,
+            6,
+            151,
+            184
+          ],
+          "visible_pixels": 10227,
+          "touches_edge": false
+        },
+        {
+          "frame": 2,
+          "bbox": [
+            39,
+            6,
+            153,
+            184
+          ],
+          "visible_pixels": 10181,
+          "touches_edge": false
+        },
+        {
+          "frame": 3,
+          "bbox": [
+            34,
+            6,
+            159,
+            184
+          ],
+          "visible_pixels": 10196,
+          "touches_edge": false
+        },
+        {
+          "frame": 4,
+          "bbox": [
+            27,
+            6,
+            166,
+            184
+          ],
+          "visible_pixels": 10097,
+          "touches_edge": false
+        },
+        {
+          "frame": 5,
+          "bbox": [
+            45,
+            6,
+            148,
+            184
+          ],
+          "visible_pixels": 9700,
+          "touches_edge": false
+        },
+        {
+          "frame": 6,
+          "bbox": [
+            40,
+            6,
+            153,
+            184
+          ],
+          "visible_pixels": 10255,
+          "touches_edge": false
+        }
+      ],
+      "errors": [],
+      "warnings": [],
+      "status": "passed"
+    },
+    {
+      "file": "warrior_cherry_melee_up.png",
+      "mode": "RGBA",
+      "size": [
+        1152,
+        192
+      ],
+      "frames": 6,
+      "cell_size": [
+        192,
+        192
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "transparent_pixels": 162742,
+      "partially_transparent_pixels": 15319,
+      "green_spill_pixels": 0,
+      "frames_detail": [
+        {
+          "frame": 1,
+          "bbox": [
+            41,
+            6,
+            152,
+            184
+          ],
+          "visible_pixels": 9358,
+          "touches_edge": false
+        },
+        {
+          "frame": 2,
+          "bbox": [
+            39,
+            6,
+            153,
+            184
+          ],
+          "visible_pixels": 9299,
+          "touches_edge": false
+        },
+        {
+          "frame": 3,
+          "bbox": [
+            38,
+            6,
+            154,
+            184
+          ],
+          "visible_pixels": 9295,
+          "touches_edge": false
+        },
+        {
+          "frame": 4,
+          "bbox": [
+            31,
+            6,
+            162,
+            184
+          ],
+          "visible_pixels": 9159,
+          "touches_edge": false
+        },
+        {
+          "frame": 5,
+          "bbox": [
+            35,
+            6,
+            158,
+            184
+          ],
+          "visible_pixels": 8950,
+          "touches_edge": false
+        },
+        {
+          "frame": 6,
+          "bbox": [
+            41,
+            6,
+            152,
+            184
+          ],
+          "visible_pixels": 9369,
+          "touches_edge": false
+        }
+      ],
+      "errors": [],
+      "warnings": [],
+      "status": "passed"
+    },
+    {
+      "file": "warrior_cherry_melee_left.png",
+      "mode": "RGBA",
+      "size": [
+        1152,
+        192
+      ],
+      "frames": 6,
+      "cell_size": [
+        192,
+        192
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "transparent_pixels": 159077,
+      "partially_transparent_pixels": 16115,
+      "green_spill_pixels": 0,
+      "frames_detail": [
+        {
+          "frame": 1,
+          "bbox": [
+            35,
+            6,
+            158,
+            184
+          ],
+          "visible_pixels": 9978,
+          "touches_edge": false
+        },
+        {
+          "frame": 2,
+          "bbox": [
+            37,
+            6,
+            156,
+            184
+          ],
+          "visible_pixels": 9791,
+          "touches_edge": false
+        },
+        {
+          "frame": 3,
+          "bbox": [
+            29,
+            6,
+            164,
+            184
+          ],
+          "visible_pixels": 9260,
+          "touches_edge": false
+        },
+        {
+          "frame": 4,
+          "bbox": [
+            31,
+            6,
+            168,
+            184
+          ],
+          "visible_pixels": 9372,
+          "touches_edge": false
+        },
+        {
+          "frame": 5,
+          "bbox": [
+            34,
+            6,
+            158,
+            184
+          ],
+          "visible_pixels": 9616,
+          "touches_edge": false
+        },
+        {
+          "frame": 6,
+          "bbox": [
+            34,
+            6,
+            158,
+            184
+          ],
+          "visible_pixels": 10010,
+          "touches_edge": false
+        }
+      ],
+      "errors": [],
+      "warnings": [],
+      "status": "passed"
+    },
+    {
+      "file": "warrior_cherry_melee_right.png",
+      "mode": "RGBA",
+      "size": [
+        1152,
+        192
+      ],
+      "frames": 6,
+      "cell_size": [
+        192,
+        192
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "transparent_pixels": 160392,
+      "partially_transparent_pixels": 14512,
+      "green_spill_pixels": 0,
+      "frames_detail": [
+        {
+          "frame": 1,
+          "bbox": [
+            39,
+            6,
+            154,
+            184
+          ],
+          "visible_pixels": 9272,
+          "touches_edge": false
+        },
+        {
+          "frame": 2,
+          "bbox": [
+            49,
+            6,
+            144,
+            184
+          ],
+          "visible_pixels": 9251,
+          "touches_edge": false
+        },
+        {
+          "frame": 3,
+          "bbox": [
+            26,
+            6,
+            166,
+            184
+          ],
+          "visible_pixels": 9591,
+          "touches_edge": false
+        },
+        {
+          "frame": 4,
+          "bbox": [
+            23,
+            6,
+            170,
+            184
+          ],
+          "visible_pixels": 10016,
+          "touches_edge": false
+        },
+        {
+          "frame": 5,
+          "bbox": [
+            26,
+            6,
+            166,
+            184
+          ],
+          "visible_pixels": 9984,
+          "touches_edge": false
+        },
+        {
+          "frame": 6,
+          "bbox": [
+            39,
+            6,
+            154,
+            184
+          ],
+          "visible_pixels": 9248,
+          "touches_edge": false
+        }
+      ],
+      "errors": [],
+      "warnings": [],
+      "status": "passed"
+    },
+    {
+      "file": "warrior_cherry_ranged_down.png",
+      "mode": "RGBA",
+      "size": [
+        1152,
+        192
+      ],
+      "frames": 6,
+      "cell_size": [
+        192,
+        192
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "transparent_pixels": 158975,
+      "partially_transparent_pixels": 14923,
+      "green_spill_pixels": 0,
+      "frames_detail": [
+        {
+          "frame": 1,
+          "bbox": [
+            38,
+            6,
+            154,
+            184
+          ],
+          "visible_pixels": 10343,
+          "touches_edge": false
+        },
+        {
+          "frame": 2,
+          "bbox": [
+            45,
+            6,
+            148,
+            184
+          ],
+          "visible_pixels": 9943,
+          "touches_edge": false
+        },
+        {
+          "frame": 3,
+          "bbox": [
+            39,
+            6,
+            154,
+            184
+          ],
+          "visible_pixels": 9912,
+          "touches_edge": false
+        },
+        {
+          "frame": 4,
+          "bbox": [
+            45,
+            6,
+            148,
+            184
+          ],
+          "visible_pixels": 9807,
+          "touches_edge": false
+        },
+        {
+          "frame": 5,
+          "bbox": [
+            45,
+            6,
+            147,
+            184
+          ],
+          "visible_pixels": 9787,
+          "touches_edge": false
+        },
+        {
+          "frame": 6,
+          "bbox": [
+            40,
+            6,
+            152,
+            184
+          ],
+          "visible_pixels": 10157,
+          "touches_edge": false
+        }
+      ],
+      "errors": [],
+      "warnings": [],
+      "status": "passed"
+    },
+    {
+      "file": "warrior_cherry_ranged_up.png",
+      "mode": "RGBA",
+      "size": [
+        1152,
+        192
+      ],
+      "frames": 6,
+      "cell_size": [
+        192,
+        192
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "transparent_pixels": 163010,
+      "partially_transparent_pixels": 16166,
+      "green_spill_pixels": 0,
+      "frames_detail": [
+        {
+          "frame": 1,
+          "bbox": [
+            41,
+            6,
+            151,
+            184
+          ],
+          "visible_pixels": 9235,
+          "touches_edge": false
+        },
+        {
+          "frame": 2,
+          "bbox": [
+            48,
+            6,
+            144,
+            184
+          ],
+          "visible_pixels": 9089,
+          "touches_edge": false
+        },
+        {
+          "frame": 3,
+          "bbox": [
+            43,
+            6,
+            150,
+            184
+          ],
+          "visible_pixels": 9256,
+          "touches_edge": false
+        },
+        {
+          "frame": 4,
+          "bbox": [
+            34,
+            6,
+            158,
+            184
+          ],
+          "visible_pixels": 9101,
+          "touches_edge": false
+        },
+        {
+          "frame": 5,
+          "bbox": [
+            37,
+            6,
+            155,
+            184
+          ],
+          "visible_pixels": 9044,
+          "touches_edge": false
+        },
+        {
+          "frame": 6,
+          "bbox": [
+            42,
+            6,
+            151,
+            184
+          ],
+          "visible_pixels": 9257,
+          "touches_edge": false
+        }
+      ],
+      "errors": [],
+      "warnings": [],
+      "status": "passed"
+    },
+    {
+      "file": "warrior_cherry_ranged_left.png",
+      "mode": "RGBA",
+      "size": [
+        1152,
+        192
+      ],
+      "frames": 6,
+      "cell_size": [
+        192,
+        192
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "transparent_pixels": 159692,
+      "partially_transparent_pixels": 16360,
+      "green_spill_pixels": 0,
+      "frames_detail": [
+        {
+          "frame": 1,
+          "bbox": [
+            35,
+            6,
+            157,
+            184
+          ],
+          "visible_pixels": 9664,
+          "touches_edge": false
+        },
+        {
+          "frame": 2,
+          "bbox": [
+            49,
+            6,
+            144,
+            184
+          ],
+          "visible_pixels": 9277,
+          "touches_edge": false
+        },
+        {
+          "frame": 3,
+          "bbox": [
+            20,
+            6,
+            172,
+            184
+          ],
+          "visible_pixels": 9526,
+          "touches_edge": false
+        },
+        {
+          "frame": 4,
+          "bbox": [
+            16,
+            6,
+            176,
+            184
+          ],
+          "visible_pixels": 9577,
+          "touches_edge": false
+        },
+        {
+          "frame": 5,
+          "bbox": [
+            25,
+            6,
+            168,
+            184
+          ],
+          "visible_pixels": 9521,
+          "touches_edge": false
+        },
+        {
+          "frame": 6,
+          "bbox": [
+            35,
+            6,
+            157,
+            184
+          ],
+          "visible_pixels": 9671,
+          "touches_edge": false
+        }
+      ],
+      "errors": [],
+      "warnings": [],
+      "status": "passed"
+    },
+    {
+      "file": "warrior_cherry_ranged_right.png",
+      "mode": "RGBA",
+      "size": [
+        1152,
+        192
+      ],
+      "frames": 6,
+      "cell_size": [
+        192,
+        192
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "transparent_pixels": 160629,
+      "partially_transparent_pixels": 15838,
+      "green_spill_pixels": 0,
+      "frames_detail": [
+        {
+          "frame": 1,
+          "bbox": [
+            40,
+            6,
+            153,
+            184
+          ],
+          "visible_pixels": 9384,
+          "touches_edge": false
+        },
+        {
+          "frame": 2,
+          "bbox": [
+            52,
+            6,
+            141,
+            184
+          ],
+          "visible_pixels": 9029,
+          "touches_edge": false
+        },
+        {
+          "frame": 3,
+          "bbox": [
+            25,
+            6,
+            167,
+            184
+          ],
+          "visible_pixels": 9425,
+          "touches_edge": false
+        },
+        {
+          "frame": 4,
+          "bbox": [
+            15,
+            6,
+            178,
+            184
+          ],
+          "visible_pixels": 9540,
+          "touches_edge": false
+        },
+        {
+          "frame": 5,
+          "bbox": [
+            20,
+            6,
+            173,
+            184
+          ],
+          "visible_pixels": 9541,
+          "touches_edge": false
+        },
+        {
+          "frame": 6,
+          "bbox": [
+            39,
+            6,
+            153,
+            184
+          ],
+          "visible_pixels": 9439,
+          "touches_edge": false
+        }
+      ],
+      "errors": [],
+      "warnings": [],
+      "status": "passed"
+    }
+  ]
+}
