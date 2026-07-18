@@ -27,10 +27,15 @@ window.addEventListener("DOMContentLoaded", async () => {
   await loadScript("src/cherrift_v0554.js?v=0554","v0.5.5.4");
   await loadScript("src/cherrift_v0555.js?v=0555","v0.5.5.5");
   await loadScript("src/cherrift_v0556.js?v=0556","v0.5.5.6");
-  await loadScript("src/cherrift_v0557.js?v=0557","v0.5.5.7 Warrior/UI");
+  await loadScript("src/cherrift_v0557.js?v=0557","v0.5.5.7");
+  await loadScript("src/cherrift_v0558.js?v=0558","v0.5.5.8 Base Cherry");
 
   const save = CherriftStorage.load();
   const input = new CherriftInput();
-  const game = new CherriftGame(document.getElementById("game"), input, save);
+  const game = new CherriftGame(
+    document.getElementById("game"),
+    input,
+    save
+  );
   UI.init(save, game);
 });
