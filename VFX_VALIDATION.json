@@ -1,7 +1,6 @@
 {
-  "png_count": 12,
-  "all_valid": true,
-  "errors": [],
+  "file_count": 12,
+  "all_true_rgba": true,
   "files": [
     {
       "file": "assets/player/skins/warrior_cherry/vfx/attack/warrior_cherry_attack_down.png",
@@ -13,42 +12,12 @@
       "alpha_extrema": [
         0,
         255
-      ]
-    },
-    {
-      "file": "assets/player/skins/warrior_cherry/vfx/attack/warrior_cherry_attack_left.png",
-      "mode": "RGBA",
-      "size": [
-        1152,
-        192
       ],
-      "alpha_extrema": [
+      "corners": [
         0,
-        255
-      ]
-    },
-    {
-      "file": "assets/player/skins/warrior_cherry/vfx/attack/warrior_cherry_attack_right.png",
-      "mode": "RGBA",
-      "size": [
-        1152,
-        192
-      ],
-      "alpha_extrema": [
         0,
-        255
-      ]
-    },
-    {
-      "file": "assets/player/skins/warrior_cherry/vfx/attack/warrior_cherry_attack_up.png",
-      "mode": "RGBA",
-      "size": [
-        1152,
-        192
-      ],
-      "alpha_extrema": [
         0,
-        255
+        0
       ]
     },
     {
@@ -61,10 +30,16 @@
       "alpha_extrema": [
         0,
         255
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
       ]
     },
     {
-      "file": "assets/player/skins/warrior_cherry/vfx/whirlwind/back/warrior_whirlwind_back_left.png",
+      "file": "assets/player/skins/warrior_cherry/vfx/whirlwind/front/warrior_whirlwind_front_down.png",
       "mode": "RGBA",
       "size": [
         1536,
@@ -72,19 +47,31 @@
       ],
       "alpha_extrema": [
         0,
-        255
+        244
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
       ]
     },
     {
-      "file": "assets/player/skins/warrior_cherry/vfx/whirlwind/back/warrior_whirlwind_back_right.png",
+      "file": "assets/player/skins/warrior_cherry/vfx/attack/warrior_cherry_attack_up.png",
       "mode": "RGBA",
       "size": [
-        1536,
+        1152,
         192
       ],
       "alpha_extrema": [
         0,
         255
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
       ]
     },
     {
@@ -97,42 +84,12 @@
       "alpha_extrema": [
         0,
         255
-      ]
-    },
-    {
-      "file": "assets/player/skins/warrior_cherry/vfx/whirlwind/front/warrior_whirlwind_front_down.png",
-      "mode": "RGBA",
-      "size": [
-        1536,
-        192
       ],
-      "alpha_extrema": [
+      "corners": [
         0,
-        209
-      ]
-    },
-    {
-      "file": "assets/player/skins/warrior_cherry/vfx/whirlwind/front/warrior_whirlwind_front_left.png",
-      "mode": "RGBA",
-      "size": [
-        1536,
-        192
-      ],
-      "alpha_extrema": [
         0,
-        209
-      ]
-    },
-    {
-      "file": "assets/player/skins/warrior_cherry/vfx/whirlwind/front/warrior_whirlwind_front_right.png",
-      "mode": "RGBA",
-      "size": [
-        1536,
-        192
-      ],
-      "alpha_extrema": [
         0,
-        209
+        0
       ]
     },
     {
@@ -144,7 +101,121 @@
       ],
       "alpha_extrema": [
         0,
-        209
+        244
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "assets/player/skins/warrior_cherry/vfx/attack/warrior_cherry_attack_left.png",
+      "mode": "RGBA",
+      "size": [
+        1152,
+        192
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "assets/player/skins/warrior_cherry/vfx/whirlwind/back/warrior_whirlwind_back_left.png",
+      "mode": "RGBA",
+      "size": [
+        1536,
+        192
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "assets/player/skins/warrior_cherry/vfx/whirlwind/front/warrior_whirlwind_front_left.png",
+      "mode": "RGBA",
+      "size": [
+        1536,
+        192
+      ],
+      "alpha_extrema": [
+        0,
+        244
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "assets/player/skins/warrior_cherry/vfx/attack/warrior_cherry_attack_right.png",
+      "mode": "RGBA",
+      "size": [
+        1152,
+        192
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "assets/player/skins/warrior_cherry/vfx/whirlwind/back/warrior_whirlwind_back_right.png",
+      "mode": "RGBA",
+      "size": [
+        1536,
+        192
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "assets/player/skins/warrior_cherry/vfx/whirlwind/front/warrior_whirlwind_front_right.png",
+      "mode": "RGBA",
+      "size": [
+        1536,
+        192
+      ],
+      "alpha_extrema": [
+        0,
+        244
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
       ]
     }
   ]

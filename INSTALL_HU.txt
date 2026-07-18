@@ -1,51 +1,22 @@
-CHERRIFT – Warrior Cherry PNG VFX integráció v0.5.6.2
-=====================================================
+CHERRIFT Warrior VFX FIX v0.5.6.3
+===================================
 
-TEENDŐ:
+MI VOLT A HIBA?
+- A v0562 'screen' blend módot használt.
+- A világos fű hátteren ettől a rózsaszín/fehér VFX szinte eltűnt.
+- A régi Warrior placeholder effect objektumok továbbra is létrejöttek.
 
-1. A ZIP teljes tartalmát másold a CHERRIFT repository GYÖKERÉBE.
-2. Engedélyezd a mappák összevonását.
-3. A src/main.js fájlt írd felül a ZIP-ben lévő verzióval.
-4. Commitold az új fájlokat.
-5. Hard refresh a böngészőben: Ctrl + F5.
-6. Válaszd ki a Warrior Cherryt, indíts pályát, majd teszteld:
-   - automata melee attack
-   - Skill / Whirlwind
+TELEPÍTÉS
+1. Csomagold ki ezt a ZIP-et.
+2. A teljes tartalmát másold a CHERRIFT repository gyökerébe.
+3. Engedélyezd a mappák összevonását és a fájlok felülírását.
+4. A src/main.js fájlt kötelező felülírni.
+5. Commit + push.
+6. Mobilon töröld a webhely gyorsítótárát, vagy nyisd meg inkognitóban.
+7. Teszteld Warrior Cherryvel az alap attackot és a Whirlwind skillt.
 
-MIT MÓDOSÍT:
-
-- Új fájl: src/cherrift_v0562.js
-- Módosított fájl: src/main.js
-- Új VFX assetek:
-  assets/player/skins/warrior_cherry/vfx/
-
-RENDER SORREND A WHIRLWINDNÉL:
-
-1. back VFX
-2. Warrior Cherry modell
-3. front VFX
-
-Így Cherry a nagy effekt közepén is látható marad.
-
-AZ EREDETI KÓDOT NEM TÖRLI:
-
-- A Warrior sebzése és hitboxa továbbra is a v0.5.5.7 logikát használja.
-- A karakter attack/skill sprite animációi változatlanok.
-- Csak a régi kék Canvas placeholder effektet váltja le PNG VFX-re.
-
-FINOMHANGOLÁS:
-
-A src/cherrift_v0562.js elején, a config.vfx objektumban állítható:
-
-- attackSize: attack effekt mérete
-- attackCenterOffset: mennyire legyen Cherry előtt
-- whirlwindSize: Whirlwind mérete
-- whirlwindVerticalOffset: függőleges pozíció
-- whirlwindBackAlpha: hátsó réteg erőssége
-- whirlwindFrontAlpha: első réteg erőssége
-
-Ha túl nagy:
-  whirlwindSize: 390 -> 340
-
-Ha túl erős Cherry előtt:
-  whirlwindFrontAlpha: 0.78 -> 0.55
+FONTOS
+- A src/cherrift_v0562.js maradhat a repóban, de a main.js már nem tölti be.
+- Az új verzió: src/cherrift_v0563.js
+- A 12 PNG ugyanazokra az assetútvonalakra kerül, és felülírja a halvány régieket.
+- Minden PNG valódi RGBA, alpha=0 háttérrel.

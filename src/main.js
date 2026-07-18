@@ -32,7 +32,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   await loadScript("src/cherrift_v0559.js?v=0559","v0.5.5.9 Dash/UI reset");
   await loadScript("src/cherrift_v0560.js?v=0560","v0.5.6.0 Gear redesign");
   await loadScript("src/cherrift_v0561.js?v=0561","v0.5.6.1 Wuxia Sakura");
-  await loadScript("src/cherrift_v0562.js?v=0562","v0.5.6.2 Warrior VFX");
+  await loadScript("src/cherrift_v0563.js?v=0563","v0.5.6.3 Warrior VFX fix");
 
   const save = CherriftStorage.load();
   const input = new CherriftInput();
