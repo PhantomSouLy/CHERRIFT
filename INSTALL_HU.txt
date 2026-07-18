@@ -1,0 +1,51 @@
+CHERRIFT – Warrior Cherry PNG VFX integráció v0.5.6.2
+=====================================================
+
+TEENDŐ:
+
+1. A ZIP teljes tartalmát másold a CHERRIFT repository GYÖKERÉBE.
+2. Engedélyezd a mappák összevonását.
+3. A src/main.js fájlt írd felül a ZIP-ben lévő verzióval.
+4. Commitold az új fájlokat.
+5. Hard refresh a böngészőben: Ctrl + F5.
+6. Válaszd ki a Warrior Cherryt, indíts pályát, majd teszteld:
+   - automata melee attack
+   - Skill / Whirlwind
+
+MIT MÓDOSÍT:
+
+- Új fájl: src/cherrift_v0562.js
+- Módosított fájl: src/main.js
+- Új VFX assetek:
+  assets/player/skins/warrior_cherry/vfx/
+
+RENDER SORREND A WHIRLWINDNÉL:
+
+1. back VFX
+2. Warrior Cherry modell
+3. front VFX
+
+Így Cherry a nagy effekt közepén is látható marad.
+
+AZ EREDETI KÓDOT NEM TÖRLI:
+
+- A Warrior sebzése és hitboxa továbbra is a v0.5.5.7 logikát használja.
+- A karakter attack/skill sprite animációi változatlanok.
+- Csak a régi kék Canvas placeholder effektet váltja le PNG VFX-re.
+
+FINOMHANGOLÁS:
+
+A src/cherrift_v0562.js elején, a config.vfx objektumban állítható:
+
+- attackSize: attack effekt mérete
+- attackCenterOffset: mennyire legyen Cherry előtt
+- whirlwindSize: Whirlwind mérete
+- whirlwindVerticalOffset: függőleges pozíció
+- whirlwindBackAlpha: hátsó réteg erőssége
+- whirlwindFrontAlpha: első réteg erőssége
+
+Ha túl nagy:
+  whirlwindSize: 390 -> 340
+
+Ha túl erős Cherry előtt:
+  whirlwindFrontAlpha: 0.78 -> 0.55

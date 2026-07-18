@@ -1,0 +1,5 @@
+--- a/src/main.js
++++ b/src/main.js
+@@
+   await loadScript("src/cherrift_v0561.js?v=0561","v0.5.6.1 Wuxia Sakura");
++  await loadScript("src/cherrift_v0562.js?v=0562","v0.5.6.2 Warrior VFX");
