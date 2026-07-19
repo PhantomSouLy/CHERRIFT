@@ -209,7 +209,18 @@
   }
   function isFullscreen(){ return !!(document.fullscreenElement || document.webkitFullscreenElement); }
   function isMobileLike(){ const w=window.visualViewport?.width||window.innerWidth||0; const h=window.visualViewport?.height||window.innerHeight||0; return Math.min(w,h)<=820; }
-  function computeZoom(game){ const w=window.visualViewport?.width||window.innerWidth||game.w||720; const h=window.visualViewport?.height||window.innerHeight||game.h||1280; const mobile=Math.min(w,h)<=820; const portrait=h>=w; const setting=+(UI?.save?.settings?.viewZoom||1); if(mobile&&portrait&&!isFullscreen()) return 1.08*setting; if(mobile&&portrait&&isFullscreen()) return .94*setting; if(mobile) return .86*setting; return .78*setting; }
+  function computeZoom(game){
+    const w=window.visualViewport?.width||window.innerWidth||game.w||720;
+    const h=window.visualViewport?.height||window.innerHeight||game.h||1280;
+    const mobile=Math.min(w,h)<=820;
+    const portrait=h>=w;
+    const rawSetting=Number(UI?.save?.settings?.viewZoom);
+    const setting=[1,1.1,1.2].includes(rawSetting)?rawSetting:1;
+    const aspect=Math.max(w,h)/Math.max(1,Math.min(w,h));
+    const aspectGuard=clamp(aspect/(16/9),1,1.16);
+    const base=mobile?(portrait?(isFullscreen()?1.24:1.28):1.22):1.20;
+    return base*setting*aspectGuard;
+  }
   function applyViewportClass(){ document.body.classList.toggle("mobile-browser-v040", isMobileLike() && !isFullscreen()); }
 
   function patchUI(){

@@ -1,7 +1,7 @@
 (() => {
 "use strict";
 
-const VERSION = "0.6.0-bloom-ui";
+const VERSION = "0.6.1-bloom-hotfix";
 const MOBILE_BREAKPOINT = 860;
 const NOTICE_KEY = "cherrift.v060.notices";
 const id = name => document.getElementById(name);
@@ -10,7 +10,7 @@ const qa = (selector, root = document) => Array.from(root.querySelectorAll(selec
 const isMobile = () => matchMedia(`(max-width:${MOBILE_BREAKPOINT}px)`).matches;
 
 if (!window.UI || !window.CHERRIFT_DATA || !window.CHERRIFT_CONFIG) {
-  console.error("[CHERRIFT v0.6.0] Core UI/data/config dependencies are missing.");
+  console.error("[CHERRIFT v0.6.1] Core UI/data/config dependencies are missing.");
   return;
 }
 
@@ -61,7 +61,7 @@ function ensureCss() {
   const link = document.createElement("link");
   link.id = "v060css";
   link.rel = "stylesheet";
-  link.href = "v060.css?v=060";
+  link.href = "v060.css?v=061";
   document.head.appendChild(link);
 }
 
@@ -149,7 +149,7 @@ function ensureMenuDashboard() {
   dashboard.id = "menuDashboardV060";
   dashboard.className = "menu-dashboard-v060";
   dashboard.innerHTML = `
-    <div class="dashboard-kicker-v060"><span>WORLD READY</span><b>v0.6.0 BLOOM</b></div>
+    <div class="dashboard-kicker-v060"><span>WORLD READY</span><b>v0.6.1 HOTFIX</b></div>
     <article class="dashboard-run-v060">
       <div class="dashboard-skin-v060"><span id="dashboardSkinIconV060"></span></div>
       <div class="dashboard-copy-v060">
@@ -171,8 +171,8 @@ function ensureMenuDashboard() {
     patchCard.tabIndex = 0;
     patchCard.dataset.v060PatchCard = "true";
     patchCard.innerHTML = `
-      <header><h3>Bloom Update</h3><span>v0.6.0 <i class="v060-dot" data-v060-badge="patch"></i></span></header>
-      <p>New responsive menu, Gacha, skin previews and faster loading.</p>
+      <header><h3>Bloom Update</h3><span>v0.6.1 <i class="v060-dot" data-v060-badge="patch"></i></span></header>
+      <p>Mobile Play, Library, camera, Gacha and responsive layout hotfix.</p>
       <div class="side-art">✦</div>`;
   }
 }
@@ -211,7 +211,7 @@ function ensureSettingsLayout() {
         <section class="settings-page-v060" data-v060-settings-page="display">
           <header><small>DISPLAY</small><h3>Performance &amp; screen</h3><p>Balanced defaults are recommended.</p></header>
           <label class="setting-line-v060"><span><b>FPS limit</b><small>Maximum rendered frames per second</small></span><select id="fpsLimit"><option value="30">30 FPS</option><option value="60">60 FPS</option></select></label>
-          <label class="setting-line-v060"><span><b>View zoom</b><small>How much of the world is visible</small></span><select id="viewZoom"><option value="0.90">More map</option><option value="1.00">Balanced</option><option value="1.10">Closer</option></select></label>
+          <label class="setting-line-v060"><span><b>View zoom</b><small>A fair, closer combat view on every screen</small></span><select id="viewZoom"><option value="1.00">Balanced</option><option value="1.10">Closer</option><option value="1.20">Close-up</option></select></label>
           <button type="button" id="fullscreen" class="setting-action-v060">⛶ Toggle fullscreen</button>
           <button type="button" id="settingsFullscreen" hidden aria-hidden="true">Toggle fullscreen</button>
         </section>
@@ -257,12 +257,17 @@ function ensureGachaLayout() {
       <section class="gacha-stage-v060">
         <div class="gacha-petal-field-v060" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
         <div class="gacha-rings-v060" aria-hidden="true"><i></i><i></i><i></i></div>
-        <div class="gacha-key-v060" aria-label="Bloom Key"><span></span><i></i><b></b></div>
+        <div class="gacha-chest-v060" aria-label="Bloom Chest" data-sprite-slot="gacha-chest">
+          <div class="gacha-chest-glow-v060"></div>
+          <div class="gacha-chest-lid-v060"><i></i></div>
+          <div class="gacha-chest-body-v060"><i></i><b>✦</b></div>
+          <div class="gacha-chest-sprite-v060" aria-hidden="true"></div>
+        </div>
         <div class="gacha-burst-v060" aria-hidden="true"></div>
-        <p id="gachaStatusV060">A Bloom Key is ready</p>
+        <p id="gachaStatusV060">A Bloom Chest is ready</p>
       </section>
       <section class="gacha-control-v060">
-        <div><small>BLOOM SUMMON</small><h3>Key Invocation</h3><p>Common, Uncommon and Rare gear. A Cherry skin may appear as a rare reward.</p></div>
+        <div><small>BLOOM CHEST</small><h3>Open the Chest</h3><p>Reveal gear and, on rare occasions, a new Cherry skin.</p></div>
         <button id="openChest" type="button"><span>OPEN · 1 KEY</span><small>Reveal one reward</small></button>
         <button id="gachaSkipV060" class="gacha-skip-v060" type="button">Skip animation</button>
       </section>
@@ -306,16 +311,58 @@ function ensureMobileNavigation() {
     <button type="button" data-v060-open="playerUpgrade" data-v060-panel="playerUpgrade"><span>✦</span><b>Skills</b></button>
     <button type="button" data-v060-open="menu" data-v060-panel="menu" class="home"><span>⌂</span><b>Home</b></button>
     <button type="button" data-v060-open="chests" data-v060-panel="chests"><span>◇</span><b>Gacha</b></button>
+    <button type="button" data-v060-open="libraryV0551" data-v060-panel="libraryV0551"><span>▣</span><b>Library</b></button>
     <button type="button" data-v060-open="skins" data-v060-panel="skins"><span id="mobileSkinIconV060" class="mobile-skin-icon-v060"></span><b>Cherry</b><em class="v060-dot" data-v060-badge="skin"></em></button>`;
 
-  const home = q(".mobile-stage-card");
-  if (home && !q(".mobile-more-v060", home)) {
-    home.insertAdjacentHTML("beforeend", `
-      <nav class="mobile-more-v060">
-        <button type="button" data-v060-open="libraryV0551">Library</button>
-        <button type="button" data-v060-open="settings">Settings</button>
-      </nav>`);
+  q(".mobile-more-v060")?.remove();
+}
+
+function ensureMobilePanelTabs() {
+  const upgradeLayout = q("#playerUpgrade .v052-upgrade-layout");
+  if (upgradeLayout && !id("upgradeTabsV061")) {
+    const preview = id("upgradePreviewV060");
+    const level = q(".v052-level-card", upgradeLayout);
+    const tree = q(".v052-tree", upgradeLayout);
+    if (preview && level && tree) {
+      preview.dataset.v061UpgradePane = "cherry";
+      level.dataset.v061UpgradePane = "level";
+      tree.dataset.v061UpgradePane = "tree";
+      upgradeLayout.insertAdjacentHTML("beforebegin", `
+        <nav id="upgradeTabsV061" class="mobile-panel-tabs-v061" aria-label="Player upgrade sections">
+          <button type="button" data-v061-upgrade-tab="cherry">Cherry</button>
+          <button type="button" data-v061-upgrade-tab="level">Level</button>
+          <button type="button" data-v061-upgrade-tab="tree" class="active">Skill tree</button>
+        </nav>`);
+      selectUpgradeTab("tree");
+    }
   }
+
+  const gearMain = q("#gear .gear-main-v0560");
+  if (gearMain && !id("gearTabsV061")) {
+    const loadout = q(".gear-loadout-v0560", gearMain);
+    const inventory = q(".gear-inventory-v0560", gearMain);
+    const header = q(".gear-header-v0560", gearMain);
+    if (loadout && inventory && header) {
+      loadout.dataset.v061GearPane = "loadout";
+      inventory.dataset.v061GearPane = "inventory";
+      header.insertAdjacentHTML("afterend", `
+        <nav id="gearTabsV061" class="mobile-panel-tabs-v061" aria-label="Gear sections">
+          <button type="button" data-v061-gear-tab="loadout" class="active">Loadout</button>
+          <button type="button" data-v061-gear-tab="inventory">Inventory</button>
+        </nav>`);
+      selectGearTab("loadout");
+    }
+  }
+}
+
+function selectUpgradeTab(tab) {
+  qa("[data-v061-upgrade-tab]").forEach(button => button.classList.toggle("active", button.dataset.v061UpgradeTab === tab));
+  qa("[data-v061-upgrade-pane]").forEach(pane => pane.classList.toggle("active-mobile-pane-v061", pane.dataset.v061UpgradePane === tab));
+}
+
+function selectGearTab(tab) {
+  qa("[data-v061-gear-tab]").forEach(button => button.classList.toggle("active", button.dataset.v061GearTab === tab));
+  qa("[data-v061-gear-pane]").forEach(pane => pane.classList.toggle("active-mobile-pane-v061", pane.dataset.v061GearPane === tab));
 }
 
 function loadNotices() {
@@ -358,6 +405,20 @@ function updateBadges() {
 
 function bindNavigation() {
   document.addEventListener("click", event => {
+    const upgradeTab = event.target.closest("[data-v061-upgrade-tab]");
+    if (upgradeTab) {
+      event.preventDefault();
+      selectUpgradeTab(upgradeTab.dataset.v061UpgradeTab);
+      return;
+    }
+
+    const gearTab = event.target.closest("[data-v061-gear-tab]");
+    if (gearTab) {
+      event.preventDefault();
+      selectGearTab(gearTab.dataset.v061GearTab);
+      return;
+    }
+
     const open = event.target.closest("[data-v060-open]");
     if (open) {
       event.preventDefault();
@@ -373,7 +434,7 @@ function bindNavigation() {
     const patch = event.target.closest("[data-v060-patch-card]");
     if (patch) {
       setNotice("patch", false);
-      UI.toast?.("CHERRIFT v0.6.0 · Bloom Update");
+      UI.toast?.("CHERRIFT v0.6.1 · Bloom Hotfix");
     }
   }, true);
 
@@ -430,6 +491,7 @@ function syncSettings() {
   settings.preloadArtwork ??= true;
   settings.reducedMotion ??= matchMedia("(prefers-reduced-motion:reduce)").matches;
   settings.highContrast ??= false;
+  if (![1, 1.1, 1.2].includes(Number(settings.viewZoom))) settings.viewZoom = 1;
 
   if (id("languageV060")) id("languageV060").value = settings.language;
   if (id("preloadArtworkV060")) id("preloadArtworkV060").checked = settings.preloadArtwork !== false;
@@ -437,8 +499,17 @@ function syncSettings() {
   if (id("highContrastV060")) id("highContrastV060").checked = !!settings.highContrast;
   if (id("compactHud")) id("compactHud").checked = settings.compactHud !== false;
   if (id("uiScale")) id("uiScale").value = settings.uiScale || 100;
+  if (id("viewZoom")) id("viewZoom").value = String(settings.viewZoom);
+  syncSettingsActions();
   applySettingsClasses();
   CherriftStorage.save(UI.save);
+}
+
+function syncSettingsActions() {
+  const resume = id("settingsResumeAction");
+  const fromPause = document.body.classList.contains("settings-from-pause") && UI.game?.mode === "paused";
+  resume?.classList.toggle("hidden", !fromPause);
+  q(".settings-quick-v060")?.classList.toggle("from-pause-v061", fromPause);
 }
 
 function applySettingsClasses() {
@@ -467,31 +538,28 @@ function patchGacha() {
     stage?.classList.remove("is-revealed");
     stage?.classList.add("is-opening");
     if (button) button.disabled = true;
-    if (status) status.textContent = "The Bloom Key is awakening…";
-    if (result) result.innerHTML = '<span class="gacha-wait-v060">Invoking reward…</span>';
+    if (status) status.textContent = "The Bloom Chest is opening…";
+    if (result) result.innerHTML = '<span class="gacha-wait-v060">Opening the chest…</span>';
 
     const finish = () => {
       if (!runtime.gachaFinish) return;
       clearTimeout(runtime.gachaTimer);
       runtime.gachaFinish = null;
-      const before = this.save.inventory?.length || 0;
+      const beforeIds = new Set((this.save.inventory || []).map(item => item?.id).filter(Boolean));
       const unlockedBefore = new Set(this.save.unlockedSkins || []);
       previousOpenChest(...args);
-      const after = this.save.inventory?.length || 0;
-      if (after > before) setNotice("gear", true);
+      const rewardGear = (this.save.inventory || []).find(item => item && !beforeIds.has(item.id)) || this.save.inventory?.at?.(-1);
+      if (rewardGear) setNotice("gear", true);
       const newSkinId = (this.save.unlockedSkins || []).find(skinId => !unlockedBefore.has(skinId));
       const unlockedSkin = CHERRIFT_DATA.skins.find(skin => skin.id === newSkinId);
       if (unlockedSkin) {
         setNotice("skin", true);
-        if (result) {
-          const rewardCopy = result.innerHTML.replace(unlockedSkin.emoji || "", "");
-          result.innerHTML = `<div class="gacha-unlock-v060">${imageMarkup(unlockedSkin.icon, unlockedSkin.name)}<span><small>NEW CHERRY</small><b>${escapeHtml(unlockedSkin.name)}</b></span></div><div>${rewardCopy}</div>`;
-        }
       }
+      if (result) result.innerHTML = renderGachaReward(rewardGear, unlockedSkin);
       stage?.classList.remove("is-opening");
       stage?.classList.add("is-revealed");
       if (button) button.disabled = false;
-      if (status) status.textContent = "Reward revealed";
+      if (status) status.textContent = "Chest opened — reward revealed";
       updateResourceDisplays();
       window.setTimeout(() => stage?.classList.remove("is-revealed"), reduce ? 120 : 1100);
     };
@@ -501,6 +569,39 @@ function patchGacha() {
   };
 
   id("gachaSkipV060")?.addEventListener("click", () => runtime.gachaFinish?.());
+}
+
+function prettyStatName(name) {
+  return String(name || "Stat")
+    .replace(/([A-Z])/g, " $1")
+    .replace(/^./, letter => letter.toUpperCase());
+}
+
+function renderGachaReward(gear, unlockedSkin) {
+  const rarity = String(gear?.rarity || "Common");
+  const rarityClass = `rarity-${rarity.toLowerCase()}`;
+  const name = gear ? (UI.gearName?.(gear) || `${rarity} ${gear.slot || "Gear"}`) : "Mystery reward";
+  const icon = gear ? (UI.gearEmoji?.(gear) || "✦") : "✦";
+  const stats = Object.entries(gear?.stats || {}).map(([key, value]) =>
+    `<li><span>${escapeHtml(prettyStatName(key))}</span><b>+${escapeHtml(value)}</b></li>`
+  ).join("");
+  const skinCard = unlockedSkin ? `
+    <aside class="gacha-unlock-v060">
+      ${imageMarkup(unlockedSkin.icon, unlockedSkin.name)}
+      <span><small>NEW CHERRY UNLOCKED</small><b>${escapeHtml(unlockedSkin.name)}</b></span>
+    </aside>` : "";
+
+  return `<div class="gacha-reward-wrap-v061">
+    <article class="gacha-reward-card-v061 ${rarityClass}">
+      <div class="gacha-reward-icon-v061"><span>${escapeHtml(icon)}</span><i>✦</i></div>
+      <div class="gacha-reward-copy-v061">
+        <small>${escapeHtml(rarity)} · ${escapeHtml(gear?.slot || "Reward")}</small>
+        <h4>${escapeHtml(name)}</h4>
+        <ul>${stats || "<li><span>Collection reward</span><b>New</b></li>"}</ul>
+      </div>
+    </article>
+    ${skinCard}
+  </div>`;
 }
 
 function stableSpriteEntry(source, frames) {
@@ -684,7 +785,10 @@ function updateActiveNavigation(panel) {
   qa("[data-v060-panel]").forEach(button => button.classList.toggle("active", button.dataset.v060Panel === panel));
   if (panel === "gear") setNotice("gear", false);
   if (panel === "skins") setNotice("skin", false);
-  if (panel === "settings") syncSettings();
+  if (panel === "settings") {
+    syncSettings();
+    syncSettingsActions();
+  }
   if (panel === "skins") decorateSkinCarousel();
   if (["libraryV0551", "profileV055", "collectionV055"].includes(panel)) setTimeout(decorateProfiles, 0);
   updateResourceDisplays();
@@ -696,6 +800,19 @@ function patchUiLifecycle() {
     UI.open = function openV060(panel, ...args) {
       const result = previousOpen(panel, ...args);
       updateActiveNavigation(panel);
+      return result;
+    };
+  }
+
+  const previousShowGame = UI.showGame?.bind(UI);
+  if (previousShowGame) {
+    UI.showGame = function showGameV061(...args) {
+      const result = previousShowGame(...args);
+      document.body.classList.add("is-playing");
+      document.body.classList.remove("is-loading-stage");
+      ["menu", "skins", "gear", "chests", "settings", "worlds", "playerUpgrade", "libraryV0551"].forEach(name => id(name)?.classList.add("hidden"));
+      ["hud", "skill", "stageHud"].forEach(name => id(name)?.classList.remove("hidden"));
+      id("globalMobileNavV052")?.classList.add("force-hidden-v053", "v0551-nav-hidden");
       return result;
     };
   }
@@ -729,6 +846,7 @@ function observeDynamicPanels() {
     try {
       if (!id("upgradePreviewV060")) ensureUpgradePreview();
       if (!id("gearCherryStableV060")) ensureGearPreview();
+      ensureMobilePanelTabs();
       decorateProfiles();
     } finally {
       observer.observe(root, options);
@@ -802,6 +920,7 @@ function initAfterUI() {
   if (runtime.initialized) return;
   runtime.initialized = true;
   ensureMobileNavigation();
+  ensureMobilePanelTabs();
   bindNavigation();
   bindSettings();
   patchGacha();
@@ -817,9 +936,10 @@ function initAfterUI() {
   updateActiveNavigation("menu");
   window.addEventListener("resize", () => {
     ensureMobileNavigation();
+    ensureMobilePanelTabs();
     updateResourceDisplays();
   });
-  console.info("[CHERRIFT] v0.6.0 Bloom UI initialized.");
+  console.info("[CHERRIFT] v0.6.1 Bloom hotfix initialized.");
 }
 
 function finishBoot() {
@@ -859,6 +979,7 @@ ensureSettingsLayout();
 ensureGachaLayout();
 ensureUpgradePreview();
 ensureGearPreview();
+ensureMobilePanelTabs();
 
 window.CHERRIFT_V060 = {
   version: VERSION,
@@ -870,5 +991,5 @@ window.CHERRIFT_V060 = {
   setNotice
 };
 
-console.info("[CHERRIFT] v0.6.0 Bloom UI layer loaded.");
+console.info("[CHERRIFT] v0.6.1 Bloom hotfix layer loaded.");
 })();

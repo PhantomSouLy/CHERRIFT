@@ -47,7 +47,7 @@
     out.settings.volume = Math.max(0, Math.min(100, Number(out.settings.volume) || 0));
     out.settings.fpsLimit = [30, 60].includes(Number(out.settings.fpsLimit)) ? Number(out.settings.fpsLimit) : 60;
     out.settings.uiScale = Math.max(85, Math.min(125, Number(out.settings.uiScale) || 100));
-    out.settings.viewZoom = [0.9, 1, 1.1].includes(Number(out.settings.viewZoom)) ? Number(out.settings.viewZoom) : 1;
+    out.settings.viewZoom = [1, 1.1, 1.2].includes(Number(out.settings.viewZoom)) ? Number(out.settings.viewZoom) : 1;
     out.settings.touchMode = out.settings.touchMode !== false;
     out.settings.damageNumbers = out.settings.damageNumbers !== false;
     out.settings.compactHud = out.settings.compactHud !== false;

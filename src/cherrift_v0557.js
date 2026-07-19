@@ -412,18 +412,32 @@ if (previousSkinCarousel) {
 
 function decorateSkinCollection() {
   const body=id("libraryBodyV0551");
-  if (!body) return;
+  if (!body) return false;
   const cards=qa(".v0551-collect",body);
-  if (cards.length!==CHERRIFT_DATA.skins.length) return;
+  if (cards.length!==CHERRIFT_DATA.skins.length) return false;
+
+  let changed=false;
 
   cards.forEach((card,index)=>{
     const skin=CHERRIFT_DATA.skins[index];
     const holder=q("span",card);
-    if (!holder || !skin?.icon) return;
-    holder.textContent="";
+    if (!holder || !skin?.icon || card.classList.contains("unknown")) return;
     holder.classList.add("skin-collection-icon-v0557");
-    holder.appendChild(skinImage(skin.icon,skin.name));
+
+    const image=holder.firstElementChild;
+    const alreadyDecorated=
+      holder.childNodes.length===1 &&
+      image?.tagName==="IMG" &&
+      image.getAttribute("src")===skin.icon &&
+      image.getAttribute("alt")===(skin.name || "") &&
+      image.getAttribute("draggable")==="false";
+
+    if (alreadyDecorated) return;
+    holder.replaceChildren(skinImage(skin.icon,skin.name));
+    changed=true;
   });
+
+  return changed;
 }
 
 document.addEventListener("click",event=>{
@@ -431,10 +445,24 @@ document.addEventListener("click",event=>{
   if (tab) setTimeout(decorateSkinCollection,0);
 },true);
 
-const observer=new MutationObserver(()=>{
-  if (!id("libraryV0551")?.classList.contains("hidden")) decorateSkinCollection();
-});
-observer.observe(document.body,{subtree:true,childList:true});
+const libraryBody=id("libraryBodyV0551");
+if (libraryBody) {
+  const options={subtree:true,childList:true};
+  const observer=new MutationObserver(mutations=>{
+    if (
+      id("libraryV0551")?.classList.contains("hidden") ||
+      !mutations.some(mutation=>mutation.type==="childList")
+    ) return;
+
+    observer.disconnect();
+    try {
+      decorateSkinCollection();
+    } finally {
+      if (libraryBody.isConnected) observer.observe(libraryBody,options);
+    }
+  });
+  observer.observe(libraryBody,options);
+}
 
 addCss();
 
