@@ -179,6 +179,42 @@ function installBrowserStubs(window, width, height) {
     configurable: true,
     value: { writeText: async value => { window.__clipboardText = String(value); } }
   });
+
+  const returningSession = new URL(window.location.href).searchParams.get("smoke") === "returning-session";
+  window.__authSession = returningSession ? {
+    user: {
+      id: "returning-supabase-user",
+      user_metadata: { full_name: "Returning Cherry", user_name: "returningcherry" },
+      identities: [{ provider: "discord", identity_data: { provider_id: "987654321" } }]
+    }
+  } : null;
+  window.__authOAuthRequests = [];
+  window.__authClientConfig = null;
+  window.__authStateCallback = null;
+  window.__CHERRIFT_SUPABASE_FACTORY__ = (url, publishableKey, options) => {
+    window.__authClientConfig = { url, publishableKey, options };
+    return {
+      auth: {
+        async getSession() {
+          return { data: { session: window.__authSession }, error: null };
+        },
+        async signInWithOAuth(request) {
+          window.__authOAuthRequests.push(request);
+          return { data: { provider: request.provider, url: "https://discord.test/oauth" }, error: null };
+        },
+        onAuthStateChange(callback) {
+          window.__authStateCallback = callback;
+          window.setTimeout(() => callback("INITIAL_SESSION", window.__authSession), 0);
+          return { data: { subscription: { unsubscribe() {} } } };
+        },
+        async signOut() {
+          window.__authSession = null;
+          window.__authStateCallback?.("SIGNED_OUT", null);
+          return { error: null };
+        }
+      }
+    };
+  };
 }
 
 async function waitFor(check, message, timeout = 15000) {
@@ -206,7 +242,7 @@ async function loadApp(name, width, height) {
   });
 
   await waitFor(
-    () => dom.window.CHERRIFT_V063 && dom.window.UI?.save && dom.window.UI?.game,
+    () => dom.window.CHERRIFT_V063 && dom.window.CHERRIFT_AUTH && dom.window.UI?.save && dom.window.UI?.game,
     `${name} startup`
   );
   assert.equal(dom.window.document.body.classList.contains("v062-startup-failed"), false, `${name}: startup failure screen`);
@@ -222,6 +258,18 @@ async function exercise(name, width, height) {
   const { dom, window, errors } = await loadApp(name, width, height);
   const { document, UI } = window;
   try {
+    await waitFor(() => window.CHERRIFT_AUTH.getState().gateVisible, `${name} authentication gate`);
+    assert.equal(document.getElementById("authGateV064")?.hidden, false, `${name}: login appears after loading`);
+    assert.equal(document.body.classList.contains("auth-gated-v064"), true, `${name}: menu input is gated before choosing a login mode`);
+    assert.match(document.getElementById("authWarningV064")?.textContent || "", /böngészőben/, `${name}: Guest shows its local-save warning`);
+    assert.equal(window.__authClientConfig?.url, "https://qkukvltevryegjbnwcgg.supabase.co", `${name}: configured Supabase project is used`);
+    assert.equal(window.__authClientConfig?.options?.auth?.flowType, "pkce", `${name}: browser OAuth uses PKCE`);
+    assert.equal(window.__authClientConfig?.options?.auth?.persistSession, true, `${name}: Discord session persists`);
+    click(window, document.getElementById("authGuestV064"), `${name}: Continue as Guest`);
+    await waitFor(() => window.CHERRIFT_AUTH.getState().mode === "guest", `${name} Guest mode`);
+    assert.equal(document.getElementById("authGateV064")?.hidden, true, `${name}: Guest enters the menu`);
+    assert.equal(UI.save.profile?.authProvider, "guest", `${name}: Guest mode is represented in the local profile`);
+
     assert.deepEqual([...window.CHERRIFT_V060.diagnostics().missingElements], [], `${name}: v0.6 UI is complete`);
     assert.deepEqual([...window.CHERRIFT_V062.diagnostics().duplicateIds], [], `${name}: no duplicate IDs`);
     assert.equal(window.CHERRIFT_V062.diagnostics().libraryServices, true, `${name}: Library services are present`);
@@ -272,6 +320,14 @@ async function exercise(name, width, height) {
     );
     assert.equal(window.CHERRIFT_V063.isBaseMeleeSkin({ player: { skin: "beastclaw_cherry" } }), true, `${name}: Rare generic melee skin receives the base slash`);
     assert.equal(window.CHERRIFT_V063.isBaseMeleeSkin({ player: { skin: "warrior_cherry" } }), false, `${name}: Warrior keeps its dedicated effect`);
+
+    click(window, document.querySelector("#menu .discord-login"), `${name}: open Discord login from the menu account card`);
+    await waitFor(() => window.CHERRIFT_AUTH.getState().gateVisible, `${name} reopened login gate`);
+    click(window, document.getElementById("authDiscordV064"), `${name}: Discord OAuth choice`);
+    await waitFor(() => window.__authOAuthRequests.length === 1, `${name} Discord OAuth request`);
+    assert.equal(window.__authOAuthRequests[0].provider, "discord", `${name}: Supabase receives the Discord provider`);
+    assert.equal(window.__authOAuthRequests[0].options.redirectTo, baseUrl, `${name}: OAuth returns to the exact game path`);
+    window.CHERRIFT_AUTH.continueAsGuest();
 
     click(window, document.getElementById("dashboardPlayV060"), `${name}: dashboard Play`);
     await waitFor(() => !document.getElementById("worlds")?.classList.contains("hidden"), `${name} World Select`);
@@ -380,12 +436,15 @@ async function exercise(name, width, height) {
 
     UI.open("settings");
     assert.equal(document.getElementById("settingsResumeAction")?.classList.contains("hidden"), true, `${name}: Resume run stays hidden outside a paused run`);
-    assert.equal(document.querySelector(".discord-login")?.disabled, true, `${name}: unfinished Discord login is safely disabled`);
+    assert.equal(document.querySelector(".discord-login")?.disabled, false, `${name}: Discord login is enabled`);
     const language = document.getElementById("languageV060");
     language.value = "en";
     language.dispatchEvent(new window.Event("change", { bubbles: true }));
     assert.equal(document.documentElement.lang, "en", `${name}: English language applies`);
     assert.equal(document.querySelector("#settings h2")?.textContent.trim(), "Settings", `${name}: English Settings title`);
+    window.CHERRIFT_AUTH.openGate();
+    assert.equal(document.getElementById("authTitleV064")?.textContent.trim(), "How would you like to continue?", `${name}: auth gate translates to English`);
+    window.CHERRIFT_AUTH.continueAsGuest();
     assert.match(document.getElementById("testBuildBannerV063")?.textContent || "", /TEST BUILD/, `${name}: test-build banner translates to English`);
     UI.open("mailV063");
     assert.equal(document.querySelector("#mailV063 .panel-head-v063 h2")?.textContent.trim(), "Mail", `${name}: Mail header translates to English`);
@@ -404,6 +463,29 @@ async function exercise(name, width, height) {
     assert.equal(document.querySelector("#settings h2")?.textContent.trim(), "Beállítások", `${name}: Hungarian Settings title`);
     assert.equal(window.CHERRIFT_I18N.translate("World 1-1 · Blooming Meadow"), "Világ 1-1 · Virágzó Rét", `${name}: Hungarian compound stage title`);
     assert.equal(window.CHERRIFT_I18N.translate("Clear your first stage."), "Teljesítsd az első pályádat.", `${name}: achievement copy translates to Hungarian`);
+
+    const discordSession = {
+      user: {
+        id: "supabase-user-1",
+        user_metadata: {
+          full_name: "Cherry Discord",
+          user_name: "cherrytester",
+          avatar_url: "https://cdn.discord.test/avatar.png"
+        },
+        identities: [{ provider: "discord", identity_data: { provider_id: "123456789" } }]
+      }
+    };
+    window.__authSession = discordSession;
+    assert.equal(window.CHERRIFT_AUTH.applySessionForTesting(discordSession), true, `${name}: Discord session is accepted`);
+    assert.equal(window.CHERRIFT_AUTH.getState().account?.discordId, "123456789", `${name}: Discord identity is normalized`);
+    assert.equal(document.querySelector("#menu .login-copy strong")?.textContent, "Cherry Discord", `${name}: Discord profile appears on the main menu`);
+    UI.open("settings");
+    document.querySelector('[data-v060-settings="account"]')?.click();
+    assert.match(document.querySelector('[data-v060-settings-page="account"]')?.textContent || "", /Cherry Discord/, `${name}: Settings Account shows the connected user`);
+    await window.CHERRIFT_AUTH.signOut();
+    await waitFor(() => window.CHERRIFT_AUTH.getState().gateVisible, `${name} sign-out gate`);
+    assert.equal(UI.save.profile?.authProvider, "guest", `${name}: sign-out returns the local profile to Guest`);
+    window.CHERRIFT_AUTH.continueAsGuest();
 
     UI.save.settings.viewZoom = 1;
     const balancedZoom = window.CHERRIFT_V062.fairCameraZoom();
@@ -441,13 +523,30 @@ async function exercise(name, width, height) {
   }
 }
 
+async function exerciseReturningSession() {
+  const { dom, window, errors } = await loadApp("returning-session", 1280, 760);
+  try {
+    await waitFor(() => window.CHERRIFT_AUTH.getState().mode === "discord", "returning Discord session restoration");
+    assert.equal(window.CHERRIFT_AUTH.getState().gateVisible, false, "returning session: login gate is skipped");
+    assert.equal(window.CHERRIFT_AUTH.getState().account?.discordId, "987654321", "returning session: Discord identity is restored");
+    assert.equal(window.document.querySelector("#menu .login-copy strong")?.textContent, "Returning Cherry", "returning session: account card is restored");
+    const meaningfulErrors = errors.filter(error => !/Not implemented: HTMLCanvasElement|Could not load link/i.test(error));
+    assert.deepEqual(meaningfulErrors, [], "returning session: no runtime console errors");
+    return { name: "returning Discord session", viewport: "1280x760" };
+  } finally {
+    dom.window.close();
+  }
+}
+
 try {
   const results = [];
   results.push(await exercise("desktop", 1440, 900));
   results.push(await exercise("mobile", 390, 844));
+  const returningSession = await exerciseReturningSession();
   for (const result of results) {
     console.log(`PASS ${result.name} ${result.viewport} · camera ${result.camera} · ${result.libraryCards} Library skin cards`);
   }
+  console.log(`PASS ${returningSession.name} ${returningSession.viewport}`);
   console.log("CHERRIFT smoke tests passed.");
 } finally {
   await new Promise(resolve => server.close(resolve));

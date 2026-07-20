@@ -10,6 +10,7 @@ CHERRIFT egy böngészős survivor/action RPG prototípus, Cherry-kinézetekkel,
 
 - Teljes, azonnal váltható magyar és angol felület a Settings → General → Language menüben.
 - Helyi, mentett Mail rendszer olvasatlan jelzéssel és egyszer átvehető mellékletekkel.
+- Betöltés utáni Guest / Discord belépőképernyő, Supabase Authtal, tartós Discord-munkamenettel és Beállítások → Fiók kijelentkezéssel.
 - Beépített magyar/angol Feedback és Bug Report felület, vágólap- és GitHub Issue-kimenettel.
 - Jól látható `TESZTVERZIÓ · v0.6.3` jelzés, valamint nagy Erő / HP / ATK kártyák a főmenüben és a loadoutban.
 - Az új felszerelésgrafikák ritkaság és slot szerint logikusan bekötve; a régi emoji-ikonok helyett valódi item art jelenik meg.
@@ -41,7 +42,7 @@ Ezután nyisd meg: `http://localhost:8000`
 
 ### Fejlesztői ellenőrzés
 
-Node.js 20 vagy újabb ajánlott.
+Node.js 22 vagy újabb ajánlott.
 
 ```bash
 npm install
@@ -53,7 +54,7 @@ Az `npm test` ellenőrzi a JavaScript-szintaxist, a közvetlen assethivatkozáso
 ### Mentés és jelenlegi korlátok
 
 - A mentés jelenleg a böngésző `localStorage` tárhelyén marad; nincs még felhőszinkron.
-- A Discord-login helye elő van készítve, de biztonságos backend nélkül szándékosan le van tiltva.
+- A Discord-login működik Supabase Authon keresztül. A felhőmentéshez még külön adatbázistábla és RLS-szabályok szükségesek; a játékmentés ebben a buildben továbbra is helyi.
 - World 3 jelenleg előzetes/placeholder tartalom, teljesítése a 0.7 célja.
 - A régi verziók egymásra épülő patch-fájljai működnek, de a 0.9 előtt moduláris buildbe kell őket összevonni.
 
@@ -63,6 +64,7 @@ Az `npm test` ellenőrzi a JavaScript-szintaxist, a közvetlen assethivatkozáso
 
 - Complete runtime-switchable Hungarian and English UI under Settings → General → Language.
 - Local, persisted Mail with unread badges and one-time claimable attachments.
+- A post-loader Guest / Discord gate powered by Supabase Auth, persistent Discord sessions and sign-out under Settings → Account.
 - Built-in Hungarian/English Feedback and Bug Report screen with clipboard and GitHub Issue output.
 - A prominent `TEST BUILD · v0.6.3` label and large Power / HP / ATK cards on the home and loadout screens.
 - New equipment artwork mapped logically by rarity and slot instead of the previous emoji icons.
@@ -92,7 +94,7 @@ Then open `http://localhost:8000`.
 ### Current limits
 
 - Saves are device-local until the account/cloud-save milestone.
-- Discord login is intentionally disabled until a secure server-side OAuth exchange exists.
+- Discord login is active through Supabase Auth. Cloud saves still require a dedicated database table and RLS policies; this build continues to use the local game save.
 - World 3 is preview/placeholder content scheduled for completion in 0.7.
 - The legacy sequential patch stack should be consolidated before the 1.0 BETA.
 
@@ -103,5 +105,6 @@ Then open `http://localhost:8000`.
 - [v0.6.2 changelog](CHANGELOG_V062_HU_EN.md)
 - [v0.6.3 changelog](CHANGELOG_V063_HU_EN.md)
 - [v0.6.3 Installation / Telepítés](INSTALL_V063_HU_EN.md)
+- [Supabase Discord setup / beállítás](SUPABASE_DISCORD_SETUP_HU_EN.md)
 
 The project runs entirely in the browser and does not require a production npm build step.

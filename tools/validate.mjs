@@ -99,6 +99,34 @@ for (const match of html.matchAll(/<(?:script|link)\b[^>]+(?:src|href)=["']([^"'
   if (!existsSync(join(root, reference))) errors.push(`index.html: missing local dependency ${reference}`);
 }
 
+const authPatchPath = join(root, "src", "cherrift_v064_auth.js");
+const authConfigPath = join(root, "src", "supabase_config.js");
+const supabaseVendorPath = join(root, "vendor", "supabase-js-2.110.7.js");
+if (!existsSync(authPatchPath)) errors.push("src/cherrift_v064_auth.js: missing Discord auth patch");
+else {
+  const authPatch = readFileSync(authPatchPath, "utf8");
+  for (const required of ["signInWithOAuth", 'provider: "discord"', 'flowType: "pkce"', "persistSession", "signOut", "authGateV064"]) {
+    if (!authPatch.includes(required)) errors.push(`src/cherrift_v064_auth.js: missing ${required}`);
+  }
+}
+if (!existsSync(authConfigPath)) errors.push("src/supabase_config.js: missing public Supabase configuration");
+else {
+  const authConfig = readFileSync(authConfigPath, "utf8");
+  if (!authConfig.includes("https://qkukvltevryegjbnwcgg.supabase.co")) errors.push("src/supabase_config.js: unexpected Supabase project URL");
+  if (!/sb_publishable_[A-Za-z0-9_-]+/.test(authConfig)) errors.push("src/supabase_config.js: publishable key is missing");
+  if (/sb_(?:secret|service_role)_[A-Za-z0-9_-]+/i.test(authConfig)) errors.push("src/supabase_config.js: service-role material must never be shipped to the browser");
+}
+if (!existsSync(supabaseVendorPath) || statSync(supabaseVendorPath).size < 100000) {
+  errors.push("vendor/supabase-js-2.110.7.js: local Supabase browser bundle is missing or incomplete");
+}
+if (!(html.indexOf("vendor/supabase-js-2.110.7.js") < html.indexOf("src/main.js"))) {
+  errors.push("index.html: Supabase browser client must load before the game bootstrap");
+}
+const packageJson = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
+for (const dependency of ["@supabase/supabase-js", "@supabase/ssr"]) {
+  if (!packageJson.dependencies?.[dependency]) errors.push(`package.json: missing ${dependency}`);
+}
+
 if (existsSync(join(root, "src", "cherrift_v0562.js")) && !main.includes("cherrift_v0562.js")) {
   warnings.push("src/cherrift_v0562.js exists but is not loaded (v0.5.6.3 supersedes it)");
 }

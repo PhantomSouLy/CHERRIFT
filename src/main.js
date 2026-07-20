@@ -1,5 +1,5 @@
 window.addEventListener("DOMContentLoaded", async () => {
-  const patchCount = 24;
+  const patchCount = 25;
   let loadedPatches = 0;
   const failedPatches = [];
 
@@ -118,6 +118,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   await loadScript("src/cherrift_i18n_v062.js?v=062","v0.6.2 Hungarian/English localization");
   await loadScript("src/cherrift_v062.js?v=062","v0.6.2 quality update");
   await loadScript("src/cherrift_v063.js?v=063","v0.6.3 mail, reports, equipment and effects");
+  await loadScript("src/cherrift_v064_auth.js?v=064","v0.6.3 Supabase Discord login");
 
   try {
     if (failedPatches.length) {

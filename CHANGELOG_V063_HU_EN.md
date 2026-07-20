@@ -2,6 +2,9 @@
 
 ## Magyar
 
+- Betöltés utáni, reszponzív Guest / Discord belépőképernyő került a játékba. A Guest mód egyértelműen jelzi a helyi mentés kockázatát.
+- A Discord-belépés Supabase Authtal, PKCE-folyamattal, automatikus session-visszaállítással és kijelentkezéssel működik. A Settings → Account most valódi fiókállapotot mutat.
+- A Supabase böngészős kliens helyi, verziózott vendor fájlként töltődik, ezért a login nem függ külső CDN-től.
 - Új, helyben mentett Mail rendszer olvasatlan számlálóval, levélolvasóval és egyszer átvehető jutalommal.
 - Új Feedback és Bug Report felület. Strukturált Markdown jelentést készít, amely másolható vagy előre kitöltött GitHub Issue-ként megnyitható. A teljes mentés nem kerül bele.
 - A főmenü minden változatán jól látható a `TESZTVERZIÓ · v0.6.3` jelzés.
@@ -15,6 +18,9 @@
 
 ## English
 
+- Added a responsive post-loader Guest / Discord gate. Guest mode clearly explains the risk of browser-local saves.
+- Discord sign-in now uses Supabase Auth with PKCE, automatic session restoration and sign-out. Settings → Account displays the real account state.
+- The Supabase browser client is shipped as a local versioned vendor file, so login does not depend on a third-party CDN.
 - New device-local Mail with an unread counter, reader and one-time claimable reward.
 - New Feedback and Bug Report screen. It builds a structured Markdown report that can be copied or opened as a prefilled GitHub Issue; the complete save is never included.
 - Every home layout now clearly displays `TEST BUILD · v0.6.3`.

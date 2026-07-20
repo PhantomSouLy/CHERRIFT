@@ -13,7 +13,8 @@
    ```
 
 5. Nézd át a `git status` kimenetét, majd commitold és pushold a változásokat.
-6. Várd meg a GitHub Pages telepítését, majd végezz hard refresh-t. Ez nem törli a böngészőben tárolt játékmentést.
+6. Állítsd be a Discord callbacket és a Supabase Redirect URL-eket a `SUPABASE_DISCORD_SETUP_HU_EN.md` szerint.
+7. Várd meg a GitHub Pages telepítését, majd végezz hard refresh-t. Ez nem törli a böngészőben tárolt játékmentést.
 
 Ajánlott commitüzenet:
 
@@ -28,4 +29,5 @@ CHERRIFT v0.6.3 test build systems and effects update
 3. Allow existing files to be replaced. Do not leave the files inside an extra nested `CHERRIFT_v0.6.3...` folder.
 4. Run `npm install` and `npm test` to verify the package.
 5. Review `git status`, then commit and push the changes.
-6. Wait for GitHub Pages to deploy and perform a hard refresh. This does not delete the browser-local game save.
+6. Configure the Discord callback and Supabase Redirect URLs described in `SUPABASE_DISCORD_SETUP_HU_EN.md`.
+7. Wait for GitHub Pages to deploy and perform a hard refresh. This does not delete the browser-local game save.
