@@ -1,0 +1,65 @@
+{
+  "project": "CHERRIFT",
+  "version": "0.7.0",
+  "generated_at_utc": "2026-07-21T21:06:18+00:00",
+  "base_repository_state": {
+    "repository": "PhantomSouLy/CHERRIFT",
+    "latest_inspected_commit": "51cdad51009de2616aa248f390d503f6ae5374f4",
+    "base_runtime": "v0.6.3 Discord + Supabase cloud save"
+  },
+  "checks": {
+    "javascript_syntax": "passed",
+    "runtime_smoke": "passed",
+    "feature_smoke": "passed",
+    "declared_patch_count": 26,
+    "actual_loadScript_calls": 26,
+    "patch_count_matches": true,
+    "required_patch_loaders": {
+      "src/cherrift_v070.js": true
+    },
+    "secret_like_runtime_scan": "passed",
+    "full_browser_gameplay_test": "not_completed"
+  },
+  "notes": [
+    "The patch is additive and keeps the existing Guest/local and Discord/Supabase full-save flow.",
+    "Missing future PixelLab artwork uses built-in text/emoji fallbacks.",
+    "World and additional skin content are intentionally deferred to a later content pass."
+  ],
+  "files": [
+    {
+      "path": "ASSET_PATHS_V070.md",
+      "bytes": 773,
+      "sha256": "9c08dc85faf22badf1c5dab9b276c84cbdbee7affd0abf65c26121bf0025e3ce"
+    },
+    {
+      "path": "CHANGELOG_V070_HU_EN.md",
+      "bytes": 1858,
+      "sha256": "016906c4d0f2f13c31f37bb880862ec004dd528e89bb26585cb0d6492aecbd51"
+    },
+    {
+      "path": "INSTALL_V070_HU_EN.md",
+      "bytes": 698,
+      "sha256": "0ddd70dbafca2a269d3ea0ba65e2eb0a1d8485a0eecb4d30b4b0107834e4abf4"
+    },
+    {
+      "path": "README_V070.txt",
+      "bytes": 379,
+      "sha256": "c6034355d5fe91f150862fa1559d5993c0d3e282c7ec6437ca500ac8bb06ad14"
+    },
+    {
+      "path": "src/cherrift_v070.js",
+      "bytes": 25175,
+      "sha256": "e3cedcf7e5fdd2f66baf5e9c5ccd9bbd7e62f88a4e1d37479dd82a0b426c5282"
+    },
+    {
+      "path": "src/main.js",
+      "bytes": 7523,
+      "sha256": "37088723c7940677c73aa728aea1d70c6d1e73b0892fec6c82cbc02e824aba27"
+    },
+    {
+      "path": "v070.css",
+      "bytes": 5862,
+      "sha256": "5d8adfe511a1d38feb0e7e3e6d5911ea4ae4801567acc77f621010c5f461b126"
+    }
+  ]
+}

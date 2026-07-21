@@ -1,5 +1,8 @@
 window.addEventListener("DOMContentLoaded", async () => {
-  const patchCount = 25;
+  document.title = "CHERRIFT v0.7.0 – TEST BUILD";
+  const bootSub = document.querySelector(".boot-sub-v060");
+  if (bootSub) bootSub.textContent = "v0.7.0 · TEST BUILD";
+  const patchCount = 26;
   let loadedPatches = 0;
   const failedPatches = [];
 
@@ -121,6 +124,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   await loadScript("src/cherrift_v062.js?v=062","v0.6.2 quality update");
   await loadScript("src/cherrift_v063.js?v=063","v0.6.3 mail, reports, equipment and effects");
   await loadScript("src/cherrift_v064_auth.js?v=065","v0.6.3 Supabase Discord cloud save");
+  await loadScript("src/cherrift_v070.js?v=070","v0.7.0 Arsenal & Enhancement");
 
   try {
     if (failedPatches.length) {
