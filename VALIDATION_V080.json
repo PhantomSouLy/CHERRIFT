@@ -1,0 +1,81 @@
+{
+  "project": "CHERRIFT",
+  "version": "0.8.0",
+  "generated_at_utc": "2026-07-21T21:06:18+00:00",
+  "base_repository_state": {
+    "repository": "PhantomSouLy/CHERRIFT",
+    "latest_inspected_commit": "51cdad51009de2616aa248f390d503f6ae5374f4",
+    "base_runtime": "v0.6.3 Discord + Supabase cloud save"
+  },
+  "checks": {
+    "javascript_syntax": "passed",
+    "runtime_smoke": "passed",
+    "feature_smoke": "passed",
+    "declared_patch_count": 27,
+    "actual_loadScript_calls": 27,
+    "patch_count_matches": true,
+    "required_patch_loaders": {
+      "src/cherrift_v070.js": true,
+      "src/cherrift_v080.js": true
+    },
+    "secret_like_runtime_scan": "passed",
+    "full_browser_gameplay_test": "not_completed"
+  },
+  "notes": [
+    "The patch is additive and keeps the existing Guest/local and Discord/Supabase full-save flow.",
+    "Missing future PixelLab artwork uses built-in text/emoji fallbacks.",
+    "World and additional skin content are intentionally deferred to a later content pass."
+  ],
+  "files": [
+    {
+      "path": "ASSET_PATHS_V080.md",
+      "bytes": 695,
+      "sha256": "e85bfebffe3f0a269f0c82b7c326dc4480d471e50cf48b8d82b0ed371378632a"
+    },
+    {
+      "path": "CHANGELOG_V080_HU_EN.md",
+      "bytes": 2081,
+      "sha256": "e01bee4c16ac8df170dc6471ed29130c2ac0167c33acda15725d974bd3e80cdd"
+    },
+    {
+      "path": "INSTALL_V080_HU_EN.md",
+      "bytes": 802,
+      "sha256": "33cb6775cecfa741a0d0ba6c6efdaa9f0fcefa3cc97ebeb6ba616f298ae7560a"
+    },
+    {
+      "path": "NEXT_CONTENT_HOOKS.md",
+      "bytes": 630,
+      "sha256": "c5af444a8d3a3cd9ae76441c1b8952bc2cae302c48071f03ff1e1a40ad0e47cf"
+    },
+    {
+      "path": "README_V080.txt",
+      "bytes": 418,
+      "sha256": "3a6a0d9a5dd6d63707715d841d937ed77f5c5c1677104d88a3c76ade23853e3e"
+    },
+    {
+      "path": "src/cherrift_v070.js",
+      "bytes": 25175,
+      "sha256": "e3cedcf7e5fdd2f66baf5e9c5ccd9bbd7e62f88a4e1d37479dd82a0b426c5282"
+    },
+    {
+      "path": "src/cherrift_v080.js",
+      "bytes": 37443,
+      "sha256": "2c2209302715b33a1bbe6765880847dd0996fe26974aa7aacfae2dbeffdd7dc0"
+    },
+    {
+      "path": "src/main.js",
+      "bytes": 7601,
+      "sha256": "38a5767293bc23af024f4484b14fe329dd5c74cdef1221f203c9c0fee39b2b37"
+    },
+    {
+      "path": "v070.css",
+      "bytes": 5862,
+      "sha256": "5d8adfe511a1d38feb0e7e3e6d5911ea4ae4801567acc77f621010c5f461b126"
+    },
+    {
+      "path": "v080.css",
+      "bytes": 8953,
+      "sha256": "6df40c61087beeed6db44ce1de93a1bbf541c47f6aedb636ab557d785bf325e7"
+    }
+  ]
+}
