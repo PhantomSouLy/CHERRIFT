@@ -1,0 +1,56 @@
+{
+  "package": "CHERRIFT v0.8.4 UI Polish & Bug Fixes",
+  "source_repository": "PhantomSouLy/CHERRIFT",
+  "source_commit": "022ee761332344189c81f427822a7b8de512bd1d",
+  "source_commit_message": "0.8.3 Icons Update",
+  "generated_date": "2026-07-25",
+  "checks": {
+    "main_loads_v084_after_v083": true,
+    "main_patch_count_31": true,
+    "v084_javascript_syntax": true,
+    "main_javascript_syntax": true,
+    "edge_function_typescript_transpile_syntax": true,
+    "css_braces_balanced": true,
+    "discord_webhooks_not_in_frontend": true,
+    "feedback_visual_form_preserved": true,
+    "bug_report_simplified": true,
+    "mobile_breakpoints_present": true,
+    "github_write_performed": false
+  },
+  "files": {
+    "CHANGELOG_V084_HU.md": {
+      "bytes": 1810,
+      "sha256": "81ec3eec30f15273e5cd7c639433a99a01543854201bffc35f12c03afd42ed34"
+    },
+    "README_V084_HU.md": {
+      "bytes": 3672,
+      "sha256": "814cdfe94602b02f905e7a3bb4eb0602299c70b1ad1041e0024a002b6b1f1a66"
+    },
+    "src/cherrift_v084.js": {
+      "bytes": 36357,
+      "sha256": "d23dd531d48e654ee59a7db1267b02cf1dd5b6f4297daefdd3a101abd6090a2e"
+    },
+    "src/main.js": {
+      "bytes": 7957,
+      "sha256": "781c930b85f1fbeb1e559c90facaa9df787d2e17491096d5971d12b38921461c"
+    },
+    "supabase/config.toml": {
+      "bytes": 45,
+      "sha256": "a9c7be0139592879e6aec658309fa4df45e39bfbe20c390588a22c7bf4cbcf83"
+    },
+    "supabase/functions/submit-report/index.ts": {
+      "bytes": 6509,
+      "sha256": "a9f18be4148b6a96240e4783d6fa95f1012260ca72e8419a7829162134e64cfe"
+    },
+    "v084.css": {
+      "bytes": 18769,
+      "sha256": "39d11a69545b5285094e8da813be26ba305630069b75f6d2ad90f946f7106efb"
+    }
+  },
+  "runtime_browser_tested": false,
+  "notes": [
+    "GitHub App write actions returned HTTP 403, therefore this package is provided as a manual overlay ZIP.",
+    "Discord delivery requires deployment of the included Supabase Edge Function and two Supabase secrets.",
+    "The patch is designed as an overlay for the current v0.8.3 repository state."
+  ]
+}
