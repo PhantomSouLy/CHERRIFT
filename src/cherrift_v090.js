@@ -10,7 +10,7 @@ if(!window.UI||!window.CHERRIFT_CONFIG||!window.CHERRIFT_DATA)return;
 
 function ensureCss(){
   if(id("v090css"))return;
-  const link=document.createElement("link");link.id="v090css";link.rel="stylesheet";link.href="v090.css?v=090-slotfix1";document.head.appendChild(link);
+  const link=document.createElement("link");link.id="v090css";link.rel="stylesheet";link.href="v090.css?v=090-mmorpg2";document.head.appendChild(link);
 }
 
 const ART={
@@ -100,6 +100,7 @@ function markSkinsSeen(){
 
 function finalRefresh(){
   patchVersion();deviceClass();ensureMobileNav();decorateSkinNavigation();ensureSkinNotice();
+  window.CHERRIFT_V060?.ensureGearLayout?.();
 }
 
 const previousInit=UI.init?.bind(UI);

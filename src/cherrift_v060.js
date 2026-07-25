@@ -155,7 +155,7 @@ function ensureCss() {
   const link = document.createElement("link");
   link.id = "v060css";
   link.rel = "stylesheet";
-  link.href = "v060.css?v=061";
+  link.href = "v060.css?v=090-mmorpg2";
   document.head.appendChild(link);
 }
 
@@ -393,6 +393,97 @@ function ensureGearPreview() {
   stable.height = 320;
   stable.setAttribute("aria-label", "Selected Cherry stable idle animation");
   original.insertAdjacentElement("afterend", stable);
+}
+
+const GEAR_SLOT_AREAS_V090 = {
+  Helmet: "helmet",
+  Armor: "armor",
+  Weapon: "weapon",
+  Ring: "ring",
+  Necklace: "necklace",
+  Gloves: "gloves",
+  Boots: "boots"
+};
+
+function ensureCompleteGearLayout() {
+  const stage = id("gearStageV0560");
+  if (!stage) return false;
+
+  const mobile = matchMedia("(max-width:820px)").matches;
+  stage.classList.add("gear-mmorp-layout-v090");
+  stage.dataset.v090SlotCount = "7";
+  stage.style.setProperty("display", "grid", "important");
+  stage.style.setProperty(
+    "grid-template-columns",
+    mobile
+      ? "minmax(94px,1fr) minmax(110px,1.12fr) minmax(94px,1fr)"
+      : "minmax(150px,1fr) minmax(220px,1.15fr) minmax(150px,1fr)",
+    "important"
+  );
+  stage.style.setProperty(
+    "grid-template-rows",
+    mobile ? "52px repeat(3,minmax(62px,1fr))" : "72px repeat(3,minmax(82px,1fr))",
+    "important"
+  );
+  stage.style.setProperty(
+    "grid-template-areas",
+    '". helmet ." "armor character necklace" "weapon character gloves" "ring character boots"',
+    "important"
+  );
+  stage.style.setProperty("align-items", "center", "important");
+  stage.style.setProperty("justify-items", "center", "important");
+  stage.style.setProperty("gap", mobile ? "0 4px" : "2px 22px", "important");
+  stage.style.setProperty("min-height", mobile ? "238px" : "370px", "important");
+
+  const slots = qa("[data-v0560-slot]", stage);
+  for (const button of slots) {
+    const slot = button.dataset.v0560Slot;
+    const area = GEAR_SLOT_AREAS_V090[slot];
+    if (!area) continue;
+    button.dataset.v090GearArea = area;
+    button.style.setProperty("grid-area", area, "important");
+    button.style.setProperty("position", "relative", "important");
+    button.style.setProperty("left", "auto", "important");
+    button.style.setProperty("right", "auto", "important");
+    button.style.setProperty("top", "auto", "important");
+    button.style.setProperty("bottom", "auto", "important");
+    button.style.setProperty("transform", "none", "important");
+    button.style.setProperty("width", mobile ? "min(104px,100%)" : "min(155px,100%)", "important");
+    button.style.setProperty("height", mobile ? "48px" : "68px", "important");
+    button.style.setProperty("display", "grid", "important");
+    button.style.setProperty(
+      "grid-template-columns",
+      mobile ? "27px minmax(0,1fr)" : "46px minmax(0,1fr)",
+      "important"
+    );
+    button.style.setProperty("grid-template-rows", "auto auto", "important");
+    button.style.setProperty("column-gap", mobile ? "4px" : "8px", "important");
+    button.style.setProperty("padding", mobile ? "4px 5px" : "7px 9px", "important");
+    button.style.setProperty(
+      "justify-self",
+      slot === "Helmet" ? "center" : ["Armor", "Weapon", "Ring"].includes(slot) ? "end" : "start",
+      "important"
+    );
+
+    const icon = q(".gear-slot-icon-v0560", button);
+    const label = q(":scope > b", button);
+    const state = q(":scope > small", button);
+    if (icon) {
+      icon.style.setProperty("grid-column", "1", "important");
+      icon.style.setProperty("grid-row", "1 / 3", "important");
+    }
+    if (label) {
+      label.style.setProperty("position", "static", "important");
+      label.style.setProperty("grid-column", "2", "important");
+      label.style.setProperty("grid-row", "1", "important");
+    }
+    if (state) {
+      state.style.setProperty("position", "static", "important");
+      state.style.setProperty("grid-column", "2", "important");
+      state.style.setProperty("grid-row", "2", "important");
+    }
+  }
+  return slots.length === 7;
 }
 
 function ensureMobileNavigation() {
@@ -944,6 +1035,7 @@ function observeDynamicPanels() {
     try {
       if (!id("upgradePreviewV060")) ensureUpgradePreview();
       if (!id("gearCherryStableV060")) ensureGearPreview();
+      ensureCompleteGearLayout();
       ensureMobilePanelTabs();
       decorateProfiles();
     } finally {
@@ -1031,11 +1123,13 @@ function initAfterUI() {
   decorateSkinCarousel();
   decorateProfiles();
   startStablePreviews();
+  ensureCompleteGearLayout();
   backgroundPreloadIdleSheets();
   updateActiveNavigation("menu");
   window.addEventListener("resize", () => {
     ensureMobileNavigation();
     ensureMobilePanelTabs();
+    ensureCompleteGearLayout();
     updateResourceDisplays();
   });
   console.info("[CHERRIFT] v0.6.1 Bloom hotfix initialized.");
@@ -1078,6 +1172,7 @@ ensureSettingsLayout();
 ensureGachaLayout();
 ensureUpgradePreview();
 ensureGearPreview();
+ensureCompleteGearLayout();
 ensureMobilePanelTabs();
 
 window.CHERRIFT_V060 = {
@@ -1089,7 +1184,8 @@ window.CHERRIFT_V060 = {
   initAfterUI,
   finishBoot,
   diagnostics,
-  setNotice
+  setNotice,
+  ensureGearLayout: ensureCompleteGearLayout
 };
 
 console.info("[CHERRIFT] v0.6.1 Bloom hotfix layer loaded.");

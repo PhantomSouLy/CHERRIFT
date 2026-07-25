@@ -130,7 +130,7 @@ const pairs = [
   ["Regen", "Regeneráció"], ["Pickup", "Felszedési távolság"],
   ["Offensive", "Támadó"], ["Defensive", "Védekező"], ["Hybrid", "Hibrid"],
   ["Inventory full", "A tárgylista megtelt"], ["Dropped", "Megszerezve"], ["Sold", "Eladva"],
-  ["Armor", "Páncél"], ["Gloves", "Kesztyű"], ["Boots", "Csizma"], ["Ring", "Gyűrű"], ["Necklace", "Nyaklánc"], ["Helmet", "Sisak"],
+  ["Armor", "Páncél"], ["Chestplate", "Mellvért"], ["Gloves", "Kesztyű"], ["Boots", "Csizma"], ["Ring", "Gyűrű"], ["Necklace", "Nyaklánc"], ["Helmet", "Sisak"],
   ["Crimson = offenzív, Azure = defenzív, Verdant = hybrid. Gear csak statot ad.", "Crimson is offensive, Azure is defensive and Verdant is hybrid. Gear only grants stats."],
   ["Húzd az itemet a világító, megfelelő slotra.", "Drag the item to the glowing compatible slot."],
   ["Húzd az inventory itemet a megfelelő body slotra, vagy kattints rá a részletekhez.", "Drag an inventory item to the matching body slot, or click it for details."],

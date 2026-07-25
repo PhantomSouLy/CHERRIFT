@@ -13,6 +13,15 @@ const SLOT_ICONS = {
   Ring: "◉",
   Boots: "🥾"
 };
+const SLOT_DISPLAY_LABELS = {
+  Helmet: "Helmet",
+  Necklace: "Necklace",
+  Armor: "Chestplate",
+  Gloves: "Gloves",
+  Weapon: "Weapon",
+  Ring: "Ring",
+  Boots: "Boots"
+};
 const STAT_LABELS = {
   damage: "Attack",
   maxHp: "HP",
@@ -444,17 +453,18 @@ function startAnimationLoop() {
 }
 
 function slotMarkup(slot, item) {
+  const label = SLOT_DISPLAY_LABELS[slot] || slot;
   if (!item) {
     return `
       <span class="gear-slot-icon-v0560">${SLOT_ICONS[slot] || "＋"}</span>
-      <b>${slot}</b>
+      <b>${label}</b>
       <small>EMPTY</small>`;
   }
 
   return `
     <i class="gear-slot-lock-v0560">${item.locked ? "🔒" : ""}</i>
     <span class="gear-slot-icon-v0560">${gearEmoji(item)}</span>
-    <b>${slot}</b>
+    <b>${label}</b>
     <small>Lv.${item.itemLevel || 1} · ${itemPower(item)}</small>`;
 }
 

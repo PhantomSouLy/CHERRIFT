@@ -157,12 +157,21 @@ function assertSkin(window,skinId){
   }
 }
 
-function assertCompleteGearRing(window,name){
-  const slots=Array.from(window.document.querySelectorAll("#gearStageV0560 [data-v0560-slot]"));
+function assertCompleteGearLayout(window,name){
+  const stage=window.document.getElementById("gearStageV0560");
+  assert.ok(stage?.classList.contains("gear-mmorp-layout-v090"),`${name}: MMORPG Gear layout is active`);
+  const slots=Array.from(stage.querySelectorAll("[data-v0560-slot]"));
   const expected=["Helmet","Necklace","Armor","Gloves","Weapon","Ring","Boots"];
+  const areas={Helmet:"helmet",Armor:"armor",Weapon:"weapon",Ring:"ring",Necklace:"necklace",Gloves:"gloves",Boots:"boots"};
   assert.equal(slots.length,expected.length,`${name}: all seven Gear slots exist`);
   assert.deepEqual(slots.map(slot=>slot.dataset.v0560Slot).sort(),expected.slice().sort(),`${name}: canonical Gear slot set`);
   assert.equal(new Set(slots.map(slot=>slot.dataset.v0560Slot)).size,expected.length,`${name}: Gear slots are unique`);
+  for(const slot of slots){
+    const name=slot.dataset.v0560Slot;
+    assert.equal(slot.dataset.v090GearArea,areas[name],`${name}: fixed MMORPG area`);
+    assert.equal(slot.style.getPropertyPriority("grid-area"),"important",`${name}: area cannot be overridden`);
+    assert.equal(slot.style.getPropertyValue("position"),"relative",`${name}: slot participates in the Gear grid`);
+  }
 }
 
 async function exercise(name,width,height){
@@ -185,7 +194,7 @@ async function exercise(name,width,height){
     assert.equal(document.querySelectorAll('#globalMobileNavV052 [data-v082-open="worlds"]').length,1,`${name}: no duplicate Play`);
 
     UI.open("gear");
-    assertCompleteGearRing(window,name);
+    assertCompleteGearLayout(window,name);
 
     UI.open("settings");
     for(const setting of ["effectQualityV085","cameraMotionV085","screenShakeV085","combatSoundsV085"])assert.ok(document.getElementById(setting),`${name}: ${setting} setting`);

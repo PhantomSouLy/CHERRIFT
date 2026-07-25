@@ -57,9 +57,11 @@ Ez a csomag a v0.8.5–v0.9.0 közötti terveket hat, sorrendben betöltött pat
 
 ## Arsenal / Gear slot hotfix
 
-- A hét felszerelési hely most mindig teljes, zárt körben látszik Cherry körül:
-  Sisak, Nyaklánc, Páncél, Kesztyű, Fegyver, Gyűrű és Csizma.
-- Megszűnt a lefelé lépcsőző elrendezés, amely alacsony PC-ablaknál a panelen kívülre
-  tolta a Fegyver, Gyűrű és Csizma slotot.
+- A Gear loadout most MMORPG-s felszereléslap: felül Sisak; bal oldalon Mellvért,
+  Fegyver és Gyűrű; jobb oldalon Nyaklánc, Kesztyű és Csizma.
+- Mind a hét hely külön, széles kártyaként látszik, a slot neve és az ÜRES/gear
+  állapot a kártyán belül marad.
+- Megszűnt a lefelé lépcsőző elrendezés, amely alacsony PC-ablaknál a panelen
+  kívülre tolta a Fegyver, Gyűrű, Kesztyű és Csizma helyeket.
 - Külön ellenőrzött rövid PC-nézet készült 1128×584 felbontásra, továbbá megmaradt
   az álló és fekvő telefonos reszponzív elrendezés.
