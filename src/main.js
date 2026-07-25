@@ -1,8 +1,8 @@
 window.addEventListener("DOMContentLoaded", async () => {
-  document.title = "CHERRIFT v0.8.2 – TEST BUILD";
+  document.title = "CHERRIFT v0.8.3 – TEST BUILD";
   const bootSub = document.querySelector(".boot-sub-v060");
-  if (bootSub) bootSub.textContent = "v0.8.2 · TEST BUILD";
-  const patchCount = 29;
+  if (bootSub) bootSub.textContent = "v0.8.3 · TEST BUILD";
+  const patchCount = 30;
   let loadedPatches = 0;
   const failedPatches = [];
 
@@ -128,6 +128,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   await loadScript("src/cherrift_v080.js?v=080","v0.8.0 Gacha, BAG & Buffs");
   await loadScript("src/cherrift_v081.js?v=081","v0.8.1 Arsenal layout hotfix");
   await loadScript("src/cherrift_v082.js?v=082","v0.8.2 systems, navigation and Skill Tree rework");
+  await loadScript("src/cherrift_v083.js?v=083","v0.8.3 item artwork and reward overlay");
 
   try {
     if (failedPatches.length) {
