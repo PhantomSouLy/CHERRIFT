@@ -13,16 +13,16 @@ const CHEST_DEFS = {
   epic:{ name:"Epic Chest", color:"purple", pity:25, asset:"assets/items/chests/epic_chest.png" }
 };
 const FOOD_CATALOG = {
-  coin_cookie:{ name:"Coin Cookie", rarity:"Common", effect:"coin", value:0.05, runs:2, icon:"🍪", asset:"assets/items/food/coin_cookie.png", price:{ coins:220 } },
-  lucky_sakura_tea:{ name:"Lucky Sakura Tea", rarity:"Common", effect:"chestDrop", value:0.05, runs:2, icon:"🍵", asset:"assets/items/food/lucky_sakura_tea.png", price:{ coins:260 } },
-  treasure_bento:{ name:"Treasure Bento", rarity:"Rare", effect:"itemDrop", value:0.10, runs:3, icon:"🍱", asset:"assets/items/food/treasure_bento.png", price:{ gems:35 } },
-  warrior_steak:{ name:"Warrior Steak", rarity:"Rare", effect:"damage", value:0.08, runs:3, icon:"🥩", asset:"assets/items/food/warrior_steak.png", price:{ coins:520 } },
-  spicy_noodles:{ name:"Spicy Noodles", rarity:"Rare", effect:"attackSpeed", value:0.08, runs:3, icon:"🍜", asset:"assets/items/food/spicy_noodles.png", price:{ coins:540 } },
-  cherry_cake:{ name:"Cherry Cake", rarity:"Epic", effect:"crit", value:0.06, runs:4, icon:"🍰", asset:"assets/items/food/cherry_cake.png", price:{ gems:70 } },
-  carrot_soup:{ name:"Bunny Carrot Soup", rarity:"Common", effect:"moveSpeed", value:0.05, runs:2, icon:"🥕", asset:"assets/items/food/carrot_soup.png", price:{ coins:260 } },
-  healing_mochi:{ name:"Healing Mochi", rarity:"Rare", effect:"maxHp", value:0.10, runs:3, icon:"🍡", asset:"assets/items/food/healing_mochi.png", price:{ coins:500 } },
-  magic_macaron:{ name:"Magic Macaron", rarity:"Epic", effect:"cooldown", value:0.10, runs:4, icon:"🧁", asset:"assets/items/food/magic_macaron.png", price:{ gems:80 } },
-  golden_dumpling:{ name:"Golden Dumpling", rarity:"Legendary", effect:"bundle", value:0.12, runs:5, icon:"🥟", asset:"assets/items/food/golden_dumpling.png", price:{ gems:150 } }
+  coin_cookie:{ name:"Coin Cookie", rarity:"Common", effect:"coin", value:0.05, runs:2, icon:"🍪", asset:"assets/items/buffs/coin_cookie.png", price:{ coins:220 } },
+  lucky_sakura_tea:{ name:"Lucky Sakura Tea", rarity:"Common", effect:"chestDrop", value:0.05, runs:2, icon:"🍵", asset:"assets/items/buffs/lucky_sakura_tea.png", price:{ coins:260 } },
+  treasure_bento:{ name:"Treasure Bento", rarity:"Rare", effect:"itemDrop", value:0.10, runs:3, icon:"🍱", asset:"assets/items/buffs/fancy_bento.png", price:{ gems:35 } },
+  warrior_steak:{ name:"Warrior Steak", rarity:"Rare", effect:"damage", value:0.08, runs:3, icon:"🥩", asset:"assets/items/buffs/support_drink.png", price:{ coins:520 } },
+  spicy_noodles:{ name:"Spicy Noodles", rarity:"Rare", effect:"attackSpeed", value:0.08, runs:3, icon:"🍜", asset:"assets/items/buffs/spicy_noodle.png", price:{ coins:540 } },
+  cherry_cake:{ name:"Cherry Cake", rarity:"Epic", effect:"crit", value:0.06, runs:4, icon:"🍰", asset:"assets/items/buffs/cherry_cake.png", price:{ gems:70 } },
+  carrot_soup:{ name:"Bunny Carrot Soup", rarity:"Common", effect:"moveSpeed", value:0.05, runs:2, icon:"🥕", asset:"assets/items/buffs/bunny_carrot_soup.png", price:{ coins:260 } },
+  healing_mochi:{ name:"Healing Mochi", rarity:"Rare", effect:"maxHp", value:0.10, runs:3, icon:"🍡", asset:"assets/items/buffs/healing_mochi.png", price:{ coins:500 } },
+  magic_macaron:{ name:"Magic Macaron", rarity:"Epic", effect:"cooldown", value:0.10, runs:4, icon:"🧁", asset:"assets/items/buffs/magic_macaron.png", price:{ gems:80 } },
+  golden_dumpling:{ name:"Golden Dumpling", rarity:"Legendary", effect:"bundle", value:0.12, runs:5, icon:"🥟", asset:"assets/items/buffs/golden_dumplin.png", price:{ gems:150 } }
 };
 const EFFECT_LABELS = {
   coin:"Coin earned", chestDrop:"Chest drop chance", itemDrop:"Item drop chance", damage:"Damage",

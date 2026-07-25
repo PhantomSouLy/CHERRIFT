@@ -41,7 +41,7 @@ const COPY = {
     accountMemoryOnly: "A Discord-fiók aktív, de ebben a tesztkörnyezetben nincs adatbázis-kapcsolat.",
     guestAccount: "Jelenleg vendégként játszol. A mentés csak ezen az eszközön található.",
     discordLogin: "Discord Login",
-    testBuild: "TESZTVERZIÓ · v0.6.3",
+    testBuild: "TESZTVERZIÓ · v0.9.0",
     language: "Nyelv"
   },
   en: {
@@ -75,7 +75,7 @@ const COPY = {
     accountMemoryOnly: "Discord is active, but this test environment has no database connection.",
     guestAccount: "You are currently playing as a guest. The save exists only on this device.",
     discordLogin: "Discord Login",
-    testBuild: "TEST BUILD · v0.6.3",
+    testBuild: "TEST BUILD · v0.9.0",
     language: "Language"
   }
 };

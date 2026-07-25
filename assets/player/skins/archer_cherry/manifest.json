@@ -1,0 +1,16 @@
+{
+  "id": "archer_cherry",
+  "name": "Archer Cherry",
+  "version": "0.9.0",
+  "frame": { "width": 192, "height": 192 },
+  "states": {
+    "idle": { "frames": 4, "directions": ["down", "up", "left", "right"] },
+    "walk": { "frames": 6, "directions": ["down", "up", "left", "right"] },
+    "ranged": { "frames": 6, "directions": ["down", "up", "left", "right"] },
+    "skill": { "frames": 6, "directions": ["down", "up", "left", "right"] }
+  },
+  "passive": "+10% critical chance",
+  "attack": "Single bow shot",
+  "skill": "Four Arrow Shot in a cone",
+  "alpha": "RGBA"
+}

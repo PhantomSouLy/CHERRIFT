@@ -780,7 +780,11 @@ function drawStablePreview(canvas, timestamp) {
   const sourceFrameWidth = entry.image.naturalWidth / frames;
   const availableWidth = cssWidth * .86;
   const availableHeight = cssHeight * .91;
-  const scale = Math.min(availableWidth / box.width, availableHeight / box.height);
+  // One scale for the whole animation prevents individual frame bounds from
+  // making Cherry visibly grow/shrink or jump in Gear and Upgrade previews.
+  const maxFrameWidth = Math.max(...entry.metrics.map(metric => metric.width));
+  const maxFrameHeight = Math.max(...entry.metrics.map(metric => metric.height));
+  const scale = Math.min(availableWidth / maxFrameWidth, availableHeight / maxFrameHeight);
   const targetWidth = box.width * scale;
   const targetHeight = box.height * scale;
   const targetX = (cssWidth - targetWidth) / 2;
