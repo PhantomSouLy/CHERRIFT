@@ -54,3 +54,12 @@ Ez a csomag a v0.8.5–v0.9.0 közötti terveket hat, sorrendben betöltött pat
 - 16-16 Mage/Archer sheet: 192 px cellák, négy irány, valódi alpha csatorna.
 - Böngészős smoke: 1440×900, 390×844, 844×390 és visszatérő Discord-session.
 - Mage/Archer passzív és skill lövedékszám, dinamikus kamera, World 1 dekoráció és boss ability timer.
+
+## Arsenal / Gear slot hotfix
+
+- A hét felszerelési hely most mindig teljes, zárt körben látszik Cherry körül:
+  Sisak, Nyaklánc, Páncél, Kesztyű, Fegyver, Gyűrű és Csizma.
+- Megszűnt a lefelé lépcsőző elrendezés, amely alacsony PC-ablaknál a panelen kívülre
+  tolta a Fegyver, Gyűrű és Csizma slotot.
+- Külön ellenőrzött rövid PC-nézet készült 1128×584 felbontásra, továbbá megmaradt
+  az álló és fekvő telefonos reszponzív elrendezés.

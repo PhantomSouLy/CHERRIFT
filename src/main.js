@@ -135,7 +135,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   await loadScript("src/cherrift_v087.js?v=090","v0.8.7 Skin Identity");
   await loadScript("src/cherrift_v088.js?v=090","v0.8.8 Enemy and Boss");
   await loadScript("src/cherrift_v089.js?v=090","v0.8.9 Run and Loot");
-  await loadScript("src/cherrift_v090.js?v=090","v0.9.0 Night Bloom");
+  await loadScript("src/cherrift_v090.js?v=090-slotfix1","v0.9.0 Night Bloom");
 
   try {
     if (failedPatches.length) {

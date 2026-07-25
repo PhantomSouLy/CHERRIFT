@@ -157,6 +157,14 @@ function assertSkin(window,skinId){
   }
 }
 
+function assertCompleteGearRing(window,name){
+  const slots=Array.from(window.document.querySelectorAll("#gearStageV0560 [data-v0560-slot]"));
+  const expected=["Helmet","Necklace","Armor","Gloves","Weapon","Ring","Boots"];
+  assert.equal(slots.length,expected.length,`${name}: all seven Gear slots exist`);
+  assert.deepEqual(slots.map(slot=>slot.dataset.v0560Slot).sort(),expected.slice().sort(),`${name}: canonical Gear slot set`);
+  assert.equal(new Set(slots.map(slot=>slot.dataset.v0560Slot)).size,expected.length,`${name}: Gear slots are unique`);
+}
+
 async function exercise(name,width,height){
   const {dom,window,errors}=await loadApp(name,width,height);
   const {document,UI}=window;
@@ -175,6 +183,9 @@ async function exercise(name,width,height){
     assert.ok(UI.save.unlockedSkins.includes("mage_cherry")&&UI.save.unlockedSkins.includes("archer_cherry"),`${name}: new skins available`);
     assert.equal(document.querySelectorAll("#globalMobileNavV052 > button").length,5,`${name}: five mobile destinations`);
     assert.equal(document.querySelectorAll('#globalMobileNavV052 [data-v082-open="worlds"]').length,1,`${name}: no duplicate Play`);
+
+    UI.open("gear");
+    assertCompleteGearRing(window,name);
 
     UI.open("settings");
     for(const setting of ["effectQualityV085","cameraMotionV085","screenShakeV085","combatSoundsV085"])assert.ok(document.getElementById(setting),`${name}: ${setting} setting`);
@@ -267,6 +278,7 @@ async function exerciseReturningSession(){
 try{
   const results=[
     await exercise("desktop",1440,900),
+    await exercise("short-desktop",1128,584),
     await exercise("phone-portrait",390,844),
     await exercise("phone-landscape",844,390),
     await exerciseReturningSession()
