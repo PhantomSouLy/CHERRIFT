@@ -33,7 +33,7 @@ function makeDirections(state) {
   return Object.fromEntries(
     DIRECTIONS.map(direction => [
       direction,
-      `assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_${state}_${direction}.png?v=0561`
+      `assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_${state}_${direction}.png?v=090-hf1`
     ])
   );
 }
@@ -88,9 +88,9 @@ const wuxiaData = {
   stats: { damage: 0, speed: 0 },
   gradient: ["#ffb2d3", "#5b1839"],
   splash:
-    "assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_splashart.jpg?v=0561",
+    "assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_splashart.jpg?v=090-hf1",
   icon:
-    "assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_icon.png?v=0561"
+    "assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_icon.png?v=090-hf1"
 };
 
 const existingSkinIndex = CHERRIFT_DATA.skins.findIndex(

@@ -16,7 +16,9 @@ the supplied Wuxia sheets and Sakura dual-sword splash art.
 
 The supplied Idle, Walk and Skill art was repacked frame by frame. Detached
 generation scraps and content crossing nominal cell boundaries were removed,
-then every pose was recentered and grounded without changing the design.
+then every pose was recentered and grounded without changing the design. A
+uniform safe inset keeps the wide swords, hair and baked-in slash effects away
+from browser/canvas sampling edges in every direction.
 
 ## Combat animation
 

@@ -193,6 +193,22 @@ async function exercise(name,width,height){
     assert.equal(document.querySelectorAll("#globalMobileNavV052 > button").length,5,`${name}: five mobile destinations`);
     assert.equal(document.querySelectorAll('#globalMobileNavV052 [data-v082-open="worlds"]').length,1,`${name}: no duplicate Play`);
 
+    UI.open("menu");
+    await waitFor(()=>document.querySelectorAll("#menuToolsV082 [data-v090-menu-action]").length===4,`${name} menu tools`);
+    click(window,document.querySelector('#menuToolsV082 [data-v090-menu-action="feedback"]'),`${name} feedback tool`);
+    await waitFor(()=>!document.getElementById("supportV063")?.classList.contains("hidden"),`${name} feedback panel`);
+    assert.ok(document.querySelector('#supportV063 [data-v063-support-type="feedback"]')?.classList.contains("active"),`${name}: feedback tab active`);
+    UI.open("menu");
+    click(window,document.querySelector('#menuToolsV082 [data-v090-menu-action="bug"]'),`${name} bug tool`);
+    await waitFor(()=>!document.getElementById("supportV063")?.classList.contains("hidden"),`${name} bug panel`);
+    await waitFor(()=>document.querySelector('#supportV063 [data-v063-support-type="bug"]')?.classList.contains("active"),`${name} bug tab`);
+    UI.open("menu");
+    click(window,document.querySelector('#menuToolsV082 [data-v090-menu-action="mail"]'),`${name} mail tool`);
+    await waitFor(()=>!document.getElementById("mailV063")?.classList.contains("hidden"),`${name} mail panel`);
+    UI.open("menu");
+    click(window,document.querySelector('#menuToolsV082 [data-v090-menu-action="settings"]'),`${name} settings tool`);
+    await waitFor(()=>!document.getElementById("settings")?.classList.contains("hidden"),`${name} settings panel`);
+
     UI.open("gear");
     assertCompleteGearLayout(window,name);
 
@@ -201,6 +217,10 @@ async function exercise(name,width,height){
 
     UI.open("skins");
     await waitFor(()=>document.getElementById("skinSplash")?.style.backgroundImage.includes("assets/player/skins"),`${name} skin artwork`);
+    UI.skinIndex=window.CHERRIFT_DATA.skins.findIndex(skin=>skin.id==="archer_cherry");
+    UI.renderSkinCarousel();
+    assert.equal(document.getElementById("skinSplash")?.dataset.skinId,"archer_cherry",`${name}: Archer splash framing`);
+    assert.match(document.getElementById("skinSplash")?.style.backgroundImage,/090-hf1/,`${name}: refreshed Archer splash`);
     UI.open("libraryV0551");
     click(window,document.querySelector('[data-library-tab="skins"]'),`${name} collection skins`);
     window.CHERRIFT_V084.renderCollection();

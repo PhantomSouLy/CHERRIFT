@@ -1,6 +1,9 @@
 :root{--v090-nav-h:68px;--v090-safe-bottom:max(7px,env(safe-area-inset-bottom));--v090-safe-top:max(7px,env(safe-area-inset-top))}
 .skin-nav-icon-v090{overflow:hidden!important;border-radius:8px!important;background:rgba(255,255,255,.06)!important}
 .skin-nav-icon-v090 img{width:100%!important;height:100%!important;display:block;object-fit:cover;object-position:center 20%}
+#menuToolsV082,#menuToolsV082 button{pointer-events:auto!important}
+#skinSplash[data-skin-id="archer_cherry"]{background-position:center 14%!important}
+.skin-splash-v084[src*="/archer_cherry/"]{object-position:center 14%!important}
 .boot-v060{isolation:isolate}
 .boot-card-v060{animation:v090BootIn .45s ease-out}
 @keyframes v090BootIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}

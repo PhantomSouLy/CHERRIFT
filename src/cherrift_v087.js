@@ -19,7 +19,7 @@ function ensureCss() {
 
 function state(folder, name, frames, fps, duration) {
   const dirs = {};
-  for (const direction of DIRECTIONS) dirs[direction] = `assets/player/skins/${folder}/${folder}_${name}_${direction}.png?v=090`;
+  for (const direction of DIRECTIONS) dirs[direction] = `assets/player/skins/${folder}/${folder}_${name}_${direction}.png?v=090-hf1`;
   return {frames, fps, ...(duration ? {duration} : {}), dirs};
 }
 
@@ -58,16 +58,16 @@ const skinData = [
     weapon:"Bloom Staff", skill:"Magical Shot", passive:"+5% HP recovery",
     desc:"A staff-wielding ranged Cherry. Magical Shot releases five homing magic orbs; all five focus the same target when only one enemy is present.",
     stats:{damage:2,speed:0}, gradient:["#ff9fd6","#4c245f"],
-    icon:"assets/player/skins/mage_cherry/mage_cherry_icon.png?v=090",
-    splash:"assets/player/skins/mage_cherry/mage_cherry_splashart.png?v=090"
+    icon:"assets/player/skins/mage_cherry/mage_cherry_icon.png?v=090-hf1",
+    splash:"assets/player/skins/mage_cherry/mage_cherry_splashart.png?v=090-hf1"
   },
   {
     id:"archer_cherry", name:"Archer Cherry", rarity:"Rare", emoji:"🏹",
     weapon:"Bloom Bow", skill:"Four Arrow Shot", passive:"+10% critical chance",
     desc:"A mobile ranged Cherry. Her skill fires four arrows in a wide cone while her raised bow stays clear during movement.",
     stats:{damage:2,speed:4}, gradient:["#ffb4ce","#5d392a"],
-    icon:"assets/player/skins/archer_cherry/archer_cherry_icon.png?v=090",
-    splash:"assets/player/skins/archer_cherry/archer_cherry_splashart.png?v=090"
+    icon:"assets/player/skins/archer_cherry/archer_cherry_icon.png?v=090-hf1",
+    splash:"assets/player/skins/archer_cherry/archer_cherry_splashart.png?v=090-hf1"
   }
 ];
 

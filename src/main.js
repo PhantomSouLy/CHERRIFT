@@ -117,7 +117,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   await loadScript("src/cherrift_v0558.js?v=0558","v0.5.5.8 Base Cherry");
   await loadScript("src/cherrift_v0559.js?v=0559","v0.5.5.9 Dash/UI reset");
   await loadScript("src/cherrift_v0560.js?v=090-mmorpg2","v0.5.6.0 Gear redesign");
-  await loadScript("src/cherrift_v0561.js?v=0561","v0.5.6.1 Wuxia Sakura");
+  await loadScript("src/cherrift_v0561.js?v=090-hf1","v0.5.6.1 Wuxia Sakura");
   await loadScript("src/cherrift_v0563.js?v=063","v0.6.3 Warrior VFX grid fix");
   await loadScript("src/cherrift_v060.js?v=090-mmorpg2","v0.6.1 Bloom UI + click audio");
   await loadScript("src/cherrift_i18n_v062.js?v=090-mmorpg2","v0.6.2 Hungarian/English localization");
@@ -132,10 +132,10 @@ window.addEventListener("DOMContentLoaded", async () => {
   await loadScript("src/cherrift_v084.js?v=084","v0.8.4 UI polish and bug fixes");
   await loadScript("src/cherrift_v085.js?v=090","v0.8.5 Combat Feel");
   await loadScript("src/cherrift_v086.js?v=090","v0.8.6 World 1 Remaster");
-  await loadScript("src/cherrift_v087.js?v=090","v0.8.7 Skin Identity");
+  await loadScript("src/cherrift_v087.js?v=090-hf1","v0.8.7 Skin Identity");
   await loadScript("src/cherrift_v088.js?v=090","v0.8.8 Enemy and Boss");
   await loadScript("src/cherrift_v089.js?v=090","v0.8.9 Run and Loot");
-  await loadScript("src/cherrift_v090.js?v=090-mmorpg2","v0.9.0 Night Bloom");
+  await loadScript("src/cherrift_v090.js?v=090-hf1","v0.9.0 Night Bloom");
 
   try {
     if (failedPatches.length) {

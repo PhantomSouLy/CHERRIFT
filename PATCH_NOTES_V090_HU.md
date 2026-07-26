@@ -65,3 +65,19 @@ Ez a csomag a v0.8.5–v0.9.0 közötti terveket hat, sorrendben betöltött pat
   kívülre tolta a Fegyver, Gyűrű, Kesztyű és Csizma helyeket.
 - Külön ellenőrzött rövid PC-nézet készült 1128×584 felbontásra, továbbá megmaradt
   az álló és fekvő telefonos reszponzív elrendezés.
+
+## Archer / Wuxia / főmenü hotfix
+
+- Archer Cherry mind a 16 sheetje a közös `x=96, ground y=184` talppontra került;
+  megszűnt a korábbi 8 pixeles lefelé csúszás.
+- Wuxia Sakura Cherry mind a 16 sheetje ugyanazzal a biztonsági kerettel készült
+  újra: a kard, haj és skill-effekt se ér a 192×192-as cella széléhez, a méret pedig
+  nem változik képkockánként.
+- Mindkét skinhez géppel ellenőrizhető, képkockánkénti RGBA/méret/pivot/margó
+  validáció tartozik.
+- Az Archer splash art és a két javított sheetkészlet új cache-verziót kapott,
+  ezért a böngésző nem használhatja tovább a régi képeket.
+- A főmenü Feedback, Bug report, Mail és Settings ikonjai külön, stabil
+  eseményútvonalat kaptak; mind a négy célpanel kattintásos smoke teszten is átment.
+- A dinamikus kamerazoomnál megjelenő talajcsempe-hajszálréseket 1 pixeles
+  átfedés szünteti meg.

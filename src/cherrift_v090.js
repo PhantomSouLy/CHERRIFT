@@ -3,6 +3,7 @@
 
 const VERSION="0.9.0-night-bloom";
 const DISPLAY_VERSION="v0.9.0";
+const CACHE_VERSION="090-hf1";
 const id=value=>document.getElementById(value);
 const q=(selector,root=document)=>root?.querySelector?.(selector)||null;
 const qa=(selector,root=document)=>Array.from(root?.querySelectorAll?.(selector)||[]);
@@ -10,7 +11,7 @@ if(!window.UI||!window.CHERRIFT_CONFIG||!window.CHERRIFT_DATA)return;
 
 function ensureCss(){
   if(id("v090css"))return;
-  const link=document.createElement("link");link.id="v090css";link.rel="stylesheet";link.href="v090.css?v=090-mmorpg2";document.head.appendChild(link);
+  const link=document.createElement("link");link.id="v090css";link.rel="stylesheet";link.href=`v090.css?v=${CACHE_VERSION}`;document.head.appendChild(link);
 }
 
 const ART={
@@ -25,7 +26,10 @@ const ART={
   archer_cherry:["assets/player/skins/archer_cherry/archer_cherry_icon.png","assets/player/skins/archer_cherry/archer_cherry_splashart.png"]
 };
 for(const skin of CHERRIFT_DATA.skins||[]){
-  if(ART[skin.id]){skin.icon=ART[skin.id][0];skin.splash=ART[skin.id][1];}
+  if(ART[skin.id]){
+    skin.icon=`${ART[skin.id][0]}?v=${CACHE_VERSION}`;
+    skin.splash=`${ART[skin.id][1]}?v=${CACHE_VERSION}`;
+  }
 }
 
 CHERRIFT_CONFIG.version=VERSION;
@@ -90,6 +94,42 @@ function ensureSkinNotice(){
   }
 }
 
+function normalizeMenuTools(){
+  const tools=id("menuToolsV082");if(!tools)return;
+  const actions=[
+    ['[data-v082-support="feedback"],[data-v090-menu-action="feedback"]',"feedback"],
+    ['[data-v082-support="bug"],[data-v090-menu-action="bug"]',"bug"],
+    ['[data-v082-open="mailV063"],[data-v090-menu-action="mail"]',"mail"],
+    ['[data-v082-open="settings"],[data-v090-menu-action="settings"]',"settings"]
+  ];
+  for(const [selector,action] of actions){
+    const button=q(selector,tools);if(!button)continue;
+    button.removeAttribute("data-v082-support");
+    button.removeAttribute("data-v082-open");
+    button.dataset.v090MenuAction=action;
+    button.setAttribute("aria-label",button.title||action);
+  }
+}
+
+function openMenuTool(action){
+  if(action==="settings"){UI.open("settings");return;}
+  const panel=action==="mail"?"mailV063":"supportV063";
+  UI.open(panel);
+  if(panel==="mailV063")window.CHERRIFT_V063?.renderMail?.();
+  else{
+    window.CHERRIFT_V063?.renderSupport?.();
+    requestAnimationFrame(()=>q(`[data-v063-support-type="${action}"]`,id("supportV063"))?.click());
+  }
+}
+
+function stabilizeSkinSplash(){
+  const skin=CHERRIFT_DATA.skins[UI.skinIndex||0]||selectedSkin();
+  const splash=id("skinSplash");if(!skin||!splash)return;
+  splash.dataset.skinId=skin.id;
+  splash.style.backgroundRepeat="no-repeat";
+  splash.style.backgroundPosition=skin.id==="archer_cherry"?"center 14%":"center top";
+}
+
 function markSkinsSeen(){
   if(!UI.save)return;
   UI.save.noticesSeenV090||={};
@@ -99,7 +139,7 @@ function markSkinsSeen(){
 }
 
 function finalRefresh(){
-  patchVersion();deviceClass();ensureMobileNav();decorateSkinNavigation();ensureSkinNotice();
+  patchVersion();deviceClass();ensureMobileNav();decorateSkinNavigation();ensureSkinNotice();normalizeMenuTools();stabilizeSkinSplash();
   window.CHERRIFT_V060?.ensureGearLayout?.();
 }
 
@@ -122,8 +162,25 @@ if(previousOpen&&!UI.__v090Open){
   UI.open=function openV090(...args){const result=previousOpen(...args);finalRefresh();requestAnimationFrame(finalRefresh);return result;};
   UI.__v090Open=true;
 }
+const previousCarousel=UI.renderSkinCarousel?.bind(UI);
+if(previousCarousel&&!UI.__v090Carousel){
+  UI.renderSkinCarousel=function renderSkinCarouselV090(...args){
+    const result=previousCarousel(...args);
+    stabilizeSkinSplash();
+    requestAnimationFrame(stabilizeSkinSplash);
+    return result;
+  };
+  UI.__v090Carousel=true;
+}
 
 document.addEventListener("click",event=>{
+  const menuTool=event.target.closest?.("[data-v090-menu-action]");
+  if(menuTool){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    openMenuTool(menuTool.dataset.v090MenuAction);
+    return;
+  }
   if(event.target.closest?.('[data-v082-open="skins"],[data-v060-open="skins"],[data-open="skins"]'))setTimeout(markSkinsSeen,0);
 },true);
 
@@ -180,6 +237,6 @@ window.addEventListener("cherrift:languagechange",()=>setTimeout(finalRefresh,0)
 
 ensureCss();
 finalRefresh();
-window.CHERRIFT_V090={version:VERSION,displayVersion:DISPLAY_VERSION,refresh:finalRefresh,art:ART};
+window.CHERRIFT_V090={version:VERSION,displayVersion:DISPLAY_VERSION,cacheVersion:CACHE_VERSION,refresh:finalRefresh,art:ART,openMenuTool};
 console.info("[CHERRIFT] v0.9.0 Night Bloom and mobile compatibility loaded.");
 })();

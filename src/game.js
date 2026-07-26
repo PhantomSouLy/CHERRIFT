@@ -480,7 +480,9 @@ class CherriftGame {
     const endY = Math.floor((this.camera.y + viewH / 2) / size) + 1;
     for (let gx=startX; gx<=endX; gx++) for (let gy=startY; gy<=endY; gy++) {
       const x = gx * size, y = gy * size;
-      if (tile) c.drawImage(tile, x, y, size, size);
+      // A one-pixel overlap prevents transparent hairline seams when the
+      // dynamic camera lands on fractional device pixels.
+      if (tile) c.drawImage(tile, x - .5, y - .5, size + 1, size + 1);
       else {
         c.fillStyle = (gx + gy) % 2 === 0 ? "#2f9d55" : "#2a934f";
         c.fillRect(x, y, size, size);

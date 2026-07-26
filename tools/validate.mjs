@@ -187,6 +187,24 @@ for (const name of ["warrior_slash_effects_true_rgba.png", "warrior_whirlwind_ef
   }
 }
 
+for (const skin of ["archer_cherry", "wuxia_sakura_cherry"]) {
+  const reportPath = join(root, "assets", "player", "skins", skin, `${skin}_validation.json`);
+  if (!existsSync(reportPath)) {
+    errors.push(`${skin}: sprite validation report is missing`);
+    continue;
+  }
+  const report = JSON.parse(readFileSync(reportPath, "utf8"));
+  if (!report.valid || report.canonical_files !== 16) {
+    errors.push(`${skin}: expected 16 valid canonical sprite strips`);
+  }
+  for (const file of report.files || []) {
+    if (file.mode !== "RGBA" || file.size?.[1] !== 192 || file.size?.[0] !== file.frames * 192) {
+      errors.push(`${skin}/${file.file}: invalid RGBA strip geometry`);
+    }
+    if ((file.errors || []).length) errors.push(`${skin}/${file.file}: ${file.errors.join(", ")}`);
+  }
+}
+
 console.log(`Validated ${javascriptFiles.length} JavaScript files, ${cssFiles.length} CSS files and ${sourceFiles.length} source files.`);
 for (const warning of warnings) console.warn(`WARN: ${warning}`);
 for (const error of errors) console.error(`ERROR: ${error}`);
