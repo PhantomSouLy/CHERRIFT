@@ -390,7 +390,7 @@ function imageOrFallback(asset,icon,label){return `<span class="v080-art"><img s
 function ensureHub(){
   const panel=id("chests"); if(!panel||panel.dataset.v080Ready)return;
   panel.dataset.v080Ready="true";panel.classList.add("economy-v080");panel.setAttribute("data-i18n-ignore","true");
-  panel.innerHTML=`<header class="economy-head-v080"><button class="back" type="button" data-v080-back>←</button><div><small>CHERRIFT · ${DISPLAY_VERSION}</small><h1>${t("economy")}</h1><p>${t("subtitle")}</p></div><div class="economy-wallet-v080"><span>🪙 <b id="v080Coins">0</b></span><span>💎 <b id="v080Gems">0</b></span><span>🌸 <b id="v080Essence">0</b></span></div></header><nav class="economy-tabs-v080"><button data-v080-tab="gacha">${t("gacha")}</button><button data-v080-tab="bag">${t("bag")}</button><button data-v080-tab="buffs">${t("buffs")}</button><button data-v080-tab="shop">${t("shop")}</button></nav><div id="economyBodyV080" class="economy-body-v080"></div>`;
+  panel.innerHTML=`<header class="economy-head-v080"><button class="back" type="button" data-v080-back>←</button><div><h1>${t("economy")}</h1><p>${t("subtitle")}</p></div><div class="economy-wallet-v080"><span>🪙 <b id="v080Coins">0</b></span><span>💎 <b id="v080Gems">0</b></span><span>🌸 <b id="v080Essence">0</b></span></div></header><nav class="economy-tabs-v080"><button data-v080-tab="gacha">${t("gacha")}</button><button data-v080-tab="bag">${t("bag")}</button><button data-v080-tab="buffs">${t("buffs")}</button><button data-v080-tab="shop">${t("shop")}</button></nav><div id="economyBodyV080" class="economy-body-v080"></div>`;
 }
 function ensureNavigation(){
   const mainNav=q("#menu .main-nav");
@@ -473,10 +473,11 @@ function patchUi(){
   UI.__v080Ui=true;
 }
 function updateVersion(){
-  document.title=`CHERRIFT ${DISPLAY_VERSION} – GACHA & BUFF UPDATE`;
-  const boot=q(".boot-sub-v060");if(boot)boot.textContent=`${DISPLAY_VERSION} · GACHA & BUFF UPDATE`;
-  if(id("menuBuildVersion"))id("menuBuildVersion").textContent=`${DISPLAY_VERSION} · ECONOMY UPDATE`;
-  qa(".version-badge-v063,[data-v063-version]").forEach(label=>label.textContent=`${DISPLAY_VERSION} · TEST BUILD`);
+  document.title=window.CHERRIFT_BUILD?.title||"CHERRIFT v0.9.0 – TEST BUILD";
+  const label=window.CHERRIFT_BUILD?.label||"TESZTVERZIÓ · v0.9.0";
+  const boot=q(".boot-sub-v060");if(boot)boot.textContent=label;
+  if(id("menuBuildVersion"))id("menuBuildVersion").textContent=label;
+  qa(".version-badge-v063,[data-v063-version]").forEach(element=>element.textContent=label);
 }
 function setServerEntitlements(entitlements={}){
   const save=normalize(UI.save);

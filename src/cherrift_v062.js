@@ -193,18 +193,18 @@ function disableDecorativeControls() {
 
 function updateVersionLabels() {
   const title = id("menuBuildVersion");
-  if (title) title.textContent = "v0.6.2 QUALITY UPDATE";
+  if (title) title.textContent = window.CHERRIFT_BUILD?.label || "TESZTVERZIÓ · v0.9.0";
   const kicker = q("#menuDashboardV060 .dashboard-kicker-v060 b");
-  if (kicker) kicker.textContent = "v0.6.2 QUALITY";
+  if (kicker) kicker.textContent = window.CHERRIFT_BUILD?.displayVersion || "v0.9.0";
   const patchCard = q("#menu .patch-card");
   if (patchCard) {
     const version = q("header span", patchCard);
     const description = q("p", patchCard);
-    if (version) version.innerHTML = 'v0.6.2 <i class="v060-dot" data-v060-badge="patch"></i>';
+    if (version) version.innerHTML = `${window.CHERRIFT_BUILD?.displayVersion || "v0.9.0"} <i class="v060-dot" data-v060-badge="patch"></i>`;
     if (description) description.textContent = "HU/EN localization, stable navigation, fair camera, save and input fixes.";
   }
   const bootSubtitle = q(".boot-sub-v060");
-  if (bootSubtitle) bootSubtitle.textContent = "Quality & localization · v0.6.2";
+  if (bootSubtitle) bootSubtitle.textContent = window.CHERRIFT_BUILD?.label || "TESZTVERZIÓ · v0.9.0";
 }
 
 function improveAccessibility() {

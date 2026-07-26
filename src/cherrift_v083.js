@@ -626,12 +626,13 @@ function withSuppressedRewards(callback) {
 }
 
 function patchVersion() {
-  document.title = `CHERRIFT ${DISPLAY_VERSION} – TEST BUILD`;
+  document.title = window.CHERRIFT_BUILD?.title || "CHERRIFT v0.9.0 – TEST BUILD";
+  const label = window.CHERRIFT_BUILD?.label || "TESZTVERZIÓ · v0.9.0";
   const boot = q(".boot-sub-v060");
-  if (boot) boot.textContent = `${DISPLAY_VERSION} · ITEM ART UPDATE`;
+  if (boot) boot.textContent = label;
   const menu = id("menuBuildVersion");
-  if (menu) menu.textContent = `${DISPLAY_VERSION} · TEST BUILD`;
-  qa(".version-badge-v063,[data-v063-version]").forEach(label => { label.textContent = `${DISPLAY_VERSION} · TEST BUILD`; });
+  if (menu) menu.textContent = label;
+  qa(".version-badge-v063,[data-v063-version]").forEach(element => { element.textContent = label; });
 }
 
 function bindGlobalEvents() {

@@ -8,6 +8,7 @@ const id=value=>document.getElementById(value);
 const q=(selector,root=document)=>root?.querySelector?.(selector)||null;
 const qa=(selector,root=document)=>Array.from(root?.querySelectorAll?.(selector)||[]);
 if(!window.UI||!window.CHERRIFT_CONFIG||!window.CHERRIFT_DATA)return;
+const language=()=>window.CHERRIFT_I18N?.language==="en"||window.UI?.save?.settings?.language==="en"?"en":"hu";
 
 function ensureCss(){
   if(id("v090css"))return;
@@ -37,13 +38,17 @@ CHERRIFT_DATA.version=VERSION;
 CHERRIFT_CONFIG.performance.renderScaleMax=Math.min(Number(CHERRIFT_CONFIG.performance.renderScaleMax)||1.5,Math.min(innerWidth||1280,innerHeight||720)<=860?1.3:1.5);
 
 function patchVersion(){
-  if(!document.title.includes(DISPLAY_VERSION))document.title=`CHERRIFT ${DISPLAY_VERSION} – TEST BUILD`;
-  const labels=[
-    [q(".boot-sub-v060"),`${DISPLAY_VERSION} · NIGHT BLOOM`],
-    [id("menuBuildVersion"),`${DISPLAY_VERSION} · TEST BUILD`]
-  ];
-  for(const [element,text] of labels)if(element&&element.textContent!==text)element.textContent=text;
-  qa(".version-badge-v063,[data-v063-version]").forEach(element=>{const text=`${DISPLAY_VERSION} · TEST BUILD`;if(element.textContent!==text)element.textContent=text;});
+  document.title=window.CHERRIFT_BUILD?.title||`CHERRIFT ${DISPLAY_VERSION} – TEST BUILD`;
+  const boot=q(".boot-sub-v060");
+  if(boot)boot.textContent=`${language()==="hu"?"TESZTVERZIÓ":"TEST BUILD"} · ${DISPLAY_VERSION}`;
+  const menuVersion=id("menuBuildVersion");
+  if(menuVersion)menuVersion.hidden=true;
+  const banner=id("testBuildBannerV063");
+  if(banner){
+    const label=q("strong",banner);
+    if(label)label.textContent=`${language()==="hu"?"TESZTVERZIÓ":"TEST BUILD"} · ${DISPLAY_VERSION}`;
+  }
+  qa(".dashboard-kicker-v060,.version-badge-v063,[data-v063-version],.arsenal-head-v070 > div > small,.economy-head-v080 > div > small,.v082-panel-head > div > small,#mailV063 .panel-head-v063 small,#supportV063 .panel-head-v063 small").forEach(element=>element.remove());
   const patch=q("#menu .patch-card");
   if(patch){
     const badge=q("header span",patch),copy=q(":scope > p",patch);
@@ -94,32 +99,8 @@ function ensureSkinNotice(){
   }
 }
 
-function normalizeMenuTools(){
-  const tools=id("menuToolsV082");if(!tools)return;
-  const actions=[
-    ['[data-v082-support="feedback"],[data-v090-menu-action="feedback"]',"feedback"],
-    ['[data-v082-support="bug"],[data-v090-menu-action="bug"]',"bug"],
-    ['[data-v082-open="mailV063"],[data-v090-menu-action="mail"]',"mail"],
-    ['[data-v082-open="settings"],[data-v090-menu-action="settings"]',"settings"]
-  ];
-  for(const [selector,action] of actions){
-    const button=q(selector,tools);if(!button)continue;
-    button.removeAttribute("data-v082-support");
-    button.removeAttribute("data-v082-open");
-    button.dataset.v090MenuAction=action;
-    button.setAttribute("aria-label",button.title||action);
-  }
-}
-
 function openMenuTool(action){
-  if(action==="settings"){UI.open("settings");return;}
-  const panel=action==="mail"?"mailV063":"supportV063";
-  UI.open(panel);
-  if(panel==="mailV063")window.CHERRIFT_V063?.renderMail?.();
-  else{
-    window.CHERRIFT_V063?.renderSupport?.();
-    requestAnimationFrame(()=>q(`[data-v063-support-type="${action}"]`,id("supportV063"))?.click());
-  }
+  window.CHERRIFT_V082?.openMenuTool?.(action);
 }
 
 function stabilizeSkinSplash(){
@@ -139,7 +120,7 @@ function markSkinsSeen(){
 }
 
 function finalRefresh(){
-  patchVersion();deviceClass();ensureMobileNav();decorateSkinNavigation();ensureSkinNotice();normalizeMenuTools();stabilizeSkinSplash();
+  patchVersion();deviceClass();ensureMobileNav();decorateSkinNavigation();ensureSkinNotice();window.CHERRIFT_V082?.bindMenuTools?.();stabilizeSkinSplash();
   window.CHERRIFT_V060?.ensureGearLayout?.();
 }
 
@@ -174,13 +155,6 @@ if(previousCarousel&&!UI.__v090Carousel){
 }
 
 document.addEventListener("click",event=>{
-  const menuTool=event.target.closest?.("[data-v090-menu-action]");
-  if(menuTool){
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    openMenuTool(menuTool.dataset.v090MenuAction);
-    return;
-  }
   if(event.target.closest?.('[data-v082-open="skins"],[data-v060-open="skins"],[data-open="skins"]'))setTimeout(markSkinsSeen,0);
 },true);
 

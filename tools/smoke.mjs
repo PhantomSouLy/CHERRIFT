@@ -61,6 +61,18 @@ function canvasContext() {
 }
 
 function installBrowserStubs(window, width, height) {
+  window.__cherriftTitleWrites=[];
+  const titleDescriptor=Object.getOwnPropertyDescriptor(window.Document.prototype,"title");
+  if(titleDescriptor?.get&&titleDescriptor?.set){
+    Object.defineProperty(window.Document.prototype,"title",{
+      configurable:true,
+      get(){return titleDescriptor.get.call(this);},
+      set(value){
+        window.__cherriftTitleWrites.push(String(value));
+        titleDescriptor.set.call(this,value);
+      }
+    });
+  }
   Object.defineProperties(window, {
     innerWidth:{configurable:true,value:width},
     innerHeight:{configurable:true,value:height},
@@ -185,6 +197,8 @@ async function exercise(name,width,height){
     assert.equal(document.body.classList.contains("v062-startup-failed"),false,`${name}: no startup failure`);
     await waitFor(()=>/0\.9\.0/.test(document.title),`${name} current title`);
     assert.match(document.title,/0\.9\.0/,`${name}: current title`);
+    assert.deepEqual(window.__cherriftTitleWrites.filter(title=>/\bv0\.[0-8](?:\.\d+)?\b/.test(title)),[],`${name}: title never shows a legacy version`);
+    assert.doesNotMatch(document.body.textContent,/\bv0\.[0-8](?:\.\d+)?\b/,`${name}: no legacy version is visible anywhere`);
     for(const version of ["085","086","087","088","089","090"])assert.ok(window[`CHERRIFT_V${version}`],`${name}: v0.${version.slice(1)} patch`);
     assert.equal(window.CHERRIFT_DATA.skins.length,9,`${name}: all nine Cherry skins`);
     assertSkin(window,"mage_cherry");
@@ -194,19 +208,19 @@ async function exercise(name,width,height){
     assert.equal(document.querySelectorAll('#globalMobileNavV052 [data-v082-open="worlds"]').length,1,`${name}: no duplicate Play`);
 
     UI.open("menu");
-    await waitFor(()=>document.querySelectorAll("#menuToolsV082 [data-v090-menu-action]").length===4,`${name} menu tools`);
-    click(window,document.querySelector('#menuToolsV082 [data-v090-menu-action="feedback"]'),`${name} feedback tool`);
+    await waitFor(()=>document.querySelectorAll("#menuToolsV082 [data-v082-menu-tool]").length===4,`${name} menu tools`);
+    click(window,document.querySelector('#menuToolsV082 [data-v082-menu-tool="feedback"]'),`${name} feedback tool`);
     await waitFor(()=>!document.getElementById("supportV063")?.classList.contains("hidden"),`${name} feedback panel`);
     assert.ok(document.querySelector('#supportV063 [data-v063-support-type="feedback"]')?.classList.contains("active"),`${name}: feedback tab active`);
     UI.open("menu");
-    click(window,document.querySelector('#menuToolsV082 [data-v090-menu-action="bug"]'),`${name} bug tool`);
+    click(window,document.querySelector('#menuToolsV082 [data-v082-menu-tool="bug"]'),`${name} bug tool`);
     await waitFor(()=>!document.getElementById("supportV063")?.classList.contains("hidden"),`${name} bug panel`);
     await waitFor(()=>document.querySelector('#supportV063 [data-v063-support-type="bug"]')?.classList.contains("active"),`${name} bug tab`);
     UI.open("menu");
-    click(window,document.querySelector('#menuToolsV082 [data-v090-menu-action="mail"]'),`${name} mail tool`);
+    click(window,document.querySelector('#menuToolsV082 [data-v082-menu-tool="mail"]'),`${name} mail tool`);
     await waitFor(()=>!document.getElementById("mailV063")?.classList.contains("hidden"),`${name} mail panel`);
     UI.open("menu");
-    click(window,document.querySelector('#menuToolsV082 [data-v090-menu-action="settings"]'),`${name} settings tool`);
+    click(window,document.querySelector('#menuToolsV082 [data-v082-menu-tool="settings"]'),`${name} settings tool`);
     await waitFor(()=>!document.getElementById("settings")?.classList.contains("hidden"),`${name} settings panel`);
 
     UI.open("gear");

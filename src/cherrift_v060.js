@@ -243,7 +243,7 @@ function ensureMenuDashboard() {
   dashboard.id = "menuDashboardV060";
   dashboard.className = "menu-dashboard-v060";
   dashboard.innerHTML = `
-    <div class="dashboard-kicker-v060"><span>WORLD READY</span><b>v0.6.1 HOTFIX</b></div>
+    <div class="dashboard-kicker-v060" hidden aria-hidden="true"></div>
     <article class="dashboard-run-v060">
       <div class="dashboard-skin-v060"><span id="dashboardSkinIconV060"></span></div>
       <div class="dashboard-copy-v060">
@@ -265,7 +265,7 @@ function ensureMenuDashboard() {
     patchCard.tabIndex = 0;
     patchCard.dataset.v060PatchCard = "true";
     patchCard.innerHTML = `
-      <header><h3>Bloom Update</h3><span>v0.6.1 <i class="v060-dot" data-v060-badge="patch"></i></span></header>
+      <header><h3>Bloom Update</h3><span>v0.9.0 <i class="v060-dot" data-v060-badge="patch"></i></span></header>
       <p>Mobile Play, Library, camera, Gacha and responsive layout hotfix.</p>
       <div class="side-art">✦</div>`;
   }
@@ -619,7 +619,7 @@ function bindNavigation() {
     const patch = event.target.closest("[data-v060-patch-card]");
     if (patch) {
       setNotice("patch", false);
-      UI.toast?.("CHERRIFT v0.6.1 · Bloom Hotfix");
+      UI.toast?.("CHERRIFT · Bloom Update");
     }
   }, true);
 

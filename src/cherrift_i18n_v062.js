@@ -419,9 +419,7 @@ function translateSubtree(root = document.documentElement) {
 
 function updateDocumentMetadata() {
   document.documentElement.lang = language;
-  document.title = language === "hu"
-    ? "CHERRIFT v0.6.2 – MINŐSÉGI FRISSÍTÉS"
-    : "CHERRIFT v0.6.2 – QUALITY UPDATE";
+  document.title = window.CHERRIFT_BUILD?.title || "CHERRIFT v0.9.0 – TEST BUILD";
   const selector = document.getElementById("languageV060");
   if (selector && selector.value !== language) selector.value = language;
 }

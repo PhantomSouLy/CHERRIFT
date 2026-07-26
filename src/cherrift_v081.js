@@ -108,13 +108,14 @@ function patchLifecycle() {
 }
 
 function patchVersion() {
-  document.title = `CHERRIFT ${DISPLAY_VERSION} – TEST BUILD`;
+  document.title = window.CHERRIFT_BUILD?.title || "CHERRIFT v0.9.0 – TEST BUILD";
+  const label = window.CHERRIFT_BUILD?.label || "TESZTVERZIÓ · v0.9.0";
   const boot = document.querySelector(".boot-sub-v060");
-  if (boot) boot.textContent = `${DISPLAY_VERSION} · ARSENAL HOTFIX`;
+  if (boot) boot.textContent = label;
   const menu = id("menuBuildVersion");
-  if (menu) menu.textContent = `${DISPLAY_VERSION} · TEST BUILD`;
+  if (menu) menu.textContent = label;
   document.querySelectorAll(".version-badge-v063,[data-v063-version]").forEach(label => {
-    label.textContent = `${DISPLAY_VERSION} · TEST BUILD`;
+    label.textContent = window.CHERRIFT_BUILD?.label || "TESZTVERZIÓ · v0.9.0";
   });
 }
 

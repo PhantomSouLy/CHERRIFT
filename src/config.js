@@ -1,3 +1,10 @@
+window.CHERRIFT_BUILD = Object.freeze({
+  version: "0.9.0",
+  displayVersion: "v0.9.0",
+  title: "CHERRIFT v0.9.0 – TEST BUILD",
+  label: "TESZTVERZIÓ · v0.9.0"
+});
+
 window.CHERRIFT_CONFIG = {
   version: "0.2.5-polish",
   worldSize: 4200,

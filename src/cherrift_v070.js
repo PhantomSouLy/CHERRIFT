@@ -353,7 +353,7 @@ function ensurePanel() {
   panel.innerHTML = `
     <header class="arsenal-head-v070">
       <button type="button" data-v070-open="gear" class="arsenal-back-v070">←</button>
-      <div><small>CHERRIFT · ${DISPLAY_VERSION}</small><h1>${t("arsenal")}</h1><p>${t("subtitle")}</p></div>
+      <div><h1>${t("arsenal")}</h1><p>${t("subtitle")}</p></div>
       <div class="arsenal-wallet-v070"><span>🪙 <b id="arsenalCoinsV070">0</b></span><span>⚙ <b id="arsenalScrapV070">0</b></span></div>
     </header>
     <div class="arsenal-note-v070">${t("betaCap")}</div>
@@ -523,12 +523,12 @@ function patchUi() {
   UI.__v070ArsenalUi = true;
 }
 function updateVersion() {
-  document.title = `CHERRIFT ${DISPLAY_VERSION} – ARSENAL UPDATE`;
+  document.title = window.CHERRIFT_BUILD?.title || "CHERRIFT v0.9.0 – TEST BUILD";
   const labels = [id("menuBuildVersion"), id("buildVersionV060")].filter(Boolean);
-  for (const label of labels) label.textContent = `${DISPLAY_VERSION} · ARSENAL UPDATE`;
+  for (const label of labels) label.textContent = window.CHERRIFT_BUILD?.label || "TESZTVERZIÓ · v0.9.0";
   const boot = q(".boot-sub-v060");
-  if (boot) boot.textContent = `${DISPLAY_VERSION} · ARSENAL UPDATE`;
-  qa(".version-badge-v063, [data-v063-version]").forEach(label => { label.textContent = `${DISPLAY_VERSION} · TEST BUILD`; });
+  if (boot) boot.textContent = window.CHERRIFT_BUILD?.label || "TESZTVERZIÓ · v0.9.0";
+  qa(".version-badge-v063, [data-v063-version]").forEach(label => { label.textContent = window.CHERRIFT_BUILD?.label || "TESZTVERZIÓ · v0.9.0"; });
 }
 
 ensureCss();

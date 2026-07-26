@@ -1,5 +1,5 @@
 window.addEventListener("DOMContentLoaded", async () => {
-  document.title = "CHERRIFT v0.9.0 – TEST BUILD";
+  document.title = window.CHERRIFT_BUILD?.title || "CHERRIFT v0.9.0 – TEST BUILD";
   const bootSub = document.querySelector(".boot-sub-v060");
   if (bootSub) bootSub.textContent = "v0.9.0 · TEST BUILD";
   const patchCount = 37;
@@ -100,7 +100,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   updateBoot(5, "Loading game systems…");
   await loadScript("src/cherrift_v042_completion.js?v=063","v0.4 completion");
-  await loadScript("src/cherrift_v050.js?v=050","v0.5");
+  await loadScript("src/cherrift_v050.js?v=090-hf2","v0.5");
   await loadScript("src/cherrift_mobile_v051.js?v=051","v0.5.1");
   await loadScript("src/cherrift_v052.js?v=052","v0.5.2");
   await loadScript("src/cherrift_v053.js?v=053","v0.5.3");
@@ -119,23 +119,23 @@ window.addEventListener("DOMContentLoaded", async () => {
   await loadScript("src/cherrift_v0560.js?v=090-mmorpg2","v0.5.6.0 Gear redesign");
   await loadScript("src/cherrift_v0561.js?v=090-hf1","v0.5.6.1 Wuxia Sakura");
   await loadScript("src/cherrift_v0563.js?v=063","v0.6.3 Warrior VFX grid fix");
-  await loadScript("src/cherrift_v060.js?v=090-mmorpg2","v0.6.1 Bloom UI + click audio");
-  await loadScript("src/cherrift_i18n_v062.js?v=090-mmorpg2","v0.6.2 Hungarian/English localization");
-  await loadScript("src/cherrift_v062.js?v=062","v0.6.2 quality update");
-  await loadScript("src/cherrift_v063.js?v=063","v0.6.3 mail, reports, equipment and effects");
+  await loadScript("src/cherrift_v060.js?v=090-hf2","v0.6.1 Bloom UI + click audio");
+  await loadScript("src/cherrift_i18n_v062.js?v=090-hf2","v0.6.2 Hungarian/English localization");
+  await loadScript("src/cherrift_v062.js?v=090-hf2","v0.6.2 quality update");
+  await loadScript("src/cherrift_v063.js?v=090-hf2","v0.6.3 mail, reports, equipment and effects");
   await loadScript("src/cherrift_v064_auth.js?v=065","v0.6.3 Supabase Discord cloud save");
-  await loadScript("src/cherrift_v070.js?v=070","v0.7.0 Arsenal & Enhancement");
-  await loadScript("src/cherrift_v080.js?v=080","v0.8.0 Gacha, BAG & Buffs");
-  await loadScript("src/cherrift_v081.js?v=081","v0.8.1 Arsenal layout hotfix");
-  await loadScript("src/cherrift_v082.js?v=082","v0.8.2 systems, navigation and Skill Tree rework");
-  await loadScript("src/cherrift_v083.js?v=083","v0.8.3 item artwork and reward overlay");
-  await loadScript("src/cherrift_v084.js?v=084","v0.8.4 UI polish and bug fixes");
+  await loadScript("src/cherrift_v070.js?v=090-hf2","v0.7.0 Arsenal & Enhancement");
+  await loadScript("src/cherrift_v080.js?v=090-hf2","v0.8.0 Gacha, BAG & Buffs");
+  await loadScript("src/cherrift_v081.js?v=090-hf2","v0.8.1 Arsenal layout hotfix");
+  await loadScript("src/cherrift_v082.js?v=090-hf2","v0.8.2 systems, navigation and Skill Tree rework");
+  await loadScript("src/cherrift_v083.js?v=090-hf2","v0.8.3 item artwork and reward overlay");
+  await loadScript("src/cherrift_v084.js?v=090-hf2","v0.8.4 UI polish and bug fixes");
   await loadScript("src/cherrift_v085.js?v=090","v0.8.5 Combat Feel");
   await loadScript("src/cherrift_v086.js?v=090","v0.8.6 World 1 Remaster");
   await loadScript("src/cherrift_v087.js?v=090-hf1","v0.8.7 Skin Identity");
   await loadScript("src/cherrift_v088.js?v=090","v0.8.8 Enemy and Boss");
   await loadScript("src/cherrift_v089.js?v=090","v0.8.9 Run and Loot");
-  await loadScript("src/cherrift_v090.js?v=090-hf1","v0.9.0 Night Bloom");
+  await loadScript("src/cherrift_v090.js?v=090-hf2","v0.9.0 Night Bloom");
 
   try {
     if (failedPatches.length) {

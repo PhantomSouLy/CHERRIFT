@@ -294,7 +294,7 @@ function ensureCustomPanels(){
   }
 }
 function panelHeader(title,subtitle,back="menu"){
-  return `<header class="panel-head v082-panel-head"><button class="back" type="button" data-v082-open="${back}">←</button><div><small>CHERRIFT · ${DISPLAY_VERSION}</small><h2>${escapeHtml(title)}</h2><p>${escapeHtml(subtitle)}</p></div></header>`;
+  return `<header class="panel-head v082-panel-head"><button class="back" type="button" data-v082-open="${back}">←</button><div><h2>${escapeHtml(title)}</h2><p>${escapeHtml(subtitle)}</p></div></header>`;
 }
 function ensureResourceBar(){
   if(id("resourceBarV082"))return;
@@ -385,6 +385,33 @@ function renderMobileDrawer(){
 }
 function closeMobileDrawer(){id("mobileMenuV082")?.classList.add("hidden");}
 
+function openMenuTool(action){
+  if(action==="settings"){
+    UI.open("settings");
+    return;
+  }
+  if(action==="mail"){
+    UI.open("mailV063");
+    window.CHERRIFT_V063?.renderMail?.();
+    return;
+  }
+  const systems=window.CHERRIFT_V063;
+  if(systems?.runtime)systems.runtime.supportType=action==="bug"?"bug":"feedback";
+  UI.open("supportV063");
+  systems?.renderSupport?.();
+}
+
+function bindMenuTools(){
+  const tools=id("menuToolsV082");if(!tools)return;
+  qa("[data-v082-menu-tool]",tools).forEach(button=>{
+    button.onclick=event=>{
+      event.preventDefault();
+      event.stopPropagation();
+      openMenuTool(button.dataset.v082MenuTool);
+    };
+  });
+}
+
 function rebuildHome(){
   const dashboard=id("menuDashboardV060");if(!dashboard)return;
   const shortcuts=q(".dashboard-shortcuts-v060",dashboard);
@@ -403,10 +430,11 @@ function rebuildHome(){
     id("menu")?.appendChild(tools);
   }
   id("menuToolsV082").innerHTML=`
-    <button type="button" data-v082-support="feedback" title="${escapeHtml(t("feedback"))}">💬<small>${escapeHtml(t("feedback"))}</small></button>
-    <button type="button" data-v082-support="bug" title="${escapeHtml(t("bug"))}">⚠<small>${escapeHtml(t("bug"))}</small></button>
-    <button type="button" data-v082-open="mailV063" title="${escapeHtml(t("mail"))}">✉<em class="mail-badge-v063" data-v063-mail-count></em></button>
-    <button type="button" data-v082-open="settings" title="${escapeHtml(t("settings"))}">⚙</button>`;
+    <button type="button" data-v082-menu-tool="feedback" title="${escapeHtml(t("feedback"))}" aria-label="${escapeHtml(t("feedback"))}">💬<small>${escapeHtml(t("feedback"))}</small></button>
+    <button type="button" data-v082-menu-tool="bug" title="${escapeHtml(t("bug"))}" aria-label="${escapeHtml(t("bug"))}">⚠<small>${escapeHtml(t("bug"))}</small></button>
+    <button type="button" data-v082-menu-tool="mail" title="${escapeHtml(t("mail"))}" aria-label="${escapeHtml(t("mail"))}">✉<em class="mail-badge-v063" data-v063-mail-count></em></button>
+    <button type="button" data-v082-menu-tool="settings" title="${escapeHtml(t("settings"))}" aria-label="${escapeHtml(t("settings"))}">⚙</button>`;
+  bindMenuTools();
 }
 
 function ensurePlayerUpgrade(){
@@ -874,12 +902,13 @@ function updateNotices(){
   qa("[data-v082-notice]").forEach(dot=>dot.classList.toggle("show",!!notices[dot.dataset.v082Notice]));
 }
 function updateVersion(){
-  document.title=`CHERRIFT ${DISPLAY_VERSION} – SYSTEMS REWORK`;
-  const boot=q(".boot-sub-v060");if(boot)boot.textContent=`${DISPLAY_VERSION} · SYSTEMS REWORK`;
-  if(id("menuBuildVersion"))id("menuBuildVersion").textContent=`${DISPLAY_VERSION} · TEST BUILD`;
-  qa(".version-badge-v063,[data-v063-version]").forEach(label=>label.textContent=`${DISPLAY_VERSION} · TEST BUILD`);
+  document.title=window.CHERRIFT_BUILD?.title||"CHERRIFT v0.9.0 – TEST BUILD";
+  const label=window.CHERRIFT_BUILD?.label||"TESZTVERZIÓ · v0.9.0";
+  const boot=q(".boot-sub-v060");if(boot)boot.textContent=label;
+  if(id("menuBuildVersion"))id("menuBuildVersion").textContent=label;
+  qa(".version-badge-v063,[data-v063-version]").forEach(element=>element.textContent=label);
   const kicker=q("#menuDashboardV060 .dashboard-kicker-v060");
-  if(kicker)kicker.innerHTML=`<span>TESZTVERZIÓ</span><b>${DISPLAY_VERSION} SYSTEMS</b>`;
+  if(kicker)kicker.hidden=true;
 }
 function refreshAll(){
   document.body.classList.toggle("v082-home",runtime.route==="menu");
@@ -985,7 +1014,8 @@ updateVersion();
 
 window.CHERRIFT_V082={
   version:VERSION,displayVersion:DISPLAY_VERSION,normalize,skillBonuses,renderSkillTree,
-  compactArsenal,renderProfile,renderWeekly,renderStatSummary,refresh:refreshAll
+  compactArsenal,renderProfile,renderWeekly,renderStatSummary,refresh:refreshAll,
+  bindMenuTools,openMenuTool
 };
 console.info("[CHERRIFT] v0.8.2 Systems, navigation, Arsenal, Gear and Skill Tree rework loaded.");
 })();

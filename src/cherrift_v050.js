@@ -301,7 +301,7 @@
     normalize(this.save);
     const result = oldRefreshMenu(...args);
     const build = id("menuBuildVersion");
-    if (build) build.textContent = "v0.5.0 PROGRESSION";
+    if (build) build.textContent = window.CHERRIFT_BUILD?.label || "TESZTVERZIÓ · v0.9.0";
     updateAccountUI(this.save);
     return result;
   };

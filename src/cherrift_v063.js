@@ -62,7 +62,7 @@ const COPY = {
     power: "ERŐ",
     hp: "HP",
     atk: "ATK",
-    mailWelcomeTitle: "Üdv a v0.6.3 tesztbuildben!",
+    mailWelcomeTitle: "Üdv a CHERRIFT tesztverziójában!",
     mailWelcomeBody: "Ez még fejlesztés alatt álló tesztverzió. A Mail, a visszajelzés, az új felszerelésikonok és a javított közelharci effektek mostantól kipróbálhatók.",
     mailGiftTitle: "Tesztelői ellátmány",
     mailGiftBody: "Köszönjük a tesztelést! A mellékelt érmével és kulccsal könnyebben kipróbálhatod a Gear és Gacha rendszert.",
@@ -117,7 +117,7 @@ const COPY = {
     power: "POWER",
     hp: "HP",
     atk: "ATK",
-    mailWelcomeTitle: "Welcome to the v0.6.3 test build!",
+    mailWelcomeTitle: "Welcome to the CHERRIFT test build!",
     mailWelcomeBody: "This is still a work-in-progress test version. Mail, feedback, new equipment icons and corrected melee effects are now ready to try.",
     mailGiftTitle: "Tester supplies",
     mailGiftBody: "Thank you for testing! Use the attached coins and key to try the Gear and Gacha systems more easily.",
@@ -129,14 +129,14 @@ const COPY = {
 const MAIL_CATALOG = [
   {
     id: "v063_welcome",
-    version: DISPLAY_VERSION,
+    version: window.CHERRIFT_BUILD?.displayVersion || "v0.9.0",
     titleKey: "mailWelcomeTitle",
     bodyKey: "mailWelcomeBody",
     attachments: null
   },
   {
     id: "v063_tester_supply",
-    version: DISPLAY_VERSION,
+    version: window.CHERRIFT_BUILD?.displayVersion || "v0.9.0",
     titleKey: "mailGiftTitle",
     bodyKey: "mailGiftBody",
     attachments: { coins: 30, keys: 1 }
@@ -318,7 +318,7 @@ function ensurePanels() {
     panel.innerHTML = `
       <header class="panel-head panel-head-v063">
         <button class="back" type="button" data-v063-back>←</button>
-        <div><small>${DISPLAY_VERSION} · ${c("testBuild")}</small><h2>${c("mail")}</h2><p>${c("mailIntro")}</p></div>
+        <div><h2>${c("mail")}</h2><p>${c("mailIntro")}</p></div>
       </header>
       <div id="mailBodyV063" class="mail-shell-v063"></div>`;
     app.appendChild(panel);
@@ -331,7 +331,7 @@ function ensurePanels() {
     panel.innerHTML = `
       <header class="panel-head panel-head-v063">
         <button class="back" type="button" data-v063-back>←</button>
-        <div><small>${DISPLAY_VERSION} · ${c("testBuild")}</small><h2>${c("support")}</h2><p>${c("supportIntro")}</p></div>
+        <div><h2>${c("support")}</h2><p>${c("supportIntro")}</p></div>
       </header>
       <div id="supportBodyV063" class="support-shell-v063"></div>`;
     app.appendChild(panel);
@@ -350,7 +350,7 @@ function updateLocalizedStaticUi() {
   if (banner) {
     const strong = q("strong", banner);
     const note = q("span", banner);
-    if (strong) strong.textContent = `${c("testBuild")} · ${DISPLAY_VERSION}`;
+    if (strong) strong.textContent = `${c("testBuild")} · ${window.CHERRIFT_BUILD?.displayVersion || "v0.9.0"}`;
     if (note) note.textContent = c("testNotice");
   }
 
@@ -377,7 +377,7 @@ function updateLocalizedStaticUi() {
   }
 
   const mobileBuild = q(".mobile-profile-copy-v051 > small");
-  if (mobileBuild) mobileBuild.textContent = `${c("testBuild")} · ${DISPLAY_VERSION}`;
+  if (mobileBuild) mobileBuild.textContent = c("testBuild");
   const mobileMail = q('.mobile-header-tool-v063[data-open="mailV063"]');
   const mobileSupport = q('.mobile-header-tool-v063[data-open="supportV063"]');
   if (mobileMail) mobileMail.setAttribute("aria-label", c("mail"));
@@ -385,13 +385,11 @@ function updateLocalizedStaticUi() {
 
   const mailHeader = q("#mailV063 .panel-head-v063");
   if (mailHeader) {
-    q("small", mailHeader).textContent = `${DISPLAY_VERSION} · ${c("testBuild")}`;
     q("h2", mailHeader).textContent = c("mail");
     q("p", mailHeader).textContent = c("mailIntro");
   }
   const supportHeader = q("#supportV063 .panel-head-v063");
   if (supportHeader) {
-    q("small", supportHeader).textContent = `${DISPLAY_VERSION} · ${c("testBuild")}`;
     q("h2", supportHeader).textContent = c("support");
     q("p", supportHeader).textContent = c("supportIntro");
   }
@@ -402,7 +400,7 @@ function ensureMainMenuEnhancements() {
   if (dashboard && !id("testBuildBannerV063")) {
     dashboard.insertAdjacentHTML("afterbegin", `
       <div id="testBuildBannerV063" class="test-build-banner-v063">
-        <strong>${c("testBuild")} · ${DISPLAY_VERSION}</strong><span>${c("testNotice")}</span>
+        <strong>${c("testBuild")} · ${window.CHERRIFT_BUILD?.displayVersion || "v0.9.0"}</strong><span>${c("testNotice")}</span>
       </div>`);
   }
 
@@ -419,7 +417,7 @@ function ensureMainMenuEnhancements() {
   }
 
   const legacyVersion = id("menuBuildVersion");
-  if (legacyVersion) legacyVersion.textContent = `${DISPLAY_VERSION} ${c("testBuild")}`;
+  if (legacyVersion) legacyVersion.textContent = `${c("testBuild")} · ${window.CHERRIFT_BUILD?.displayVersion || "v0.9.0"}`;
 
   const topMail = q('#menu .top-icons button[title="Mail"], #menu .top-icons button[title="Levelek"]');
   if (topMail) {
@@ -464,18 +462,16 @@ function ensureMainMenuEnhancements() {
 function updateVersionLabels() {
   CHERRIFT_CONFIG.version = VERSION;
   CHERRIFT_DATA.version = VERSION;
-  document.title = language() === "hu"
-    ? `CHERRIFT ${DISPLAY_VERSION} – TESZTVERZIÓ`
-    : `CHERRIFT ${DISPLAY_VERSION} – TEST BUILD`;
+  document.title = window.CHERRIFT_BUILD?.title || "CHERRIFT v0.9.0 – TEST BUILD";
   const boot = q(".boot-sub-v060");
-  if (boot) boot.textContent = `${c("testBuild")} · ${DISPLAY_VERSION}`;
+  if (boot) boot.textContent = `${c("testBuild")} · ${window.CHERRIFT_BUILD?.displayVersion || "v0.9.0"}`;
   const kicker = q("#menuDashboardV060 .dashboard-kicker-v060");
-  if (kicker) kicker.innerHTML = `<span>${c("testBuild")}</span><b>${DISPLAY_VERSION}</b>`;
+  if (kicker) kicker.hidden = true;
   const patchCard = q("#menu .patch-card");
   if (patchCard) {
     const version = q("header span", patchCard);
     const description = q("p", patchCard);
-    if (version) version.textContent = `${DISPLAY_VERSION} ${c("testBuild")}`;
+    if (version) version.textContent = window.CHERRIFT_BUILD?.displayVersion || "v0.9.0";
     if (description) description.textContent = language() === "hu"
       ? "Mail, visszajelzés, új felszerelésikonok és javított melee effektek."
       : "Mail, feedback, new equipment icons and corrected melee effects.";
@@ -563,7 +559,7 @@ function claimMail(messageId) {
 
 function diagnosticData() {
   return {
-    version: DISPLAY_VERSION,
+    version: window.CHERRIFT_BUILD?.displayVersion || "v0.9.0",
     build: VERSION,
     language: language(),
     viewport: `${window.innerWidth || 0}×${window.innerHeight || 0} @${window.devicePixelRatio || 1}x`,

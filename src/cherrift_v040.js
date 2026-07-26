@@ -295,7 +295,7 @@
 
     UI.refreshMenu = function(){
       normalizeSave(this.save);
-      setText("menuBuildVersion","v0.4.1g W2 PERF");
+      setText("menuBuildVersion",window.CHERRIFT_BUILD?.label||"TESZTVERZIÓ · v0.9.0");
       setText("menuCoins", this.save.coins); setText("menuKeys", this.save.keys);
       setText("mobileCoinsValue", this.save.coins); setText("mobileKeysValue", this.save.keys); setText("mobileEnergyValue", "5");
       const skin=CHERRIFT_DATA.skins.find(s=>s.id===this.save.selectedSkin)||CHERRIFT_DATA.skins[0];
@@ -861,7 +861,7 @@
     const stage = currentStageV040i(this.save);
 
     const build = id("menuBuildVersion");
-    if (build) build.textContent = "v0.4.1g W2 PERF";
+    if (build) build.textContent = window.CHERRIFT_BUILD?.label || "TESZTVERZIÓ · v0.9.0";
 
     const desktop = id("selectedStageDesktop");
     if (desktop && stage) desktop.textContent = stage.name;
@@ -1047,7 +1047,7 @@
     if (this.save) normalizeSaveJ(this.save);
     const result = oldRefreshMenu ? oldRefreshMenu(...args) : undefined;
     const build = id("menuBuildVersion");
-    if (build) build.textContent = "v0.4.1g W2 PERF";
+    if (build) build.textContent = window.CHERRIFT_BUILD?.label || "TESZTVERZIÓ · v0.9.0";
     const stage = selectedStage(this.save);
     const art = id("mobileStageArt");
     if (art && stage) {
@@ -1833,7 +1833,7 @@
   UI.refreshMenu = function refreshMenuV041c(...args) {
     const result = oldRefreshMenu ? oldRefreshMenu(...args) : undefined;
     const build = document.getElementById("menuBuildVersion");
-    if (build) build.textContent = "v0.4.1g W2 PERF";
+    if (build) build.textContent = window.CHERRIFT_BUILD?.label || "TESZTVERZIÓ · v0.9.0";
     initMobileTapFix();
     return result;
   };
@@ -2411,7 +2411,7 @@
   UI.refreshMenu = function refreshMenuV041e(...args) {
     const result = oldRefreshMenu ? oldRefreshMenu(...args) : undefined;
     const build = document.getElementById("menuBuildVersion");
-    if (build) build.textContent = "v0.4.1g W2 PERF";
+    if (build) build.textContent = window.CHERRIFT_BUILD?.label || "TESZTVERZIÓ · v0.9.0";
     return result;
   };
 
@@ -2717,7 +2717,7 @@
   UI.refreshMenu = function refreshMenuV041g(...args) {
     const result = oldRefreshMenu ? oldRefreshMenu(...args) : undefined;
     const build = document.getElementById("menuBuildVersion");
-    if (build) build.textContent = "v0.4.1g W2 PERF";
+    if (build) build.textContent = window.CHERRIFT_BUILD?.label || "TESZTVERZIÓ · v0.9.0";
     return result;
   };
 
