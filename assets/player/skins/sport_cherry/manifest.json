@@ -1,0 +1,41 @@
+{
+  "skin_id": "sport_cherry",
+  "display_name": "Sport Cherry",
+  "rarity": "common",
+  "archetype": "defensive",
+  "passive": {
+    "hp_bonus_percent": 2
+  },
+  "attack": {
+    "type": "base_ranged_attack",
+    "visual_variant": "pink_sport_cast"
+  },
+  "skill": {
+    "name": "Shield",
+    "duration_seconds": 2,
+    "blocks_attacks": true,
+    "hp_restore_percent": 10
+  },
+  "sprite": {
+    "format": "RGBA",
+    "cell_width": 192,
+    "cell_height": 192,
+    "pivot_x": 96,
+    "pivot_y": 184,
+    "directions": ["down", "up", "left", "right"],
+    "animations": {
+      "idle": 4,
+      "walk": 6,
+      "attack": 6,
+      "skill": 6
+    },
+    "side_rule": "left_is_exact_per_frame_mirror_of_right",
+    "rear_rules": {
+      "loop_ahoge_visible": true,
+      "front_pink_hair_strand_visible": false,
+      "inner_ear_panels_visible": false,
+      "white_inner_ear_tufts_visible": false,
+      "face_visible": false
+    }
+  }
+}

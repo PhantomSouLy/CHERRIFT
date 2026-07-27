@@ -1,0 +1,42 @@
+{
+  "skin_id": "kimono_cherry",
+  "display_name": "Kimono Cherry",
+  "rarity": "common",
+  "archetype": "support",
+  "passive": {
+    "movement_speed_percent": 1,
+    "hp_recovery_percent": 1
+  },
+  "attack": {
+    "type": "base_ranged_attack",
+    "visual_variant": "pink_blossom_orb"
+  },
+  "skill": {
+    "name": "Healing",
+    "hp_restore_percent": 40,
+    "movement_speed_bonus_percent": 5,
+    "movement_speed_duration_seconds": 2
+  },
+  "sprite": {
+    "format": "RGBA",
+    "cell_width": 192,
+    "cell_height": 192,
+    "pivot_x": 96,
+    "pivot_y": 184,
+    "directions": ["down", "up", "left", "right"],
+    "animations": {
+      "idle": 4,
+      "walk": 6,
+      "attack": 6,
+      "skill": 6
+    },
+    "side_rule": "left_is_exact_per_frame_mirror_of_right",
+    "rear_rules": {
+      "loop_ahoge_visible": true,
+      "front_pink_hair_strand_visible": false,
+      "inner_ear_panels_visible": false,
+      "white_inner_ear_tufts_visible": false,
+      "face_visible": false
+    }
+  }
+}
