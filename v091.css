@@ -1,0 +1,29 @@
+.common-skin-card-v091{
+  display:grid;
+  gap:6px;
+  width:100%;
+  padding:12px 14px;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:14px;
+  background:linear-gradient(135deg,rgba(255,255,255,.10),rgba(255,255,255,.035));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10);
+}
+.common-skin-card-v091 small{
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.13em;
+  opacity:.84;
+}
+.common-skin-card-v091 b{font-size:13px;line-height:1.25}
+.common-skin-card-v091 span{font-size:10px;line-height:1.35;opacity:.78}
+.common-skin-card-v091.role-offensive{border-color:rgba(255,91,112,.42);box-shadow:inset 3px 0 0 #ff5b70}
+.common-skin-card-v091.role-defensive{border-color:rgba(91,161,255,.42);box-shadow:inset 3px 0 0 #5ba1ff}
+.common-skin-card-v091.role-hybrid{border-color:rgba(255,200,82,.42);box-shadow:inset 3px 0 0 #ffc852}
+.common-skin-card-v091.role-support{border-color:rgba(91,232,143,.42);box-shadow:inset 3px 0 0 #5be88f}
+
+@media (max-width:820px){
+  .common-skin-card-v091{gap:4px;padding:9px 11px;border-radius:11px}
+  .common-skin-card-v091 small{font-size:8px}
+  .common-skin-card-v091 b{font-size:11px}
+  .common-skin-card-v091 span{font-size:9px}
+}
