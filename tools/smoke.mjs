@@ -148,7 +148,7 @@ async function loadApp(name,width,height){
     runScripts:"dangerously",resources:"usable",pretendToBeVisual:true,virtualConsole,
     beforeParse(window){installBrowserStubs(window,width,height);}
   });
-  await waitFor(()=>dom.window.CHERRIFT_V090&&dom.window.UI?.save&&dom.window.UI?.game,`${name} startup`);
+  await waitFor(()=>dom.window.CHERRIFT_V091&&dom.window.UI?.save&&dom.window.UI?.game,`${name} startup`);
   return {dom,window:dom.window,errors};
 }
 
@@ -195,15 +195,21 @@ async function exercise(name,width,height){
     await waitFor(()=>window.CHERRIFT_AUTH.getState().mode==="guest",`${name} guest mode`);
 
     assert.equal(document.body.classList.contains("v062-startup-failed"),false,`${name}: no startup failure`);
-    await waitFor(()=>/0\.9\.0/.test(document.title),`${name} current title`);
-    assert.match(document.title,/0\.9\.0/,`${name}: current title`);
+    await waitFor(()=>/0\.9\.1/.test(document.title),`${name} current title`);
+    assert.match(document.title,/0\.9\.1/,`${name}: current title`);
     assert.deepEqual(window.__cherriftTitleWrites.filter(title=>/\bv0\.[0-8](?:\.\d+)?\b/.test(title)),[],`${name}: title never shows a legacy version`);
     assert.doesNotMatch(document.body.textContent,/\bv0\.[0-8](?:\.\d+)?\b/,`${name}: no legacy version is visible anywhere`);
-    for(const version of ["085","086","087","088","089","090"])assert.ok(window[`CHERRIFT_V${version}`],`${name}: v0.${version.slice(1)} patch`);
-    assert.equal(window.CHERRIFT_DATA.skins.length,9,`${name}: all nine Cherry skins`);
+    for(const version of ["085","086","087","088","089","090","091"])assert.ok(window[`CHERRIFT_V${version}`],`${name}: v0.${version.slice(1)} patch`);
+    assert.equal(window.CHERRIFT_DATA.skins.length,14,`${name}: all fourteen Cherry skins`);
     assertSkin(window,"mage_cherry");
     assertSkin(window,"archer_cherry");
-    assert.ok(UI.save.unlockedSkins.includes("mage_cherry")&&UI.save.unlockedSkins.includes("archer_cherry"),`${name}: new skins available`);
+    const commonSkins=["cake_deliver_cherry","kimono_cherry","pajama_cherry","school_uniform_cherry","sport_cherry"];
+    for(const skinId of commonSkins){
+      assertSkin(window,skinId);
+      assert.ok(UI.save.unlockedSkins.includes(skinId),`${name}: ${skinId} unlocked`);
+    }
+    assert.ok(UI.save.unlockedSkins.includes("mage_cherry")&&UI.save.unlockedSkins.includes("archer_cherry"),`${name}: Rare skins available`);
+    assert.equal(window.CherriftGame.prototype.drawWorld.__v091BoundaryFog,true,`${name}: map boundary fog active`);
     assert.equal(document.querySelectorAll("#globalMobileNavV052 > button").length,5,`${name}: five mobile destinations`);
     assert.equal(document.querySelectorAll('#globalMobileNavV052 [data-v082-open="worlds"]').length,1,`${name}: no duplicate Play`);
 
@@ -235,13 +241,19 @@ async function exercise(name,width,height){
     UI.renderSkinCarousel();
     assert.equal(document.getElementById("skinSplash")?.dataset.skinId,"archer_cherry",`${name}: Archer splash framing`);
     assert.match(document.getElementById("skinSplash")?.style.backgroundImage,/090-hf1/,`${name}: refreshed Archer splash`);
+    UI.skinIndex=window.CHERRIFT_DATA.skins.findIndex(skin=>skin.id==="cake_deliver_cherry");
+    UI.renderSkinCarousel();
+    assert.equal(document.getElementById("skinSplash")?.dataset.skinId,"cake_deliver_cherry",`${name}: Cake Deliver splash framing`);
+    assert.match(document.getElementById("skinSplash")?.style.backgroundImage,/091/,`${name}: Cake Deliver splash cache`);
+    assert.ok(document.querySelector("#skinBonusV055 .role-hybrid"),`${name}: Hybrid role card`);
     UI.open("libraryV0551");
     click(window,document.querySelector('[data-library-tab="skins"]'),`${name} collection skins`);
     window.CHERRIFT_V084.renderCollection();
     await waitFor(()=>document.querySelectorAll("#libraryBodyV0551 .collection-card-v084").length>0,`${name} collection cards`);
-    assert.equal(document.querySelectorAll("#libraryBodyV0551 .collection-card-v084").length,9,`${name}: all skin collection cards`);
+    assert.equal(document.querySelectorAll("#libraryBodyV0551 .collection-card-v084").length,14,`${name}: all skin collection cards`);
     assert.ok(document.querySelector('[data-v084-skin="mage_cherry"] img'),`${name}: Mage collection icon`);
     assert.ok(document.querySelector('[data-v084-skin="archer_cherry"] img'),`${name}: Archer collection icon`);
+    assert.ok(document.querySelector('[data-v084-skin="sport_cherry"] img'),`${name}: Sport collection splash icon`);
 
     UI.save.selectedSkin="archer_cherry";
     UI.save.selectedStageId="world_1_1";
@@ -287,6 +299,48 @@ async function exercise(name,width,height){
       assert.ok(Number.isFinite(boss.__bossAbilityV088),`${name}: boss ability timer`);
     }
 
+    if(name==="desktop"){
+      async function startSkin(skinId){
+        UI.quit();
+        await new Promise(resolve=>setTimeout(resolve,700));
+        UI.save.selectedSkin=skinId;
+        window.CherriftStorage.save(UI.save);
+        await UI.game.start();
+        return UI.game.player;
+      }
+
+      const hybrid=await startSkin("cake_deliver_cherry");
+      assert.equal(hybrid.commonArchetype,"hybrid","desktop: Cake Deliver is Hybrid");
+      const hybridEnemy={x:hybrid.x+90,y:hybrid.y,r:20,hp:500,maxHp:500,speed:0,xp:1,dead:false};
+      UI.game.enemies=[hybridEnemy];
+      const hybridStartX=hybridEnemy.x;
+      UI.game.skill();
+      assert.ok(hybridEnemy.hp<500&&hybridEnemy.x>hybridStartX,"desktop: Pink Burst damages and knocks back");
+      assert.ok(hybrid.commonSpeedBuffTimer>.9,"desktop: Hybrid movement buff");
+
+      const support=await startSkin("kimono_cherry");
+      support.hp=support.maxHp*.20;
+      UI.game.skill();
+      assert.ok(support.hp>=support.maxHp*.59,"desktop: Support restores 40% max HP");
+      assert.ok(support.commonSpeedBuffTimer>1.9,"desktop: Support movement buff");
+
+      const defensive=await startSkin("pajama_cherry");
+      defensive.hp=defensive.maxHp*.50;
+      UI.game.skill();
+      assert.ok(defensive.hp>=defensive.maxHp*.59,"desktop: Defensive restores 10% max HP");
+      assert.ok(defensive.commonShieldTimer>1.9&&defensive.invuln>=1.9,"desktop: Defensive shield blocks damage");
+
+      const succubus=await startSkin("succubus_cherry");
+      UI.game.player.skillTimer=0;
+      UI.game.skill();
+      assert.ok(UI.game.effects.some(effect=>effect.type==="succubusReleaseV091"),"desktop: Succubus release VFX");
+      for(const key of ["succubus_claw","succubus_core","succubus_burst","succubus_wisp","succubus_hit","succubus_siphon","succubus_shield"]){
+        assert.ok(UI.game.assets.get(key),`desktop: ${key} loaded`);
+      }
+      assert.ok(UI.game.assets.get("wuxia_skill_sheet"),"desktop: Wuxia animated skill VFX loaded");
+      UI.game.drawWorld(UI.game.ctx);
+    }
+
     if(width<=820){
       assert.equal(document.body.classList.contains("v090-mobile"),true,`${name}: mobile mode`);
       assert.ok(document.getElementById("mobileMenuV082"),`${name}: mobile drawer`);
@@ -308,8 +362,8 @@ async function exerciseReturningSession(){
     await waitFor(()=>window.CHERRIFT_AUTH.getState().mode==="discord","returning session");
     assert.equal(window.CHERRIFT_AUTH.getState().gateVisible,false,"returning session: gate skipped");
     assert.equal(window.CHERRIFT_AUTH.getState().account?.discordId,"987654321","returning session: identity restored");
-    await waitFor(()=>/0\.9\.0/.test(window.document.title),"returning session current version");
-    assert.match(window.document.title,/0\.9\.0/,"returning session: current version");
+    await waitFor(()=>/0\.9\.1/.test(window.document.title),"returning session current version");
+    assert.match(window.document.title,/0\.9\.1/,"returning session: current version");
     const meaningful=errors.filter(error=>!/Not implemented: HTMLCanvasElement|Could not load link/i.test(error));
     assert.deepEqual(meaningful,[],"returning session: no runtime errors");
     return {name:"returning session",viewport:"1280x760"};
@@ -327,7 +381,7 @@ try{
     await exerciseReturningSession()
   ];
   for(const result of results)console.log(`PASS ${result.name} ${result.viewport}${result.skins?` · ${result.skins} skins`:""}`);
-  console.log("CHERRIFT v0.9.0 smoke tests passed.");
+  console.log("CHERRIFT v0.9.1 smoke tests passed.");
 } finally {
   await new Promise(resolve=>server.close(resolve));
 }

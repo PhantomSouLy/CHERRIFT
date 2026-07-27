@@ -1,0 +1,36 @@
+{
+  "skin_id": "school_uniform_cherry",
+  "display_name": "School Uniform Cherry",
+  "rarity": "common",
+  "archetype": "hybrid",
+  "passive": {
+    "atk_bonus_percent": 1,
+    "hp_bonus_percent": 1
+  },
+  "attack": {
+    "type": "base_ranged_attack",
+    "visual_variant": "hybrid_gold_orb"
+  },
+  "skill": {
+    "name": "Pink Burst",
+    "damage": true,
+    "knockback": true,
+    "movement_speed_bonus_percent": 5,
+    "movement_speed_duration_seconds": 1
+  },
+  "sprite": {
+    "format": "RGBA",
+    "cell_width": 192,
+    "cell_height": 192,
+    "pivot_x": 96,
+    "pivot_y": 184,
+    "directions": ["down", "up", "left", "right"],
+    "animations": {
+      "idle": 4,
+      "walk": 6,
+      "attack": 6,
+      "skill": 6
+    },
+    "side_rule": "left_is_exact_per_frame_mirror_of_right"
+  }
+}

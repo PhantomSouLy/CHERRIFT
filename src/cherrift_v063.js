@@ -7,10 +7,10 @@ const SAVE_SCHEMA = 6;
 const ISSUE_BASE = "https://github.com/PhantomSouLy/CHERRIFT/issues/new";
 const CUSTOM_PANELS = new Set(["mailV063", "supportV063"]);
 const BASE_EFFECTS = [
-  "assets/effects/base_effects/purple_slash.png?v=063",
-  "assets/effects/base_effects/purple_slash2.png?v=063",
-  "assets/effects/base_effects/purple_slash3.png?v=063",
-  "assets/effects/base_effects/purple_slash4.png?v=063"
+  "assets/effects/base_effects/melee_purplee_attack_1.png?v=091",
+  "assets/effects/base_effects/melee_purplee_attack_2.png?v=091",
+  "assets/effects/base_effects/melee_purplee_attack_3.png?v=091",
+  "assets/effects/base_effects/melee_purplee_attack_4.png?v=091"
 ];
 
 const COPY = {

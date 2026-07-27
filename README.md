@@ -1,4 +1,4 @@
-# CHERRIFT v0.9.0 — Night Bloom Test Build
+# CHERRIFT v0.9.1 — Common Skins & VFX Test Build
 
 CHERRIFT egy böngészős survivor/action RPG prototípus, Cherry-kinézetekkel, felszerelésekkel, pályaprogresszióval, Gachával és mobilos érintéses irányítással.
 
@@ -13,15 +13,19 @@ CHERRIFT egy böngészős survivor/action RPG prototípus, Cherry-kinézetekkel,
 - Betöltés utáni Guest / Discord belépőképernyő, Supabase Authtal, tartós Discord-munkamenettel és Beállítások → Fiók kijelentkezéssel.
 - Discord-fiókhoz kötött Supabase felhőmentés, külön Guest `localStorage` mentéssel és első belépéskori automatikus migrációval.
 - Beépített magyar/angol Feedback és Bug Report felület, vágólap- és GitHub Issue-kimenettel.
-- Jól látható `TESZTVERZIÓ · v0.9.0` jelzés, valamint nagy Erő / HP / ATK kártyák a főmenüben és a loadoutban.
+- Jól látható `TESZTVERZIÓ · v0.9.1` jelzés, valamint nagy Erő / HP / ATK kártyák a főmenüben és a loadoutban.
 - Az új felszerelésgrafikák ritkaság és slot szerint logikusan bekötve; a régi emoji-ikonok helyett valódi item art jelenik meg.
-- Common/Rare melee vágáseffekt, továbbá a Warrior 3×2 slash és 4×2 Whirlwind sprite sheetjének helyes animációja.
+- Common/Rare melee vágáseffekt, továbbá a Warrior új, külön attack és két Whirlwind RGBA effektjének helyes rétegezése.
 - Stabil Play → World Select → run indítás desktopon és mobilon.
 - Javított Library, benne Profile, Stats, Gear, Enemies, Skins és Worlds fülekkel.
 - Elérhető Daily Quests, Achievements, Login Rewards és Shop a Library szolgáltatássorából.
 - Vizuális Bloom Chest Gacha, jutalomkártyával és ritkaság-/statkijelzéssel.
 - Sebesség-, dash- és mozgásfüggő kamera, render-only karaktermozgás, hit-stop, screenshake és típusos sebzésszámok.
 - Mage Cherry és Archer Cherry teljes 16 fájlos, négyirányú RGBA készlettel, saját passzívval, ranged attackkal és aktív skillel.
+- Öt új Common skin: Cake Deliver (Hybrid), Kimono (Support), Pajama (Defensive), School Uniform (Hybrid) és Sport (Defensive), saját 16-fájlos RGBA animációkkal és splash arttal.
+- Common Offensive/Defensive/Hybrid/Support passzívok és skillek, szerepkör-színű alaplövedékekkel.
+- A Succubus, Ninja és Wuxia név szerinti PNG effektjei használatban vannak; a Wuxia frissített sheetje fix `x=96, y=184` pivotról renderelődik.
+- A bejárható map határán túl fokozatosan sötétedő fog jelzi a lezárt területet.
 - World 1 vizuális remaster, World 2 Night Bloom atmoszféra, elite ellenfelek és boss-telegráf.
 - Kibővített run/loot összegző, valódi kulcs-pickup és mobilon szabályozható effekt-/kameraminőség.
 - Automatikus mentés, mentésséma-migráció és sérült Guest-mentés esetén backup-visszaállítás.
@@ -53,7 +57,7 @@ npm install
 npm test
 ```
 
-Az `npm test` ellenőrzi a JavaScript- és CSS-szintaxist, a közvetlen assethivatkozásokat és a betöltési patch-számot. Ezután 1440×900 desktop, 390×844 álló telefon és 844×390 fekvő telefon DOM-környezetben ellenőrzi a 9 skint, a navigációt, Mage/Archer harcát, a passzívokat, a kamerát, World 1 dekorációját, a boss-rendszert és a visszatérő Discord-munkamenetet.
+Az `npm test` ellenőrzi a JavaScript- és CSS-szintaxist, a közvetlen assethivatkozásokat, az új RGBA sheetek 192 px-es celláit és a betöltési patch-számot. Ezután 1440×900 és 1128×584 desktop, 390×844 álló telefon és 844×390 fekvő telefon DOM-környezetben ellenőrzi mind a 14 skint, a Common szerepköröket, a PNG effekteket, a navigációt, a kamerát, a boss-rendszert és a visszatérő Discord-munkamenetet.
 
 ### Mentés és jelenlegi korlátok
 
@@ -62,7 +66,7 @@ Az `npm test` ellenőrzi a JavaScript- és CSS-szintaxist, a közvetlen assethiv
 - Az első Discord-belépés a meglévő Guest-mentést csak akkor másolja fel, ha a fiókhoz még nincs felhőmentés; a Guest-mentés külön megmarad.
 - A felhőmentés használata előtt egyszer futtatni kell a `supabase/game_saves.sql` fájlt a Supabase SQL Editorban.
 - A szinkronizálás jelenleg utolsó írás nyer elven működik, ezért ugyanazzal a fiókkal két eszközön egyszerre játszani nem ajánlott.
-- World 3 továbbra is előzetes tartalom; a 0.9.0 fókusza World 1–2, a harc és a Cherry skinek.
+- World 3 továbbra is előzetes tartalom; a 0.9.1 fókusza World 1–2, a harc és a Cherry skinek.
 - A régi verziók továbbra is egymásra épülő patch-fájlokként futnak; a validátor ellenőrzi a sorrendet és a darabszámot.
 
 ## English
@@ -74,15 +78,19 @@ Az `npm test` ellenőrzi a JavaScript- és CSS-szintaxist, a közvetlen assethiv
 - A post-loader Guest / Discord gate powered by Supabase Auth, persistent Discord sessions and sign-out under Settings → Account.
 - Discord-account Supabase cloud saves, a separate Guest `localStorage` save and automatic first-sign-in migration.
 - Built-in Hungarian/English Feedback and Bug Report screen with clipboard and GitHub Issue output.
-- A prominent `TEST BUILD · v0.9.0` label and large Power / HP / ATK cards on the home and loadout screens.
+- A prominent `TEST BUILD · v0.9.1` label and large Power / HP / ATK cards on the home and loadout screens.
 - New equipment artwork mapped logically by rarity and slot instead of the previous emoji icons.
-- Common/Rare melee slash art plus correctly sliced 3×2 Warrior slash and 4×2 Whirlwind sheets.
+- Common/Rare melee slash art plus the Warrior's new separate attack and two-layer Whirlwind RGBA effects.
 - Stable Play → World Select → run launch on desktop and mobile.
 - Fixed Library with Profile, Stats, Gear, Enemies, Skins and Worlds tabs.
 - Daily Quests, Achievements, Login Rewards and Shop are reachable from the Library service bar.
 - Visual Bloom Chest Gacha with reward art, rarity and stat cards.
 - A speed- and dash-reactive camera, render-only character motion, hit-stop, screen shake and typed damage numbers.
 - Complete four-direction RGBA sets for Mage Cherry and Archer Cherry, including their passives, ranged attacks and active skills.
+- Five new Common skins: Cake Deliver (Hybrid), Kimono (Support), Pajama (Defensive), School Uniform (Hybrid) and Sport (Defensive), each with sixteen RGBA strips and dedicated splash art.
+- Common Offensive/Defensive/Hybrid/Support passives and active skills with role-colored base projectiles.
+- Named Succubus, Ninja and Wuxia PNG effects are active; the refreshed Wuxia strips render from a fixed `x=96, y=184` pivot.
+- A progressive fog beyond the playable map boundary clearly marks blocked terrain.
 - A World 1 visual remaster, World 2 Night Bloom atmosphere, elite enemies and telegraphed boss attacks.
 - Expanded run/loot summaries, a real key pickup and mobile effect/camera quality settings.
 - Automatic saving, schema migration and backup recovery for malformed Guest saves.
@@ -109,7 +117,7 @@ Then open `http://localhost:8000`.
 - On first Discord sign-in, the existing Guest save is copied only when no cloud save exists yet; the Guest save remains separate.
 - Run `supabase/game_saves.sql` once in the Supabase SQL Editor before enabling the deployed cloud-save build.
 - Synchronization currently uses last-write-wins, so playing the same account on two devices at the same time is not recommended.
-- World 3 remains preview content; v0.9.0 focuses on Worlds 1–2, combat and Cherry skins.
+- World 3 remains preview content; v0.9.1 focuses on Worlds 1–2, combat and Cherry skins.
 - The legacy sequential patch stack remains in place; validation checks its order and count.
 
 ## Dokumentáció / Documentation
@@ -120,6 +128,7 @@ Then open `http://localhost:8000`.
 - [v0.6.3 changelog](CHANGELOG_V063_HU_EN.md)
 - [v0.6.3 Installation / Telepítés](INSTALL_V063_HU_EN.md)
 - [v0.9.0 patch notes / javítási jegyzet](PATCH_NOTES_V090_HU.md)
+- [v0.9.1 patch notes / javítási jegyzet](PATCH_NOTES_V091_HU_EN.md)
 - [Supabase Discord setup / beállítás](SUPABASE_DISCORD_SETUP_HU_EN.md)
 - [Supabase cloud save setup / felhőmentés](SUPABASE_CLOUD_SAVE_SETUP_HU_EN.md)
 

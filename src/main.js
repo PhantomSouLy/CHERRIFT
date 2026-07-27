@@ -1,8 +1,8 @@
 window.addEventListener("DOMContentLoaded", async () => {
-  document.title = window.CHERRIFT_BUILD?.title || "CHERRIFT v0.9.0 – TEST BUILD";
+  document.title = window.CHERRIFT_BUILD?.title || "CHERRIFT v0.9.1 – TEST BUILD";
   const bootSub = document.querySelector(".boot-sub-v060");
-  if (bootSub) bootSub.textContent = "v0.9.0 · TEST BUILD";
-  const patchCount = 37;
+  if (bootSub) bootSub.textContent = "v0.9.1 · TEST BUILD";
+  const patchCount = 38;
   let loadedPatches = 0;
   const failedPatches = [];
 
@@ -136,6 +136,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   await loadScript("src/cherrift_v088.js?v=090","v0.8.8 Enemy and Boss");
   await loadScript("src/cherrift_v089.js?v=090","v0.8.9 Run and Loot");
   await loadScript("src/cherrift_v090.js?v=090-hf2","v0.9.0 Night Bloom");
+  await loadScript("src/cherrift_v091.js?v=091","v0.9.1 Common Skins and VFX");
 
   try {
     if (failedPatches.length) {

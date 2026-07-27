@@ -1,8 +1,8 @@
 window.CHERRIFT_BUILD = Object.freeze({
-  version: "0.9.0",
-  displayVersion: "v0.9.0",
-  title: "CHERRIFT v0.9.0 – TEST BUILD",
-  label: "TESZTVERZIÓ · v0.9.0"
+  version: "0.9.1",
+  displayVersion: "v0.9.1",
+  title: "CHERRIFT v0.9.1 – TEST BUILD",
+  label: "TESZTVERZIÓ · v0.9.1"
 });
 
 window.CHERRIFT_CONFIG = {
@@ -105,9 +105,9 @@ window.CHERRIFT_CONFIG = {
   effects: {
     burst: "assets/effects/pink_burst.png",
     baseHit: [
-      "assets/effects/base_hit_effect_01.png?v=025",
-      "assets/effects/base_hit_effect_02.png?v=025",
-      "assets/effects/base_hit_effect_03.png?v=025"
+      "assets/effects/base_hit_effect_1.png?v=091",
+      "assets/effects/base_hit_effect_2.png?v=091",
+      "assets/effects/base_hit_effect_3.png?v=091"
     ]
   }
 };

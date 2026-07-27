@@ -126,6 +126,15 @@ const packageJson = JSON.parse(readFileSync(join(root, "package.json"), "utf8"))
 for (const dependency of ["@supabase/supabase-js", "@supabase/ssr"]) {
   if (!packageJson.dependencies?.[dependency]) errors.push(`package.json: missing ${dependency}`);
 }
+if (packageJson.version !== "0.9.1") errors.push(`package.json: expected version 0.9.1, found ${packageJson.version}`);
+for (const [file, contents] of [
+  ["index.html", html],
+  ["src/main.js", main],
+  ["src/config.js", readFileSync(join(root, "src", "config.js"), "utf8")]
+]) {
+  if (!contents.includes("0.9.1")) errors.push(`${file}: v0.9.1 build marker is missing`);
+}
+if (!main.includes("src/cherrift_v091.js")) errors.push("src/main.js: v0.9.1 runtime patch is not loaded");
 
 if (existsSync(join(root, "src", "cherrift_v0562.js")) && !main.includes("cherrift_v0562.js")) {
   warnings.push("src/cherrift_v0562.js exists but is not loaded (v0.5.6.3 supersedes it)");
@@ -169,7 +178,12 @@ for (const file of equipmentPngs) {
   }
 }
 
-for (const name of ["purple_slash.png", "purple_slash2.png", "purple_slash3.png", "purple_slash4.png"]) {
+for (const name of [
+  "melee_purplee_attack_1.png",
+  "melee_purplee_attack_2.png",
+  "melee_purplee_attack_3.png",
+  "melee_purplee_attack_4.png"
+]) {
   const file = join(root, "assets", "effects", "base_effects", name);
   const info = existsSync(file) ? pngInfo(file) : null;
   if (!info) errors.push(`assets/effects/base_effects/${name}: missing or invalid PNG`);
@@ -178,12 +192,85 @@ for (const name of ["purple_slash.png", "purple_slash2.png", "purple_slash3.png"
   }
 }
 
-for (const name of ["warrior_slash_effects_true_rgba.png", "warrior_whirlwind_effects_true_rgba.png"]) {
+for (const name of ["attack_1.png", "skill_effect_1.png", "skill_effect_2.png"]) {
   const file = join(root, "assets", "effects", "warrior_cherry", name);
   const info = existsSync(file) ? pngInfo(file) : null;
   if (!info) errors.push(`assets/effects/warrior_cherry/${name}: missing or invalid PNG`);
-  else if (info.width !== 1448 || info.height !== 1086 || info.colorType !== 6) {
-    errors.push(`assets/effects/warrior_cherry/${name}: expected 1448×1086 RGBA PNG`);
+  else if (info.width !== 128 || info.height !== 128 || info.colorType !== 6) {
+    errors.push(`assets/effects/warrior_cherry/${name}: expected 128×128 RGBA PNG`);
+  }
+}
+
+const commonSkins = [
+  "cake_deliver_cherry",
+  "kimono_cherry",
+  "pajama_cherry",
+  "school_uniform_cherry",
+  "sport_cherry"
+];
+const spriteStates = { idle:4, walk:6, attack:6, skill:6 };
+for (const skin of commonSkins) {
+  const folder = join(root, "assets", "player", "skins", skin);
+  const manifestPath = join(folder, "manifest.json");
+  if (!existsSync(manifestPath)) errors.push(`${skin}: manifest.json is missing`);
+  else {
+    const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
+    if (manifest.skin_id !== skin || manifest.rarity !== "common") {
+      errors.push(`${skin}: invalid Common-skin manifest identity`);
+    }
+  }
+  const splash = join(folder, `${skin}_splashart.png`);
+  const splashInfo = existsSync(splash) ? pngInfo(splash) : null;
+  if (!splashInfo) errors.push(`${skin}: splash art is missing or invalid`);
+  for (const [state, frames] of Object.entries(spriteStates)) {
+    for (const direction of ["down", "up", "left", "right"]) {
+      const name = `${skin}_${state}_${direction}.png`;
+      const file = join(folder, name);
+      const info = existsSync(file) ? pngInfo(file) : null;
+      if (!info) errors.push(`${skin}/${name}: missing or invalid PNG`);
+      else if (info.width !== frames * 192 || info.height !== 192 || info.colorType !== 6) {
+        errors.push(`${skin}/${name}: expected ${frames * 192}×192 RGBA PNG`);
+      }
+    }
+  }
+}
+
+for (const name of [
+  "basic_cherry_attack_offensive.png",
+  "basic_cherry_attack_deffensive.png",
+  "basic_cherry_attack_hybrid.png",
+  "basic_cherry_attack_support.png"
+]) {
+  const file = join(root, "assets", "effects", name);
+  const info = existsSync(file) ? pngInfo(file) : null;
+  if (!info) errors.push(`assets/effects/${name}: missing or invalid PNG`);
+  else if (info.width !== 128 || info.height !== 128 || ![3, 6].includes(info.colorType)) {
+    errors.push(`assets/effects/${name}: expected transparent 128×128 PNG`);
+  }
+}
+
+const exactEffects = new Map([
+  ["succubus_cherry/succubus_crimson_claw_wave.png", [128, 128]],
+  ["succubus_cherry/succubus_soul_drain_core.png", [256, 256]],
+  ["succubus_cherry/succubus_soul_drain_burst_sheet.png", [768, 768]],
+  ["succubus_cherry/succubus_soul_wisp.png", [128, 128]],
+  ["succubus_cherry/succubus_soul_hit.png", [128, 128]],
+  ["succubus_cherry/succubus_lifesteal_siphon.png", [256, 256]],
+  ["succubus_cherry/succubus_blood_shield.png", [128, 128]],
+  ["succubus_cherry/succubus_soul_drain_release.png", [256, 256]],
+  ["wuxia_sakura_cherry/attack_1.png", [128, 128]],
+  ["wuxia_sakura_cherry/skill_effect_1.png", [256, 256]],
+  ["wuxia_sakura_cherry/skill_effect_1_sheet.png", [768, 768]],
+  ["ninja_cherry/shuriken_1.png", [128, 128]],
+  ["ninja_cherry/shuriken_2.png", [128, 128]],
+  ["ninja_cherry/shuriken_hit_effect.png", [128, 128]]
+]);
+for (const [name, [width, height]] of exactEffects) {
+  const file = join(root, "assets", "effects", name);
+  const info = existsSync(file) ? pngInfo(file) : null;
+  if (!info) errors.push(`assets/effects/${name}: missing or invalid PNG`);
+  else if (info.width !== width || info.height !== height || info.colorType !== 6) {
+    errors.push(`assets/effects/${name}: expected ${width}×${height} RGBA PNG`);
   }
 }
 

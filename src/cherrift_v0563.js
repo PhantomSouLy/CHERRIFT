@@ -1,7 +1,7 @@
 (() => {
 "use strict";
 
-const VERSION = "0.6.3-warrior-composite-vfx";
+const VERSION = "0.9.1-warrior-split-vfx";
 const SKIN_ID = "warrior_cherry";
 const OLD_EFFECT_TYPES = new Set([
   "warrior_slash",
@@ -11,17 +11,24 @@ const OLD_EFFECT_TYPES = new Set([
 const SHEETS = {
   slash: {
     key: "warrior_v063_slash",
-    source: "assets/effects/warrior_cherry/warrior_slash_effects_true_rgba.png?v=063",
-    columns: 3,
-    rows: 2,
-    frames: 6
+    source: "assets/effects/warrior_cherry/attack_1.png?v=091",
+    columns: 1,
+    rows: 1,
+    frames: 1
   },
   whirlwind: {
-    key: "warrior_v063_whirlwind",
-    source: "assets/effects/warrior_cherry/warrior_whirlwind_effects_true_rgba.png?v=063",
-    columns: 4,
-    rows: 2,
-    frames: 8
+    key: "warrior_v063_whirlwind_back",
+    source: "assets/effects/warrior_cherry/skill_effect_1.png?v=091",
+    columns: 1,
+    rows: 1,
+    frames: 1
+  },
+  whirlwindFront: {
+    key: "warrior_v063_whirlwind_front",
+    source: "assets/effects/warrior_cherry/skill_effect_2.png?v=091",
+    columns: 1,
+    rows: 1,
+    frames: 1
   }
 };
 
@@ -37,14 +44,14 @@ if (!config) {
 }
 
 config.vfx = {
-  source: "composite-rgba",
+  source: "split-rgba",
   attackFrames: SHEETS.slash.frames,
-  attackWidth: 300,
-  attackForwardOffset: 62,
-  attackVerticalOffset: -42,
+  attackWidth: 190,
+  attackForwardOffset: 48,
+  attackVerticalOffset: -20,
   whirlwindFrames: SHEETS.whirlwind.frames,
-  whirlwindWidth: 350,
-  whirlwindVerticalOffset: -68
+  whirlwindWidth: 258,
+  whirlwindVerticalOffset: -22
 };
 
 function clamp(value, min, max) {
@@ -103,8 +110,7 @@ function drawGridFrame(game, context, sheet, options) {
   context.save();
   context.globalCompositeOperation = "source-over";
   context.globalAlpha = clamp(options.alpha ?? 1, 0, 1);
-  context.imageSmoothingEnabled = true;
-  context.imageSmoothingQuality = "high";
+  context.imageSmoothingEnabled = false;
   context.translate(options.x, options.y);
   context.rotate(options.rotation || 0);
 
@@ -142,7 +148,7 @@ function drawAttack(game, context, player) {
     x: player.x + Math.cos(angle) * forward,
     y: player.y + Math.sin(angle) * forward * 0.64 + config.vfx.attackVerticalOffset,
     width: config.vfx.attackWidth,
-    rotation: angle + 0.24,
+    rotation: angle,
     alpha: 1
   });
 }
@@ -155,12 +161,13 @@ function whirlwindFrame(player) {
 function drawWhirlwind(game, context, player, front) {
   const duration = Math.max(0.001, player.skillCastDuration || config.whirlwindDuration || 0.72);
   const progress = clamp(1 - (player.skillCastTimer || 0) / duration, 0, 1);
-  return drawGridFrame(game, context, SHEETS.whirlwind, {
+  const sheet = front ? SHEETS.whirlwindFront : SHEETS.whirlwind;
+  return drawGridFrame(game, context, sheet, {
     frame: whirlwindFrame(player),
     x: player.x,
     y: player.y + config.vfx.whirlwindVerticalOffset,
     width: config.vfx.whirlwindWidth,
-    rotation: progress * 0.18,
+    rotation: progress * (front ? -0.72 : 0.72),
     alpha: front ? 0.98 : 0.72,
     clipFront: front
   });
@@ -217,6 +224,7 @@ window.CHERRIFT_V0563 = {
   sheets: SHEETS,
   sourceOverVfx: true,
   compositeGridFixed: true,
+  splitRgbaVfx: true,
   removesOldWarriorPlaceholders: true,
   loadWarriorVfx
 };
