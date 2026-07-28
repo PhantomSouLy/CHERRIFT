@@ -148,7 +148,7 @@ async function loadApp(name,width,height){
     runScripts:"dangerously",resources:"usable",pretendToBeVisual:true,virtualConsole,
     beforeParse(window){installBrowserStubs(window,width,height);}
   });
-  await waitFor(()=>dom.window.CHERRIFT_V091&&dom.window.UI?.save&&dom.window.UI?.game,`${name} startup`);
+  await waitFor(()=>dom.window.CHERRIFT_V093&&dom.window.UI?.save&&dom.window.UI?.game,`${name} startup`);
   return {dom,window:dom.window,errors};
 }
 
@@ -195,11 +195,14 @@ async function exercise(name,width,height){
     await waitFor(()=>window.CHERRIFT_AUTH.getState().mode==="guest",`${name} guest mode`);
 
     assert.equal(document.body.classList.contains("v062-startup-failed"),false,`${name}: no startup failure`);
-    await waitFor(()=>/0\.9\.1/.test(document.title),`${name} current title`);
-    assert.match(document.title,/0\.9\.1/,`${name}: current title`);
+    await waitFor(()=>/0\.9\.3/.test(document.title),`${name} current title`);
+    assert.match(document.title,/0\.9\.3/,`${name}: current title`);
     assert.deepEqual(window.__cherriftTitleWrites.filter(title=>/\bv0\.[0-8](?:\.\d+)?\b/.test(title)),[],`${name}: title never shows a legacy version`);
     assert.doesNotMatch(document.body.textContent,/\bv0\.[0-8](?:\.\d+)?\b/,`${name}: no legacy version is visible anywhere`);
-    for(const version of ["085","086","087","088","089","090","091"])assert.ok(window[`CHERRIFT_V${version}`],`${name}: v0.${version.slice(1)} patch`);
+    for(const version of ["085","086","087","088","089","090","091","092","093"])assert.ok(window[`CHERRIFT_V${version}`],`${name}: v0.${version.slice(1)} patch`);
+    assert.equal(window.CHERRIFT_BUILD.version,"0.9.3",`${name}: canonical build version`);
+    assert.equal(window.CHERRIFT_LOCALIZATION.t("world.recommendedLevel",{level:7}),window.CHERRIFT_LOCALIZATION.language()==="hu"?"Ajánlott szint: 7":"Recommended level: 7",`${name}: localization parameters`);
+    assert.deepEqual(window.CHERRIFT_LOCALIZATION.validateKeys(["common.play","skin.title","world.title"]),[],`${name}: localization keys`);
     assert.equal(window.CHERRIFT_DATA.skins.length,14,`${name}: all fourteen Cherry skins`);
     assertSkin(window,"mage_cherry");
     assertSkin(window,"archer_cherry");
@@ -228,6 +231,10 @@ async function exercise(name,width,height){
     UI.open("menu");
     click(window,document.querySelector('#menuToolsV082 [data-v082-menu-tool="settings"]'),`${name} settings tool`);
     await waitFor(()=>!document.getElementById("settings")?.classList.contains("hidden"),`${name} settings panel`);
+    UI.open("menu");
+    click(window,document.getElementById("playBtn"),`${name} main Play`);
+    await waitFor(()=>!document.getElementById("worlds")?.classList.contains("hidden"),`${name} Play opens World Select`);
+    assert.equal(document.querySelectorAll("[data-v093-chapter]").length,5,`${name}: Play uses redesigned World Select`);
 
     UI.open("gear");
     assertCompleteGearLayout(window,name);
@@ -236,16 +243,77 @@ async function exercise(name,width,height){
     for(const setting of ["effectQualityV085","cameraMotionV085","screenShakeV085","combatSoundsV085"])assert.ok(document.getElementById(setting),`${name}: ${setting} setting`);
 
     UI.open("skins");
-    await waitFor(()=>document.getElementById("skinSplash")?.style.backgroundImage.includes("assets/player/skins"),`${name} skin artwork`);
-    UI.skinIndex=window.CHERRIFT_DATA.skins.findIndex(skin=>skin.id==="archer_cherry");
-    UI.renderSkinCarousel();
-    assert.equal(document.getElementById("skinSplash")?.dataset.skinId,"archer_cherry",`${name}: Archer splash framing`);
-    assert.match(document.getElementById("skinSplash")?.style.backgroundImage,/090-hf1/,`${name}: refreshed Archer splash`);
-    UI.skinIndex=window.CHERRIFT_DATA.skins.findIndex(skin=>skin.id==="cake_deliver_cherry");
-    UI.renderSkinCarousel();
-    assert.equal(document.getElementById("skinSplash")?.dataset.skinId,"cake_deliver_cherry",`${name}: Cake Deliver splash framing`);
-    assert.match(document.getElementById("skinSplash")?.style.backgroundImage,/091/,`${name}: Cake Deliver splash cache`);
-    assert.ok(document.querySelector("#skinBonusV055 .role-hybrid"),`${name}: Hybrid role card`);
+    await waitFor(()=>document.querySelectorAll("[data-v093-skin]").length===14,`${name} v0.9.3 skin selector`);
+    assert.equal(document.querySelectorAll("[data-v093-skin]").length,14,`${name}: all skin icons`);
+    assert.ok(document.querySelector(".skin-icon-v093 img")?.src.includes("assets/ui/skin_thumbs"),`${name}: optimized selector thumbnails`);
+    assert.ok(document.querySelector("[data-v093-skin-view='splash'].active"),`${name}: splash is default`);
+    click(window,document.querySelector("[data-v093-skin-view='game']"),`${name} game view`);
+    await waitFor(()=>document.getElementById("skinPreviewCanvasV093"),`${name} sprite preview`);
+    assert.ok(document.querySelectorAll("[data-v093-preview-direction]").length===4,`${name}: four preview directions`);
+    assert.ok(document.querySelectorAll("[data-v093-preview-animation]").length===4,`${name}: four preview animations`);
+    const beforeSelected=UI.save.selectedSkin;
+    const cakeButton=document.querySelector('[data-v093-skin="cake_deliver_cherry"]');
+    click(window,cakeButton,`${name} select Cake Deliver`);
+    assert.equal(UI.save.selectedSkin,beforeSelected,`${name}: selecting does not auto-equip`);
+    click(window,document.querySelector("[data-v093-equip]"),`${name} equip selected skin`);
+    assert.equal(UI.save.selectedSkin,"cake_deliver_cherry",`${name}: separate Equip action`);
+    click(window,document.querySelector("[data-v093-skill-info]"),`${name} skill details`);
+    assert.equal(document.getElementById("skinSkillDialogV093").classList.contains("hidden"),false,`${name}: tap skill dialog`);
+    click(window,document.querySelector("[data-v093-skill-close]"),`${name} close skill details`);
+
+    UI.openWorldSelect();
+    await waitFor(()=>document.querySelectorAll("[data-v093-chapter]").length===5,`${name} World 1 chapters`);
+    assert.equal(window.CHERRIFT_V093.worldCount,7,`${name}: seven World entries`);
+    assert.equal(document.querySelectorAll("[data-v093-chapter]").length,5,`${name}: only selected World chapters are visible`);
+    click(window,document.querySelector('[data-v093-world-step="1"]'),`${name} next World`);
+    assert.equal(window.CHERRIFT_V093.state.world,2,`${name}: World switcher`);
+    assert.equal(document.querySelectorAll("[data-v093-chapter]").length,5,`${name}: World 2 has its own chapter list`);
+    window.CHERRIFT_V093.state.world=4;
+    window.CHERRIFT_V093.renderWorldSelect();
+    assert.equal(document.querySelectorAll("[data-v093-chapter]").length,0,`${name}: unfinished World does not expose fake chapters`);
+    assert.equal(document.querySelector("[data-v093-world-play]").disabled,true,`${name}: unfinished World cannot launch`);
+    window.CHERRIFT_V093.state.world=1;
+    window.CHERRIFT_V093.state.chapterId="world_1_1";
+    window.CHERRIFT_V093.renderWorldSelect();
+
+    UI.save.bag=UI.save.bag||{};
+    UI.save.bag.items={};
+    UI.save.bag.materials={gearScrap:0,stones:{},slotCores:{}};
+    UI.save.sakuraEssence=0;
+    UI.save.chests={common:0,rare:0,epic:0,legendary:0};
+    UI.open("bagV082");
+    await waitFor(()=>document.querySelector(".bag-inventory-v084"),`${name} Bag inventory`);
+    window.CHERRIFT_V084.renderBag();
+    assert.equal(document.querySelectorAll("[data-v084-bag-item]").length,0,`${name}: BAG hides zero-count and unknown items`);
+    assert.equal(document.querySelectorAll(".bag-empty-slot-v092").length,9,`${name}: BAG shows empty inventory slots`);
+
+    if(name==="desktop"){
+      UI.save.inventory=[];
+      UI.save.equipped={};
+      const oldGear={id:"smoke_old_gear",slot:"Weapon",type:"Crimson",rarity:"Common",itemLevel:1,stats:{damage:1}};
+      const newGear={id:"smoke_new_gear",slot:"Weapon",type:"Crimson",rarity:"Rare",itemLevel:2,stats:{damage:3}};
+      UI.save.equipped.Weapon=oldGear;
+      UI.save.inventory.push(newGear);
+      window.CHERRIFT_REWARDS.withSuppressed(()=>window.CherriftStorage.save(UI.save));
+      UI.equipGear(newGear.id);
+      assert.equal(UI.save.equipped.Weapon.id,newGear.id,"desktop: Gear swap equips selected item");
+      assert.ok(UI.save.inventory.some(item=>item.id===oldGear.id),"desktop: previous Gear returns to inventory");
+      assert.equal(document.getElementById("rewardOverlayV083")?.classList.contains("open"),false,"desktop: Gear swap does not open Reward popup");
+      window.CHERRIFT_REWARDS.show([{key:"test",name:"Test Reward",amount:1,rarity:"Common",kind:"currency"}]);
+      assert.equal(document.getElementById("rewardOverlayV083")?.classList.contains("open"),true,"desktop: explicit reward event opens Reward popup");
+      window.CHERRIFT_REWARDS.close();
+    }
+
+    UI.open("eventV093");
+    await waitFor(()=>document.querySelector("[data-v093-event-claim]"),`${name} beta Event`);
+    const coinsBeforeEvent=Number(UI.save.coins)||0;
+    click(window,document.querySelector("[data-v093-event-claim]"),`${name} claim Event reward`);
+    assert.equal(UI.save.coins,coinsBeforeEvent+250,`${name}: Event grants Coin once`);
+    assert.equal(UI.save.chests.common,1,`${name}: Event grants one Common Chest`);
+    window.CHERRIFT_REWARDS.close();
+    window.CHERRIFT_V093.claimWelcomeEvent();
+    assert.equal(UI.save.coins,coinsBeforeEvent+250,`${name}: Event reward is idempotent`);
+    assert.equal(UI.save.chests.common,1,`${name}: Event chest cannot be claimed twice`);
     UI.open("libraryV0551");
     click(window,document.querySelector('[data-library-tab="skins"]'),`${name} collection skins`);
     window.CHERRIFT_V084.renderCollection();
@@ -309,6 +377,35 @@ async function exercise(name,width,height){
         return UI.game.player;
       }
 
+      const stationary=await startSkin("cake_deliver_cherry");
+      const attackTarget={x:stationary.x+420,y:stationary.y,r:20,hp:800,maxHp:800,speed:0,xp:1,dead:false};
+      UI.game.enemies=[attackTarget];
+      UI.game.bullets=[];
+      stationary.fireTimer=0;
+      const originalMoveVector=UI.game.input.getMoveVector.bind(UI.game.input);
+      UI.game.input.getMoveVector=()=>({x:0,y:0});
+      UI.game.autoFire();
+      assert.ok(stationary.__attackV092,"desktop: Common attack starts a pending fire-frame state");
+      assert.equal(UI.game.bullets.length,0,"desktop: Common projectile is not created before fire frame");
+      UI.game.input.getMoveVector=()=>({x:1,y:0});
+      UI.game.update(.02);
+      assert.equal(stationary.__attackV092,null,"desktop: movement before fire frame cancels attack");
+      assert.equal(UI.game.bullets.length,0,"desktop: pre-fire cancel creates no projectile");
+      assert.ok(stationary.fireTimer>0,"desktop: pre-fire cancel keeps cooldown");
+
+      stationary.fireTimer=0;
+      UI.game.input.getMoveVector=()=>({x:0,y:0});
+      UI.game.autoFire();
+      for(let index=0;index<4;index++)UI.game.update(.05);
+      assert.ok(UI.game.bullets.some(bullet=>bullet.firedByV092),"desktop: projectile spawns at fire frame");
+      const firedCount=UI.game.bullets.length;
+      UI.game.input.getMoveVector=()=>({x:1,y:0});
+      UI.game.update(.016);
+      assert.equal(stationary.__attackV092,null,"desktop: movement after fire cancels recovery animation");
+      assert.ok(UI.game.bullets.length>=firedCount,"desktop: fired projectile continues after animation cancel");
+      assert.ok(stationary.fireTimer>0,"desktop: post-fire cancel keeps cooldown");
+      UI.game.input.getMoveVector=originalMoveVector;
+
       const hybrid=await startSkin("cake_deliver_cherry");
       assert.equal(hybrid.commonArchetype,"hybrid","desktop: Cake Deliver is Hybrid");
       const hybridEnemy={x:hybrid.x+90,y:hybrid.y,r:20,hp:500,maxHp:500,speed:0,xp:1,dead:false};
@@ -344,7 +441,7 @@ async function exercise(name,width,height){
     if(width<=820){
       assert.equal(document.body.classList.contains("v090-mobile"),true,`${name}: mobile mode`);
       assert.ok(document.getElementById("mobileMenuV082"),`${name}: mobile drawer`);
-      assert.equal(document.querySelectorAll(".mobile-menu-grid-v082 > button").length,10,`${name}: compact More destinations`);
+      assert.equal(document.querySelectorAll(".mobile-menu-grid-v082 > button").length,11,`${name}: compact More destinations plus Event`);
       assert.equal(document.querySelectorAll(".mobile-nav-v090 > button").length,5,`${name}: stable bottom nav`);
     }
 
@@ -362,8 +459,8 @@ async function exerciseReturningSession(){
     await waitFor(()=>window.CHERRIFT_AUTH.getState().mode==="discord","returning session");
     assert.equal(window.CHERRIFT_AUTH.getState().gateVisible,false,"returning session: gate skipped");
     assert.equal(window.CHERRIFT_AUTH.getState().account?.discordId,"987654321","returning session: identity restored");
-    await waitFor(()=>/0\.9\.1/.test(window.document.title),"returning session current version");
-    assert.match(window.document.title,/0\.9\.1/,"returning session: current version");
+    await waitFor(()=>/0\.9\.3/.test(window.document.title),"returning session current version");
+    assert.match(window.document.title,/0\.9\.3/,"returning session: current version");
     const meaningful=errors.filter(error=>!/Not implemented: HTMLCanvasElement|Could not load link/i.test(error));
     assert.deepEqual(meaningful,[],"returning session: no runtime errors");
     return {name:"returning session",viewport:"1280x760"};
@@ -381,7 +478,7 @@ try{
     await exerciseReturningSession()
   ];
   for(const result of results)console.log(`PASS ${result.name} ${result.viewport}${result.skins?` · ${result.skins} skins`:""}`);
-  console.log("CHERRIFT v0.9.1 smoke tests passed.");
+  console.log("CHERRIFT v0.9.3 smoke tests passed.");
 } finally {
   await new Promise(resolve=>server.close(resolve));
 }

@@ -126,15 +126,34 @@ const packageJson = JSON.parse(readFileSync(join(root, "package.json"), "utf8"))
 for (const dependency of ["@supabase/supabase-js", "@supabase/ssr"]) {
   if (!packageJson.dependencies?.[dependency]) errors.push(`package.json: missing ${dependency}`);
 }
-if (packageJson.version !== "0.9.1") errors.push(`package.json: expected version 0.9.1, found ${packageJson.version}`);
+if (packageJson.version !== "0.9.3") errors.push(`package.json: expected version 0.9.3, found ${packageJson.version}`);
 for (const [file, contents] of [
   ["index.html", html],
   ["src/main.js", main],
   ["src/config.js", readFileSync(join(root, "src", "config.js"), "utf8")]
 ]) {
-  if (!contents.includes("0.9.1")) errors.push(`${file}: v0.9.1 build marker is missing`);
+  if (!contents.includes("0.9.3")) errors.push(`${file}: v0.9.3 build marker is missing`);
 }
 if (!main.includes("src/cherrift_v091.js")) errors.push("src/main.js: v0.9.1 runtime patch is not loaded");
+if (!main.includes("src/cherrift_v092.js")) errors.push("src/main.js: v0.9.2 runtime patch is not loaded");
+if (!main.includes("src/cherrift_v093.js")) errors.push("src/main.js: v0.9.3 runtime patch is not loaded");
+for (const locale of ["src/locales/en.js", "src/locales/hu.js", "src/locales/index.js"]) {
+  if (!main.includes(locale)) errors.push(`src/main.js: ${locale} is not loaded`);
+}
+
+const skinThumbRoot = join(root, "assets", "ui", "skin_thumbs");
+const skinThumbs = existsSync(skinThumbRoot)
+  ? readdirSync(skinThumbRoot).filter(name => name.endsWith(".webp"))
+  : [];
+if (skinThumbs.length !== 14) errors.push(`assets/ui/skin_thumbs: expected 14 optimized WebP thumbnails, found ${skinThumbs.length}`);
+for (const name of skinThumbs) {
+  const file = join(skinThumbRoot, name);
+  const header = readFileSync(file).subarray(0, 12);
+  if (header.subarray(0, 4).toString("ascii") !== "RIFF" || header.subarray(8, 12).toString("ascii") !== "WEBP") {
+    errors.push(`assets/ui/skin_thumbs/${name}: invalid WebP header`);
+  }
+  if (statSync(file).size > 100000) errors.push(`assets/ui/skin_thumbs/${name}: thumbnail exceeds 100 KB`);
+}
 
 if (existsSync(join(root, "src", "cherrift_v0562.js")) && !main.includes("cherrift_v0562.js")) {
   warnings.push("src/cherrift_v0562.js exists but is not loaded (v0.5.6.3 supersedes it)");
