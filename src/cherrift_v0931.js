@@ -428,7 +428,9 @@ function arsenalCost(state) {
     coins:Math.floor((Number(original.coins) || 100) * 1.12 + target * 22),
     stone:target <= 5 ? "copper" : (original.stone || "copper"),
     stones:Math.max(1, Number(original.stones) || 1, Math.ceil(1 + target * .65)),
-    scrap:Math.max(1, Math.ceil(target * .45))
+    scrap:target <= 6
+      ? ({2:10,3:12,4:15,5:18,6:22}[target] || 10)
+      : Math.ceil(22 + (target - 6) * 3.2 + Math.pow(target - 6, 1.22))
   };
 }
 
