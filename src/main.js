@@ -143,7 +143,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   await loadScript("src/cherrift_v092.js?v=092","v0.9.2 Stability and Combat Fix");
   await loadScript("src/cherrift_v093.js?v=093","v0.9.3 UI and World Update");
   await loadScript("src/cherrift_v0931.js?v=0931","v0.9.3.1 Gameplay and Economy Hotfix");
-  await loadScript("src/cherrift_v0932.js?v=0932","v0.9.3.2 Layout and Combat Polish");
+  await loadScript("src/cherrift_v0932.js?v=0932a","v0.9.3.2.1 Skin Scroll and Succubus Hotfix");
 
   try {
     if (failedPatches.length) {

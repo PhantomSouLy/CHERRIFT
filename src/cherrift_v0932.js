@@ -1,8 +1,8 @@
 (() => {
 "use strict";
 
-const VERSION = "0.9.3.2-layout-combat-polish";
-const CACHE_VERSION = "0932";
+const VERSION = "0.9.3.2.1-scroll-claw-hotfix";
+const CACHE_VERSION = "0932a";
 const id = value => document.getElementById(value);
 const q = (selector, root = document) => root?.querySelector?.(selector) || null;
 const qa = (selector, root = document) => Array.from(root?.querySelectorAll?.(selector) || []);
@@ -19,7 +19,7 @@ if (!window.UI || !window.CherriftGame || !window.CherriftStorage) {
 const runtime = {
   observer:null,
   refreshQueued:false,
-  skinScroll:{top:0,left:0,valid:false},
+  skinScroll:{top:0,left:0,valid:false,restoring:false},
   bagPopoverItem:null,
   pendingGearId:null,
   imageCache:new Map()
@@ -79,7 +79,7 @@ function patchSuccubusClaw() {
     const targetAngle = Number.isFinite(bullet.angle)
       ? bullet.angle
       : Math.atan2(Number(bullet.vy) || 0, Number(bullet.vx) || 1);
-    const width = 128;
+    const width = 78;
     const height = width * image.naturalHeight / image.naturalWidth;
     const lifeProgress = clamp((Number(bullet.life) || 0) / .62, 0, 1);
     const fade = Math.min(clamp((1 - lifeProgress) / .08, 0, 1), clamp(lifeProgress / .26, 0, 1));
@@ -88,10 +88,10 @@ function patchSuccubusClaw() {
     context.globalCompositeOperation = "source-over";
     context.globalAlpha = .20 + fade * .80;
     context.translate(bullet.x, bullet.y);
-    context.rotate(targetAngle - naturalAngle);
+    context.rotate(targetAngle - naturalAngle + Math.PI);
     context.imageSmoothingEnabled = false;
     context.shadowColor = "rgba(255,35,82,.72)";
-    context.shadowBlur = 12;
+    context.shadowBlur = 7;
     // The source's narrow pointed root is around the lower-left edge.
     context.drawImage(image, -width * .08, -height * .82, width, height);
     context.restore();
@@ -233,26 +233,56 @@ function patchRewardGearArt() {
 /* -------------------------------------------------------------------------
  * Skin list scroll retention
  * ---------------------------------------------------------------------- */
-function rememberSkinScroll() {
-  const list = q("#skins .skin-list-v093");
-  if (!list) return;
-  runtime.skinScroll = {top:list.scrollTop, left:list.scrollLeft, valid:true};
+function rememberSkinScroll(list = q("#skins .skin-list-v093")) {
+  if (!list || runtime.skinScroll.restoring) return;
+  runtime.skinScroll = {
+    top:list.scrollTop,
+    left:list.scrollLeft,
+    valid:true,
+    restoring:false
+  };
 }
-function restoreSkinScroll() {
-  if (!runtime.skinScroll.valid) return;
+function restoreSkinScroll(snapshot = runtime.skinScroll) {
+  if (!snapshot?.valid) return;
   const list = q("#skins .skin-list-v093");
   if (!list) return;
-  list.scrollTop = runtime.skinScroll.top;
-  list.scrollLeft = runtime.skinScroll.left;
+  runtime.skinScroll.restoring = true;
+  list.scrollTop = snapshot.top;
+  list.scrollLeft = snapshot.left;
+  requestAnimationFrame(() => {
+    runtime.skinScroll.restoring = false;
+    rememberSkinScroll(list);
+  });
+}
+function queueSkinScrollRestore(snapshot) {
+  if (!snapshot?.valid) return;
+  requestAnimationFrame(() => {
+    restoreSkinScroll(snapshot);
+    requestAnimationFrame(() => restoreSkinScroll(snapshot));
+  });
 }
 function patchSkinScroll() {
-  window.addEventListener("pointerdown", event => {
-    if (event.target?.closest?.("#skins [data-v093-skin],#skins [data-v093-skin-view],#skins [data-v093-preview-direction],#skins [data-v093-preview-animation],#skins [data-v093-equip]")) rememberSkinScroll();
+  // Scroll events are tracked continuously, so normal mouse/touch scrolling is never fought.
+  document.addEventListener("scroll", event => {
+    const list = event.target?.matches?.("#skins .skin-list-v093") ? event.target : null;
+    if (list) rememberSkinScroll(list);
   }, true);
-  document.addEventListener("click", event => {
-    if (event.target?.closest?.("#skins [data-v093-skin],#skins [data-v093-skin-view],#skins [data-v093-preview-direction],#skins [data-v093-preview-animation],#skins [data-v093-equip]")) {
-      requestAnimationFrame(() => { restoreSkinScroll(); requestAnimationFrame(restoreSkinScroll); });
-    }
+
+  window.addEventListener("pointerdown", event => {
+    const list = event.target?.closest?.("#skins .skin-list-v093");
+    if (list) rememberSkinScroll(list);
+  }, true);
+
+  // Window capture runs before the selector's document handler rebuilds the list.
+  window.addEventListener("click", event => {
+    const control = event.target?.closest?.("#skins [data-v093-skin],#skins [data-v093-skin-view],#skins [data-v093-preview-direction],#skins [data-v093-preview-animation],#skins [data-v093-equip]");
+    if (!control) return;
+    const list = q("#skins .skin-list-v093");
+    const snapshot = list
+      ? {top:list.scrollTop,left:list.scrollLeft,valid:true,restoring:false}
+      : {...runtime.skinScroll,restoring:false};
+    runtime.skinScroll = snapshot;
+    queueSkinScrollRestore(snapshot);
   }, true);
 }
 
@@ -544,7 +574,6 @@ function refreshAll() {
   decorateGearUi();
   ensureMobileHomePolish();
   shortenEconomyText();
-  restoreSkinScroll();
 }
 function observeRuntime() {
   if (!runtime.observer || !document.body) return;
@@ -651,5 +680,5 @@ patchVersion();
 scheduleRefresh();
 
 window.CHERRIFT_V0932=Object.freeze({version:VERSION,refresh:refreshAll,closeBagPopover});
-console.info("[CHERRIFT] v0.9.3.2 layout and combat polish loaded.");
+console.info("[CHERRIFT] v0.9.3.2.1 skin scroll and Succubus claw hotfix loaded.");
 })();
