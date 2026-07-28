@@ -1,0 +1,40 @@
+CHERRIFT v0.9.2 + v0.9.3
+Only changed/new files compared with:
+27598e6495973327bb0439f332144f35baa6099d
+
+APPLY_INSTRUCTIONS_V093_HU.txt
+CHANGED_FILES_V093.txt
+PATCH_NOTES_V093_HU_EN.md
+index.html
+package-lock.json
+package.json
+src/cherrift_v060.js
+src/cherrift_v084.js
+src/cherrift_v091.js
+src/cherrift_v092.js
+src/cherrift_v093.js
+src/config.js
+src/locales/en.js
+src/locales/hu.js
+src/locales/index.js
+src/main.js
+tools/smoke.mjs
+tools/validate.mjs
+v092.css
+v093.css
+assets/ui/skin_thumbs/archer_cherry.webp
+assets/ui/skin_thumbs/base_cherry.webp
+assets/ui/skin_thumbs/beastclaw_cherry.webp
+assets/ui/skin_thumbs/cake_deliver_cherry.webp
+assets/ui/skin_thumbs/fairy_cherry.webp
+assets/ui/skin_thumbs/kimono_cherry.webp
+assets/ui/skin_thumbs/mage_cherry.webp
+assets/ui/skin_thumbs/ninja_cherry.webp
+assets/ui/skin_thumbs/pajama_cherry.webp
+assets/ui/skin_thumbs/school_uniform_cherry.webp
+assets/ui/skin_thumbs/sport_cherry.webp
+assets/ui/skin_thumbs/succubus_cherry.webp
+assets/ui/skin_thumbs/warrior_cherry.webp
+assets/ui/skin_thumbs/wuxia_sakura_cherry.webp
+
+Deleted files: none

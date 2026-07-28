@@ -1,0 +1,29 @@
+CHERRIFT v0.9.2 + v0.9.3 – TELEPÍTÉS
+
+FONTOS:
+Ez a ZIP csak az új és módosított fájlokat tartalmazza.
+Önmagában nem teljes játék és nem indítható el külön mappából.
+
+Alap:
+- PhantomSouLy/CHERRIFT
+- main branch
+- v0.9.1 full patch
+- commit: 27598e6495973327bb0439f332144f35baa6099d
+
+Telepítés:
+1. Készíts biztonsági másolatot a jelenlegi CHERRIFT mappáról.
+2. A ZIP tartalmát csomagold ki közvetlenül a jelenlegi CHERRIFT gyökérmappájába.
+3. Tartsd meg a ZIP-ben lévő mappaszerkezetet.
+4. Engedélyezd a meglévő fájlok felülírását.
+5. Ne töröld a régi assets mappát: a ZIP csak a 14 új, könnyű skin-thumbnailt tartalmazza.
+6. Böngészőben végezz teljes frissítést / cache-törlést.
+
+Nincs törlendő projektfájl.
+A ZIP nem tartalmaz .git vagy node_modules mappát.
+A GitHub repository nem lett módosítva, commit és push nem történt.
+
+Fejlesztői ellenőrzés:
+npm test
+
+Várt verzió:
+CHERRIFT v0.9.3 – TEST BUILD
