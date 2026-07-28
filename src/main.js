@@ -2,7 +2,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   document.title = window.CHERRIFT_BUILD?.title || "CHERRIFT v0.9.3 – TEST BUILD";
   const bootSub = document.querySelector(".boot-sub-v060");
   if (bootSub) bootSub.textContent = "v0.9.3 · TEST BUILD";
-  const patchCount = 43;
+  const patchCount = 44;
   let loadedPatches = 0;
   const failedPatches = [];
 
@@ -142,6 +142,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   await loadScript("src/cherrift_v091.js?v=091","v0.9.1 Common Skins and VFX");
   await loadScript("src/cherrift_v092.js?v=092","v0.9.2 Stability and Combat Fix");
   await loadScript("src/cherrift_v093.js?v=093","v0.9.3 UI and World Update");
+  await loadScript("src/cherrift_v0931.js?v=0931","v0.9.3.1 Gameplay and Economy Hotfix");
 
   try {
     if (failedPatches.length) {
