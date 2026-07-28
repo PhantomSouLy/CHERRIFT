@@ -797,7 +797,11 @@ function stableSpriteEntry(source, frames) {
   const entry = { image: new Image(), frames, ready: false, metrics: [] };
   entry.image.decoding = "async";
   entry.image.onload = () => {
-    entry.metrics = calculateFrameMetrics(entry.image, frames);
+    const frameWidth = Math.max(1, Math.floor(entry.image.naturalWidth / frames));
+    const frameHeight = Math.max(1, entry.image.naturalHeight);
+    entry.metrics = Array.from({length:frames}, () => ({
+      x:0, y:0, width:frameWidth, height:frameHeight
+    }));
     entry.ready = true;
   };
   entry.image.onerror = () => { entry.ready = false; };
@@ -867,27 +871,24 @@ function drawStablePreview(canvas, timestamp) {
   context.imageSmoothingQuality = "high";
 
   const frame = Math.floor(timestamp / 1000 * fps) % frames;
-  const box = entry.metrics[frame] || entry.metrics[0];
   const sourceFrameWidth = entry.image.naturalWidth / frames;
   const availableWidth = cssWidth * .86;
   const availableHeight = cssHeight * .91;
-  // One scale for the whole animation prevents individual frame bounds from
-  // making Cherry visibly grow/shrink or jump in Gear and Upgrade previews.
-  const maxFrameWidth = Math.max(...entry.metrics.map(metric => metric.width));
-  const maxFrameHeight = Math.max(...entry.metrics.map(metric => metric.height));
-  const scale = Math.min(availableWidth / maxFrameWidth, availableHeight / maxFrameHeight);
-  const targetWidth = box.width * scale;
-  const targetHeight = box.height * scale;
-  const targetX = (cssWidth - targetWidth) / 2;
+  const sourceFrameHeight = entry.image.naturalHeight;
+  const pivot = idle?.pivot || config?.pivot || {x:96, y:184};
+  const scale = Math.min(availableWidth / sourceFrameWidth, availableHeight / sourceFrameHeight);
+  const targetWidth = sourceFrameWidth * scale;
+  const targetHeight = sourceFrameHeight * scale;
   const groundY = cssHeight * .94;
-  const targetY = groundY - targetHeight;
+  const targetX = cssWidth / 2 - (Number(pivot.x) || 96) * scale;
+  const targetY = groundY - (Number(pivot.y) || 184) * scale;
 
   context.drawImage(
     entry.image,
-    frame * sourceFrameWidth + box.x,
-    box.y,
-    box.width,
-    box.height,
+    frame * sourceFrameWidth,
+    0,
+    sourceFrameWidth,
+    sourceFrameHeight,
     targetX,
     targetY,
     targetWidth,
@@ -1072,15 +1073,8 @@ async function preload(save, report = () => {}) {
   const selectedConfig = skinConfig(save);
   const sources = new Set(["assets/ui/mainmenu.png?v=060"]);
 
-  if (save?.settings?.preloadArtwork !== false) {
-    for (const skin of CHERRIFT_DATA.skins) {
-      if (skin.icon) sources.add(skin.icon);
-      if (skin.splash) sources.add(skin.splash);
-    }
-  } else {
-    if (selected?.icon) sources.add(selected.icon);
-    if (selected?.splash) sources.add(selected.splash);
-  }
+  if (selected?.icon) sources.add(selected.icon);
+  if (selected?.splash && save?.settings?.preloadArtwork !== false) sources.add(selected.splash);
   if (selectedConfig?.states?.idle?.dirs?.down) sources.add(selectedConfig.states.idle.dirs.down);
 
   const list = [...sources];
@@ -1099,10 +1093,9 @@ async function preload(save, report = () => {}) {
 function backgroundPreloadIdleSheets() {
   const schedule = window.requestIdleCallback || (callback => setTimeout(callback, 450));
   schedule(() => {
-    for (const config of Object.values(CHERRIFT_CONFIG.player.skins || {})) {
-      const idle = config?.states?.idle;
-      if (idle?.dirs?.down) stableSpriteEntry(idle.dirs.down, Math.max(1, Number(idle.frames) || 4));
-    }
+    const config = skinConfig(UI.save);
+    const idle = config?.states?.idle;
+    if (idle?.dirs?.down) stableSpriteEntry(idle.dirs.down, Math.max(1, Number(idle.frames) || 4));
   });
 }
 

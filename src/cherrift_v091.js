@@ -1009,8 +1009,9 @@ function decorateCommonSkin() {
 }
 
 function patchVersion() {
-  document.title = `CHERRIFT ${DISPLAY_VERSION} – ${language() === "hu" ? "TESZTVERZIÓ" : "TEST BUILD"}`;
-  const label = `${language() === "hu" ? "TESZTVERZIÓ" : "TEST BUILD"} · ${DISPLAY_VERSION}`;
+  const build = window.CHERRIFT_BUILD || {displayVersion:DISPLAY_VERSION,title:`CHERRIFT ${DISPLAY_VERSION} – TEST BUILD`};
+  document.title = build.title;
+  const label = `${language() === "hu" ? "TESZTVERZIÓ" : "TEST BUILD"} · ${build.displayVersion}`;
   const boot = q(".boot-sub-v060");
   if (boot) boot.textContent = label;
   const banner = id("testBuildBannerV063");
@@ -1025,7 +1026,7 @@ function patchVersion() {
   if (patch) {
     const badge = q("header span", patch);
     const copy = q(":scope > p", patch);
-    if (badge) badge.textContent = DISPLAY_VERSION;
+    if (badge) badge.textContent = build.displayVersion;
     if (copy) {
       copy.textContent = language() === "hu"
         ? "Új Common Cherry skinek és szerepkörök, PNG harci effektek, javított sprite-időzítés és sötétedő map-határ."

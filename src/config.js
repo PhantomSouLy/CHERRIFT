@@ -1,8 +1,8 @@
 window.CHERRIFT_BUILD = Object.freeze({
-  version: "0.9.1",
-  displayVersion: "v0.9.1",
-  title: "CHERRIFT v0.9.1 – TEST BUILD",
-  label: "TESZTVERZIÓ · v0.9.1"
+  version: "0.9.3",
+  displayVersion: "v0.9.3",
+  title: "CHERRIFT v0.9.3 – TEST BUILD",
+  label: "TESZTVERZIÓ · v0.9.3"
 });
 
 window.CHERRIFT_CONFIG = {

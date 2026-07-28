@@ -1,8 +1,8 @@
 window.addEventListener("DOMContentLoaded", async () => {
-  document.title = window.CHERRIFT_BUILD?.title || "CHERRIFT v0.9.1 – TEST BUILD";
+  document.title = window.CHERRIFT_BUILD?.title || "CHERRIFT v0.9.3 – TEST BUILD";
   const bootSub = document.querySelector(".boot-sub-v060");
-  if (bootSub) bootSub.textContent = "v0.9.1 · TEST BUILD";
-  const patchCount = 38;
+  if (bootSub) bootSub.textContent = "v0.9.3 · TEST BUILD";
+  const patchCount = 43;
   let loadedPatches = 0;
   const failedPatches = [];
 
@@ -121,6 +121,9 @@ window.addEventListener("DOMContentLoaded", async () => {
   await loadScript("src/cherrift_v0563.js?v=063","v0.6.3 Warrior VFX grid fix");
   await loadScript("src/cherrift_v060.js?v=090-hf2","v0.6.1 Bloom UI + click audio");
   await loadScript("src/cherrift_i18n_v062.js?v=090-hf2","v0.6.2 Hungarian/English localization");
+  await loadScript("src/locales/en.js?v=093","v0.9.3 English locale");
+  await loadScript("src/locales/hu.js?v=093","v0.9.3 Hungarian locale");
+  await loadScript("src/locales/index.js?v=093","v0.9.3 key-based localization");
   await loadScript("src/cherrift_v062.js?v=090-hf2","v0.6.2 quality update");
   await loadScript("src/cherrift_v063.js?v=090-hf2","v0.6.3 mail, reports, equipment and effects");
   await loadScript("src/cherrift_v064_auth.js?v=065","v0.6.3 Supabase Discord cloud save");
@@ -137,6 +140,8 @@ window.addEventListener("DOMContentLoaded", async () => {
   await loadScript("src/cherrift_v089.js?v=090","v0.8.9 Run and Loot");
   await loadScript("src/cherrift_v090.js?v=090-hf2","v0.9.0 Night Bloom");
   await loadScript("src/cherrift_v091.js?v=091","v0.9.1 Common Skins and VFX");
+  await loadScript("src/cherrift_v092.js?v=092","v0.9.2 Stability and Combat Fix");
+  await loadScript("src/cherrift_v093.js?v=093","v0.9.3 UI and World Update");
 
   try {
     if (failedPatches.length) {

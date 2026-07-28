@@ -68,7 +68,7 @@ function language() {
 }
 function t(key) { return COPY[language()][key] || COPY.en[key] || key; }
 function image(source, alt, className = "v084-icon") {
-  return source ? `<img class="${className}" src="${escapeHtml(source)}" alt="${escapeHtml(alt)}" draggable="false">` : "";
+  return source ? `<img class="${className}" src="${escapeHtml(source)}" alt="${escapeHtml(alt)}" loading="lazy" decoding="async" draggable="false">` : "";
 }
 function safeCount(value) { return Math.max(0, Math.floor(Number(value) || 0)); }
 function visible(element) { return !!element && !element.classList.contains("hidden") && getComputedStyle(element).display !== "none"; }
@@ -225,7 +225,7 @@ function bagItems() {
   const catalog = window.CHERRIFT_V080?.foodCatalog || {};
   for (const [itemId, food] of Object.entries(catalog)) push({id:`buff:${itemId}`,itemId,category:"buffs",name:food.name,count:safeCount(save.bag?.items?.[itemId]),asset:food.asset,rarity:food.rarity||"Common",description:`+${Math.round(Number(food.value||0)*100)}% ${prettyKey(food.effect)} · ${food.runs||0} ${language()==="hu"?"kör":"runs"}`,source:"Shop · Rewards",action:"use"});
   for (const type of ["common","rare","epic","legendary"]) push({id:`chest:${type}`,chestType:type,category:"chests",name:`${type[0].toUpperCase()}${type.slice(1)} Chest`,count:safeCount(save.chests?.[type]),asset:assets.chests?.[type],rarity:type==="common"?"Common":type==="rare"?"Rare":type==="epic"?"Epic":"Legendary",description:language()==="hu"?"Nyisd ki a Gacha oldalon jutalmakért.":"Open it on the Gacha page for rewards.",source:"Stage Clear · Weekly Reward · Shop",action:"gacha"});
-  return items;
+  return items.filter(item => item.count > 0);
 }
 
 function bagSignature() {
@@ -247,7 +247,7 @@ function renderBagInventory() {
   const categories = [["all",t("all")],["enhancement",t("enhancement")],["stones",t("stones")],["cores",t("cores")],["buffs",t("buffs")],["chests",t("chests")]];
   const cards = filtered.length ? filtered.map(item => `<button type="button" class="bag-item-v084 rarity-${String(item.rarity).toLowerCase()} ${item.id===selected?.id?"active":""}" data-v084-bag-item="${escapeHtml(item.id)}">
     <span class="bag-item-art-v084">${image(item.asset,item.name)}</span><small>${escapeHtml(item.rarity)}</small><b>${escapeHtml(item.name)}</b><em>×${item.count}</em>
-  </button>`).join("") : `<div class="bag-empty-v084">${escapeHtml(t("noItems"))}</div>`;
+  </button>`).join("") : `<div class="bag-empty-v084"><p>${escapeHtml(t("noItems"))}</p><div class="bag-empty-slots-v092" aria-hidden="true">${Array.from({length:9},()=>'<span class="bag-empty-slot-v092"></span>').join("")}</div></div>`;
   const action = !selected ? "" : selected.action === "use" ? `<button type="button" class="primary" data-v084-bag-use="${escapeHtml(selected.itemId)}" ${selected.count<1?"disabled":""}>${escapeHtml(t("use"))}</button>` : selected.action === "gacha" ? `<button type="button" class="primary" data-v084-bag-gacha="${escapeHtml(selected.chestType)}">${escapeHtml(t("openGacha"))}</button>` : "";
   body.innerHTML = `<section class="bag-inventory-v084">
     <header class="bag-inventory-head-v084"><div><small>CHERRIFT BAG</small><h2>${escapeHtml(t("inventory"))}</h2><p>${escapeHtml(t("inventoryHint"))}</p></div></header>
