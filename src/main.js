@@ -2,7 +2,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   document.title = window.CHERRIFT_BUILD?.title || "CHERRIFT v0.9.3 – TEST BUILD";
   const bootSub = document.querySelector(".boot-sub-v060");
   if (bootSub) bootSub.textContent = "v0.9.3 · TEST BUILD";
-  const patchCount = 46;
+  const patchCount = 51;
   let loadedPatches = 0;
   const failedPatches = [];
 
@@ -145,6 +145,11 @@ window.addEventListener("DOMContentLoaded", async () => {
   await loadScript("src/cherrift_v0931.js?v=0931","v0.9.3.1 Gameplay and Economy Hotfix");
   await loadScript("src/cherrift_v0932.js?v=0932a","v0.9.3.2.1 Skin Scroll and Succubus Hotfix");
   await loadScript("src/cherrift_v0933.js?v=0933","v0.9.3.3 Desktop Menu and Chapter Layout");
+  await loadScript("src/cherrift_v094.js?v=09341","v0.9.3.4.1 World Tile Scale Hotfix");
+  await loadScript("src/cherrift_v0942.js?v=09342","v0.9.3.4.2 Sharp Ground Texture Hotfix");
+  await loadScript("src/cherrift_v0943.js?v=09343","v0.9.3.4.3 Native 512 Ground Tile Hotfix");
+  await loadScript("src/cherrift_v0944.js?v=09345","v0.9.3.4.5 Crisp Lazy Map Hotfix");
+  await loadScript("src/cherrift_v09347.js?v=09347","v0.9.3.4.7 PC Visual Polish");
 
   try {
     if (failedPatches.length) {
