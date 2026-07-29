@@ -2,7 +2,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   document.title = window.CHERRIFT_BUILD?.title || "CHERRIFT v0.9.3 – TEST BUILD";
   const bootSub = document.querySelector(".boot-sub-v060");
   if (bootSub) bootSub.textContent = "v0.9.3 · TEST BUILD";
-  const patchCount = 49;
+  const patchCount = 50;
   let loadedPatches = 0;
   const failedPatches = [];
 
@@ -148,6 +148,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   await loadScript("src/cherrift_v094.js?v=09341","v0.9.3.4.1 World Tile Scale Hotfix");
   await loadScript("src/cherrift_v0942.js?v=09342","v0.9.3.4.2 Sharp Ground Texture Hotfix");
   await loadScript("src/cherrift_v0943.js?v=09343","v0.9.3.4.3 Native 512 Ground Tile Hotfix");
+  await loadScript("src/cherrift_v0944.js?v=09344","v0.9.3.4.4 Map Object Blend and Performance Hotfix");
 
   try {
     if (failedPatches.length) {
