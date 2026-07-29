@@ -1,7 +1,7 @@
 (() => {
 "use strict";
 
-const VERSION = "1.1.0";
+const VERSION = "3.0.0-full-ui";
 const STYLE_ID = "cherriftThemeSystemCss";
 const SAVE_KEY = "cherrift_save_v025_polish";
 
@@ -118,7 +118,8 @@ function ensureCss() {
   const link = document.createElement("link");
   link.id = STYLE_ID;
   link.rel = "stylesheet";
-  link.href = "assets/ui/themes/theme_system.css?v=2";
+  link.href = "assets/ui/themes/theme_system.css?v=3";
+  link.onload = () => document.documentElement.classList.add("cherrift-theme-css-ready");
   document.head.appendChild(link);
 }
 
@@ -139,9 +140,19 @@ function updateBrowserThemeColor(themeId) {
 
 function applyTheme(themeId, options = {}) {
   const normalized = normalizeThemeId(themeId);
+  document.documentElement.classList.add("cherrift-theme-system-v3");
   document.documentElement.dataset.cherriftTheme = normalized;
   document.body?.setAttribute("data-cherrift-theme", normalized);
+  document.body?.classList.remove("theme-default", "theme-cozy-cherry", "theme-summer-splash");
+  document.body?.classList.add(THEMES[normalized].className);
   updateBrowserThemeColor(normalized);
+
+  // Several CHERRIFT screens are created dynamically by later patches. A resize
+  // refresh makes their mobile/desktop layout recalculate immediately after a theme swap.
+  requestAnimationFrame(() => {
+    document.body?.setAttribute("data-cherrift-theme", normalized);
+    window.dispatchEvent(new Event("resize"));
+  });
 
   if (!options.silent) {
     window.dispatchEvent(new CustomEvent("cherrift:themechange", {
@@ -494,5 +505,5 @@ window.CHERRIFT_THEMES = Object.freeze({
   ensureSave
 });
 
-console.info("[CHERRIFT] Theme System loaded: Default, Cozy Cherry and Summer Splash.");
+console.info("[CHERRIFT] Theme System v3 loaded: full UI coverage for Default, Cozy Cherry and Summer Splash.");
 })();
