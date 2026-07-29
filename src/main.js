@@ -145,7 +145,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   await loadScript("src/cherrift_v0931.js?v=0931","v0.9.3.1 Gameplay and Economy Hotfix");
   await loadScript("src/cherrift_v0932.js?v=0932a","v0.9.3.2.1 Skin Scroll and Succubus Hotfix");
   await loadScript("src/cherrift_v0933.js?v=0933","v0.9.3.3 Desktop Menu and Chapter Layout");
-  await loadScript("src/cherrift_v094.js?v=0934","v0.9.3.4 World, Map and Training Update");
+  await loadScript("src/cherrift_v094.js?v=09341","v0.9.3.4.1 World Tile Scale Hotfix");
 
   try {
     if (failedPatches.length) {

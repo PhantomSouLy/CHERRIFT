@@ -1,8 +1,8 @@
 (() => {
 "use strict";
 
-const VERSION = "0.9.3.4-world-map-training";
-const CACHE_VERSION = "0934";
+const VERSION = "0.9.3.4.1-ground-tile-scale-hotfix";
+const CACHE_VERSION = "09341";
 const id = value => document.getElementById(value);
 const q = (selector, root = document) => root?.querySelector?.(selector) || null;
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
@@ -689,6 +689,45 @@ function patchGame() {
     context.restore();
   };
 
+  /*
+   * Ground tile scale hotfix.
+   *
+   * The new high-resolution seamless textures were previously repeated at
+   * their full native pixel size. That made every blade of grass, stone and
+   * flower look several times larger than Cherry. Build one small, cached
+   * pattern tile per world instead; the camera and gameplay objects keep their
+   * existing size.
+   */
+  const GROUND_TEXTURE_SCALE_V0941 = Object.freeze({
+    0:.23, // Training: keep the spider-lily pattern readable, but not gigantic.
+    1:.22,
+    2:.22,
+    3:.23,
+    4:.23
+  });
+  const GROUND_TILE_MIN_V0941 = 112;
+  const GROUND_TILE_MAX_V0941 = 240;
+
+  function scaledGroundTileV0941(image, world) {
+    const sourceWidth = Math.max(1, Number(image?.naturalWidth || image?.width) || 1);
+    const sourceHeight = Math.max(1, Number(image?.naturalHeight || image?.height) || 1);
+    const longestSide = Math.max(sourceWidth, sourceHeight);
+    const requestedLongest = Math.round(longestSide * (GROUND_TEXTURE_SCALE_V0941[world] || .22));
+    const targetLongest = clamp(requestedLongest, GROUND_TILE_MIN_V0941, GROUND_TILE_MAX_V0941);
+    const ratio = targetLongest / longestSide;
+    const width = Math.max(1, Math.round(sourceWidth * ratio));
+    const height = Math.max(1, Math.round(sourceHeight * ratio));
+    const tile = document.createElement("canvas");
+    tile.width = width;
+    tile.height = height;
+    const tileContext = tile.getContext("2d");
+    if (!tileContext) return null;
+    tileContext.imageSmoothingEnabled = true;
+    tileContext.imageSmoothingQuality = "high";
+    tileContext.drawImage(image, 0, 0, width, height);
+    return {tile, width, height, sourceWidth, sourceHeight};
+  }
+
   const previousDrawGround = proto.drawGround;
   proto.drawGround = function drawGroundV094(context, zoom=1) {
     const stage = this.stage || this.getSelectedStage?.();
@@ -697,17 +736,39 @@ function patchGame() {
     const key = `w${world}_ground`;
     const image = this.assets.get(key);
     const viewWidth = this.w/zoom, viewHeight = this.h/zoom;
-    const x = this.camera.x-viewWidth/2-96, y = this.camera.y-viewHeight/2-96;
-    const width = viewWidth+192, height = viewHeight+192;
+    const padding = 256;
+    const x = this.camera.x-viewWidth/2-padding;
+    const y = this.camera.y-viewHeight/2-padding;
+    const width = viewWidth+padding*2;
+    const height = viewHeight+padding*2;
     if (!image) {
       context.fillStyle = world===0?"#342640":world===2?"#14222a":world===3?"#b38b42":world===4?"#a33e2d":"#4c9b50";
       context.fillRect(x,y,width,height);
       return;
     }
+
     this.__v094PatternCache ||= new Map();
-    let pattern = this.__v094PatternCache.get(key);
-    if (!pattern) { pattern = context.createPattern(image,"repeat"); this.__v094PatternCache.set(key,pattern); }
-    context.save();context.fillStyle=pattern;context.fillRect(x,y,width,height);context.restore();
+    const sourceWidth = Math.max(1, Number(image.naturalWidth || image.width) || 1);
+    const sourceHeight = Math.max(1, Number(image.naturalHeight || image.height) || 1);
+    const cacheKey = `${key}:${sourceWidth}x${sourceHeight}:09341`;
+    let cached = this.__v094PatternCache.get(cacheKey);
+    if (!cached) {
+      const scaled = scaledGroundTileV0941(image, world);
+      const pattern = scaled ? context.createPattern(scaled.tile, "repeat") : null;
+      cached = scaled && pattern ? {...scaled, pattern} : null;
+      if (cached) this.__v094PatternCache.set(cacheKey, cached);
+    }
+
+    if (!cached?.pattern) {
+      context.fillStyle = world===0?"#342640":world===2?"#14222a":world===3?"#b38b42":world===4?"#a33e2d":"#4c9b50";
+      context.fillRect(x,y,width,height);
+      return;
+    }
+
+    context.save();
+    context.fillStyle = cached.pattern;
+    context.fillRect(x,y,width,height);
+    context.restore();
   };
 
   const previousDrawObstacle = proto.drawObstacle;
@@ -800,5 +861,5 @@ window.CHERRIFT_V094 = {
   renderWorld:renderWorldSelector,
   generateWorldMap
 };
-console.info("[CHERRIFT] v0.9.3.4 World, map, HP drop and Training update loaded.");
+console.info("[CHERRIFT] v0.9.3.4.1 ground tile scale hotfix loaded.");
 })();
