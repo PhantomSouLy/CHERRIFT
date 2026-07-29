@@ -2,7 +2,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   document.title = window.CHERRIFT_BUILD?.title || "CHERRIFT v0.9.3 – TEST BUILD";
   const bootSub = document.querySelector(".boot-sub-v060");
   if (bootSub) bootSub.textContent = "v0.9.3 · TEST BUILD";
-  const patchCount = 51;
+  const patchCount = 52;
   let loadedPatches = 0;
   const failedPatches = [];
 
@@ -151,6 +151,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   await loadScript("src/cherrift_v0944.js?v=09345","v0.9.3.4.5 Crisp Lazy Map Hotfix");
   await loadScript("src/cherrift_v0944.js?v=09346","v0.9.3.4.6 Crisp Map Stability Hotfix");
   await loadScript("src/cherrift_v09347.js?v=09347","v0.9.3.4.7 PC Visual Polish");
+  await loadScript("src/cherrift_theme_system.js?v=1","Theme System");
 
   try {
     if (failedPatches.length) {
