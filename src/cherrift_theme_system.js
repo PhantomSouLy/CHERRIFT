@@ -1,7 +1,7 @@
 (() => {
 "use strict";
 
-const VERSION = "1.0.0";
+const VERSION = "1.1.0";
 const STYLE_ID = "cherriftThemeSystemCss";
 const SAVE_KEY = "cherrift_save_v025_polish";
 
@@ -118,7 +118,7 @@ function ensureCss() {
   const link = document.createElement("link");
   link.id = STYLE_ID;
   link.rel = "stylesheet";
-  link.href = "assets/ui/themes/theme_system.css?v=1";
+  link.href = "assets/ui/themes/theme_system.css?v=2";
   document.head.appendChild(link);
 }
 
@@ -263,10 +263,100 @@ function themeCardMarkup(theme, save) {
     </article>`;
 }
 
+function selectV060SettingsTab(tabName) {
+  const settings = document.getElementById("settings");
+  if (!settings) return;
+  settings.querySelectorAll("[data-v060-settings]").forEach(button => {
+    button.classList.toggle("active", button.dataset.v060Settings === tabName);
+  });
+  settings.querySelectorAll("[data-v060-settings-page]").forEach(page => {
+    page.classList.toggle("active", page.dataset.v060SettingsPage === tabName);
+  });
+}
+
+function ensureV060SettingsPage(save = window.UI?.save) {
+  const settings = document.getElementById("settings");
+  const tabs = settings?.querySelector?.(".settings-tabs-v060");
+  const content = settings?.querySelector?.(".settings-content-v060");
+  if (!settings || !tabs || !content) return null;
+
+  const language = preferredLanguage(save);
+  const tabLabel = language === "hu" ? "Téma" : "Theme";
+  let tab = document.getElementById("themeSettingsTabV2");
+  if (!tab) {
+    tab = document.createElement("button");
+    tab.id = "themeSettingsTabV2";
+    tab.type = "button";
+    tab.dataset.v060Settings = "theme";
+    tab.innerHTML = `<i>✿</i><b>${escapeHtml(tabLabel)}</b>`;
+    const accountTab = tabs.querySelector('[data-v060-settings="account"]');
+    tabs.insertBefore(tab, accountTab || null);
+  } else {
+    const label = tab.querySelector("b");
+    if (label) label.textContent = tabLabel;
+  }
+
+  if (!tab.dataset.themeSystemBound) {
+    tab.dataset.themeSystemBound = "true";
+    tab.addEventListener("click", () => selectV060SettingsTab("theme"));
+  }
+
+  let page = document.getElementById("themeSettingsPageV2");
+  if (!page) {
+    page = document.createElement("section");
+    page.id = "themeSettingsPageV2";
+    page.className = "settings-page-v060 theme-settings-page-v2";
+    page.dataset.v060SettingsPage = "theme";
+    page.dataset.i18nIgnore = "true";
+    const accountPage = content.querySelector('[data-v060-settings-page="account"]');
+    content.insertBefore(page, accountPage || null);
+  }
+  return page;
+}
+
+function themePickerMarkup(save) {
+  const text = copy(save);
+  return `
+    <div class="theme-settings-head-v1">
+      <div><h3>${escapeHtml(text.title)}</h3><p>${escapeHtml(text.subtitle)}</p></div>
+      <span class="theme-current-chip-v1">${escapeHtml(themeName(THEMES[save.settings.uiTheme], save))}</span>
+    </div>
+    <div class="theme-options-v1">
+      ${Object.values(THEMES).map(theme => themeCardMarkup(theme, save)).join("")}
+    </div>
+    <p class="theme-test-hint-v1">${escapeHtml(text.testHint)}</p>`;
+}
+
+function bindThemeButtons(root, save) {
+  root?.querySelectorAll?.("[data-theme-select]").forEach(button => {
+    button.addEventListener("click", () => setTheme(button.dataset.themeSelect, save));
+  });
+}
+
 function renderSettingsCard() {
   const save = ensureSave(window.UI?.save);
+  if (!save) return;
+
+  // Current CHERRIFT v0.9.3.x Settings layout: add a real Theme tab/page.
+  const v060Page = ensureV060SettingsPage(save);
+  if (v060Page) {
+    const language = preferredLanguage(save);
+    v060Page.innerHTML = `
+      <header>
+        <small>${language === "hu" ? "MEGJELENÉS" : "APPEARANCE"}</small>
+        <h3>${language === "hu" ? "Menütéma" : "Menu theme"}</h3>
+        <p>${language === "hu" ? "Válaszd ki, hogyan nézzen ki a CHERRIFT teljes kezelőfelülete." : "Choose how the complete CHERRIFT interface should look."}</p>
+      </header>
+      <div class="theme-settings-card-v1 theme-settings-embedded-v2">
+        ${themePickerMarkup(save)}
+      </div>`;
+    bindThemeButtons(v060Page, save);
+    return;
+  }
+
+  // Fallback for the old Settings grid used by earlier builds.
   const settingsGrid = document.querySelector("#settings .settings-grid");
-  if (!save || !settingsGrid) return;
+  if (!settingsGrid) return;
 
   let card = document.getElementById("themeSettingsCardV1");
   if (!card) {
@@ -276,21 +366,44 @@ function renderSettingsCard() {
     card.dataset.i18nIgnore = "true";
     settingsGrid.appendChild(card);
   }
+  card.innerHTML = themePickerMarkup(save);
+  bindThemeButtons(card, save);
+}
 
-  const text = copy(save);
-  card.innerHTML = `
-    <div class="theme-settings-head-v1">
-      <div><h3>${escapeHtml(text.title)}</h3><p>${escapeHtml(text.subtitle)}</p></div>
-      <span class="theme-current-chip-v1">${escapeHtml(themeName(THEMES[save.settings.uiTheme], save))}</span>
-    </div>
-    <div class="theme-options-v1">
-      ${Object.values(THEMES).map(theme => themeCardMarkup(theme, save)).join("")}
-    </div>
-    <p class="theme-test-hint-v1">${escapeHtml(text.testHint)}</p>`;
+function patchV060SettingsLifecycle() {
+  const layer = window.CHERRIFT_V060;
+  if (!layer?.initAfterUI || layer.initAfterUI.__themeSystemPatched) return;
 
-  card.querySelectorAll("[data-theme-select]").forEach(button => {
-    button.addEventListener("click", () => setTheme(button.dataset.themeSelect, save));
+  const previousInitAfterUI = layer.initAfterUI.bind(layer);
+  const patchedInitAfterUI = function themeAwareV060Init(...args) {
+    const result = previousInitAfterUI(...args);
+    ensureV060SettingsPage(window.UI?.save);
+    renderSettingsCard();
+    requestAnimationFrame(renderSettingsCard);
+    window.setTimeout(renderSettingsCard, 180);
+    return result;
+  };
+  patchedInitAfterUI.__themeSystemPatched = true;
+  layer.initAfterUI = patchedInitAfterUI;
+}
+
+function watchSettingsLayout() {
+  const settings = document.getElementById("settings");
+  if (!settings || settings.dataset.themeSystemObserved) return;
+  settings.dataset.themeSystemObserved = "true";
+  let queued = false;
+  const observer = new MutationObserver(() => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => {
+      queued = false;
+      if (!document.getElementById("themeSettingsTabV2") || !document.getElementById("themeSettingsPageV2")) {
+        ensureV060SettingsPage(window.UI?.save);
+        renderSettingsCard();
+      }
+    });
   });
+  observer.observe(settings, { childList: true, subtree: true });
 }
 
 function migrateLocalSaveEarly() {
@@ -350,12 +463,21 @@ function patchUi() {
 ensureCss();
 applyTheme(migrateLocalSaveEarly(), { silent: true });
 patchStorageLoad();
+ensureV060SettingsPage();
+patchV060SettingsLifecycle();
 patchUi();
+watchSettingsLayout();
 
-window.addEventListener("cherrift:languagechange", () => renderSettingsCard());
+window.addEventListener("cherrift:languagechange", () => {
+  ensureV060SettingsPage(window.UI?.save);
+  renderSettingsCard();
+});
 window.addEventListener("DOMContentLoaded", () => {
   patchStorageLoad();
+  ensureV060SettingsPage(window.UI?.save);
+  patchV060SettingsLifecycle();
   patchUi();
+  watchSettingsLayout();
   renderSettingsCard();
 });
 

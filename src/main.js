@@ -151,7 +151,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   await loadScript("src/cherrift_v0944.js?v=09345","v0.9.3.4.5 Crisp Lazy Map Hotfix");
   await loadScript("src/cherrift_v0944.js?v=09346","v0.9.3.4.6 Crisp Map Stability Hotfix");
   await loadScript("src/cherrift_v09347.js?v=09347","v0.9.3.4.7 PC Visual Polish");
-  await loadScript("src/cherrift_theme_system.js?v=1","Theme System");
+  await loadScript("src/cherrift_theme_system.js?v=2","Theme System");
 
   try {
     if (failedPatches.length) {
