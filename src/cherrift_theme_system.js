@@ -1,7 +1,7 @@
 (() => {
 "use strict";
 
-const VERSION = "3.0.0-full-ui";
+const VERSION = "4.0.0-ui-readability-polish";
 const STYLE_ID = "cherriftThemeSystemCss";
 const SAVE_KEY = "cherrift_save_v025_polish";
 
@@ -118,7 +118,7 @@ function ensureCss() {
   const link = document.createElement("link");
   link.id = STYLE_ID;
   link.rel = "stylesheet";
-  link.href = "assets/ui/themes/theme_system.css?v=3";
+  link.href = "assets/ui/themes/theme_system.css?v=4";
   link.onload = () => document.documentElement.classList.add("cherrift-theme-css-ready");
   document.head.appendChild(link);
 }
@@ -417,6 +417,197 @@ function watchSettingsLayout() {
   observer.observe(settings, { childList: true, subtree: true });
 }
 
+
+const uiPolishState = {
+  route: "menu",
+  queued: false,
+  observer: null,
+  interactionBound: false
+};
+
+function currentRouteBucket(route = uiPolishState.route) {
+  if (["worlds", "worldsV094"].includes(route)) return "play";
+  if (route === "gear") return "gear";
+  if (["menu", "home"].includes(route)) return "home";
+  if (["chests", "gachaV082"].includes(route)) return "gacha";
+  return "more";
+}
+
+function setMobileNavigationState(route = uiPolishState.route) {
+  uiPolishState.route = route || "menu";
+  const drawer = document.getElementById("mobileMenuV082");
+  const drawerOpen = !!drawer && !drawer.classList.contains("hidden");
+  const activeBucket = drawerOpen ? "more" : currentRouteBucket(uiPolishState.route);
+
+  const navs = [
+    document.getElementById("globalMobileNavV052"),
+    document.querySelector("#menu .mobile-bottom-nav-v051")
+  ].filter(Boolean);
+
+  for (const nav of navs) {
+    nav.querySelectorAll("button").forEach(button => {
+      let bucket = "";
+      if (button.matches("[data-v082-toggle-mobile]")) bucket = "more";
+      else {
+        const target = button.dataset.v082Open || button.dataset.open || "";
+        bucket = currentRouteBucket(target);
+      }
+      const active = bucket === activeBucket;
+      button.classList.toggle("active", active);
+      button.classList.toggle("theme-nav-active", active);
+      if (active) button.setAttribute("aria-current", "page");
+      else button.removeAttribute("aria-current");
+    });
+  }
+}
+
+function polishMobileDrawer() {
+  const drawer = document.getElementById("mobileMenuV082");
+  if (!drawer) return;
+  drawer.classList.add("theme-readable-drawer");
+  drawer.querySelectorAll(".mobile-menu-grid-v082 button").forEach(button => {
+    button.classList.add("theme-drawer-button");
+    const icon = button.querySelector(":scope > i");
+    if (icon) icon.setAttribute("aria-hidden", "true");
+  });
+}
+
+function polishArsenal() {
+  const panel = document.getElementById("arsenalV070");
+  if (!panel) return;
+  panel.classList.add("theme-arsenal-polished");
+
+  // Coin and Gear Scrap are already visible in the header wallet. Keep only
+  // upgrade stones in the secondary material strip to avoid duplicate data.
+  panel.querySelectorAll('.arsenal-note-v070 [data-v082-material="gearScrap"]').forEach(button => button.remove());
+
+  panel.querySelectorAll(".arsenal-compact-v082").forEach(card => {
+    card.classList.add("theme-arsenal-card");
+    const multiplier = card.querySelector("header > b");
+    if (multiplier) {
+      multiplier.classList.add("theme-arsenal-multiplier");
+      multiplier.setAttribute("title", preferredLanguage() === "hu" ? "Aktuális szorzó" : "Current multiplier");
+    }
+    card.querySelector(".arsenal-main-action-v082")?.classList.add("theme-arsenal-level-button");
+  });
+}
+
+function polishGear() {
+  const gear = document.getElementById("gear");
+  if (!gear) return;
+  gear.classList.add("theme-gear-polished");
+  gear.querySelectorAll(".gear-open-arsenal-v070").forEach(button => button.classList.add("theme-hide-gear-arsenal-shortcut"));
+
+  gear.querySelectorAll("[data-v0560-slot]").forEach(slotCard => {
+    const slot = slotCard.dataset.v0560Slot;
+    const level = Number(window.UI?.save?.arsenal?.slots?.[slot]?.level) || 1;
+    slotCard.classList.add("theme-equipped-slot");
+    const badge = slotCard.querySelector(".arsenal-badge-v070");
+    if (badge) {
+      const label = `LVL ${level}`;
+      if (badge.textContent !== label) badge.textContent = label;
+      badge.classList.add("theme-gear-level-badge");
+    }
+    slotCard.querySelector(".gear-slot-icon-v0560")?.classList.add("theme-equipped-icon");
+  });
+}
+
+function detectEconomyRoute() {
+  const panel = document.getElementById("chests");
+  if (!panel) return;
+  const active = panel.querySelector("[data-v080-tab].active")?.dataset.v080Tab;
+  const heading = panel.querySelector(".economy-head-v080 h1")?.textContent?.trim().toLowerCase() || "";
+  const route = active || (/\bbag\b|inventory|táska/.test(heading) ? "bag" : /shop|bolt/.test(heading) ? "shop" : /buff/.test(heading) ? "buffs" : "gacha");
+  panel.dataset.themeEconomyRoute = route;
+}
+
+function findFoodIdForReward(card) {
+  const catalog = window.CHERRIFT_V080?.foodCatalog || {};
+  const name = card.querySelector(".reward-copy-v083 h3")?.textContent?.trim().toLowerCase() || "";
+  const imageSrc = card.querySelector(".reward-image-v083")?.getAttribute("src") || "";
+  return Object.entries(catalog).find(([, food]) => {
+    const foodName = String(food?.name || "").trim().toLowerCase();
+    const asset = String(food?.asset || "");
+    return (foodName && foodName === name) || (asset && imageSrc && (imageSrc === asset || imageSrc.endsWith(asset)));
+  })?.[0] || "";
+}
+
+function polishRewardOverlay() {
+  const overlay = document.getElementById("rewardOverlayV083");
+  if (!overlay) return;
+  overlay.classList.add("theme-reward-polished");
+  overlay.querySelectorAll(".reward-item-v083").forEach(card => {
+    const subtitle = card.querySelector(".reward-copy-v083 p");
+    if (!subtitle) return;
+    if (/maximum(?:\s+stack)?\s*99|maximum\s+99\s+db/i.test(subtitle.textContent || "")) {
+      const itemId = findFoodIdForReward(card);
+      if (!itemId) return;
+      const current = Math.max(0, Math.floor(Number(window.UI?.save?.bag?.items?.[itemId]) || 0));
+      subtitle.textContent = `${current} / 99`;
+      subtitle.classList.add("theme-stack-count");
+    }
+  });
+}
+
+function addInteractionFeedback() {
+  if (uiPolishState.interactionBound) return;
+  uiPolishState.interactionBound = true;
+
+  // Pointer feedback is bound separately because some older navigation handlers
+  // stop the click event during capture after opening their target panel.
+  document.addEventListener("pointerdown", event => {
+    const button = event.target.closest?.("button, [role='button']");
+    if (!button || button.disabled) return;
+    button.classList.remove("theme-click-pop");
+    void button.offsetWidth;
+    button.classList.add("theme-click-pop");
+    window.setTimeout(() => button.classList.remove("theme-click-pop"), 260);
+  }, true);
+
+  document.addEventListener("click", event => {
+    const mobileToggle = event.target.closest?.("[data-v082-toggle-mobile]");
+    if (mobileToggle) requestAnimationFrame(() => setMobileNavigationState(uiPolishState.route));
+
+    const opener = event.target.closest?.("[data-v082-open], [data-open]");
+    if (opener) {
+      const route = opener.dataset.v082Open || opener.dataset.open || "menu";
+      uiPolishState.route = route;
+      requestAnimationFrame(() => setMobileNavigationState(route));
+    }
+  });
+}
+
+function polishDynamicUi() {
+  polishMobileDrawer();
+  polishArsenal();
+  polishGear();
+  detectEconomyRoute();
+  polishRewardOverlay();
+  setMobileNavigationState(uiPolishState.route);
+}
+
+function scheduleDynamicPolish() {
+  if (uiPolishState.queued) return;
+  uiPolishState.queued = true;
+  requestAnimationFrame(() => {
+    uiPolishState.queued = false;
+    polishDynamicUi();
+  });
+}
+
+function observeDynamicUi() {
+  if (uiPolishState.observer || !document.body) return;
+  uiPolishState.observer = new MutationObserver(scheduleDynamicPolish);
+  uiPolishState.observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["class"]
+  });
+  addInteractionFeedback();
+  scheduleDynamicPolish();
+}
+
 function migrateLocalSaveEarly() {
   try {
     const raw = localStorage.getItem(SAVE_KEY);
@@ -460,10 +651,12 @@ function patchUi() {
   if (previousOpen && !window.UI.open?.__themeSystemPatched) {
     const patchedOpen = function themeAwareOpen(panel, ...args) {
       const result = previousOpen(panel, ...args);
+      uiPolishState.route = panel || "menu";
       if (panel === "settings") {
         renderSettingsCard();
         requestAnimationFrame(renderSettingsCard);
       }
+      requestAnimationFrame(scheduleDynamicPolish);
       return result;
     };
     patchedOpen.__themeSystemPatched = true;
@@ -478,6 +671,7 @@ ensureV060SettingsPage();
 patchV060SettingsLifecycle();
 patchUi();
 watchSettingsLayout();
+observeDynamicUi();
 
 window.addEventListener("cherrift:languagechange", () => {
   ensureV060SettingsPage(window.UI?.save);
@@ -490,6 +684,8 @@ window.addEventListener("DOMContentLoaded", () => {
   patchUi();
   watchSettingsLayout();
   renderSettingsCard();
+  observeDynamicUi();
+  scheduleDynamicPolish();
 });
 
 window.CHERRIFT_THEMES = Object.freeze({
@@ -502,8 +698,9 @@ window.CHERRIFT_THEMES = Object.freeze({
   lock: lockTheme,
   isUnlocked,
   renderSettings: renderSettingsCard,
-  ensureSave
+  ensureSave,
+  polish: scheduleDynamicPolish
 });
 
-console.info("[CHERRIFT] Theme System v3 loaded: full UI coverage for Default, Cozy Cherry and Summer Splash.");
+console.info("[CHERRIFT] Theme System v4 loaded: readability, navigation and HUD polish for Default, Cozy Cherry and Summer Splash.");
 })();
