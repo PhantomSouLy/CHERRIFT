@@ -1,4 +1,4 @@
-/* CHERRIFT Theme System v1.0
+/* CHERRIFT Theme System v1.1
    Default + Cozy Cherry + Summer Splash
 */
 
@@ -262,6 +262,56 @@ html[data-cherrift-theme="summer_splash"] {
 .theme-option-v1 > button:disabled { cursor: default; opacity: .74; }
 .theme-option-v1.active > button { color: var(--theme-text); background: var(--theme-panel-soft); }
 .theme-test-hint-v1 { margin-top: 14px; font-size: 12px; }
+
+
+
+/* v0.9.3.x Settings integration: dedicated Theme tab/page */
+.theme-settings-page-v2 > header { margin-bottom: 18px; }
+.theme-settings-page-v2 > header h3 { margin: 4px 0 7px; }
+.theme-settings-embedded-v2 {
+  min-width: 0;
+  padding: clamp(14px, 2vw, 22px);
+  border: 1px solid var(--theme-outline);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--theme-panel) 88%, transparent);
+  box-shadow: 0 14px 28px var(--theme-shadow);
+}
+#themeSettingsTabV2 i { font-style: normal; }
+
+html[data-cherrift-theme="cozy_cherry"] :is(
+  .settings-shell-v060, .settings-tabs-v060, .settings-content-v060,
+  .settings-page-v060, .settings-quick-v060, .setting-line-v060, .setting-info-v060
+),
+html[data-cherrift-theme="summer_splash"] :is(
+  .settings-shell-v060, .settings-tabs-v060, .settings-content-v060,
+  .settings-page-v060, .settings-quick-v060, .setting-line-v060, .setting-info-v060
+) {
+  color: var(--theme-text) !important;
+  border-color: var(--theme-outline) !important;
+}
+html[data-cherrift-theme="cozy_cherry"] :is(.settings-tabs-v060, .settings-content-v060, .settings-quick-v060),
+html[data-cherrift-theme="summer_splash"] :is(.settings-tabs-v060, .settings-content-v060, .settings-quick-v060) {
+  background: var(--theme-panel) !important;
+  box-shadow: 0 10px 24px var(--theme-shadow) !important;
+}
+html[data-cherrift-theme="cozy_cherry"] .settings-tabs-v060 button,
+html[data-cherrift-theme="summer_splash"] .settings-tabs-v060 button {
+  color: var(--theme-text) !important;
+  border-color: transparent !important;
+  background: transparent !important;
+}
+html[data-cherrift-theme="cozy_cherry"] .settings-tabs-v060 button.active,
+html[data-cherrift-theme="summer_splash"] .settings-tabs-v060 button.active {
+  color: #fff !important;
+  border-color: var(--theme-outline-strong) !important;
+  background: linear-gradient(135deg, var(--theme-primary-strong), var(--theme-primary)) !important;
+}
+html[data-cherrift-theme="cozy_cherry"] .setting-line-v060,
+html[data-cherrift-theme="cozy_cherry"] .setting-info-v060,
+html[data-cherrift-theme="summer_splash"] .setting-line-v060,
+html[data-cherrift-theme="summer_splash"] .setting-info-v060 {
+  background: var(--theme-panel-soft) !important;
+}
 
 /* Shared full-UI theme behaviour */
 html[data-cherrift-theme="cozy_cherry"] body,
@@ -529,4 +579,17 @@ html[data-cherrift-theme="summer_splash"] .boot-track-v060 i {
 
 @media (prefers-reduced-motion: reduce) {
   .theme-option-v1 { transition: none; }
+}
+
+
+@media (max-width: 620px) {
+  .theme-settings-head-v1 { flex-direction: column; }
+  .theme-current-chip-v1 { align-self: flex-start; }
+  .theme-option-v1 {
+    grid-template-columns: 92px minmax(0,1fr);
+    padding: 10px;
+  }
+  .theme-preview-v1 { min-height: 112px; }
+  .theme-option-title-v1 { align-items: flex-start; flex-direction: column; }
+  .theme-option-v1 > button { grid-column: 1 / -1; width: 100%; }
 }
