@@ -148,7 +148,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   await loadScript("src/cherrift_v094.js?v=09341","v0.9.3.4.1 World Tile Scale Hotfix");
   await loadScript("src/cherrift_v0942.js?v=09342","v0.9.3.4.2 Sharp Ground Texture Hotfix");
   await loadScript("src/cherrift_v0943.js?v=09343","v0.9.3.4.3 Native 512 Ground Tile Hotfix");
-  await loadScript("src/cherrift_v0944.js?v=09345","v0.9.3.4.5 Crisp Lazy Map Hotfix");
+  await loadScript("src/cherrift_v0944.js?v=09346","v0.9.3.4.6 Crisp Map Stability Hotfix");
 
   try {
     if (failedPatches.length) {
