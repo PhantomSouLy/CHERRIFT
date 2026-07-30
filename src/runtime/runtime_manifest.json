@@ -1,5 +1,5 @@
 {
-  "runtimeVersion": "1.0.0",
+  "runtimeVersion": "1.1.0",
   "gameVersion": "0.9.3-test",
   "javascript": "src/runtime/cherrift_app.js",
   "stylesheet": "assets/runtime/cherrift_app.css",
@@ -105,5 +105,10 @@
   "externalConfiguration": [
     "src/config.js",
     "src/supabase_config.js"
+  ],
+  "hotfixes": [
+    "Retire the initial boot layer before the Continue overlay appears",
+    "Correct bundled CSS mainmenu image paths",
+    "Restore lightweight tap-only petals; remove hold/drag spawning"
   ]
 }

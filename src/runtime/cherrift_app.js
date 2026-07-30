@@ -26014,35 +26014,25 @@ function ensurePetalLayer() {
   return layer;
 }
 
-function createPetalRipple(layer, x, y) {
-  const ripple = document.createElement('span');
-  ripple.className = 'theme-petal-ripple-v5';
-  ripple.style.left = `${x}px`;
-  ripple.style.top = `${y}px`;
-  layer.appendChild(ripple);
-  window.setTimeout(() => ripple.remove(), 430);
-}
-
-function createPetalBurst(x, y, options = {}) {
+function createPetalBurst(x, y) {
   if (document.body.classList.contains("is-playing")) return;
   if (matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) return;
   const layer = ensurePetalLayer();
   const lightweight = document.documentElement.classList.contains("mobile-performance-mode");
-  const amount = Number(options.amount) || (lightweight ? 6 : 10);
+  const amount = lightweight ? 4 : 7;
   const fragment = document.createDocumentFragment();
-  createPetalRipple(layer, x, y);
   for (let index = 0; index < amount; index++) {
     const petal = document.createElement("i");
-    const angle = (Math.PI * 2 * index / amount) + (Math.random() - .5) * .8;
-    const distance = (lightweight ? 26 : 34) + Math.random() * (lightweight ? 22 : 34);
+    const angle = (Math.PI * 2 * index / amount) + (Math.random() - .5) * .65;
+    const distance = (lightweight ? 24 : 34) + Math.random() * (lightweight ? 18 : 32);
     petal.style.left = `${x}px`;
     petal.style.top = `${y}px`;
     petal.style.setProperty("--petal-x", `${Math.cos(angle) * distance}px`);
-    petal.style.setProperty("--petal-y", `${Math.sin(angle) * distance + 18 + Math.random() * 18}px`);
-    petal.style.setProperty("--petal-r", `${(Math.random() * 260 - 130).toFixed(0)}deg`);
+    petal.style.setProperty("--petal-y", `${Math.sin(angle) * distance + 22 + Math.random() * 20}px`);
+    petal.style.setProperty("--petal-r", `${(Math.random() * 240 - 120).toFixed(0)}deg`);
     petal.style.setProperty("--petal-delay", `${Math.random() * 45}ms`);
     fragment.appendChild(petal);
-    window.setTimeout(() => petal.remove(), 820);
+    window.setTimeout(() => petal.remove(), 760);
   }
   layer.appendChild(fragment);
 }
@@ -26134,6 +26124,10 @@ function installStartupExperience() {
   const previousFinish = window.CHERRIFT_V060.finishBoot.bind(window.CHERRIFT_V060);
   window.CHERRIFT_V060.finishBoot = function finishBootV5(...args) {
     ensureStartupOverlay();
+    document.body.classList.remove("v060-booting");
+    const initialBoot = document.getElementById("bootV060");
+    initialBoot?.classList.add("done");
+    window.setTimeout(() => initialBoot?.remove(), 380);
     const result = previousFinish(...args);
     syncStartupExperience();
     window.clearInterval(uiPolishState.startupTimer);
@@ -26147,44 +26141,26 @@ function addInteractionFeedback() {
   if (uiPolishState.interactionBound) return;
   uiPolishState.interactionBound = true;
   const pointers = new Map();
-  const trailTimers = new Map();
-
-  function stopTrail(pointerId) {
-    const timer = trailTimers.get(pointerId);
-    if (timer) window.clearInterval(timer);
-    trailTimers.delete(pointerId);
-  }
 
   document.addEventListener("pointerdown", event => {
     if (!event.isPrimary) return;
-    const point = { x:event.clientX, y:event.clientY };
-    pointers.set(event.pointerId, point);
-    createPetalBurst(point.x, point.y);
-    const cadence = document.documentElement.classList.contains('mobile-performance-mode') ? 140 : 95;
-    trailTimers.set(event.pointerId, window.setInterval(() => {
-      const active = pointers.get(event.pointerId);
-      if (!active) return;
-      createPetalBurst(active.x, active.y, { amount: document.documentElement.classList.contains('mobile-performance-mode') ? 4 : 7 });
-    }, cadence));
+    pointers.set(event.pointerId, { x:event.clientX, y:event.clientY });
     const button = event.target.closest?.("button, [role='button']");
     if (!button || button.disabled) return;
     button.classList.add("theme-click-pop");
     window.setTimeout(() => button.classList.remove("theme-click-pop"), 220);
   }, true);
 
-  document.addEventListener('pointermove', event => {
-    const point = pointers.get(event.pointerId);
-    if (!point) return;
-    point.x = event.clientX;
-    point.y = event.clientY;
-  }, true);
-
   document.addEventListener("pointerup", event => {
+    const start = pointers.get(event.pointerId);
     pointers.delete(event.pointerId);
-    stopTrail(event.pointerId);
+    if (!start) return;
+    if (Math.hypot(event.clientX - start.x, event.clientY - start.y) <= 12) {
+      createPetalBurst(event.clientX, event.clientY);
+    }
     requestAnimationFrame(scheduleDynamicPolish);
   }, true);
-  document.addEventListener("pointercancel", event => { pointers.delete(event.pointerId); stopTrail(event.pointerId); }, true);
+  document.addEventListener("pointercancel", event => pointers.delete(event.pointerId), true);
 
   document.addEventListener("click", event => {
     const mobileToggle = event.target.closest?.("[data-v082-toggle-mobile]");
@@ -26461,4 +26437,4 @@ window.addEventListener("DOMContentLoaded", async () => {
 });
 
 
-console.info("[CHERRIFT] Clean Runtime 1.0.0 loaded from one consolidated application file.");
+console.info("[CHERRIFT] Clean Runtime 1.1.0 hotfix loaded: clean startup transition and lightweight tap petals.");
