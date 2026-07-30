@@ -1421,3 +1421,137 @@ html.mobile-performance-mode .theme-click-pop{animation-duration:.14s!important}
 #gear .theme-selection-mode-v5 [data-v0560-item-id].selected-v082{filter:none!important;opacity:1!important;transform:none!important}
 #gear .theme-selection-mode-v5 [data-v0560-item-id].selected-v082 .gear-select-mark-v082{display:grid!important}
 .startup-discord-mark-v5{font-size:10px!important;letter-spacing:-1px!important;font-weight:1000!important}
+
+/* ===== v6 hotfix overrides ===== */
+
+/* Hide stray training dummy panel outside gameplay. */
+body:not(.is-playing) .training-damage-v094{display:none!important}
+
+/* Profile cleanup. */
+.theme-profile-hide-v6,
+#profile .panel-head p,
+.profile-head-v082 p{display:none!important}
+
+/* Stronger readable upgrade requirements. */
+#arsenalV070 .theme-readable-requirements-v6,
+#arsenalV070 .theme-readable-requirements-v6 :is(span,small,b,strong,em){
+  color:var(--theme-text,#fff)!important;
+  opacity:1!important;
+  text-shadow:none!important;
+}
+#arsenalV070 .theme-readable-requirements-v6 [disabled],
+#arsenalV070 .theme-readable-requirements-v6 .locked,
+#arsenalV070 .theme-readable-requirements-v6 .missing{color:var(--theme-danger,#df718d)!important}
+
+/* Gear loadout: square slots, full icon, only level shown on the tile. */
+#gear .gear-slot-v0560.theme-equipped-slot{
+  position:relative!important;
+  display:grid!important;
+  place-items:stretch!important;
+  width:min(29vw,124px)!important;
+  min-width:92px!important;
+  aspect-ratio:1/1!important;
+  min-height:auto!important;
+  padding:0!important;
+  border-radius:22px!important;
+  overflow:hidden!important;
+}
+#gear .gear-slot-v0560.theme-equipped-slot .gear-slot-icon-v0560,
+#gear .gear-slot-v0560.theme-equipped-slot .theme-equipped-icon,
+#gear .gear-slot-v0560.theme-equipped-slot [class*="gear-slot-icon"],
+#gear .gear-slot-v0560.theme-equipped-slot [class*="gear-icon-wrap"]{
+  width:100%!important;
+  height:100%!important;
+  display:grid!important;
+  place-items:center!important;
+  margin:0!important;
+  padding:0!important;
+}
+#gear .gear-slot-v0560.theme-equipped-slot :is(img,.gear-icon-v063,canvas,svg){
+  width:84%!important;
+  height:84%!important;
+  object-fit:contain!important;
+  transform:scale(1.14)!important;
+}
+#gear .gear-slot-v0560.theme-equipped-slot .theme-gear-level-badge,
+#gear .gear-slot-v0560.theme-equipped-slot .arsenal-badge-v070{
+  left:8px!important;
+  right:auto!important;
+  bottom:8px!important;
+  top:auto!important;
+  min-width:54px!important;
+  padding:5px 8px!important;
+  border-radius:8px!important;
+  font-size:9px!important;
+  letter-spacing:.4px!important;
+}
+#gear .gear-slot-v0560 .theme-slot-rank-badge{display:none!important}
+
+/* Better login / continue presentation. */
+.cherrift-startup-v5>main{
+  width:min(560px,92vw)!important;
+  padding-top:min(18vh,120px)!important;
+  align-content:start!important;
+}
+.cherrift-startup-v5 .startup-version-v5{margin:10px 0 40px!important}
+.cherrift-startup-v5 .startup-continue-v5{
+  min-width:auto!important;
+  min-height:auto!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  color:#fff!important;
+  opacity:.78!important;
+  font-size:clamp(24px,6.6vw,44px)!important;
+  font-weight:950!important;
+  letter-spacing:.8px!important;
+  text-shadow:0 3px 20px rgba(0,0,0,.58),0 0 18px color-mix(in srgb,var(--theme-primary,#e44a97) 36%,transparent)!important;
+}
+.cherrift-startup-v5.ready .startup-continue-v5{
+  opacity:1!important;
+  animation:startupContinuePulseV5 1.65s ease-in-out infinite!important;
+}
+.cherrift-startup-v5 .startup-track-v5{
+  width:min(520px,88vw)!important;
+  margin-top:28px!important;
+}
+.cherrift-startup-v5.ready .startup-status-v5{display:none!important}
+.cherrift-startup-v5 .startup-status-v5{
+  margin-top:18px!important;
+  max-width:min(420px,84vw)!important;
+  text-align:center!important;
+  line-height:1.45!important;
+}
+
+/* Petal interaction upgrade with blur ripple. */
+.theme-petal-layer-v5 .theme-petal-ripple-v5{
+  position:absolute;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  border:1px solid color-mix(in srgb,var(--petal-c,#ffd0e4) 80%,transparent);
+  background:radial-gradient(circle,color-mix(in srgb,var(--petal-c,#ffd0e4) 42%,transparent),transparent 70%);
+  filter:blur(2px);
+  opacity:.58;
+  transform:translate(-50%,-50%) scale(.35);
+  animation:themePetalRippleV6 .42s ease-out forwards;
+}
+.theme-petal-layer-v5 i{
+  width:9px!important;
+  height:14px!important;
+  border-radius:80% 8% 78% 12%/88% 6% 92% 9%!important;
+  box-shadow:0 0 6px color-mix(in srgb,var(--petal-a,#ef67aa) 45%,transparent)!important;
+  transform:translate(-50%,-50%) rotate(28deg)!important;
+  animation:themePetalBurstV6 .76s var(--petal-delay,0ms) cubic-bezier(.15,.65,.25,1) forwards!important;
+}
+.theme-petal-layer-v5 i:nth-child(2n){width:8px!important;height:12px!important}
+.theme-petal-layer-v5 i:nth-child(3n){width:10px!important;height:13px!important}
+@keyframes themePetalRippleV6{0%{opacity:.58;transform:translate(-50%,-50%) scale(.35)}100%{opacity:0;transform:translate(-50%,-50%) scale(2.35)}}
+@keyframes themePetalBurstV6{0%{opacity:.82;transform:translate(-50%,-50%) scale(.42) rotate(-12deg)}20%{opacity:.8;transform:translate(calc(-50% + var(--petal-x)*.32),calc(-50% + var(--petal-y)*.16)) scale(1) rotate(calc(var(--petal-r)*.32))}100%{opacity:0;transform:translate(calc(-50% + var(--petal-x)),calc(-50% + var(--petal-y))) scale(.78) rotate(var(--petal-r))}}
+
+@media(max-width:820px){
+  #gear .gear-slot-v0560.theme-equipped-slot{width:min(30vw,116px)!important;min-width:88px!important}
+  .cherrift-startup-v5>main{padding-top:min(22vh,150px)!important}
+}
