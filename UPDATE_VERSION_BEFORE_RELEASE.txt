@@ -1,12 +1,19 @@
 CHERRIFT – KIADÁS ELŐTT KÖTELEZŐ
 
-A verziószámot minden új build előtt frissíteni kell a központi CHERRIFT_BUILD beállításban.
-A src/main.js fájlban lévő fallback értékeket is ellenőrizd:
+A megjelenített verzió egyetlen aktív helye:
 
-- BUILD_TITLE
-- BUILD_LABEL
+src/config.js → window.CHERRIFT_BUILD
 
-A jelenlegi fallback tesztérték:
+Minden új build előtt frissítsd ezeket:
+- version
+- displayVersion
+- title
+- label
+
+A jelenlegi tesztérték:
 TESZTVERZIÓ · v0.9.3
 
-A Loading / Login / Tap or Click to Continue képernyő automatikusan ebből a build labelből olvassa ki a verziót.
+A Loading / Login / Tap or Click to Continue képernyő automatikusan a CHERRIFT_BUILD értékeit használja.
+A régi src/main.js már nem része a Clean Runtime rendszernek, ott semmit nem kell átírni.
+
+Publikus verziónál a package.json "version" értékét is igazítsd a kiadáshoz.
