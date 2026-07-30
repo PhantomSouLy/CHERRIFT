@@ -1525,31 +1525,37 @@ body:not(.is-playing) .training-damage-v094{display:none!important}
   line-height:1.45!important;
 }
 
-/* Petal interaction upgrade with blur ripple. */
+/* Petal interaction burst: softer center puff + more falling sakura petals. */
 .theme-petal-layer-v5 .theme-petal-ripple-v5{
   position:absolute;
-  width:18px;
-  height:18px;
+  width:22px;
+  height:22px;
   border-radius:50%;
-  border:1px solid color-mix(in srgb,var(--petal-c,#ffd0e4) 80%,transparent);
-  background:radial-gradient(circle,color-mix(in srgb,var(--petal-c,#ffd0e4) 42%,transparent),transparent 70%);
+  border:1px solid color-mix(in srgb,var(--petal-c,#ffd0e4) 74%,transparent);
+  background:radial-gradient(circle,color-mix(in srgb,var(--petal-c,#ffd0e4) 55%,transparent),transparent 72%);
   filter:blur(2px);
-  opacity:.58;
-  transform:translate(-50%,-50%) scale(.35);
-  animation:themePetalRippleV6 .42s ease-out forwards;
+  opacity:.62;
+  transform:translate(-50%,-50%) scale(.28);
+  animation:themePetalRippleV6 .52s ease-out forwards;
 }
 .theme-petal-layer-v5 i{
-  width:9px!important;
-  height:14px!important;
-  border-radius:80% 8% 78% 12%/88% 6% 92% 9%!important;
-  box-shadow:0 0 6px color-mix(in srgb,var(--petal-a,#ef67aa) 45%,transparent)!important;
-  transform:translate(-50%,-50%) rotate(28deg)!important;
-  animation:themePetalBurstV6 .76s var(--petal-delay,0ms) cubic-bezier(.15,.65,.25,1) forwards!important;
+  width:10px!important;
+  height:15px!important;
+  border-radius:88% 10% 82% 14%/92% 8% 96% 10%!important;
+  background:linear-gradient(180deg,var(--petal-a,#ef67aa),var(--petal-c,#ffd0e4))!important;
+  box-shadow:0 0 7px color-mix(in srgb,var(--petal-a,#ef67aa) 40%,transparent)!important;
+  transform:translate(-50%,-50%) rotate(18deg)!important;
+  animation:themePetalBurstV6 1.02s var(--petal-delay,0ms) cubic-bezier(.18,.74,.22,1) forwards!important;
 }
-.theme-petal-layer-v5 i:nth-child(2n){width:8px!important;height:12px!important}
-.theme-petal-layer-v5 i:nth-child(3n){width:10px!important;height:13px!important}
-@keyframes themePetalRippleV6{0%{opacity:.58;transform:translate(-50%,-50%) scale(.35)}100%{opacity:0;transform:translate(-50%,-50%) scale(2.35)}}
-@keyframes themePetalBurstV6{0%{opacity:.82;transform:translate(-50%,-50%) scale(.42) rotate(-12deg)}20%{opacity:.8;transform:translate(calc(-50% + var(--petal-x)*.32),calc(-50% + var(--petal-y)*.16)) scale(1) rotate(calc(var(--petal-r)*.32))}100%{opacity:0;transform:translate(calc(-50% + var(--petal-x)),calc(-50% + var(--petal-y))) scale(.78) rotate(var(--petal-r))}}
+.theme-petal-layer-v5 i:nth-child(2n){width:9px!important;height:13px!important;background:linear-gradient(180deg,var(--petal-b,#c681ff),var(--petal-c,#ffd0e4))!important}
+.theme-petal-layer-v5 i:nth-child(3n){width:11px!important;height:14px!important;background:linear-gradient(180deg,var(--petal-c,#ffd0e4),var(--petal-a,#ef67aa))!important}
+@keyframes themePetalRippleV6{0%{opacity:.62;transform:translate(-50%,-50%) scale(.28)}100%{opacity:0;transform:translate(-50%,-50%) scale(2.8)}}
+@keyframes themePetalBurstV6{
+  0%{opacity:.9;transform:translate(-50%,-50%) scale(.32) rotate(-16deg)}
+  18%{opacity:.9;transform:translate(calc(-50% + var(--petal-x)*.34),calc(-50% - var(--petal-lift,12px))) scale(var(--petal-scale,1)) rotate(calc(var(--petal-r)*.26))}
+  72%{opacity:.72;transform:translate(calc(-50% + var(--petal-x)*.86),calc(-50% + var(--petal-y)*.72)) scale(calc(var(--petal-scale,1) * .96)) rotate(calc(var(--petal-r)*.88))}
+  100%{opacity:0;transform:translate(calc(-50% + var(--petal-x)),calc(-50% + var(--petal-y))) scale(calc(var(--petal-scale,1) * .78)) rotate(var(--petal-r))}
+}
 
 @media(max-width:820px){
   #gear .gear-slot-v0560.theme-equipped-slot{width:min(30vw,116px)!important;min-width:88px!important}
