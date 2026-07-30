@@ -1,7 +1,0 @@
-CHERRIFT v0.8.3 validation
-
-- node --check src/cherrift_v083.js: PASSED
-- node --check src/main.js: PASSED
-- Existing repository asset paths were audited from commit e1843f724e83a9a13c144affa94a9c462c39612a (Icons Pack).
-- No gameplay droprate or chest reward table was changed.
-- GitHub write was attempted but rejected by the connected integration with HTTP 403.
