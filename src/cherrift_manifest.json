@@ -1,0 +1,24 @@
+{
+  "runtimeVersion": "1.3.0-flat",
+  "gameVersion": "0.9.3-test",
+  "javascript": "src/cherrift_app.js",
+  "stylesheet": "assets/cherrift_app.css",
+  "externalConfiguration": [
+    "src/config.js",
+    "src/supabase_config.js"
+  ],
+  "vendor": [
+    "vendor/supabase-js-2.110.7.js"
+  ],
+  "includedHotfixes": [
+    "Clean startup transition and lightweight tap-only petals",
+    "Wuxia Sakura down/walk strip safety",
+    "World 2 RGBA decoration assets",
+    "Flat runtime paths for easier phone updates"
+  ],
+  "updateFiles": [
+    "index.html",
+    "src/cherrift_app.js",
+    "assets/cherrift_app.css"
+  ]
+}

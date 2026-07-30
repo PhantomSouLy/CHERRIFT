@@ -79,15 +79,15 @@ for (const [id, count] of ids) {
   if (count > 1) errors.push(`index.html: duplicate id \"${id}\" (${count} occurrences)`);
 }
 
-const runtimePath = join(root, "src", "runtime", "cherrift_app.js");
-const runtimeCssPath = join(root, "assets", "runtime", "cherrift_app.css");
-const runtimeManifestPath = join(root, "src", "runtime", "runtime_manifest.json");
+const runtimePath = join(root, "src", "cherrift_app.js");
+const runtimeCssPath = join(root, "assets", "cherrift_app.css");
+const runtimeManifestPath = join(root, "src", "cherrift_manifest.json");
 const authConfigPath = join(root, "src", "supabase_config.js");
 const supabaseVendorPath = join(root, "vendor", "supabase-js-2.110.7.js");
 
-if (!existsSync(runtimePath)) errors.push("src/runtime/cherrift_app.js: Clean Runtime bundle is missing");
-if (!existsSync(runtimeCssPath)) errors.push("assets/runtime/cherrift_app.css: Clean Runtime stylesheet is missing");
-if (!existsSync(runtimeManifestPath)) errors.push("src/runtime/runtime_manifest.json: runtime manifest is missing");
+if (!existsSync(runtimePath)) errors.push("src/cherrift_app.js: Clean Runtime bundle is missing");
+if (!existsSync(runtimeCssPath)) errors.push("assets/cherrift_app.css: Clean Runtime stylesheet is missing");
+if (!existsSync(runtimeManifestPath)) errors.push("src/cherrift_manifest.json: runtime manifest is missing");
 const runtime = existsSync(runtimePath) ? readFileSync(runtimePath, "utf8") : "";
 
 for (const match of html.matchAll(/<(?:script|link)\b[^>]+(?:src|href)=["']([^"']+)["']/gi)) {
@@ -96,17 +96,17 @@ for (const match of html.matchAll(/<(?:script|link)\b[^>]+(?:src|href)=["']([^"'
   if (!existsSync(join(root, reference))) errors.push(`index.html: missing local dependency ${reference}`);
 }
 
-if (!html.includes("src/runtime/cherrift_app.js")) errors.push("index.html: Clean Runtime JavaScript is not loaded");
-if (!html.includes("assets/runtime/cherrift_app.css")) errors.push("index.html: Clean Runtime CSS is not loaded");
+if (!html.includes("src/cherrift_app.js")) errors.push("index.html: Clean Runtime JavaScript is not loaded");
+if (!html.includes("assets/cherrift_app.css")) errors.push("index.html: Clean Runtime CSS is not loaded");
 if (/src\/(?:main|data|storage|input|game|ui|cherrift_v\d|cherrift_mobile_v|cherrift_theme_system)\.js/.test(html)) {
   errors.push("index.html: a legacy game/runtime script is still loaded beside Clean Runtime");
 }
-if (!(html.indexOf("vendor/supabase-js-2.110.7.js") < html.indexOf("src/runtime/cherrift_app.js"))) {
+if (!(html.indexOf("vendor/supabase-js-2.110.7.js") < html.indexOf("src/cherrift_app.js"))) {
   errors.push("index.html: Supabase browser client must load before Clean Runtime");
 }
 
 for (const required of ["signInWithOAuth", 'provider: "discord"', 'flowType: "pkce"', "persistSession", "signOut", "authGateV064"]) {
-  if (!runtime.includes(required)) errors.push(`src/runtime/cherrift_app.js: bundled auth runtime is missing ${required}`);
+  if (!runtime.includes(required)) errors.push(`src/cherrift_app.js: bundled auth runtime is missing ${required}`);
 }
 if (!existsSync(authConfigPath)) errors.push("src/supabase_config.js: missing public Supabase configuration");
 else {
@@ -125,21 +125,21 @@ for (const dependency of ["@supabase/supabase-js", "@supabase/ssr"]) {
 if (packageJson.version !== "0.9.3") errors.push(`package.json: expected version 0.9.3, found ${packageJson.version}`);
 for (const [file, contents] of [
   ["index.html", html],
-  ["src/runtime/cherrift_app.js", runtime]
+  ["src/cherrift_app.js", runtime]
 ]) {
   if (!contents.includes("0.9.3")) errors.push(`${file}: v0.9.3 build marker is missing`);
 }
 for (const marker of ["BEGIN src/cherrift_v091.js", "BEGIN src/cherrift_v092.js", "BEGIN src/cherrift_v093.js", "BEGIN src/locales/en.js", "BEGIN src/locales/hu.js", "BEGIN src/locales/index.js"]) {
-  if (!runtime.includes(marker)) errors.push(`src/runtime/cherrift_app.js: missing bundled source marker ${marker}`);
+  if (!runtime.includes(marker)) errors.push(`src/cherrift_app.js: missing bundled source marker ${marker}`);
 }
 if ((runtime.match(/BEGIN src\/cherrift_v0944\.js/g) || []).length !== 1) {
-  errors.push("src/runtime/cherrift_app.js: v0.9.3.4.6 map stability module must be bundled exactly once");
+  errors.push("src/cherrift_app.js: v0.9.3.4.6 map stability module must be bundled exactly once");
 }
-if (/loadScript\(["']src\/cherrift_/.test(runtime)) errors.push("src/runtime/cherrift_app.js: legacy patch loader is still present");
+if (/loadScript\(["']src\/cherrift_/.test(runtime)) errors.push("src/cherrift_app.js: legacy patch loader is still present");
 
 const legacyRuntimeFiles = readdirSync(join(root, "src"))
   .filter(name => /^(?:main|data|storage|input|game|ui|profile|cherrift_(?:v|mobile_v|theme_system|i18n_v)).*\.js$/.test(name));
-if (legacyRuntimeFiles.length) warnings.push(`Legacy source files remain and may be deleted after applying CLEAN_RUNTIME_DELETE_LIST.txt: ${legacyRuntimeFiles.join(", ")}`);
+if (legacyRuntimeFiles.length) warnings.push(`Legacy source files remain and may be deleted after applying DELETE_AFTER_SUCCESSFUL_TEST.txt: ${legacyRuntimeFiles.join(", ")}`);
 
 const skinThumbRoot = join(root, "assets", "ui", "skin_thumbs");
 const skinThumbs = existsSync(skinThumbRoot)
