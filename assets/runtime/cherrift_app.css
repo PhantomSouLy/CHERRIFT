@@ -17,7 +17,7 @@
   color: #fff;
   background:
     linear-gradient(90deg, rgba(5, 2, 11, .9), rgba(19, 6, 25, .63), rgba(5, 2, 11, .9)),
-    url("assets/ui/mainmenu.png?v=064") center 30% / cover no-repeat,
+    url("../ui/mainmenu.png?v=064") center 30% / cover no-repeat,
     #08040f;
   isolation: isolate;
 }
@@ -486,7 +486,7 @@ body.auth-gated-v064 #game { pointer-events: none !important; user-select: none;
     background:
       radial-gradient(circle at 50% 24%, rgba(255,120,185,.20), transparent 28%),
       linear-gradient(180deg, rgba(13,6,20,.18), rgba(7,3,12,.84)),
-      url("assets/ui/mainmenu.png?v=040") center/cover no-repeat !important;
+      url("../ui/mainmenu.png?v=040") center/cover no-repeat !important;
   }
 
   #menu .menu-left,
@@ -3107,7 +3107,7 @@ body.is-levelup .global-rail-v060,
   background:
     linear-gradient(90deg, rgba(8, 4, 13, .30), rgba(7, 4, 12, .08) 52%, rgba(7, 4, 12, .72)),
     linear-gradient(0deg, rgba(7, 4, 12, .42), transparent 46%),
-    url("assets/ui/mainmenu.png?v=060") center center / cover no-repeat,
+    url("../ui/mainmenu.png?v=060") center center / cover no-repeat,
     #0b0610 !important;
 }
 
@@ -7750,7 +7750,7 @@ html[data-cherrift-theme="cozy_cherry"] {
   --theme-menu-bg:
     linear-gradient(180deg, rgba(255,241,239,.18), rgba(111,66,79,.34)),
     radial-gradient(circle at 25% 12%, rgba(255,245,244,.46), transparent 35%),
-    url("../mainmenu.png?v=060") center / cover no-repeat;
+    url("../ui/mainmenu.png?v=060") center / cover no-repeat;
   --theme-nav-bg: rgba(255, 247, 245, .96);
   --theme-card-dark: linear-gradient(145deg, #49333e, #251a24);
   --theme-card-dark-flat: #33232d;
@@ -7847,7 +7847,7 @@ html[data-cherrift-theme="summer_splash"] {
   --theme-menu-bg:
     linear-gradient(180deg, rgba(91,211,229,.20), rgba(20,80,95,.40)),
     radial-gradient(circle at 82% 8%, rgba(255,235,135,.30), transparent 28%),
-    url("../mainmenu.png?v=060") center / cover no-repeat;
+    url("../ui/mainmenu.png?v=060") center / cover no-repeat;
   --theme-nav-bg: rgba(245, 253, 255, .96);
   --theme-card-dark: linear-gradient(145deg, #164859, #092a36);
   --theme-card-dark-flat: #103b49;
@@ -9059,7 +9059,7 @@ html[data-cherrift-theme="summer_splash"]{--petal-a:#2aa9bd;--petal-b:#ed91aa;--
 /* Startup / login experience. */
 .cherrift-startup-v5{
   position:fixed;inset:0;z-index:1000001;display:grid;place-items:center;padding:24px;color:#fff;overflow:hidden;
-  background:linear-gradient(180deg,rgba(8,5,15,.42),rgba(8,5,15,.72)),url("../mainmenu.png?v=060") center/cover no-repeat;
+  background:linear-gradient(180deg,rgba(8,5,15,.42),rgba(8,5,15,.72)),url("../ui/mainmenu.png?v=060") center/cover no-repeat;
   transition:opacity .32s ease,visibility .32s ease
 }
 .cherrift-startup-v5::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 40%,rgba(255,255,255,.18),transparent 36%);pointer-events:none}
@@ -9080,7 +9080,7 @@ html[data-cherrift-theme="summer_splash"]{--petal-a:#2aa9bd;--petal-b:#ed91aa;--
 
 /* Existing Discord/Guest gate becomes a full CHERRIFT login screen. */
 .auth-gate-v064{
-  z-index:1000002!important;padding:24px!important;background:linear-gradient(180deg,rgba(6,4,12,.28),rgba(6,4,12,.68)),url("../mainmenu.png?v=060") center/cover no-repeat!important
+  z-index:1000002!important;padding:24px!important;background:linear-gradient(180deg,rgba(6,4,12,.28),rgba(6,4,12,.68)),url("../ui/mainmenu.png?v=060") center/cover no-repeat!important
 }
 .auth-gate-v064 .auth-card-v064{
   width:min(620px,94vw)!important;margin:0 auto!important;padding:24px!important;border:1px solid color-mix(in srgb,var(--theme-primary-soft,#ffb9d8) 58%,white)!important;
@@ -9283,3 +9283,24 @@ body:not(.is-playing) .training-damage-v094{display:none!important}
   bottom:5px!important;
 }
 /* ===== END assets/ui/themes/theme_system.css ===== */
+
+
+/* ===== Clean Runtime 1.1 startup + tap feedback hotfix ===== */
+.cherrift-startup-v5{
+  background:
+    linear-gradient(180deg,rgba(8,5,15,.42),rgba(8,5,15,.72)),
+    url("../ui/mainmenu.png?v=clean-runtime-1-1") center/cover no-repeat!important;
+  opacity:1!important;
+}
+.cherrift-startup-v5:not(.done){visibility:visible!important}
+.theme-petal-layer-v5 .theme-petal-ripple-v5{display:none!important}
+.theme-petal-layer-v5 i{
+  width:10px!important;
+  height:6px!important;
+  border-radius:80% 18% 72% 28%!important;
+  opacity:.78!important;
+  transform:translate(-50%,-50%) rotate(18deg)!important;
+  animation:themePetalBurstV5 .68s var(--petal-delay,0ms) cubic-bezier(.15,.65,.25,1) forwards!important;
+}
+.theme-petal-layer-v5 i:nth-child(2n){width:8px!important;height:5px!important}
+.theme-petal-layer-v5 i:nth-child(3n){width:10px!important;height:6px!important}
