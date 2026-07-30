@@ -1,3 +1,0 @@
-src/runtime/cherrift_app.js
-src/runtime/runtime_manifest.json
-assets/runtime/cherrift_app.css
