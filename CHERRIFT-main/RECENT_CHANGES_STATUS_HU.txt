@@ -1,0 +1,26 @@
+CHERRIFT – KORÁBBI KÉRÉSEK ÁLLAPOTA A CLEAN RUNTIME-BAN
+
+A CLEAN RUNTIME FÁJLBAN MEGTALÁLHATÓ:
+- Default / Cozy Cherry / Summer Splash témarendszer.
+- Mobil teljesítmény mód.
+- Arsenal mobil scroll és követelmény-szöveg kontraszt javítás.
+- Training Damage panel elrejtése a gameplayen kívül.
+- Startup Settings / Feedback gomb eseményének különválasztása a Continue művelettől.
+- Gear négyzetes slot és LVL felirat kódja. Ezt élő készüléken újra ellenőrizni kell.
+- Skin Splash Art teljes képernyős megnyitás.
+- Menü navigáció és BAG/reward UI módosítások.
+
+CSAK RÉSZBEN KÉSZÜLT EL:
+- Profile: az Active Title felirat és a fejléc magyarázata elrejthető, de a teljes címválasztó,
+  külön Discord username, szerkeszthető játéknév és Discord-avataros frame rendszer még nincs kész.
+- Startup: a funkció bent volt, de a régi boot réteg nem tűnt el. Ezt az 1.1 hotfix javítja.
+
+MÉG NINCS VÉGLEGESEN MEGCSINÁLVA:
+- World 2 összes fekete hátteres dekorációs PNG-jének valódi alpha-javítása.
+- Cherry minden pályán működő, teljesítménybarát körfénye.
+- Green / Blue Slime forrásképek valódi transparent RGBA asset-javítása.
+
+FONTOS:
+A Clean Runtime 1.0 technikailag egyetlen fájlba csomagolta a korábbi modulokat, de sok régi wrapper
+és felülírás továbbra is szerepel benne. Ez kevesebb hálózati kérést ad, de még nem teljes final-state
+forráskód-refaktor. A további fejlesztéseket már a runtime aktív renderelőiben kell rendesen átvezetni.

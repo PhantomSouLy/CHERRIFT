@@ -1,0 +1,19 @@
+CHERRIFT – KIADÁS ELŐTT KÖTELEZŐ
+
+A megjelenített verzió egyetlen aktív helye:
+
+src/config.js → window.CHERRIFT_BUILD
+
+Minden új build előtt frissítsd ezeket:
+- version
+- displayVersion
+- title
+- label
+
+A jelenlegi tesztérték:
+TESZTVERZIÓ · v0.9.3
+
+A Loading / Login / Tap or Click to Continue képernyő automatikusan a CHERRIFT_BUILD értékeit használja.
+A régi src/main.js már nem része a Clean Runtime rendszernek, ott semmit nem kell átírni.
+
+Publikus verziónál a package.json "version" értékét is igazítsd a kiadáshoz.

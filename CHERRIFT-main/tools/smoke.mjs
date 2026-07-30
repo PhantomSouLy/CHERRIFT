@@ -183,6 +183,11 @@ function assertCompleteGearLayout(window,name){
     assert.equal(slot.dataset.v090GearArea,areas[name],`${name}: fixed MMORPG area`);
     assert.equal(slot.style.getPropertyPriority("grid-area"),"important",`${name}: area cannot be overridden`);
     assert.equal(slot.style.getPropertyValue("position"),"relative",`${name}: slot participates in the Gear grid`);
+    const width=parseFloat(window.getComputedStyle(slot).width);
+    const height=parseFloat(window.getComputedStyle(slot).height);
+    assert.ok(Number.isFinite(width)&&Number.isFinite(height)&&Math.abs(width-height)<1,`${name}: ${slot.dataset.v0560Slot} is square`);
+    assert.match(slot.textContent,/LVL\d+/,`${name}: ${slot.dataset.v0560Slot} shows the slot level`);
+    assert.doesNotMatch(slot.textContent,/\bA\d+\b/,`${name}: legacy A-level label is removed`);
   }
 }
 
@@ -195,6 +200,8 @@ async function exercise(name,width,height){
     await waitFor(()=>window.CHERRIFT_AUTH.getState().mode==="guest",`${name} guest mode`);
 
     assert.equal(document.body.classList.contains("v062-startup-failed"),false,`${name}: no startup failure`);
+    assert.ok(window.__CHERRIFT_CLEAN_RUNTIME__,`${name}: consolidated Clean Runtime is active`);
+    assert.equal(document.querySelectorAll('script[src*="cherrift_app.js"]').length,1,`${name}: one application runtime script`);
     await waitFor(()=>/0\.9\.3/.test(document.title),`${name} current title`);
     assert.match(document.title,/0\.9\.3/,`${name}: current title`);
     assert.deepEqual(window.__cherriftTitleWrites.filter(title=>/\bv0\.[0-8](?:\.\d+)?\b/.test(title)),[],`${name}: title never shows a legacy version`);
