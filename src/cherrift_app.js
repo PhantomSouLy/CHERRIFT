@@ -10,7 +10,7 @@
     console.warn("[CHERRIFT] Clean Runtime was requested more than once; duplicate load ignored.");
     return;
   }
-  window.__CHERRIFT_CLEAN_RUNTIME__ = Object.freeze({version:"1.3.0", build:"0.9.3-test"});
+  window.__CHERRIFT_CLEAN_RUNTIME__ = Object.freeze({version:"1.4.0", build:"0.9.3-test"});
   window.CHERRIFT_RUNTIME_CSS_BUNDLED = true;
   const styleMarkers = ["mobileV051Styles", "v050Style", "v052css", "v053css", "v055css", "v0551css", "v0552css", "v0557css", "v0560css", "v0561css", "v060css", "v062css", "v063css", "v070css", "v080css", "v081css", "v082css", "v083css", "v084css", "v085css", "v086css", "v087css", "v088css", "v089css", "v090css", "v091css", "v092css", "v093css", "v0931css", "v0932css", "v0933css", "v094css", "v0946css", "cherriftThemeSystemCss"];
   for (const markerId of styleMarkers) {
@@ -4690,15 +4690,26 @@ console.info(`[CHERRIFT] ${VERSION} loaded. Mode: ${enabled ? "ON" : "OFF"}`);
 
     const world = Number(this.stage?.world || 1);
     const isBoss = !!enemy.isBoss;
-    const chance = isBoss ? 1 : 0.055 + world * 0.012;
+    const isElite = !!enemy.eliteV088;
+    const chance = isBoss ? 1 : isElite ? 0.075 : 0.012 + Math.max(1, world) * 0.003;
     if (Math.random() > chance) return;
 
     let rarity = weightedRarity(world, isBoss);
     if (isBoss && rarityIndex(rarity) < rarityIndex("Rare")) rarity = "Rare";
     const item = createGear(world, rarity);
-    if (addItem(this.save, item, true)) {
+    if (addItem(this.save, item, false)) {
       this.__v050Drops = this.__v050Drops || [];
       this.__v050Drops.push(item);
+      this.effects = Array.isArray(this.effects) ? this.effects : [];
+      this.effects.push({
+        type:"gearDropText",
+        x:Number(enemy.x) || 0,
+        y:(Number(enemy.y) || 0) - Math.max(22, Number(enemy.r) || 20),
+        value:`${item.rarity} ${item.slot}`,
+        rarity:item.rarity,
+        t:0,
+        life:1.35
+      });
       CherriftStorage.save(this.save);
     }
   };
@@ -23907,6 +23918,38 @@ function drawHeart(context, x, y, size) {
   context.closePath();
 }
 
+function collisionShapeV094(object) {
+  const key = String(object?.assetKey || "").toLowerCase();
+  const drawW = Math.max(1, Number(object?.drawW) || 64);
+  const drawH = Math.max(1, Number(object?.drawH) || 64);
+  const anchor = Number.isFinite(Number(object?.anchor)) ? Number(object.anchor) : .72;
+  const bottomSpace = Math.max(0, drawH * (1 - anchor));
+
+  if (key.includes("tree")) {
+    return {rx:Math.max(27, drawW * .14), ry:Math.max(14, drawH * .065), offsetY:bottomSpace * .55};
+  }
+  if (key.includes("log")) {
+    return {rx:Math.max(34, drawW * .38), ry:Math.max(12, drawH * .15), offsetY:bottomSpace * .43};
+  }
+  if (key.includes("rock")) {
+    return {rx:Math.max(22, drawW * .31), ry:Math.max(12, drawH * .18), offsetY:bottomSpace * .45};
+  }
+  if (key.includes("cactus")) {
+    return {rx:Math.max(21, drawW * .18), ry:Math.max(13, drawH * .085), offsetY:bottomSpace * .50};
+  }
+  const radius = Math.max(1, Number(object?.collisionRadius || object?.r) || 18);
+  return {rx:radius, ry:radius, offsetY:0};
+}
+
+function collidesWithMapObjectV094(player, object) {
+  if (!player || !object?.solid) return false;
+  const shape = collisionShapeV094(object);
+  const playerRadius = Math.max(1, Number(player.r) || 18);
+  const dx = (player.x - object.x) / (shape.rx + playerRadius);
+  const dy = (player.y - (object.y + shape.offsetY)) / (shape.ry + playerRadius);
+  return dx * dx + dy * dy < 1;
+}
+
 function patchGame() {
   const proto = CherriftGame.prototype;
 
@@ -23932,7 +23975,7 @@ function patchGame() {
   proto.hitObstacle = function hitObstacleV094(...args) {
     if ((this.obstacles || []).some(object => object?.v094Map)) {
       const player = this.player;
-      return (this.obstacles || []).some(object => object.solid && Math.hypot(player.x-object.x, player.y-object.y) < player.r + (object.collisionRadius || (object.r || 0) * .62));
+      return (this.obstacles || []).some(object => collidesWithMapObjectV094(player, object));
     }
     return previousHitObstacle.apply(this, args);
   };
@@ -24170,6 +24213,28 @@ function patchGame() {
 
   const previousDrawEffect = proto.drawEffect;
   proto.drawEffect = function drawEffectV094(context, effect) {
+    if (effect?.type === "gearDropText") {
+      const life = Math.max(.01, Number(effect.life) || 1.35);
+      const progress = Math.max(0, Math.min(1, (Number(effect.t) || 0) / life));
+      const fadeIn = Math.min(1, progress / .10);
+      const fadeOut = Math.min(1, (1 - progress) / .28);
+      const alpha = Math.max(0, Math.min(fadeIn, fadeOut));
+      const colors = {Common:"#fff4fb",Uncommon:"#82ff9d",Rare:"#79cfff",Epic:"#d495ff",Legendary:"#ffd46d"};
+      const y = effect.y - 14 - progress * 28;
+      context.save();
+      context.globalAlpha = alpha;
+      context.textAlign = "center";
+      context.textBaseline = "middle";
+      context.font = "900 16px system-ui, sans-serif";
+      context.lineJoin = "round";
+      context.lineWidth = 5;
+      context.strokeStyle = "rgba(18,8,16,.84)";
+      context.fillStyle = colors[effect.rarity] || "#fff4fb";
+      context.strokeText(String(effect.value || "Gear"), effect.x, y);
+      context.fillText(String(effect.value || "Gear"), effect.x, y);
+      context.restore();
+      return;
+    }
     if (effect?.type !== "dummyHitV094") return previousDrawEffect.call(this, context, effect);
     const alpha = Math.max(0,1-effect.t/effect.life);
     context.save();context.globalAlpha=alpha;context.strokeStyle="#bfeaff";context.lineWidth=5;context.beginPath();context.arc(effect.x,effect.y,70+(1-alpha)*38,0,Math.PI*2);context.stroke();context.restore();
@@ -24830,9 +24895,11 @@ function tintSlimeSheet(source, color) {
   const context = canvas.getContext("2d", {alpha:true});
   if (!context) return source;
   context.drawImage(source, 0, 0);
-  context.globalCompositeOperation = "color";
+  context.globalCompositeOperation = "source-atop";
+  context.globalAlpha = .72;
   context.fillStyle = color;
   context.fillRect(0, 0, width, height);
+  context.globalAlpha = 1;
   context.globalCompositeOperation = "source-over";
   return canvas;
 }
@@ -24868,6 +24935,30 @@ proto.resize = function resizeV0946(...args) {
   return previousResize.apply(this, args);
 };
 
+function contactShadowV0946(context, object) {
+  const key = String(object?.assetKey || "").toLowerCase();
+  if (!/(rock|log)/.test(key)) return;
+  const drawW = Math.max(1, Number(object.drawW) || 64);
+  const drawH = Math.max(1, Number(object.drawH) || 64);
+  const anchor = Number.isFinite(Number(object.anchor)) ? Number(object.anchor) : .72;
+  const bottomSpace = Math.max(0, drawH * (1 - anchor));
+  const isLog = key.includes("log");
+  const radiusX = drawW * (isLog ? .41 : .34);
+  const radiusY = drawH * (isLog ? .12 : .15);
+  const centerY = object.y + bottomSpace * .42;
+
+  context.save();
+  context.fillStyle = "rgba(49,31,18,.10)";
+  context.beginPath();
+  context.ellipse(object.x, centerY + 2, radiusX * 1.14, radiusY * 1.18, 0, 0, Math.PI * 2);
+  context.fill();
+  context.fillStyle = "rgba(23,15,12,.15)";
+  context.beginPath();
+  context.ellipse(object.x, centerY, radiusX, radiusY, 0, 0, Math.PI * 2);
+  context.fill();
+  context.restore();
+}
+
 const previousDrawObstacle = proto.drawObstacle;
 proto.drawObstacle = function drawObstacleV0946(context, object) {
   if (!object?.v094Map || object.kind === "fireflyV094") {
@@ -24896,6 +24987,7 @@ proto.drawObstacle = function drawObstacleV0946(context, object) {
     drawable = image;
   }
 
+  contactShadowV0946(context, object);
   context.save();
   context.imageSmoothingEnabled = true;
   if ("imageSmoothingQuality" in context) context.imageSmoothingQuality = "high";
@@ -26629,4 +26721,23 @@ window.addEventListener("DOMContentLoaded", async () => {
 });
 
 
-console.info("[CHERRIFT] Clean Runtime 1.3.0 loaded from src/cherrift_app.js: flat mobile-friendly layout, startup, lightweight petals, Wuxia strip safety and World 2 RGBA assets.");
+console.info("[CHERRIFT] Clean Runtime 1.4.0 loaded from src/cherrift_app.js: flat mobile-friendly layout, startup, lightweight petals, Wuxia strip safety and World 2 RGBA assets.");
+
+
+/* ===== BEGIN Clean Runtime 1.4 gameplay notification hotfix ===== */
+(() => {
+  "use strict";
+  if (!window.UI || UI.__cleanRuntime14ToastFilter) return;
+  UI.__cleanRuntime14ToastFilter = true;
+  const previousToast = typeof UI.toast === "function" ? UI.toast.bind(UI) : null;
+  if (!previousToast) return;
+  UI.toast = function toastCleanRuntime14(message, ...args) {
+    if (document.body.classList.contains("is-playing")) {
+      const text = String(message || "");
+      const critical = /inventory full|converted|error|failed|connection|offline/i.test(text);
+      if (!critical) return;
+    }
+    return previousToast(message, ...args);
+  };
+})();
+/* ===== END Clean Runtime 1.4 gameplay notification hotfix ===== */

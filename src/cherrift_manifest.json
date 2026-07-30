@@ -1,5 +1,5 @@
 {
-  "runtimeVersion": "1.3.0-flat",
+  "runtimeVersion": "1.4.0-gameplay-hotfix",
   "gameVersion": "0.9.3-test",
   "javascript": "src/cherrift_app.js",
   "stylesheet": "assets/cherrift_app.css",
@@ -14,11 +14,16 @@
     "Clean startup transition and lightweight tap-only petals",
     "Wuxia Sakura down/walk strip safety",
     "World 2 RGBA decoration assets",
-    "Flat runtime paths for easier phone updates"
+    "Flat runtime paths for easier phone updates",
+    "Object-specific elliptical map collision",
+    "Low-cost rock and log contact shadows",
+    "Transparent Blue/Green Slime recoloring",
+    "World-positioned gear drop text",
+    "Reduced normal enemy gear drop rates"
   ],
   "updateFiles": [
     "index.html",
     "src/cherrift_app.js",
-    "assets/cherrift_app.css"
+    "src/cherrift_manifest.json"
   ]
 }
