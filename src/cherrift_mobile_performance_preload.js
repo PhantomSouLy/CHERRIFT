@@ -1,7 +1,7 @@
 (() => {
 "use strict";
 
-const VERSION = "5.0.0-mobile-performance-bootstrap";
+const VERSION = "6.0.0-mobile-performance-bootstrap";
 const SAVE_KEY = "cherrift_save_v025_polish";
 const MOBILE_BREAKPOINT = 900;
 const html = document.documentElement;

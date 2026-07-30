@@ -102,7 +102,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   }
 
   updateBoot(5, "Loading game systems…");
-  await loadScript("src/cherrift_mobile_performance_preload.js?v=5","Mobile performance bootstrap");
+  await loadScript("src/cherrift_mobile_performance_preload.js?v=6","Mobile performance bootstrap");
   await loadScript("src/cherrift_v042_completion.js?v=063","v0.4 completion");
   await loadScript("src/cherrift_v050.js?v=090-hf2","v0.5");
   await loadScript("src/cherrift_mobile_v051.js?v=051","v0.5.1");
@@ -155,7 +155,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   await loadScript("src/cherrift_v0944.js?v=09345","v0.9.3.4.5 Crisp Lazy Map Hotfix");
   await loadScript("src/cherrift_v0944.js?v=09346","v0.9.3.4.6 Crisp Map Stability Hotfix");
   await loadScript("src/cherrift_v09347.js?v=09347","v0.9.3.4.7 PC Visual Polish");
-  await loadScript("src/cherrift_theme_system.js?v=5","Theme System");
+  await loadScript("src/cherrift_theme_system.js?v=6","Theme System");
 
   try {
     if (failedPatches.length) {

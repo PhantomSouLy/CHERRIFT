@@ -1,7 +1,7 @@
 (() => {
 "use strict";
 
-const VERSION = "5.0.0-complete-ui-mobile-performance";
+const VERSION = "6.0.0-ui-hotfix-batch";
 const STYLE_ID = "cherriftThemeSystemCss";
 const SAVE_KEY = "cherrift_save_v025_polish";
 
@@ -121,7 +121,7 @@ function ensureCss() {
   const link = document.createElement("link");
   link.id = STYLE_ID;
   link.rel = "stylesheet";
-  link.href = "assets/ui/themes/theme_system.css?v=5";
+  link.href = "assets/ui/themes/theme_system.css?v=6";
   link.onload = () => document.documentElement.classList.add("cherrift-theme-css-ready");
   document.head.appendChild(link);
 }
@@ -433,6 +433,11 @@ const uiPolishState = {
   petalLayer: null
 };
 
+function localizedText(hu, en) {
+  return preferredLanguage() === "hu" ? hu : en;
+}
+
+
 function currentRouteBucket(route = uiPolishState.route) {
   if (["worlds", "worldsV094"].includes(route)) return "play";
   if (route === "gear") return "gear";
@@ -497,7 +502,16 @@ function polishArsenal() {
       multiplier.setAttribute("title", preferredLanguage() === "hu" ? "Aktuális szorzó" : "Current multiplier");
     }
     card.querySelector(".arsenal-main-action-v082")?.classList.add("theme-arsenal-level-button");
+    card.querySelectorAll('.arsenal-compact-cost-v082, .arsenal-requirements-v070').forEach(costBox => {
+      costBox.classList.add('theme-readable-requirements-v6');
+    });
   });
+
+  const scrollRoot = panel.querySelector('.arsenal-grid-v070') || panel;
+  if (scrollRoot) {
+    scrollRoot.style.minHeight = 'max-content';
+    scrollRoot.style.paddingBottom = '28px';
+  }
 }
 
 function polishGear() {
@@ -516,6 +530,10 @@ function polishGear() {
       if (badge.textContent !== label) badge.textContent = label;
       badge.classList.add("theme-gear-level-badge");
     }
+    slotCard.querySelectorAll('small, span, em, b').forEach(node => {
+      const value = (node.textContent || '').trim();
+      if (/^[A-Z]\d+$/.test(value)) node.classList.add('theme-slot-rank-badge');
+    });
     slotCard.querySelector(".gear-slot-icon-v0560")?.classList.add("theme-equipped-icon");
   });
 }
@@ -645,6 +663,19 @@ function polishGearInventory() {
   });
 }
 
+function polishProfilePanel() {
+  const panel = document.getElementById("profile") || document.querySelector('.profile-panel-v082, .utility-panel-v063[data-panel="profile"]');
+  if (!panel) return;
+  panel.querySelectorAll('.panel-head p, .profile-head-v082 p').forEach(el => {
+    el.hidden = true;
+    el.setAttribute('aria-hidden', 'true');
+  });
+  panel.querySelectorAll('small, p, span, b, strong').forEach(node => {
+    const value = (node.textContent || '').trim().toLowerCase();
+    if (value === 'active title' || value === 'aktív cím') node.classList.add('theme-profile-hide-v6');
+  });
+}
+
 function ensureSplashOverlay() {
   let overlay = document.getElementById("skinSplashFullscreenV5");
   if (overlay) return overlay;
@@ -709,25 +740,35 @@ function ensurePetalLayer() {
   return layer;
 }
 
-function createPetalBurst(x, y) {
+function createPetalRipple(layer, x, y) {
+  const ripple = document.createElement('span');
+  ripple.className = 'theme-petal-ripple-v5';
+  ripple.style.left = `${x}px`;
+  ripple.style.top = `${y}px`;
+  layer.appendChild(ripple);
+  window.setTimeout(() => ripple.remove(), 430);
+}
+
+function createPetalBurst(x, y, options = {}) {
   if (document.body.classList.contains("is-playing")) return;
   if (matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) return;
   const layer = ensurePetalLayer();
   const lightweight = document.documentElement.classList.contains("mobile-performance-mode");
-  const amount = lightweight ? 4 : 7;
+  const amount = Number(options.amount) || (lightweight ? 6 : 10);
   const fragment = document.createDocumentFragment();
+  createPetalRipple(layer, x, y);
   for (let index = 0; index < amount; index++) {
     const petal = document.createElement("i");
-    const angle = (Math.PI * 2 * index / amount) + (Math.random() - .5) * .65;
-    const distance = (lightweight ? 24 : 34) + Math.random() * (lightweight ? 18 : 32);
+    const angle = (Math.PI * 2 * index / amount) + (Math.random() - .5) * .8;
+    const distance = (lightweight ? 26 : 34) + Math.random() * (lightweight ? 22 : 34);
     petal.style.left = `${x}px`;
     petal.style.top = `${y}px`;
     petal.style.setProperty("--petal-x", `${Math.cos(angle) * distance}px`);
-    petal.style.setProperty("--petal-y", `${Math.sin(angle) * distance + 22 + Math.random() * 20}px`);
-    petal.style.setProperty("--petal-r", `${(Math.random() * 240 - 120).toFixed(0)}deg`);
+    petal.style.setProperty("--petal-y", `${Math.sin(angle) * distance + 18 + Math.random() * 18}px`);
+    petal.style.setProperty("--petal-r", `${(Math.random() * 260 - 130).toFixed(0)}deg`);
     petal.style.setProperty("--petal-delay", `${Math.random() * 45}ms`);
     fragment.appendChild(petal);
-    window.setTimeout(() => petal.remove(), 760);
+    window.setTimeout(() => petal.remove(), 820);
   }
   layer.appendChild(fragment);
 }
@@ -746,15 +787,27 @@ function ensureStartupOverlay() {
   overlay.innerHTML = `<div class="startup-tools-v5"><button type="button" data-startup-tool="discord" aria-label="Discord"><span class="startup-discord-mark-v5">●●</span></button><button type="button" data-startup-tool="feedback" aria-label="Feedback">!</button><button type="button" data-startup-tool="settings" aria-label="Settings">⚙</button></div><main><div class="startup-mark-v5">✦</div><h1>CHERRIFT</h1><p class="startup-version-v5"></p><button type="button" class="startup-continue-v5" disabled></button><div class="startup-track-v5"><i></i></div><small class="startup-status-v5"></small></main>`;
   document.body.appendChild(overlay);
   const continueButton = overlay.querySelector(".startup-continue-v5");
-  continueButton.addEventListener("click", () => finishStartupExperience());
+  continueButton.addEventListener("click", event => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!overlay.classList.contains('ready')) return;
+    finishStartupExperience();
+  });
   overlay.addEventListener("click", event => {
-    const tool = event.target.closest?.("[data-startup-tool]")?.dataset.startupTool;
+    const toolButton = event.target.closest?.("[data-startup-tool]");
+    const tool = toolButton?.dataset.startupTool;
     if (!tool) return;
-    if (tool === "discord") window.CHERRIFT_AUTH?.openGate?.();
-    else {
-      finishStartupExperience(tool === "settings" ? "settings" : "supportV063");
-      if (tool === "feedback") window.CHERRIFT_V063?.runtime && (window.CHERRIFT_V063.runtime.supportType = "feedback");
+    event.preventDefault();
+    event.stopPropagation();
+    if (tool === "discord") {
+      window.CHERRIFT_AUTH?.openGate?.();
+      return;
     }
+    const panel = tool === 'settings' ? 'settings' : 'supportV063';
+    if (tool === "feedback" && window.CHERRIFT_V063?.runtime) {
+      window.CHERRIFT_V063.runtime.supportType = "feedback";
+    }
+    window.UI?.open?.(panel);
   });
   return overlay;
 }
@@ -775,8 +828,8 @@ function syncStartupExperience() {
   overlay.classList.toggle("ready", ready);
   overlay.classList.toggle("waiting-auth", !ready);
   const statusText = ready
-    ? (state.mode === "discord" ? `Discord · ${state.account?.name || "Connected"}` : (preferredLanguage() === "hu" ? "Vendégmód · a helyi mentés elveszhet" : "Guest mode · local progress can be lost"))
-    : (preferredLanguage() === "hu" ? "Fiók ellenőrzése…" : "Checking account…");
+    ? ""
+    : localizedText('Jelentkezz be Discorddal, vagy lépj be vendégként.', 'Sign in with Discord, or continue as a guest.');
   setTextIfChanged(overlay.querySelector(".startup-status-v5"), statusText);
   overlay.querySelector(".startup-tools-v5").hidden = !ready;
   if (ready && uiPolishState.startupTimer) {
@@ -820,26 +873,44 @@ function addInteractionFeedback() {
   if (uiPolishState.interactionBound) return;
   uiPolishState.interactionBound = true;
   const pointers = new Map();
+  const trailTimers = new Map();
+
+  function stopTrail(pointerId) {
+    const timer = trailTimers.get(pointerId);
+    if (timer) window.clearInterval(timer);
+    trailTimers.delete(pointerId);
+  }
 
   document.addEventListener("pointerdown", event => {
     if (!event.isPrimary) return;
-    pointers.set(event.pointerId, { x:event.clientX, y:event.clientY });
+    const point = { x:event.clientX, y:event.clientY };
+    pointers.set(event.pointerId, point);
+    createPetalBurst(point.x, point.y);
+    const cadence = document.documentElement.classList.contains('mobile-performance-mode') ? 140 : 95;
+    trailTimers.set(event.pointerId, window.setInterval(() => {
+      const active = pointers.get(event.pointerId);
+      if (!active) return;
+      createPetalBurst(active.x, active.y, { amount: document.documentElement.classList.contains('mobile-performance-mode') ? 4 : 7 });
+    }, cadence));
     const button = event.target.closest?.("button, [role='button']");
     if (!button || button.disabled) return;
     button.classList.add("theme-click-pop");
     window.setTimeout(() => button.classList.remove("theme-click-pop"), 220);
   }, true);
 
+  document.addEventListener('pointermove', event => {
+    const point = pointers.get(event.pointerId);
+    if (!point) return;
+    point.x = event.clientX;
+    point.y = event.clientY;
+  }, true);
+
   document.addEventListener("pointerup", event => {
-    const start = pointers.get(event.pointerId);
     pointers.delete(event.pointerId);
-    if (!start) return;
-    if (Math.hypot(event.clientX - start.x, event.clientY - start.y) <= 12) {
-      createPetalBurst(event.clientX, event.clientY);
-    }
+    stopTrail(event.pointerId);
     requestAnimationFrame(scheduleDynamicPolish);
   }, true);
-  document.addEventListener("pointercancel", event => pointers.delete(event.pointerId), true);
+  document.addEventListener("pointercancel", event => { pointers.delete(event.pointerId); stopTrail(event.pointerId); }, true);
 
   document.addEventListener("click", event => {
     const mobileToggle = event.target.closest?.("[data-v082-toggle-mobile]");
@@ -867,6 +938,7 @@ function polishDynamicUi() {
   polishArsenal();
   polishGear();
   polishGearInventory();
+  polishProfilePanel();
   polishSkinSelector();
   removeHeaderExplanations();
   ensurePerformanceSetting();
@@ -1004,5 +1076,5 @@ window.CHERRIFT_THEMES = Object.freeze({
   polish: scheduleDynamicPolish
 });
 
-console.info("[CHERRIFT] Theme System v5 loaded: complete UI refinement, startup flow and mobile performance mode.");
+console.info("[CHERRIFT] Theme System v6 loaded: UI hotfix batch, startup cleanup and improved tap petals.");
 })();
