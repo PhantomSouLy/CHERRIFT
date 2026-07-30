@@ -19,11 +19,23 @@
     "Low-cost rock and log contact shadows",
     "Transparent Blue/Green Slime recoloring",
     "World-positioned gear drop text",
-    "Reduced normal enemy gear drop rates"
+    "Reduced normal enemy gear drop rates",
+    "Mobile GM Tool Pack with protected Mail, Redeem and Profile modules",
+    "Server-backed player Mail and Redeem bridge"
   ],
   "updateFiles": [
-    "index.html",
-    "src/cherrift_app.js",
-    "src/cherrift_manifest.json"
+    "src/supabase_config.js",
+    "src/cherrift_live_services.js",
+    "src/cherrift_manifest.json",
+    "gm/index.html",
+    "gm/gm.css",
+    "gm/gm.js",
+    "supabase/config.toml",
+    "supabase/migrations/20260730_gm_tool_pack.sql",
+    "supabase/functions/gm-api/index.ts",
+    "supabase/functions/gm-api/deno.json",
+    "supabase/functions/player-api/index.ts",
+    "supabase/functions/player-api/deno.json",
+    "GM_TOOL_PACK_SETUP_HU.md"
   ]
 }
