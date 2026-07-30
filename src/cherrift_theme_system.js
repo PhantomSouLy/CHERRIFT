@@ -1,7 +1,7 @@
 (() => {
 "use strict";
 
-const VERSION = "4.0.0-ui-readability-polish";
+const VERSION = "5.0.0-complete-ui-mobile-performance";
 const STYLE_ID = "cherriftThemeSystemCss";
 const SAVE_KEY = "cherrift_save_v025_polish";
 
@@ -90,6 +90,9 @@ function ensureSave(save) {
   if (!save || typeof save !== "object") return save;
 
   save.settings = save.settings && typeof save.settings === "object" ? save.settings : {};
+  if (typeof save.settings.mobilePerformanceMode !== "boolean") {
+    save.settings.mobilePerformanceMode = window.CHERRIFT_MOBILE_PERFORMANCE?.defaultEnabled ?? false;
+  }
   save.unlockedThemes = Array.isArray(save.unlockedThemes) ? save.unlockedThemes : [];
 
   for (const themeId of STARTER_UNLOCKS) {
@@ -118,7 +121,7 @@ function ensureCss() {
   const link = document.createElement("link");
   link.id = STYLE_ID;
   link.rel = "stylesheet";
-  link.href = "assets/ui/themes/theme_system.css?v=4";
+  link.href = "assets/ui/themes/theme_system.css?v=5";
   link.onload = () => document.documentElement.classList.add("cherrift-theme-css-ready");
   document.head.appendChild(link);
 }
@@ -147,11 +150,12 @@ function applyTheme(themeId, options = {}) {
   document.body?.classList.add(THEMES[normalized].className);
   updateBrowserThemeColor(normalized);
 
-  // Several CHERRIFT screens are created dynamically by later patches. A resize
-  // refresh makes their mobile/desktop layout recalculate immediately after a theme swap.
   requestAnimationFrame(() => {
     document.body?.setAttribute("data-cherrift-theme", normalized);
-    window.dispatchEvent(new Event("resize"));
+    window.CHERRIFT_MOBILE_PERFORMANCE?.apply?.(
+      window.UI?.save?.settings?.mobilePerformanceMode ?? window.CHERRIFT_MOBILE_PERFORMANCE?.enabled
+    );
+    if (typeof scheduleDynamicPolish === "function") scheduleDynamicPolish();
   });
 
   if (!options.silent) {
@@ -422,7 +426,11 @@ const uiPolishState = {
   route: "menu",
   queued: false,
   observer: null,
-  interactionBound: false
+  interactionBound: false,
+  splashBound: false,
+  startupInstalled: false,
+  startupTimer: 0,
+  petalLayer: null
 };
 
 function currentRouteBucket(route = uiPolishState.route) {
@@ -549,20 +557,289 @@ function polishRewardOverlay() {
   });
 }
 
+
+function saveUiSettings() {
+  try { window.CherriftStorage?.save?.(window.UI?.save); }
+  catch (error) { console.warn("[CHERRIFT Theme System] UI setting save failed:", error); }
+}
+
+function applyPerformancePreference(value) {
+  const enabled = !!value;
+  if (window.UI?.save) {
+    ensureSave(window.UI.save);
+    window.UI.save.settings.mobilePerformanceMode = enabled;
+    saveUiSettings();
+  }
+  window.CHERRIFT_MOBILE_PERFORMANCE?.apply?.(enabled);
+  document.documentElement.classList.toggle("mobile-performance-mode", enabled);
+  document.body?.classList.toggle("mobile-performance-mode", enabled);
+  const button = document.querySelector("[data-theme-mobile-performance]");
+  if (button) {
+    const hu = preferredLanguage() === "hu";
+    button.textContent = enabled ? (hu ? "BE" : "ON") : (hu ? "KI" : "OFF");
+    button.classList.toggle("active", enabled);
+    button.setAttribute("aria-pressed", String(enabled));
+  }
+  scheduleDynamicPolish();
+  return enabled;
+}
+
+function ensurePerformanceSetting() {
+  const page = document.querySelector('[data-v060-settings-page="display"]') ||
+    document.querySelector('[data-v060-settings-page="gameplay"]');
+  if (!page || document.getElementById("mobilePerformanceSettingV5")) return;
+  const hu = preferredLanguage() === "hu";
+  const row = document.createElement("div");
+  row.id = "mobilePerformanceSettingV5";
+  row.className = "setting-line-v060 mobile-performance-setting-v5";
+  row.dataset.i18nIgnore = "true";
+  row.innerHTML = `<span><b>${hu ? "Mobil teljesítmény mód" : "Mobile Performance Mode"}</b><small>${hu ? "Csökkenti a blur, árnyék és felesleges újrarenderelés terhelését. Telefonon ajánlott." : "Reduces blur, shadows and unnecessary rerenders. Recommended on phones."}</small></span><button type="button" class="setting-action-v060" data-theme-mobile-performance></button>`;
+  page.appendChild(row);
+  const enabled = window.UI?.save?.settings?.mobilePerformanceMode ?? window.CHERRIFT_MOBILE_PERFORMANCE?.enabled ?? false;
+  const button = row.querySelector("[data-theme-mobile-performance]");
+  button?.addEventListener("click", () => applyPerformancePreference(!button.classList.contains("active")));
+  applyPerformancePreference(enabled);
+}
+
+function removeHeaderExplanations() {
+  const selectors = [
+    "#skins > .panel-head p",
+    "#gear .gear-heading-v0560 p",
+    "#chests .economy-head-v080 p",
+    "#arsenalV070 .arsenal-head-v070 p",
+    ".world-header-v094 p",
+    ".shop-intro-v080 p",
+    "#playerUpgrade > .panel-head p",
+    ".v082-custom-panel > .panel-head p"
+  ];
+  document.querySelectorAll(selectors.join(",")).forEach(element => {
+    element.hidden = true;
+    element.setAttribute("aria-hidden", "true");
+  });
+}
+
+function polishGearInventory() {
+  const gear = document.getElementById("gear");
+  if (!gear) return;
+  gear.querySelectorAll(".gear-change-skin-v0560").forEach(button => button.remove());
+
+  const count = document.getElementById("gearInventoryCountV0560");
+  const heading = gear.querySelector(".gear-inventory-head-v0560 > div:first-child");
+  if (count && heading && count.parentElement !== heading) {
+    count.classList.add("theme-inventory-capacity-v5");
+    heading.appendChild(count);
+  }
+
+  const tools = document.getElementById("gearBulkToolsV082");
+  const selectCommon = tools?.querySelector("[data-v082-select-common]");
+  const selectionMode = !!selectCommon && !selectCommon.classList.contains("hidden");
+  const grid = document.getElementById("gearInventoryGridV0560");
+  grid?.classList.toggle("theme-selection-mode-v5", selectionMode);
+  gear.classList.toggle("theme-selection-mode-v5", selectionMode);
+  grid?.querySelectorAll("[data-v0560-item-id]").forEach(card => {
+    const selected = card.classList.contains("selected-v082");
+    card.classList.toggle("theme-selected-item-v5", selected);
+    card.classList.toggle("theme-unselected-item-v5", selectionMode && !selected);
+    const mark = card.querySelector(".gear-select-mark-v082");
+    if (mark) mark.hidden = !selected;
+  });
+}
+
+function ensureSplashOverlay() {
+  let overlay = document.getElementById("skinSplashFullscreenV5");
+  if (overlay) return overlay;
+  overlay = document.createElement("section");
+  overlay.id = "skinSplashFullscreenV5";
+  overlay.className = "skin-splash-fullscreen-v5 hidden";
+  overlay.setAttribute("role", "dialog");
+  overlay.setAttribute("aria-modal", "true");
+  overlay.innerHTML = '<button type="button" class="skin-splash-backdrop-v5" data-splash-close aria-label="Close"></button><div class="skin-splash-shell-v5"><button type="button" class="skin-splash-close-v5" data-splash-close aria-label="Close">×</button><img alt="Cherry Splash Art" draggable="false"></div>';
+  document.body.appendChild(overlay);
+  overlay.addEventListener("click", event => {
+    if (event.target.closest?.("[data-splash-close]")) {
+      overlay.classList.add("hidden");
+      document.body.classList.remove("skin-splash-open-v5");
+    }
+  });
+  return overlay;
+}
+
+function splashUrlFromArt(art) {
+  const raw = art?.style?.backgroundImage || getComputedStyle(art || document.body).backgroundImage || "";
+  return raw.match(/url\((['"]?)(.*?)\1\)/)?.[2] || "";
+}
+
+function polishSkinSelector() {
+  const panel = document.getElementById("skins");
+  if (!panel) return;
+  panel.querySelectorAll(".skin-stats-v093 > div").forEach(row => {
+    if (row.querySelector('dd[class*="role-"]')) row.remove();
+  });
+  const art = panel.querySelector(".skin-art-v093");
+  if (!art) return;
+  art.classList.add("theme-full-splash-v5");
+  let button = art.querySelector(".skin-splash-expand-v5");
+  if (!button) {
+    button = document.createElement("button");
+    button.type = "button";
+    button.className = "skin-splash-expand-v5";
+    button.setAttribute("aria-label", preferredLanguage() === "hu" ? "Teljes Splash Art" : "Full Splash Art");
+    button.textContent = "⛶";
+    art.appendChild(button);
+    button.addEventListener("click", event => {
+      event.preventDefault();
+      event.stopPropagation();
+      const source = splashUrlFromArt(art);
+      if (!source) return;
+      const overlay = ensureSplashOverlay();
+      overlay.querySelector("img").src = source;
+      overlay.classList.remove("hidden");
+      document.body.classList.add("skin-splash-open-v5");
+    });
+  }
+}
+
+function ensurePetalLayer() {
+  if (uiPolishState.petalLayer?.isConnected) return uiPolishState.petalLayer;
+  const layer = document.createElement("div");
+  layer.className = "theme-petal-layer-v5";
+  layer.setAttribute("aria-hidden", "true");
+  document.body.appendChild(layer);
+  uiPolishState.petalLayer = layer;
+  return layer;
+}
+
+function createPetalBurst(x, y) {
+  if (document.body.classList.contains("is-playing")) return;
+  if (matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) return;
+  const layer = ensurePetalLayer();
+  const lightweight = document.documentElement.classList.contains("mobile-performance-mode");
+  const amount = lightweight ? 4 : 7;
+  const fragment = document.createDocumentFragment();
+  for (let index = 0; index < amount; index++) {
+    const petal = document.createElement("i");
+    const angle = (Math.PI * 2 * index / amount) + (Math.random() - .5) * .65;
+    const distance = (lightweight ? 24 : 34) + Math.random() * (lightweight ? 18 : 32);
+    petal.style.left = `${x}px`;
+    petal.style.top = `${y}px`;
+    petal.style.setProperty("--petal-x", `${Math.cos(angle) * distance}px`);
+    petal.style.setProperty("--petal-y", `${Math.sin(angle) * distance + 22 + Math.random() * 20}px`);
+    petal.style.setProperty("--petal-r", `${(Math.random() * 240 - 120).toFixed(0)}deg`);
+    petal.style.setProperty("--petal-delay", `${Math.random() * 45}ms`);
+    fragment.appendChild(petal);
+    window.setTimeout(() => petal.remove(), 760);
+  }
+  layer.appendChild(fragment);
+}
+
+function buildLabel() {
+  return window.CHERRIFT_BUILD?.label || "TESZTVERZIÓ · v0.9.3";
+}
+
+function ensureStartupOverlay() {
+  let overlay = document.getElementById("cherriftStartupV5");
+  if (overlay) return overlay;
+  overlay = document.createElement("section");
+  overlay.id = "cherriftStartupV5";
+  overlay.className = "cherrift-startup-v5";
+  overlay.dataset.i18nIgnore = "true";
+  overlay.innerHTML = `<div class="startup-tools-v5"><button type="button" data-startup-tool="discord" aria-label="Discord"><span class="startup-discord-mark-v5">●●</span></button><button type="button" data-startup-tool="feedback" aria-label="Feedback">!</button><button type="button" data-startup-tool="settings" aria-label="Settings">⚙</button></div><main><div class="startup-mark-v5">✦</div><h1>CHERRIFT</h1><p class="startup-version-v5"></p><button type="button" class="startup-continue-v5" disabled></button><div class="startup-track-v5"><i></i></div><small class="startup-status-v5"></small></main>`;
+  document.body.appendChild(overlay);
+  const continueButton = overlay.querySelector(".startup-continue-v5");
+  continueButton.addEventListener("click", () => finishStartupExperience());
+  overlay.addEventListener("click", event => {
+    const tool = event.target.closest?.("[data-startup-tool]")?.dataset.startupTool;
+    if (!tool) return;
+    if (tool === "discord") window.CHERRIFT_AUTH?.openGate?.();
+    else {
+      finishStartupExperience(tool === "settings" ? "settings" : "supportV063");
+      if (tool === "feedback") window.CHERRIFT_V063?.runtime && (window.CHERRIFT_V063.runtime.supportType = "feedback");
+    }
+  });
+  return overlay;
+}
+
+function setTextIfChanged(element, value) {
+  if (element && element.textContent !== value) element.textContent = value;
+}
+
+function syncStartupExperience() {
+  const overlay = ensureStartupOverlay();
+  const state = window.CHERRIFT_AUTH?.getState?.() || { mode: "guest", gateVisible: false };
+  const ready = ["guest", "discord"].includes(state.mode) && !state.gateVisible;
+  const coarse = matchMedia?.("(pointer:coarse)")?.matches === true;
+  setTextIfChanged(overlay.querySelector(".startup-version-v5"), buildLabel());
+  const button = overlay.querySelector(".startup-continue-v5");
+  setTextIfChanged(button, coarse ? "Tap to Continue" : "Click to Continue");
+  button.disabled = !ready;
+  overlay.classList.toggle("ready", ready);
+  overlay.classList.toggle("waiting-auth", !ready);
+  const statusText = ready
+    ? (state.mode === "discord" ? `Discord · ${state.account?.name || "Connected"}` : (preferredLanguage() === "hu" ? "Vendégmód · a helyi mentés elveszhet" : "Guest mode · local progress can be lost"))
+    : (preferredLanguage() === "hu" ? "Fiók ellenőrzése…" : "Checking account…");
+  setTextIfChanged(overlay.querySelector(".startup-status-v5"), statusText);
+  overlay.querySelector(".startup-tools-v5").hidden = !ready;
+  if (ready && uiPolishState.startupTimer) {
+    window.clearInterval(uiPolishState.startupTimer);
+    uiPolishState.startupTimer = 0;
+  }
+}
+
+function finishStartupExperience(openPanel = "") {
+  const overlay = document.getElementById("cherriftStartupV5");
+  if (!overlay || overlay.classList.contains("finishing")) return;
+  overlay.classList.add("finishing");
+  const fill = overlay.querySelector(".startup-track-v5 i");
+  const status = overlay.querySelector(".startup-status-v5");
+  if (status) status.textContent = preferredLanguage() === "hu" ? "Menü előkészítése…" : "Preparing menu…";
+  if (fill) fill.style.width = "100%";
+  window.clearInterval(uiPolishState.startupTimer);
+  window.setTimeout(() => {
+    overlay.classList.add("done");
+    window.setTimeout(() => overlay.remove(), 360);
+    if (openPanel) window.UI?.open?.(openPanel);
+  }, 300);
+}
+
+function installStartupExperience() {
+  if (uiPolishState.startupInstalled || !window.CHERRIFT_V060?.finishBoot) return;
+  uiPolishState.startupInstalled = true;
+  const previousFinish = window.CHERRIFT_V060.finishBoot.bind(window.CHERRIFT_V060);
+  window.CHERRIFT_V060.finishBoot = function finishBootV5(...args) {
+    ensureStartupOverlay();
+    const result = previousFinish(...args);
+    syncStartupExperience();
+    window.clearInterval(uiPolishState.startupTimer);
+    uiPolishState.startupTimer = window.setInterval(syncStartupExperience, 250);
+    return result;
+  };
+  window.addEventListener("cherrift:authgate", syncStartupExperience);
+}
+
 function addInteractionFeedback() {
   if (uiPolishState.interactionBound) return;
   uiPolishState.interactionBound = true;
+  const pointers = new Map();
 
-  // Pointer feedback is bound separately because some older navigation handlers
-  // stop the click event during capture after opening their target panel.
   document.addEventListener("pointerdown", event => {
+    if (!event.isPrimary) return;
+    pointers.set(event.pointerId, { x:event.clientX, y:event.clientY });
     const button = event.target.closest?.("button, [role='button']");
     if (!button || button.disabled) return;
-    button.classList.remove("theme-click-pop");
-    void button.offsetWidth;
     button.classList.add("theme-click-pop");
-    window.setTimeout(() => button.classList.remove("theme-click-pop"), 260);
+    window.setTimeout(() => button.classList.remove("theme-click-pop"), 220);
   }, true);
+
+  document.addEventListener("pointerup", event => {
+    const start = pointers.get(event.pointerId);
+    pointers.delete(event.pointerId);
+    if (!start) return;
+    if (Math.hypot(event.clientX - start.x, event.clientY - start.y) <= 12) {
+      createPetalBurst(event.clientX, event.clientY);
+    }
+    requestAnimationFrame(scheduleDynamicPolish);
+  }, true);
+  document.addEventListener("pointercancel", event => pointers.delete(event.pointerId), true);
 
   document.addEventListener("click", event => {
     const mobileToggle = event.target.closest?.("[data-v082-toggle-mobile]");
@@ -574,6 +851,14 @@ function addInteractionFeedback() {
       uiPolishState.route = route;
       requestAnimationFrame(() => setMobileNavigationState(route));
     }
+    requestAnimationFrame(scheduleDynamicPolish);
+  }, true);
+
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+      document.getElementById("skinSplashFullscreenV5")?.classList.add("hidden");
+      document.body.classList.remove("skin-splash-open-v5");
+    }
   });
 }
 
@@ -581,6 +866,10 @@ function polishDynamicUi() {
   polishMobileDrawer();
   polishArsenal();
   polishGear();
+  polishGearInventory();
+  polishSkinSelector();
+  removeHeaderExplanations();
+  ensurePerformanceSetting();
   detectEconomyRoute();
   polishRewardOverlay();
   setMobileNavigationState(uiPolishState.route);
@@ -597,12 +886,16 @@ function scheduleDynamicPolish() {
 
 function observeDynamicUi() {
   if (uiPolishState.observer || !document.body) return;
-  uiPolishState.observer = new MutationObserver(scheduleDynamicPolish);
+  uiPolishState.observer = new MutationObserver(mutations => {
+    const meaningful = mutations.some(mutation => {
+      const target = mutation.target instanceof Element ? mutation.target : mutation.target?.parentElement;
+      return !target?.closest?.(".theme-petal-layer-v5, .cherrift-startup-v5, .auth-gate-v064");
+    });
+    if (meaningful) scheduleDynamicPolish();
+  });
   uiPolishState.observer.observe(document.body, {
     childList: true,
-    subtree: true,
-    attributes: true,
-    attributeFilter: ["class"]
+    subtree: true
   });
   addInteractionFeedback();
   scheduleDynamicPolish();
@@ -640,8 +933,10 @@ function patchUi() {
     applyTheme(save.settings.uiTheme, { silent: true });
     const result = previousInit(save, game);
     renderSettingsCard();
-    requestAnimationFrame(renderSettingsCard);
-    window.setTimeout(renderSettingsCard, 160);
+    ensurePerformanceSetting();
+    applyPerformancePreference(save.settings.mobilePerformanceMode);
+    requestAnimationFrame(() => { renderSettingsCard(); scheduleDynamicPolish(); });
+    window.setTimeout(() => { renderSettingsCard(); scheduleDynamicPolish(); }, 160);
     return result;
   };
   patchedInit.__themeSystemPatched = true;
@@ -654,6 +949,7 @@ function patchUi() {
       uiPolishState.route = panel || "menu";
       if (panel === "settings") {
         renderSettingsCard();
+        ensurePerformanceSetting();
         requestAnimationFrame(renderSettingsCard);
       }
       requestAnimationFrame(scheduleDynamicPolish);
@@ -665,6 +961,7 @@ function patchUi() {
 }
 
 ensureCss();
+installStartupExperience();
 applyTheme(migrateLocalSaveEarly(), { silent: true });
 patchStorageLoad();
 ensureV060SettingsPage();
@@ -676,14 +973,19 @@ observeDynamicUi();
 window.addEventListener("cherrift:languagechange", () => {
   ensureV060SettingsPage(window.UI?.save);
   renderSettingsCard();
+  document.getElementById("mobilePerformanceSettingV5")?.remove();
+  ensurePerformanceSetting();
+  scheduleDynamicPolish();
 });
 window.addEventListener("DOMContentLoaded", () => {
   patchStorageLoad();
   ensureV060SettingsPage(window.UI?.save);
   patchV060SettingsLifecycle();
   patchUi();
+  installStartupExperience();
   watchSettingsLayout();
   renderSettingsCard();
+  ensurePerformanceSetting();
   observeDynamicUi();
   scheduleDynamicPolish();
 });
@@ -702,5 +1004,5 @@ window.CHERRIFT_THEMES = Object.freeze({
   polish: scheduleDynamicPolish
 });
 
-console.info("[CHERRIFT] Theme System v4 loaded: readability, navigation and HUD polish for Default, Cozy Cherry and Summer Splash.");
+console.info("[CHERRIFT] Theme System v5 loaded: complete UI refinement, startup flow and mobile performance mode.");
 })();
