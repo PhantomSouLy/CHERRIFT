@@ -1,57 +1,404 @@
 (() => {
   "use strict";
-  if (window.__CHERRIFT_ECONOMY_V11__) return;
-  window.__CHERRIFT_ECONOMY_V11__ = Object.freeze({ version:"1.1.0" });
+  if (window.__CHERRIFT_ECONOMY_CHEST_ONLY__) return;
+  window.__CHERRIFT_ECONOMY_CHEST_ONLY__ = true;
 
-  const TIERS = ["common","rare","epic","legendary"];
+  const VERSION = "1.2.0-chest-only";
+  const TIERS = ["common", "rare", "epic"];
   const DEF = {
-    common:{name:"Common Chest",icon:"📦",pity:10,asset:"assets/items/chests/common_chest.png",rarity:"Common"},
-    rare:{name:"Rare Chest",icon:"🧰",pity:15,asset:"assets/items/chests/rare_chest.png",rarity:"Rare"},
-    epic:{name:"Epic Chest",icon:"🎁",pity:25,asset:"assets/items/chests/epic_chest.png",rarity:"Epic"},
-    legendary:{name:"Legendary Chest",icon:"🏆",pity:20,asset:"",rarity:"Legendary"},
+    common: { name: "Common Chest", itemText: "Common Items", pity: 10, rarity: "Common", asset: "assets/items/chests/common_chest.png" },
+    rare: { name: "Rare Chest", itemText: "Common / Rare Items", pity: 15, rarity: "Rare", asset: "assets/items/chests/rare_chest.png" },
+    epic: { name: "Epic Chest", itemText: "Rare / Epic Items", pity: 25, rarity: "Epic", asset: "assets/items/chests/epic_chest.png" }
   };
-  const id=(name)=>document.getElementById(name);
-  const q=(selector,root=document)=>root?.querySelector?.(selector)||null;
-  const qa=(selector,root=document)=>Array.from(root?.querySelectorAll?.(selector)||[]);
-  const n=(value)=>Math.max(0,Math.floor(Number(value)||0));
+  const state = { tier: "common", busy: false, dragStart: null, originalOpen: null };
+  const id = value => document.getElementById(value);
+  const q = (selector, root = document) => root?.querySelector?.(selector) || null;
+  const qa = (selector, root = document) => Array.from(root?.querySelectorAll?.(selector) || []);
+  const number = value => Math.max(0, Math.floor(Number(value) || 0));
+  const esc = value => String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
 
-  function normalize(save){
-    if(!save||typeof save!=="object")save={};
-    save.coins=n(save.coins);save.keys=n(save.keys);save.blossomGems=n(save.blossomGems);save.sakuraEssence=n(save.sakuraEssence);
-    save.resourceWallet=save.resourceWallet&&typeof save.resourceWallet==="object"?save.resourceWallet:{};
-    save.resourceWallet.keys=save.resourceWallet.keys&&typeof save.resourceWallet.keys==="object"?save.resourceWallet.keys:{};
-    for(const tier of ["rare","epic","legendary"])save.resourceWallet.keys[tier]=n(save.resourceWallet.keys[tier]);
-    save.chests=save.chests&&typeof save.chests==="object"?save.chests:{};for(const tier of TIERS)save.chests[tier]=n(save.chests[tier]);
-    save.gacha=save.gacha&&typeof save.gacha==="object"?save.gacha:{};save.gacha.pity=save.gacha.pity&&typeof save.gacha.pity==="object"?save.gacha.pity:{};for(const tier of TIERS)save.gacha.pity[tier]=n(save.gacha.pity[tier]);
-    save.gacha.history=Array.isArray(save.gacha.history)?save.gacha.history.slice(0,50):[];
-    save.bag=save.bag&&typeof save.bag==="object"?save.bag:{};save.bag.items=save.bag.items&&typeof save.bag.items==="object"?save.bag.items:{};
-    save.arsenal=save.arsenal&&typeof save.arsenal==="object"?save.arsenal:{};save.arsenal.materials=save.arsenal.materials&&typeof save.arsenal.materials==="object"?save.arsenal.materials:{};
-    save.economy=save.economy&&typeof save.economy==="object"?save.economy:{};save.economy.totalChestOpens=n(save.economy.totalChestOpens);
-    save.inventory=Array.isArray(save.inventory)?save.inventory:[];save.unlockedSkins=Array.isArray(save.unlockedSkins)?save.unlockedSkins:[];
+  function normalize(save) {
+    if (!save || typeof save !== "object") save = {};
+    save.coins = number(save.coins);
+    save.blossomGems = number(save.blossomGems);
+    save.sakuraEssence = number(save.sakuraEssence);
+    save.chests = save.chests && typeof save.chests === "object" ? save.chests : {};
+    for (const tier of ["common", "rare", "epic", "legendary"]) save.chests[tier] = number(save.chests[tier]);
+    save.gacha = save.gacha && typeof save.gacha === "object" ? save.gacha : {};
+    save.gacha.pity = save.gacha.pity && typeof save.gacha.pity === "object" ? save.gacha.pity : {};
+    for (const tier of ["common", "rare", "epic", "legendary"]) save.gacha.pity[tier] = number(save.gacha.pity[tier]);
+    save.economy = save.economy && typeof save.economy === "object" ? save.economy : {};
+    save.economy.totalChestOpens = number(save.economy.totalChestOpens);
+    save.inventory = Array.isArray(save.inventory) ? save.inventory : [];
+    save.unlockedSkins = Array.isArray(save.unlockedSkins) ? save.unlockedSkins : [];
+    save.resourceWallet = save.resourceWallet && typeof save.resourceWallet === "object" ? save.resourceWallet : {};
+    save.resourceWallet.keys = save.resourceWallet.keys && typeof save.resourceWallet.keys === "object" ? save.resourceWallet.keys : {};
+
+    if (!save.economy.chestOnlyMigrationV1) {
+      save.chests.common += number(save.keys);
+      save.chests.rare += number(save.resourceWallet.keys.rare);
+      save.chests.epic += number(save.resourceWallet.keys.epic);
+      save.chests.legendary += number(save.resourceWallet.keys.legendary);
+      save.keys = 0;
+      save.resourceWallet.keys.common = 0;
+      save.resourceWallet.keys.rare = 0;
+      save.resourceWallet.keys.epic = 0;
+      save.resourceWallet.keys.legendary = 0;
+      save.economy.chestOnlyMigrationV1 = true;
+    }
     return save;
   }
-  function keyCount(save,tier){save=normalize(save);return tier==="common"?save.keys:n(save.resourceWallet.keys[tier])}
-  function chestCount(save,tier){return normalize(save).chests[tier]}
-  function canOpen(save,tier){return chestCount(save,tier)>0||keyCount(save,tier)>0}
-  function consume(save,tier){save=normalize(save);if(save.chests[tier]>0){save.chests[tier]--;return"chest"}if(tier==="common"&&save.keys>0){save.keys--;return"key"}if(tier!=="common"&&save.resourceWallet.keys[tier]>0){save.resourceWallet.keys[tier]--;return"key"}return null}
-  function currentWorld(save){return Math.max(1,...Object.keys(save.clearedStages||{}).map(key=>Number(key.match(/world_(\d+)/)?.[1])||1))}
-  function randomSkin(rarity){const pool=(window.CHERRIFT_DATA?.skins||[]).filter(s=>String(s.rarity).toLowerCase()===rarity.toLowerCase());return pool.length?pool[Math.floor(Math.random()*pool.length)]:null}
-  function grantSkin(save,rarity){const skin=randomSkin(rarity);if(!skin){const amount={Common:5,Rare:15,Epic:40,Legendary:100}[rarity]||5;save.sakuraEssence+=amount;return{kind:"essence",rarity,amount,label:`${amount} Sakura Essence`,icon:"🌸"}}if(save.unlockedSkins.includes(skin.id)){const amount={Common:5,Rare:15,Epic:40,Legendary:100}[rarity]||5;save.sakuraEssence+=amount;return{kind:"duplicateSkin",rarity,amount,label:`${skin.name} duplicate → ${amount} Essence`,icon:skin.icon||skin.emoji||"🐰"}}save.unlockedSkins.push(skin.id);return{kind:"skin",rarity,skinId:skin.id,label:skin.name,icon:skin.icon||skin.emoji||"🐰"}}
-  function grantGear(save,rarity){const create=window.CHERRIFT_V050?.createGear;if(typeof create!=="function"){const coins={Common:30,Rare:90,Epic:240,Legendary:650}[rarity]||30;save.coins+=coins;return{kind:"coins",rarity,amount:coins,label:`${coins} Coin`,icon:"🪙"}}const item=create(currentWorld(save),rarity);window.CHERRIFT_V070?.syncItemToArsenal?.(item,save);if(save.inventory.length>=80){const coins=window.CHERRIFT_V050?.sellValue?.(item)||{Common:20,Rare:60,Epic:180,Legendary:500}[rarity]||20;save.coins+=coins;return{kind:"coins",rarity,amount:coins,label:`Inventory full → ${coins} Coin`,icon:"🪙"}}save.inventory.push(item);save.lootStats||={};save.lootStats.totalDrops=n(save.lootStats.totalDrops)+1;const key=`${rarity.toLowerCase()}Drops`;save.lootStats[key]=n(save.lootStats[key])+1;return{kind:"gear",rarity,item,label:`${rarity} ${item.type||""} ${item.slot||"Gear"}`.trim(),icon:window.UI?.gearEmoji?.(item)||"⚔️"}}
-  function roll(save,tier){const pity=++save.gacha.pity[tier],guarantee=pity%DEF[tier].pity===0,r=Math.random();if(tier==="common"){if(guarantee)return grantSkin(save,"Common");if(r<.86)return grantGear(save,"Common");if(r<.97)return grantSkin(save,"Common");if(r<.995)return grantGear(save,"Rare");return grantSkin(save,"Rare")}if(tier==="rare"){if(guarantee)return grantSkin(save,"Rare");if(r<.35)return grantGear(save,"Common");if(r<.82)return grantGear(save,"Rare");if(r<.91)return grantSkin(save,"Common");if(r<.985)return grantSkin(save,"Rare");return grantGear(save,"Epic")}if(tier==="epic"){if(guarantee)return r<.82?grantGear(save,"Epic"):grantSkin(save,"Epic");if(r<.46)return grantGear(save,"Rare");if(r<.78)return grantGear(save,"Epic");if(r<.89)return grantSkin(save,"Rare");if(r<.985)return grantSkin(save,"Epic");return grantGear(save,"Legendary")}if(guarantee)return r<.72?grantGear(save,"Legendary"):grantSkin(save,"Legendary");if(r<.30)return grantGear(save,"Epic");if(r<.75)return grantGear(save,"Legendary");if(r<.88)return grantSkin(save,"Epic");return grantSkin(save,"Legendary")}
-  function saveProgress(save){normalize(save);try{window.CherriftStorage?.save?.(save)}catch(_){}window.UI?.refreshMenu?.();render()}
-  function openChest(tier){if(!TIERS.includes(tier)||!window.UI?.save)return null;const save=normalize(UI.save);if(!consume(save,tier)){UI.toast?.(`Nincs ${DEF[tier].name} vagy hozzá való kulcs.`);return null}const reward=roll(save,tier);save.economy.totalChestOpens++;save.gacha.history.unshift({type:tier,reward:{kind:reward.kind,rarity:reward.rarity,label:reward.label,amount:reward.amount||0},at:Date.now()});save.gacha.history=save.gacha.history.slice(0,50);saveProgress(save);UI.toast?.(`Megszerezve: ${reward.label}`);showReward(reward,tier);return reward}
-  function showReward(reward,tier){const result=id("economyV11Result");if(result){result.classList.remove("hidden");result.innerHTML=`<span>${reward.icon||DEF[tier].icon}</span><div><small>${DEF[tier].name}</small><b>${escapeHtml(reward.label)}</b><em>${reward.rarity||""}</em></div>`}const assets=window.CHERRIFT_ITEM_ASSETS;window.CHERRIFT_REWARDS?.show?.([{key:`economy:${tier}:${Date.now()}`,name:reward.label,amount:reward.amount||1,asset:reward.item?.asset||assets?.chests?.[tier],rarity:reward.rarity||DEF[tier].rarity,kind:reward.kind}])}
-  function escapeHtml(value){return String(value??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")}
-  function tierCard(save,tier){const def=DEF[tier],asset=def.asset?`<img src="${def.asset}" alt="">`:`<span class="legendary-chest">🏆</span>`;return `<article class="economy-card-v11 ${tier}">${asset}<div><h3>${def.name}</h3><p>Chest: <b>${chestCount(save,tier)}</b> · Key: <b>${keyCount(save,tier)}</b></p><small>Pity: ${save.gacha.pity[tier]%def.pity}/${def.pity}</small></div><button data-economy-open="${tier}" ${canOpen(save,tier)?"":"disabled"}>NYITÁS</button></article>`}
-  function ensureStyles(){if(id("economyV11Css"))return;const style=document.createElement("style");style.id="economyV11Css";style.textContent=`#economyV11{overflow:auto;padding-bottom:90px}.economy-shell-v11{max-width:1050px;margin:auto;padding:18px}.economy-head-v11{display:flex;justify-content:space-between;gap:12px;align-items:center}.economy-head-v11 h2{margin:0}.economy-currencies-v11{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}.economy-currencies-v11 b{padding:9px 12px;border:1px solid rgba(255,255,255,.14);border-radius:999px;background:rgba(255,255,255,.05)}.economy-grid-v11{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.economy-card-v11{display:grid;grid-template-columns:82px 1fr auto;align-items:center;gap:12px;padding:15px;border:1px solid rgba(255,255,255,.12);border-radius:18px;background:rgba(26,13,29,.86)}.economy-card-v11 img,.legendary-chest{width:76px;height:76px;object-fit:contain;display:grid;place-items:center;font-size:52px}.economy-card-v11 h3{margin:0 0 5px}.economy-card-v11 p{margin:0 0 4px}.economy-card-v11 small{opacity:.7}.economy-card-v11 button{min-height:44px;padding:0 14px;border:0;border-radius:12px;color:#fff;font-weight:900;background:linear-gradient(120deg,#bd2870,#f067aa)}.economy-card-v11 button:disabled{opacity:.35}.economy-card-v11.rare{box-shadow:inset 0 0 0 1px rgba(77,163,255,.16)}.economy-card-v11.epic{box-shadow:inset 0 0 0 1px rgba(184,89,255,.18)}.economy-card-v11.legendary{box-shadow:inset 0 0 0 1px rgba(255,203,60,.24)}.economy-result-v11{display:flex;gap:13px;align-items:center;margin-top:14px;padding:16px;border:1px solid rgba(255,216,118,.24);border-radius:17px;background:rgba(255,195,54,.08)}.economy-result-v11>span{font-size:38px}.economy-result-v11 b,.economy-result-v11 small,.economy-result-v11 em{display:block}.economy-result-v11 em{color:#ffd36c}.economy-nav-v11{position:fixed;right:14px;bottom:90px;z-index:22;width:54px;height:54px;border:0;border-radius:50%;background:linear-gradient(135deg,#d52f7d,#7d46cf);color:#fff;font-size:24px;box-shadow:0 10px 35px #0008}@media(max-width:720px){.economy-grid-v11{grid-template-columns:1fr}.economy-card-v11{grid-template-columns:65px 1fr}.economy-card-v11 button{grid-column:1/-1}.economy-card-v11 img,.legendary-chest{width:60px;height:60px;font-size:42px}}`;document.head.appendChild(style)}
-  function ensurePanel(){if(id("economyV11"))return;const app=id("app");if(!app)return;app.insertAdjacentHTML("beforeend",`<section id="economyV11" class="panel hidden"><div class="economy-shell-v11"><header class="economy-head-v11"><div><small>CHERRIFT ECONOMY v1.1</small><h2>Chest Vault</h2><p>Külön tier kulcsok és ládák.</p></div><button class="back" data-economy-back>←</button></header><div id="economyV11Currencies" class="economy-currencies-v11"></div><div id="economyV11Grid" class="economy-grid-v11"></div><div id="economyV11Result" class="economy-result-v11 hidden"></div></div></section>`);const floating=document.createElement("button");floating.id="economyV11Floating";floating.className="economy-nav-v11";floating.type="button";floating.title="Chest Vault";floating.textContent="🏆";document.body.appendChild(floating);floating.onclick=openPanel;id("economyV11").addEventListener("click",event=>{const open=event.target.closest("[data-economy-open]");if(open)openChest(open.dataset.economyOpen);if(event.target.closest("[data-economy-back]"))window.UI?.open?.("menu")});const nav=q(".menu-left .main-nav");if(nav&&!id("economyV11DesktopBtn")){const b=document.createElement("button");b.id="economyV11DesktopBtn";b.className="menu-btn";b.type="button";b.innerHTML="<span>🏆</span><i>CHEST VAULT</i><b>›</b>";b.onclick=openPanel;nav.appendChild(b)}}
-  function render(){if(!id("economyV11")||!window.UI?.save)return;const save=normalize(UI.save);id("economyV11Currencies").innerHTML=`<b>🪙 ${save.coins} Coin</b><b>💎 ${save.blossomGems} Blossom Gem</b><b>🌸 ${save.sakuraEssence} Essence</b>`;id("economyV11Grid").innerHTML=TIERS.map(t=>tierCard(save,t)).join("")}
-  function openPanel(){ensurePanel();render();const custom="economyV11";qa("#app > section.panel").forEach(panel=>panel.classList.toggle("hidden",panel.id!==custom));document.body.classList.remove("is-playing");scrollTo({top:0,behavior:"smooth"})}
-  function patchOpen(){if(!window.UI||UI.__economyV11OpenPatched)return;const previous=UI.open?.bind(UI);if(previous)UI.open=function(panel,...args){if(panel==="economyV11"){openPanel();return}return previous(panel,...args)};UI.__economyV11OpenPatched=true}
-  function patchStorage(){if(!window.CherriftStorage||CherriftStorage.__economyV11)return;const d=CherriftStorage.defaults.bind(CherriftStorage),l=CherriftStorage.load.bind(CherriftStorage),s=CherriftStorage.save.bind(CherriftStorage);CherriftStorage.defaults=()=>normalize(d());CherriftStorage.load=()=>normalize(l());CherriftStorage.save=save=>s(normalize(save));CherriftStorage.__economyV11=true}
-  function patchRefresh(){if(!window.UI||UI.__economyV11Refresh)return;const previous=UI.refreshMenu?.bind(UI);if(previous)UI.refreshMenu=function(...args){const out=previous(...args);if(this.save)normalize(this.save);render();return out};UI.__economyV11Refresh=true}
-  function start(){if(!window.UI||!window.CherriftStorage||!window.CHERRIFT_DATA){setTimeout(start,120);return}ensureStyles();patchStorage();patchOpen();patchRefresh();if(UI.save)normalize(UI.save);ensurePanel();render();console.info("[CHERRIFT] Economy v1.1 tiered keys/chests loaded.")}
-  window.CHERRIFT_ECONOMY_V11={version:"1.1.0",normalize,keyCount,chestCount,canOpen,openChest,open:openPanel,render};
-  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
+
+  function saveProgress(save) {
+    normalize(save);
+    try { window.CherriftStorage?.save?.(save); } catch (error) { console.warn("[CHERRIFT Gacha] save failed", error); }
+    window.UI?.refreshMenu?.();
+    render();
+    window.dispatchEvent(new CustomEvent("cherrift:economychange"));
+  }
+
+  function currentWorld(save) {
+    return Math.max(1, ...Object.keys(save.clearedStages || {}).map(key => Number(key.match(/world_(\d+)/)?.[1]) || 1));
+  }
+
+  function skinPool(rarity) {
+    const source = Array.isArray(window.CHERRIFT_DATA?.skins) ? window.CHERRIFT_DATA.skins : [];
+    return source.filter(skin => String(skin.rarity || "Common").toLowerCase() === String(rarity).toLowerCase());
+  }
+
+  function grantSkin(save, rarity) {
+    const exactPool = skinPool(rarity);
+    const allSkins = Array.isArray(window.CHERRIFT_DATA?.skins) ? window.CHERRIFT_DATA.skins : [];
+    const pool = exactPool.length ? exactPool : allSkins;
+    const skin = pool.length ? pool[Math.floor(Math.random() * pool.length)] : null;
+    if (!skin) {
+      const amount = { Common: 5, Rare: 15, Epic: 40 }[rarity] || 5;
+      save.sakuraEssence += amount;
+      return { kind: "essence", rarity, amount, label: `${amount} Sakura Essence`, icon: "🌸" };
+    }
+    const duplicate = save.unlockedSkins.includes(skin.id);
+    if (!duplicate) save.unlockedSkins.push(skin.id);
+    if (duplicate) {
+      const amount = { Common: 5, Rare: 15, Epic: 40 }[rarity] || 5;
+      save.sakuraEssence += amount;
+      return { kind: "skin", duplicate: true, rarity, amount, skinId: skin.id, label: `${skin.name} · Duplicate +${amount} Essence`, icon: skin.icon || skin.emoji || "🐰", asset: skin.splash || skin.icon || "" };
+    }
+    return { kind: "skin", duplicate: false, rarity, skinId: skin.id, label: skin.name || skin.id, icon: skin.icon || skin.emoji || "🐰", asset: skin.splash || skin.icon || "" };
+  }
+
+  function grantGear(save, rarity) {
+    const create = window.CHERRIFT_V050?.createGear;
+    if (typeof create !== "function") {
+      const amount = { Common: 30, Rare: 90, Epic: 240 }[rarity] || 30;
+      save.coins += amount;
+      return { kind: "coins", rarity, amount, label: `${amount} Coin`, icon: "🪙" };
+    }
+    const item = create(currentWorld(save), rarity);
+    window.CHERRIFT_V070?.syncItemToArsenal?.(item, save);
+    if (save.inventory.length >= 80) {
+      const amount = window.CHERRIFT_V050?.sellValue?.(item) || { Common: 20, Rare: 60, Epic: 180 }[rarity] || 20;
+      save.coins += amount;
+      return { kind: "coins", rarity, amount, label: `Inventory full · ${amount} Coin`, icon: "🪙" };
+    }
+    save.inventory.push(item);
+    return { kind: "gear", rarity, item, amount: 1, label: `${rarity} ${item.type || ""} ${item.slot || "Gear"}`.trim(), icon: window.UI?.gearEmoji?.(item) || "⚔️", asset: item.asset || "" };
+  }
+
+  function roll(save, tier) {
+    const def = DEF[tier];
+    save.gacha.pity[tier] = number(save.gacha.pity[tier]) + 1;
+    const guaranteed = save.gacha.pity[tier] >= def.pity;
+    if (guaranteed) {
+      save.gacha.pity[tier] = 0;
+      return grantSkin(save, def.rarity);
+    }
+    const random = Math.random();
+    if (tier === "common") {
+      if (random < .87) return grantGear(save, "Common");
+      if (random < .975) return grantSkin(save, "Common");
+      if (random < .995) return grantGear(save, "Rare");
+      return grantSkin(save, "Rare");
+    }
+    if (tier === "rare") {
+      if (random < .32) return grantGear(save, "Common");
+      if (random < .81) return grantGear(save, "Rare");
+      if (random < .91) return grantSkin(save, "Common");
+      if (random < .985) return grantSkin(save, "Rare");
+      return grantGear(save, "Epic");
+    }
+    if (random < .45) return grantGear(save, "Rare");
+    if (random < .79) return grantGear(save, "Epic");
+    if (random < .90) return grantSkin(save, "Rare");
+    return grantSkin(save, "Epic");
+  }
+
+  function resourcePath(resourceId) {
+    const aliases = {
+      "key.common": "chest.common", "key.rare": "chest.rare", "key.epic": "chest.epic", "key.legendary": "chest.legendary"
+    };
+    const id = aliases[resourceId] || resourceId;
+    const paths = {
+      "currency.coins": ["coins"],
+      "currency.blossom_gems": ["blossomGems"],
+      "currency.sakura_essence": ["sakuraEssence"],
+      "chest.common": ["chests", "common"],
+      "chest.rare": ["chests", "rare"],
+      "chest.epic": ["chests", "epic"],
+      "chest.legendary": ["chests", "legendary"],
+      "material.copper": ["arsenal", "materials", "copper"],
+      "material.iron": ["arsenal", "materials", "iron"],
+      "material.steel": ["arsenal", "materials", "steel"],
+      "material.silver": ["arsenal", "materials", "silver"],
+      "material.royal": ["arsenal", "materials", "royal"],
+      "material.magical": ["arsenal", "materials", "magical"]
+    };
+    if (paths[id]) return paths[id];
+    if (id.startsWith("bag.")) return ["bag", "items", id.slice(4)];
+    return null;
+  }
+
+  function addAtPath(save, path, amount) {
+    let target = save;
+    for (let index = 0; index < path.length - 1; index += 1) {
+      const key = path[index];
+      if (!target[key] || typeof target[key] !== "object") target[key] = {};
+      target = target[key];
+    }
+    const key = path[path.length - 1];
+    target[key] = number(target[key]) + number(amount);
+  }
+
+  function applyReward(save, reward) {
+    save = normalize(save);
+    if (!reward || typeof reward !== "object") return save;
+    const resources = { ...(reward.resources || {}) };
+    if (reward.coins) resources["currency.coins"] = number(resources["currency.coins"]) + number(reward.coins);
+    if (reward.keys) resources["chest.common"] = number(resources["chest.common"]) + number(reward.keys);
+    for (const [resourceId, amount] of Object.entries(resources)) {
+      const path = resourcePath(resourceId);
+      if (path && number(amount) > 0) addAtPath(save, path, amount);
+    }
+    if (Array.isArray(reward.skins)) for (const skinId of reward.skins) if (skinId && !save.unlockedSkins.includes(skinId)) save.unlockedSkins.push(skinId);
+    return save;
+  }
+
+  function aggregate(rewards) {
+    const groups = new Map();
+    for (const reward of rewards.filter(item => item.kind !== "skin")) {
+      const key = reward.kind === "gear" ? `${reward.label}:${reward.item?.id || Math.random()}` : reward.label;
+      if (!groups.has(key)) groups.set(key, { ...reward, amount: 0 });
+      groups.get(key).amount += number(reward.amount || 1);
+    }
+    return [...groups.values()];
+  }
+
+  function ensureCss() {
+    if (id("cherriftChestOnlyCss")) return;
+    const style = document.createElement("style");
+    style.id = "cherriftChestOnlyCss";
+    style.textContent = `
+      #economyV11Floating,#economyV11DesktopBtn,.economy-nav-v11{display:none!important;pointer-events:none!important}
+      #gachaChestOnlyV12{overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior-y:contain;touch-action:pan-y;min-height:100dvh;padding-bottom:140px;color:#fff}
+      .gco-shell{width:min(920px,100%);margin:0 auto;padding:18px 18px 150px}
+      .gco-head{display:flex;align-items:center;gap:16px;margin-bottom:14px}.gco-head h2{margin:0;font:700 clamp(42px,8vw,64px)/1 Georgia,serif}.gco-back{width:72px;height:72px;border:1px solid #ffffff25;border-radius:22px;color:#fff;background:#ffffff08;font-size:28px}
+      .gco-wallet,.gco-chests{display:flex;justify-content:center;flex-wrap:wrap;gap:9px}.gco-wallet{margin:8px 0 12px}.gco-wallet b,.gco-chests b{display:flex;align-items:center;gap:8px;min-height:50px;padding:8px 14px;border:1px solid #ffffff1f;border-radius:15px;background:#ffffff08}.gco-chests{margin:0 0 18px}.gco-chests img{width:38px;height:38px;object-fit:contain}
+      .gco-carousel{position:relative;display:grid;grid-template-columns:54px minmax(0,1fr) 54px;align-items:center;gap:10px;user-select:none}.gco-arrow{height:64px;border:1px solid #ffffff22;border-radius:18px;color:#fff;background:#ffffff08;font-size:36px}.gco-card{min-height:650px;padding:22px;border:1px solid #ffffff24;border-radius:30px;background:linear-gradient(160deg,#2a102fdd,#120817f2);box-shadow:0 24px 80px #0007;touch-action:pan-y}
+      .gco-card.common{border-top:7px solid #63dd8a}.gco-card.rare{border-top:7px solid #58adff}.gco-card.epic{border-top:7px solid #c060ff}.gco-art{height:260px;display:grid;place-items:center;border-radius:24px;background:#ffffff05}.gco-art img{max-width:230px;max-height:220px;object-fit:contain;filter:drop-shadow(0 18px 25px #0008)}
+      .gco-rarity{margin:20px 0 3px;font-weight:1000;letter-spacing:4px;text-transform:uppercase}.gco-card h3{margin:0;font:700 clamp(38px,7vw,58px)/1.05 Georgia,serif}.gco-copy{margin:18px 0 8px;color:#e7c9db;font-size:18px}.gco-empty-note{margin:0 0 14px;padding:9px 12px;border:1px solid #ffb4d13d;border-radius:12px;color:#ffb4d1;background:#b9276414;font-weight:850}.gco-pity{padding:15px 18px;border-radius:18px;background:#ffffff07}.gco-pity header{display:flex;justify-content:space-between;font-size:19px}.gco-track{height:10px;margin-top:10px;border-radius:99px;background:#ffffff0d;overflow:hidden}.gco-track i{display:block;height:100%;background:linear-gradient(90deg,#e34b98,#b65cff)}
+      .gco-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.gco-actions button{min-height:70px;border:0;border-radius:18px;color:#fff;background:linear-gradient(115deg,#d72f7d,#ea70ac);font-size:19px;font-weight:1000}.gco-actions button:disabled{color:#ffffff55;background:#64718a55;box-shadow:none}
+      .gco-dots{display:flex;justify-content:center;gap:9px;margin-top:16px}.gco-dots button{width:11px;height:11px;padding:0;border:0;border-radius:50%;background:#ffffff30}.gco-dots button.active{background:#f15aa3;transform:scale(1.3)}
+      .gco-modal{position:fixed;inset:0;z-index:100050;display:grid;place-items:center;padding:18px;background:#07030ce8;backdrop-filter:blur(8px)}.gco-modal.hidden{display:none!important}.gco-modal-card{width:min(600px,100%);max-height:min(780px,90dvh);overflow:auto;padding:24px;border:1px solid #ffffff25;border-radius:28px;background:linear-gradient(155deg,#34133deb,#120817);text-align:center}.gco-opening img{width:min(280px,65vw);height:240px;object-fit:contain;animation:gcoOpen .85s ease both}.gco-skin-art{width:100%;height:330px;object-fit:contain;border-radius:20px;background:#ffffff06}.gco-modal h3{font:700 38px Georgia,serif;margin:12px 0}.gco-next,.gco-close{width:100%;min-height:58px;border:0;border-radius:16px;color:#fff;background:linear-gradient(115deg,#d72f7d,#ea70ac);font-weight:1000}.gco-summary{display:grid;gap:9px;text-align:left}.gco-summary-row{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:#ffffff07}.gco-summary-row img{width:48px;height:48px;object-fit:contain}.gco-summary-row span{font-size:28px}.gco-summary-row b{margin-left:auto}.gco-toast{position:fixed;z-index:100080;top:max(14px,env(safe-area-inset-top));left:50%;translate:-50% -120%;max-width:min(520px,90vw);padding:12px 18px;border:1px solid #ffbad8aa;border-radius:14px;background:#2f1029ed;color:#fff;font-weight:900;transition:translate .22s}.gco-toast.show{translate:-50% 0}
+      @keyframes gcoOpen{0%{transform:scale(.65) rotate(-5deg);filter:brightness(.5)}60%{transform:scale(1.13) rotate(2deg);filter:brightness(1.7) drop-shadow(0 0 35px #ff77bd)}100%{transform:scale(1);filter:brightness(1)}}
+      @media(max-width:700px){.gco-shell{padding:12px 12px 130px}.gco-head h2{font-size:48px}.gco-back{width:64px;height:64px}.gco-carousel{grid-template-columns:38px minmax(0,1fr) 38px;gap:6px}.gco-arrow{height:58px;border-radius:14px}.gco-card{min-height:570px;padding:16px;border-radius:25px}.gco-art{height:210px}.gco-art img{max-height:190px;max-width:200px}.gco-actions button{min-height:64px}.gco-wallet b{padding:7px 10px}.gco-chests b{padding:5px 8px;font-size:13px}.gco-chests img{width:32px;height:32px}}
+    `;
+    document.head.appendChild(style);
+  }
+
+  function ensurePanel() {
+    let panel = id("gachaChestOnlyV12");
+    if (panel) return panel;
+    const app = id("app");
+    if (!app) return null;
+    panel = document.createElement("section");
+    panel.id = "gachaChestOnlyV12";
+    panel.className = "panel hidden";
+    panel.innerHTML = `<div class="gco-shell"><header class="gco-head"><button class="gco-back" type="button" data-gco-back>←</button><h2>Gacha</h2></header><div id="gcoWallet" class="gco-wallet"></div><div id="gcoChestWallet" class="gco-chests"></div><div class="gco-carousel" id="gcoCarousel"><button class="gco-arrow" type="button" data-gco-step="-1">‹</button><div id="gcoCard"></div><button class="gco-arrow" type="button" data-gco-step="1">›</button></div><div id="gcoDots" class="gco-dots"></div></div><div id="gcoModal" class="gco-modal hidden"></div><div id="gcoToast" class="gco-toast"></div>`;
+    app.appendChild(panel);
+    panel.addEventListener("click", event => {
+      const step = event.target.closest("[data-gco-step]");
+      if (step) changeTier(Number(step.dataset.gcoStep));
+      if (event.target.closest("[data-gco-back]")) closePanel();
+      const open = event.target.closest("[data-gco-open]");
+      if (open) openMany(Number(open.dataset.gcoOpen));
+      const dot = event.target.closest("[data-gco-tier]");
+      if (dot) { state.tier = dot.dataset.gcoTier; render(); }
+    });
+    const carousel = id("gcoCarousel");
+    carousel.addEventListener("pointerdown", event => { state.dragStart = { x: event.clientX, y: event.clientY, id: event.pointerId }; carousel.setPointerCapture?.(event.pointerId); });
+    carousel.addEventListener("pointerup", event => {
+      if (!state.dragStart) return;
+      const dx = event.clientX - state.dragStart.x;
+      const dy = event.clientY - state.dragStart.y;
+      state.dragStart = null;
+      if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.25) changeTier(dx < 0 ? 1 : -1);
+    });
+    return panel;
+  }
+
+  function toast(message) {
+    const element = id("gcoToast");
+    if (!element) return window.UI?.toast?.(message);
+    element.textContent = message;
+    element.classList.add("show");
+    clearTimeout(toast.timer);
+    toast.timer = setTimeout(() => element.classList.remove("show"), 2800);
+  }
+
+  function render() {
+    const panel = ensurePanel();
+    if (!panel || !window.UI?.save) return;
+    const save = normalize(UI.save);
+    const def = DEF[state.tier];
+    const count = number(save.chests[state.tier]);
+    const pity = number(save.gacha.pity[state.tier]);
+    id("gcoWallet").innerHTML = `<b>🪙 ${save.coins}</b><b>💎 ${save.blossomGems}</b><b>🌸 ${save.sakuraEssence}</b>`;
+    id("gcoChestWallet").innerHTML = TIERS.map(tier => `<b><img src="${DEF[tier].asset}" alt=""><span>${number(save.chests[tier])}</span></b>`).join("");
+    id("gcoCard").innerHTML = `<article class="gco-card ${state.tier}" data-gco-card><div class="gco-art"><img src="${def.asset}" alt="${esc(def.name)}"></div><div class="gco-rarity">${state.tier}</div><h3>${esc(def.name)}</h3><p class="gco-copy">${esc(def.itemText)}</p>${count < 1 ? `<p class="gco-empty-note">You don't have any ${esc(def.name)}s.</p>` : ""}<section class="gco-pity"><header><span>Guaranteed Skin</span><b>${pity} / ${def.pity}</b></header><div class="gco-track"><i style="width:${Math.min(100, pity / def.pity * 100)}%"></i></div></section><div class="gco-actions"><button type="button" data-gco-open="1" ${count < 1 || state.busy ? "disabled" : ""}>Open 1×</button><button type="button" data-gco-open="10" ${count < 10 || state.busy ? "disabled" : ""}>Open 10×</button></div></article>`;
+    id("gcoDots").innerHTML = TIERS.map(tier => `<button type="button" class="${tier === state.tier ? "active" : ""}" data-gco-tier="${tier}" aria-label="${DEF[tier].name}"></button>`).join("");
+  }
+
+  function changeTier(step) {
+    const current = TIERS.indexOf(state.tier);
+    state.tier = TIERS[(current + step + TIERS.length) % TIERS.length];
+    render();
+  }
+
+  function hideGamePanels(target) {
+    qa("#app > section").forEach(section => {
+      if (section === target) section.classList.remove("hidden");
+      else if (section.id !== "hud" && section.id !== "stageHud") section.classList.add("hidden");
+    });
+    document.body.classList.remove("is-playing");
+  }
+
+  function openPanel(tier) {
+    if (TIERS.includes(tier)) state.tier = tier;
+    ensureCss();
+    const panel = ensurePanel();
+    if (!panel) return;
+    if (window.UI?.save) {
+      const before = JSON.stringify({ keys: UI.save.keys, wallet: UI.save.resourceWallet?.keys, migrated: UI.save.economy?.chestOnlyMigrationV1 });
+      normalize(UI.save);
+      const after = JSON.stringify({ keys: UI.save.keys, wallet: UI.save.resourceWallet?.keys, migrated: UI.save.economy?.chestOnlyMigrationV1 });
+      if (before !== after) saveProgress(UI.save);
+    }
+    hideGamePanels(panel);
+    render();
+    panel.scrollTop = 0;
+    window.scrollTo?.({ top: 0, behavior: "instant" });
+  }
+
+  function closePanel() {
+    if (state.originalOpen) state.originalOpen("menu");
+    else window.UI?.open?.("menu");
+  }
+
+  function summaryMarkup(rewards) {
+    const rows = aggregate(rewards);
+    if (!rows.length) return `<p>All rewards were shown above.</p>`;
+    return `<div class="gco-summary">${rows.map(reward => `<div class="gco-summary-row">${reward.asset ? `<img src="${esc(reward.asset)}" alt="">` : `<span>${reward.icon || "•"}</span>`}<strong>${esc(reward.label)}</strong><b>×${number(reward.amount || 1)}</b></div>`).join("")}</div>`;
+  }
+
+  function showResultSequence(tier, rewards) {
+    const modal = id("gcoModal");
+    const skins = rewards.filter(reward => reward.kind === "skin");
+    const queue = [...skins];
+    const renderSummary = () => {
+      modal.innerHTML = `<div class="gco-modal-card"><small>${esc(DEF[tier].name)}</small><h3>Rewards</h3>${summaryMarkup(rewards)}<button class="gco-close" type="button">Close</button></div>`;
+      q(".gco-close", modal).onclick = () => modal.classList.add("hidden");
+    };
+    const nextSkin = () => {
+      const reward = queue.shift();
+      if (!reward) return renderSummary();
+      modal.innerHTML = `<div class="gco-modal-card"><small>${esc(reward.rarity)} Skin</small>${reward.asset ? `<img class="gco-skin-art" src="${esc(reward.asset)}" alt="">` : `<div style="font-size:90px">${reward.icon || "🐰"}</div>`}<h3>${esc(reward.label)}</h3>${reward.duplicate ? `<p>Duplicate skin converted to Sakura Essence.</p>` : `<p>New Cherry skin unlocked!</p>`}<button class="gco-next" type="button">${queue.length ? "Next Skin" : "Reward Summary"}</button></div>`;
+      q(".gco-next", modal).onclick = nextSkin;
+    };
+    modal.classList.remove("hidden");
+    modal.innerHTML = `<div class="gco-modal-card gco-opening"><small>${rewards.length}× opening</small><img src="${DEF[tier].asset}" alt=""><h3>Opening…</h3></div>`;
+    setTimeout(() => skins.length ? nextSkin() : renderSummary(), 850);
+  }
+
+  function openMany(amount) {
+    if (state.busy || !window.UI?.save || ![1, 10].includes(amount)) return;
+    const save = normalize(UI.save);
+    const available = number(save.chests[state.tier]);
+    if (available < amount) {
+      toast(amount === 10 ? `You need 10 ${DEF[state.tier].name}s.` : `You don't have any ${DEF[state.tier].name}s.`);
+      return;
+    }
+    state.busy = true;
+    save.chests[state.tier] -= amount;
+    const rewards = [];
+    for (let index = 0; index < amount; index += 1) rewards.push(roll(save, state.tier));
+    save.economy.totalChestOpens += amount;
+    saveProgress(save);
+    state.busy = false;
+    render();
+    showResultSequence(state.tier, rewards);
+  }
+
+  function patchStorage() {
+    if (!window.CherriftStorage || CherriftStorage.__chestOnlyV12) return;
+    const defaults = CherriftStorage.defaults?.bind(CherriftStorage);
+    const load = CherriftStorage.load?.bind(CherriftStorage);
+    const save = CherriftStorage.save?.bind(CherriftStorage);
+    if (defaults) CherriftStorage.defaults = () => normalize(defaults());
+    if (load) CherriftStorage.load = () => normalize(load());
+    if (save) CherriftStorage.save = value => save(normalize(value));
+    CherriftStorage.__chestOnlyV12 = true;
+  }
+
+  function patchOpen() {
+    if (!window.UI || UI.__chestOnlyOpenV12) return;
+    state.originalOpen = UI.open?.bind(UI) || null;
+    if (state.originalOpen) UI.open = function chestOnlyOpen(panel, ...args) {
+      if (["gachaV082", "chests", "economyV11", "gachaChestOnlyV12"].includes(panel)) return openPanel(args[0]);
+      return state.originalOpen(panel, ...args);
+    };
+    UI.__chestOnlyOpenV12 = true;
+  }
+
+  function removeLegacyUi() {
+    id("economyV11Floating")?.remove();
+    id("economyV11DesktopBtn")?.remove();
+    const oldPanel = id("economyV11");
+    if (oldPanel) oldPanel.remove();
+    qa('[data-tier="legendary"],[data-chest="legendary"],[data-v082-chest="legendary"],.legendary-chest').forEach(element => element.remove());
+  }
+
+  function start() {
+    if (!window.UI || !window.CherriftStorage || !window.CHERRIFT_DATA) return setTimeout(start, 120);
+    ensureCss();
+    patchStorage();
+    patchOpen();
+    if (UI.save) normalize(UI.save);
+    ensurePanel();
+    removeLegacyUi();
+    new MutationObserver(removeLegacyUi).observe(document.body, { childList: true, subtree: true });
+    console.info(`[CHERRIFT] Economy ${VERSION} loaded: chest-only Common/Rare/Epic carousel.`);
+  }
+
+  window.CHERRIFT_ECONOMY_V11 = Object.freeze({
+    version: VERSION,
+    tiers: TIERS,
+    normalize,
+    applyReward,
+    open: openPanel,
+    render,
+    openMany,
+    chestCount: (save, tier) => number(normalize(save).chests[tier])
+  });
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start, { once: true });
+  else start();
 })();
