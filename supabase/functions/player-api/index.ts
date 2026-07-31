@@ -108,6 +108,28 @@ Deno.serve(async (req: Request) => {
     if (!isObject(body)) throw new Error("invalid_json_body");
     const action = typeof body.action === "string" ? body.action : "";
 
+    if (action === "reward_catalog") {
+      const { data, error } = await adminClient
+        .from("reward_catalog")
+        .select("resource_id,category,label_hu,label_en,max_amount,sort_order,metadata")
+        .eq("active", true)
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return json(req, {
+        ok: true,
+        requestId,
+        resources: (data ?? []).map((row: any) => ({
+          id: row.resource_id,
+          category: row.category,
+          label_hu: row.label_hu,
+          label_en: row.label_en,
+          max_amount: row.max_amount,
+          sort_order: row.sort_order,
+          metadata: row.metadata ?? {},
+        })),
+      });
+    }
+
     if (action === "list_mail") {
       const now = new Date();
       const { data: messages, error: messageError } = await adminClient
@@ -211,7 +233,7 @@ Deno.serve(async (req: Request) => {
     throw new Error("unknown_action");
   } catch (error) {
     const code = errorCode(error);
-    console.error(`[CHERRIFT player-api] Request failed [${requestId}]`, error);
+    console.error(`[CHERRIFT player-api v1.1] Request failed [${requestId}]`, error);
     const status = code === "invalid_auth_token" || code === "missing_auth_token" ? 401 : 400;
     return json(req, { error: code, requestId }, status);
   }
