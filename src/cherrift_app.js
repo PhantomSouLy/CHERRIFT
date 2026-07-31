@@ -1,6 +1,6 @@
 /*!
  * CHERRIFT Clean Runtime
- * Consolidated from the active v0.4–v0.9.3 patch chain.
+ * Consolidated from the active v0.4–v0.9.4 patch chain.
  * Generated as a classic browser script. Do not load the old v*.js files beside it.
  */
 
@@ -10,7 +10,7 @@
     console.warn("[CHERRIFT] Clean Runtime was requested more than once; duplicate load ignored.");
     return;
   }
-  window.__CHERRIFT_CLEAN_RUNTIME__ = Object.freeze({version:"1.4.0", build:"0.9.3-test"});
+  window.__CHERRIFT_CLEAN_RUNTIME__ = Object.freeze({version:"1.4.1", build:"0.9.4-test"});
   window.CHERRIFT_RUNTIME_CSS_BUNDLED = true;
   const styleMarkers = ["mobileV051Styles", "v050Style", "v052css", "v053css", "v055css", "v0551css", "v0552css", "v0557css", "v0560css", "v0561css", "v060css", "v062css", "v063css", "v070css", "v080css", "v081css", "v082css", "v083css", "v084css", "v085css", "v086css", "v087css", "v088css", "v089css", "v090css", "v091css", "v092css", "v093css", "v0931css", "v0932css", "v0933css", "v094css", "v0946css", "cherriftThemeSystemCss"];
   for (const markerId of styleMarkers) {
@@ -1237,21 +1237,21 @@ window.UI = {
   };
 
   const WORLD1_GROUND = {
-    basic:"assets/map/world1/world1_grass_seamless.png",
-    flowersRocks:"assets/map/world1/world1_grass_rock.png",
-    dirtClearing:"assets/map/world1/world1_grass_seamless_low.png",
-    grassDirtMix:"assets/map/world1/world1_grass_seamless_low.png",
-    cloverFlowers:"assets/map/world1/world1_grass_seamless.png"
+    basic:"assets/map/world1/world1_ground_1.png",
+    flowersRocks:"assets/map/world1/world1_ground_1.png",
+    dirtClearing:"assets/map/world1/world1_ground_1.png",
+    grassDirtMix:"assets/map/world1/world1_ground_1.png",
+    cloverFlowers:"assets/map/world1/world1_ground_1.png"
   };
 
   function installConfigData() {
     Object.assign(CHERRIFT_CONFIG.map, {
-      grassNight:"assets/map/world1/world1_grass_seamless.png",
-      flower1:"assets/map/world1/flower1.png",
-      flower2:"assets/map/world1/flower2.png",
-      mushroom:"assets/map/world1/mushroom.png",
-      world1:"assets/map/world1/world1.png",
-      world2:"assets/map/world2.png",
+      grassNight:"assets/map/world1/world1_ground_1.png",
+      flower1:"assets/map/world1/world1_flower_1.png",
+      flower2:"assets/map/world1/world1_flower_2.png",
+      mushroom:"assets/map/world1/world1_mushroom_1.png",
+      world1:"assets/map/world1/world1_splashart_1.png",
+      world2:"assets/map/world2/world2_splashart_1.png",
       ...WORLD1_GROUND
     });
 
@@ -1814,9 +1814,9 @@ window.UI = {
    Clean replacement for old v0.4.0d/e/f/g/h world patches.
 
    Final world rules:
-   - World 1 ground: assets/map/world1/world1_grass_seamless.png
+   - World 1 ground: assets/map/world1/world1_ground_1.png
    - World 2 ground: same seamless texture + night overlay
-   - World 2 splash: assets/map/world2.png
+   - World 2 splash: assets/map/world2/world2_splashart_1.png
    - World 2-1 stays unlocked for testing
    ============================================================ */
 (() => {
@@ -1830,21 +1830,21 @@ window.UI = {
   const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 
   const STAGES = window.CHERRIFT_V040?.stages || [];
-  const SHARED_GROUND = "assets/map/world1/world1_grass_seamless.png";
-  const WORLD1_SPLASH = "assets/map/world1/world1.png";
-  const WORLD2_SPLASH = "assets/map/world2.png";
+  const SHARED_GROUND = "assets/map/world1/world1_ground_1.png";
+  const WORLD1_SPLASH = "assets/map/world1/world1_splashart_1.png";
+  const WORLD2_SPLASH = "assets/map/world2/world2_splashart_1.png";
 
   const WORLD1_DECOR = {
-    bush1: "assets/map/world1/bush_01.png",
-    bush2: "assets/map/world1/bush_02.png",
-    flower1: "assets/map/world1/flower1.png",
-    flower2: "assets/map/world1/flower2.png",
-    log: "assets/map/world1/log.png",
-    mushroom: "assets/map/world1/mushroom.png",
-    rockBig: "assets/map/world1/rock_big.png",
-    rockSmall: "assets/map/world1/rock_small.png",
-    treeBig: "assets/map/world1/tree_big.png",
-    treeSmall: "assets/map/world1/tree_small.png"
+    bush1: "assets/map/world1/world1_bush_1.png",
+    bush2: "assets/map/world1/world1_bush_2.png",
+    flower1: "assets/map/world1/world1_flower_1.png",
+    flower2: "assets/map/world1/world1_flower_2.png",
+    log: "assets/map/world1/world1_log_1.png",
+    mushroom: "assets/map/world1/world1_mushroom_1.png",
+    rockBig: "assets/map/world1/world1_rock_1.png",
+    rockSmall: "assets/map/world1/world1_rock_small_1.png",
+    treeBig: "assets/map/world1/world1_tree_2.png",
+    treeSmall: "assets/map/world1/world1_tree_1.png"
   };
 
   CHERRIFT_CONFIG.version = VERSION;
@@ -2141,9 +2141,9 @@ window.UI = {
   if (!window.CHERRIFT_CONFIG || !window.CHERRIFT_DATA || !window.CherriftGame || !window.UI) return;
 
   const VERSION = "0.4.1b-bugfix";
-  const SHARED_GROUND = "assets/map/world1/world1_grass_seamless.png";
-  const WORLD1_SPLASH = "assets/map/world1/world1.png";
-  const WORLD2_SPLASH = "assets/map/world2.png";
+  const SHARED_GROUND = "assets/map/world1/world1_ground_1.png";
+  const WORLD1_SPLASH = "assets/map/world1/world1_splashart_1.png";
+  const WORLD2_SPLASH = "assets/map/world2/world2_splashart_1.png";
   const STAGES = window.CHERRIFT_V040?.stages || [];
   const id = name => document.getElementById(name);
   const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -2471,7 +2471,7 @@ window.UI = {
 
 /* ============================================================
    CHERRIFT v0.4.1 GROUND ASSET FINAL SAFETY
-   - Uses assets/map/world1/world1_grass_seamless.png directly
+   - Uses assets/map/world1/world1_ground_1.png directly
    - Does not rely only on canvas pattern
    - World 2 keeps the night overlay
    ============================================================ */
@@ -2480,7 +2480,7 @@ window.UI = {
 
   if (!window.CherriftGame || !window.CHERRIFT_CONFIG) return;
 
-  const SHARED_GROUND_K = "assets/map/world1/world1_grass_seamless.png";
+  const SHARED_GROUND_K = "assets/map/world1/world1_ground_1.png";
   CHERRIFT_CONFIG.map.grass = SHARED_GROUND_K;
   CHERRIFT_CONFIG.map.grassNight = SHARED_GROUND_K;
   CHERRIFT_CONFIG.map.world1GrassSeamless = SHARED_GROUND_K;
@@ -2963,7 +2963,7 @@ window.UI = {
   };
 
   // Faster night ground final override.
-  const SHARED_GROUND = "assets/map/world1/world1_grass_seamless.png";
+  const SHARED_GROUND = "assets/map/world1/world1_ground_1.png";
   CHERRIFT_CONFIG.map.grass = SHARED_GROUND;
   CHERRIFT_CONFIG.map.grassNight = SHARED_GROUND;
   CHERRIFT_CONFIG.map.world1GrassSeamless = SHARED_GROUND;
@@ -3033,7 +3033,7 @@ window.UI = {
 /* ============================================================
    CHERRIFT v0.4.1e FINAL PERF + ENEMY + GROUND FIX
    - Removes dependency on the huge embedded base64 ground.
-   - Uses external assets/map/world1/world1_grass_seamless.png only.
+   - Uses external assets/map/world1/world1_ground_1.png only.
    - Direct-loads enemy sprite sheets and uses cached frame canvases.
    - Uses cheap World 2 night overlay.
    - Adds 3.5 sec VICTORY delay before Stage Cleared modal.
@@ -3438,7 +3438,7 @@ window.UI = {
   // ------------------------------------------------------------
   // Fast external ground renderer
   // ------------------------------------------------------------
-  const GROUND_SRC = "assets/map/world1/world1_grass_seamless.png";
+  const GROUND_SRC = "assets/map/world1/world1_ground_1.png";
   CHERRIFT_CONFIG.map.grass = GROUND_SRC;
   CHERRIFT_CONFIG.map.grassNight = GROUND_SRC;
   CHERRIFT_CONFIG.map.world1GrassSeamless = GROUND_SRC;
@@ -3699,7 +3699,7 @@ window.UI = {
   // ------------------------------------------------------------
   // Ground: world2 super cheap. Pattern still used for world1.
   // ------------------------------------------------------------
-  const GROUND_SRC = "assets/map/world1/world1_grass_seamless.png";
+  const GROUND_SRC = "assets/map/world1/world1_ground_1.png";
   CHERRIFT_CONFIG.map.grass = GROUND_SRC;
   CHERRIFT_CONFIG.map.grassNight = GROUND_SRC;
   CHERRIFT_CONFIG.map.world1GrassSeamless = GROUND_SRC;
@@ -10306,12 +10306,8 @@ function bindClickSounds() {
 }
 
 function ensureCss() {
-  id("v060css")?.remove();
-  const link = document.createElement("link");
-  link.id = "v060css";
-  link.rel = "stylesheet";
-  link.href = "v060.css?v=090-mmorpg2";
-  document.head.appendChild(link);
+  // v060.css is already part of assets/cherrift_app.css.
+  document.documentElement.dataset.v060Css = "bundled";
 }
 
 function escapeHtml(value) {
@@ -13387,8 +13383,8 @@ console.info("[CHERRIFT] v0.6.3 test-build systems loaded.");
 (() => {
 "use strict";
 
-const VERSION = "0.6.3-auth.2-cloud";
-const CLOUD_SAVE_VERSION = "0.6.3-cloud.1";
+const VERSION = "0.9.4-auth.3-safe-cloud";
+const CLOUD_SAVE_VERSION = "0.9.4-cloud.2";
 const CONFIG = window.CHERRIFT_SUPABASE_CONFIG || {};
 const CLOUD_TABLE = CONFIG.cloudSaveTable || "game_saves";
 const SAVE_DEBOUNCE_MS = 650;
@@ -13427,7 +13423,7 @@ const COPY = {
     accountMemoryOnly: "A Discord-fiók aktív, de ebben a tesztkörnyezetben nincs adatbázis-kapcsolat.",
     guestAccount: "Jelenleg vendégként játszol. A mentés csak ezen az eszközön található.",
     discordLogin: "Discord Login",
-    testBuild: "TESZTVERZIÓ · v0.9.0",
+    testBuild: "TESZTVERZIÓ · v0.9.4",
     language: "Nyelv"
   },
   en: {
@@ -13461,7 +13457,7 @@ const COPY = {
     accountMemoryOnly: "Discord is active, but this test environment has no database connection.",
     guestAccount: "You are currently playing as a guest. The save exists only on this device.",
     discordLogin: "Discord Login",
-    testBuild: "TEST BUILD · v0.9.0",
+    testBuild: "TEST BUILD · v0.9.4",
     language: "Language"
   }
 };
@@ -13630,6 +13626,47 @@ function currentGuestSave() {
   return loader();
 }
 
+function discordBackupKey(userId = runtime.session?.user?.id) {
+  return userId ? `cherrift-discord-backup-v1:${String(userId)}` : "";
+}
+
+function readDiscordBackup(userId = runtime.session?.user?.id) {
+  const key = discordBackupKey(userId);
+  if (!key) return null;
+  try {
+    const value = JSON.parse(window.localStorage.getItem(key) || "null");
+    if (!isPlainObject(value?.saveData)) return null;
+    return { saveData:normalizeCloudSave(value.saveData), savedAt:String(value.savedAt || "") };
+  } catch (error) {
+    console.warn("[CHERRIFT Cloud Save] Local account backup could not be read:", error);
+    return null;
+  }
+}
+
+function writeDiscordBackup(data, userId = runtime.session?.user?.id) {
+  const key = discordBackupKey(userId);
+  if (!key || !isPlainObject(data)) return false;
+  try {
+    window.localStorage.setItem(key, JSON.stringify({
+      savedAt:new Date().toISOString(),
+      saveVersion:CLOUD_SAVE_VERSION,
+      saveData:cloneJson(data)
+    }));
+    return true;
+  } catch (error) {
+    console.warn("[CHERRIFT Cloud Save] Local account backup could not be written:", error);
+    return false;
+  }
+}
+
+function newerLocalBackup(cloudRow, backup) {
+  if (!backup?.saveData) return false;
+  if (!cloudRow?.save_data) return true;
+  const localTime = Date.parse(backup.savedAt || "") || 0;
+  const cloudTime = Date.parse(cloudRow.updated_at || "") || 0;
+  return localTime > cloudTime;
+}
+
 async function selectCloudSave(userId) {
   if (typeof runtime.client?.from !== "function") return { supported: false, row: null };
   const result = await runtime.client
@@ -13691,29 +13728,37 @@ async function bootstrapSave(loadGuestSave) {
       runtime.session = session;
       runtime.mode = "discord";
       runtime.statusKey = "loadingCloud";
+      const backup = readDiscordBackup(session.user.id);
       const cloud = await selectCloudSave(session.user.id);
 
       if (!cloud.supported) {
-        const memorySave = normalizeCloudSave(loadGuest());
+        const memorySave = normalizeCloudSave(backup?.saveData || loadGuest());
         applyDiscordProfileToSave(memorySave, session);
         runtime.memoryOnly = true;
         runtime.cloudReady = false;
         runtime.lastSavedJson = JSON.stringify(memorySave);
-        console.warn("[CHERRIFT Cloud Save] Database API is unavailable in this environment; using memory-only Discord mode.");
+        writeDiscordBackup(memorySave, session.user.id);
+        console.warn("[CHERRIFT Cloud Save] Database API is unavailable; using the local account backup until reconnection.");
         return memorySave;
       }
 
       let save;
-      if (cloud.row?.save_data) {
+      if (newerLocalBackup(cloud.row, backup)) {
+        save = normalizeCloudSave(backup.saveData);
+        applyDiscordProfileToSave(save, session);
+        await upsertCloudSnapshot(save);
+      } else if (cloud.row?.save_data) {
         save = normalizeCloudSave(cloud.row.save_data);
       } else {
-        save = normalizeCloudSave(loadGuest());
+        save = normalizeCloudSave(backup?.saveData || loadGuest());
         applyDiscordProfileToSave(save, session);
         await upsertCloudSnapshot(save);
       }
 
       applyDiscordProfileToSave(save, session);
+      writeDiscordBackup(save, session.user.id);
       runtime.cloudReady = true;
+      runtime.memoryOnly = false;
       runtime.lastSavedJson = JSON.stringify(save);
       runtime.lastCloudSavedAt = cloud.row?.updated_at || runtime.lastCloudSavedAt;
       return save;
@@ -13722,10 +13767,17 @@ async function bootstrapSave(loadGuestSave) {
       runtime.bootstrapErrorKey = "cloudUnavailable";
       runtime.bootstrapErrorDetail = cloudErrorDetail(error);
       runtime.cloudReady = false;
+      if (runtime.session?.user) {
+        const fallback = normalizeCloudSave(readDiscordBackup(runtime.session.user.id)?.saveData || loadGuest());
+        applyDiscordProfileToSave(fallback, runtime.session);
+        writeDiscordBackup(fallback, runtime.session.user.id);
+        runtime.memoryOnly = true;
+        runtime.mode = "discord";
+        runtime.lastSavedJson = JSON.stringify(fallback);
+        return fallback;
+      }
       runtime.memoryOnly = false;
       runtime.mode = "gate";
-      runtime.session = null;
-      try { await runtime.client?.auth?.signOut?.({ scope: "local" }); } catch (_) {}
       return loadGuest();
     } finally {
       runtime.bootstrapDone = true;
@@ -13737,6 +13789,7 @@ async function bootstrapSave(loadGuestSave) {
 
 function queueCloudSave(data) {
   if (runtime.mode !== "discord") return false;
+  writeDiscordBackup(data);
   if (runtime.memoryOnly) return true;
   if (!runtime.cloudReady || !runtime.session?.user) return false;
   runtime.pendingSave = cloneJson(data);
@@ -14002,11 +14055,35 @@ function syncAccountUi() {
   renderAccountSettings();
 }
 
-function completeDiscordSession(session) {
+async function completeDiscordSession(session) {
   if (!session?.user) return false;
   runtime.session = session;
   runtime.mode = "discord";
-  applyDiscordProfile(session);
+  runtime.statusKey = "loadingCloud";
+  let save;
+  try {
+    const backup = readDiscordBackup(session.user.id);
+    const cloud = await selectCloudSave(session.user.id);
+    if (cloud.supported && !newerLocalBackup(cloud.row, backup) && cloud.row?.save_data) {
+      save = normalizeCloudSave(cloud.row.save_data);
+    } else {
+      save = normalizeCloudSave(backup?.saveData || window.UI?.save || currentGuestSave());
+      if (cloud.supported) await upsertCloudSnapshot(save);
+    }
+    runtime.cloudReady = !!cloud.supported;
+    runtime.memoryOnly = !cloud.supported;
+    runtime.lastCloudSavedAt = cloud.row?.updated_at || runtime.lastCloudSavedAt;
+  } catch (error) {
+    console.error("[CHERRIFT Cloud Save] Session restore failed; local account backup remains active:", error);
+    save = normalizeCloudSave(readDiscordBackup(session.user.id)?.saveData || window.UI?.save || currentGuestSave());
+    runtime.cloudReady = false;
+    runtime.memoryOnly = true;
+  }
+  applyDiscordProfileToSave(save, session);
+  writeDiscordBackup(save, session.user.id);
+  runtime.lastSavedJson = JSON.stringify(save);
+  if (window.UI) window.UI.save = save;
+  if (window.UI?.game) window.UI.game.save = save;
   closeGate("discord");
   syncAccountUi();
   window.UI?.refreshMenu?.();
@@ -14133,8 +14210,7 @@ const previousStorageSave = window.CherriftStorage?.save?.bind(window.CherriftSt
 if (previousStorageSave) {
   window.CherriftStorage.save = function saveByAccountMode(data) {
     if (runtime.mode === "discord") {
-      queueCloudSave(data);
-      return;
+      return queueCloudSave(data);
     }
     return previousStorageSave(data);
   };
@@ -14143,6 +14219,21 @@ if (previousStorageSave) {
 window.addEventListener("pagehide", () => { flushCloudSave(); });
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "hidden") flushCloudSave();
+});
+window.addEventListener("online", async () => {
+  if (runtime.mode !== "discord" || !runtime.memoryOnly || !runtime.session?.user || !window.UI?.save) return;
+  try {
+    const cloud = await selectCloudSave(runtime.session.user.id);
+    if (!cloud.supported) return;
+    const backup = readDiscordBackup(runtime.session.user.id);
+    if (!cloud.row?.save_data || newerLocalBackup(cloud.row, backup)) await upsertCloudSnapshot(window.UI.save);
+    runtime.memoryOnly = false;
+    runtime.cloudReady = true;
+    runtime.lastSavedJson = JSON.stringify(window.UI.save);
+    syncAccountUi();
+  } catch (error) {
+    console.warn("[CHERRIFT Cloud Save] Reconnect retry failed:", error);
+  }
 });
 
 document.addEventListener("click", event => {
@@ -18771,7 +18862,8 @@ function patchVersion(){
 }
 
 function deviceClass(){
-  const mobile=matchMedia("(max-width:820px)").matches;
+  const touchLike=Number(navigator.maxTouchPoints||0)>0||matchMedia("(pointer:coarse)").matches;
+  const mobile=matchMedia("(max-width:820px)").matches||(touchLike&&innerHeight<=600);
   document.body.classList.toggle("v090-mobile",mobile);
   document.body.classList.toggle("v090-landscape",mobile&&innerWidth>innerHeight);
   if(UI.game&&mobile)requestAnimationFrame(()=>UI.game.resize?.());
@@ -20382,9 +20474,13 @@ const THUMB_FOLDERS = {
   school_uniform_cherry:"school_uniform_cherry",
   sport_cherry:"sport_cherry"
 };
+const THUMB_PLACEHOLDERS = Object.freeze({
+  warrior_cherry:"assets/player/skins/warrior_cherry/warrior_cherry_icon.png",
+  wuxia_sakura_cherry:"assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_icon.png"
+});
 const WORLD_ART = {
-  1:'linear-gradient(180deg,rgba(5,3,12,.02),rgba(5,3,12,.48)),url("assets/map/world1/world1.png")',
-  2:'linear-gradient(180deg,rgba(5,3,12,.05),rgba(5,3,12,.58)),url("assets/map/world2.png")',
+  1:'linear-gradient(180deg,rgba(5,3,12,.02),rgba(5,3,12,.48)),url("assets/map/world1/world1_splashart_1.png")',
+  2:'linear-gradient(180deg,rgba(5,3,12,.05),rgba(5,3,12,.58)),url("assets/map/world2/world2_splashart_1.png")',
   3:"radial-gradient(circle at 55% 20%,rgba(255,145,66,.36),transparent 32%),linear-gradient(160deg,#4a2920,#1a0b10 68%,#08050c)",
   4:"radial-gradient(circle at 20% 20%,rgba(116,211,255,.22),transparent 30%),linear-gradient(150deg,#163547,#0b1928 60%,#060810)",
   5:"radial-gradient(circle at 75% 22%,rgba(193,132,255,.23),transparent 28%),linear-gradient(150deg,#34204c,#130d27 62%,#080611)",
@@ -20447,7 +20543,8 @@ function ensureSave(save = UI.save) {
 function configureLocalizedData() {
   for (const skin of CHERRIFT_DATA.skins || []) {
     const folder = THUMB_FOLDERS[skin.id];
-    if (folder) skin.icon = `assets/ui/skin_thumbs/${folder}.webp`;
+    if (THUMB_PLACEHOLDERS[skin.id]) skin.icon = THUMB_PLACEHOLDERS[skin.id];
+    else if (folder) skin.icon = `assets/ui/skin_thumbs/${folder}.webp`;
     skin.nameKey = `skins.${skin.id}.name`;
     skin.descriptionKey = `skins.${skin.id}.desc`;
     skin.passiveKey = `skins.${skin.id}.passive`;
@@ -22717,17 +22814,8 @@ function ensureMobileHomePolish() {
   qa("#mobileStageArt > *,#menu .mobile-stage-preview .skin-nav-icon-v090,#menu .mobile-stage-preview .dashboard-skin-v060,#mobileCharacterIconV051").forEach(node=>node.remove());
   const art=id("mobileStageArt"); if(art) art.textContent="";
 
-  // Bring missing mobile destinations into More as well.
-  const drawer=q("#mobileMenuV082 .mobile-menu-grid-v082");
-  if(drawer) {
-    const entries=[
-      ["dailyQuests","✓",copy("Napi jutalom","Daily")],
-      ["weeklyV082","♛",copy("Heti jutalom","Weekly")],
-      ["loginRewards","🎁",copy("Belépési jutalom","Login")],
-      ["mailV063","✉",copy("Levelek","Mail")]
-    ];
-    for(const [route,icon,label] of entries) if(!q(`[data-v082-open="${route}"]`,drawer)) drawer.insertAdjacentHTML("beforeend",`<button type="button" data-v082-open="${route}"><i>${icon}</i><b>${escapeHtml(label)}</b></button>`);
-  }
+  // Daily, Weekly, Login and Mail already have dedicated mobile controls.
+  // Duplicating them in More made the drawer grow from 11 to 15 entries.
 
   const patch=q("#menu .patch-card > p");
   if(patch) patch.textContent=copy("UI-rendrakás, combat effektek és kényelmesebb mobilnézet.","UI polish, combat effects and a cleaner mobile layout.");
@@ -22899,18 +22987,19 @@ function language() {
   return window.CHERRIFT_I18N?.language === "en" || UI.save?.settings?.language === "en" ? "en" : "hu";
 }
 function copy(hu, en) { return language() === "en" ? en : hu; }
-function isDesktop() { return matchMedia(DESKTOP_QUERY).matches; }
+function isDesktop() {
+  const touchLandscape=(Number(navigator.maxTouchPoints||0)>0||matchMedia("(pointer:coarse)").matches)&&innerHeight<=600;
+  return matchMedia(DESKTOP_QUERY).matches&&!touchLandscape;
+}
 function localized(key, fallback) {
   const value = window.CHERRIFT_LOCALIZATION?.t?.(key);
   return value && value !== key ? value : fallback;
 }
 function ensureCss() {
-  if (id("v0933css")) return;
-  const link = document.createElement("link");
-  link.id = "v0933css";
-  link.rel = "stylesheet";
-  link.href = `v0933.css?v=${CACHE_VERSION}`;
-  document.head.appendChild(link);
+  // The v0.9.3.3 rules are bundled into assets/cherrift_app.css. Loading the
+  // old standalone copy here caused a redundant request and order-dependent
+  // overrides, so this function only marks the bundled stylesheet as active.
+  document.documentElement.dataset.v0933Css = "bundled";
 }
 function cachedImage(source) {
   if (!source) return null;
@@ -23087,9 +23176,9 @@ function worldName(world) {
   return localized(`worlds.w${world}.name`, `${copy("Világ", "World")} ${world}`);
 }
 function worldArt(world) {
-  if (Number(world) === 1) return 'linear-gradient(180deg,rgba(5,3,12,.04),rgba(5,3,12,.70)),url("assets/map/world1/world1.png")';
-  if (Number(world) === 2) return 'linear-gradient(180deg,rgba(5,3,12,.06),rgba(5,3,12,.76)),url("assets/map/world2.png")';
-  return 'radial-gradient(circle at 55% 20%,rgba(255,145,66,.28),transparent 34%),linear-gradient(180deg,rgba(20,8,7,.12),rgba(8,3,7,.82)),url("assets/map/world1/world1.png")';
+  if (Number(world) === 1) return 'linear-gradient(180deg,rgba(5,3,12,.04),rgba(5,3,12,.70)),url("assets/map/world1/world1_splashart_1.png")';
+  if (Number(world) === 2) return 'linear-gradient(180deg,rgba(5,3,12,.06),rgba(5,3,12,.76)),url("assets/map/world2/world2_splashart_1.png")';
+  return 'radial-gradient(circle at 55% 20%,rgba(255,145,66,.28),transparent 34%),linear-gradient(180deg,rgba(20,8,7,.12),rgba(8,3,7,.82)),url("assets/map/world1/world1_splashart_1.png")';
 }
 function selectedStage() {
   const list = worldStages(runtime.world);
@@ -23407,7 +23496,7 @@ const WORLD_META = {
     nameHu:"Night Bloom", nameEn:"Night Bloom",
     descHu:"World 1 éjszakai változata meleg Cherry-fénnyel és pulzáló szentjánosbogarakkal.",
     descEn:"Night version of World 1 with Cherry's warm body light and pulsing fireflies.",
-    art:'linear-gradient(180deg,rgba(4,3,8,.10),rgba(4,3,8,.76)),url("assets/map/world2/world2_splashart_1.png"),url("assets/map/world2/world2_splashart.png"),url("assets/map/world2/world2_ground_1.png")'
+    art:'linear-gradient(180deg,rgba(4,3,8,.10),rgba(4,3,8,.76)),url("assets/map/world2/world2_splashart_1.png"),url("assets/map/world2/world2_ground_1.png")'
   },
   3:{
     nameHu:"Sunlit Savanna", nameEn:"Sunlit Savanna",
@@ -23459,10 +23548,7 @@ const MAP_ASSETS = {
 };
 
 const FIREFLY_CANDIDATES = [
-  "assets/map/world2/world2_firefly.png",
-  "assets/map/world2/world2_firefly_1.png",
-  "assets/map/world2/firefly.png",
-  "assets/map/world2/firefly_1.png"
+  "assets/map/world2/world2_firefly_01.png"
 ];
 
 function language() {
@@ -23503,8 +23589,10 @@ function starsFor(stage) {
   return clamp(Math.floor(Number(UI.save?.stageStars?.[stage.id] || UI.save?.stageStats?.[stage.id]?.stars || 0)), 0, 3);
 }
 
-function addStageIfMissing(stage) {
-  if (!stages().some(entry => entry.id === stage.id)) stages().push(stage);
+function upsertStage(stage) {
+  const existing = stages().find(entry => entry.id === stage.id);
+  if (existing) Object.assign(existing, stage);
+  else stages().push(stage);
 }
 function installStages() {
   const training = {
@@ -23525,7 +23613,7 @@ function installStages() {
     {id:"world_4_3",world:4,index:3,name:"World 4-3",title:"Colossus Stones",theme:"red_desert",goalKills:260,maxEnemies:60,raidEvery:48,raidCount:27,enemyPool:["blue_slime","big_slime","beetle","crawler","moth"],repeatReward:{coins:91},firstClearReward:{coins:174,keys:1},desc:"The first colossal desert rock appears here."},
     {id:"world_4_4",world:4,index:4,name:"World 4-4",title:"Burning Ridge",theme:"red_desert",goalKills:285,maxEnemies:64,raidEvery:51,raidCount:30,enemyPool:["pink_slime","green_slime","big_slime","spider","beetle","crawler"],repeatReward:{coins:102},firstClearReward:{coins:196},desc:"Two rare colossal rocks shape the battlefield."},
     {id:"world_4_5",world:4,index:5,name:"World 4-5",title:"Red Titan Basin",theme:"red_desert",goalKills:320,maxEnemies:70,raidEvery:54,raidCount:34,enemyPool:["pink_slime","green_slime","blue_slime","big_slime","spider","beetle","crawler","moth"],repeatReward:{coins:116},firstClearReward:{coins:225,keys:1},desc:"Three fixed colossal rocks mark the final red desert arena."}
-  ].forEach(addStageIfMissing);
+  ].forEach(upsertStage);
 }
 
 function ensureSave(save = UI.save) {
@@ -25097,6 +25185,9 @@ proto.drawWorld = function drawWorldV0946(context) {
     this.effects = original.effects;
   }
 };
+// Preserve the boundary-fog capability marker through this final performance
+// wrapper so diagnostics and future patches can detect the active implementation.
+proto.drawWorld.__v091BoundaryFog = true;
 
 const previousStart = proto.start;
 proto.start = async function startV0946(...args) {

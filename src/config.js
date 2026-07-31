@@ -1,8 +1,8 @@
 window.CHERRIFT_BUILD = Object.freeze({
-  version: "0.9.3",
-  displayVersion: "v0.9.3",
-  title: "CHERRIFT v0.9.3 – TEST BUILD",
-  label: "TESZTVERZIÓ · v0.9.3"
+  version: "0.9.4",
+  displayVersion: "v0.9.4",
+  title: "CHERRIFT v0.9.4 – TEST BUILD",
+  label: "TESZTVERZIÓ · v0.9.4"
 });
 
 window.CHERRIFT_CONFIG = {
@@ -87,14 +87,14 @@ window.CHERRIFT_CONFIG = {
   },
 
   map: {
-    grass: "assets/map/world1/world1_grass_seamless.png",
-    rockSmall: "assets/map/world1/rock_small.png",
-    rockBig: "assets/map/world1/rock_big.png",
-    bush1: "assets/map/world1/bush_01.png",
-    bush2: "assets/map/world1/bush_02.png",
-    log: "assets/map/world1/log.png",
-    treeSmall: "assets/map/world1/tree_small.png",
-    treeBig: "assets/map/world1/tree_big.png"
+    grass: "assets/map/world1/world1_ground_1.png",
+    rockSmall: "assets/map/world1/world1_rock_small_1.png",
+    rockBig: "assets/map/world1/world1_rock_1.png",
+    bush1: "assets/map/world1/world1_bush_1.png",
+    bush2: "assets/map/world1/world1_bush_2.png",
+    log: "assets/map/world1/world1_log_1.png",
+    treeSmall: "assets/map/world1/world1_tree_1.png",
+    treeBig: "assets/map/world1/world1_tree_2.png"
   },
 
   pickups: {

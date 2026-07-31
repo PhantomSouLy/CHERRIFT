@@ -1,6 +1,6 @@
 {
-  "runtimeVersion": "1.4.0-gameplay-hotfix+economy-v11",
-  "gameVersion": "0.9.3-test",
+  "runtimeVersion": "1.4.1-stabilized-modules",
+  "gameVersion": "0.9.4-test",
   "javascript": "src/cherrift_app.js",
   "stylesheet": "assets/cherrift_app.css",
   "externalConfiguration": [
@@ -24,12 +24,17 @@
     "Server-backed player Mail and Redeem bridge",
     "Dynamic server reward catalog for currencies, keys, chests, materials and bag items",
     "Custom hashed redeem codes with zero-as-unlimited limits",
-    "Common, Rare, Epic and Legendary tiered keys and Chest Vault"
+    "Common, Rare and Epic chest-only Gacha with guaranteed-skin pity",
+    "Deterministic navigation router for desktop, phone and landscape",
+    "Per-account local backup with cloud retry"
   ],
   "updateFiles": [
     "src/supabase_config.js",
     "src/cherrift_live_services.js",
-    "src/cherrift_economy_v11.js",
+    "src/cherrift_gacha.js",
+    "src/cherrift_account_mail.js",
+    "src/cherrift_world_ui.js",
+    "src/cherrift_stability.js",
     "src/cherrift_manifest.json",
     "gm/index.html",
     "gm/gm.css",
