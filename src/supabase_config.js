@@ -33,8 +33,9 @@
       await loadScript("cherriftLiveServicesV12Script", "src/cherrift_live_services.js?v=0941-mail-api-1");
       await loadScript("cherriftBugfixV0941Script", "src/cherrift_bugfix_v0941.js?v=0942-profile-mail-1");
       await loadScript("cherriftBugfixV0942Script", "src/cherrift_bugfix_v0942.js?v=0942-ui-stability-1");
+      await loadScript("cherriftBugfixV0943Script", "src/cherrift_bugfix_v0943.js?v=0943-desktop-map-stability-1");
     } catch (error) {
-      console.error("[CHERRIFT] v0.9.4.2 bugfix systems failed to load:", error);
+      console.error("[CHERRIFT] v0.9.4.3 external systems failed to load:", error);
     }
   }
 

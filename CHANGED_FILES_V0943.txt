@@ -1,0 +1,9 @@
+CHERRIFT v0.9.4.3 – changed/new files only
+
+MODIFIED
+src/supabase_config.js
+
+NEW
+src/cherrift_bugfix_v0943.js
+BUGFIX_V0943_SETUP_HU.md
+CHANGED_FILES_V0943.txt
