@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#150b17">
   <title>CHERRIFT GM Tool Pack</title>
-  <link rel="stylesheet" href="gm.css?v=gm-tool-1">
+  <link rel="stylesheet" href="gm.css?v=gm-tool-11">
 </head>
 <body>
   <div class="ambient" aria-hidden="true"><i></i><i></i><i></i></div>
@@ -13,147 +13,74 @@
   <main id="authView" class="auth-view">
     <section class="auth-card">
       <div class="brand-mark" aria-hidden="true">C</div>
-      <p class="eyebrow">CHERRIFT ADMIN</p>
-      <h1>GM Tool Pack</h1>
+      <p class="eyebrow">CHERRIFT ADMIN</p><h1>GM Tool Pack</h1>
       <p class="muted">Mobilbarát Mail, Redeem és Profile kezelőfelület.</p>
       <button id="discordLoginBtn" class="primary large" type="button">Belépés Discorddal</button>
       <p id="authStatus" class="status" aria-live="polite">Munkamenet ellenőrzése…</p>
-      <div id="unauthorizedBox" class="unauthorized hidden">
-        <strong>Nincs aktív GM-jogosultságod.</strong>
-        <p>A saját Supabase user UUID-det másold ki, és add hozzá a <code>gm_admins</code> táblához.</p>
-        <div class="copy-row"><code id="unauthorizedUserId"></code><button id="copyUserIdBtn" type="button">Másolás</button></div>
-      </div>
+      <div id="unauthorizedBox" class="unauthorized hidden"><strong>Nincs aktív GM-jogosultságod.</strong><p>A saját Supabase user UUID-det másold ki, és add hozzá a <code>gm_admins</code> táblához.</p><div class="copy-row"><code id="unauthorizedUserId"></code><button id="copyUserIdBtn" type="button">Másolás</button></div></div>
     </section>
   </main>
 
   <div id="gmApp" class="app hidden">
     <header class="topbar">
-      <div class="brand-small"><span>C</span><div><b>CHERRIFT</b><small>GM TOOL PACK</small></div></div>
-      <button id="accountBtn" class="account-button" type="button">
-        <img id="adminAvatar" alt="" hidden>
-        <span id="adminAvatarFallback">GM</span>
-        <span><b id="adminName">Admin</b><small id="adminRole">—</small></span>
-      </button>
+      <div class="brand-small"><span>C</span><div><b>CHERRIFT</b><small>GM TOOL PACK v1.1</small></div></div>
+      <button id="accountBtn" class="account-button" type="button"><img id="adminAvatar" alt="" hidden><span id="adminAvatarFallback">GM</span><span><b id="adminName">Admin</b><small id="adminRole">—</small></span></button>
     </header>
-
-    <section id="accountSheet" class="account-sheet hidden" aria-label="Fiók">
-      <div><b id="accountSheetName">Admin</b><small id="accountSheetId"></small></div>
-      <button id="logoutBtn" class="danger ghost" type="button">Kijelentkezés</button>
-    </section>
+    <section id="accountSheet" class="account-sheet hidden"><div><b id="accountSheetName">Admin</b><small id="accountSheetId"></small></div><button id="logoutBtn" class="danger ghost" type="button">Kijelentkezés</button></section>
 
     <div class="desktop-shell">
-      <aside class="side-nav" aria-label="GM modulok">
+      <aside class="side-nav">
         <button data-module="mail" class="active" type="button"><span>01</span><b>Mail Sender</b></button>
         <button data-module="redeem" type="button"><span>02</span><b>Redeem Creator</b></button>
         <button data-module="profiles" type="button"><span>03</span><b>Profile Editor</b></button>
       </aside>
 
       <main class="content">
-        <section id="moduleMail" class="module active" data-module-view="mail">
-          <header class="module-head"><div><p class="eyebrow">01 · DELIVERY</p><h2>Mail Sender</h2><p>Levél és jutalom küldése egy játékosnak vagy mindenkinek.</p></div><span class="security-chip">EDGE PROTECTED</span></header>
-
+        <section class="module active" data-module-view="mail">
+          <header class="module-head"><div><p class="eyebrow">01 · DELIVERY</p><h2>Mail Sender</h2><p>Bármely aktív currency, key, chest, material, bag item vagy skin küldhető.</p></div><span class="security-chip">EDGE PROTECTED</span></header>
           <div class="grid two">
             <form id="mailForm" class="card form-card">
-              <fieldset class="segmented">
-                <label><input type="radio" name="mailAudience" value="user" checked><span>Egy játékos</span></label>
-                <label><input type="radio" name="mailAudience" value="all"><span>Minden játékos</span></label>
-              </fieldset>
-
-              <section id="mailTargetBox" class="target-picker">
-                <label><span>Játékos keresése</span><div class="input-action"><input id="mailPlayerSearch" autocomplete="off" placeholder="Discord név, ID vagy UUID"><button id="mailSearchBtn" type="button">Keresés</button></div></label>
-                <div id="mailPlayerResults" class="search-results"></div>
-                <div id="mailSelectedPlayer" class="selected-player hidden"></div>
-              </section>
-
-              <div class="language-grid">
-                <label><span>Magyar cím</span><input id="mailTitleHu" maxlength="120" required></label>
-                <label><span>Angol cím <em>opcionális</em></span><input id="mailTitleEn" maxlength="120"></label>
-                <label><span>Magyar szöveg</span><textarea id="mailBodyHu" rows="6" maxlength="4000" required></textarea></label>
-                <label><span>Angol szöveg <em>opcionális</em></span><textarea id="mailBodyEn" rows="6" maxlength="4000"></textarea></label>
-              </div>
-
-              <div class="reward-grid">
-                <label><span>Érme</span><input id="mailCoins" type="number" min="0" max="1000000000" value="0" inputmode="numeric"></label>
-                <label><span>Kulcs</span><input id="mailKeys" type="number" min="0" max="1000000" value="0" inputmode="numeric"></label>
-                <label class="wide"><span>Skin ID-k <em>vesszővel vagy új sorban</em></span><textarea id="mailSkins" rows="3" placeholder="kimono_cherry, pajama_cherry"></textarea></label>
-              </div>
-
-              <details class="advanced">
-                <summary>Időzítés</summary>
-                <div class="two-fields">
-                  <label><span>Kezdés</span><input id="mailStartsAt" type="datetime-local"></label>
-                  <label><span>Lejárat</span><input id="mailExpiresAt" type="datetime-local"></label>
-                </div>
-              </details>
-
+              <fieldset class="segmented"><label><input type="radio" name="mailAudience" value="user" checked><span>Egy játékos</span></label><label><input type="radio" name="mailAudience" value="all"><span>Minden játékos</span></label></fieldset>
+              <section id="mailTargetBox" class="target-picker"><label><span>Játékos keresése</span><div class="input-action"><input id="mailPlayerSearch" autocomplete="off" placeholder="Discord név, ID vagy UUID"><button id="mailSearchBtn" type="button">Keresés</button></div></label><div id="mailPlayerResults" class="search-results"></div><div id="mailSelectedPlayer" class="selected-player hidden"></div></section>
+              <div class="language-grid"><label><span>Magyar cím</span><input id="mailTitleHu" maxlength="120" required></label><label><span>Angol cím <em>opcionális</em></span><input id="mailTitleEn" maxlength="120"></label><label><span>Magyar szöveg</span><textarea id="mailBodyHu" rows="6" maxlength="4000" required></textarea></label><label><span>Angol szöveg <em>opcionális</em></span><textarea id="mailBodyEn" rows="6" maxlength="4000"></textarea></label></div>
+              <section class="reward-builder"><header><h3>Jutalmak</h3><small>A lista a szerveres katalógusból töltődik.</small></header><div id="mailResourceFields" class="resource-groups"><p class="empty">Katalógus betöltése…</p></div><label><span>Skin ID-k <em>vesszővel vagy új sorban</em></span><textarea id="mailSkins" rows="3" placeholder="kimono_cherry, pajama_cherry"></textarea></label></section>
+              <details class="advanced"><summary>Időzítés</summary><div class="two-fields"><label><span>Kezdés</span><input id="mailStartsAt" type="datetime-local"></label><label><span>Lejárat</span><input id="mailExpiresAt" type="datetime-local"></label></div></details>
               <label id="broadcastConfirm" class="confirm-row hidden"><input id="broadcastConfirmCheck" type="checkbox"><span>Tudomásul veszem, hogy ez a levél minden játékosnak megjelenik.</span></label>
               <button id="mailSubmitBtn" class="primary submit" type="submit">Levél küldése</button>
             </form>
-
-            <div class="stack">
-              <article class="card preview-card">
-                <p class="eyebrow">ELŐNÉZET</p>
-                <small id="mailPreviewAudience">Egy játékos</small>
-                <h3 id="mailPreviewTitle">A levél címe</h3>
-                <p id="mailPreviewBody">Itt jelenik meg a levél szövege.</p>
-                <div id="mailPreviewReward" class="reward-preview">Nincs melléklet</div>
-              </article>
-              <article class="card list-card"><header><h3>Legutóbbi levelek</h3><button id="refreshMailHistory" class="ghost" type="button">Frissítés</button></header><div id="mailHistory" class="activity-list"><p class="empty">Még nincs adat.</p></div></article>
-            </div>
+            <div class="stack"><article class="card preview-card"><p class="eyebrow">ELŐNÉZET</p><small id="mailPreviewAudience">Egy játékos</small><h3 id="mailPreviewTitle">A levél címe</h3><p id="mailPreviewBody">Itt jelenik meg a levél szövege.</p><div id="mailPreviewReward" class="reward-preview">Nincs melléklet</div></article><article class="card list-card"><header><h3>Legutóbbi levelek</h3><button id="refreshMailHistory" class="ghost" type="button">Frissítés</button></header><div id="mailHistory" class="activity-list"><p class="empty">Még nincs adat.</p></div></article></div>
           </div>
         </section>
 
-        <section id="moduleRedeem" class="module" data-module-view="redeem">
-          <header class="module-head"><div><p class="eyebrow">02 · REWARDS</p><h2>Redeem Code Creator</h2><p>Biztonságos, egyszer megjelenő beváltókód létrehozása.</p></div><span class="security-chip">HASHED STORAGE</span></header>
+        <section class="module" data-module-view="redeem">
+          <header class="module-head"><div><p class="eyebrow">02 · REWARDS</p><h2>Custom Redeem Creator</h2><p>Te adod meg a kódot. Az adatbázis továbbra is csak a hashét tárolja.</p></div><span class="security-chip">CUSTOM + HASHED</span></header>
           <div class="grid two">
             <form id="redeemForm" class="card form-card">
-              <div class="reward-grid">
-                <label><span>Érme</span><input id="redeemCoins" type="number" min="0" max="1000000000" value="0" inputmode="numeric"></label>
-                <label><span>Kulcs</span><input id="redeemKeys" type="number" min="0" max="1000000" value="0" inputmode="numeric"></label>
-                <label class="wide"><span>Skin ID-k</span><textarea id="redeemSkins" rows="3" placeholder="sport_cherry"></textarea></label>
-              </div>
-              <div class="two-fields">
-                <label><span>Összes beváltás</span><input id="redeemMax" type="number" min="1" max="1000000" value="100" inputmode="numeric"></label>
-                <label><span>Játékosonként</span><input id="redeemPerUser" type="number" min="1" max="100" value="1" inputmode="numeric"></label>
-              </div>
+              <label><span>Egyedi kuponkód</span><input id="redeemCustomCode" minlength="4" maxlength="64" pattern="[A-Za-z0-9 _-]+" placeholder="SUMMER2026" autocomplete="off" required><small>Betű, szám, szóköz, kötőjel és aláhúzás használható.</small></label>
+              <section class="reward-builder"><header><h3>Jutalmak</h3><small>Globális kuponhoz is bármely katalóguselemet választhatod.</small></header><div id="redeemResourceFields" class="resource-groups"><p class="empty">Katalógus betöltése…</p></div><label><span>Skin ID-k</span><textarea id="redeemSkins" rows="3" placeholder="sport_cherry"></textarea></label></section>
+              <div class="two-fields"><label><span>Összes beváltás</span><input id="redeemMax" type="number" min="0" max="1000000" value="0" inputmode="numeric"><small><b>0 = végtelen globálisan</b></small></label><label><span>Játékosonként</span><input id="redeemPerUser" type="number" min="0" max="100" value="1" inputmode="numeric"><small><b>0 = ugyanaz a játékos is végtelenszer</b></small></label></div>
               <details class="advanced"><summary>Időzítés</summary><div class="two-fields"><label><span>Kezdés</span><input id="redeemStartsAt" type="datetime-local"></label><label><span>Lejárat</span><input id="redeemExpiresAt" type="datetime-local"></label></div></details>
-              <button id="redeemSubmitBtn" class="primary submit" type="submit">Kód létrehozása</button>
+              <label class="confirm-row"><input id="redeemConfirm" type="checkbox" required><span>Ellenőriztem a kódot, a limiteket és a jutalmat.</span></label>
+              <button id="redeemSubmitBtn" class="primary submit" type="submit">Kupon létrehozása</button>
             </form>
-
-            <div class="stack">
-              <article id="redeemResult" class="card code-result hidden">
-                <p class="eyebrow">A TELJES KÓD CSAK MOST LÁTHATÓ</p>
-                <code id="redeemCodeValue"></code>
-                <button id="copyRedeemBtn" class="primary" type="button">Kód másolása</button>
-              </article>
-              <article class="card list-card"><header><h3>Legutóbbi kódok</h3><button id="refreshRedeemHistory" class="ghost" type="button">Frissítés</button></header><div id="redeemHistory" class="activity-list"><p class="empty">Még nincs adat.</p></div></article>
-            </div>
+            <div class="stack"><article id="redeemResult" class="card code-result hidden"><p class="eyebrow">LÉTREHOZOTT KÓD</p><code id="redeemCodeValue"></code><button id="copyRedeemBtn" class="primary" type="button">Kód másolása</button></article><article class="card list-card"><header><h3>Legutóbbi kuponok</h3><button id="refreshRedeemHistory" class="ghost" type="button">Frissítés</button></header><div id="redeemHistory" class="activity-list"><p class="empty">Még nincs adat.</p></div></article></div>
           </div>
         </section>
 
-        <section id="moduleProfiles" class="module" data-module-view="profiles">
-          <header class="module-head"><div><p class="eyebrow">03 · PLAYER DATA</p><h2>Profile Editor</h2><p>Minden mentés előtt automatikus snapshot és napló készül.</p></div><span class="security-chip">AUTO SNAPSHOT</span></header>
-
-          <section class="card profile-search-card">
-            <label><span>Játékos keresése</span><div class="input-action"><input id="profileSearch" autocomplete="off" placeholder="Discord név, ID vagy UUID"><button id="profileSearchBtn" type="button">Keresés</button></div></label>
-            <div id="profileSearchResults" class="search-results horizontal"></div>
-          </section>
-
+        <section class="module" data-module-view="profiles">
+          <header class="module-head"><div><p class="eyebrow">03 · PLAYER DATA</p><h2>Profile Editor</h2><p>A dinamikus resource-ok és a profiladatok is snapshotolt szerverművelettel mentődnek.</p></div><span class="security-chip">AUTO SNAPSHOT</span></header>
+          <section class="card profile-search-card"><label><span>Játékos keresése</span><div class="input-action"><input id="profileSearch" autocomplete="off" placeholder="Discord név, ID vagy UUID"><button id="profileSearchBtn" type="button">Keresés</button></div></label><div id="profileSearchResults" class="search-results horizontal"></div></section>
           <div id="profileEmpty" class="card empty-profile"><b>Válassz ki egy játékost.</b><p>A profil adatai csak kiválasztás után töltődnek be.</p></div>
-
           <div id="profileWorkspace" class="profile-workspace hidden">
             <article class="card player-banner"><div class="player-avatar"><img id="profileAvatar" alt="" hidden><span id="profileAvatarFallback">P</span></div><div><h3 id="profileName">Player</h3><p id="profileIdentity"></p><small id="profileSaveMeta"></small></div></article>
-
             <form id="profileForm" class="card form-card profile-form">
-              <div class="two-fields"><label><span>Érme</span><input id="profileCoins" type="number" min="0" max="1000000000" inputmode="numeric"></label><label><span>Kulcs</span><input id="profileKeys" type="number" min="0" max="1000000" inputmode="numeric"></label></div>
+              <section class="reward-builder"><header><h3>Currency, key, chest, material és item</h3><small>Itt pontos darabszámot állítasz be, nem hozzáadást.</small></header><div id="profileResourceFields" class="resource-groups"><p class="empty">Katalógus betöltése…</p></div></section>
               <div class="two-fields"><label><span>Kiválasztott skin</span><input id="profileSelectedSkin" maxlength="80"></label><label><span>Kiválasztott pálya</span><input id="profileSelectedStage" maxlength="80"></label></div>
               <div class="two-fields"><label><span>Feloldott skinek</span><textarea id="profileUnlockedSkins" rows="6"></textarea></label><label><span>Feloldott pályák</span><textarea id="profileUnlockedStages" rows="6"></textarea></label></div>
               <div class="two-fields"><label><span>Inventory JSON</span><textarea id="profileInventory" class="mono" rows="10" spellcheck="false"></textarea></label><label><span>Equipped JSON</span><textarea id="profileEquipped" class="mono" rows="10" spellcheck="false"></textarea></label></div>
-              <label><span>Módosítás indoka <em>kötelező, naplózva lesz</em></span><textarea id="profileReason" rows="3" maxlength="500" required placeholder="Például: elveszett mentés visszaállítása"></textarea></label>
-              <div id="profileDiff" class="diff-box">Még nincs módosítás.</div>
-              <button id="profileSaveBtn" class="primary submit" type="submit">Snapshot + profil mentése</button>
+              <label><span>Módosítás indoka <em>kötelező, naplózva lesz</em></span><textarea id="profileReason" rows="3" maxlength="500" required placeholder="Például: elveszett jutalom visszaállítása"></textarea></label>
+              <div id="profileDiff" class="diff-box">Még nincs módosítás.</div><button id="profileSaveBtn" class="primary submit" type="submit">Snapshot + profil mentése</button>
             </form>
-
             <details class="card raw-save"><summary>Teljes mentés – csak olvasható</summary><pre id="rawSaveJson"></pre></details>
             <article class="card list-card"><header><h3>Legutóbbi műveletek</h3><button id="refreshActivity" class="ghost" type="button">Frissítés</button></header><div id="auditHistory" class="activity-list"><p class="empty">Még nincs adat.</p></div></article>
           </div>
@@ -161,17 +88,12 @@
       </main>
     </div>
 
-    <nav class="bottom-nav" aria-label="GM modulok">
-      <button data-module="mail" class="active" type="button"><span>01</span><b>Mail</b></button>
-      <button data-module="redeem" type="button"><span>02</span><b>Redeem</b></button>
-      <button data-module="profiles" type="button"><span>03</span><b>Profiles</b></button>
-    </nav>
+    <nav class="bottom-nav"><button data-module="mail" class="active" type="button"><span>01</span><b>Mail</b></button><button data-module="redeem" type="button"><span>02</span><b>Redeem</b></button><button data-module="profiles" type="button"><span>03</span><b>Profiles</b></button></nav>
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-
-  <script src="../vendor/supabase-js-2.110.7.js?v=gm-tool-1"></script>
-  <script src="../src/supabase_config.js?v=gm-tool-1"></script>
-  <script src="gm.js?v=gm-tool-1"></script>
+  <script src="../vendor/supabase-js-2.110.7.js?v=gm-tool-11"></script>
+  <script src="../src/supabase_config.js?v=gm-tool-11"></script>
+  <script src="gm.js?v=gm-tool-11"></script>
 </body>
 </html>
