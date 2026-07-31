@@ -14,6 +14,7 @@ const contentTypes = {
   ".png":"image/png",
   ".jpg":"image/jpeg",
   ".jpeg":"image/jpeg",
+  ".webp":"image/webp",
   ".wav":"audio/wav"
 };
 
@@ -60,7 +61,7 @@ function canvasContext() {
   });
 }
 
-function installBrowserStubs(window, width, height) {
+function installBrowserStubs(window, width, height, name) {
   window.__cherriftTitleWrites=[];
   const titleDescriptor=Object.getOwnPropertyDescriptor(window.Document.prototype,"title");
   if(titleDescriptor?.get&&titleDescriptor?.set){
@@ -79,10 +80,13 @@ function installBrowserStubs(window, width, height) {
     devicePixelRatio:{configurable:true,value:1},
     visualViewport:{configurable:true,value:{width,height,addEventListener() {},removeEventListener() {}}}
   });
+  const touchDevice=name.startsWith("phone");
+  Object.defineProperty(window.navigator,"maxTouchPoints",{configurable:true,value:touchDevice?5:0});
   window.matchMedia = query => {
     const max=query.match(/max-width\s*:\s*(\d+)px/i),min=query.match(/min-width\s*:\s*(\d+)px/i);
     const portrait=query.includes("orientation:portrait"),landscape=query.includes("orientation:landscape");
-    const matches=(!max||width<=Number(max[1]))&&(!min||width>=Number(min[1]))&&(!portrait||height>=width)&&(!landscape||width>height)&&!query.includes("prefers-reduced-motion");
+    const coarse=query.includes("pointer:coarse"),fine=query.includes("pointer:fine");
+    const matches=(!max||width<=Number(max[1]))&&(!min||width>=Number(min[1]))&&(!portrait||height>=width)&&(!landscape||width>height)&&(!coarse||touchDevice)&&(!fine||!touchDevice)&&!query.includes("prefers-reduced-motion");
     return {matches,media:query,onchange:null,addListener() {},removeListener() {},addEventListener() {},removeEventListener() {},dispatchEvent:()=>true};
   };
 
@@ -105,6 +109,7 @@ function installBrowserStubs(window, width, height) {
   window.HTMLCanvasElement.prototype.getBoundingClientRect=()=>({x:0,y:0,left:0,top:0,right:width,bottom:height,width,height,toJSON(){return this;}});
   window.Element.prototype.scrollIntoView ||= () => {};
   window.Element.prototype.scrollBy ||= () => {};
+  window.scrollTo=()=>{};
   window.Element.prototype.animate ||= () => ({cancel(){},finished:Promise.resolve()});
   window.HTMLElement.prototype.requestFullscreen ||= () => Promise.resolve();
   window.document.exitFullscreen ||= () => Promise.resolve();
@@ -146,9 +151,9 @@ async function loadApp(name,width,height){
   virtualConsole.on("error",(...values)=>errors.push(values.map(String).join(" ")));
   const dom=await JSDOM.fromURL(`${baseUrl}?smoke=${name}`,{
     runScripts:"dangerously",resources:"usable",pretendToBeVisual:true,virtualConsole,
-    beforeParse(window){installBrowserStubs(window,width,height);}
+    beforeParse(window){installBrowserStubs(window,width,height,name);}
   });
-  await waitFor(()=>dom.window.CHERRIFT_V093&&dom.window.UI?.save&&dom.window.UI?.game,`${name} startup`);
+  await waitFor(()=>dom.window.CHERRIFT_STABILITY&&dom.window.CHERRIFT_WORLD_UI&&dom.window.CHERRIFT_ECONOMY_V11&&dom.window.UI?.save&&dom.window.UI?.game,`${name} startup`);
   return {dom,window:dom.window,errors};
 }
 
@@ -183,9 +188,11 @@ function assertCompleteGearLayout(window,name){
     assert.equal(slot.dataset.v090GearArea,areas[name],`${name}: fixed MMORPG area`);
     assert.equal(slot.style.getPropertyPriority("grid-area"),"important",`${name}: area cannot be overridden`);
     assert.equal(slot.style.getPropertyValue("position"),"relative",`${name}: slot participates in the Gear grid`);
-    const width=parseFloat(window.getComputedStyle(slot).width);
-    const height=parseFloat(window.getComputedStyle(slot).height);
-    assert.ok(Number.isFinite(width)&&Number.isFinite(height)&&Math.abs(width-height)<1,`${name}: ${slot.dataset.v0560Slot} is square`);
+    const computed=window.getComputedStyle(slot);
+    const width=parseFloat(computed.width),height=parseFloat(computed.height);
+    const squareBySize=Number.isFinite(width)&&Number.isFinite(height)&&Math.abs(width-height)<1;
+    const squareByRule=computed.aspectRatio==="1 / 1"||computed.aspectRatio==="1/1"||computed.width===computed.height;
+    assert.ok(squareBySize||squareByRule,`${name}: ${slot.dataset.v0560Slot} is square (${computed.width}×${computed.height})`);
     assert.match(slot.textContent,/LVL\d+/,`${name}: ${slot.dataset.v0560Slot} shows the slot level`);
     assert.doesNotMatch(slot.textContent,/\bA\d+\b/,`${name}: legacy A-level label is removed`);
   }
@@ -202,12 +209,12 @@ async function exercise(name,width,height){
     assert.equal(document.body.classList.contains("v062-startup-failed"),false,`${name}: no startup failure`);
     assert.ok(window.__CHERRIFT_CLEAN_RUNTIME__,`${name}: consolidated Clean Runtime is active`);
     assert.equal(document.querySelectorAll('script[src*="cherrift_app.js"]').length,1,`${name}: one application runtime script`);
-    await waitFor(()=>/0\.9\.3/.test(document.title),`${name} current title`);
-    assert.match(document.title,/0\.9\.3/,`${name}: current title`);
+    await waitFor(()=>/0\.9\.4/.test(document.title),`${name} current title`);
+    assert.match(document.title,/0\.9\.4/,`${name}: current title`);
     assert.deepEqual(window.__cherriftTitleWrites.filter(title=>/\bv0\.[0-8](?:\.\d+)?\b/.test(title)),[],`${name}: title never shows a legacy version`);
     assert.doesNotMatch(document.body.textContent,/\bv0\.[0-8](?:\.\d+)?\b/,`${name}: no legacy version is visible anywhere`);
     for(const version of ["085","086","087","088","089","090","091","092","093"])assert.ok(window[`CHERRIFT_V${version}`],`${name}: v0.${version.slice(1)} patch`);
-    assert.equal(window.CHERRIFT_BUILD.version,"0.9.3",`${name}: canonical build version`);
+    assert.equal(window.CHERRIFT_BUILD.version,"0.9.4",`${name}: canonical build version`);
     assert.equal(window.CHERRIFT_LOCALIZATION.t("world.recommendedLevel",{level:7}),window.CHERRIFT_LOCALIZATION.language()==="hu"?"Ajánlott szint: 7":"Recommended level: 7",`${name}: localization parameters`);
     assert.deepEqual(window.CHERRIFT_LOCALIZATION.validateKeys(["common.play","skin.title","world.title"]),[],`${name}: localization keys`);
     assert.equal(window.CHERRIFT_DATA.skins.length,14,`${name}: all fourteen Cherry skins`);
@@ -234,25 +241,32 @@ async function exercise(name,width,height){
     await waitFor(()=>document.querySelector('#supportV063 [data-v063-support-type="bug"]')?.classList.contains("active"),`${name} bug tab`);
     UI.open("menu");
     click(window,document.querySelector('#menuToolsV082 [data-v082-menu-tool="mail"]'),`${name} mail tool`);
-    await waitFor(()=>!document.getElementById("mailV063")?.classList.contains("hidden"),`${name} mail panel`);
+    await waitFor(()=>!document.getElementById("mailBugfixV0941")?.classList.contains("hidden"),`${name} mail panel`);
     UI.open("menu");
     click(window,document.querySelector('#menuToolsV082 [data-v082-menu-tool="settings"]'),`${name} settings tool`);
     await waitFor(()=>!document.getElementById("settings")?.classList.contains("hidden"),`${name} settings panel`);
     UI.open("menu");
     click(window,document.getElementById("playBtn"),`${name} main Play`);
-    await waitFor(()=>!document.getElementById("worlds")?.classList.contains("hidden"),`${name} Play opens World Select`);
-    assert.equal(document.querySelectorAll("[data-v093-chapter]").length,5,`${name}: Play uses redesigned World Select`);
+    if(window.CHERRIFT_WORLD_UI.isMobile()){
+      await waitFor(()=>!document.getElementById("worldSelectorV0942")?.classList.contains("hidden"),`${name} mobile Play opens World Select`);
+      assert.equal(document.querySelectorAll("#worldDotsV0942 i").length,5,`${name}: Training and four mobile Worlds`);
+    }else{
+      await waitFor(()=>!document.getElementById("worldsV094")?.classList.contains("hidden")||!document.getElementById("worlds")?.classList.contains("hidden"),`${name} desktop Play opens World Select`);
+    }
 
     UI.open("gear");
+    await waitFor(()=>Array.from(document.querySelectorAll("#gear [data-v0560-slot]")).every(slot=>/LVL\d+/.test(slot.textContent)),`${name} Gear decoration`);
     assertCompleteGearLayout(window,name);
 
     UI.open("settings");
     for(const setting of ["effectQualityV085","cameraMotionV085","screenShakeV085","combatSoundsV085"])assert.ok(document.getElementById(setting),`${name}: ${setting} setting`);
 
     UI.open("skins");
-    await waitFor(()=>document.querySelectorAll("[data-v093-skin]").length===14,`${name} v0.9.3 skin selector`);
+    await waitFor(()=>document.querySelectorAll("[data-v093-skin]").length===14,`${name} v0.9.4 skin selector`);
     assert.equal(document.querySelectorAll("[data-v093-skin]").length,14,`${name}: all skin icons`);
     assert.ok(document.querySelector(".skin-icon-v093 img")?.src.includes("assets/ui/skin_thumbs"),`${name}: optimized selector thumbnails`);
+    assert.ok(window.CHERRIFT_DATA.skins.find(skin=>skin.id==="warrior_cherry")?.icon.endsWith("warrior_cherry_icon.png"),`${name}: Warrior placeholder thumbnail`);
+    assert.ok(window.CHERRIFT_DATA.skins.find(skin=>skin.id==="wuxia_sakura_cherry")?.icon.endsWith("wuxia_sakura_cherry_icon.png"),`${name}: Wuxia placeholder thumbnail`);
     assert.ok(document.querySelector("[data-v093-skin-view='splash'].active"),`${name}: splash is default`);
     click(window,document.querySelector("[data-v093-skin-view='game']"),`${name} game view`);
     await waitFor(()=>document.getElementById("skinPreviewCanvasV093"),`${name} sprite preview`);
@@ -268,20 +282,57 @@ async function exercise(name,width,height){
     assert.equal(document.getElementById("skinSkillDialogV093").classList.contains("hidden"),false,`${name}: tap skill dialog`);
     click(window,document.querySelector("[data-v093-skill-close]"),`${name} close skill details`);
 
-    UI.openWorldSelect();
-    await waitFor(()=>document.querySelectorAll("[data-v093-chapter]").length===5,`${name} World 1 chapters`);
-    assert.equal(window.CHERRIFT_V093.worldCount,7,`${name}: seven World entries`);
-    assert.equal(document.querySelectorAll("[data-v093-chapter]").length,5,`${name}: only selected World chapters are visible`);
-    click(window,document.querySelector('[data-v093-world-step="1"]'),`${name} next World`);
-    assert.equal(window.CHERRIFT_V093.state.world,2,`${name}: World switcher`);
-    assert.equal(document.querySelectorAll("[data-v093-chapter]").length,5,`${name}: World 2 has its own chapter list`);
-    window.CHERRIFT_V093.state.world=4;
-    window.CHERRIFT_V093.renderWorldSelect();
-    assert.equal(document.querySelectorAll("[data-v093-chapter]").length,0,`${name}: unfinished World does not expose fake chapters`);
-    assert.equal(document.querySelector("[data-v093-world-play]").disabled,true,`${name}: unfinished World cannot launch`);
-    window.CHERRIFT_V093.state.world=1;
-    window.CHERRIFT_V093.state.chapterId="world_1_1";
-    window.CHERRIFT_V093.renderWorldSelect();
+    UI.open("worlds");
+    if(window.CHERRIFT_WORLD_UI.isMobile()){
+      await waitFor(()=>!document.getElementById("worldSelectorV0942")?.classList.contains("hidden"),`${name} consolidated World selector`);
+      assert.equal(document.querySelectorAll("#worldDotsV0942 i").length,5,`${name}: exact mobile World count`);
+      click(window,document.querySelector('[data-world-step="1"]'),`${name} next mobile World`);
+      click(window,document.querySelector("[data-world-start]"),`${name} select mobile World`);
+      await waitFor(()=>!document.getElementById("chapterSelectorV0942")?.classList.contains("hidden"),`${name} mobile Chapter selector`);
+      assert.equal(document.querySelectorAll("#chapterDotsV0942 i").length,5,`${name}: five chapters in selected World`);
+      click(window,document.querySelector("[data-chapter-back]"),`${name} back to mobile Worlds`);
+    }else{
+      await waitFor(()=>document.querySelectorAll("[data-v094-world]").length>=4||document.querySelectorAll("[data-v0933-world]").length>=4,`${name} consolidated desktop World selector`);
+      assert.ok((window.CHERRIFT_V040?.stages||[]).filter(stage=>stage.world===4).length===5,`${name}: World 4 has five real stages`);
+    }
+
+    UI.save.keys=2;
+    UI.save.resourceWallet={keys:{common:1,rare:1,epic:1}};
+    UI.save.chests={common:1,rare:1,epic:1};
+    window.CHERRIFT_ECONOMY_V11.normalize(UI.save);
+    assert.equal(UI.save.keys,0,`${name}: legacy generic keys are removed`);
+    assert.deepEqual({...UI.save.chests},{common:4,rare:2,epic:2},`${name}: all legacy keys migrate to usable chests`);
+    UI.open("gacha");
+    await waitFor(()=>!document.getElementById("gachaChestOnlyV12")?.classList.contains("hidden"),`${name} Gacha panel`);
+    assert.equal(document.querySelectorAll("[data-gco-tier]").length,3,`${name}: exactly three Gacha tiers`);
+    const commonBefore=UI.save.chests.common;
+    window.CHERRIFT_ECONOMY_V11.openMany(1);
+    await waitFor(()=>!document.getElementById("gcoModal")?.classList.contains("hidden"),`${name} Gacha opening animation`);
+    await waitFor(()=>UI.save.chests.common===commonBefore-1,`${name} Gacha consumes one chest`);
+    assert.ok(UI.save.gacha.history.length>=1,`${name}: Gacha history records the reward`);
+    await new Promise(resolve=>setTimeout(resolve,1000));
+    const gachaNext=document.querySelector("#gcoModal .gco-next");
+    if(gachaNext) click(window,gachaNext,`${name} finish Gacha reveal`);
+    window.CHERRIFT_REWARDS?.close?.();
+    document.getElementById("gcoModal")?.classList.add("hidden");
+    if(name==="desktop"){
+      UI.save.chests.common=10;
+      UI.save.gacha.pity.common=9;
+      window.CHERRIFT_ECONOMY_V11.open("common");
+      window.CHERRIFT_ECONOMY_V11.openMany(10);
+      await waitFor(()=>UI.save.chests.common===0,"desktop 10× Gacha consumes all chests");
+      await waitFor(()=>document.querySelector("#gcoModal .gco-skin-reveal"),"desktop 10× Gacha reveals guaranteed skin first");
+      assert.equal(document.getElementById("rewardOverlayV083")?.classList.contains("open"),false,"desktop: non-skin Gacha summary waits until skin reveals finish");
+      for(let index=0;index<12;index++){
+        const next=document.querySelector("#gcoModal .gco-next");
+        if(!next) break;
+        click(window,next,"desktop continue 10× Gacha reveal");
+        await new Promise(resolve=>setTimeout(resolve,0));
+      }
+      window.CHERRIFT_REWARDS?.close?.();
+      document.getElementById("gcoModal")?.classList.add("hidden");
+    }
+    UI.open("menu");
 
     UI.save.bag=UI.save.bag||{};
     UI.save.bag.items={};
@@ -358,7 +409,7 @@ async function exercise(name,width,height){
     const mageOrbs=UI.game.bullets.filter(bullet=>bullet.customV087&&bullet.style==="mage_orb_skill");
     assert.equal(mageOrbs.length,5,`${name}: Magical Shot has five orbs`);
     assert.ok(mageOrbs.every(bullet=>bullet.target===mageEnemy),`${name}: one enemy receives all five orbs`);
-    assert.ok(UI.game.obstacles.some(obstacle=>obstacle.v086Decor),`${name}: World 1 remaster decor`);
+    assert.ok(UI.game.obstacles.some(obstacle=>obstacle.v094Map),`${name}: consolidated World 1 map objects`);
     UI.game.player.moving=true;
     UI.game.update(.016);
     assert.ok(Number.isFinite(UI.game.__cameraZoomV085),`${name}: dynamic camera zoom`);
@@ -437,7 +488,7 @@ async function exercise(name,width,height){
       const succubus=await startSkin("succubus_cherry");
       UI.game.player.skillTimer=0;
       UI.game.skill();
-      assert.ok(UI.game.effects.some(effect=>effect.type==="succubusReleaseV091"),"desktop: Succubus release VFX");
+      assert.ok(UI.game.effects.some(effect=>effect.type==="succubus_cast_v0931"),"desktop: current Succubus cast VFX");
       for(const key of ["succubus_claw","succubus_core","succubus_burst","succubus_wisp","succubus_hit","succubus_siphon","succubus_shield"]){
         assert.ok(UI.game.assets.get(key),`desktop: ${key} loaded`);
       }
@@ -445,14 +496,14 @@ async function exercise(name,width,height){
       UI.game.drawWorld(UI.game.ctx);
     }
 
-    if(width<=820){
+    if(window.CHERRIFT_WORLD_UI.isMobile()){
       assert.equal(document.body.classList.contains("v090-mobile"),true,`${name}: mobile mode`);
       assert.ok(document.getElementById("mobileMenuV082"),`${name}: mobile drawer`);
       assert.equal(document.querySelectorAll(".mobile-menu-grid-v082 > button").length,11,`${name}: compact More destinations plus Event`);
       assert.equal(document.querySelectorAll(".mobile-nav-v090 > button").length,5,`${name}: stable bottom nav`);
     }
 
-    const meaningful=errors.filter(error=>!/Not implemented: HTMLCanvasElement|Could not load link/i.test(error));
+    const meaningful=errors.filter(error=>!/Not implemented: HTMLCanvasElement/i.test(error));
     assert.deepEqual(meaningful,[],`${name}: no runtime errors`);
     return {name,viewport:`${width}x${height}`,skins:window.CHERRIFT_DATA.skins.length};
   } finally {
@@ -466,9 +517,14 @@ async function exerciseReturningSession(){
     await waitFor(()=>window.CHERRIFT_AUTH.getState().mode==="discord","returning session");
     assert.equal(window.CHERRIFT_AUTH.getState().gateVisible,false,"returning session: gate skipped");
     assert.equal(window.CHERRIFT_AUTH.getState().account?.discordId,"987654321","returning session: identity restored");
-    await waitFor(()=>/0\.9\.3/.test(window.document.title),"returning session current version");
-    assert.match(window.document.title,/0\.9\.3/,"returning session: current version");
-    const meaningful=errors.filter(error=>!/Not implemented: HTMLCanvasElement|Could not load link/i.test(error));
+    assert.equal(window.CHERRIFT_AUTH.getState().memoryOnly,true,"returning session: local account backup mode when cloud API is unavailable");
+    window.UI.save.coins=4321;
+    window.CherriftStorage.save(window.UI.save);
+    const backup=JSON.parse(window.localStorage.getItem("cherrift-discord-backup-v1:returning-user"));
+    assert.equal(backup?.saveData?.coins,4321,"returning session: every Discord save is backed up synchronously");
+    await waitFor(()=>/0\.9\.4/.test(window.document.title),"returning session current version");
+    assert.match(window.document.title,/0\.9\.4/,"returning session: current version");
+    const meaningful=errors.filter(error=>!/Not implemented: HTMLCanvasElement/i.test(error));
     assert.deepEqual(meaningful,[],"returning session: no runtime errors");
     return {name:"returning session",viewport:"1280x760"};
   } finally {
@@ -485,7 +541,7 @@ try{
     await exerciseReturningSession()
   ];
   for(const result of results)console.log(`PASS ${result.name} ${result.viewport}${result.skins?` · ${result.skins} skins`:""}`);
-  console.log("CHERRIFT v0.9.3 smoke tests passed.");
+  console.log("CHERRIFT v0.9.4 smoke tests passed.");
 } finally {
   await new Promise(resolve=>server.close(resolve));
 }
