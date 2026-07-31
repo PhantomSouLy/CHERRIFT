@@ -164,7 +164,7 @@ body.is-loading-stage #stageLoading:not(.hidden){display:grid!important;}
 
 /* ============================================================
    CHERRIFT v0.4.0k GROUND ASSET FIX
-   Ensures assets/map/world1/world1_grass_seamless.png is included.
+   Uses the bundled World 1 ground artwork.
    ============================================================ */
 
 

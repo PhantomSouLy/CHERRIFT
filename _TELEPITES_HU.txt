@@ -1,0 +1,11 @@
+CHERRIFT v0.9.4 – csak a frissítéshez szükséges fájlok
+
+1. Csomagold ki ezt a ZIP-et.
+2. A két aláhúzással kezdődő TXT kivételével másold fel a tartalmát a repository gyökerébe.
+3. Engedélyezd a meglévő fájlok felülírását, és tartsd meg a mappaszerkezetet (.github, src, tools).
+4. Töröld a repositoryból a _TORLENDO_FAJLOK.txt fájlban felsorolt régi patch-fájlokat.
+
+A ZIP nem tartalmazza a teljes játékot és a változatlan asseteket. A jelenleg hiányzó assetekhez
+meglévő helyettesítő/fallback fájlok vannak beállítva; ezek később egyszerűen lecserélhetők.
+
+Az _TELEPITES_HU.txt és _TORLENDO_FAJLOK.txt csak útmutató, ezeket nem kell feltölteni.
