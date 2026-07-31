@@ -1,5 +1,5 @@
 {
-  "runtimeVersion": "1.4.0-gameplay-hotfix",
+  "runtimeVersion": "1.4.0-gameplay-hotfix+economy-v11",
   "gameVersion": "0.9.3-test",
   "javascript": "src/cherrift_app.js",
   "stylesheet": "assets/cherrift_app.css",
@@ -21,21 +21,22 @@
     "World-positioned gear drop text",
     "Reduced normal enemy gear drop rates",
     "Mobile GM Tool Pack with protected Mail, Redeem and Profile modules",
-    "Server-backed player Mail and Redeem bridge"
+    "Server-backed player Mail and Redeem bridge",
+    "Dynamic server reward catalog for currencies, keys, chests, materials and bag items",
+    "Custom hashed redeem codes with zero-as-unlimited limits",
+    "Common, Rare, Epic and Legendary tiered keys and Chest Vault"
   ],
   "updateFiles": [
     "src/supabase_config.js",
     "src/cherrift_live_services.js",
+    "src/cherrift_economy_v11.js",
     "src/cherrift_manifest.json",
     "gm/index.html",
     "gm/gm.css",
     "gm/gm.js",
-    "supabase/config.toml",
-    "supabase/migrations/20260730_gm_tool_pack.sql",
+    "supabase/migrations/20260731_gm_tool_pack_v11_economy.sql",
     "supabase/functions/gm-api/index.ts",
-    "supabase/functions/gm-api/deno.json",
     "supabase/functions/player-api/index.ts",
-    "supabase/functions/player-api/deno.json",
-    "GM_TOOL_PACK_SETUP_HU.md"
+    "GM_TOOL_PACK_V11_SETUP_HU.md"
   ]
 }
