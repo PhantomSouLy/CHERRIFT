@@ -3,7 +3,7 @@
   if (window.__CHERRIFT_ECONOMY_CHEST_ONLY__) return;
   window.__CHERRIFT_ECONOMY_CHEST_ONLY__ = true;
 
-  const VERSION = "1.2.0-chest-only";
+  const VERSION = "1.2.1-chest-only-stable-rewards";
   const TIERS = ["common", "rare", "epic"];
   const DEF = {
     common: { name: "Common Chest", itemText: "Common Items", pity: 10, rarity: "Common", asset: "assets/items/chests/common_chest.png" },
@@ -26,7 +26,10 @@
     for (const tier of ["common", "rare", "epic", "legendary"]) save.chests[tier] = number(save.chests[tier]);
     save.gacha = save.gacha && typeof save.gacha === "object" ? save.gacha : {};
     save.gacha.pity = save.gacha.pity && typeof save.gacha.pity === "object" ? save.gacha.pity : {};
-    for (const tier of ["common", "rare", "epic", "legendary"]) save.gacha.pity[tier] = number(save.gacha.pity[tier]);
+    for (const tier of ["common", "rare", "epic", "legendary"]) {
+      const value = number(save.gacha.pity[tier]);
+      save.gacha.pity[tier] = DEF[tier]?.pity ? value % DEF[tier].pity : value;
+    }
     save.economy = save.economy && typeof save.economy === "object" ? save.economy : {};
     save.economy.totalChestOpens = number(save.economy.totalChestOpens);
     save.inventory = Array.isArray(save.inventory) ? save.inventory : [];
@@ -106,7 +109,8 @@
 
   function roll(save, tier) {
     const def = DEF[tier];
-    save.gacha.pity[tier] = number(save.gacha.pity[tier]) + 1;
+    const currentPity = Math.min(Math.max(0, def.pity - 1), number(save.gacha.pity[tier]));
+    save.gacha.pity[tier] = currentPity + 1;
     const guaranteed = save.gacha.pity[tier] >= def.pity;
     if (guaranteed) {
       save.gacha.pity[tier] = 0;
@@ -210,6 +214,18 @@
       .gco-modal{position:fixed;inset:0;z-index:100050;display:grid;place-items:center;padding:18px;background:#07030ce8;backdrop-filter:blur(8px)}.gco-modal.hidden{display:none!important}.gco-modal-card{width:min(600px,100%);max-height:min(780px,90dvh);overflow:auto;padding:24px;border:1px solid #ffffff25;border-radius:28px;background:linear-gradient(155deg,#34133deb,#120817);text-align:center}.gco-opening img{width:min(280px,65vw);height:240px;object-fit:contain;animation:gcoOpen .85s ease both}.gco-skin-art{width:100%;height:330px;object-fit:contain;border-radius:20px;background:#ffffff06}.gco-modal h3{font:700 38px Georgia,serif;margin:12px 0}.gco-next,.gco-close{width:100%;min-height:58px;border:0;border-radius:16px;color:#fff;background:linear-gradient(115deg,#d72f7d,#ea70ac);font-weight:1000}.gco-summary{display:grid;gap:9px;text-align:left}.gco-summary-row{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:#ffffff07}.gco-summary-row img{width:48px;height:48px;object-fit:contain}.gco-summary-row span{font-size:28px}.gco-summary-row b{margin-left:auto}.gco-toast{position:fixed;z-index:100080;top:max(14px,env(safe-area-inset-top));left:50%;translate:-50% -120%;max-width:min(520px,90vw);padding:12px 18px;border:1px solid #ffbad8aa;border-radius:14px;background:#2f1029ed;color:#fff;font-weight:900;transition:translate .22s}.gco-toast.show{translate:-50% 0}
       @keyframes gcoOpen{0%{transform:scale(.65) rotate(-5deg);filter:brightness(.5)}60%{transform:scale(1.13) rotate(2deg);filter:brightness(1.7) drop-shadow(0 0 35px #ff77bd)}100%{transform:scale(1);filter:brightness(1)}}
       @media(max-width:700px){.gco-shell{padding:12px 12px 130px}.gco-head h2{font-size:48px}.gco-back{width:64px;height:64px}.gco-carousel{grid-template-columns:38px minmax(0,1fr) 38px;gap:6px}.gco-arrow{height:58px;border-radius:14px}.gco-card{min-height:570px;padding:16px;border-radius:25px}.gco-art{height:210px}.gco-art img{max-height:190px;max-width:200px}.gco-actions button{min-height:64px}.gco-wallet b{padding:7px 10px}.gco-chests b{padding:5px 8px;font-size:13px}.gco-chests img{width:32px;height:32px}}
+      @media(max-width:820px){
+        #gachaChestOnlyV12{height:100dvh!important;min-height:100dvh!important;overflow:hidden!important;padding-bottom:0!important}
+        #gachaChestOnlyV12 .gco-shell{height:100%;display:flex;flex-direction:column;overflow:hidden;padding:104px 10px calc(82px + env(safe-area-inset-bottom))!important}
+        #gachaChestOnlyV12 .gco-head{flex:0 0 auto;margin:0 0 4px;min-height:52px}.gco-head h2{font-size:42px!important}.gco-back{width:52px!important;height:52px!important;border-radius:17px!important}
+        #gachaChestOnlyV12 .gco-chests{flex:0 0 auto;margin:0 auto 5px;gap:6px}.gco-chests b{padding:3px 8px!important}.gco-chests img{width:28px!important;height:28px!important}
+        #gachaChestOnlyV12 .gco-carousel{flex:1 1 auto;min-height:0;grid-template-columns:36px minmax(0,1fr) 36px;gap:5px;align-items:center}
+        #gachaChestOnlyV12 #gcoCard{height:100%;min-height:0}.gco-card{height:100%;min-height:0!important;display:flex;flex-direction:column;padding:10px 14px!important;border-radius:23px!important;overflow:hidden}
+        .gco-art{flex:1 1 auto;min-height:110px;height:auto!important;margin-bottom:2px}.gco-art img{max-height:min(25dvh,175px)!important;max-width:180px!important}
+        .gco-rarity{font-size:10px;margin-top:0}.gco-card h3{margin:0!important;font-size:clamp(32px,8vw,45px)!important;line-height:.95}.gco-copy{margin:5px 0!important;font-size:15px}.gco-empty-note{margin:2px 0!important;font-size:10px}
+        .gco-pity{margin-top:auto!important;padding:9px 11px!important}.gco-pity header{font-size:14px}.gco-actions{gap:8px;margin-top:8px!important}.gco-actions button{min-height:50px!important;font-size:17px!important}
+        .gco-dots{flex:0 0 auto;margin:5px 0 0!important}.gco-arrow{height:54px!important}
+      }
     `;
     document.head.appendChild(style);
   }
@@ -222,7 +238,7 @@
     panel = document.createElement("section");
     panel.id = "gachaChestOnlyV12";
     panel.className = "panel hidden";
-    panel.innerHTML = `<div class="gco-shell"><header class="gco-head"><button class="gco-back" type="button" data-gco-back>←</button><h2>Gacha</h2></header><div id="gcoWallet" class="gco-wallet"></div><div id="gcoChestWallet" class="gco-chests"></div><div class="gco-carousel" id="gcoCarousel"><button class="gco-arrow" type="button" data-gco-step="-1">‹</button><div id="gcoCard"></div><button class="gco-arrow" type="button" data-gco-step="1">›</button></div><div id="gcoDots" class="gco-dots"></div></div><div id="gcoModal" class="gco-modal hidden"></div><div id="gcoToast" class="gco-toast"></div>`;
+    panel.innerHTML = `<div class="gco-shell"><header class="gco-head"><button class="gco-back" type="button" data-gco-back>←</button><h2>Gacha</h2></header><div id="gcoChestWallet" class="gco-chests"></div><div class="gco-carousel" id="gcoCarousel"><button class="gco-arrow" type="button" data-gco-step="-1">‹</button><div id="gcoCard"></div><button class="gco-arrow" type="button" data-gco-step="1">›</button></div><div id="gcoDots" class="gco-dots"></div></div><div id="gcoModal" class="gco-modal hidden"></div><div id="gcoToast" class="gco-toast"></div>`;
     app.appendChild(panel);
     panel.addEventListener("click", event => {
       const step = event.target.closest("[data-gco-step]");
@@ -261,7 +277,6 @@
     const def = DEF[state.tier];
     const count = number(save.chests[state.tier]);
     const pity = number(save.gacha.pity[state.tier]);
-    id("gcoWallet").innerHTML = `<b>🪙 ${save.coins}</b><b>💎 ${save.blossomGems}</b><b>🌸 ${save.sakuraEssence}</b>`;
     id("gcoChestWallet").innerHTML = TIERS.map(tier => `<b><img src="${DEF[tier].asset}" alt=""><span>${number(save.chests[tier])}</span></b>`).join("");
     id("gcoCard").innerHTML = `<article class="gco-card ${state.tier}" data-gco-card><div class="gco-art"><img src="${def.asset}" alt="${esc(def.name)}"></div><div class="gco-rarity">${state.tier}</div><h3>${esc(def.name)}</h3><p class="gco-copy">${esc(def.itemText)}</p>${count < 1 ? `<p class="gco-empty-note">You don't have any ${esc(def.name)}s.</p>` : ""}<section class="gco-pity"><header><span>Guaranteed Skin</span><b>${pity} / ${def.pity}</b></header><div class="gco-track"><i style="width:${Math.min(100, pity / def.pity * 100)}%"></i></div></section><div class="gco-actions"><button type="button" data-gco-open="1" ${count < 1 || state.busy ? "disabled" : ""}>Open 1×</button><button type="button" data-gco-open="10" ${count < 10 || state.busy ? "disabled" : ""}>Open 10×</button></div></article>`;
     id("gcoDots").innerHTML = TIERS.map(tier => `<button type="button" class="${tier === state.tier ? "active" : ""}" data-gco-tier="${tier}" aria-label="${DEF[tier].name}"></button>`).join("");
@@ -309,23 +324,51 @@
     return `<div class="gco-summary">${rows.map(reward => `<div class="gco-summary-row">${reward.asset ? `<img src="${esc(reward.asset)}" alt="">` : `<span>${reward.icon || "•"}</span>`}<strong>${esc(reward.label)}</strong><b>×${number(reward.amount || 1)}</b></div>`).join("")}</div>`;
   }
 
+  function globalRewardRows(rewards) {
+    return aggregate(rewards).map((reward, index) => ({
+      key: `${reward.kind || "reward"}:${reward.item?.id || reward.label || index}`,
+      name: reward.label || "Reward",
+      amount: number(reward.amount || 1),
+      rarity: reward.rarity || "Common",
+      kind: reward.kind || "item",
+      icon: reward.icon || "•",
+      asset: reward.asset || reward.item?.asset || "",
+      item: reward.item || null
+    }));
+  }
+
+  function showGlobalSummary(rewards) {
+    const modal = id("gcoModal");
+    modal?.classList.add("hidden");
+    const rows = globalRewardRows(rewards);
+    if (!rows.length) return;
+    if (window.CHERRIFT_REWARDS?.show) {
+      window.CHERRIFT_REWARDS.show(rows);
+      return;
+    }
+    // Fallback only when the game's shared Reward viewer is unavailable.
+    modal.classList.remove("hidden");
+    modal.innerHTML = `<div class="gco-modal-card"><h3>Rewards</h3>${summaryMarkup(rewards)}<button class="gco-close" type="button">Close</button></div>`;
+    q(".gco-close", modal).onclick = () => modal.classList.add("hidden");
+  }
+
   function showResultSequence(tier, rewards) {
     const modal = id("gcoModal");
-    const skins = rewards.filter(reward => reward.kind === "skin");
-    const queue = [...skins];
-    const renderSummary = () => {
-      modal.innerHTML = `<div class="gco-modal-card"><small>${esc(DEF[tier].name)}</small><h3>Rewards</h3>${summaryMarkup(rewards)}<button class="gco-close" type="button">Close</button></div>`;
-      q(".gco-close", modal).onclick = () => modal.classList.add("hidden");
-    };
+    const queue = rewards.filter(reward => reward.kind === "skin");
+    const normalRewards = rewards.filter(reward => reward.kind !== "skin");
     const nextSkin = () => {
       const reward = queue.shift();
-      if (!reward) return renderSummary();
-      modal.innerHTML = `<div class="gco-modal-card"><small>${esc(reward.rarity)} Skin</small>${reward.asset ? `<img class="gco-skin-art" src="${esc(reward.asset)}" alt="">` : `<div style="font-size:90px">${reward.icon || "🐰"}</div>`}<h3>${esc(reward.label)}</h3>${reward.duplicate ? `<p>Duplicate skin converted to Sakura Essence.</p>` : `<p>New Cherry skin unlocked!</p>`}<button class="gco-next" type="button">${queue.length ? "Next Skin" : "Reward Summary"}</button></div>`;
-      q(".gco-next", modal).onclick = nextSkin;
+      if (!reward) return showGlobalSummary(normalRewards);
+      modal.classList.remove("hidden");
+      modal.innerHTML = `<div class="gco-modal-card gco-skin-reveal"><small>${esc(reward.rarity)} Skin</small>${reward.asset ? `<img class="gco-skin-art" src="${esc(reward.asset)}" alt="">` : `<div class="gco-skin-fallback">${reward.icon || "🐰"}</div>`}<h3>${esc(reward.label)}</h3>${reward.duplicate ? `<p>Duplicate skin converted to Sakura Essence.</p>` : `<p>New Cherry skin unlocked!</p>`}<button class="gco-next" type="button">${queue.length ? "Continue" : normalRewards.length ? "Continue" : "Close"}</button></div>`;
+      q(".gco-next", modal).onclick = () => {
+        if (queue.length) nextSkin();
+        else if (normalRewards.length) showGlobalSummary(normalRewards);
+        else modal.classList.add("hidden");
+      };
     };
-    modal.classList.remove("hidden");
-    modal.innerHTML = `<div class="gco-modal-card gco-opening"><small>${rewards.length}× opening</small><img src="${DEF[tier].asset}" alt=""><h3>Opening…</h3></div>`;
-    setTimeout(() => skins.length ? nextSkin() : renderSummary(), 850);
+    if (queue.length) nextSkin();
+    else showGlobalSummary(normalRewards);
   }
 
   function openMany(amount) {

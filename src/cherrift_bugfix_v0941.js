@@ -3,7 +3,7 @@
   if (window.__CHERRIFT_BUGFIX_V0941__) return;
   window.__CHERRIFT_BUGFIX_V0941__ = true;
 
-  const VERSION = "0.9.4.1-ui-bugfix";
+  const VERSION = "0.9.4.2-ui-bugfix";
   const id = value => document.getElementById(value);
   const q = (selector, root = document) => root?.querySelector?.(selector) || null;
   const qa = (selector, root = document) => Array.from(root?.querySelectorAll?.(selector) || []);
@@ -124,7 +124,12 @@
 
   function localMails() {
     const catalog = Array.isArray(window.CHERRIFT_V063?.mailCatalog) ? window.CHERRIFT_V063.mailCatalog : [];
-    return catalog.filter(entry => entry && entry.__gmLive !== true).map((entry, index) => {
+    const hiddenLegacy = new Set(["mailwelcometitle", "mailgifttitle", "welcome_mail", "gift_mail"]);
+    return catalog.filter(entry => {
+      if (!entry || entry.__gmLive === true) return false;
+      const markers = [entry.id, entry.titleKey, entry.title].map(value => String(value || "").trim().toLowerCase());
+      return !markers.some(value => hiddenLegacy.has(value));
+    }).map((entry, index) => {
       const mailId = String(entry.id || `local:${index}`);
       const status = mailboxState(mailId);
       return {
@@ -359,8 +364,9 @@
     const card = document.createElement("section");
     card.id = "settingsAccountBugfixV0941";
     card.className = "bf-card settings-account-bf";
-    card.innerHTML = `<h3>${t("redeemCode")}</h3><p>${t("redeemHint")}</p><button type="button" class="bf-button">${t("redeemCode")}</button>`;
-    q("button", card).onclick = () => ensureRedeemModal().classList.remove("hidden");
+    card.innerHTML = `<h3>${t("account")}</h3><p>${t("displayName")}: <strong>${esc(displayName())}</strong></p><div class="bf-form-actions"><button type="button" class="bf-button secondary" data-settings-display-name>${t("editName")}</button><button type="button" class="bf-button" data-settings-redeem>${t("redeemCode")}</button></div>`;
+    q("[data-settings-display-name]", card).onclick = () => openNameModal();
+    q("[data-settings-redeem]", card).onclick = () => ensureRedeemModal().classList.remove("hidden");
     host.appendChild(card);
   }
 
@@ -383,10 +389,17 @@
   function activeTitle() {
     return UI.save?.profile?.activeTitle || UI.save?.activeTitle || UI.save?.selectedTitle || (language() === "hu" ? "Nincs Title" : "No Title");
   }
+  function prettyTitle(value) {
+    const raw = String(value || "").trim();
+    if (!raw) return language() === "hu" ? "Nincs Title" : "No Title";
+    const localized = localize(raw);
+    const source = localized && localized !== raw ? localized : raw;
+    return source.replace(/[_-]+/g, " ").replace(/\b\p{L}/gu, letter => letter.toUpperCase());
+  }
   function activeTitleName() {
     const current = activeTitle();
     const match = titleCatalog().find(title => title.id === current || title.name === current);
-    return match?.name || current;
+    return prettyTitle(match?.name || current);
   }
   function titleSources() {
     return [window.CHERRIFT_TITLES, window.CHERRIFT_DATA?.titles, window.CHERRIFT_V082?.titles, window.CHERRIFT_V082?.titleCatalog, window.CHERRIFT_V084?.titles, window.UI?.titleCatalog];
@@ -400,7 +413,7 @@
       if (!titleId) return;
       found.set(titleId, {
         id: titleId,
-        name: localize(entry.nameKey || entry.name || entry.title || titleId),
+        name: prettyTitle(localize(entry.nameKey || entry.name || entry.title || titleId)),
         rarity: String(entry.rarity || "Common"),
         bonus: localize(entry.bonusKey || entry.bonus || entry.description || ""),
         owned: entry.owned === true || entry.unlocked === true
@@ -463,7 +476,6 @@
     id("app")?.appendChild(panel);
     panel.addEventListener("click", event => {
       if (event.target.closest("[data-profile-back]")) state.previousOpen?.("menu");
-      if (event.target.closest("[data-profile-name-edit]")) openNameModal();
       if (event.target.closest("[data-profile-title-edit]")) openTitleModal();
       if (event.target.closest("[data-profile-stats]")) state.previousOpen?.("statSummaryV082");
     });
@@ -483,7 +495,7 @@
       [t("stageClears"), stageClearCount()], [t("totalXp"), lifetimeStat("totalXp", "xp", "stats.totalXp")],
       [t("gear"), gearCount()], [t("gacha"), gachaCount()], [t("arsenalAvg"), arsenalAverage()], [t("power"), powerValue()]
     ];
-    panel.innerHTML = `<div class="bf-shell"><header class="bf-head"><button type="button" class="bf-back" data-profile-back>←</button><h2>Profile</h2></header><section class="bf-card profile-hero-bf"><div class="profile-avatar-bf">${avatar ? `<img src="${esc(avatar)}" alt="">` : ""}</div><div><div class="profile-name-row-bf"><h3>${esc(displayName())}</h3><button type="button" class="profile-mini-edit-bf" data-profile-name-edit aria-label="${esc(t("editName"))}">✎</button></div><div class="profile-title-row-bf"><span>${esc(activeTitleName())}</span><button type="button" class="profile-mini-edit-bf" data-profile-title-edit aria-label="${esc(t("titles"))}">✎</button></div><div class="profile-lines-bf"><span>${t("level")}: ${level}</span><span>${t("cherrySkin")}: ${esc(skin.name || skin.id)}</span></div><div class="profile-discord-bf">${t("discord")}: ${esc(discordName)}</div></div><button type="button" class="bf-button profile-stat-button-bf" data-profile-stats>${t("statDetails")}</button></section><div class="profile-stats-bf">${stats.map(([label, value]) => `<article class="bf-card profile-stat-bf"><div><small>${esc(label)}</small><b>${esc(value)}</b></div></article>`).join("")}</div><section class="bf-card profile-title-collection-bf"><h3>Title Collection</h3></section></div>`;
+    panel.innerHTML = `<div class="bf-shell"><header class="bf-head"><button type="button" class="bf-back" data-profile-back>←</button><h2>Profile</h2></header><section class="bf-card profile-hero-bf"><div class="profile-avatar-bf">${avatar ? `<img src="${esc(avatar)}" alt="">` : ""}</div><div><div class="profile-name-row-bf"><h3>${esc(displayName())}</h3></div><div class="profile-title-row-bf"><span>${esc(activeTitleName())}</span><button type="button" class="profile-mini-edit-bf" data-profile-title-edit aria-label="${esc(t("titles"))}">✎</button></div><div class="profile-lines-bf"><span>${t("level")}: ${level}</span><span>${t("cherrySkin")}: ${esc(skin.name || skin.id)}</span></div><div class="profile-discord-bf">${t("discord")}: ${esc(discordName)}</div></div><button type="button" class="bf-button profile-stat-button-bf" data-profile-stats>${t("statDetails")}</button></section><div class="profile-stats-bf">${stats.map(([label, value]) => `<article class="bf-card profile-stat-bf"><div><small>${esc(label)}</small><b>${esc(value)}</b></div></article>`).join("")}</div><section class="bf-card profile-title-collection-bf"><h3>Title Collection</h3></section></div>`;
   }
 
   function openProfile() {

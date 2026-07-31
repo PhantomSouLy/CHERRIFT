@@ -29,11 +29,12 @@
 
   async function loadExternalSystems() {
     try {
-      await loadScript("cherriftEconomyV12Script", "src/cherrift_economy_v11.js?v=0941-chest-only-1");
+      await loadScript("cherriftEconomyV12Script", "src/cherrift_economy_v11.js?v=0942-chest-stable-1");
       await loadScript("cherriftLiveServicesV12Script", "src/cherrift_live_services.js?v=0941-mail-api-1");
-      await loadScript("cherriftBugfixV0941Script", "src/cherrift_bugfix_v0941.js?v=0941-ui-1");
+      await loadScript("cherriftBugfixV0941Script", "src/cherrift_bugfix_v0941.js?v=0942-profile-mail-1");
+      await loadScript("cherriftBugfixV0942Script", "src/cherrift_bugfix_v0942.js?v=0942-ui-stability-1");
     } catch (error) {
-      console.error("[CHERRIFT] v0.9.4.1 bugfix systems failed to load:", error);
+      console.error("[CHERRIFT] v0.9.4.2 bugfix systems failed to load:", error);
     }
   }
 
