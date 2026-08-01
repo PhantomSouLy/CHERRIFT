@@ -111,7 +111,7 @@
     if (!skin) {
       const amount = window.CHERRIFT_BALANCE?.gacha?.duplicateEssence?.[rarity] || 5;
       save.sakuraEssence += amount;
-      return { kind: "essence", rarity, amount, label: `${amount} Sakura Essence`, icon: "🌸" };
+      return { kind: "essence", rarity, amount, label: `${amount} Sakura Essence`, asset: "assets/items/sakura_potion.png" };
     }
     const duplicate = save.unlockedSkins.includes(skin.id);
     if (!duplicate) save.unlockedSkins.push(skin.id);
@@ -128,17 +128,17 @@
     if (typeof create !== "function") {
       const amount = { Common: 30, Uncommon: 50, Rare: 90, Epic: 240 }[rarity] || 30;
       save.coins += amount;
-      return { kind: "coins", rarity, amount, label: `${amount} Coin`, icon: "🪙" };
+      return { kind: "coins", rarity, amount, label: `${amount} Coin`, asset: "assets/items/coin.png" };
     }
     const item = create(currentWorld(save), rarity);
     window.CHERRIFT_V070?.syncItemToArsenal?.(item, save);
     if (save.inventory.length >= 80) {
       const amount = window.CHERRIFT_V050?.sellValue?.(item) || { Common: 20, Uncommon: 35, Rare: 60, Epic: 180 }[rarity] || 20;
       save.coins += amount;
-      return { kind: "coins", rarity, amount, label: text("inventoryFull", amount), icon: "🪙" };
+      return { kind: "coins", rarity, amount, label: text("inventoryFull", amount), asset: "assets/items/coin.png" };
     }
     save.inventory.push(item);
-    return { kind: "gear", rarity, item, amount: 1, label: `${rarity} ${item.type || ""} ${item.slot || "Gear"}`.trim(), icon: window.UI?.gearEmoji?.(item) || "⚔️", asset: item.asset || "" };
+    return { kind: "gear", rarity, item, amount: 1, label: `${rarity} ${item.type || ""} ${item.slot || "Gear"}`.trim(), asset: item.asset || "assets/items/equipments/weapons/sword_sword.png" };
   }
 
   function roll(save, tier) {
@@ -242,7 +242,7 @@
       #gachaChestOnlyV12{overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior-y:contain;touch-action:pan-y;min-height:var(--cherrift-viewport-height,100dvh);color:#fff}
       .gco-shell{width:min(920px,100%);min-height:var(--cherrift-viewport-height,100dvh);margin:0 auto;padding:18px 18px 64px}
       .gco-head{display:flex;align-items:center;gap:16px;margin-bottom:14px}.gco-head h2{margin:0;font:700 clamp(42px,8vw,64px)/1 Georgia,serif}.gco-back{width:72px;height:72px;border:1px solid #ffffff25;border-radius:22px;color:#fff;background:#ffffff08;font-size:28px}
-      .gco-wallet,.gco-chests{display:flex;justify-content:center;flex-wrap:wrap;gap:9px}.gco-wallet{margin:8px 0 12px}.gco-wallet b,.gco-chests b{display:flex;align-items:center;gap:8px;min-height:50px;padding:8px 14px;border:1px solid #ffffff1f;border-radius:15px;background:#ffffff08}.gco-chests{margin:0 0 18px}.gco-chests img{width:38px;height:38px;object-fit:contain}
+      .gco-wallet,.gco-chests{display:flex;justify-content:center;flex-wrap:wrap;gap:9px}.gco-wallet{margin:8px 0 12px}.gco-wallet b,.gco-chests b{display:flex;align-items:center;gap:8px;min-height:50px;padding:8px 14px;border:1px solid #ffffff1f;border-radius:15px;background:#ffffff08}.gco-wallet img{width:28px;height:28px;object-fit:contain}.gco-chests{margin:0 0 18px}.gco-chests img{width:38px;height:38px;object-fit:contain}
       .gco-carousel{position:relative;display:grid;grid-template-columns:54px minmax(0,1fr) 54px;align-items:center;gap:10px;user-select:none}.gco-arrow{height:64px;border:1px solid #ffffff22;border-radius:18px;color:#fff;background:#ffffff08;font-size:36px}.gco-card{min-height:clamp(480px,calc(100dvh - 250px),650px);padding:22px;border:1px solid #ffffff24;border-radius:30px;background:linear-gradient(160deg,#2a102fdd,#120817f2);box-shadow:0 24px 80px #0007;touch-action:pan-y}
       .gco-card.common{border-top:7px solid #63dd8a}.gco-card.rare{border-top:7px solid #58adff}.gco-card.epic{border-top:7px solid #c060ff}.gco-art{height:clamp(180px,28dvh,260px);display:grid;place-items:center;border-radius:24px;background:#ffffff05}.gco-art img{max-width:230px;max-height:220px;object-fit:contain;filter:drop-shadow(0 18px 25px #0008)}.gco-art-fallback{display:none;font-size:72px}.gco-art img[hidden]+.gco-art-fallback{display:block}
       .gco-rarity{margin:20px 0 3px;font-weight:1000;letter-spacing:4px;text-transform:uppercase}.gco-card h3{margin:0;font:700 clamp(38px,7vw,58px)/1.05 Georgia,serif}.gco-copy{margin:18px 0 8px;color:#e7c9db;font-size:18px}.gco-empty-note{margin:0 0 14px;padding:9px 12px;border:1px solid #ffb4d13d;border-radius:12px;color:#ffb4d1;background:#b9276414;font-weight:850}.gco-pity{padding:15px 18px;border-radius:18px;background:#ffffff07}.gco-pity header{display:flex;justify-content:space-between;font-size:19px}.gco-track{height:10px;margin-top:10px;border-radius:99px;background:#ffffff0d;overflow:hidden}.gco-track i{display:block;height:100%;background:linear-gradient(90deg,#e34b98,#b65cff)}
@@ -334,9 +334,9 @@
     const back = q("[data-gco-back]", panel);
     if (back) back.setAttribute("aria-label", text("back"));
     const scrap = number(save.gearScrap ?? save.scrap ?? save.bag?.materials?.gearScrap ?? save.arsenal?.materials?.gearScrap);
-    id("gcoWallet").innerHTML = `<b title="Coin"><span>🪙</span><span>${number(save.coins)}</span></b><b title="Bloom Gem"><span>💎</span><span>${number(save.bloomGems ?? save.blossomGems)}</span></b><b title="Sakura Essence"><span>🌸</span><span>${number(save.sakuraEssence)}</span></b><b title="Scrap"><span>⚙</span><span>${scrap}</span></b>`;
+    id("gcoWallet").innerHTML = `<b title="Coin"><img src="assets/items/coin.png" alt=""><span>${number(save.coins)}</span></b><b title="Bloom Gem"><img src="assets/items/blossom_gem.png" alt=""><span>${number(save.bloomGems ?? save.blossomGems)}</span></b><b title="Sakura Essence"><img src="assets/items/sakura_potion.png" alt=""><span>${number(save.sakuraEssence)}</span></b><b title="Scrap"><img src="assets/items/scraps.png" alt=""><span>${scrap}</span></b>`;
     id("gcoChestWallet").innerHTML = TIERS.map(tier => `<b><img src="${DEF[tier].asset}" alt=""><span>${number(save.chests[tier])}</span></b>`).join("");
-    id("gcoCard").innerHTML = `<article class="gco-card ${state.tier}" data-gco-card><div class="gco-art"><img src="${def.asset}" alt="${esc(chestName(state.tier))}" onerror="this.hidden=true"><span class="gco-art-fallback" aria-hidden="true">🎁</span></div><div class="gco-rarity">${state.tier}</div><h3>${esc(chestName(state.tier))}</h3><p class="gco-copy">${esc(chestItems(state.tier))}</p>${count < 1 ? `<p class="gco-empty-note">${esc(text("empty", chestName(state.tier)))}</p>` : ""}<section class="gco-pity"><header><span>${esc(text("guaranteed"))}</span><b>${pity} / ${def.pity}</b></header><div class="gco-track"><i style="width:${Math.min(100, pity / def.pity * 100)}%"></i></div></section><div class="gco-actions"><button type="button" data-gco-open="1" ${count < 1 || state.busy ? "disabled" : ""}>${esc(text("openOne"))}</button><button type="button" data-gco-open="10" ${count < 10 || state.busy ? "disabled" : ""}>${esc(text("openTen"))}</button></div></article>`;
+    id("gcoCard").innerHTML = `<article class="gco-card ${state.tier}" data-gco-card><div class="gco-art"><img src="${def.asset}" alt="${esc(chestName(state.tier))}" onerror="this.hidden=true"><span class="gco-art-fallback" aria-hidden="true">CHEST</span></div><div class="gco-rarity">${state.tier}</div><h3>${esc(chestName(state.tier))}</h3><p class="gco-copy">${esc(chestItems(state.tier))}</p>${count < 1 ? `<p class="gco-empty-note">${esc(text("empty", chestName(state.tier)))}</p>` : ""}<section class="gco-pity"><header><span>${esc(text("guaranteed"))}</span><b>${pity} / ${def.pity}</b></header><div class="gco-track"><i style="width:${Math.min(100, pity / def.pity * 100)}%"></i></div></section><div class="gco-actions"><button type="button" data-gco-open="1" ${count < 1 || state.busy ? "disabled" : ""}>${esc(text("openOne"))}</button><button type="button" data-gco-open="10" ${count < 10 || state.busy ? "disabled" : ""}>${esc(text("openTen"))}</button></div></article>`;
     id("gcoDots").innerHTML = TIERS.map(tier => `<button type="button" class="${tier === state.tier ? "active" : ""}" data-gco-tier="${tier}" aria-label="${esc(chestName(tier))}"></button>`).join("");
   }
 
@@ -424,7 +424,7 @@
     }
     clearTimeout(state.openingTimer);
     modal.classList.remove("hidden");
-    modal.innerHTML = `<div class="gco-modal-card gco-opening" role="status" aria-live="polite"><img src="${esc(DEF[tier].asset)}" alt="${esc(chestName(tier))}" onerror="this.hidden=true"><span class="gco-opening-fallback" aria-hidden="true">🎁</span><h3>${esc(text("opening"))}</h3></div>`;
+    modal.innerHTML = `<div class="gco-modal-card gco-opening" role="status" aria-live="polite"><img src="${esc(DEF[tier].asset)}" alt="${esc(chestName(tier))}" onerror="this.hidden=true"><span class="gco-opening-fallback" aria-hidden="true">CHEST</span><h3>${esc(text("opening"))}</h3></div>`;
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
     const testDuration = Number(window.__CHERRIFT_GACHA_OPENING_MS__);
     const openingDuration = Number.isFinite(testDuration) && testDuration >= 100 ? testDuration : reducedMotion ? 700 : 1800;

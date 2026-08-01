@@ -11,7 +11,7 @@
   const n = value => Math.max(0, Math.floor(Number(value) || 0));
   const clone = value => { try { return structuredClone(value); } catch (_) { return JSON.parse(JSON.stringify(value)); } };
   const escapeHtml = value => String(value ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;");
-  const state = { entitlements:{}, socialTab:"friends", socialRows:[], ranking:[], frameSelection:null, patched:false };
+  const state = { entitlements:{}, socialTab:"friends", socialRows:[], ranking:[], frameSelection:null, patched:false, ready:false };
 
   function dayKey(date = new Date()) { return `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`; }
   function stages() { return window.CHERRIFT_V040?.stages || []; }
@@ -20,6 +20,13 @@
   function worldStages(world) { return stages().filter(stage => stageWorld(stage) === Number(world) && !stage.training).sort((a,b)=>stageIndex(a)-stageIndex(b)); }
   function stars(save, stageId) { return Math.min(3, n(save?.stageStars?.[stageId] || save?.stageStats?.[stageId]?.stars)); }
   function cleared(save, stageId) { return !!(save?.clearedStages?.[stageId] || save?.stageStats?.[stageId]?.clears || stars(save,stageId)); }
+  function convertLegacyChestReward(reward = {}) {
+    const converted={...reward,chests:{...(reward.chests||{})}};
+    if(n(reward.keys))converted.chests.common=n(converted.chests.common)+n(reward.keys);
+    delete converted.keys;
+    if(!Object.values(converted.chests).some(n))delete converted.chests;
+    return converted;
+  }
 
   function entitlementMap(save) { return {...(save?.prebeta?.entitlements || {}), ...state.entitlements}; }
   function hasEntitlement(name, save = window.UI?.save) {
@@ -194,8 +201,8 @@
     for (const stage of list) {
       const world=stageWorld(stage),index=stageIndex(stage),rewards=B.stageRewards?.[world];
       if (!stage.training && rewards && index>=1 && index<=5) {
-        stage.repeatReward={...(stage.repeatReward||{}),coins:rewards.repeat[index-1]};
-        stage.firstClearReward={...(stage.firstClearReward||{}),coins:rewards.first[index-1]};
+        stage.repeatReward=convertLegacyChestReward({...(stage.repeatReward||{}),coins:rewards.repeat[index-1]});
+        stage.firstClearReward=convertLegacyChestReward({...(stage.firstClearReward||{}),coins:rewards.first[index-1]});
         stage.accountXp=stageXp(world,index);
       }
     }
@@ -286,6 +293,19 @@
     const generate=proto.generateMap; if(generate) proto.generateMap=function(...args){ const stage=this.stage||this.getSelectedStage?.(); if(!stage||stage.world<5)return generate.apply(this,args); const world=stage.world; stage.world=world===5?4:3; try{return generate.apply(this,args);}finally{stage.world=world;} };
     const spawn=proto.spawnEnemy; if(spawn) proto.spawnEnemy=function(...args){ const before=this.enemies?.length||0,result=spawn.apply(this,args),world=B.worlds?.[stageWorld(this.stage)]||B.worlds?.[1]; for(const enemy of (this.enemies||[]).slice(before)){ const chapter=1+(stageIndex(this.stage)-1)*.09; const elite=enemy.eliteV088?1.65:1; enemy.hp*=world.hp*chapter*elite; enemy.maxHp*=world.hp*chapter*elite; enemy.speed*=world.speed; } return result; };
     const updateEnemies=proto.updateEnemies; if(updateEnemies) proto.updateEnemies=function(dt){ const hp=Number(this.player?.hp); const result=updateEnemies.call(this,dt); const lost=hp-Number(this.player?.hp); const mult=B.worlds?.[stageWorld(this.stage)]?.damage||1; if(lost>0&&this.player)this.player.hp=Math.max(0,this.player.hp-lost*(mult-1)); return result; };
+    const stageClear=proto.stageClear; if(stageClear) proto.stageClear=function(...args){
+      const stage=this.stage||this.getSelectedStage?.();
+      const already=!!this.stageState?.cleared;
+      const first=!this.save?.firstClearClaimed?.[stage?.id];
+      const result=stageClear.apply(this,args);
+      if(!already&&this.stageState?.cleared&&stage){
+        this.save.chests||={common:0,rare:0,epic:0};
+        const grants=[stage.repeatReward?.chests,first?stage.firstClearReward?.chests:null].filter(Boolean);
+        for(const reward of grants)for(const tier of ["common","rare","epic"])this.save.chests[tier]=n(this.save.chests[tier])+n(reward[tier]);
+        CherriftStorage.save(this.save);
+      }
+      return result;
+    };
   }
 
   function dismantleReward(rarity) { return B.gear.dismantle[rarity] || B.gear.dismantle.Common; }
@@ -318,7 +338,7 @@
 
   function ensurePanel(panelId){let panel=id(panelId);if(!panel){panel=document.createElement("section");panel.id=panelId;panel.className="panel hidden prebeta-panel";id("app")?.appendChild(panel);}return panel;}
   function showCustom(panelId){qa("#app > section,.screen,.panel").forEach(panel=>panel.classList.toggle("hidden",panel.id!==panelId));document.body.classList.remove("is-playing");}
-  function head(title){return `<div class="prebeta-shell"><header class="prebeta-head"><button class="prebeta-back" data-prebeta-open="menu">←</button><h2>${escapeHtml(title)}</h2></header>`;}
+  function head(title){return `<div class="prebeta-shell"><header class="prebeta-head"><button class="prebeta-back" data-prebeta-open="menu">← Lobby</button><h2>${escapeHtml(title)}</h2></header>`;}
 
   async function api(action,payload={}){try{return await window.CHERRIFT_LIVE_SERVICES?.invoke?.(action,payload)||{};}catch(error){UI.toast?.(`Online hiba: ${error.message}`);return {error:error.message};}}
   async function renderSocial(tab=state.socialTab){state.socialTab=tab;const panel=ensurePanel("socialV082");showCustom("socialV082");panel.innerHTML=`${head("Social")}<nav class="prebeta-social-tabs prebeta-card">${[["friends","Friends"],["requests","Requests"],["search","Search"],["blocked","Blocked"]].map(([key,label])=>`<button class="prebeta-button ${tab===key?"primary":""}" data-prebeta-social-tab="${key}">${label}</button>`).join("")}</nav><section class="prebeta-social-toolbar prebeta-card"><input id="prebetaSocialSearch" placeholder="Discord name or UUID" maxlength="80"><button class="prebeta-button primary" data-prebeta-search>Search</button></section><div id="prebetaSocialList" class="prebeta-social-list"><p class="prebeta-empty prebeta-card">Loading…</p></div></div>`;
@@ -326,8 +346,9 @@
   function renderSocialRows(){const root=id("prebetaSocialList");if(!root)return;root.innerHTML=state.socialRows.length?state.socialRows.map(player=>`<article class="prebeta-player-row prebeta-card">${avatarMarkup(player)}<div><h3>${escapeHtml(player.display_name||player.discord_name||"Cherry Player")}</h3><p>Lv.${n(player.level)||1} · Power ${n(player.power)} · ${escapeHtml(player.public_code||"")}</p></div><div class="prebeta-player-actions"><button class="prebeta-button" data-prebeta-view-player="${escapeHtml(player.user_id||player.id)}">Profile</button>${state.socialTab==="search"?`<button class="prebeta-button primary" data-prebeta-friend-add="${escapeHtml(player.user_id||player.id)}">Add</button>`:""}${state.socialTab==="requests"?`<button class="prebeta-button primary" data-prebeta-friend-accept="${escapeHtml(player.request_id)}">Accept</button>`:""}${state.socialTab==="friends"?`<button class="prebeta-button danger" data-prebeta-friend-delete="${escapeHtml(player.user_id||player.id)}">Delete</button>`:""}${state.socialTab==="blocked"?`<button class="prebeta-button" data-prebeta-unblock="${escapeHtml(player.user_id||player.id)}">Unblock</button>`:`<button class="prebeta-button" data-prebeta-block="${escapeHtml(player.user_id||player.id)}">Block</button>`}</div></article>`).join(""):`<p class="prebeta-empty prebeta-card">Nincs megjeleníthető játékos.</p>`;}
 
   async function renderRanking(){const panel=ensurePanel("rankingPrebeta");showCustom("rankingPrebeta");panel.innerHTML=`${head("Weekly Power Rank")}<p class="prebeta-ranking-note prebeta-card">A címjutalmak 100 aktív játékostól nyílnak meg. A lista hetente újraindul.</p><div id="prebetaRanking" class="prebeta-ranking-table"><p class="prebeta-empty prebeta-card">Loading…</p></div></div>`;const data=await api("ranking_list",{limit:50});state.ranking=data.ranking||[];const active=n(data.active_players);if(UI.save?.economy){UI.save.economy.activePlayers=active;evaluateTitles(UI.save);CherriftStorage.save(UI.save);}const note=q(".prebeta-ranking-note",panel);if(note)note.textContent=`Heti aktív játékosok: ${active}/100 · A ranking title-ok 100 játékostól nyílnak meg.`;const root=id("prebetaRanking");root.innerHTML=state.ranking.length?state.ranking.map((row,index)=>`<button class="prebeta-ranking-row prebeta-card" data-prebeta-view-player="${escapeHtml(row.user_id)}"><strong>#${index+1}</strong><span>${escapeHtml(row.display_name||"Cherry Player")}</span><em>${n(row.power)} POWER</em></button>`).join(""):`<p class="prebeta-empty prebeta-card">A heti ranglista még üres.</p>`;}
+  function openPrebetaPanel(panel){if(panel==="socialV082"){renderSocial();return true;}if(panel==="rankingPrebeta"){renderRanking();return true;}return false;}
 
-  function addNavigation(){const drawer=q("#mobileMenuV082 .mobile-menu-grid-v082");if(drawer&&!q('[data-prebeta-open="rankingPrebeta"]',drawer))drawer.insertAdjacentHTML("beforeend",'<button type="button" data-prebeta-open="rankingPrebeta"><i>🏆</i><b>Ranking</b></button>');const dashboard=q("#menuDashboardV060 .dashboard-shortcuts-v060");if(dashboard&&!q('[data-prebeta-open="rankingPrebeta"]',dashboard))dashboard.insertAdjacentHTML("beforeend",'<button type="button" data-prebeta-open="rankingPrebeta"><i>🏆</i><span><b>Ranking</b><small>Weekly Power Top 50</small></span></button>');}
+  function addNavigation(){const drawer=q("#mobileMenuV082 .mobile-menu-grid-v082");if(drawer&&!q('[data-prebeta-open="rankingPrebeta"]',drawer))drawer.insertAdjacentHTML("beforeend",'<button type="button" data-prebeta-open="rankingPrebeta"><i><img src="assets/player/frames/frame_rank1.png" alt=""></i><b>Ranking</b></button>');}
   function updateEnergyUi(){const save=window.UI?.save;if(!save)return;refreshEnergy(save);qa(".mobile-energy-v0932").forEach(node=>{node.classList.add("prebeta-energy-pill");node.innerHTML=`<i>⚡</i><b>${save.energy}/${save.energyState.max}</b>`;node.onclick=showEnergyModal;});const mobile=id("mobileEnergyValue");if(mobile)mobile.textContent=`${save.energy}/${save.energyState.max}`;}
 
   function patchUi(){if(!window.UI||state.patched)return;state.patched=true;window.CHERRIFT_TITLES=B.titles;const open=UI.open?.bind(UI);UI.open=function(panel,...args){if(panel==="socialV082"){renderSocial();return;}if(panel==="rankingPrebeta"){renderRanking();return;}const result=open?.(panel,...args);setTimeout(()=>{decorateProfile();addNavigation();updateEnergyUi();},0);return result;};const refresh=UI.refreshMenu?.bind(UI);if(refresh)UI.refreshMenu=function(...args){normalizeSave(this.save);const result=refresh(...args);setTimeout(()=>{updateEnergyUi();addNavigation();decorateProfile();},0);return result;};}
@@ -338,9 +359,9 @@
     window.addEventListener("click",event=>{const button=event.target?.closest?.("[data-v082-bulk-sell],[data-v070-salvage]");if(!button)return;const ids=qa("[data-v0560-item-id].selected,[data-v0560-item-id][aria-selected=true]").map(card=>card.dataset.v0560ItemId);if(ids.length&&dismantleSelected(ids)){event.preventDefault();event.stopImmediatePropagation();}},true);
   }
 
-  function start(){if(!window.UI?.save||!window.CherriftStorage)return setTimeout(start,100);patchUi();installPlaceholderStages();normalizeSave(UI.save);bindCapture();addNavigation();updateEnergyUi();decorateProfile();setInterval(()=>{if(UI.save){refreshEnergy(UI.save);updateEnergyUi();}},60000);window.CHERRIFT_LIVE_SERVICES?.onChange?.(event=>{if(event.type==="session"||event.type==="ready")bootstrapOnline();});bootstrapOnline();console.info(`[CHERRIFT] ${VERSION} progression, balance, energy, titles, frames, social and ranking loaded.`);}
+  function start(){if(!window.UI?.save||!window.CherriftStorage)return setTimeout(start,100);patchUi();installPlaceholderStages();normalizeSave(UI.save);bindCapture();addNavigation();updateEnergyUi();decorateProfile();setInterval(()=>{if(UI.save){refreshEnergy(UI.save);updateEnergyUi();}},60000);window.CHERRIFT_LIVE_SERVICES?.onChange?.(event=>{if(event.type==="session"||event.type==="ready")bootstrapOnline();});state.ready=true;window.__CHERRIFT_PREBETA_READY__=true;window.dispatchEvent(new CustomEvent("cherrift:prebeta-ready"));bootstrapOnline();console.info(`[CHERRIFT] ${VERSION} progression, balance, energy, titles, frames, social and ranking loaded.`);}
 
-  window.CHERRIFT_PREBETA = Object.freeze({version:VERSION,normalizeSave,refreshEnergy,isWorldUnlocked,isStageUnlocked,hasEntitlement,commitStageEnergy,evaluateTitles,titleStats,calculatePower,ownedFrames,dismantleReward,showEnergyModal});
+  window.CHERRIFT_PREBETA = Object.freeze({version:VERSION,normalizeSave,refreshEnergy,isWorldUnlocked,isStageUnlocked,hasEntitlement,commitStageEnergy,evaluateTitles,titleStats,calculatePower,ownedFrames,dismantleReward,showEnergyModal,open:openPrebetaPanel});
   patchStorage(); patchGame();
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
 })();

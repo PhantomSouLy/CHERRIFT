@@ -338,6 +338,29 @@
   function syncGlobalNav(route) {
     state.navRoute = normalizeRoute(route);
     paintGlobalNav();
+    paintDesktopNav(state.navRoute);
+  }
+
+  function desktopPrimaryRoute(route) {
+    const target=normalizeRoute(route);
+    if(["socialV082","rankingPrebeta","eventV093","profileV082","mailV063"].includes(target))return "menu";
+    if(target==="arsenalV070")return "gear";
+    if(target==="statSummaryV082")return "playerUpgrade";
+    if(target==="buffsV082")return "bagV082";
+    if(["collectionV082","libraryV0551"].includes(target))return "achievements";
+    if(target==="gacha")return "gachaV082";
+    return target;
+  }
+
+  function paintDesktopNav(route=state.navRoute) {
+    const primary=desktopPrimaryRoute(route);
+    const rail=id("globalRailV060");
+    if(!rail)return;
+    qa(".rail-nav-v082 [data-v082-route]",rail).forEach(button=>{
+      const selected=button.dataset.v082Route===primary;
+      button.classList.toggle("active",selected);
+      if(selected)button.setAttribute("aria-current","page");else button.removeAttribute("aria-current");
+    });
   }
 
   function selectedHomeStage() {
@@ -434,15 +457,27 @@
       window.CHERRIFT_WORLD_UI?.hide?.();
       window.CHERRIFT_ECONOMY_V11?.open?.(args[0]);
       syncGlobalNav("gacha");
+      // The custom Gacha does not pass through the legacy panel router. A
+      // refresh is required so the desktop sub-navigation observes the real
+      // Gacha route instead of retaining the previously active section.
+      if(window.CHERRIFT_REWARDS?.withSuppressed)CHERRIFT_REWARDS.withSuppressed(()=>window.UI?.refreshMenu?.());
+      else window.UI?.refreshMenu?.();
       requestAnimationFrame(() => {
         id("gachaChestOnlyV12")?.classList.remove("hidden");
         window.CHERRIFT_ECONOMY_V11?.render?.();
+        paintDesktopNav("gacha");
       });
       return;
     }
 
     hideGacha();
     window.CHERRIFT_ACCOUNT_MAIL?.hide?.();
+    if(["socialV082","rankingPrebeta"].includes(target)&&window.CHERRIFT_PREBETA?.open?.(target)){
+      window.CHERRIFT_WORLD_UI?.hide?.();
+      syncGlobalNav(target);
+      requestAnimationFrame(patchVisibleUi);
+      return;
+    }
     if (target === "worlds" && window.CHERRIFT_WORLD_UI?.isMobile?.()) {
       window.CHERRIFT_WORLD_UI.openWorldSelector();
       syncGlobalNav("menu");
@@ -603,7 +638,7 @@
   }
 
   function walletItem(icon, image, value, label) {
-    return `<span title="${label}">${image ? `<img src="${image}" alt="">` : `<i>${icon}</i>`}<b>${value}</b></span>`;
+    return `<span title="${label}"><img src="${image}" alt=""><b>${value}</b></span>`;
   }
 
   function syncDesktopCurrency() {
@@ -621,15 +656,20 @@
       railBottom.prepend(bar);
     }
     const values = walletValues();
-    const images = sourceWalletImages();
+    const images = {
+      coins:"assets/items/coin.png",
+      blossom:"assets/items/blossom_gem.png",
+      essence:"assets/items/sakura_potion.png",
+      scrap:"assets/items/scraps.png"
+    };
     const signature = JSON.stringify({ values, images });
     if (bar.dataset.signature === signature) return;
     bar.dataset.signature = signature;
     bar.innerHTML =
-      walletItem("🪙", images.coins, values.coins, "Coin") +
-      walletItem("♦", images.blossom, values.blossom, "Bloom Gem") +
-      walletItem("🌸", images.essence, values.essence, "Sakura Essence") +
-      walletItem("⚙", images.scrap, values.scrap, "Scrap");
+      walletItem("", images.coins, values.coins, "Coin") +
+      walletItem("", images.blossom, values.blossom, "Bloom Gem") +
+      walletItem("", images.essence, values.essence, "Sakura Essence") +
+      walletItem("", images.scrap, values.scrap, "Scrap");
   }
 
   function loadImage(source) {
@@ -975,6 +1015,7 @@
     syncDesktopCurrency();
     syncSkinSplash();
     syncWorldSplashArts();
+    paintDesktopNav();
     closeMoreDrawer();
   }
 

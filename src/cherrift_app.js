@@ -12868,12 +12868,8 @@ function ensureMainMenuEnhancements() {
     runCard.insertAdjacentHTML("afterend", `<section id="mainStatsV063" class="main-stats-v063">${statMarkup("main")}</section>`);
   }
 
-  const shortcuts = q(".dashboard-shortcuts-v060", dashboard);
-  if (shortcuts && !q('[data-v063-open="mailV063"]', shortcuts)) {
-    shortcuts.insertAdjacentHTML("beforeend", `
-      <button type="button" data-v063-open="mailV063"><i>✉</i><span><b>${c("mail")}</b><small>${c("inbox")}</small></span><em class="mail-badge-v063" data-v063-mail-count></em></button>
-      <button type="button" data-v063-open="supportV063"><i>!</i><span><b>${c("feedback")}</b><small>${c("bugReport")}</small></span></button>`);
-  }
+  /* Mail, support and settings live in the dedicated upper tool row. Keep
+     the Lobby quick-action row reserved for Login, Quests and Social. */
 
   const legacyVersion = id("menuBuildVersion");
   if (legacyVersion) legacyVersion.textContent = `${c("testBuild")} · ${window.CHERRIFT_BUILD?.displayVersion || "v0.9.0"}`;
@@ -15300,7 +15296,7 @@ function imageOrFallback(asset,icon,label){return `<span class="v080-art"><img s
 function ensureHub(){
   const panel=id("chests"); if(!panel||panel.dataset.v080Ready)return;
   panel.dataset.v080Ready="true";panel.classList.add("economy-v080");panel.setAttribute("data-i18n-ignore","true");
-  panel.innerHTML=`<header class="economy-head-v080"><button class="back" type="button" data-v080-back>←</button><div><h1>${t("economy")}</h1><p>${t("subtitle")}</p></div><div class="economy-wallet-v080"><span>🪙 <b id="v080Coins">0</b></span><span>💎 <b id="v080Gems">0</b></span><span>🌸 <b id="v080Essence">0</b></span></div></header><nav class="economy-tabs-v080"><button data-v080-tab="gacha">${t("gacha")}</button><button data-v080-tab="bag">${t("bag")}</button><button data-v080-tab="buffs">${t("buffs")}</button><button data-v080-tab="shop">${t("shop")}</button></nav><div id="economyBodyV080" class="economy-body-v080"></div>`;
+  panel.innerHTML=`<header class="economy-head-v080"><button class="back" type="button" data-v080-back>←</button><div><h1>${t("economy")}</h1><p>${t("subtitle")}</p></div><div class="economy-wallet-v080"><span><img src="assets/items/coin.png" alt=""> <b id="v080Coins">0</b></span><span><img src="assets/items/blossom_gem.png" alt=""> <b id="v080Gems">0</b></span><span><img src="assets/items/sakura_potion.png" alt=""> <b id="v080Essence">0</b></span></div></header><nav class="economy-tabs-v080"><button data-v080-tab="gacha">${t("gacha")}</button><button data-v080-tab="bag">${t("bag")}</button><button data-v080-tab="buffs">${t("buffs")}</button><button data-v080-tab="shop">${t("shop")}</button></nav><div id="economyBodyV080" class="economy-body-v080"></div>`;
 }
 function ensureNavigation(){
   const mainNav=q("#menu .main-nav");
@@ -15331,7 +15327,7 @@ function renderBag(save){
   const material=save.bag.materials;
   const materials=[["Gear Scrap",material.gearScrap,"⚙"],[t("essence"),save.sakuraEssence,"🌸"],...["copper","iron","steel","silver","royal"].map(key=>[`${key} Stone`,material.stones[key],"◆"]),...Object.entries(material.slotCores).map(([slot,count])=>[`${slot} Core`,count,"✥"])];
   const foods=Object.entries(FOOD_CATALOG).filter(([key])=>(save.bag.items[key]||0)>0);
-  return `<section class="bag-section-v080"><header><h2>${escapeHtml(t("materials"))}</h2></header><div class="material-grid-v080">${materials.map(([name,count,icon])=>`<article><span>${icon}</span><div><small>${escapeHtml(name)}</small><b>${count}</b></div></article>`).join("")}</div></section><section class="bag-section-v080"><header><h2>${escapeHtml(t("food"))}</h2><p>${escapeHtml(t("activeLimit"))}</p></header><div class="food-grid-v080">${foods.length?foods.map(([key,food])=>foodCard(key,food,save,true)).join(""):`<p class="empty-v080">${escapeHtml(t("noItems"))}</p>`}</div></section><section class="bag-section-v080"><header><h2>${escapeHtml(t("chests"))}</h2></header><div class="mini-chests-v080">${Object.keys(CHEST_DEFS).map(type=>`<button type="button" data-v080-goto-gacha="${type}"><span>${type==="common"?"📦":type==="rare"?"🧰":"🎁"}</span><b>${type} Chest</b><small>${chestCount(save,type)}</small></button>`).join("")}</div></section>`;
+  return `<section class="bag-section-v080"><header><h2>${escapeHtml(t("materials"))}</h2></header><div class="material-grid-v080">${materials.map(([name,count,icon])=>`<article><span>${icon}</span><div><small>${escapeHtml(name)}</small><b>${count}</b></div></article>`).join("")}</div></section><section class="bag-section-v080"><header><h2>${escapeHtml(t("food"))}</h2><p>${escapeHtml(t("activeLimit"))}</p></header><div class="food-grid-v080">${foods.length?foods.map(([key,food])=>foodCard(key,food,save,true)).join(""):`<p class="empty-v080">${escapeHtml(t("noItems"))}</p>`}</div></section><section class="bag-section-v080"><header><h2>${escapeHtml(t("chests"))}</h2></header><div class="mini-chests-v080">${Object.keys(CHEST_DEFS).map(type=>`<button type="button" data-v080-goto-gacha="${type}"><span><img src="${CHEST_DEFS[type].asset}" alt=""></span><b>${type} Chest</b><small>${chestCount(save,type)}</small></button>`).join("")}</div></section>`;
 }
 function foodCard(key,food,save,usable){
   const count=save.bag.items[key]||0;const percent=Math.round(food.value*100);
@@ -15344,7 +15340,7 @@ function renderBuffs(save){
 function renderShop(save){
   const chestPrices={common:{coins:450},rare:{gems:window.CHERRIFT_BALANCE?.gacha?.prices?.rare?.one||80},epic:{gems:window.CHERRIFT_BALANCE?.gacha?.prices?.epic?.one||240}};
   const skins=(CHERRIFT_DATA.skins||[]).filter(skin=>skin.id!=="cherry_default");const day=Math.floor(Date.now()/86400000);const offers=[0,1,2].map(offset=>skins[(day+offset*5)%skins.length]).filter(Boolean);
-  return `<section class="shop-intro-v080"><h2>${escapeHtml(t("shop"))}</h2><p>${escapeHtml(t("shopIntro"))}</p></section><section class="shop-grid-v080">${Object.entries(chestPrices).map(([type,price])=>`<article class="shop-card-v080"><span>${type==="common"?"📦":type==="rare"?"🧰":"🎁"}</span><h3>${escapeHtml(CHEST_DEFS[type].name)}</h3><b>${priceText(price)}</b><button type="button" data-v080-buy-chest="${type}" ${!canAfford(save,price)?"disabled":""}>${escapeHtml(t("buy"))}</button></article>`).join("")}</section><section class="bag-section-v080"><header><h2>Sakura Essence Skin Shop</h2><p>Daily rotating offers</p></header><div class="food-grid-v080">${offers.map(skin=>{const cost=window.CHERRIFT_BALANCE?.gacha?.essenceShop?.[skin.rarity]||300,owned=save.unlockedSkins.includes(skin.id);return `<article class="food-card-v080 rarity-${String(skin.rarity||"Common").toLowerCase()}">${imageOrFallback(skin.icon,skin.emoji||"🐰",skin.name)}<small>${escapeHtml(skin.rarity||"Common")}</small><h3>${escapeHtml(skin.name)}</h3><p>Unique skin offer</p><b>🌸 ${cost}</b><button type="button" data-v080-buy-skin="${escapeHtml(skin.id)}" ${owned||save.sakuraEssence<cost?"disabled":""}>${escapeHtml(owned?t("owned"):t("buy"))}</button></article>`;}).join("")}</div></section><section class="bag-section-v080"><header><h2>${escapeHtml(t("food"))}</h2></header><div class="food-grid-v080">${Object.entries(FOOD_CATALOG).map(([key,food])=>`<article class="food-card-v080 rarity-${food.rarity.toLowerCase()}">${imageOrFallback(food.asset,food.icon,food.name)}<small>${escapeHtml(food.rarity)}</small><h3>${escapeHtml(food.name)}</h3><p>+${Math.round(food.value*100)}% ${escapeHtml(EFFECT_LABELS[food.effect])} · ${food.runs} ${escapeHtml(t("runs"))}</p><b>${priceText(food.price)}</b><button type="button" data-v080-buy-food="${key}" ${!canAfford(save,food.price)?"disabled":""}>${escapeHtml(t("buy"))}</button></article>`).join("")}</div></section>`;
+  return `<section class="shop-intro-v080"><h2>${escapeHtml(t("shop"))}</h2><p>${escapeHtml(t("shopIntro"))}</p></section><section class="shop-grid-v080">${Object.entries(chestPrices).map(([type,price])=>`<article class="shop-card-v080"><span><img src="${CHEST_DEFS[type].asset}" alt=""></span><h3>${escapeHtml(CHEST_DEFS[type].name)}</h3><b>${priceText(price)}</b><button type="button" data-v080-buy-chest="${type}" ${!canAfford(save,price)?"disabled":""}>${escapeHtml(t("buy"))}</button></article>`).join("")}</section><section class="bag-section-v080"><header><h2>Sakura Essence Skin Shop</h2><p>Daily rotating offers</p></header><div class="food-grid-v080">${offers.map(skin=>{const cost=window.CHERRIFT_BALANCE?.gacha?.essenceShop?.[skin.rarity]||300,owned=save.unlockedSkins.includes(skin.id);return `<article class="food-card-v080 rarity-${String(skin.rarity||"Common").toLowerCase()}">${imageOrFallback(skin.icon,"CHERRY",skin.name)}<small>${escapeHtml(skin.rarity||"Common")}</small><h3>${escapeHtml(skin.name)}</h3><p>Unique skin offer</p><b><img src="assets/items/sakura_potion.png" alt=""> ${cost}</b><button type="button" data-v080-buy-skin="${escapeHtml(skin.id)}" ${owned||save.sakuraEssence<cost?"disabled":""}>${escapeHtml(owned?t("owned"):t("buy"))}</button></article>`;}).join("")}</div></section><section class="bag-section-v080"><header><h2>${escapeHtml(t("food"))}</h2></header><div class="food-grid-v080">${Object.entries(FOOD_CATALOG).map(([key,food])=>`<article class="food-card-v080 rarity-${food.rarity.toLowerCase()}">${imageOrFallback(food.asset,food.icon,food.name)}<small>${escapeHtml(food.rarity)}</small><h3>${escapeHtml(food.name)}</h3><p>+${Math.round(food.value*100)}% ${escapeHtml(EFFECT_LABELS[food.effect])} · ${food.runs} ${escapeHtml(t("runs"))}</p><b>${priceText(food.price)}</b><button type="button" data-v080-buy-food="${key}" ${!canAfford(save,food.price)?"disabled":""}>${escapeHtml(t("buy"))}</button></article>`).join("")}</div></section>`;
 }
 function patchNavigation(){
   if(UI.__v080Navigation)return;
@@ -15876,16 +15872,17 @@ function updateResourceBar(){
   ensureResourceBar();if(!UI.save)return;
   const save=normalize(UI.save),material=save.bag?.materials||{};
   id("resourceBarV082").innerHTML=`
-    <span title="Coin">🪙 <b>${Math.floor(save.coins||0)}</b></span>
-    <span title="Blossom Gem">💎 <b>${save.blossomGems||0}</b></span>
-    <span title="Sakura Essence">🌸 <b>${save.sakuraEssence||0}</b></span>
-    <span title="Gear Scrap">⚙ <b>${material.gearScrap||0}</b></span>`;
+    <span title="Coin"><img src="assets/items/coin.png" alt=""> <b>${Math.floor(save.coins||0)}</b></span>
+    <span title="Bloom Gem"><img src="assets/items/blossom_gem.png" alt=""> <b>${save.blossomGems||0}</b></span>
+    <span title="Sakura Essence"><img src="assets/items/sakura_potion.png" alt=""> <b>${save.sakuraEssence||0}</b></span>
+    <span title="Gear Scrap"><img src="assets/items/scraps.png" alt=""> <b>${material.gearScrap||0}</b></span>`;
   id("resourceBarV082").classList.toggle("hidden",
     runtime.route==="arsenalV070"||document.body.classList.contains("is-playing")||document.body.classList.contains("arsenal-open-v081"));
 }
 
 function railButton(route,icon,label,notice=""){
-  return `<button type="button" data-v082-open="${route}" data-v082-route="${route}"><i>${icon}</i><b>${escapeHtml(label)}</b>${notice?`<em class="notice-dot-v082" data-v082-notice="${notice}"></em>`:""}</button>`;
+  const image=/\.(?:png|webp|jpe?g)(?:\?.*)?$/i.test(String(icon));
+  return `<button type="button" data-v082-open="${route}" data-v082-route="${route}"><i>${image?`<img src="${escapeHtml(icon)}" alt="">`:icon}</i><b>${escapeHtml(label)}</b>${notice?`<em class="notice-dot-v082" data-v082-notice="${notice}"></em>`:""}</button>`;
 }
 function rebuildRail(){
   const rail=id("globalRailV060");if(!rail)return;
@@ -15893,16 +15890,15 @@ function rebuildRail(){
   rail.innerHTML=`
     <button type="button" class="rail-brand-v060" data-v082-open="menu"><strong>CHERRIFT</strong><small>${escapeHtml(t("menuSubtitle"))}</small></button>
     <nav class="rail-nav-v060 rail-nav-v082">
-      ${railButton("worlds","▶",t("play"))}
-      ${railButton("skins","🐰",t("skins"),"skin")}
-      ${railButton("gear","⚔",t("gear"),"gear")}
-      ${railButton("arsenalV070","✥",t("arsenal"),"arsenal")}
-      ${railButton("playerUpgrade","✦",t("upgrade"),"upgrade")}
-      ${railButton("bagV082","🎒",t("bag"),"bag")}
-      ${railButton("gachaV082","◇",t("gacha"),"gacha")}
-      ${railButton("shopV082","▤",t("shop"),"shop")}
-      ${railButton("collectionV082","▣",t("collection"))}
-      ${railButton("achievements","♛",t("achievements"),"achievements")}
+      ${railButton("skins","assets/player/skins/base_cherry/base_cherry_icon.png","Cherry","skin")}
+      ${railButton("gear","assets/items/equipments/weapons/sword_sword.png","Gear","gear")}
+      ${railButton("playerUpgrade","assets/items/upgrade.png","Upgrade","upgrade")}
+      ${railButton("worlds","assets/map/world1/world1_splashart_1.png","PLAY")}
+      ${railButton("menu","assets/player/skins/base_cherry/base_cherry_icon.png","LOBBY")}
+      ${railButton("bagV082","assets/items/buffs/bag_buff.png","Bag","bag")}
+      ${railButton("shopV082","assets/items/coin.png","Shop","shop")}
+      ${railButton("gachaV082","assets/items/chests/common_chest.png","Gacha","gacha")}
+      ${railButton("achievements","assets/player/frames/frame_rank1.png","Achievements","achievements")}
     </nav>
     <div class="rail-bottom-v060">
       <button type="button" class="rail-settings-v060" data-v082-open="settings" data-v082-route="settings"><i>⚙</i><b>${escapeHtml(t("settings"))}</b></button>
@@ -15987,12 +15983,9 @@ function rebuildHome(){
   const shortcuts=q(".dashboard-shortcuts-v060",dashboard);
   if(shortcuts){
     shortcuts.innerHTML=`
-      <button type="button" data-v082-open="dailyQuests"><i>✓</i><span><b>${escapeHtml(t("daily"))}</b><small>Daily quests & rewards</small></span></button>
-      <button type="button" data-v082-open="weeklyV082"><i>♛</i><span><b>${escapeHtml(t("weekly"))}</b><small>Weekly progress</small></span><em class="notice-dot-v082" data-v082-notice="weekly"></em></button>
-      <button type="button" data-v082-open="loginRewards"><i>🎁</i><span><b>${escapeHtml(t("login"))}</b><small>Login streak</small></span></button>
-      <button type="button" data-v082-open="mailV063"><i>✉</i><span><b>${escapeHtml(t("mail"))}</b><small>Inbox</small></span><em class="mail-badge-v063" data-v063-mail-count></em></button>
-      <button type="button" data-v082-open="socialV082"><i>♧</i><span><b>${escapeHtml(t("social"))}</b><small>Friends & profile</small></span></button>
-      <button type="button" data-v082-open="buffsV082"><i>♥</i><span><b>${escapeHtml(t("buffs"))}</b><small>Temporary & permanent</small></span></button>`;
+      <button type="button" data-v082-open="loginRewards"><i><img src="assets/items/chests/common_chest.png" alt=""></i><span><b>Login</b><small>Login rewards</small></span></button>
+      <button type="button" data-v082-open="dailyQuests"><i><img src="assets/items/chests/rare_chest.png" alt=""></i><span><b>Quests</b><small>Daily & Weekly</small></span><em class="notice-dot-v082" data-v082-notice="weekly"></em></button>
+      <button type="button" data-v082-open="socialV082"><i><img src="assets/player/frames/frame_rank1.png" alt=""></i><span><b>Social</b><small>Friends & profiles</small></span></button>`;
   }
   if(!id("menuToolsV082")){
     const tools=document.createElement("nav");
@@ -16000,7 +15993,7 @@ function rebuildHome(){
     id("menu")?.appendChild(tools);
   }
   id("menuToolsV082").innerHTML=`
-    <button type="button" data-v082-menu-tool="feedback" title="${escapeHtml(t("feedback"))}" aria-label="${escapeHtml(t("feedback"))}">💬<small>${escapeHtml(t("feedback"))}</small></button>
+    <button type="button" data-v082-menu-tool="feedback" title="${escapeHtml(t("feedback"))}" aria-label="${escapeHtml(t("feedback"))}">?<small>${escapeHtml(t("feedback"))}</small></button>
     <button type="button" data-v082-menu-tool="bug" title="${escapeHtml(t("bug"))}" aria-label="${escapeHtml(t("bug"))}">⚠<small>${escapeHtml(t("bug"))}</small></button>
     <button type="button" data-v082-menu-tool="mail" title="${escapeHtml(t("mail"))}" aria-label="${escapeHtml(t("mail"))}">✉<em class="mail-badge-v063" data-v063-mail-count></em></button>
     <button type="button" data-v082-menu-tool="settings" title="${escapeHtml(t("settings"))}" aria-label="${escapeHtml(t("settings"))}">⚙</button>`;
@@ -23057,59 +23050,79 @@ function panelVisible(panelId) {
 }
 function detectRoute() {
   if (panelVisible("menu")) return "menu";
-  const active = q("#globalRailV060 [data-v082-route].active");
-  if (active?.dataset.v082Route) return active.dataset.v082Route;
   const candidates = [
-    "worlds", "skins", "gear", "arsenalV070", "playerUpgrade", "chests",
-    "libraryV0551", "achievements", "profileV082", "weeklyV082", "statSummaryV082",
-    "settings", "eventV093"
+    "gachaChestOnlyV12", "worlds", "skins", "gear", "arsenalV070", "playerUpgrade",
+    "bagV082", "shopV082", "chests", "collectionV082", "libraryV0551", "achievements",
+    "profileV082", "socialV082", "rankingPrebeta", "buffsV082", "dailyQuests", "weeklyV082",
+    "loginRewards", "statSummaryV082", "settings", "eventV093"
   ];
-  return candidates.find(panelVisible) || runtime.route || "menu";
+  const visible=candidates.find(panelVisible);
+  if(visible)return visible==="gachaChestOnlyV12"?"gachaV082":visible;
+  const active = q("#globalRailV060 [data-v082-route].active");
+  return active?.dataset.v082Route || runtime.route || "menu";
 }
 
 function routeGroup(route) {
-  if (["menu", "worlds", "dailyQuests", "weeklyV082", "loginRewards", "eventV093"].includes(route)) return "play";
+  if (["menu", "socialV082", "rankingPrebeta", "eventV093"].includes(route)) return "lobby";
+  if (["worlds"].includes(route)) return "play";
+  if (["dailyQuests", "weeklyV082", "loginRewards"].includes(route)) return "quests";
   if (["skins"].includes(route)) return "cherry";
-  if (["gear", "arsenalV070", "bagV082"].includes(route)) return "gear";
+  if (["gear", "arsenalV070"].includes(route)) return "gear";
   if (["playerUpgrade", "statSummaryV082"].includes(route)) return "progress";
-  if (["gachaV082", "chests", "shopV082", "buffsV082"].includes(route)) return "economy";
-  if (["collectionV082", "libraryV0551", "achievements"].includes(route)) return "collection";
-  return "play";
+  if (["bagV082", "buffsV082"].includes(route)) return "bag";
+  if (["shopV082"].includes(route)) return "shop";
+  if (["gachaV082", "chests"].includes(route)) return "gacha";
+  if (["collectionV082", "libraryV0551", "achievements"].includes(route)) return "achievements";
+  return "lobby";
 }
 function subnavItems(group) {
   const maps = {
-    play:[
+    lobby:[
       ["menu", copy("Lobby", "Lobby")],
       ["worlds", copy("Chapterek", "Chapters")],
-      ["dailyQuests", copy("Napi", "Daily")],
-      ["weeklyV082", copy("Heti", "Weekly")],
-      ["loginRewards", copy("Belépési jutalom", "Login Reward")]
+      ["socialV082", "Social"],
+      ["rankingPrebeta", "Rank"],
+      ["buffsV082", copy("Buff lista", "Buff List")]
+    ],
+    play:[
+      ["worlds", "World Selector"],
+      ["menu", "Lobby"]
+    ],
+    quests:[
+      ["dailyQuests", copy("Napi küldetések", "Daily Quests")],
+      ["weeklyV082", copy("Heti küldetések", "Weekly Quests")],
+      ["loginRewards", "Login"]
     ],
     cherry:[
       ["skins", copy("Cherry részletek", "Cherry Details")],
-      ["collectionV082", copy("Gyűjtemény", "Collection")]
+      ["gachaV082", "Gacha"]
     ],
     gear:[
       ["gear", copy("Felszerelés", "Loadout")],
-      ["arsenalV070", "Arsenal"],
-      ["bagV082", "BAG"]
+      ["arsenalV070", "Arsenal"]
     ],
     progress:[
       ["playerUpgrade", copy("Képességfa", "Skill Tree")],
       ["statSummaryV082", copy("Statok", "Stats")]
     ],
-    economy:[
-      ["gachaV082", "Gacha"],
+    bag:[
       ["bagV082", "BAG"],
-      ["shopV082", copy("Bolt", "Shop")],
-      ["buffsV082", copy("Buffok", "Buffs")]
+      ["buffsV082", copy("Buff lista", "Buff List")]
     ],
-    collection:[
-      ["collectionV082", copy("Gyűjtemény", "Collection")],
-      ["achievements", copy("Eredmények", "Achievements")]
+    shop:[
+      ["shopV082", copy("Bolt", "Shop")],
+      ["gachaV082", "Gacha"]
+    ],
+    gacha:[
+      ["gachaV082", "Gacha"],
+      ["shopV082", copy("Bolt", "Shop")]
+    ],
+    achievements:[
+      ["achievements", copy("Eredmények", "Achievements")],
+      ["collectionV082", copy("Gyűjtemény", "Collection")]
     ]
   };
-  return maps[group] || maps.play;
+  return maps[group] || maps.lobby;
 }
 function ensureSubnav() {
   let nav = id("desktopSubnavV0933");
@@ -23135,8 +23148,6 @@ function renderDesktopChrome() {
   rail?.classList.add("topnav-v0933");
   const route = detectRoute();
   runtime.route = route;
-  const upgradeLabel = q('[data-v082-route="playerUpgrade"] b', rail);
-  if (upgradeLabel) upgradeLabel.textContent = copy("Fejlesztés", "Upgrade");
   const group = routeGroup(route);
   const nav = ensureSubnav();
   nav.classList.remove("hidden");

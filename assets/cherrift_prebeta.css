@@ -16,3 +16,39 @@ html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .prebeta-button,h
 html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .prebeta-button.primary{color:#fff;background:var(--theme-selection)}
 html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .prebeta-social-toolbar input{color:var(--theme-text);border-color:var(--theme-outline-soft);background:var(--theme-surface)}
 html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .prebeta-player-row p,html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .prebeta-ranking-note,html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .prebeta-empty{color:var(--theme-muted)}
+
+/* v0.9.5 pre-beta desktop navigation and Lobby composition. */
+@media(min-width:821px){
+  body.v0933-desktop .topnav-v0933 [data-v082-route="bagV082"],
+  body.v0933-desktop .topnav-v0933 [data-v082-route="achievements"]{display:flex!important}
+  body.v0933-desktop .topnav-v0933 .rail-nav-v060 button i{overflow:hidden!important;background:rgba(255,255,255,.055)!important}
+  body.v0933-desktop .topnav-v0933 .rail-nav-v060 button i img{display:block;width:100%;height:100%;object-fit:contain;border-radius:inherit}
+  body.v0933-desktop .topnav-v0933 [data-v082-route="worlds"] i img{object-fit:cover}
+
+  body.v0933-desktop #menuDashboardV060{
+    top:calc(var(--v0933-top) + var(--v0933-sub) + 18px)!important;
+    right:auto!important;bottom:32px!important;left:30px!important;
+    width:min(680px,calc(100vw - 470px))!important;height:auto!important;
+    display:grid!important;grid-template-rows:auto 1fr auto auto!important;
+    align-content:stretch!important;gap:9px!important
+  }
+  body.v0933-desktop #menuDashboardV060 #testBuildBannerV063{display:none!important}
+  body.v0933-desktop #menuDashboardV060 .dashboard-shortcuts-v060{grid-row:1;align-self:start;grid-template-columns:repeat(3,minmax(0,1fr))!important;width:min(560px,100%)}
+  body.v0933-desktop #menuDashboardV060 .dashboard-shortcuts-v060 i{overflow:hidden!important;padding:3px}
+  body.v0933-desktop #menuDashboardV060 .dashboard-shortcuts-v060 i img{display:block;width:100%;height:100%;object-fit:contain}
+  body.v0933-desktop #menuDashboardV060 #mainStatsV063{grid-row:3;margin:0!important}
+  body.v0933-desktop #menuDashboardV060 .dashboard-run-v060{grid-row:4;margin:0!important}
+
+  body.v0933-desktop .rail-profile-v060,
+  body.v0933-desktop #railProfileIconV082{overflow:hidden!important}
+  body.v0933-desktop #railProfileIconV082 .prebeta-avatar.rail{width:32px!important;height:32px!important}
+  body.v0933-desktop #railProfileIconV082 .prebeta-avatar>img:first-child{width:76%!important;height:76%!important}
+  body.v0933-desktop #railProfileIconV082 .prebeta-avatar-frame{inset:0!important;width:100%!important;height:100%!important}
+
+  body.v0933-desktop #gachaChestOnlyV12:not(.hidden){padding-top:calc(var(--v0933-top) + var(--v0933-sub) + 18px)!important}
+  body.v0933-desktop #rankingPrebeta .prebeta-back{width:auto;min-width:122px;padding:0 18px;font:900 15px/1 system-ui,sans-serif}
+}
+.economy-wallet-v080 img{width:21px;height:21px;object-fit:contain;vertical-align:middle}
+.mini-chests-v080 button>span img{display:block;width:44px;height:44px;object-fit:contain}
+.shop-card-v080>span img{display:block;width:74px;height:74px;object-fit:contain}
+.food-card-v080>b img{width:20px;height:20px;object-fit:contain;vertical-align:middle}
