@@ -3,7 +3,7 @@
   if (window.__CHERRIFT_BUGFIX_V0942__) return;
   window.__CHERRIFT_BUGFIX_V0942__ = true;
 
-  const VERSION = "0.9.4.4-consolidated-world-ui";
+  const VERSION = "0.9.4.5-consolidated-world-ui";
   const MOBILE_QUERY = "(max-width:820px)";
   const id = value => document.getElementById(value);
   const q = (selector, root = document) => root?.querySelector?.(selector) || null;
@@ -16,6 +16,7 @@
   const state = {
     originalOpen: null,
     observer: null,
+    navObserver: null,
     timer: 0,
     navCherryIntentUntil: 0,
     worldIndex: 0,
@@ -39,17 +40,19 @@
     style.id = "cherriftBugfixV0942Css";
     style.textContent = `
       /* Gear centering and platform removal. */
-      #gear .gear-stage-rune-v0560,#gear [class*="pedestal"],#gear [class*="stage-base"],#gear [class*="ground-shadow"],#gear .gear-stage-v0560::after,#gear .gear-stage-v0560::before{display:none!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;background:none!important;box-shadow:none!important}
-      #gear #gearCherryCanvasV0560,#gear #gearCherryStableV060{position:absolute!important;left:50%!important;right:auto!important;top:50%!important;transform:translate(-50%,-46%)!important;margin:0!important;z-index:4!important}
-      #gear .gear-equipment-tools-v0942{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:10px!important;margin-left:auto!important;justify-self:end!important}
-      #gear .gear-equipment-tools-v0942 button{margin:0!important;min-width:92px!important}
+      #gear .gear-stage-rune-v0560,#gear .gear-character-floor-v0560,#gear [class*="pedestal"],#gear [class*="stage-base"],#gear [class*="ground-shadow"],#gear .gear-stage-v0560::after,#gear .gear-stage-v0560::before{display:none!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;background:none!important;box-shadow:none!important}
+      #gear #gearCherryCanvasV0560,#gear #gearCherryStableV060{position:absolute!important;left:50%!important;right:auto!important;top:50%!important;width:min(210px,48vw)!important;height:min(210px,48vw)!important;max-width:none!important;max-height:none!important;transform:translate(-50%,-46%) scale(1.32)!important;transform-origin:center!important;margin:0!important;z-index:4!important}
+      #gear .gear-equipment-tools-v0942{display:flex!important;align-items:center!important;justify-content:flex-end!important;flex-wrap:wrap!important;gap:8px!important;margin-left:auto!important;justify-self:end!important}
+      #gear .gear-equipment-tools-v0942>.gear-bulk-tools-v082{display:flex!important;align-items:center!important;justify-content:flex-end!important;flex-wrap:wrap!important;gap:8px!important;margin:0!important}
+      #gear .gear-equipment-tools-v0942 button{margin:0!important;min-width:82px!important;white-space:nowrap!important}
 
       /* Shared mobile World / Chapter carousel. */
-      .selector-v0942{overflow:hidden!important;height:100dvh!important;min-height:100dvh!important;color:#fff}
-      .selector-shell-v0942{width:min(760px,100%);height:100%;margin:auto;display:flex;flex-direction:column;padding:106px 12px calc(82px + env(safe-area-inset-bottom));overflow:hidden}
+      .selector-v0942{overflow:hidden!important;height:var(--cherrift-viewport-height,100dvh)!important;min-height:0!important;color:#fff}
+      .selector-shell-v0942{width:min(760px,100%);height:100%;min-height:0;margin:auto;display:flex;flex-direction:column;padding:max(74px,calc(env(safe-area-inset-top) + 70px)) 12px calc(82px + env(safe-area-inset-bottom));overflow:hidden}
       .selector-head-v0942{flex:0 0 auto;display:flex;align-items:center;gap:13px;margin-bottom:7px}.selector-head-v0942 h2{margin:0;font:700 clamp(35px,10vw,53px)/1 Georgia,serif}.selector-back-v0942{width:58px;height:58px;border:1px solid #ffffff26;border-radius:19px;color:#fff;background:#ffffff08;font-size:25px}
-      .selector-carousel-v0942{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:42px minmax(0,1fr) 42px;align-items:center;gap:7px;touch-action:pan-y}
-      .selector-arrow-v0942{height:66px;border:1px solid #ffffff22;border-radius:17px;color:#fff;background:#ffffff08;font-size:40px}.selector-arrow-v0942:disabled{opacity:.25}
+      .selector-carousel-v0942{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:42px minmax(0,1fr) 42px;align-items:stretch;gap:7px;touch-action:pan-y}
+      .selector-arrow-v0942{align-self:center;height:66px;border:1px solid #ffffff22;border-radius:17px;color:#fff;background:#ffffff08;font-size:40px}.selector-arrow-v0942:disabled{opacity:.25}
+      #worldCardV0942,#chapterCardV0942{align-self:stretch;min-width:0;min-height:280px;height:100%;display:block}
       .selector-card-v0942{position:relative;height:100%;min-height:0;overflow:hidden;border:1px solid #ffffff28;border-radius:28px;background:#16091d center/cover no-repeat;box-shadow:0 18px 60px #0008;isolation:isolate}
       .selector-card-v0942::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,#06030b19 10%,#09040d16 40%,#08030dde 100%)}
       .selector-card-v0942.locked{filter:grayscale(.75) brightness(.55)}
@@ -62,32 +65,53 @@
       @media(max-width:820px){
         /* Bottom navigation: Cherry really opens Cherry Selector. */
         .mobile-nav-v090 .cherry-nav-v0942 span img{width:30px!important;height:30px!important;border-radius:8px!important;object-fit:cover!important}.mobile-nav-v090 .cherry-nav-v0942 b{font-size:8px!important}
+        .mobile-nav-v090>button.home:not(.active),.mobile-nav-v090>button:not(.active){color:#dcbfd1!important;border-color:transparent!important;background:transparent!important;box-shadow:none!important;transform:none!important}
+        .mobile-nav-v090>button.active{color:#fff!important;border:1px solid rgba(255,255,255,.72)!important;background:linear-gradient(180deg,#ed66a5,#b92f74)!important;box-shadow:0 5px 18px rgba(187,42,112,.32)!important}
 
         /* Main menu layout. */
-        #menu .mobile-floating-actions-v051.left{position:absolute!important;left:10px!important;top:410px!important;z-index:9!important;display:grid!important;align-content:start!important;gap:7px!important;margin:0!important}
+        #menu .mobile-floating-actions-v051.left,#menu .mobile-side-actions-v0932.left{display:none!important;visibility:hidden!important;pointer-events:none!important}
         #menu .mobile-floating-actions-v051.left [data-bf-removed="true"],#menu .mobile-floating-actions-v051.left .removed-v0942{display:none!important}
-        #menu .mobile-floating-actions-v051.right{position:absolute!important;right:10px!important;top:205px!important;z-index:10!important;display:grid!important;align-content:start!important;gap:7px!important;margin:0!important;padding:0!important}
-        #menu .mobile-character-stage-v051{margin-top:76px!important}
+        #menu .mobile-floating-actions-v051.right{display:none!important;visibility:hidden!important;pointer-events:none!important}
+        #menu .mobile-side-actions-v0932.right{top:38dvh!important;gap:7px!important}
+        #menu .mobile-home-v031.mobile-archero-v051{height:var(--cherrift-viewport-height,100dvh)!important;min-height:0!important;display:grid!important;grid-template-rows:minmax(0,1fr) auto!important;padding-top:max(100px,calc(env(safe-area-inset-top) + 94px))!important;overflow:hidden!important}
+        #menu .mobile-hero-area-v051{min-height:0!important;height:auto!important;overflow:hidden!important}
+        #menu .mobile-character-stage-v051{min-height:0!important;height:100%!important;margin-top:0!important}
         #menu .mobile-character-display-v051{margin-top:0!important}
         #menu .mobile-character-display-v051 .mobile-chapter-stars-v0932{position:absolute!important;left:50%!important;right:auto!important;top:auto!important;bottom:-58px!important;translate:-50% 0!important;width:max-content!important;margin:0!important;z-index:12!important}
         #menu .mobile-character-display-v051 .mobile-chapter-stars-v0932 span{font-size:34px!important}
         #menu .mobile-stage-copy-v051{display:none!important}
-        #menu .mobile-stage-panel-v051{margin-top:68px!important}
+        #menu .mobile-stage-panel-v051{position:relative!important;z-index:20!important;flex:0 0 auto!important;margin-top:46px!important;overflow:visible!important}
+        #menu #mobilePlayBtn{display:grid!important;visibility:visible!important;opacity:1!important;position:relative!important;z-index:2!important}
 
         /* More drawer must never remain over the selected page. */
         .mobile-menu-v082.force-closed-v0942{display:none!important;pointer-events:none!important;visibility:hidden!important}
 
         /* Equipment toolbar. */
-        #gear .gear-equipment-tools-v0942{position:absolute!important;right:14px!important;top:12px!important;z-index:7!important}
+        #gear .gear-inventory-head-v0560{position:relative!important;padding-right:12px!important}
+        #gear .gear-equipment-tools-v0942{position:static!important;max-width:68%!important;margin-left:auto!important;z-index:7!important}
+        #gear .gear-equipment-tools-v0942 button{min-width:74px!important;min-height:38px!important;padding:0 10px!important;font-size:11px!important}
+        #gear #gearCherryCanvasV0560,#gear #gearCherryStableV060{width:min(230px,52vw)!important;height:min(230px,52vw)!important;transform:translate(-50%,-46%) scale(1.38)!important}
+
+        .selector-head-v0942 h2{font-size:clamp(32px,8vw,44px)}
+        #worldCardV0942,#chapterCardV0942{min-height:clamp(300px,48dvh,520px)}
+      }
+
+      @media(max-width:820px) and (max-height:700px){
+        #menu .mobile-home-v031.mobile-archero-v051{padding-top:max(82px,calc(env(safe-area-inset-top) + 76px))!important}
+        #menu .mobile-character-display-v051{height:min(29dvh,225px)!important}
+        #menu .mobile-stage-panel-v051{margin-top:34px!important;padding:6px 8px!important}
+        #menu #mobilePlayBtn{min-height:48px!important}
+        .selector-shell-v0942{padding-top:max(56px,calc(env(safe-area-inset-top) + 52px))}
+        #worldCardV0942,#chapterCardV0942{min-height:230px}
       }
 
       @media(orientation:landscape) and (max-height:600px) and (pointer:coarse){
-        html,body,#app{width:100%;height:100dvh;min-height:100dvh;overscroll-behavior:none}body{overflow:hidden!important}
+        html,body,#app{width:100%;height:var(--cherrift-viewport-height,100dvh);min-height:0;overscroll-behavior:none}body{overflow:hidden!important}
         body.v090-mobile #globalRailV060{display:none!important}
         body.v090-mobile #globalMobileNavV052.mobile-nav-v090{position:fixed!important;left:max(6px,env(safe-area-inset-left))!important;right:auto!important;top:50%!important;bottom:auto!important;width:68px!important;z-index:20000!important;display:grid!important;grid-template-columns:1fr!important;gap:3px!important;padding:5px!important;transform:translateY(-50%)!important}
         body.v090-mobile .mobile-nav-v090>button{min-height:48px!important}
         body.v090-mobile .mobile-menu-v082{inset:7px 7px 7px 82px!important;max-height:none!important}
-        body.v090-mobile:not(.is-playing):not(.is-loading-stage) #app>.panel:not(.hidden),body.v090-mobile:not(.is-playing):not(.is-loading-stage) .v082-custom-panel:not(.hidden){position:fixed!important;inset:0!important;width:100%!important;height:100dvh!important;padding:45px 8px 8px 82px!important;overflow:auto!important}
+        body.v090-mobile:not(.is-playing):not(.is-loading-stage) #app>.panel:not(.hidden),body.v090-mobile:not(.is-playing):not(.is-loading-stage) .v082-custom-panel:not(.hidden){position:fixed!important;inset:0!important;width:100%!important;height:var(--cherrift-viewport-height,100dvh)!important;padding:45px 8px 8px 82px!important;overflow:auto!important}
         .selector-shell-v0942{width:min(900px,100%);padding:max(6px,env(safe-area-inset-top)) 48px calc(58px + env(safe-area-inset-bottom))}
         .selector-head-v0942{min-height:38px;margin-bottom:2px}.selector-head-v0942 h2{font-size:30px}.selector-back-v0942{width:40px;height:40px;border-radius:13px;font-size:20px}
         .selector-carousel-v0942{grid-template-columns:34px minmax(0,1fr) 34px;gap:5px}.selector-arrow-v0942{height:48px;font-size:30px}.selector-card-v0942{min-height:205px;border-radius:20px}
@@ -110,24 +134,27 @@
   function patchGear() {
     const gear = id("gear");
     if (!gear || gear.classList.contains("hidden")) return;
-    qa('.gear-stage-rune-v0560,[class*="pedestal"],[class*="stage-base"],[class*="ground-shadow"]', gear).forEach(element => element.remove());
+    qa('.gear-stage-rune-v0560,.gear-character-floor-v0560,[class*="pedestal"],[class*="stage-base"],[class*="ground-shadow"]', gear).forEach(element => element.remove());
     const cherry = id("gearCherryStableV060") || id("gearCherryCanvasV0560");
     if (cherry) {
       cherry.style.left = "50%";
       cherry.style.right = "auto";
       cherry.style.top = "50%";
-      cherry.style.transform = "translate(-50%,-46%)";
+      cherry.style.transform = "";
     }
-    const power = qa("button", gear).find(button => /^power(?:\s|$)/i.test(button.textContent.trim()));
-    const select = qa("button", gear).find(button => /^select$/i.test(button.textContent.trim()));
-    if (power && select) {
-      let host = power.parentElement;
-      if (host !== select.parentElement) {
+    const header = q(".gear-inventory-head-v0560", gear);
+    const sort = id("gearSortV0560") || qa("button", gear).find(button => /^(?:level|power)(?:\s|$)/i.test(button.textContent.trim()));
+    const bulkTools = id("gearBulkToolsV082");
+    const select = q("[data-v082-select-mode]", bulkTools);
+    if (header && sort && bulkTools && select) {
+      let host = q(".gear-equipment-tools-v0942", header);
+      if (!host) {
         host = document.createElement("div");
-        power.parentElement?.insertBefore(host, power);
-        host.append(power, select);
+        host.className = "gear-equipment-tools-v0942";
+        header.appendChild(host);
       }
-      host.classList.add("gear-equipment-tools-v0942");
+      if (sort.parentElement !== host) host.appendChild(sort);
+      if (bulkTools.parentElement !== host) host.appendChild(bulkTools);
     }
   }
 
@@ -163,17 +190,40 @@
     if (!button) return;
     button.classList.add("cherry-nav-v0942");
     button.classList.remove("home");
+    button.dataset.v082Open = "skins";
     button.dataset.v082Route = "skins";
     button.dataset.open = "skins";
+    button.dataset.i18nIgnore = "true";
+    button.removeAttribute("data-v052-open");
     const skin = selectedSkin();
     const image = skin.icon || skin.splash || "";
-    button.innerHTML = `<span>${image ? `<img src="${esc(image)}" alt="">` : "🐰"}</span><b>Cherry</b>`;
+    const holder = q(":scope > span", button);
+    const currentImage = q("img", holder)?.getAttribute("src") || "";
+    if (holder && currentImage !== image) holder.innerHTML = image ? `<img src="${esc(image)}" alt="">` : "🐰";
+    const label = q(":scope > b", button);
+    if (label && label.textContent.trim() !== "Cherry") label.textContent = "Cherry";
+  }
+
+  function observeMobileNav() {
+    if (state.navObserver) return;
+    if (!document.body) return;
+    state.navObserver = new MutationObserver(mutations => {
+      const changed = mutations.some(mutation => {
+        const target = mutation.target.nodeType === Node.TEXT_NODE ? mutation.target.parentElement : mutation.target;
+        if (target?.closest?.("#globalMobileNavV052")) return true;
+        return Array.from(mutation.addedNodes || []).some(node => node.nodeType === Node.ELEMENT_NODE && (node.matches?.("#globalMobileNavV052") || node.querySelector?.("#globalMobileNavV052")));
+      });
+      if (changed) patchMobileNav();
+    });
+    state.navObserver.observe(document.body, { childList:true, characterData:true, subtree:true });
   }
 
   function normalizeLabel(button) { return button.textContent.replace(/\s+/g, " ").trim().toLowerCase(); }
   function patchHome() {
     const menu = id("menu");
     if (!isMobile() || !menu || menu.classList.contains("hidden")) return;
+    q(".mobile-floating-actions-v051.left", menu)?.setAttribute("aria-hidden", "true");
+    q(".mobile-side-actions-v0932.left", menu)?.setAttribute("aria-hidden", "true");
     qa("button", menu).forEach(button => {
       if (button.closest(".mobile-nav-v090")) return;
       const label = normalizeLabel(button);
@@ -185,16 +235,22 @@
     const display = q(".mobile-character-display-v051", menu);
     const stars = q(".mobile-chapter-stars-v0932", menu);
     if (display && stars && stars.parentElement !== display) display.appendChild(stars);
-    const right = q(".mobile-floating-actions-v051.right", menu);
-    if (right) {
-      const order = ["daily", "weekly", "login"];
+    const rightGroups = [q(".mobile-side-actions-v0932.right", menu)].filter(Boolean);
+    for (const right of rightGroups) {
+      const order = ["quest", "daily", "weekly", "login"];
       qa("button", right).forEach(button => {
         const label = normalizeLabel(button);
         const index = order.findIndex(item => label.includes(item));
-        if (index >= 0) button.style.order = String(index);
+        button.style.order = String(index >= 0 ? index : order.length);
       });
     }
     patchMobileNav();
+  }
+
+  function updateViewportMetrics() {
+    const viewport = window.visualViewport;
+    const height = Math.max(320, Math.round(viewport?.height || window.innerHeight || document.documentElement.clientHeight || 720));
+    document.documentElement.style.setProperty("--cherrift-viewport-height", `${height}px`);
   }
 
   function stages() {
@@ -259,7 +315,7 @@
     panel = document.createElement("section");
     panel.id = "worldSelectorV0942";
     panel.className = "panel selector-v0942 hidden";
-    panel.innerHTML = `<div class="selector-shell-v0942"><header class="selector-head-v0942"><h2 data-world-title></h2></header><div class="selector-carousel-v0942" data-selector-drag><button class="selector-arrow-v0942" data-world-step="-1" aria-label="Previous world">‹</button><div id="worldCardV0942"></div><button class="selector-arrow-v0942" data-world-step="1" aria-label="Next world">›</button></div><div id="worldDotsV0942" class="selector-dots-v0942"></div><div class="selector-actions-v0942"><button class="primary" data-world-start></button></div></div>`;
+    panel.innerHTML = `<div class="selector-shell-v0942"><header class="selector-head-v0942"><h2 data-world-title></h2></header><div class="selector-carousel-v0942" data-selector-drag><button class="selector-arrow-v0942" data-world-step="-1" aria-label="Previous world">‹</button><div id="worldCardV0942" class="selector-card-host-v0942"></div><button class="selector-arrow-v0942" data-world-step="1" aria-label="Next world">›</button></div><div id="worldDotsV0942" class="selector-dots-v0942"></div><div class="selector-actions-v0942"><button class="primary" data-world-start></button></div></div>`;
     id("app")?.appendChild(panel);
     panel.addEventListener("click", event => {
       const step = event.target.closest("[data-world-step]");
@@ -305,7 +361,7 @@
     panel = document.createElement("section");
     panel.id = "chapterSelectorV0942";
     panel.className = "panel selector-v0942 hidden";
-    panel.innerHTML = `<div class="selector-shell-v0942"><header class="selector-head-v0942"><h2 id="chapterWorldTitleV0942">World</h2></header><div class="selector-carousel-v0942" data-chapter-drag><button class="selector-arrow-v0942" data-chapter-step="-1" aria-label="Previous chapter">‹</button><div id="chapterCardV0942"></div><button class="selector-arrow-v0942" data-chapter-step="1" aria-label="Next chapter">›</button></div><div id="chapterDotsV0942" class="selector-dots-v0942"></div><div class="selector-actions-v0942 two"><button data-chapter-back></button><button class="primary" data-chapter-play></button></div></div>`;
+    panel.innerHTML = `<div class="selector-shell-v0942"><header class="selector-head-v0942"><h2 id="chapterWorldTitleV0942">World</h2></header><div class="selector-carousel-v0942" data-chapter-drag><button class="selector-arrow-v0942" data-chapter-step="-1" aria-label="Previous chapter">‹</button><div id="chapterCardV0942" class="selector-card-host-v0942"></div><button class="selector-arrow-v0942" data-chapter-step="1" aria-label="Next chapter">›</button></div><div id="chapterDotsV0942" class="selector-dots-v0942"></div><div class="selector-actions-v0942 two"><button data-chapter-back></button><button class="primary" data-chapter-play></button></div></div>`;
     id("app")?.appendChild(panel);
     panel.addEventListener("click", event => {
       const step = event.target.closest("[data-chapter-step]");
@@ -415,6 +471,7 @@
   }
 
   function patchVisible() {
+    updateViewportMetrics();
     document.body.classList.toggle("v090-mobile", isMobile());
     document.body.classList.toggle("v090-landscape", isMobile() && innerWidth > innerHeight);
     document.body.classList.toggle("v0933-desktop", !isMobile() && matchMedia("(min-width:821px)").matches);
@@ -422,6 +479,7 @@
     patchGear();
     patchHome();
     patchMobileNav();
+    observeMobileNav();
   }
 
   function bindEvents() {
@@ -438,13 +496,18 @@
         event.preventDefault();
         event.stopImmediatePropagation();
         state.navCherryIntentUntil = Date.now() + 800;
-        state.originalOpen?.("skins");
+        if (window.CHERRIFT_STABILITY?.open) window.CHERRIFT_STABILITY.open("skins");
+        else UI.open?.("skins");
         closeMoreDrawer();
         return;
       }
       if (event.target.closest?.(".mobile-menu-v082 button,.mobile-menu-grid-v082 button")) setTimeout(closeMoreDrawer, 0);
     }, true);
     window.addEventListener("resize", patchVisible);
+    window.addEventListener("orientationchange", () => setTimeout(patchVisible, 80));
+    document.addEventListener("fullscreenchange", () => setTimeout(patchVisible, 80));
+    document.addEventListener("webkitfullscreenchange", () => setTimeout(patchVisible, 80));
+    window.visualViewport?.addEventListener("resize", patchVisible);
     window.addEventListener("cherrift:savechange", patchVisible);
   }
 
@@ -457,6 +520,7 @@
     ensureChapterPanel();
     bindEvents();
     patchVisible();
+    observeMobileNav();
     console.info(`[CHERRIFT] Bugfix ${VERSION} loaded.`);
   }
 

@@ -4,7 +4,7 @@
   if (window.__CHERRIFT_BUGFIX_V0943__) return;
   window.__CHERRIFT_BUGFIX_V0943__ = true;
 
-  const VERSION = "0.9.4.4-stability-router";
+  const VERSION = "0.9.4.5-stability-router";
   const DESKTOP_QUERY = "(min-width:821px)";
   const id = value => document.getElementById(value);
   const q = (selector, root = document) => root?.querySelector?.(selector) || null;
@@ -162,6 +162,16 @@
     document.body.classList.remove("mobile-menu-open-v082", "more-open", "drawer-open");
   }
 
+  function toggleMoreDrawer() {
+    const drawer = id("mobileMenuV082");
+    if (!drawer) return;
+    const opening = drawer.classList.contains("hidden");
+    drawer.classList.toggle("hidden", !opening);
+    drawer.setAttribute("aria-hidden", opening ? "false" : "true");
+    document.body.classList.toggle("mobile-menu-open-v082", opening);
+    syncGlobalNav(opening ? "more" : "menu");
+  }
+
   function hideGacha() {
     id("gachaChestOnlyV12")?.classList.add("hidden");
     id("gcoModal")?.classList.add("hidden");
@@ -179,12 +189,37 @@
     return aliases[value] || value || "menu";
   }
 
+  function syncGlobalNav(route) {
+    const nav = id("globalMobileNavV052") || q(".mobile-nav-v090");
+    if (!nav) return;
+    const target = normalizeRoute(route);
+    const activeRoute = target === "worlds" ? "menu" : target;
+    const buttons = qa(":scope > button", nav);
+    for (const button of buttons) {
+      button.classList.remove("active");
+      button.removeAttribute("aria-current");
+    }
+    const active = buttons.find(button => {
+      if (activeRoute === "more") return button.hasAttribute("data-v082-toggle-mobile");
+      return normalizeRoute(routeFromButton(button), button) === activeRoute;
+    });
+    if (active) {
+      active.classList.add("active");
+      active.setAttribute("aria-current", "page");
+    }
+    nav.dataset.active = activeRoute;
+  }
+
   function safeOpen(route, ...args) {
     const target = normalizeRoute(route);
     closeMoreDrawer();
+    document.body.style.overflow = "";
 
     if (target === "gacha") {
+      window.CHERRIFT_ACCOUNT_MAIL?.hide?.();
+      window.CHERRIFT_WORLD_UI?.hide?.();
       window.CHERRIFT_ECONOMY_V11?.open?.(args[0]);
+      syncGlobalNav("gacha");
       requestAnimationFrame(() => {
         id("gachaChestOnlyV12")?.classList.remove("hidden");
         window.CHERRIFT_ECONOMY_V11?.render?.();
@@ -193,16 +228,25 @@
     }
 
     hideGacha();
+    window.CHERRIFT_ACCOUNT_MAIL?.hide?.();
     if (target === "worlds" && window.CHERRIFT_WORLD_UI?.isMobile?.()) {
       window.CHERRIFT_WORLD_UI.openWorldSelector();
+      syncGlobalNav("menu");
       requestAnimationFrame(patchVisibleUi);
       return;
     }
     window.CHERRIFT_WORLD_UI?.hide?.();
-    if (target === "mailV063" || target === "mailBugfixV0941") return window.CHERRIFT_ACCOUNT_MAIL?.openMail?.();
-    if (target === "profileV082" || target === "profileBugfixV0941") return window.CHERRIFT_ACCOUNT_MAIL?.openProfile?.();
+    if (target === "mailV063" || target === "mailBugfixV0941") {
+      syncGlobalNav("more");
+      return window.CHERRIFT_ACCOUNT_MAIL?.openMail?.();
+    }
+    if (target === "profileV082" || target === "profileBugfixV0941") {
+      syncGlobalNav("more");
+      return window.CHERRIFT_ACCOUNT_MAIL?.openProfile?.();
+    }
     if (!state.upstreamOpen) return;
     const result = state.upstreamOpen(target, ...args);
+    syncGlobalNav(target);
     requestAnimationFrame(() => {
       hideGacha();
       window.CHERRIFT_ACCOUNT_MAIL?.patchVisibleRoute?.();
@@ -269,6 +313,18 @@
           else safeOpen("menu");
           return;
         }
+      }
+
+      const mobileButton = event.target.closest?.("#globalMobileNavV052 > button,.mobile-nav-v090 > button");
+      if (mobileButton && !mobileButton.disabled) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        if (mobileButton.hasAttribute("data-v082-toggle-mobile")) toggleMoreDrawer();
+        else {
+          const route = routeFromButton(mobileButton);
+          if (route) safeOpen(route);
+        }
+        return;
       }
 
       const button = event.target.closest?.(
@@ -713,6 +769,7 @@
     installGamePatches();
     installPetalBurst();
     patchVisibleUi();
+    syncGlobalNav("menu");
 
     window.addEventListener("resize", patchVisibleUi);
     window.addEventListener("cherrift:savechange", syncDesktopCurrency);
@@ -722,6 +779,7 @@
     window.CHERRIFT_STABILITY = Object.freeze({
       version:VERSION,
       open:safeOpen,
+      syncNav:syncGlobalNav,
       refresh:patchVisibleUi,
       normalizeMap:normalizeMapObjects,
       objectPaths:MAP_OBJECT_PATHS

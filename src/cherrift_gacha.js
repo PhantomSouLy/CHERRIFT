@@ -3,7 +3,7 @@
   if (window.__CHERRIFT_ECONOMY_CHEST_ONLY__) return;
   window.__CHERRIFT_ECONOMY_CHEST_ONLY__ = true;
 
-  const VERSION = "1.3.0-consolidated-gacha";
+  const VERSION = "1.4.0-consolidated-gacha";
   const TIERS = ["common", "rare", "epic"];
   const DEF = {
     common: { name: "Common Chest", names:{hu:"Common láda",en:"Common Chest"}, itemText:{hu:"Common tárgyak",en:"Common Items"}, pity: 10, rarity: "Common", asset: "assets/items/chests/common_chest.png" },
@@ -236,8 +236,9 @@
     style.id = "cherriftChestOnlyCss";
     style.textContent = `
       #economyV11Floating,#economyV11DesktopBtn,.economy-nav-v11{display:none!important;pointer-events:none!important}
-      #gachaChestOnlyV12{overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior-y:contain;touch-action:pan-y;min-height:100dvh;color:#fff}
-      .gco-shell{width:min(920px,100%);margin:0 auto;padding:18px 18px 64px}
+      body.gacha-open .resource-bar-v082,body.gacha-open #resourceBarV082{display:none!important;visibility:hidden!important;pointer-events:none!important}
+      #gachaChestOnlyV12{overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior-y:contain;touch-action:pan-y;min-height:var(--cherrift-viewport-height,100dvh);color:#fff}
+      .gco-shell{width:min(920px,100%);min-height:var(--cherrift-viewport-height,100dvh);margin:0 auto;padding:18px 18px 64px}
       .gco-head{display:flex;align-items:center;gap:16px;margin-bottom:14px}.gco-head h2{margin:0;font:700 clamp(42px,8vw,64px)/1 Georgia,serif}.gco-back{width:72px;height:72px;border:1px solid #ffffff25;border-radius:22px;color:#fff;background:#ffffff08;font-size:28px}
       .gco-wallet,.gco-chests{display:flex;justify-content:center;flex-wrap:wrap;gap:9px}.gco-wallet{margin:8px 0 12px}.gco-wallet b,.gco-chests b{display:flex;align-items:center;gap:8px;min-height:50px;padding:8px 14px;border:1px solid #ffffff1f;border-radius:15px;background:#ffffff08}.gco-chests{margin:0 0 18px}.gco-chests img{width:38px;height:38px;object-fit:contain}
       .gco-carousel{position:relative;display:grid;grid-template-columns:54px minmax(0,1fr) 54px;align-items:center;gap:10px;user-select:none}.gco-arrow{height:64px;border:1px solid #ffffff22;border-radius:18px;color:#fff;background:#ffffff08;font-size:36px}.gco-card{min-height:clamp(480px,calc(100dvh - 250px),650px);padding:22px;border:1px solid #ffffff24;border-radius:30px;background:linear-gradient(160deg,#2a102fdd,#120817f2);box-shadow:0 24px 80px #0007;touch-action:pan-y}
@@ -245,24 +246,26 @@
       .gco-rarity{margin:20px 0 3px;font-weight:1000;letter-spacing:4px;text-transform:uppercase}.gco-card h3{margin:0;font:700 clamp(38px,7vw,58px)/1.05 Georgia,serif}.gco-copy{margin:18px 0 8px;color:#e7c9db;font-size:18px}.gco-empty-note{margin:0 0 14px;padding:9px 12px;border:1px solid #ffb4d13d;border-radius:12px;color:#ffb4d1;background:#b9276414;font-weight:850}.gco-pity{padding:15px 18px;border-radius:18px;background:#ffffff07}.gco-pity header{display:flex;justify-content:space-between;font-size:19px}.gco-track{height:10px;margin-top:10px;border-radius:99px;background:#ffffff0d;overflow:hidden}.gco-track i{display:block;height:100%;background:linear-gradient(90deg,#e34b98,#b65cff)}
       .gco-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.gco-actions button{min-height:70px;border:0;border-radius:18px;color:#fff;background:linear-gradient(115deg,#d72f7d,#ea70ac);font-size:19px;font-weight:1000}.gco-actions button:disabled{color:#ffffff55;background:#64718a55;box-shadow:none}
       .gco-dots{display:flex;justify-content:center;gap:9px;margin-top:16px}.gco-dots button{width:11px;height:11px;padding:0;border:0;border-radius:50%;background:#ffffff30}.gco-dots button.active{background:#f15aa3;transform:scale(1.3)}
-      .gco-modal{position:fixed;inset:0;z-index:100050;display:grid;place-items:center;padding:18px;background:#07030ce8;backdrop-filter:blur(8px)}.gco-modal.hidden{display:none!important}.gco-modal-card{width:min(600px,100%);max-height:min(780px,90dvh);overflow:auto;padding:24px;border:1px solid #ffffff25;border-radius:28px;background:linear-gradient(155deg,#34133deb,#120817);text-align:center}.gco-opening img{width:min(280px,65vw);height:240px;object-fit:contain;animation:gcoOpen .85s ease both}.gco-skin-art{width:100%;height:330px;object-fit:contain;border-radius:20px;background:#ffffff06}.gco-modal h3{font:700 38px Georgia,serif;margin:12px 0}.gco-next,.gco-close{width:100%;min-height:58px;border:0;border-radius:16px;color:#fff;background:linear-gradient(115deg,#d72f7d,#ea70ac);font-weight:1000}.gco-summary{display:grid;gap:9px;text-align:left}.gco-summary-row{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:#ffffff07}.gco-summary-row img{width:48px;height:48px;object-fit:contain}.gco-summary-row span{font-size:28px}.gco-summary-row b{margin-left:auto}.gco-toast{position:fixed;z-index:100080;top:max(14px,env(safe-area-inset-top));left:50%;translate:-50% -120%;max-width:min(520px,90vw);padding:12px 18px;border:1px solid #ffbad8aa;border-radius:14px;background:#2f1029ed;color:#fff;font-weight:900;transition:translate .22s}.gco-toast.show{translate:-50% 0}
-      @keyframes gcoOpen{0%{transform:scale(.65) rotate(-5deg);filter:brightness(.5)}60%{transform:scale(1.13) rotate(2deg);filter:brightness(1.7) drop-shadow(0 0 35px #ff77bd)}100%{transform:scale(1);filter:brightness(1)}}
+      .gco-modal{position:fixed;inset:0;z-index:100050;display:grid;place-items:center;padding:18px;background:#07030ce8;backdrop-filter:blur(8px)}.gco-modal.hidden{display:none!important}.gco-modal-card{width:min(600px,100%);max-height:min(780px,90dvh);overflow:auto;padding:24px;border:1px solid #ffffff25;border-radius:28px;background:linear-gradient(155deg,#34133deb,#120817);text-align:center}.gco-opening img{width:min(280px,65vw);height:240px;object-fit:contain;animation:gcoOpen 1.45s cubic-bezier(.2,.72,.2,1) both}.gco-opening-fallback{display:none;height:240px;place-items:center;font-size:92px;animation:gcoOpen 1.45s cubic-bezier(.2,.72,.2,1) both}.gco-opening img[hidden]+.gco-opening-fallback{display:grid}.gco-skin-art{width:100%;height:330px;object-fit:contain;border-radius:20px;background:#ffffff06}.gco-modal h3{font:700 38px Georgia,serif;margin:12px 0}.gco-next,.gco-close{width:100%;min-height:58px;border:0;border-radius:16px;color:#fff;background:linear-gradient(115deg,#d72f7d,#ea70ac);font-weight:1000}.gco-summary{display:grid;gap:9px;text-align:left}.gco-summary-row{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:#ffffff07}.gco-summary-row img{width:48px;height:48px;object-fit:contain}.gco-summary-row span{font-size:28px}.gco-summary-row b{margin-left:auto}.gco-toast{position:fixed;z-index:100080;top:max(14px,env(safe-area-inset-top));left:50%;translate:-50% -120%;max-width:min(520px,90vw);padding:12px 18px;border:1px solid #ffbad8aa;border-radius:14px;background:#2f1029ed;color:#fff;font-weight:900;transition:translate .22s}.gco-toast.show{translate:-50% 0}
+      @keyframes gcoOpen{0%{transform:scale(.58) translateY(20px) rotate(-6deg);filter:brightness(.42)}32%{transform:scale(.92) translateY(0) rotate(3deg);filter:brightness(.9)}68%{transform:scale(1.16) rotate(-1deg);filter:brightness(1.8) drop-shadow(0 0 42px #ff77bd)}100%{transform:scale(1);filter:brightness(1.12) drop-shadow(0 0 24px #ff77bd88)}}
       @media(max-width:700px){.gco-shell{padding:12px 12px 130px}.gco-head h2{font-size:48px}.gco-back{width:64px;height:64px}.gco-carousel{grid-template-columns:38px minmax(0,1fr) 38px;gap:6px}.gco-arrow{height:58px;border-radius:14px}.gco-card{min-height:570px;padding:16px;border-radius:25px}.gco-art{height:210px}.gco-art img{max-height:190px;max-width:200px}.gco-actions button{min-height:64px}.gco-wallet b{padding:7px 10px}.gco-chests b{padding:5px 8px;font-size:13px}.gco-chests img{width:32px;height:32px}}
       @media(max-width:820px){
-        #gachaChestOnlyV12{min-height:100dvh!important;overflow:auto!important}
-        #gachaChestOnlyV12 .gco-shell{min-height:100dvh;display:flex;flex-direction:column;padding:max(12px,env(safe-area-inset-top)) 10px calc(82px + env(safe-area-inset-bottom))!important}
+        #gachaChestOnlyV12{height:var(--cherrift-viewport-height,100dvh)!important;min-height:0!important;overflow:hidden!important;overscroll-behavior:none!important}
+        #gachaChestOnlyV12 .gco-shell{height:100%;min-height:0;display:flex;flex-direction:column;padding:max(8px,env(safe-area-inset-top)) 10px calc(78px + env(safe-area-inset-bottom))!important;overflow:hidden!important}
         #gachaChestOnlyV12 .gco-head{flex:0 0 auto;margin:0 0 4px;min-height:52px}.gco-head h2{font-size:42px!important}.gco-back{width:52px!important;height:52px!important;border-radius:17px!important}
+        #gachaChestOnlyV12 .gco-wallet{flex:0 0 auto;margin:0 0 4px!important;gap:5px!important;flex-wrap:nowrap!important}.gco-wallet b{min-width:0!important;min-height:31px!important;padding:3px 8px!important;font-size:12px!important}
         #gachaChestOnlyV12 .gco-chests{flex:0 0 auto;margin:0 auto 5px;gap:6px}.gco-chests b{padding:3px 8px!important}.gco-chests img{width:28px!important;height:28px!important}
-        #gachaChestOnlyV12 .gco-carousel{flex:1 1 auto;min-height:440px;grid-template-columns:36px minmax(0,1fr) 36px;gap:5px;align-items:center}
-        #gachaChestOnlyV12 #gcoCard{height:100%;min-height:0}.gco-card{height:100%;min-height:430px!important;display:flex;flex-direction:column;padding:10px 14px!important;border-radius:23px!important}
+        #gachaChestOnlyV12 .gco-carousel{flex:1 1 auto;min-height:0;grid-template-columns:36px minmax(0,1fr) 36px;gap:5px;align-items:stretch;overflow:hidden!important}
+        #gachaChestOnlyV12 .gco-arrow{align-self:center}
+        #gachaChestOnlyV12 #gcoCard{height:100%;min-height:0;overflow:hidden}.gco-card{height:100%;min-height:0!important;display:flex;flex-direction:column;padding:10px 14px!important;border-radius:23px!important;overflow:hidden!important}
         .gco-art{flex:1 1 auto;min-height:110px;height:auto!important;margin-bottom:2px}.gco-art img{max-height:min(25dvh,175px)!important;max-width:180px!important}
         .gco-rarity{font-size:10px;margin-top:0}.gco-card h3{margin:0!important;font-size:clamp(32px,8vw,45px)!important;line-height:.95}.gco-copy{margin:5px 0!important;font-size:15px}.gco-empty-note{margin:2px 0!important;font-size:10px}
         .gco-pity{margin-top:auto!important;padding:9px 11px!important}.gco-pity header{font-size:14px}.gco-actions{gap:8px;margin-top:8px!important}.gco-actions button{min-height:50px!important;font-size:17px!important}
         .gco-dots{flex:0 0 auto;margin:5px 0 0!important}.gco-arrow{height:54px!important}
       }
       @media(orientation:landscape) and (max-height:600px) and (pointer:coarse){
-        #gachaChestOnlyV12{height:100dvh!important;min-height:100dvh!important;overflow:auto!important}
-        #gachaChestOnlyV12 .gco-shell{width:min(900px,100%);min-height:100dvh;padding:max(6px,env(safe-area-inset-top)) 46px calc(58px + env(safe-area-inset-bottom))!important}
+        #gachaChestOnlyV12{height:var(--cherrift-viewport-height,100dvh)!important;min-height:0!important;overflow:hidden!important}
+        #gachaChestOnlyV12 .gco-shell{width:min(900px,100%);height:100%;min-height:0;padding:max(6px,env(safe-area-inset-top)) 46px calc(58px + env(safe-area-inset-bottom))!important}
         #gachaChestOnlyV12 .gco-head{min-height:36px!important;margin:0 0 2px!important}.gco-head h2{font-size:30px!important}.gco-back{width:38px!important;height:38px!important;border-radius:12px!important;font-size:20px!important}
         #gachaChestOnlyV12 .gco-chests{margin:0 auto 3px!important}.gco-chests b{min-height:28px!important;padding:2px 7px!important;font-size:11px}.gco-chests img{width:24px!important;height:24px!important}
         #gachaChestOnlyV12 .gco-carousel{min-height:210px!important;grid-template-columns:34px minmax(0,1fr) 34px!important}
@@ -282,7 +285,7 @@
     panel = document.createElement("section");
     panel.id = "gachaChestOnlyV12";
     panel.className = "panel hidden";
-    panel.innerHTML = `<div class="gco-shell"><header class="gco-head"><button class="gco-back" type="button" data-gco-back aria-label="${esc(text("back"))}">←</button><h2 data-gco-title>${esc(text("title"))}</h2></header><div id="gcoChestWallet" class="gco-chests"></div><div class="gco-carousel" id="gcoCarousel"><button class="gco-arrow" type="button" data-gco-step="-1" aria-label="${esc(text("previous"))}">‹</button><div id="gcoCard"></div><button class="gco-arrow" type="button" data-gco-step="1" aria-label="${esc(text("next"))}">›</button></div><div id="gcoDots" class="gco-dots"></div></div><div id="gcoModal" class="gco-modal hidden" role="dialog" aria-modal="true"></div><div id="gcoToast" class="gco-toast" role="status" aria-live="polite"></div>`;
+    panel.innerHTML = `<div class="gco-shell"><header class="gco-head"><button class="gco-back" type="button" data-gco-back aria-label="${esc(text("back"))}">←</button><h2 data-gco-title>${esc(text("title"))}</h2></header><div id="gcoWallet" class="gco-wallet" aria-label="Currencies"></div><div id="gcoChestWallet" class="gco-chests" aria-label="Chests"></div><div class="gco-carousel" id="gcoCarousel"><button class="gco-arrow" type="button" data-gco-step="-1" aria-label="${esc(text("previous"))}">‹</button><div id="gcoCard"></div><button class="gco-arrow" type="button" data-gco-step="1" aria-label="${esc(text("next"))}">›</button></div><div id="gcoDots" class="gco-dots"></div></div><div id="gcoModal" class="gco-modal hidden" role="dialog" aria-modal="true"></div><div id="gcoToast" class="gco-toast" role="status" aria-live="polite"></div>`;
     app.appendChild(panel);
     panel.addEventListener("click", event => {
       const step = event.target.closest("[data-gco-step]");
@@ -328,6 +331,8 @@
     if (title) title.textContent = text("title");
     const back = q("[data-gco-back]", panel);
     if (back) back.setAttribute("aria-label", text("back"));
+    const scrap = number(save.gearScrap ?? save.scrap ?? save.bag?.materials?.gearScrap ?? save.arsenal?.materials?.gearScrap);
+    id("gcoWallet").innerHTML = `<b title="Coin"><span>🪙</span><span>${number(save.coins)}</span></b><b title="Blossom Gem"><span>💎</span><span>${number(save.blossomGems)}</span></b><b title="Sakura Essence"><span>🌸</span><span>${number(save.sakuraEssence)}</span></b><b title="Gear Scrap"><span>⚙</span><span>${scrap}</span></b>`;
     id("gcoChestWallet").innerHTML = TIERS.map(tier => `<b><img src="${DEF[tier].asset}" alt=""><span>${number(save.chests[tier])}</span></b>`).join("");
     id("gcoCard").innerHTML = `<article class="gco-card ${state.tier}" data-gco-card><div class="gco-art"><img src="${def.asset}" alt="${esc(chestName(state.tier))}" onerror="this.hidden=true"><span class="gco-art-fallback" aria-hidden="true">🎁</span></div><div class="gco-rarity">${state.tier}</div><h3>${esc(chestName(state.tier))}</h3><p class="gco-copy">${esc(chestItems(state.tier))}</p>${count < 1 ? `<p class="gco-empty-note">${esc(text("empty", chestName(state.tier)))}</p>` : ""}<section class="gco-pity"><header><span>${esc(text("guaranteed"))}</span><b>${pity} / ${def.pity}</b></header><div class="gco-track"><i style="width:${Math.min(100, pity / def.pity * 100)}%"></i></div></section><div class="gco-actions"><button type="button" data-gco-open="1" ${count < 1 || state.busy ? "disabled" : ""}>${esc(text("openOne"))}</button><button type="button" data-gco-open="10" ${count < 10 || state.busy ? "disabled" : ""}>${esc(text("openTen"))}</button></div></article>`;
     id("gcoDots").innerHTML = TIERS.map(tier => `<button type="button" class="${tier === state.tier ? "active" : ""}" data-gco-tier="${tier}" aria-label="${esc(chestName(tier))}"></button>`).join("");
@@ -352,6 +357,7 @@
     ensureCss();
     const panel = ensurePanel();
     if (!panel) return;
+    document.body.classList.add("gacha-open");
     if (window.UI?.save) {
       const before = JSON.stringify({ keys: UI.save.keys, wallet: UI.save.resourceWallet?.keys, migrated: UI.save.economy?.chestOnlyMigrationV1 });
       normalize(UI.save);
@@ -416,14 +422,16 @@
     }
     clearTimeout(state.openingTimer);
     modal.classList.remove("hidden");
-    modal.innerHTML = `<div class="gco-modal-card gco-opening" role="status" aria-live="polite"><img src="${esc(DEF[tier].asset)}" alt="${esc(chestName(tier))}" onerror="this.hidden=true"><h3>${esc(text("opening"))}</h3></div>`;
+    modal.innerHTML = `<div class="gco-modal-card gco-opening" role="status" aria-live="polite"><img src="${esc(DEF[tier].asset)}" alt="${esc(chestName(tier))}" onerror="this.hidden=true"><span class="gco-opening-fallback" aria-hidden="true">🎁</span><h3>${esc(text("opening"))}</h3></div>`;
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const testDuration = Number(window.__CHERRIFT_GACHA_OPENING_MS__);
+    const openingDuration = Number.isFinite(testDuration) && testDuration >= 100 ? testDuration : reducedMotion ? 700 : 1800;
     state.openingTimer = setTimeout(() => {
       state.openingTimer = 0;
       state.busy = false;
       render();
       showResultSequence(tier, rewards);
-    }, reducedMotion ? 80 : 900);
+    }, openingDuration);
   }
 
   function openMany(amount) {
