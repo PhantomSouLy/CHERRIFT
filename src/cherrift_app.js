@@ -15884,21 +15884,24 @@ function railButton(route,icon,label,notice=""){
   const image=/\.(?:png|webp|jpe?g)(?:\?.*)?$/i.test(String(icon));
   return `<button type="button" data-v082-open="${route}" data-v082-route="${route}"><i>${image?`<img src="${escapeHtml(icon)}" alt="">`:icon}</i><b>${escapeHtml(label)}</b>${notice?`<em class="notice-dot-v082" data-v082-notice="${notice}"></em>`:""}</button>`;
 }
+function railTextButton(route,label,notice="",className=""){
+  return `<button type="button" class="rail-text-v095 ${escapeHtml(className)}" data-v082-open="${route}" data-v082-route="${route}"><b>${escapeHtml(label)}</b>${notice?`<em class="notice-dot-v082" data-v082-notice="${notice}"></em>`:""}</button>`;
+}
 function rebuildRail(){
   const rail=id("globalRailV060");if(!rail)return;
   rail.classList.add("rail-v082");
   rail.innerHTML=`
     <button type="button" class="rail-brand-v060" data-v082-open="menu"><strong>CHERRIFT</strong><small>${escapeHtml(t("menuSubtitle"))}</small></button>
-    <nav class="rail-nav-v060 rail-nav-v082">
-      ${railButton("skins","assets/player/skins/base_cherry/base_cherry_icon.png","Cherry","skin")}
-      ${railButton("gear","assets/items/equipments/weapons/sword_sword.png","Gear","gear")}
-      ${railButton("playerUpgrade","assets/items/upgrade.png","Upgrade","upgrade")}
-      ${railButton("worlds","assets/map/world1/world1_splashart_1.png","PLAY")}
-      ${railButton("menu","assets/player/skins/base_cherry/base_cherry_icon.png","LOBBY")}
-      ${railButton("bagV082","assets/items/buffs/bag_buff.png","Bag","bag")}
-      ${railButton("shopV082","assets/items/coin.png","Shop","shop")}
-      ${railButton("gachaV082","assets/items/chests/common_chest.png","Gacha","gacha")}
-      ${railButton("achievements","assets/player/frames/frame_rank1.png","Achievements","achievements")}
+    <nav class="rail-nav-v060 rail-nav-v082 rail-text-nav-v095" data-i18n-ignore="true">
+      ${railTextButton("skins","Cherry","skin")}
+      ${railTextButton("gear","Gear","gear")}
+      ${railTextButton("playerUpgrade","Upgrade","upgrade")}
+      ${railTextButton("worlds","PLAY","","rail-play-v095")}
+      ${railTextButton("menu","LOBBY","","rail-lobby-v095")}
+      ${railTextButton("bagV082","Bag","bag")}
+      ${railTextButton("shopV082","Shop","shop")}
+      ${railTextButton("gachaV082","Gacha","gacha")}
+      ${railTextButton("achievements","Achievements","achievements")}
     </nav>
     <div class="rail-bottom-v060">
       <button type="button" class="rail-settings-v060" data-v082-open="settings" data-v082-route="settings"><i>⚙</i><b>${escapeHtml(t("settings"))}</b></button>

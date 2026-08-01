@@ -84,7 +84,22 @@
     cherry_default:"base_cherry"
   });
 
-  const PETAL_COLORS = ["#ff74b8", "#ffb6d8", "#f7d96f", "#8ddcff", "#b899ff", "#ffffff"];
+  const PETAL_COLORS = ["#9f1e60", "#c93378", "#eb5ca0", "#ff91c2", "#ffd0e4"];
+
+  function petalPalette() {
+    const root = document.documentElement;
+    const theme = root.dataset.cherriftTheme || "default";
+    if (theme === "default") return PETAL_COLORS;
+    const css = getComputedStyle(root);
+    const colors = [
+      css.getPropertyValue("--theme-primary-strong"),
+      css.getPropertyValue("--theme-primary"),
+      css.getPropertyValue("--theme-primary-soft"),
+      css.getPropertyValue("--theme-accent"),
+      css.getPropertyValue("--theme-accent-2")
+    ].map(color => color.trim()).filter(Boolean);
+    return colors.length >= 2 ? colors : PETAL_COLORS;
+  }
 
   function ensureCss() {
     if (id("cherriftBugfixV0943Css")) return;
@@ -99,8 +114,9 @@
         pointer-events:none!important;contain:strict
       }
       #clickPetalBurstV0943 i{
-        position:absolute;width:9px;height:14px;border-radius:85% 15% 75% 25%;
-        transform-origin:50% 75%;will-change:transform,opacity;pointer-events:none
+        position:absolute;width:8px;height:13px;border-radius:85% 15% 75% 25%;
+        transform-origin:50% 75%;will-change:transform,opacity;pointer-events:none;
+        box-shadow:0 2px 7px rgba(56,8,34,.18)
       }
 
       /* The Gacha must remain the only interactive panel while it is open. */
@@ -968,30 +984,34 @@
     if (document.body.classList.contains("is-playing")) return;
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const layer = clickLayer();
-    const amount = isDesktop() ? 12 : 9;
+    const amount = isDesktop() ? 8 : 6;
+    const colors = petalPalette();
     for (let index = 0; index < amount; index += 1) {
       const petal = document.createElement("i");
       petal.style.left = `${x}px`;
       petal.style.top = `${y}px`;
-      petal.style.background = PETAL_COLORS[index % PETAL_COLORS.length];
+      petal.style.background = colors[index % colors.length];
+      petal.style.filter = `blur(${(.25 + Math.random() * .75).toFixed(2)}px)`;
       layer.appendChild(petal);
 
-      const angle = (Math.PI * 2 * index / amount) + (Math.random() - .5) * .55;
-      const distance = 25 + Math.random() * 42;
-      const dx = Math.cos(angle) * distance;
-      const burstY = Math.sin(angle) * distance - 12 - Math.random() * 16;
-      const fallY = burstY + 55 + Math.random() * 55;
-      const rotate = (Math.random() * 520 - 260);
-      const duration = 680 + Math.random() * 300;
+      const startX = (Math.random() - .5) * 24;
+      const driftX = startX + (Math.random() - .5) * 96;
+      const swayX = driftX + (Math.random() - .5) * 42;
+      const liftY = -8 - Math.random() * 20;
+      const middleY = 65 + Math.random() * 55;
+      const fallY = 150 + Math.random() * 105;
+      const rotate = Math.random() * 760 - 380;
+      const duration = 2350 + Math.random() * 1450;
 
       const animation = petal.animate([
-        { transform:"translate(-50%,-50%) scale(.55) rotate(0deg)", opacity:0 },
-        { transform:`translate(calc(-50% + ${dx * .65}px),calc(-50% + ${burstY}px)) scale(1) rotate(${rotate * .45}deg)`, opacity:1, offset:.28 },
-        { transform:`translate(calc(-50% + ${dx}px),calc(-50% + ${fallY}px)) scale(.72) rotate(${rotate}deg)`, opacity:0 }
+        { transform:`translate(calc(-50% + ${startX}px),-50%) scale(.55) rotate(0deg)`, opacity:0 },
+        { transform:`translate(calc(-50% + ${startX * .55}px),calc(-50% + ${liftY}px)) scale(.92) rotate(${rotate * .16}deg)`, opacity:.9, offset:.16 },
+        { transform:`translate(calc(-50% + ${swayX}px),calc(-50% + ${middleY}px)) scale(.82) rotate(${rotate * .62}deg)`, opacity:.72, offset:.62 },
+        { transform:`translate(calc(-50% + ${driftX}px),calc(-50% + ${fallY}px)) scale(.62) rotate(${rotate}deg)`, opacity:0 }
       ], {
         duration,
-        delay:Math.random() * 45,
-        easing:"cubic-bezier(.18,.72,.26,1)",
+        delay:Math.random() * 140,
+        easing:"cubic-bezier(.22,.48,.28,1)",
         fill:"forwards"
       });
       animation.finished.catch(() => {}).finally(() => petal.remove());
