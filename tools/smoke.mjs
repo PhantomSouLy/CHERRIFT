@@ -596,6 +596,54 @@ async function exercise(name,width,height){
       assert.notEqual(window.getComputedStyle(document.getElementById("mobilePlayBtn")).display,"none",`${name}: stage Play remains visible`);
       await assertActiveNav(window,name,'[data-v082-open="menu"]',"final Home");
 
+      const cherryNav=document.querySelector('#globalMobileNavV052 [data-v082-open="skins"]');
+      const cherryImageBefore=cherryNav?.querySelector(":scope > span > img");
+      assert.ok(cherryImageBefore,`${name}: Cherry nav thumbnail exists before returning Home`);
+      UI.save.selectedStageId="world_2_1";
+      UI.save.stageStars=UI.save.stageStars||{};
+      UI.save.stageStars.world_2_1=2;
+      UI.open("gear");
+      await waitFor(()=>!document.getElementById("gear")?.classList.contains("hidden"),`${name}: leave Home before flash regression check`);
+      click(window,document.querySelector('#globalMobileNavV052 [data-v082-open="menu"]'),`${name} return Home without fallback frame`);
+      const stableArt=document.getElementById("mobileStageArt");
+      const stableStars=document.getElementById("mobileChapterStarsV0932");
+      assert.match(stableArt?.style.backgroundImage||"",/world2\/world2_splashart_1\.png/,`${name}: selected map is correct in the same Home click task`);
+      assert.equal(stableStars?.textContent?.replace(/\s+/g,""),"★★☆2/3",`${name}: selected stars are present in the same Home click task`);
+      await new Promise(resolve=>window.setTimeout(resolve,35));
+      assert.equal(cherryNav.querySelector(":scope > span > img"),cherryImageBefore,`${name}: Home does not rebuild the Cherry thumbnail node`);
+      assert.match(stableArt?.style.backgroundImage||"",/world2\/world2_splashart_1\.png/,`${name}: legacy refresh cannot flash the World 1 fallback`);
+      assert.equal(stableStars?.dataset.stableStageId,"world_2_1",`${name}: stars stay synchronized after deferred refreshes`);
+      stableArt.style.backgroundImage='url("assets/map/world1/world1_splashart_1.png")';
+      window.CHERRIFT_STABILITY.refresh();
+      assert.match(stableArt.style.backgroundImage,/world2\/world2_splashart_1\.png/,`${name}: an obsolete World 1 write is corrected synchronously`);
+
+      if(name==="phone-portrait"){
+        const themeCss=document.getElementById("cherriftBugfixV0943Css")?.textContent||"";
+        for(const selector of [".gco-card",".bf-card",".v0551-stat-grid article",".skill-node-v082",".gear-item-v0560"]){
+          assert.ok(themeCss.includes(selector),`theme bridge covers ${selector}`);
+        }
+        const themeColours=[];
+        for(const themeId of ["cozy_cherry","summer_splash"]){
+          assert.equal(window.CHERRIFT_THEMES.select(themeId,UI.save,{silent:true}),true,`${themeId}: theme can be selected`);
+          assert.equal(document.documentElement.dataset.cherriftTheme,themeId,`${themeId}: root theme state`);
+          assert.equal(document.body.dataset.cherriftTheme,themeId,`${themeId}: body theme state`);
+          themeColours.push(window.getComputedStyle(document.documentElement).getPropertyValue("--theme-primary").trim());
+          UI.open("gacha");
+          await waitFor(()=>document.querySelector("#gachaChestOnlyV12 .gco-card"),`${themeId}: themed Gacha renders`);
+          UI.open("profileV082");
+          await waitFor(()=>document.querySelector("#profileBugfixV0941 .bf-card"),`${themeId}: themed Profile renders`);
+          UI.open("collectionV082");
+          await waitFor(()=>!document.getElementById("libraryV0551")?.classList.contains("hidden"),`${themeId}: themed Collection renders`);
+          UI.open("playerUpgrade");
+          await waitFor(()=>document.querySelector("#playerUpgrade .skill-node-v082"),`${themeId}: themed Skill Tree renders`);
+          UI.open("mailV063");
+          await waitFor(()=>document.querySelector("#mailBugfixV0941 .bf-card"),`${themeId}: themed Mail renders`);
+        }
+        assert.ok(themeColours.every(Boolean)&&themeColours[0]!==themeColours[1],"Cozy Cherry and Summer Splash keep distinct shared theme variables");
+        window.CHERRIFT_THEMES.select("default",UI.save,{silent:true});
+        UI.open("menu");
+      }
+
       const moreButton=document.querySelector("#globalMobileNavV052 > button[data-v082-toggle-mobile]");
       const drawer=document.getElementById("mobileMenuV082");
       click(window,moreButton,`${name} open More drawer from Home`);
