@@ -1,11 +1,31 @@
-CHERRIFT v0.9.4 – csak a frissítéshez szükséges fájlok
+CHERRIFT v0.9.4.5 – UI / navigáció / Gacha javítócsomag
 
-1. Csomagold ki ezt a ZIP-et.
-2. A két aláhúzással kezdődő TXT kivételével másold fel a tartalmát a repository gyökerébe.
-3. Engedélyezd a meglévő fájlok felülírását, és tartsd meg a mappaszerkezetet (.github, src, tools).
-4. Töröld a repositoryból a _TORLENDO_FAJLOK.txt fájlban felsorolt régi patch-fájlokat.
+Ez egy KIEGÉSZÍTŐ frissítés az előzőleg telepített CHERRIFT javítócsomaghoz.
+Csak a ténylegesen cserélendő fájlokat tartalmazza.
 
-A ZIP nem tartalmazza a teljes játékot és a változatlan asseteket. A jelenleg hiányzó assetekhez
-meglévő helyettesítő/fallback fájlok vannak beállítva; ezek később egyszerűen lecserélhetők.
+TELEPÍTÉS
+1. Nyisd meg a CHERRIFT repository gyökérmappáját.
+2. A ZIP teljes tartalmát másold ebbe a gyökérmappába.
+3. Engedélyezd a meglévő fájlok felülírását, a mappaszerkezetet tartsd meg.
+4. Töltsd fel / commitold a módosításokat GitHubra.
+5. GitHub Pages frissülése után töröld a böngésző gyorsítótárát, vagy nyisd meg az oldalt inkognitó módban.
 
-Az _TELEPITES_HU.txt és _TORLENDO_FAJLOK.txt csak útmutató, ezeket nem kell feltölteni.
+CSERÉLENDŐ FÁJLOK
+- index.html
+- src/cherrift_account_mail.js
+- src/cherrift_gacha.js
+- src/cherrift_stability.js
+- src/cherrift_world_ui.js
+- tools/smoke.mjs
+
+FŐ JAVÍTÁSOK
+- mobil főmenü, Cherry alsó navigáció és jobb oldali napi/heti/login gombok
+- World és Chapter selector kártyák, méretezés és fullscreen/orientáció
+- eltűnő Play gomb és dupla aktív alsó navigáció
+- Gear Select + Level eszközsor, nagyobb Cherry, talaj/platform eltávolítása
+- mobil/PC Gacha méretezés, látható valuták és teljes ládanyitási animáció
+- Profile Title Collection eltávolítása és külön Title Stats információs ablak
+- Mail egyedi törlés, Delete All és jutalmas levelek védelme
+- Mail/Profile/egyéb oldalak közötti globális navigáció javítása
+
+Megjegyzés: a Title Stats ablak elő van készítve a későbbi title stat adatokhoz. Amíg ezek nincsenek az adatbázisban, korrekt üres állapotot mutat.

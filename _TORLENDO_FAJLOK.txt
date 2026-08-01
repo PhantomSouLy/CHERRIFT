@@ -1,9 +1,1 @@
-BUGFIX_V0943_SETUP_HU.md
-CHANGED_FILES_V0943.txt
-src/cherrift_bugfix_v0941.js
-src/cherrift_bugfix_v0942.js
-src/cherrift_bugfix_v0943.js
-src/cherrift_economy_v11.js
-src/cherrift_theme_system.js
-src/cherrift_v0933.js
-v0933.css
+Nincs törlendő fájl ebben a kiegészítő frissítésben.
