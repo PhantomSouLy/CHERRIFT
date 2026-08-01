@@ -4,7 +4,7 @@
   if (window.__CHERRIFT_BUGFIX_V0943__) return;
   window.__CHERRIFT_BUGFIX_V0943__ = true;
 
-  const VERSION = "0.9.4.5-stability-router";
+  const VERSION = "0.9.4.6-stability-router";
   const DESKTOP_QUERY = "(min-width:821px)";
   const id = value => document.getElementById(value);
   const q = (selector, root = document) => root?.querySelector?.(selector) || null;
@@ -21,7 +21,10 @@
     imagePromises: new Map(),
     mapImages: new Map(),
     clickLayer: null,
-    currencyTimer: 0
+    currencyTimer: 0,
+    navRoute: "menu",
+    navObserver: null,
+    navSyncQueued: false
   };
 
   const MAP_OBJECT_PATHS = Object.freeze({
@@ -110,6 +113,13 @@
       #gachaChestOnlyV12 [data-gco-tier],
       #gachaChestOnlyV12 [data-gco-back]{touch-action:manipulation;cursor:pointer}
 
+      /* Keep the More drawer above every normal page and make its open state
+         independent from legacy inline display rules. */
+      #mobileMenuV082:not(.hidden){
+        display:block!important;visibility:visible!important;opacity:1!important;
+        pointer-events:auto!important;z-index:100030!important
+      }
+
       /* Desktop global wallet between the navigation and profile block. */
       #desktopCurrencyV0943{display:none}
       @media(min-width:821px) and (min-height:601px){
@@ -162,14 +172,21 @@
     document.body.classList.remove("mobile-menu-open-v082", "more-open", "drawer-open");
   }
 
-  function toggleMoreDrawer() {
+  function settleMoreDrawer() {
     const drawer = id("mobileMenuV082");
     if (!drawer) return;
-    const opening = drawer.classList.contains("hidden");
-    drawer.classList.toggle("hidden", !opening);
-    drawer.setAttribute("aria-hidden", opening ? "false" : "true");
-    document.body.classList.toggle("mobile-menu-open-v082", opening);
-    syncGlobalNav(opening ? "more" : "menu");
+    const open = !drawer.classList.contains("hidden");
+    if (open) {
+      drawer.classList.remove("force-closed-v0942");
+      drawer.style.removeProperty("display");
+      drawer.style.removeProperty("visibility");
+      drawer.style.removeProperty("pointer-events");
+    }
+    drawer.setAttribute("aria-hidden", open ? "false" : "true");
+    document.body.classList.toggle("mobile-menu-open-v082", open);
+    document.body.classList.toggle("more-open", open);
+    document.body.classList.toggle("drawer-open", open);
+    paintGlobalNav();
   }
 
   function hideGacha() {
@@ -189,25 +206,59 @@
     return aliases[value] || value || "menu";
   }
 
-  function syncGlobalNav(route) {
+  function navBucket(route) {
+    const target = normalizeRoute(route);
+    if (target === "skins") return "skins";
+    if (target === "gear") return "gear";
+    if (target === "menu" || target === "worlds") return "menu";
+    if (target === "gacha") return "gacha";
+    return "more";
+  }
+
+  function drawerOpen() {
+    const drawer = id("mobileMenuV082");
+    return !!drawer && !drawer.classList.contains("hidden");
+  }
+
+  function paintGlobalNav() {
     const nav = id("globalMobileNavV052") || q(".mobile-nav-v090");
     if (!nav) return;
-    const target = normalizeRoute(route);
-    const activeRoute = target === "worlds" ? "menu" : target;
+    const activeBucket = drawerOpen() ? "more" : navBucket(state.navRoute);
     const buttons = qa(":scope > button", nav);
-    for (const button of buttons) {
-      button.classList.remove("active");
-      button.removeAttribute("aria-current");
-    }
     const active = buttons.find(button => {
-      if (activeRoute === "more") return button.hasAttribute("data-v082-toggle-mobile");
-      return normalizeRoute(routeFromButton(button), button) === activeRoute;
+      if (activeBucket === "more") return button.hasAttribute("data-v082-toggle-mobile");
+      return navBucket(routeFromButton(button)) === activeBucket;
     });
-    if (active) {
-      active.classList.add("active");
-      active.setAttribute("aria-current", "page");
+    for (const button of buttons) {
+      const selected = button === active;
+      button.classList.toggle("active", selected);
+      button.classList.toggle("theme-nav-active", selected);
+      if (selected) button.setAttribute("aria-current", "page");
+      else button.removeAttribute("aria-current");
     }
-    nav.dataset.active = activeRoute;
+    nav.dataset.active = activeBucket;
+  }
+
+  function syncGlobalNav(route) {
+    state.navRoute = normalizeRoute(route);
+    paintGlobalNav();
+  }
+
+  function observeGlobalNav() {
+    if (state.navObserver || !document.body) return;
+    state.navObserver = new MutationObserver(mutations => {
+      const relevant = mutations.some(mutation => {
+        const target = mutation.target instanceof Element ? mutation.target : mutation.target?.parentElement;
+        return target?.closest?.("#globalMobileNavV052,#mobileMenuV082") || Array.from(mutation.addedNodes || []).some(node => node.nodeType === Node.ELEMENT_NODE && (node.matches?.("#globalMobileNavV052,#mobileMenuV082") || node.querySelector?.("#globalMobileNavV052,#mobileMenuV082")));
+      });
+      if (!relevant || state.navSyncQueued) return;
+      state.navSyncQueued = true;
+      queueMicrotask(() => {
+        state.navSyncQueued = false;
+        paintGlobalNav();
+      });
+    });
+    state.navObserver.observe(document.body, { attributes:true, attributeFilter:["class"], childList:true, subtree:true });
   }
 
   function safeOpen(route, ...args) {
@@ -319,7 +370,10 @@
       if (mobileButton && !mobileButton.disabled) {
         event.preventDefault();
         event.stopImmediatePropagation();
-        if (mobileButton.hasAttribute("data-v082-toggle-mobile")) toggleMoreDrawer();
+        // v0.8.2's earlier capture handler has already toggled this drawer.
+        // Only normalize its accessibility/body/nav state here to avoid a
+        // same-click second toggle that would immediately close it again.
+        if (mobileButton.hasAttribute("data-v082-toggle-mobile")) settleMoreDrawer();
         else {
           const route = routeFromButton(mobileButton);
           if (route) safeOpen(route);
@@ -770,6 +824,7 @@
     installPetalBurst();
     patchVisibleUi();
     syncGlobalNav("menu");
+    observeGlobalNav();
 
     window.addEventListener("resize", patchVisibleUi);
     window.addEventListener("cherrift:savechange", syncDesktopCurrency);
