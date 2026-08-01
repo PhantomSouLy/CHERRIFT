@@ -62,6 +62,13 @@ function canvasContext() {
 }
 
 function installBrowserStubs(window, width, height, name) {
+  const browserSetTimeout=window.setTimeout.bind(window);
+  window.__CHERRIFT_GACHA_OPENING_MS__=137;
+  window.setTimeout=(callback,delay=0,...args)=>{
+    const milliseconds=Number(delay)||0;
+    const testDelay=milliseconds===window.__CHERRIFT_GACHA_OPENING_MS__?milliseconds:Math.min(milliseconds,20);
+    return browserSetTimeout(callback,testDelay,...args);
+  };
   window.__cherriftTitleWrites=[];
   const titleDescriptor=Object.getOwnPropertyDescriptor(window.Document.prototype,"title");
   if(titleDescriptor?.get&&titleDescriptor?.set){
@@ -110,6 +117,7 @@ function installBrowserStubs(window, width, height, name) {
   window.Element.prototype.scrollIntoView ||= () => {};
   window.Element.prototype.scrollBy ||= () => {};
   window.scrollTo=()=>{};
+  window.confirm=()=>true;
   window.Element.prototype.animate ||= () => ({cancel(){},finished:Promise.resolve()});
   window.HTMLElement.prototype.requestFullscreen ||= () => Promise.resolve();
   window.document.exitFullscreen ||= () => Promise.resolve();
@@ -228,7 +236,12 @@ async function exercise(name,width,height){
     assert.ok(UI.save.unlockedSkins.includes("mage_cherry")&&UI.save.unlockedSkins.includes("archer_cherry"),`${name}: Rare skins available`);
     assert.equal(window.CherriftGame.prototype.drawWorld.__v091BoundaryFog,true,`${name}: map boundary fog active`);
     assert.equal(document.querySelectorAll("#globalMobileNavV052 > button").length,5,`${name}: five mobile destinations`);
-    assert.equal(document.querySelectorAll('#globalMobileNavV052 [data-v082-open="worlds"]').length,1,`${name}: no duplicate Play`);
+    if(window.CHERRIFT_WORLD_UI.isMobile()){
+      assert.equal(document.querySelectorAll('#globalMobileNavV052 [data-v082-open="worlds"]').length,0,`${name}: bottom Play route is completely replaced`);
+      assert.equal(document.querySelectorAll('#globalMobileNavV052 [data-v082-open="skins"]').length,1,`${name}: exactly one bottom Cherry selector route`);
+    }else{
+      assert.equal(document.querySelectorAll('#globalMobileNavV052 [data-v082-open="worlds"]').length,1,`${name}: desktop keeps the hidden Play route intact`);
+    }
 
     UI.open("menu");
     await waitFor(()=>document.querySelectorAll("#menuToolsV082 [data-v082-menu-tool]").length===4,`${name} menu tools`);
@@ -242,6 +255,50 @@ async function exercise(name,width,height){
     UI.open("menu");
     click(window,document.querySelector('#menuToolsV082 [data-v082-menu-tool="mail"]'),`${name} mail tool`);
     await waitFor(()=>!document.getElementById("mailBugfixV0941")?.classList.contains("hidden"),`${name} mail panel`);
+    const smokeMail={id:`smoke-delete-${name}`,title_en:"Delete me",title_hu:"Törölj",body_en:"No reward",body_hu:"Nincs jutalom",created_at:"2026-08-01",attachments:null,read:true,claimed:false};
+    const protectedMail={id:`smoke-protected-${name}`,title_en:"Claim first",title_hu:"Előbb vedd át",body_en:"Reward",body_hu:"Jutalom",created_at:"2026-08-01",attachments:{resources:{"currency.coins":1}},read:true,claimed:false};
+    window.CHERRIFT_LIVE_SERVICES.messages.push(smokeMail,protectedMail);
+    window.CHERRIFT_ACCOUNT_MAIL.showMailList();
+    click(window,document.querySelector(`[data-mail-id="${protectedMail.id}"]`),`${name} open protected reward mail`);
+    assert.equal(document.querySelector("[data-mail-delete]")?.disabled,true,`${name}: unclaimed reward Mail cannot be deleted`);
+    click(window,document.querySelector("[data-mail-detail-back]"),`${name} back from protected mail`);
+    click(window,document.querySelector(`[data-mail-id="${smokeMail.id}"]`),`${name} open deletable mail`);
+    const deleteMail=document.querySelector("[data-mail-delete]");
+    assert.ok(deleteMail&&!deleteMail.disabled,`${name}: reward-free Mail can be deleted`);
+    click(window,deleteMail,`${name} delete single mail`);
+    assert.equal(document.querySelector(`[data-mail-id="${smokeMail.id}"]`),null,`${name}: deleted Mail stays hidden`);
+    assert.ok(document.querySelector("[data-mail-delete-all]"),`${name}: Mail list has Delete All`);
+    const homeNav=document.querySelector('#globalMobileNavV052 [data-v082-open="menu"]');
+    click(window,homeNav,`${name} global Home from Mail`);
+    await waitFor(()=>!document.getElementById("menu")?.classList.contains("hidden"),`${name} Home leaves Mail`);
+    assert.equal(document.getElementById("mailBugfixV0941").classList.contains("hidden"),true,`${name}: Mail panel closes behind global navigation`);
+    UI.open("profileV082");
+    await waitFor(()=>!document.getElementById("profileBugfixV0941")?.classList.contains("hidden"),`${name} profile panel`);
+    assert.equal(document.querySelector(".profile-title-collection-bf"),null,`${name}: obsolete Title Collection block removed`);
+    click(window,document.querySelector("[data-profile-title-stats]"),`${name} Title Stats info`);
+    assert.equal(document.getElementById("profileTitleStatsModalV0945")?.classList.contains("hidden"),false,`${name}: Title Stats opens as a separate panel`);
+    assert.match(document.getElementById("profileTitleStatsBody")?.textContent||"",/not available|nem érhetők el/i,`${name}: future Title Stats has an honest empty state`);
+    click(window,document.querySelector("[data-title-stats-close]"),`${name} close Title Stats`);
+    if(window.CHERRIFT_WORLD_UI.isMobile()){
+      const cherryNav=document.querySelector('#globalMobileNavV052 [data-v082-open="skins"]');
+      click(window,cherryNav,`${name} global Cherry from Profile`);
+      await waitFor(()=>!document.getElementById("skins")?.classList.contains("hidden"),`${name} Cherry leaves Profile`);
+      assert.equal(document.getElementById("profileBugfixV0941").classList.contains("hidden"),true,`${name}: Profile closes behind global Cherry navigation`);
+      assert.equal(document.querySelectorAll("#globalMobileNavV052 > button.active").length,1,`${name}: one active item after Cherry navigation`);
+      UI.open("profileV082");
+      await waitFor(()=>!document.getElementById("profileBugfixV0941")?.classList.contains("hidden"),`${name} reopen Profile`);
+      const gachaNav=document.querySelector('#globalMobileNavV052 [data-v082-open="gachaV082"]');
+      click(window,gachaNav,`${name} global Gacha from Profile`);
+      await waitFor(()=>!document.getElementById("gachaChestOnlyV12")?.classList.contains("hidden"),`${name} Gacha leaves Profile`);
+      assert.equal(document.getElementById("profileBugfixV0941").classList.contains("hidden"),true,`${name}: Profile closes behind global Gacha navigation`);
+      UI.open("profileV082");
+      await waitFor(()=>!document.getElementById("profileBugfixV0941")?.classList.contains("hidden"),`${name} reopen Profile after Gacha`);
+    }
+    const gearNav=document.querySelector('#globalMobileNavV052 [data-v082-open="gear"]');
+    click(window,gearNav,`${name} global Gear from Profile`);
+    await waitFor(()=>!document.getElementById("gear")?.classList.contains("hidden"),`${name} Gear leaves Profile`);
+    assert.equal(document.getElementById("profileBugfixV0941").classList.contains("hidden"),true,`${name}: Profile panel closes behind global navigation`);
+    assert.equal(document.querySelectorAll("#globalMobileNavV052 > button.active").length,1,`${name}: one active global navigation item`);
     UI.open("menu");
     click(window,document.querySelector('#menuToolsV082 [data-v082-menu-tool="settings"]'),`${name} settings tool`);
     await waitFor(()=>!document.getElementById("settings")?.classList.contains("hidden"),`${name} settings panel`);
@@ -257,6 +314,11 @@ async function exercise(name,width,height){
     UI.open("gear");
     await waitFor(()=>Array.from(document.querySelectorAll("#gear [data-v0560-slot]")).every(slot=>/LVL\d+/.test(slot.textContent)),`${name} Gear decoration`);
     assertCompleteGearLayout(window,name);
+    await waitFor(()=>document.querySelector("#gear .gear-equipment-tools-v0942"),`${name} Gear Level and Select toolbar`);
+    const gearTools=document.querySelector("#gear .gear-equipment-tools-v0942");
+    assert.ok(gearTools.contains(document.getElementById("gearSortV0560")),`${name}: Level sort is in the requested toolbar`);
+    assert.ok(gearTools.querySelector("[data-v082-select-mode]"),`${name}: Select button is restored beside sorting`);
+    assert.equal(document.querySelector("#gear .gear-character-floor-v0560"),null,`${name}: decorative character floor removed`);
 
     UI.open("settings");
     for(const setting of ["effectQualityV085","cameraMotionV085","screenShakeV085","combatSoundsV085"])assert.ok(document.getElementById(setting),`${name}: ${setting} setting`);
@@ -286,10 +348,12 @@ async function exercise(name,width,height){
     if(window.CHERRIFT_WORLD_UI.isMobile()){
       await waitFor(()=>!document.getElementById("worldSelectorV0942")?.classList.contains("hidden"),`${name} consolidated World selector`);
       assert.equal(document.querySelectorAll("#worldDotsV0942 i").length,5,`${name}: exact mobile World count`);
+      assert.ok(document.querySelector("#worldCardV0942 > .selector-card-v0942"),`${name}: World card is rendered inside a sized host`);
       click(window,document.querySelector('[data-world-step="1"]'),`${name} next mobile World`);
       click(window,document.querySelector("[data-world-start]"),`${name} select mobile World`);
       await waitFor(()=>!document.getElementById("chapterSelectorV0942")?.classList.contains("hidden"),`${name} mobile Chapter selector`);
       assert.equal(document.querySelectorAll("#chapterDotsV0942 i").length,5,`${name}: five chapters in selected World`);
+      assert.ok(document.querySelector("#chapterCardV0942 > .selector-card-v0942"),`${name}: Chapter card is rendered inside a sized host`);
       click(window,document.querySelector("[data-chapter-back]"),`${name} back to mobile Worlds`);
     }else{
       await waitFor(()=>document.querySelectorAll("[data-v094-world]").length>=4||document.querySelectorAll("[data-v0933-world]").length>=4,`${name} consolidated desktop World selector`);
@@ -305,12 +369,16 @@ async function exercise(name,width,height){
     UI.open("gacha");
     await waitFor(()=>!document.getElementById("gachaChestOnlyV12")?.classList.contains("hidden"),`${name} Gacha panel`);
     assert.equal(document.querySelectorAll("[data-gco-tier]").length,3,`${name}: exactly three Gacha tiers`);
+    assert.equal(document.querySelectorAll("#gcoWallet > b").length,4,`${name}: Gacha currency wallet is fully visible`);
     const commonBefore=UI.save.chests.common;
     window.CHERRIFT_ECONOMY_V11.openMany(1);
     await waitFor(()=>!document.getElementById("gcoModal")?.classList.contains("hidden"),`${name} Gacha opening animation`);
     await waitFor(()=>UI.save.chests.common===commonBefore-1,`${name} Gacha consumes one chest`);
     assert.ok(UI.save.gacha.history.length>=1,`${name}: Gacha history records the reward`);
-    await new Promise(resolve=>setTimeout(resolve,1000));
+    await new Promise(resolve=>setTimeout(resolve,8));
+    assert.ok(document.querySelector("#gcoModal .gco-opening"),`${name}: opening animation remains visible before rewards`);
+    assert.equal(document.querySelector("#gcoModal .gco-skin-reveal"),null,`${name}: skin reward waits for chest animation`);
+    await waitFor(()=>!document.querySelector("#gcoModal .gco-opening"),`${name}: opening animation completes`);
     const gachaNext=document.querySelector("#gcoModal .gco-next");
     if(gachaNext) click(window,gachaNext,`${name} finish Gacha reveal`);
     window.CHERRIFT_REWARDS?.close?.();
@@ -396,7 +464,7 @@ async function exercise(name,width,height){
     UI.game.updateBullets(.016);
 
     UI.quit();
-    await new Promise(resolve=>setTimeout(resolve,700));
+    await new Promise(resolve=>setTimeout(resolve,30));
     UI.save.selectedSkin="mage_cherry";
     window.CherriftStorage.save(UI.save);
     await UI.game.start();
@@ -428,7 +496,7 @@ async function exercise(name,width,height){
     if(name==="desktop"){
       async function startSkin(skinId){
         UI.quit();
-        await new Promise(resolve=>setTimeout(resolve,700));
+        await new Promise(resolve=>setTimeout(resolve,30));
         UI.save.selectedSkin=skinId;
         window.CherriftStorage.save(UI.save);
         await UI.game.start();
@@ -497,10 +565,21 @@ async function exercise(name,width,height){
     }
 
     if(window.CHERRIFT_WORLD_UI.isMobile()){
+      UI.open("menu");
+      await waitFor(()=>!document.getElementById("menu")?.classList.contains("hidden"),`${name}: mobile Home final layout`);
       assert.equal(document.body.classList.contains("v090-mobile"),true,`${name}: mobile mode`);
       assert.ok(document.getElementById("mobileMenuV082"),`${name}: mobile drawer`);
       assert.equal(document.querySelectorAll(".mobile-menu-grid-v082 > button").length,11,`${name}: compact More destinations plus Event`);
       assert.equal(document.querySelectorAll(".mobile-nav-v090 > button").length,5,`${name}: stable bottom nav`);
+      assert.equal(document.querySelector(".mobile-nav-v090 > button b")?.textContent,"Cherry",`${name}: Cherry replaces bottom Play`);
+      assert.equal(window.getComputedStyle(document.querySelector("#menu .mobile-side-actions-v0932.left")).display,"none",`${name}: left Home rail is removed`);
+      assert.equal(document.querySelectorAll("#menu .mobile-side-actions-v0932.right > button").length,3,`${name}: Daily, Weekly and Login stay in one right rail`);
+      assert.notEqual(window.getComputedStyle(document.getElementById("mobilePlayBtn")).display,"none",`${name}: stage Play remains visible`);
+      assert.equal(document.querySelectorAll("#globalMobileNavV052 > button.active").length,1,`${name}: global nav never double-highlights`);
+      const fullscreenHeight=height+37;
+      window.visualViewport.height=fullscreenHeight;
+      document.dispatchEvent(new window.Event("fullscreenchange"));
+      await waitFor(()=>document.documentElement.style.getPropertyValue("--cherrift-viewport-height")===`${fullscreenHeight}px`,`${name}: fullscreen viewport is recalculated`);
     }
 
     const meaningful=errors.filter(error=>!/Not implemented: HTMLCanvasElement/i.test(error));
@@ -532,16 +611,23 @@ async function exerciseReturningSession(){
   }
 }
 
+const smokeCases={
+  desktop:()=>exercise("desktop",1440,900),
+  "short-desktop":()=>exercise("short-desktop",1128,584),
+  "phone-portrait":()=>exercise("phone-portrait",390,844),
+  "phone-landscape":()=>exercise("phone-landscape",844,390),
+  "returning-session":()=>exerciseReturningSession()
+};
+const caseArgument=process.argv.find(argument=>argument.startsWith("--case="))?.slice(7);
+if(caseArgument&&!smokeCases[caseArgument])throw new Error(`Unknown smoke case: ${caseArgument}`);
+
 try{
-  const results=[
-    await exercise("desktop",1440,900),
-    await exercise("short-desktop",1128,584),
-    await exercise("phone-portrait",390,844),
-    await exercise("phone-landscape",844,390),
-    await exerciseReturningSession()
-  ];
+  const selectedCases=caseArgument?[caseArgument]:Object.keys(smokeCases);
+  const results=[];
+  for(const selectedCase of selectedCases)results.push(await smokeCases[selectedCase]());
   for(const result of results)console.log(`PASS ${result.name} ${result.viewport}${result.skins?` · ${result.skins} skins`:""}`);
   console.log("CHERRIFT v0.9.4 smoke tests passed.");
 } finally {
-  await new Promise(resolve=>server.close(resolve));
+  server.closeAllConnections?.();
+  server.close();
 }
