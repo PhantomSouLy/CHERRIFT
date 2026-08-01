@@ -4,7 +4,7 @@
   if (window.__CHERRIFT_BUGFIX_V0943__) return;
   window.__CHERRIFT_BUGFIX_V0943__ = true;
 
-  const VERSION = "0.9.4.6-stability-router";
+  const VERSION = "0.9.4.7-theme-home-stability";
   const DESKTOP_QUERY = "(min-width:821px)";
   const id = value => document.getElementById(value);
   const q = (selector, root = document) => root?.querySelector?.(selector) || null;
@@ -118,6 +118,102 @@
       #mobileMenuV082:not(.hidden){
         display:block!important;visibility:visible!important;opacity:1!important;
         pointer-events:auto!important;z-index:100030!important
+      }
+
+      /* Every non-default theme, including future themes, inherits these
+         surfaces through the shared theme variables. Keep module-specific
+         hard-coded dark colours from leaking into light/custom themes. */
+      html[data-cherrift-theme]:not([data-cherrift-theme="default"]) :is(
+        #gachaChestOnlyV12,.bf-panel,#libraryV0551,#playerUpgrade
+      ){color:var(--theme-text)!important}
+      html[data-cherrift-theme]:not([data-cherrift-theme="default"]) :is(
+        .gco-head h2,.gco-card h3,.gco-pity,.gco-modal-card,
+        .bf-head h2,.bf-card,.mail-toolbar-bf h3,.mail-detail-bf h3,
+        #libraryV0551 :is(h1,h2,h3,b,strong),
+        #playerUpgrade :is(h1,h2,h3,b,strong)
+      ){color:var(--theme-text)!important;text-shadow:none!important}
+      html[data-cherrift-theme]:not([data-cherrift-theme="default"]) :is(
+        .gco-back,.gco-arrow,.gco-wallet b,.gco-chests b,
+        .bf-back,.bf-x,.profile-mini-edit-bf,.profile-title-stats-button-bf,
+        #libraryV0551 .v0551-library-tabs,
+        #libraryV0551 .v0551-library-tabs button,
+        .skill-toolbar-v082>div,.skill-toolbar-v082>button
+      ){
+        color:var(--theme-text)!important;border-color:var(--theme-outline-soft)!important;
+        background:var(--theme-surface)!important;box-shadow:0 8px 20px var(--theme-shadow)!important
+      }
+      html[data-cherrift-theme]:not([data-cherrift-theme="default"]) :is(
+        .gco-card,.gco-modal-card,.bf-card,
+        #libraryV0551 .v0551-profile-card,
+        #libraryV0551 .v0551-stat-grid article,
+        #libraryV0551 .v0551-collect,
+        .skill-tier-v082,.skill-node-v082
+      ){
+        color:var(--theme-text)!important;border-color:var(--theme-outline-soft)!important;
+        background:linear-gradient(145deg,var(--theme-surface-glass),var(--theme-surface-2))!important;
+        box-shadow:0 12px 28px var(--theme-shadow)!important
+      }
+      html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .gco-card{
+        border-left-color:var(--theme-outline-soft)!important;
+        border-right-color:var(--theme-outline-soft)!important;
+        border-bottom-color:var(--theme-outline-soft)!important
+      }
+      html[data-cherrift-theme]:not([data-cherrift-theme="default"]) :is(
+        .gco-art,.gco-pity,.gco-summary-row,.gco-skin-art,
+        .mail-reward-bf,.title-stats-row-bf,.title-stats-total-bf
+      ){
+        color:var(--theme-text)!important;border-color:var(--theme-outline-soft)!important;
+        background:var(--theme-surface-2)!important
+      }
+      html[data-cherrift-theme]:not([data-cherrift-theme="default"]) :is(
+        .gco-copy,.gco-empty-note,.gco-modal-card p,
+        .mail-toolbar-bf small,.mail-empty-bf,.mail-detail-bf header small,
+        .profile-lines-bf,.profile-discord-bf,
+        #libraryV0551 :is(p,small),
+        .skill-toolbar-v082 small,.skill-tier-v082 small,.skill-node-v082 :is(p,em,small)
+      ){color:var(--theme-muted)!important}
+      html[data-cherrift-theme]:not([data-cherrift-theme="default"]) :is(
+        .gco-actions button,.gco-next,.gco-close,.bf-button,
+        .skill-node-v082>button
+      ){
+        color:#fff!important;border-color:rgba(255,255,255,.66)!important;
+        background:var(--theme-button)!important;box-shadow:0 8px 18px var(--theme-shadow)!important
+      }
+      html[data-cherrift-theme]:not([data-cherrift-theme="default"]) :is(
+        .gco-actions button:disabled,.skill-node-v082>button:disabled,.bf-button:disabled
+      ){color:var(--theme-faint)!important;background:var(--theme-surface-3)!important;box-shadow:none!important}
+      html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .gco-dots button{background:var(--theme-outline-soft)!important}
+      html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .gco-dots button.active{background:var(--theme-primary)!important}
+      html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .gco-track{background:var(--theme-surface-3)!important}
+      html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .gco-track i{background:linear-gradient(90deg,var(--theme-primary-strong),var(--theme-primary-soft))!important}
+      html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .gco-modal{background:color-mix(in srgb,var(--theme-deep-2) 72%,transparent)!important}
+      html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .gco-toast{color:var(--theme-deep-text)!important;border-color:var(--theme-primary-soft)!important;background:var(--theme-deep)!important}
+      html[data-cherrift-theme]:not([data-cherrift-theme="default"]) :is(.profile-title-row-bf,.profile-name-row-bf h3){color:var(--theme-primary-strong)!important}
+      html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .mail-row-bf{color:var(--theme-text)!important;border-color:var(--theme-outline-soft)!important}
+      html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .mail-row-bf:hover{background:var(--theme-surface-2)!important}
+      html[data-cherrift-theme]:not([data-cherrift-theme="default"]) #libraryV0551 .v0551-library-tabs button.active{
+        color:#fff!important;background:var(--theme-selection)!important
+      }
+      html[data-cherrift-theme]:not([data-cherrift-theme="default"]) #libraryV0551 .v0551-library-body{color:var(--theme-text)!important;background:transparent!important}
+      html[data-cherrift-theme]:not([data-cherrift-theme="default"]) :is(
+        #gear .gear-slot-v0560,#gear .gear-item-v0560
+      ){
+        color:var(--theme-text)!important;
+        background:linear-gradient(145deg,var(--theme-surface-2),var(--theme-surface-3))!important;
+        box-shadow:0 9px 20px var(--theme-shadow),0 0 13px color-mix(in srgb,var(--rarity,var(--theme-outline)) 24%,transparent)!important
+      }
+      html[data-cherrift-theme]:not([data-cherrift-theme="default"]) #gear :is(.gear-slot-v0560,.gear-item-v0560)>:is(b,small,em){color:var(--theme-text)!important}
+      html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .skill-tier-v082>header{border-color:var(--theme-outline-soft)!important}
+      html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .skill-tier-v082>header span{color:var(--theme-primary-strong)!important}
+
+      /* The Cherry thumbnail keeps its final geometry even while legacy code
+         refreshes the surrounding navigation. */
+      .mobile-nav-v090 :is(.cherry-nav-v0942,.cherry-nav-bf)>span{
+        overflow:hidden!important;border-radius:8px!important
+      }
+      .mobile-nav-v090 :is(.cherry-nav-v0942,.cherry-nav-bf)>span>img{
+        display:block!important;width:100%!important;height:100%!important;
+        border-radius:inherit!important;object-fit:cover!important
       }
 
       /* Desktop global wallet between the navigation and profile block. */
@@ -244,6 +340,68 @@
     paintGlobalNav();
   }
 
+  function selectedHomeStage() {
+    const stages = window.CHERRIFT_V040?.stages || window.CHERRIFT_DATA?.stages || [];
+    return stages.find(stage => stage.id === UI.save?.selectedStageId) ||
+      stages.find(stage => stage.id === UI.save?.stageId) || stages[0] || null;
+  }
+
+  function homeStageArt(stage) {
+    if (!stage || stage.training === true || /train|test/i.test(String(stage.id || ""))) {
+      return "assets/map/world1/world1_splashart_1.png";
+    }
+    const world = Math.max(1, number(stage.world) || number(String(stage.id || "").match(/world[_-]?(\d+)/i)?.[1]) || 1);
+    const index = Math.max(1, number(stage.index || stage.stage) || number(String(stage.id || "").match(/(?:_|-)(\d+)$/)?.[1]) || 1);
+    const artIndex = index <= 2 ? 1 : index <= 4 ? 2 : world === 4 ? 2 : 3;
+    return stage.splash || stage.splashArt || stage.art || stage.image || stage.preview || stage.thumbnail ||
+      `assets/map/world${world}/world${world}_splashart_${artIndex}.png`;
+  }
+
+  function selectedSkin() {
+    const skins = window.CHERRIFT_DATA?.skins || [];
+    return skins.find(skin => skin.id === UI.save?.selectedSkin) || skins[0] || null;
+  }
+
+  function syncCherryNavThumbnail() {
+    const nav = id("globalMobileNavV052") || q(".mobile-nav-v090");
+    const button = q(":scope > .cherry-nav-v0942,:scope > .cherry-nav-bf", nav);
+    const holder = q(":scope > span", button);
+    const skin = selectedSkin();
+    const source = skin?.icon || skin?.splash || "";
+    if (!holder || !source) return;
+    let image = q(":scope > img", holder);
+    if (!image) {
+      holder.textContent = "";
+      image = document.createElement("img");
+      image.alt = "";
+      holder.appendChild(image);
+    }
+    if (image.getAttribute("src") !== source) image.setAttribute("src", source);
+  }
+
+  function syncHomeFrame() {
+    const stage = selectedHomeStage();
+    const art = id("mobileStageArt");
+    const stars = id("mobileChapterStarsV0932") || q(".mobile-chapter-stars-v0932");
+    if (stage && art) {
+      const source = homeStageArt(stage);
+      const background = `linear-gradient(180deg,rgba(6,3,12,.04),rgba(8,3,14,.56)),url("${source}")`;
+      if (art.dataset.stableStageId !== stage.id || art.dataset.stableStageArt !== source || !art.style.backgroundImage.includes(source)) {
+        art.style.backgroundImage = background;
+        art.dataset.stableStageId = stage.id || "";
+        art.dataset.stableStageArt = source;
+      }
+      art.classList.toggle("night", Number(stage.world) === 2 || stage.theme === "forest_night");
+    }
+    if (stage && stars) {
+      const amount = clamp(number(UI.save?.stageStars?.[stage.id] || UI.save?.stageStats?.[stage.id]?.stars), 0, 3);
+      const markup = `<span>${"★".repeat(amount)}${"☆".repeat(3 - amount)}</span><small>${amount}/3</small>`;
+      if (stars.innerHTML !== markup) stars.innerHTML = markup;
+      stars.dataset.stableStageId = stage.id || "";
+    }
+    syncCherryNavThumbnail();
+  }
+
   function observeGlobalNav() {
     if (state.navObserver || !document.body) return;
     state.navObserver = new MutationObserver(mutations => {
@@ -265,6 +423,11 @@
     const target = normalizeRoute(route);
     closeMoreDrawer();
     document.body.style.overflow = "";
+
+    // Prime the selected stage and Cherry thumbnail while Home is still
+    // hidden. Older layers may render their World 1 defaults below, but the
+    // final correction also happens synchronously before the browser paints.
+    if (target === "menu") syncHomeFrame();
 
     if (target === "gacha") {
       window.CHERRIFT_ACCOUNT_MAIL?.hide?.();
@@ -297,11 +460,13 @@
     }
     if (!state.upstreamOpen) return;
     const result = state.upstreamOpen(target, ...args);
+    if (target === "menu") syncHomeFrame();
     syncGlobalNav(target);
     requestAnimationFrame(() => {
       hideGacha();
       window.CHERRIFT_ACCOUNT_MAIL?.patchVisibleRoute?.();
       window.CHERRIFT_WORLD_UI?.patchVisible?.();
+      if (target === "menu") syncHomeFrame();
       syncDesktopCurrency();
       syncSkinSplash();
       syncWorldSplashArts();
@@ -806,6 +971,7 @@
   function patchVisibleUi() {
     window.CHERRIFT_ACCOUNT_MAIL?.patchVisibleRoute?.();
     window.CHERRIFT_WORLD_UI?.patchVisible?.();
+    syncHomeFrame();
     syncDesktopCurrency();
     syncSkinSplash();
     syncWorldSplashArts();
@@ -827,7 +993,10 @@
     observeGlobalNav();
 
     window.addEventListener("resize", patchVisibleUi);
-    window.addEventListener("cherrift:savechange", syncDesktopCurrency);
+    window.addEventListener("cherrift:savechange", () => {
+      syncHomeFrame();
+      syncDesktopCurrency();
+    });
     window.addEventListener("cherrift:economychange", syncDesktopCurrency);
     window.addEventListener("cherrift:languagechange", patchVisibleUi);
 

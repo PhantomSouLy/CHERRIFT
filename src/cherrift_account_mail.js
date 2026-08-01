@@ -3,7 +3,7 @@
   if (window.__CHERRIFT_BUGFIX_V0941__) return;
   window.__CHERRIFT_BUGFIX_V0941__ = true;
 
-  const VERSION = "0.9.4.6-account-mail";
+  const VERSION = "0.9.4.7-account-mail";
   const id = value => document.getElementById(value);
   const q = (selector, root = document) => root?.querySelector?.(selector) || null;
   const qa = (selector, root = document) => Array.from(root?.querySelectorAll?.(selector) || []);
@@ -794,8 +794,27 @@
       }
       if (play) {
         const skin = selectedSkin();
-        const image = skin.icon || skin.splash || "";
-        play.innerHTML = `<span>${image ? `<img src="${esc(image)}" alt="">` : "🐰"}</span><b>Cherry</b>`;
+        const source = skin.icon || skin.splash || "";
+        let holder = q(":scope > span", play);
+        if (!holder) {
+          holder = document.createElement("span");
+          play.prepend(holder);
+        }
+        let image = q(":scope > img", holder);
+        if (source && !image) {
+          holder.textContent = "";
+          image = document.createElement("img");
+          image.alt = "";
+          holder.appendChild(image);
+        }
+        if (image && image.getAttribute("src") !== source) image.setAttribute("src", source);
+        if (!source && !image && holder.textContent !== "🐰") holder.textContent = "🐰";
+        let label = q(":scope > b", play);
+        if (!label) {
+          label = document.createElement("b");
+          play.appendChild(label);
+        }
+        if (label.textContent !== "Cherry") label.textContent = "Cherry";
       }
     }
   }
