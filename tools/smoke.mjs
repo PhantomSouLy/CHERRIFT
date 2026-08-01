@@ -170,6 +170,17 @@ function click(window,element,label){
   element.dispatchEvent(new window.MouseEvent("click",{bubbles:true,cancelable:true}));
 }
 
+async function assertActiveNav(window,name,selector,label){
+  const nav=window.document.getElementById("globalMobileNavV052");
+  await waitFor(()=>{
+    const active=Array.from(nav?.querySelectorAll(":scope > button.active")||[]);
+    const themed=Array.from(nav?.querySelectorAll(":scope > button.theme-nav-active")||[]);
+    return active.length===1&&themed.length===1&&active[0]===themed[0]&&active[0].matches(selector);
+  },`${name}: ${label} navigation state`);
+  assert.equal(nav.querySelectorAll(":scope > button.active").length,1,`${name}: exactly one active navigation item on ${label}`);
+  assert.equal(nav.querySelectorAll(":scope > button.theme-nav-active").length,1,`${name}: no legacy theme double-highlight on ${label}`);
+}
+
 function assertSkin(window,skinId){
   const config=window.CHERRIFT_CONFIG.player.skins[skinId];
   const data=window.CHERRIFT_DATA.skins.find(skin=>skin.id===skinId);
@@ -272,10 +283,16 @@ async function exercise(name,width,height){
     click(window,homeNav,`${name} global Home from Mail`);
     await waitFor(()=>!document.getElementById("menu")?.classList.contains("hidden"),`${name} Home leaves Mail`);
     assert.equal(document.getElementById("mailBugfixV0941").classList.contains("hidden"),true,`${name}: Mail panel closes behind global navigation`);
+    if(window.CHERRIFT_WORLD_UI.isMobile())await assertActiveNav(window,name,'[data-v082-open="menu"]',"Home");
     UI.open("profileV082");
     await waitFor(()=>!document.getElementById("profileBugfixV0941")?.classList.contains("hidden"),`${name} profile panel`);
     assert.equal(document.querySelector(".profile-title-collection-bf"),null,`${name}: obsolete Title Collection block removed`);
-    click(window,document.querySelector("[data-profile-title-stats]"),`${name} Title Stats info`);
+    const titleStatsButton=document.querySelector("[data-profile-title-stats]");
+    assert.equal(titleStatsButton?.textContent?.trim(),"Title Stats",`${name}: Title Stats is a readable text button`);
+    assert.ok(titleStatsButton?.closest(".profile-avatar-column-bf"),`${name}: Title Stats button is below the avatar in the marked column`);
+    assert.equal(document.querySelector(".profile-title-row-bf [data-profile-title-stats]"),null,`${name}: old square info button is removed from the title row`);
+    if(window.CHERRIFT_WORLD_UI.isMobile())await assertActiveNav(window,name,"[data-v082-toggle-mobile]","Profile / More");
+    click(window,titleStatsButton,`${name} Title Stats info`);
     assert.equal(document.getElementById("profileTitleStatsModalV0945")?.classList.contains("hidden"),false,`${name}: Title Stats opens as a separate panel`);
     assert.match(document.getElementById("profileTitleStatsBody")?.textContent||"",/not available|nem érhetők el/i,`${name}: future Title Stats has an honest empty state`);
     click(window,document.querySelector("[data-title-stats-close]"),`${name} close Title Stats`);
@@ -284,13 +301,14 @@ async function exercise(name,width,height){
       click(window,cherryNav,`${name} global Cherry from Profile`);
       await waitFor(()=>!document.getElementById("skins")?.classList.contains("hidden"),`${name} Cherry leaves Profile`);
       assert.equal(document.getElementById("profileBugfixV0941").classList.contains("hidden"),true,`${name}: Profile closes behind global Cherry navigation`);
-      assert.equal(document.querySelectorAll("#globalMobileNavV052 > button.active").length,1,`${name}: one active item after Cherry navigation`);
+      await assertActiveNav(window,name,'[data-v082-open="skins"]',"Cherry");
       UI.open("profileV082");
       await waitFor(()=>!document.getElementById("profileBugfixV0941")?.classList.contains("hidden"),`${name} reopen Profile`);
       const gachaNav=document.querySelector('#globalMobileNavV052 [data-v082-open="gachaV082"]');
       click(window,gachaNav,`${name} global Gacha from Profile`);
       await waitFor(()=>!document.getElementById("gachaChestOnlyV12")?.classList.contains("hidden"),`${name} Gacha leaves Profile`);
       assert.equal(document.getElementById("profileBugfixV0941").classList.contains("hidden"),true,`${name}: Profile closes behind global Gacha navigation`);
+      await assertActiveNav(window,name,'[data-v082-open="gachaV082"]',"Gacha");
       UI.open("profileV082");
       await waitFor(()=>!document.getElementById("profileBugfixV0941")?.classList.contains("hidden"),`${name} reopen Profile after Gacha`);
     }
@@ -298,10 +316,11 @@ async function exercise(name,width,height){
     click(window,gearNav,`${name} global Gear from Profile`);
     await waitFor(()=>!document.getElementById("gear")?.classList.contains("hidden"),`${name} Gear leaves Profile`);
     assert.equal(document.getElementById("profileBugfixV0941").classList.contains("hidden"),true,`${name}: Profile panel closes behind global navigation`);
-    assert.equal(document.querySelectorAll("#globalMobileNavV052 > button.active").length,1,`${name}: one active global navigation item`);
+    if(window.CHERRIFT_WORLD_UI.isMobile())await assertActiveNav(window,name,'[data-v082-open="gear"]',"Gear");
     UI.open("menu");
     click(window,document.querySelector('#menuToolsV082 [data-v082-menu-tool="settings"]'),`${name} settings tool`);
     await waitFor(()=>!document.getElementById("settings")?.classList.contains("hidden"),`${name} settings panel`);
+    if(window.CHERRIFT_WORLD_UI.isMobile())await assertActiveNav(window,name,"[data-v082-toggle-mobile]","Settings / More");
     UI.open("menu");
     click(window,document.getElementById("playBtn"),`${name} main Play`);
     if(window.CHERRIFT_WORLD_UI.isMobile()){
@@ -575,7 +594,34 @@ async function exercise(name,width,height){
       assert.equal(window.getComputedStyle(document.querySelector("#menu .mobile-side-actions-v0932.left")).display,"none",`${name}: left Home rail is removed`);
       assert.equal(document.querySelectorAll("#menu .mobile-side-actions-v0932.right > button").length,3,`${name}: Daily, Weekly and Login stay in one right rail`);
       assert.notEqual(window.getComputedStyle(document.getElementById("mobilePlayBtn")).display,"none",`${name}: stage Play remains visible`);
-      assert.equal(document.querySelectorAll("#globalMobileNavV052 > button.active").length,1,`${name}: global nav never double-highlights`);
+      await assertActiveNav(window,name,'[data-v082-open="menu"]',"final Home");
+
+      const moreButton=document.querySelector("#globalMobileNavV052 > button[data-v082-toggle-mobile]");
+      const drawer=document.getElementById("mobileMenuV082");
+      click(window,moreButton,`${name} open More drawer from Home`);
+      await waitFor(()=>!drawer.classList.contains("hidden")&&window.getComputedStyle(drawer).display!=="none",`${name}: More drawer opens visibly`);
+      assert.equal(drawer.getAttribute("aria-hidden"),"false",`${name}: open More drawer is accessible`);
+      await assertActiveNav(window,name,"[data-v082-toggle-mobile]","open More drawer");
+
+      click(window,drawer.querySelector('[data-v082-open="settings"]'),`${name} open Settings from More drawer`);
+      await waitFor(()=>!document.getElementById("settings")?.classList.contains("hidden")&&drawer.classList.contains("hidden"),`${name}: More destination opens and drawer closes`);
+      await assertActiveNav(window,name,"[data-v082-toggle-mobile]","Settings opened from More");
+
+      click(window,moreButton,`${name} reopen More drawer from Settings`);
+      await waitFor(()=>!drawer.classList.contains("hidden")&&window.getComputedStyle(drawer).display!=="none",`${name}: More drawer reopens from a subpage`);
+      click(window,drawer.querySelector("[data-v082-toggle-mobile]"),`${name} close More drawer`);
+      await waitFor(()=>drawer.classList.contains("hidden"),`${name}: More close button works`);
+      await assertActiveNav(window,name,"[data-v082-toggle-mobile]","Settings after closing More");
+
+      UI.open("dailyQuests");
+      await waitFor(()=>!document.getElementById("dailyQuests")?.classList.contains("hidden"),`${name}: Daily Quests route`);
+      await assertActiveNav(window,name,"[data-v082-toggle-mobile]","Daily Quests / More");
+      UI.open("loginRewards");
+      await waitFor(()=>!document.getElementById("loginRewards")?.classList.contains("hidden"),`${name}: Login Rewards route`);
+      await assertActiveNav(window,name,"[data-v082-toggle-mobile]","Login Rewards / More");
+      UI.open("menu");
+      await waitFor(()=>!document.getElementById("menu")?.classList.contains("hidden"),`${name}: return Home after More checks`);
+      await assertActiveNav(window,name,'[data-v082-open="menu"]',"Home after More checks");
       const fullscreenHeight=height+37;
       window.visualViewport.height=fullscreenHeight;
       document.dispatchEvent(new window.Event("fullscreenchange"));
