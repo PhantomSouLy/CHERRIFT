@@ -1,0 +1,44 @@
+CHERRIFT v0.9.5-prebeta.1 - csere/feltoltes
+
+A ZIP gyokeret a repository gyokerebe kell masolni, azonos utvonalon felulirva
+a meglevo fajlokat.
+
+CSERELENDO / UJ FAJLOK
+.github/workflows/ci.yml
+README.md
+ASSET_PLACEHOLDERS.md
+PREBETA_V095_BALANCE_HU.md
+PREBETA_V095_SETUP_HU.md
+index.html
+menu_v040.css
+package.json
+package-lock.json
+assets/cherrift_prebeta.css
+assets/ui/themes/theme_system.css
+src/config.js
+src/supabase_config.js
+src/cherrift_app.js
+src/cherrift_balance.js
+src/cherrift_gacha.js
+src/cherrift_live_services.js
+src/cherrift_account_mail.js
+src/cherrift_world_ui.js
+src/cherrift_stability.js
+src/cherrift_prebeta.js
+src/cherrift_manifest.json
+supabase/functions/player-api/index.ts
+supabase/migrations/20260801_prebeta_v095.sql
+tools/smoke.mjs
+tools/validate.mjs
+
+TORLENDO REGI PATCH FAJLOK
+Lasd: DELETE_OLD_PATCH_FILES_V095.txt
+
+SZERVEROLDALI LEPESEK
+1. Futtasd a supabase/migrations/20260801_prebeta_v095.sql fajlt a Supabase SQL Editorben.
+2. Deployold ujra a player-api Edge Functiont.
+3. Ezutan deployold a webes fajlokat.
+
+ELLENORZES
+npm ci
+npm test

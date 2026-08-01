@@ -109,14 +109,14 @@
     const pool = exactPool.length ? exactPool : allSkins;
     const skin = pool.length ? pool[Math.floor(Math.random() * pool.length)] : null;
     if (!skin) {
-      const amount = { Common: 5, Rare: 15, Epic: 40 }[rarity] || 5;
+      const amount = window.CHERRIFT_BALANCE?.gacha?.duplicateEssence?.[rarity] || 5;
       save.sakuraEssence += amount;
       return { kind: "essence", rarity, amount, label: `${amount} Sakura Essence`, icon: "🌸" };
     }
     const duplicate = save.unlockedSkins.includes(skin.id);
     if (!duplicate) save.unlockedSkins.push(skin.id);
     if (duplicate) {
-      const amount = { Common: 5, Rare: 15, Epic: 40 }[rarity] || 5;
+      const amount = window.CHERRIFT_BALANCE?.gacha?.duplicateEssence?.[rarity] || 5;
       save.sakuraEssence += amount;
       return { kind: "skin", duplicate: true, rarity, amount, skinId: skin.id, label: `${skin.name} · Duplicate +${amount} Essence`, icon: skin.icon || skin.emoji || "🐰", asset: skin.splash || skin.icon || "" };
     }
@@ -126,14 +126,14 @@
   function grantGear(save, rarity) {
     const create = window.CHERRIFT_V050?.createGear;
     if (typeof create !== "function") {
-      const amount = { Common: 30, Rare: 90, Epic: 240 }[rarity] || 30;
+      const amount = { Common: 30, Uncommon: 50, Rare: 90, Epic: 240 }[rarity] || 30;
       save.coins += amount;
       return { kind: "coins", rarity, amount, label: `${amount} Coin`, icon: "🪙" };
     }
     const item = create(currentWorld(save), rarity);
     window.CHERRIFT_V070?.syncItemToArsenal?.(item, save);
     if (save.inventory.length >= 80) {
-      const amount = window.CHERRIFT_V050?.sellValue?.(item) || { Common: 20, Rare: 60, Epic: 180 }[rarity] || 20;
+      const amount = window.CHERRIFT_V050?.sellValue?.(item) || { Common: 20, Uncommon: 35, Rare: 60, Epic: 180 }[rarity] || 20;
       save.coins += amount;
       return { kind: "coins", rarity, amount, label: text("inventoryFull", amount), icon: "🪙" };
     }
@@ -150,22 +150,24 @@
       save.gacha.pity[tier] = 0;
       return grantSkin(save, def.rarity);
     }
-    const random = Math.random();
+    const luck = Math.max(0,Math.min(.15,Number(window.CHERRIFT_PREBETA?.titleStats?.(save)?.chestLuck)||0));
+    const random = Math.min(.999999,Math.random()+luck);
     if (tier === "common") {
-      if (random < .87) return grantGear(save, "Common");
-      if (random < .975) return grantSkin(save, "Common");
+      if (random < .66) return grantGear(save, "Common");
+      if (random < .88) return grantGear(save, "Uncommon");
+      if (random < .96) return grantSkin(save, "Common");
       if (random < .995) return grantGear(save, "Rare");
       return grantSkin(save, "Rare");
     }
     if (tier === "rare") {
-      if (random < .32) return grantGear(save, "Common");
-      if (random < .81) return grantGear(save, "Rare");
-      if (random < .91) return grantSkin(save, "Common");
-      if (random < .985) return grantSkin(save, "Rare");
+      if (random < .25) return grantGear(save, "Uncommon");
+      if (random < .80) return grantGear(save, "Rare");
+      if (random < .88) return grantSkin(save, "Common");
+      if (random < .98) return grantSkin(save, "Rare");
       return grantGear(save, "Epic");
     }
-    if (random < .45) return grantGear(save, "Rare");
-    if (random < .79) return grantGear(save, "Epic");
+    if (random < .48) return grantGear(save, "Rare");
+    if (random < .85) return grantGear(save, "Epic");
     if (random < .90) return grantSkin(save, "Rare");
     return grantSkin(save, "Epic");
   }
@@ -177,16 +179,16 @@
     const id = aliases[resourceId] || resourceId;
     const paths = {
       "currency.coins": ["coins"],
-      "currency.blossom_gems": ["blossomGems"],
+      "currency.blossom_gems": ["bloomGems"],
       "currency.sakura_essence": ["sakuraEssence"],
       "chest.common": ["chests", "common"],
       "chest.rare": ["chests", "rare"],
       "chest.epic": ["chests", "epic"],
       "chest.legendary": ["chests", "legendary"],
-      "material.copper": ["arsenal", "materials", "copper"],
+      "material.copper": ["bag", "materials", "stones", "copper"],
       "material.iron": ["arsenal", "materials", "iron"],
       "material.steel": ["arsenal", "materials", "steel"],
-      "material.silver": ["arsenal", "materials", "silver"],
+      "material.silver": ["bag", "materials", "stones", "silver"],
       "material.royal": ["arsenal", "materials", "royal"],
       "material.magical": ["arsenal", "materials", "magical"]
     };
@@ -332,7 +334,7 @@
     const back = q("[data-gco-back]", panel);
     if (back) back.setAttribute("aria-label", text("back"));
     const scrap = number(save.gearScrap ?? save.scrap ?? save.bag?.materials?.gearScrap ?? save.arsenal?.materials?.gearScrap);
-    id("gcoWallet").innerHTML = `<b title="Coin"><span>🪙</span><span>${number(save.coins)}</span></b><b title="Blossom Gem"><span>💎</span><span>${number(save.blossomGems)}</span></b><b title="Sakura Essence"><span>🌸</span><span>${number(save.sakuraEssence)}</span></b><b title="Gear Scrap"><span>⚙</span><span>${scrap}</span></b>`;
+    id("gcoWallet").innerHTML = `<b title="Coin"><span>🪙</span><span>${number(save.coins)}</span></b><b title="Bloom Gem"><span>💎</span><span>${number(save.bloomGems ?? save.blossomGems)}</span></b><b title="Sakura Essence"><span>🌸</span><span>${number(save.sakuraEssence)}</span></b><b title="Scrap"><span>⚙</span><span>${scrap}</span></b>`;
     id("gcoChestWallet").innerHTML = TIERS.map(tier => `<b><img src="${DEF[tier].asset}" alt=""><span>${number(save.chests[tier])}</span></b>`).join("");
     id("gcoCard").innerHTML = `<article class="gco-card ${state.tier}" data-gco-card><div class="gco-art"><img src="${def.asset}" alt="${esc(chestName(state.tier))}" onerror="this.hidden=true"><span class="gco-art-fallback" aria-hidden="true">🎁</span></div><div class="gco-rarity">${state.tier}</div><h3>${esc(chestName(state.tier))}</h3><p class="gco-copy">${esc(chestItems(state.tier))}</p>${count < 1 ? `<p class="gco-empty-note">${esc(text("empty", chestName(state.tier)))}</p>` : ""}<section class="gco-pity"><header><span>${esc(text("guaranteed"))}</span><b>${pity} / ${def.pity}</b></header><div class="gco-track"><i style="width:${Math.min(100, pity / def.pity * 100)}%"></i></div></section><div class="gco-actions"><button type="button" data-gco-open="1" ${count < 1 || state.busy ? "disabled" : ""}>${esc(text("openOne"))}</button><button type="button" data-gco-open="10" ${count < 10 || state.busy ? "disabled" : ""}>${esc(text("openTen"))}</button></div></article>`;
     id("gcoDots").innerHTML = TIERS.map(tier => `<button type="button" class="${tier === state.tier ? "active" : ""}" data-gco-tier="${tier}" aria-label="${esc(chestName(tier))}"></button>`).join("");

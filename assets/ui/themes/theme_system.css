@@ -1561,3 +1561,54 @@ body:not(.is-playing) .training-damage-v094{display:none!important}
   #gear .gear-slot-v0560.theme-equipped-slot{width:min(30vw,116px)!important;min-width:88px!important}
   .cherrift-startup-v5>main{padding-top:min(22vh,150px)!important}
 }
+
+/* ---------- Consolidated v0.9.4+ panels (Gacha, Account and Mail) ---------- */
+html[data-cherrift-theme]:not([data-cherrift-theme="default"]) :is(#gachaChestOnlyV12,.bf-panel,#profileBugfixV0941,#mailBugfixV0941,#libraryV0551) {
+  color:var(--theme-text)!important;
+  background:var(--theme-page-bg) fixed!important;
+}
+html[data-cherrift-theme]:not([data-cherrift-theme="default"]) :is(.gco-head h2,.gco-card h3,.bf-head h2,.bf-modal-card h3,.mail-detail-bf h3,.profile-name-row-bf h3) {
+  color:var(--theme-text)!important;
+  text-shadow:none!important;
+}
+html[data-cherrift-theme]:not([data-cherrift-theme="default"]) :is(.gco-wallet b,.gco-chests b,.gco-card,.gco-modal-card,.bf-card,.bf-modal-card,.mail-reward-bf,.title-stats-row-bf,.title-stats-total-bf,.title-row-bf) {
+  color:var(--theme-text)!important;
+  border-color:var(--theme-outline-soft)!important;
+  background:var(--theme-surface-glass)!important;
+  box-shadow:0 16px 34px var(--theme-shadow)!important;
+}
+html[data-cherrift-theme]:not([data-cherrift-theme="default"]) :is(.gco-art,.gco-pity,.gco-summary-row,.mail-list-bf,.mail-toolbar-bf) {
+  color:var(--theme-text)!important;
+  border-color:var(--theme-outline-soft)!important;
+  background:var(--theme-surface-2)!important;
+}
+html[data-cherrift-theme]:not([data-cherrift-theme="default"]) :is(.gco-copy,.gco-pity,.gco-summary-row,.mail-row-bf small,.mail-body-bf,.profile-lines-bf,.profile-discord-bf,.title-row-bf small) {
+  color:var(--theme-muted)!important;
+}
+html[data-cherrift-theme]:not([data-cherrift-theme="default"]) :is(.gco-actions button,.gco-next,.gco-close,.bf-button:not(.secondary):not(.danger),.title-row-bf button) {
+  color:#fff!important;
+  border-color:transparent!important;
+  background:var(--theme-button)!important;
+}
+html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .bf-button.danger {color:#fff!important;background:var(--theme-danger)!important}
+html[data-cherrift-theme]:not([data-cherrift-theme="default"]) :is(.bf-button.secondary,.bf-back,.gco-back,.gco-arrow,.profile-mini-edit-bf,.profile-title-stats-button-bf) {
+  color:var(--theme-text)!important;
+  border-color:var(--theme-outline-soft)!important;
+  background:var(--theme-surface-2)!important;
+}
+html[data-cherrift-theme]:not([data-cherrift-theme="default"]) :is(.gco-modal,.bf-modal) {
+  background:color-mix(in srgb,var(--theme-deep-2) 70%,transparent)!important;
+}
+html[data-cherrift-theme]:not([data-cherrift-theme="default"]) :is(.v0551-library-tabs,.v0551-profile-card,.v0551-stat-grid article,.v0551-collect) {
+  color:var(--theme-text)!important;
+  border-color:var(--theme-outline-soft)!important;
+  background:var(--theme-surface-glass)!important;
+  box-shadow:0 12px 28px var(--theme-shadow)!important;
+}
+html[data-cherrift-theme]:not([data-cherrift-theme="default"]) :is(.v0551-stat-grid article small,.v0551-collect small,.v0551-profile-card p) {
+  color:var(--theme-muted)!important;
+}
+html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .v0551-library-tabs button.active {
+  color:#fff!important;
+  background:var(--theme-selection)!important;
+}

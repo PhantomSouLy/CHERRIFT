@@ -97,6 +97,68 @@ function errorCode(error: unknown): string {
   return message.slice(0, 240);
 }
 
+function safeText(value: unknown, max = 80): string {
+  return typeof value === "string" ? value.trim().replace(/[\u0000-\u001f]/g, "").slice(0, max) : "";
+}
+
+function profileCode(userId: string): string {
+  return `CH-${userId.replaceAll("-", "").slice(0, 10).toUpperCase()}`;
+}
+
+function mondayUtc(): string {
+  const now = new Date();
+  const day = now.getUTCDay() || 7;
+  now.setUTCDate(now.getUTCDate() - day + 1);
+  return now.toISOString().slice(0, 10);
+}
+
+async function profileRows(userIds: string[]): Promise<any[]> {
+  if (!userIds.length) return [];
+  const { data, error } = await adminClient.from("player_profiles")
+    .select("user_id,public_code,display_name,discord_name,avatar_url,frame_id,level,power,best_weekly_rank,last_active_at")
+    .in("user_id", [...new Set(userIds)]);
+  if (error) throw error;
+  return data ?? [];
+}
+
+async function friendCount(userId: string): Promise<number> {
+  const [{ count: low, error: lowError }, { count: high, error: highError }] = await Promise.all([
+    adminClient.from("friendships").select("user_low", { count:"exact", head:true }).eq("user_low", userId),
+    adminClient.from("friendships").select("user_high", { count:"exact", head:true }).eq("user_high", userId),
+  ]);
+  if (lowError) throw lowError;
+  if (highError) throw highError;
+  return Number(low || 0) + Number(high || 0);
+}
+
+async function friendLimit(userId: string): Promise<number> {
+  const { data, error } = await adminClient.from("player_profiles").select("level,friend_slot_bonus").eq("user_id",userId).single();
+  if (error) throw error;
+  return 30 + (Number(data?.level || 1) >= 20 ? 5 : 0) + Number(data?.friend_slot_bonus || 0);
+}
+
+async function frameAllowed(userId: string, frameId: string): Promise<boolean> {
+  if (frameId === "frame0lvl") return true;
+  const [{ data: profile, error: profileError }, { data: rights, error: rightsError }] = await Promise.all([
+    adminClient.from("player_profiles").select("level,best_weekly_rank").eq("user_id",userId).single(),
+    adminClient.from("account_entitlements").select("entitlements").eq("user_id",userId).maybeSingle(),
+  ]);
+  if (profileError) throw profileError;
+  if (rightsError) throw rightsError;
+  const entitlements = (rights?.entitlements ?? {}) as Record<string, unknown>;
+  if (entitlements.owner || entitlements.allFrames) return true;
+  const levelMatch=frameId.match(/^frame(5|30|50|80|100|150|200|225|250)lvl$/);
+  if(levelMatch)return Number(profile.level||1)>=Number(levelMatch[1]);
+  const rankMatch=frameId.match(/^frame_rank(50|3|2|1)$/);
+  if(rankMatch){
+    const { count, error }=await adminClient.from("weekly_power_ranking").select("user_id",{count:"exact",head:true}).eq("week_start",mondayUtc());
+    if(error)throw error;
+    const rank=Number(profile.best_weekly_rank||0);return Number(count||0)>=100&&rank>0&&rank<=Number(rankMatch[1]);
+  }
+  const entitlementByFrame: Record<string,string>={frame_beta:"beta",frame_pre_reg:"preRegistration",frame_event_1:"event1",frame_event_2:"event2",frame_event_3:"event3"};
+  return !!entitlements[entitlementByFrame[frameId]];
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders(req) });
   if (req.method !== "POST") return json(req, { error: "method_not_allowed" }, 405);
@@ -107,6 +169,164 @@ Deno.serve(async (req: Request) => {
     const body = await req.json().catch(() => ({}));
     if (!isObject(body)) throw new Error("invalid_json_body");
     const action = typeof body.action === "string" ? body.action : "";
+
+    if (action === "bootstrap_profile") {
+      const metadata = user.user_metadata ?? {};
+      const displayName = safeText(metadata.full_name || metadata.name || metadata.user_name || metadata.preferred_username, 40) || "Cherry Player";
+      const discordName = safeText(metadata.user_name || metadata.preferred_username || metadata.name, 80) || null;
+      const avatarUrl = safeText(metadata.avatar_url || metadata.picture, 500) || null;
+      const { data: existing } = await adminClient.from("player_profiles").select("frame_id,level,power").eq("user_id",user.id).maybeSingle();
+      const { data: profile, error: profileError } = await adminClient.from("player_profiles").upsert({
+        user_id:user.id, public_code:profileCode(user.id), display_name:displayName,
+        discord_name:discordName, avatar_url:avatarUrl, frame_id:existing?.frame_id || "frame0lvl",
+        level:Number(existing?.level || 1), power:Number(existing?.power || 0), last_active_at:new Date().toISOString(), updated_at:new Date().toISOString(),
+      }, { onConflict:"user_id" }).select("user_id,public_code,display_name,discord_name,avatar_url,frame_id,level,power,best_weekly_rank").single();
+      if (profileError) throw profileError;
+      const { data: entitlementRow, error: entitlementError } = await adminClient.from("account_entitlements").select("entitlements").eq("user_id",user.id).maybeSingle();
+      if (entitlementError) throw entitlementError;
+      return json(req,{ok:true,requestId,profile,entitlements:entitlementRow?.entitlements ?? {}});
+    }
+
+    if (action === "sync_profile") {
+      const updates: Record<string, unknown> = { updated_at:new Date().toISOString(), last_active_at:new Date().toISOString() };
+      const displayName = safeText(body.display_name,40);
+      const frameId = safeText(body.frame_id,50);
+      if (displayName) updates.display_name=displayName;
+      if (frameId && /^frame(?:0lvl|5lvl|30lvl|50lvl|80lvl|100lvl|150lvl|200lvl|225lvl|250lvl|_beta|_pre_reg|_event_[123]|_rank(?:50|3|2|1))$/.test(frameId)) {
+        if(!await frameAllowed(user.id,frameId))throw new Error("frame_locked");
+        updates.frame_id=frameId;
+      }
+      const { data, error } = await adminClient.from("player_profiles").update(updates).eq("user_id",user.id).select("user_id,public_code,display_name,avatar_url,frame_id,level,power").single();
+      if (error) throw error;
+      return json(req,{ok:true,requestId,profile:data});
+    }
+
+    if (action === "social_search") {
+      const query = safeText(body.query,80);
+      if (query.length < 2) throw new Error("search_too_short");
+      let builder = adminClient.from("player_profiles").select("user_id,public_code,display_name,discord_name,avatar_url,frame_id,level,power").neq("user_id",user.id).limit(20);
+      if(isUuid(query))builder=builder.eq("user_id",query);
+      else if(/^CH-[A-Z0-9]+$/i.test(query))builder=builder.ilike("public_code",`${query}%`);
+      else {const term=query.replace(/[%_,()]/g,"");builder=builder.or(`display_name.ilike.%${term}%,discord_name.ilike.%${term}%`);}
+      const { data, error } = await builder;
+      if (error) throw error;
+      const { data: blocks, error: blockError } = await adminClient.from("user_blocks").select("blocker_id,blocked_id").or(`blocker_id.eq.${user.id},blocked_id.eq.${user.id}`);
+      if (blockError) throw blockError;
+      const blocked = new Set((blocks ?? []).map((row:any)=>row.blocker_id===user.id?row.blocked_id:row.blocker_id));
+      return json(req,{ok:true,requestId,players:(data??[]).filter((row:any)=>!blocked.has(row.user_id))});
+    }
+
+    if (action === "friend_list") {
+      const view = safeText(body.view,20) || "friends";
+      if (view === "requests") {
+        const { data, error } = await adminClient.from("friend_requests").select("sender_id,created_at").eq("receiver_id",user.id).eq("status","pending").order("created_at",{ascending:false});
+        if (error) throw error;
+        const profiles=await profileRows((data??[]).map((row:any)=>row.sender_id));
+        return json(req,{ok:true,requestId,requests:profiles.map((profile:any)=>({...profile,request_id:profile.user_id}))});
+      }
+      if (view === "blocked") {
+        const { data, error } = await adminClient.from("user_blocks").select("blocked_id,created_at").eq("blocker_id",user.id).order("created_at",{ascending:false});
+        if (error) throw error;
+        return json(req,{ok:true,requestId,blocked:await profileRows((data??[]).map((row:any)=>row.blocked_id))});
+      }
+      const { data, error } = await adminClient.from("friendships").select("user_low,user_high,created_at").or(`user_low.eq.${user.id},user_high.eq.${user.id}`).order("created_at",{ascending:false});
+      if (error) throw error;
+      const ids=(data??[]).map((row:any)=>row.user_low===user.id?row.user_high:row.user_low);
+      return json(req,{ok:true,requestId,friends:await profileRows(ids),friend_count:ids.length});
+    }
+
+    if (action === "friend_request") {
+      if (!isUuid(body.target_user_id) || body.target_user_id===user.id) throw new Error("invalid_friend_target");
+      const target=body.target_user_id;
+      const { data: block } = await adminClient.from("user_blocks").select("blocker_id").or(`and(blocker_id.eq.${user.id},blocked_id.eq.${target}),and(blocker_id.eq.${target},blocked_id.eq.${user.id})`).maybeSingle();
+      if (block) throw new Error("friend_blocked");
+      const limit=await friendLimit(user.id);
+      if (await friendCount(user.id)>=limit) throw new Error("friend_list_full");
+      const { error } = await adminClient.from("friend_requests").upsert({sender_id:user.id,receiver_id:target,status:"pending",updated_at:new Date().toISOString()},{onConflict:"sender_id,receiver_id"});
+      if (error) throw error;
+      return json(req,{ok:true,requestId});
+    }
+
+    if (action === "friend_accept") {
+      if (!isUuid(body.request_id)) throw new Error("invalid_friend_request");
+      const sender=body.request_id;
+      const { data: request, error: requestError } = await adminClient.from("friend_requests").select("sender_id,receiver_id,status").eq("sender_id",sender).eq("receiver_id",user.id).eq("status","pending").single();
+      if (requestError || !request) throw new Error("friend_request_missing");
+      const [receiverCount,senderCount,receiverLimit,senderLimit]=await Promise.all([friendCount(user.id),friendCount(sender),friendLimit(user.id),friendLimit(sender)]);
+      if(receiverCount>=receiverLimit||senderCount>=senderLimit)throw new Error("friend_list_full");
+      const { data: block } = await adminClient.from("user_blocks").select("blocker_id").or(`and(blocker_id.eq.${user.id},blocked_id.eq.${sender}),and(blocker_id.eq.${sender},blocked_id.eq.${user.id})`).maybeSingle();
+      if(block)throw new Error("friend_blocked");
+      const [userLow,userHigh]=[sender,user.id].sort();
+      const { error } = await adminClient.from("friendships").upsert({user_low:userLow,user_high:userHigh},{onConflict:"user_low,user_high"});
+      if (error) throw error;
+      await adminClient.from("friend_requests").update({status:"accepted",updated_at:new Date().toISOString()}).eq("sender_id",sender).eq("receiver_id",user.id);
+      return json(req,{ok:true,requestId});
+    }
+
+    if (action === "friend_delete") {
+      if (!isUuid(body.target_user_id)) throw new Error("invalid_friend_target");
+      const [userLow,userHigh]=[user.id,body.target_user_id].sort();
+      const { error } = await adminClient.from("friendships").delete().eq("user_low",userLow).eq("user_high",userHigh);
+      if (error) throw error;
+      return json(req,{ok:true,requestId});
+    }
+
+    if (action === "block_player") {
+      if (!isUuid(body.target_user_id) || body.target_user_id===user.id) throw new Error("invalid_block_target");
+      const target=body.target_user_id; const [userLow,userHigh]=[user.id,target].sort();
+      const { error } = await adminClient.from("user_blocks").upsert({blocker_id:user.id,blocked_id:target},{onConflict:"blocker_id,blocked_id"});
+      if (error) throw error;
+      await adminClient.from("friendships").delete().eq("user_low",userLow).eq("user_high",userHigh);
+      await adminClient.from("friend_requests").delete().or(`and(sender_id.eq.${user.id},receiver_id.eq.${target}),and(sender_id.eq.${target},receiver_id.eq.${user.id})`);
+      return json(req,{ok:true,requestId});
+    }
+
+    if (action === "unblock_player") {
+      if (!isUuid(body.target_user_id)) throw new Error("invalid_block_target");
+      const { error } = await adminClient.from("user_blocks").delete().eq("blocker_id",user.id).eq("blocked_id",body.target_user_id);
+      if (error) throw error;
+      return json(req,{ok:true,requestId});
+    }
+
+    if (action === "player_profile") {
+      if (!isUuid(body.target_user_id)) throw new Error("invalid_profile_target");
+      const { data, error } = await adminClient.from("player_profiles").select("user_id,public_code,display_name,avatar_url,frame_id,level,power,best_weekly_rank").eq("user_id",body.target_user_id).single();
+      if (error) throw error;
+      return json(req,{ok:true,requestId,profile:data});
+    }
+
+    if (action === "ranking_submit") {
+      const power=Math.min(100000000,Math.max(0,Math.floor(Number(body.power)||0)));
+      const level=Math.min(1000,Math.max(1,Math.floor(Number(body.level)||1)));
+      const weekStart=mondayUtc();
+      const { error } = await adminClient.from("weekly_power_ranking").upsert({week_start:weekStart,user_id:user.id,power,level,submitted_at:new Date().toISOString()},{onConflict:"week_start,user_id"});
+      if (error) throw error;
+      const [{ count: higher, error: rankError }, { count: activePlayers, error: activeError }, { data: currentProfile, error: currentError }] = await Promise.all([
+        adminClient.from("weekly_power_ranking").select("user_id",{count:"exact",head:true}).eq("week_start",weekStart).gt("power",power),
+        adminClient.from("weekly_power_ranking").select("user_id",{count:"exact",head:true}).eq("week_start",weekStart),
+        adminClient.from("player_profiles").select("best_weekly_rank").eq("user_id",user.id).single(),
+      ]);
+      if(rankError)throw rankError;if(activeError)throw activeError;if(currentError)throw currentError;
+      const rank=Number(higher||0)+1;
+      const previousBest=Number(currentProfile?.best_weekly_rank||0);
+      const bestWeeklyRank=previousBest>0?Math.min(previousBest,rank):rank;
+      await adminClient.from("player_profiles").update({power,level,best_weekly_rank:bestWeeklyRank,last_active_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq("user_id",user.id);
+      return json(req,{ok:true,requestId,week_start:weekStart,rank,best_weekly_rank:bestWeeklyRank,active_players:Number(activePlayers||0)});
+    }
+
+    if (action === "ranking_list") {
+      const limit=Math.min(50,Math.max(1,Math.floor(Number(body.limit)||50)));
+      const weekStart=mondayUtc();
+      const [{ data: ranks, error }, { count: activePlayers, error: activeError }] = await Promise.all([
+        adminClient.from("weekly_power_ranking").select("user_id,power,level,submitted_at").eq("week_start",weekStart).order("power",{ascending:false}).order("submitted_at",{ascending:true}).limit(limit),
+        adminClient.from("weekly_power_ranking").select("user_id",{count:"exact",head:true}).eq("week_start",weekStart),
+      ]);
+      if (error) throw error;
+      if (activeError) throw activeError;
+      const profiles=await profileRows((ranks??[]).map((row:any)=>row.user_id)); const byId=new Map(profiles.map((row:any)=>[row.user_id,row]));
+      const ranking=(ranks??[]).map((row:any,index:number)=>({rank:index+1,...row,...(byId.get(row.user_id)||{})}));
+      return json(req,{ok:true,requestId,week_start:weekStart,active_players:Number(activePlayers||0),ranking});
+    }
 
     if (action === "reward_catalog") {
       const { data, error } = await adminClient

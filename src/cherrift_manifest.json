@@ -1,10 +1,11 @@
 {
-  "runtimeVersion": "1.4.1-stabilized-modules",
-  "gameVersion": "0.9.4-test",
+  "runtimeVersion": "1.5.0-prebeta-modules",
+  "gameVersion": "0.9.5-prebeta.1",
   "javascript": "src/cherrift_app.js",
   "stylesheet": "assets/cherrift_app.css",
   "externalConfiguration": [
     "src/config.js",
+    "src/cherrift_balance.js",
     "src/supabase_config.js"
   ],
   "vendor": [
@@ -26,7 +27,13 @@
     "Custom hashed redeem codes with zero-as-unlimited limits",
     "Common, Rare and Epic chest-only Gacha with guaranteed-skin pity",
     "Deterministic navigation router for desktop, phone and landscape",
-    "Per-account local backup with cloud retry"
+    "Per-account local backup with cloud retry",
+    "Pre-beta starter progression without test unlocks",
+    "50-point regenerating Energy with first-star commitment",
+    "Balanced Common/Uncommon/Rare/Epic/Legendary gear economy",
+    "Level-bound Arsenal progression capped at level 30",
+    "Stacking title stats, profile frames, Social and weekly Power ranking",
+    "World 5 and World 6 replaceable placeholder content"
   ],
   "updateFiles": [
     "src/supabase_config.js",
@@ -35,13 +42,17 @@
     "src/cherrift_account_mail.js",
     "src/cherrift_world_ui.js",
     "src/cherrift_stability.js",
+    "src/cherrift_balance.js",
+    "src/cherrift_prebeta.js",
+    "assets/cherrift_prebeta.css",
     "src/cherrift_manifest.json",
     "gm/index.html",
     "gm/gm.css",
     "gm/gm.js",
-    "supabase/migrations/20260731_gm_tool_pack_v11_economy.sql",
+    "supabase/migrations/20260801_prebeta_v095.sql",
     "supabase/functions/gm-api/index.ts",
     "supabase/functions/player-api/index.ts",
-    "GM_TOOL_PACK_V11_SETUP_HU.md"
+    "PREBETA_V095_SETUP_HU.md",
+    "PREBETA_V095_BALANCE_HU.md"
   ]
 }

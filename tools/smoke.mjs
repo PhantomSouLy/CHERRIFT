@@ -228,12 +228,12 @@ async function exercise(name,width,height){
     assert.equal(document.body.classList.contains("v062-startup-failed"),false,`${name}: no startup failure`);
     assert.ok(window.__CHERRIFT_CLEAN_RUNTIME__,`${name}: consolidated Clean Runtime is active`);
     assert.equal(document.querySelectorAll('script[src*="cherrift_app.js"]').length,1,`${name}: one application runtime script`);
-    await waitFor(()=>/0\.9\.4/.test(document.title),`${name} current title`);
-    assert.match(document.title,/0\.9\.4/,`${name}: current title`);
+    await waitFor(()=>/0\.9\.5/.test(document.title),`${name} current title`);
+    assert.match(document.title,/0\.9\.5/,`${name}: current title`);
     assert.deepEqual(window.__cherriftTitleWrites.filter(title=>/\bv0\.[0-8](?:\.\d+)?\b/.test(title)),[],`${name}: title never shows a legacy version`);
     assert.doesNotMatch(document.body.textContent,/\bv0\.[0-8](?:\.\d+)?\b/,`${name}: no legacy version is visible anywhere`);
     for(const version of ["085","086","087","088","089","090","091","092","093"])assert.ok(window[`CHERRIFT_V${version}`],`${name}: v0.${version.slice(1)} patch`);
-    assert.equal(window.CHERRIFT_BUILD.version,"0.9.4",`${name}: canonical build version`);
+    assert.equal(window.CHERRIFT_BUILD.version,"0.9.5-prebeta.1",`${name}: canonical build version`);
     assert.equal(window.CHERRIFT_LOCALIZATION.t("world.recommendedLevel",{level:7}),window.CHERRIFT_LOCALIZATION.language()==="hu"?"Ajánlott szint: 7":"Recommended level: 7",`${name}: localization parameters`);
     assert.deepEqual(window.CHERRIFT_LOCALIZATION.validateKeys(["common.play","skin.title","world.title"]),[],`${name}: localization keys`);
     assert.equal(window.CHERRIFT_DATA.skins.length,14,`${name}: all fourteen Cherry skins`);
@@ -242,9 +242,35 @@ async function exercise(name,width,height){
     const commonSkins=["cake_deliver_cherry","kimono_cherry","pajama_cherry","school_uniform_cherry","sport_cherry"];
     for(const skinId of commonSkins){
       assertSkin(window,skinId);
-      assert.ok(UI.save.unlockedSkins.includes(skinId),`${name}: ${skinId} unlocked`);
+      assert.equal(UI.save.unlockedSkins.includes(skinId),false,`${name}: ${skinId} starts locked`);
     }
-    assert.ok(UI.save.unlockedSkins.includes("mage_cherry")&&UI.save.unlockedSkins.includes("archer_cherry"),`${name}: Rare skins available`);
+    assert.equal(UI.save.unlockedSkins.includes("mage_cherry")||UI.save.unlockedSkins.includes("archer_cherry"),false,`${name}: Rare skins start locked`);
+    assert.deepEqual([...UI.save.unlockedSkins],["cherry_default"],`${name}: starter owns only Base Cherry`);
+    assert.equal(UI.save.coins,500,`${name}: starter Coin balance`);
+    assert.equal(UI.save.energy,50,`${name}: starter Energy balance`);
+    assert.equal(UI.save.chests.common,3,`${name}: starter Common Chests`);
+    assert.ok(window.CHERRIFT_BALANCE&&window.CHERRIFT_PREBETA,`${name}: central pre-beta balance and progression modules`);
+    assert.ok(window.CHERRIFT_BALANCE.gear.rarities.Uncommon,`${name}: Uncommon Gear tier remains available`);
+    assert.equal(window.CHERRIFT_BALANCE.arsenal.maxLevel,30,`${name}: beta Arsenal cap`);
+    for(const world of [1,2,3,4,5,6]){
+      const config=window.CHERRIFT_BALANCE.worlds[world];
+      const chapters=window.CHERRIFT_V040.stages.filter(stage=>stage.world===world&&!stage.training).sort((a,b)=>a.index-b.index);
+      const expected=Array.from({length:config.completionLevel-config.unlockLevel},(_,offset)=>window.CHERRIFT_BALANCE.xpToNext(config.unlockLevel+offset)).reduce((sum,value)=>sum+value,0);
+      const actual=chapters.reduce((sum,stage)=>sum+Number(stage.accountXp||0),0);
+      assert.equal(chapters.length,5,`${name}: World ${world} has five pre-beta chapters`);
+      assert.ok(Math.abs(actual-expected)<=2,`${name}: World ${world} first-clear XP reaches its completion level`);
+    }
+    assert.equal(window.CHERRIFT_PREBETA.isWorldUnlocked(2,UI.save),false,`${name}: World 2 starts locked`);
+    assert.equal(window.CHERRIFT_PREBETA.isStageUnlocked(window.CHERRIFT_V040.stages.find(stage=>stage.id==="world_1_2"),UI.save),false,`${name}: Chapter 1-2 requires a star on Chapter 1-1`);
+    assert.deepEqual([...window.CHERRIFT_PREBETA.ownedFrames(UI.save)],["frame0lvl"],`${name}: starter owns only the default profile frame`);
+    const stackedTitleSave={ownedTitles:["meadow_explorer","night_hunter","banker"]};
+    assert.deepEqual(JSON.parse(JSON.stringify(window.CHERRIFT_PREBETA.titleStats(stackedTitleSave))),{maxHp:50,damage:10,allStats:0,coinGain:.01,chestLuck:0},`${name}: all owned title stats stack`);
+    const energySave={energy:50,energyState:{lastTick:Date.now()}},energyGame={save:energySave,__prebetaEnergy:{stageId:"world_1_1",cost:5,committed:false}};
+    assert.equal(window.CHERRIFT_PREBETA.commitStageEnergy(energyGame),true,`${name}: first star commits Energy`);
+    assert.equal(window.CHERRIFT_PREBETA.commitStageEnergy(energyGame),false,`${name}: Energy cannot be charged twice in one run`);
+    assert.equal(energySave.energy,45,`${name}: normal stage costs five Energy`);
+    const ownerSave=structuredClone(UI.save);ownerSave.prebeta.entitlements={allContent:true};ownerSave.unlockedSkins.push("mage_cherry");window.CHERRIFT_PREBETA.normalizeSave(ownerSave);
+    assert.ok(ownerSave.unlockedSkins.includes("mage_cherry")&&window.CHERRIFT_PREBETA.isWorldUnlocked(6,ownerSave),`${name}: owner content is preserved`);
     assert.equal(window.CherriftGame.prototype.drawWorld.__v091BoundaryFog,true,`${name}: map boundary fog active`);
     assert.equal(document.querySelectorAll("#globalMobileNavV052 > button").length,5,`${name}: five mobile destinations`);
     if(window.CHERRIFT_WORLD_UI.isMobile()){
@@ -296,6 +322,18 @@ async function exercise(name,width,height){
     assert.equal(document.getElementById("profileTitleStatsModalV0945")?.classList.contains("hidden"),false,`${name}: Title Stats opens as a separate panel`);
     assert.match(document.getElementById("profileTitleStatsBody")?.textContent||"",/not available|nem érhetők el/i,`${name}: future Title Stats has an honest empty state`);
     click(window,document.querySelector("[data-title-stats-close]"),`${name} close Title Stats`);
+    if(name==="desktop"){
+      UI.save.account.level=5;
+      assert.ok(window.CHERRIFT_PREBETA.ownedFrames(UI.save).includes("frame5lvl"),`${name}: Level 5 frame entitlement`);
+      await waitFor(()=>document.querySelector(".profile-avatar-bf")?.dataset.prebeta,`${name}: decorated profile avatar`);
+      click(window,document.querySelector(".profile-avatar-bf"),`${name} open profile frames`);
+      await waitFor(()=>{const modal=document.getElementById("prebetaFrameModal");return modal&&!modal.classList.contains("hidden");},`${name}: profile frame modal`);
+      click(window,document.querySelector('[data-prebeta-frame="frame5lvl"]'),`${name} select Level 5 frame`);
+      assert.ok(document.querySelector('[data-prebeta-frame="frame5lvl"].active'),`${name}: frame selection remains active before Equip`);
+      click(window,document.querySelector("#prebetaFrameModal [data-prebeta-close]"),`${name} close profile frames`);
+      UI.save.account.level=1;
+      UI.save.ownedTitles=UI.save.ownedTitles.filter(title=>title!=="rookie_bunny");
+    }
     if(window.CHERRIFT_WORLD_UI.isMobile()){
       const cherryNav=document.querySelector('#globalMobileNavV052 [data-v082-open="skins"]');
       click(window,cherryNav,`${name} global Cherry from Profile`);
@@ -325,7 +363,7 @@ async function exercise(name,width,height){
     click(window,document.getElementById("playBtn"),`${name} main Play`);
     if(window.CHERRIFT_WORLD_UI.isMobile()){
       await waitFor(()=>!document.getElementById("worldSelectorV0942")?.classList.contains("hidden"),`${name} mobile Play opens World Select`);
-      assert.equal(document.querySelectorAll("#worldDotsV0942 i").length,5,`${name}: Training and four mobile Worlds`);
+      assert.equal(document.querySelectorAll("#worldDotsV0942 i").length,6,`${name}: six mobile beta Worlds`);
     }else{
       await waitFor(()=>!document.getElementById("worldsV094")?.classList.contains("hidden")||!document.getElementById("worlds")?.classList.contains("hidden"),`${name} desktop Play opens World Select`);
     }
@@ -354,6 +392,7 @@ async function exercise(name,width,height){
     assert.ok(document.querySelectorAll("[data-v093-preview-direction]").length===4,`${name}: four preview directions`);
     assert.ok(document.querySelectorAll("[data-v093-preview-animation]").length===4,`${name}: four preview animations`);
     const beforeSelected=UI.save.selectedSkin;
+    UI.save.unlockedSkins.push("cake_deliver_cherry");
     const cakeButton=document.querySelector('[data-v093-skin="cake_deliver_cherry"]');
     click(window,cakeButton,`${name} select Cake Deliver`);
     assert.equal(UI.save.selectedSkin,beforeSelected,`${name}: selecting does not auto-equip`);
@@ -363,10 +402,13 @@ async function exercise(name,width,height){
     assert.equal(document.getElementById("skinSkillDialogV093").classList.contains("hidden"),false,`${name}: tap skill dialog`);
     click(window,document.querySelector("[data-v093-skill-close]"),`${name} close skill details`);
 
+    UI.save.account.level=5;
+    UI.save.stageStars=UI.save.stageStars||{};
+    for(let index=1;index<=5;index++)UI.save.stageStars[`world_1_${index}`]=1;
     UI.open("worlds");
     if(window.CHERRIFT_WORLD_UI.isMobile()){
       await waitFor(()=>!document.getElementById("worldSelectorV0942")?.classList.contains("hidden"),`${name} consolidated World selector`);
-      assert.equal(document.querySelectorAll("#worldDotsV0942 i").length,5,`${name}: exact mobile World count`);
+      assert.equal(document.querySelectorAll("#worldDotsV0942 i").length,6,`${name}: exact mobile World count`);
       assert.ok(document.querySelector("#worldCardV0942 > .selector-card-v0942"),`${name}: World card is rendered inside a sized host`);
       click(window,document.querySelector('[data-world-step="1"]'),`${name} next mobile World`);
       click(window,document.querySelector("[data-world-start]"),`${name} select mobile World`);
@@ -375,8 +417,10 @@ async function exercise(name,width,height){
       assert.ok(document.querySelector("#chapterCardV0942 > .selector-card-v0942"),`${name}: Chapter card is rendered inside a sized host`);
       click(window,document.querySelector("[data-chapter-back]"),`${name} back to mobile Worlds`);
     }else{
-      await waitFor(()=>document.querySelectorAll("[data-v094-world]").length>=4||document.querySelectorAll("[data-v0933-world]").length>=4,`${name} consolidated desktop World selector`);
+      await waitFor(()=>document.querySelectorAll("[data-v094-world]").length>=6||document.querySelectorAll("[data-v0933-world]").length>=6,`${name} consolidated desktop World selector`);
       assert.ok((window.CHERRIFT_V040?.stages||[]).filter(stage=>stage.world===4).length===5,`${name}: World 4 has five real stages`);
+      assert.equal((window.CHERRIFT_V040?.stages||[]).filter(stage=>stage.world===5).length,5,`${name}: World 5 has five placeholder stages`);
+      assert.equal((window.CHERRIFT_V040?.stages||[]).filter(stage=>stage.world===6).length,5,`${name}: World 6 has five placeholder stages`);
     }
 
     UI.save.keys=2;
@@ -464,9 +508,12 @@ async function exercise(name,width,height){
     window.CHERRIFT_V084.renderCollection();
     await waitFor(()=>document.querySelectorAll("#libraryBodyV0551 .collection-card-v084").length>0,`${name} collection cards`);
     assert.equal(document.querySelectorAll("#libraryBodyV0551 .collection-card-v084").length,14,`${name}: all skin collection cards`);
-    assert.ok(document.querySelector('[data-v084-skin="mage_cherry"] img'),`${name}: Mage collection icon`);
-    assert.ok(document.querySelector('[data-v084-skin="archer_cherry"] img'),`${name}: Archer collection icon`);
-    assert.ok(document.querySelector('[data-v084-skin="sport_cherry"] img'),`${name}: Sport collection splash icon`);
+    assert.ok(document.querySelectorAll("#libraryBodyV0551 .collection-card-v084.locked").length>0,`${name}: non-starter skins remain locked`);
+
+    UI.save.unlockedSkins=[...new Set([...(UI.save.unlockedSkins||[]),"archer_cherry","mage_cherry"])];
+    window.CHERRIFT_V084.renderCollection();
+    assert.ok(document.querySelector('[data-v084-skin="mage_cherry"] img'),`${name}: unlocked Mage collection icon`);
+    assert.ok(document.querySelector('[data-v084-skin="archer_cherry"] img'),`${name}: unlocked Archer collection icon`);
 
     UI.save.selectedSkin="archer_cherry";
     UI.save.selectedStageId="world_1_1";
@@ -516,6 +563,7 @@ async function exercise(name,width,height){
       async function startSkin(skinId){
         UI.quit();
         await new Promise(resolve=>setTimeout(resolve,30));
+        UI.save.unlockedSkins=[...new Set([...(UI.save.unlockedSkins||[]),skinId])];
         UI.save.selectedSkin=skinId;
         window.CherriftStorage.save(UI.save);
         await UI.game.start();
@@ -588,7 +636,7 @@ async function exercise(name,width,height){
       await waitFor(()=>!document.getElementById("menu")?.classList.contains("hidden"),`${name}: mobile Home final layout`);
       assert.equal(document.body.classList.contains("v090-mobile"),true,`${name}: mobile mode`);
       assert.ok(document.getElementById("mobileMenuV082"),`${name}: mobile drawer`);
-      assert.equal(document.querySelectorAll(".mobile-menu-grid-v082 > button").length,11,`${name}: compact More destinations plus Event`);
+      assert.ok(document.querySelectorAll(".mobile-menu-grid-v082 > button").length>=12,`${name}: More includes Ranking`);
       assert.equal(document.querySelectorAll(".mobile-nav-v090 > button").length,5,`${name}: stable bottom nav`);
       assert.equal(document.querySelector(".mobile-nav-v090 > button b")?.textContent,"Cherry",`${name}: Cherry replaces bottom Play`);
       assert.equal(window.getComputedStyle(document.querySelector("#menu .mobile-side-actions-v0932.left")).display,"none",`${name}: left Home rail is removed`);
@@ -623,6 +671,7 @@ async function exercise(name,width,height){
           assert.ok(themeCss.includes(selector),`theme bridge covers ${selector}`);
         }
         const themeColours=[];
+        UI.save.unlockedThemes.push("cozy_cherry","summer_splash");
         for(const themeId of ["cozy_cherry","summer_splash"]){
           assert.equal(window.CHERRIFT_THEMES.select(themeId,UI.save,{silent:true}),true,`${themeId}: theme can be selected`);
           assert.equal(document.documentElement.dataset.cherriftTheme,themeId,`${themeId}: root theme state`);
@@ -680,6 +729,7 @@ async function exercise(name,width,height){
     assert.deepEqual(meaningful,[],`${name}: no runtime errors`);
     return {name,viewport:`${width}x${height}`,skins:window.CHERRIFT_DATA.skins.length};
   } finally {
+    await new Promise(resolve=>setTimeout(resolve,100));
     dom.window.close();
   }
 }
@@ -695,12 +745,13 @@ async function exerciseReturningSession(){
     window.CherriftStorage.save(window.UI.save);
     const backup=JSON.parse(window.localStorage.getItem("cherrift-discord-backup-v1:returning-user"));
     assert.equal(backup?.saveData?.coins,4321,"returning session: every Discord save is backed up synchronously");
-    await waitFor(()=>/0\.9\.4/.test(window.document.title),"returning session current version");
-    assert.match(window.document.title,/0\.9\.4/,"returning session: current version");
+    await waitFor(()=>/0\.9\.5/.test(window.document.title),"returning session current version");
+    assert.match(window.document.title,/0\.9\.5/,"returning session: current version");
     const meaningful=errors.filter(error=>!/Not implemented: HTMLCanvasElement/i.test(error));
     assert.deepEqual(meaningful,[],"returning session: no runtime errors");
     return {name:"returning session",viewport:"1280x760"};
   } finally {
+    await new Promise(resolve=>setTimeout(resolve,100));
     dom.window.close();
   }
 }
@@ -720,7 +771,7 @@ try{
   const results=[];
   for(const selectedCase of selectedCases)results.push(await smokeCases[selectedCase]());
   for(const result of results)console.log(`PASS ${result.name} ${result.viewport}${result.skins?` · ${result.skins} skins`:""}`);
-  console.log("CHERRIFT v0.9.4 smoke tests passed.");
+  console.log("CHERRIFT v0.9.5 pre-beta smoke tests passed.");
 } finally {
   server.closeAllConnections?.();
   server.close();

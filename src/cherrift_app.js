@@ -10,7 +10,7 @@
     console.warn("[CHERRIFT] Clean Runtime was requested more than once; duplicate load ignored.");
     return;
   }
-  window.__CHERRIFT_CLEAN_RUNTIME__ = Object.freeze({version:"1.4.1", build:"0.9.4-test"});
+  window.__CHERRIFT_CLEAN_RUNTIME__ = Object.freeze({version:"1.5.0", build:"0.9.5-prebeta.1"});
   window.CHERRIFT_RUNTIME_CSS_BUNDLED = true;
   const styleMarkers = ["mobileV051Styles", "v050Style", "v052css", "v053css", "v055css", "v0551css", "v0552css", "v0557css", "v0560css", "v0561css", "v060css", "v062css", "v063css", "v070css", "v080css", "v081css", "v082css", "v083css", "v084css", "v085css", "v086css", "v087css", "v088css", "v089css", "v090css", "v091css", "v092css", "v093css", "v0931css", "v0932css", "v0933css", "v094css", "v0946css", "cherriftThemeSystemCss"];
   for (const markerId of styleMarkers) {
@@ -1301,8 +1301,8 @@ window.UI = {
     save.equipped = save.equipped || {};
     save.settings = { volume:60, touchMode:true, fpsLimit:60, uiScale:100, viewZoom:1, damageNumbers:true, compactHud:true, ...(save.settings || {}) };
     save.best = { time:0, kills:0, ...(save.best || {}) };
-    save.unlockedSkins = Array.isArray(save.unlockedSkins) ? save.unlockedSkins : ["cherry_default","fairy_cherry","beastclaw_cherry"];
-    ["cherry_default","fairy_cherry","beastclaw_cherry"].forEach(s=>{if(!save.unlockedSkins.includes(s)) save.unlockedSkins.push(s);});
+    save.unlockedSkins = Array.isArray(save.unlockedSkins) ? save.unlockedSkins : ["cherry_default"];
+    if(!save.unlockedSkins.includes("cherry_default")) save.unlockedSkins.push("cherry_default");
     if (!CHERRIFT_DATA.skins.some(s=>s.id===save.selectedSkin)) save.selectedSkin = "cherry_default";
     save.selectedStageId = save.selectedStageId || "world_1_1";
     save.unlockedStages = Array.isArray(save.unlockedStages) ? save.unlockedStages : ["world_1_1"];
@@ -1874,12 +1874,12 @@ window.UI = {
     save.equipped = save.equipped || {};
     save.settings = { volume:60, touchMode:true, fpsLimit:60, uiScale:100, viewZoom:1, damageNumbers:true, compactHud:true, ...(save.settings || {}) };
     save.best = { time:0, kills:0, ...(save.best || {}) };
-    save.unlockedSkins = Array.isArray(save.unlockedSkins) ? save.unlockedSkins : ["cherry_default", "fairy_cherry", "beastclaw_cherry"];
-    ["cherry_default", "fairy_cherry", "beastclaw_cherry"].forEach(s => { if (!save.unlockedSkins.includes(s)) save.unlockedSkins.push(s); });
+    save.unlockedSkins = Array.isArray(save.unlockedSkins) ? save.unlockedSkins : ["cherry_default"];
+    if (!save.unlockedSkins.includes("cherry_default")) save.unlockedSkins.push("cherry_default");
     if (!CHERRIFT_DATA.skins.some(s => s.id === save.selectedSkin)) save.selectedSkin = "cherry_default";
     save.selectedStageId = save.selectedStageId || "world_1_1";
     save.unlockedStages = Array.isArray(save.unlockedStages) ? save.unlockedStages : ["world_1_1"];
-    ["world_1_1", "world_2_1"].forEach(s => { if (!save.unlockedStages.includes(s)) save.unlockedStages.push(s); });
+    if (!save.unlockedStages.includes("world_1_1")) save.unlockedStages.push("world_1_1");
     save.clearedStages = save.clearedStages || {};
     save.stageStats = save.stageStats || {};
     save.firstClearClaimed = save.firstClearClaimed || {};
@@ -2174,12 +2174,12 @@ window.UI = {
     save.equipped = save.equipped || {};
     save.settings = { volume:60, touchMode:true, fpsLimit:60, uiScale:100, viewZoom:1, damageNumbers:true, compactHud:true, ...(save.settings || {}) };
     save.best = { time:0, kills:0, ...(save.best || {}) };
-    save.unlockedSkins = Array.isArray(save.unlockedSkins) ? save.unlockedSkins : ["cherry_default", "fairy_cherry", "beastclaw_cherry"];
-    ["cherry_default", "fairy_cherry", "beastclaw_cherry"].forEach(s => { if (!save.unlockedSkins.includes(s)) save.unlockedSkins.push(s); });
+    save.unlockedSkins = Array.isArray(save.unlockedSkins) ? save.unlockedSkins : ["cherry_default"];
+    if (!save.unlockedSkins.includes("cherry_default")) save.unlockedSkins.push("cherry_default");
     if (!CHERRIFT_DATA.skins.some(s => s.id === save.selectedSkin)) save.selectedSkin = "cherry_default";
     save.selectedStageId = save.selectedStageId || "world_1_1";
     save.unlockedStages = Array.isArray(save.unlockedStages) ? save.unlockedStages : ["world_1_1"];
-    ["world_1_1", "world_2_1"].forEach(s => { if (!save.unlockedStages.includes(s)) save.unlockedStages.push(s); });
+    if (!save.unlockedStages.includes("world_1_1")) save.unlockedStages.push("world_1_1");
     save.clearedStages = save.clearedStages || {};
     save.stageStats = save.stageStats || {};
     save.firstClearClaimed = save.firstClearClaimed || {};
@@ -4311,7 +4311,7 @@ console.info(`[CHERRIFT] ${VERSION} loaded. Mode: ${enabled ? "ON" : "OFF"}`);
   }
 
   function xpForLevel(level) {
-    return Math.floor(120 + Math.pow(Math.max(1, level), 1.42) * 58);
+    return window.CHERRIFT_BALANCE?.xpToNext?.(level) || Math.floor(120 + Math.pow(Math.max(1, level), 1.42) * 58);
   }
 
   function normalize(save) {
@@ -4721,7 +4721,8 @@ console.info(`[CHERRIFT] ${VERSION} loaded. Mode: ${enabled ? "ON" : "OFF"}`);
     const wasFirst = !this.save.firstClearClaimed?.[stageBefore.id];
     const result = oldStageClear.apply(this, args);
 
-    const xp = Number(stageBefore.accountXp || (stageBefore.world * 25 + stageBefore.index * 10 + (wasFirst ? 30 : 0)));
+    const xpBase = Number(stageBefore.accountXp || (stageBefore.world * 25 + stageBefore.index * 10 + 30));
+    const xp = Math.max(1, Math.round(xpBase * (wasFirst ? 1 : 0.35)));
     this.__v050AccountResult = grantAccountXp(this.save, xp);
 
     if (stageBefore.boss && !(this.__v050Drops || []).some(item => item.sourceWorld === stageBefore.world && rarityIndex(item.rarity) >= rarityIndex("Rare"))) {
@@ -5077,7 +5078,7 @@ const q=(s,r=document)=>r.querySelector(s);
 const qa=(s,r=document)=>Array.from(r.querySelectorAll(s));
 if(!window.UI||!window.CherriftStorage||!window.CherriftGame||!window.CHERRIFT_V040){console.error("[CHERRIFT v0.5.2] Dependencies missing");return;}
 function ensureCss(){if(id("v052css"))return;const l=document.createElement("link");l.id="v052css";l.rel="stylesheet";l.href="v052.css?v=052";document.head.appendChild(l);}
-function levelCost(level){return Math.floor(500+Math.pow(Math.max(1,level),1.72)*260);}
+function levelCost(level){return window.CHERRIFT_BALANCE?.xpToNext?.(level)||Math.floor(500+Math.pow(Math.max(1,level),1.72)*260);}
 const TREE={
  power:{name:"Bloom Power",icon:"⚔️",desc:"+3% base damage per rank",max:10},
  vitality:{name:"Soft Vitality",icon:"❤️",desc:"+8 maximum HP per rank",max:10},
@@ -5484,21 +5485,21 @@ const dayKey=(date=new Date())=>[
 ].join('-');
 const dayNumber=key=>{const [year,month,day]=String(key).split('-').map(Number);return Date.UTC(year,month-1,day)/86400000};
 const POOL=[
- {type:'kills',title:'Slime Cleanup',target:150,icon:'⚔️',reward:{coins:90}},
- {type:'runs',title:'Keep Moving',target:3,icon:'▶️',reward:{coins:120}},
- {type:'clears',title:'Stage Hunter',target:2,icon:'🗺️',reward:{coins:130}},
- {type:'coins',title:'Treasure Trail',target:40,icon:'🪙',reward:{coins:110}},
- {type:'chests',title:'Open Sesame',target:2,icon:'📦',reward:{coins:80,keys:1}},
- {type:'gear',title:'Gear Collector',target:4,icon:'🛡️',reward:{coins:100}},
- {type:'bosses',title:'Boss Breaker',target:1,icon:'👑',reward:{coins:180,keys:1}}
+ {type:'kills',title:'Slime Cleanup',target:150,icon:'⚔️',reward:{coins:180}},
+ {type:'runs',title:'Keep Moving',target:3,icon:'▶️',reward:{coins:200}},
+ {type:'clears',title:'Stage Hunter',target:2,icon:'🗺️',reward:{coins:230}},
+ {type:'coins',title:'Treasure Trail',target:200,icon:'🪙',reward:{coins:150}},
+ {type:'chests',title:'Open Sesame',target:2,icon:'📦',reward:{coins:220}},
+ {type:'gear',title:'Gear Collector',target:4,icon:'🛡️',reward:{coins:190}},
+ {type:'bosses',title:'Boss Breaker',target:1,icon:'👑',reward:{coins:300}}
 ];
 function panel(pid,title,sub,body){if(id(pid))return;id('app').insertAdjacentHTML('beforeend',`<section id="${pid}" class="panel hidden v055-panel"><header class="panel-head"><button class="back" data-v055-back>←</button><div><h2>${title}</h2><p>${sub}</p></div></header>${body}</section>`)}
 function questStat(type,stats={}){return Number({kills:stats.kills,runs:stats.runs,clears:stats.clears,coins:stats.coinsEarned,chests:stats.chests,gear:stats.gearFound,bosses:stats.bosses}[type])||0}
 function makeDaily(stats={}){return [...POOL].sort(()=>Math.random()-.5).slice(0,5).map((x,i)=>({...x,id:`${dayKey()}_${i}_${x.type}`,start:questStat(x.type,stats),claimed:false}))}
 function normalize(s){s.daily=s.daily||{};s.login=s.login||{};s.shop=s.shop||{};s.stats={kills:0,runs:0,clears:0,coinsEarned:0,chests:0,gearFound:0,bosses:0,...(s.stats||{})};if(s.daily.key!==dayKey())s.daily={key:dayKey(),quests:makeDaily(s.stats),claimedBonus:false,rerolls:1};if(!s.daily.quests?.length)s.daily.quests=makeDaily(s.stats);s.login.firstDay=s.login.firstDay||dayKey();s.login.claimed=s.login.claimed||{};if(s.shop.key!==dayKey())s.shop={key:dayKey(),claims:{}};s.shop.claims=s.shop.claims||{};return s}
 function progress(q,s){return Math.max(0,questStat(q.type,s.stats)-(q.start||0))}
-function reward(r){UI.save.coins+=(r.coins||0);UI.save.keys+=(r.keys||0)}
-function rewardLabel(r){return [r.coins?`${r.coins} ${r.coins===1?'coin':'coins'}`:'',r.keys?`${r.keys} ${r.keys===1?'key':'keys'}`:''].filter(Boolean).join(' · ')}
+function reward(r){UI.save.coins+=(r.coins||0);UI.save.keys+=(r.keys||0);UI.save.bloomGems=(UI.save.bloomGems||UI.save.blossomGems||0)+(r.bloomGems||0);UI.save.blossomGems=UI.save.bloomGems;UI.save.chests=UI.save.chests||{common:0,rare:0,epic:0};for(const [key,value] of Object.entries(r.chests||{}))UI.save.chests[key]=(UI.save.chests[key]||0)+value;if(r.energy)UI.save.energy=Math.min(100,(UI.save.energy||0)+r.energy);if(r.drink){UI.save.energyState=UI.save.energyState||{};UI.save.energyState.drinks=UI.save.energyState.drinks||{};UI.save.energyState.drinks[r.drink]=(UI.save.energyState.drinks[r.drink]||0)+1}}
+function rewardLabel(r){return [r.coins?`${r.coins} Coin`:'',r.energy?`${r.energy} Energy`:'',r.chests?.common?`${r.chests.common} Common Chest`:'',r.chests?.rare?`${r.chests.rare} Rare Chest`:'',r.chests?.epic?`${r.chests.epic} Epic Chest`:''].filter(Boolean).join(' · ')}
 function save(){CherriftStorage.save(UI.save)}
 function ensure(){
  panel('dailyQuests','Daily Quests','Five fresh objectives every day.',`<div class="v055-toolbar"><button id="dailyRerollV055">REROLL</button><button id="dailyClaimAllV055">CLAIM ALL</button></div><div id="dailyListV055" class="v055-card-grid"></div><div id="dailyBonusV055" class="glass v055-bonus"></div>`);
@@ -5507,12 +5508,12 @@ function ensure(){
  const nav=q('.menu-left .main-nav');if(nav&&!id('dailyBtnV055'))[['dailyQuests','📅','DAILY'],['shopV055','🛒','SHOP'],['loginRewards','🎁','LOGIN REWARD']].forEach(([p,i,t],n)=>{const b=document.createElement('button');b.className='menu-btn';if(!n)b.id='dailyBtnV055';b.dataset.open=p;b.innerHTML=`<span>${i}</span><i>${t}</i><em>NEW</em><b>›</b>`;nav.appendChild(b)});
  let more=id('mobileMoreV055');if(!more){more=document.createElement('div');more.id='mobileMoreV055';more.className='mobile-more-v055';more.innerHTML=`<button data-v055-open="dailyQuests">📅<b>Daily</b></button><button data-v055-open="shopV055">🛒<b>Shop</b></button><button data-v055-open="loginRewards">🎁<b>Login</b></button>`;document.body.appendChild(more)}
 }
-function renderDaily(){const s=normalize(UI.save);id('dailyListV055').innerHTML=s.daily.quests.map(x=>{const p=Math.min(x.target,progress(x,s)),done=p>=x.target;return `<article class="glass v055-card"><span>${x.icon}</span><div><h3>${x.title}</h3><p>${p}/${x.target}</p><div class="v055-progress"><i style="width:${p/x.target*100}%"></i></div><small>${x.reward.coins||0} coins${x.reward.keys?` · ${x.reward.keys} key`:''}</small></div><button data-daily-claim="${x.id}" ${!done||x.claimed?'disabled':''}>${x.claimed?'CLAIMED':'CLAIM'}</button></article>`}).join('');const c=s.daily.quests.filter(x=>x.claimed).length;id('dailyBonusV055').innerHTML=`<h3>Daily Completion Chest</h3><p>${c}/5 quests claimed</p><button id="dailyBonusClaimV055" ${c<5||s.daily.claimedBonus?'disabled':''}>${s.daily.claimedBonus?'CLAIMED':'CLAIM 250 COINS + 2 KEYS'}</button>`;id('dailyRerollV055').textContent=`REROLL (${s.daily.rerolls||0})`}
-function renderLogin(){const R=[{coins:100},{keys:1},{coins:180},{keys:2},{coins:250},{keys:3},{coins:500,keys:2}],s=normalize(UI.save),d=Math.max(0,dayNumber(dayKey())-dayNumber(s.login.firstDay))%7;id('loginListV055').innerHTML=R.map((r,i)=>`<article class="glass v055-login ${i===d?'today':''}"><span>DAY ${i+1}</span><b>${r.coins?`${r.coins} 🪙`:''} ${r.keys?`${r.keys} 🗝️`:''}</b><button data-login-day="${i}" ${i!==d||s.login.claimed[dayKey()]?'disabled':''}>${s.login.claimed[dayKey()]&&i===d?'CLAIMED':i===d?'CLAIM':'LOCKED'}</button></article>`).join('')}
-function renderShop(){const s=normalize(UI.save),O=[{id:'freeCoins',name:'Daily Coins',icon:'🪙',cost:0,reward:{coins:100}},{id:'freeKey',name:'Daily Key',icon:'🗝️',cost:0,reward:{keys:1}},{id:'keyPack',name:'Key Pack',icon:'📦',cost:350,reward:{keys:3}},{id:'coinBundle',name:'Coin Bundle',icon:'💰',cost:2,keyCost:true,reward:{coins:300}}];id('shopListV055').innerHTML=O.map(o=>`<article class="glass v055-shop-card"><span>${o.icon}</span><h3>${o.name}</h3><p>${rewardLabel(o.reward)}</p><button data-shop="${o.id}" ${o.cost===0&&s.shop.claims[o.id]?'disabled':''}>${o.cost===0?(s.shop.claims[o.id]?'CLAIMED':'FREE'):o.keyCost?`${o.cost} KEYS`:`${o.cost} COINS`}</button></article>`).join('')}
+function renderDaily(){const s=normalize(UI.save);id('dailyListV055').innerHTML=s.daily.quests.map(x=>{const p=Math.min(x.target,progress(x,s)),done=p>=x.target;return `<article class="glass v055-card"><span>${x.icon}</span><div><h3>${x.title}</h3><p>${p}/${x.target}</p><div class="v055-progress"><i style="width:${p/x.target*100}%"></i></div><small>${x.reward.coins||0} coins</small></div><button data-daily-claim="${x.id}" ${!done||x.claimed?'disabled':''}>${x.claimed?'CLAIMED':'CLAIM'}</button></article>`}).join('');const c=s.daily.quests.filter(x=>x.claimed).length;id('dailyBonusV055').innerHTML=`<h3>Daily Completion Chest</h3><p>${c}/5 quests claimed</p><button id="dailyBonusClaimV055" ${c<5||s.daily.claimedBonus?'disabled':''}>${s.daily.claimedBonus?'CLAIMED':'CLAIM 500 COIN + 1 COMMON CHEST + 15 ENERGY'}</button>`;id('dailyRerollV055').textContent=`REROLL (${s.daily.rerolls||0})`}
+function renderLogin(){const R=[{coins:300},{chests:{common:1}},{coins:400,drink:'small'},{bloomGems:10},{coins:600},{chests:{rare:1}},{coins:1000,bloomGems:20,drink:'standard'}],s=normalize(UI.save),d=Math.max(0,dayNumber(dayKey())-dayNumber(s.login.firstDay))%7;id('loginListV055').innerHTML=R.map((r,i)=>`<article class="glass v055-login ${i===d?'today':''}"><span>DAY ${i+1}</span><b>${r.coins?`${r.coins} 🪙`:''}${r.bloomGems?` ${r.bloomGems} 💎`:''}${r.chests?.common?' 1 🟢 Chest':''}${r.chests?.rare?' 1 🔵 Chest':''}${r.drink?` 🧪 ${r.drink}`:''}</b><button data-login-day="${i}" ${i!==d||s.login.claimed[dayKey()]?'disabled':''}>${s.login.claimed[dayKey()]&&i===d?'CLAIMED':i===d?'CLAIM':'LOCKED'}</button></article>`).join('')}
+function renderShop(){const s=normalize(UI.save),O=[{id:'freeCoins',name:'Daily Coins',icon:'🪙',cost:0,reward:{coins:100}},{id:'freeEnergy',name:'Daily Energy',icon:'⚡',cost:0,reward:{energy:5}},{id:'commonChest',name:'Common Chest',icon:'🟢',cost:450,currency:'coins',reward:{chests:{common:1}}},{id:'rareChest',name:'Rare Chest',icon:'🔵',cost:80,currency:'bloom',reward:{chests:{rare:1}}},{id:'epicChest',name:'Epic Chest',icon:'🟣',cost:240,currency:'bloom',reward:{chests:{epic:1}}}];id('shopListV055').innerHTML=O.map(o=>`<article class="glass v055-shop-card"><span>${o.icon}</span><h3>${o.name}</h3><p>${rewardLabel(o.reward)}</p><button data-shop="${o.id}" ${o.cost===0&&s.shop.claims[o.id]?'disabled':''}>${o.cost===0?(s.shop.claims[o.id]?'CLAIMED':'FREE'):`${o.cost} ${o.currency==='bloom'?'BLOOM GEM':'COIN'}`}</button></article>`).join('')}
 const custom=['dailyQuests','loginRewards','shopV055'],prevOpen=UI.open.bind(UI);UI.open=function(p,...a){if(custom.includes(p)){['menu','skins','gear','chests','settings','worlds','playerUpgrade','achievements',...custom].forEach(x=>id(x)?.classList.toggle('hidden',x!==p));document.body.classList.remove('is-playing');if(p==='dailyQuests')renderDaily();if(p==='loginRewards')renderLogin();if(p==='shopV055')renderShop();return}prevOpen(p,...a);custom.forEach(x=>id(x)?.classList.add('hidden'))};
-function buy(k){const s=normalize(UI.save),O={freeCoins:{cost:0,reward:{coins:100}},freeKey:{cost:0,reward:{keys:1}},keyPack:{cost:350,reward:{keys:3}},coinBundle:{cost:2,keyCost:true,reward:{coins:300}}},o=O[k];if(!o)return;if(!o.cost){if(s.shop.claims[k])return;s.shop.claims[k]=true}else if(o.keyCost){if(s.keys<o.cost)return UI.toast('Not enough keys');s.keys-=o.cost}else{if(s.coins<o.cost)return UI.toast('Not enough coins');s.coins-=o.cost}reward(o.reward);save();renderShop();UI.refreshMenu();UI.toast('Purchase complete')}
-document.addEventListener('click',e=>{const o=e.target.closest('[data-v055-open]');if(o){UI.open(o.dataset.v055Open);return}const c=e.target.closest('[data-daily-claim]');if(c){const x=UI.save.daily.quests.find(v=>v.id===c.dataset.dailyClaim);if(x&&!x.claimed&&progress(x,UI.save)>=x.target){x.claimed=true;reward(x.reward);save();renderDaily();UI.refreshMenu()}return}if(e.target.id==='dailyBonusClaimV055'){const s=UI.save;if(s.daily.quests.every(x=>x.claimed)&&!s.daily.claimedBonus){s.daily.claimedBonus=true;reward({coins:250,keys:2});save();renderDaily();UI.refreshMenu()}return}if(e.target.id==='dailyClaimAllV055'){UI.save.daily.quests.forEach(x=>{if(!x.claimed&&progress(x,UI.save)>=x.target){x.claimed=true;reward(x.reward)}});save();renderDaily();UI.refreshMenu();return}if(e.target.id==='dailyRerollV055'){const s=UI.save;if(s.daily.rerolls>0){s.daily.rerolls--;s.daily.quests=makeDaily(s.stats);save();renderDaily()}return}const l=e.target.closest('[data-login-day]');if(l){const R=[{coins:100},{keys:1},{coins:180},{keys:2},{coins:250},{keys:3},{coins:500,keys:2}],i=+l.dataset.loginDay;if(!UI.save.login.claimed[dayKey()]){reward(R[i]);UI.save.login.claimed[dayKey()]=true;save();renderLogin();UI.refreshMenu()}return}const sh=e.target.closest('[data-shop]');if(sh)buy(sh.dataset.shop)});
+function buy(k){const s=normalize(UI.save),O={freeCoins:{cost:0,reward:{coins:100}},freeEnergy:{cost:0,reward:{energy:5}},commonChest:{cost:450,currency:'coins',reward:{chests:{common:1}}},rareChest:{cost:80,currency:'bloom',reward:{chests:{rare:1}}},epicChest:{cost:240,currency:'bloom',reward:{chests:{epic:1}}}},o=O[k];if(!o)return;if(!o.cost){if(s.shop.claims[k])return;s.shop.claims[k]=true}else if(o.currency==='bloom'){const gems=Number(s.bloomGems||s.blossomGems)||0;if(gems<o.cost)return UI.toast('Not enough Bloom Gem');s.bloomGems=gems-o.cost;s.blossomGems=s.bloomGems}else{if(s.coins<o.cost)return UI.toast('Not enough Coin');s.coins-=o.cost}reward(o.reward);save();renderShop();UI.refreshMenu();UI.toast('Purchase complete')}
+document.addEventListener('click',e=>{const o=e.target.closest('[data-v055-open]');if(o){UI.open(o.dataset.v055Open);return}const c=e.target.closest('[data-daily-claim]');if(c){const x=UI.save.daily.quests.find(v=>v.id===c.dataset.dailyClaim);if(x&&!x.claimed&&progress(x,UI.save)>=x.target){x.claimed=true;reward(x.reward);save();renderDaily();UI.refreshMenu()}return}if(e.target.id==='dailyBonusClaimV055'){const s=UI.save;if(s.daily.quests.every(x=>x.claimed)&&!s.daily.claimedBonus){s.daily.claimedBonus=true;reward({coins:500,chests:{common:1},energy:15});save();renderDaily();UI.refreshMenu()}return}if(e.target.id==='dailyClaimAllV055'){UI.save.daily.quests.forEach(x=>{if(!x.claimed&&progress(x,UI.save)>=x.target){x.claimed=true;reward(x.reward)}});save();renderDaily();UI.refreshMenu();return}if(e.target.id==='dailyRerollV055'){const s=UI.save;if(s.daily.rerolls>0){s.daily.rerolls--;s.daily.quests=makeDaily(s.stats);save();renderDaily()}return}const l=e.target.closest('[data-login-day]');if(l){const R=[{coins:300},{chests:{common:1}},{coins:400,drink:'small'},{bloomGems:10},{coins:600},{chests:{rare:1}},{coins:1000,bloomGems:20,drink:'standard'}],i=+l.dataset.loginDay;if(!UI.save.login.claimed[dayKey()]){reward(R[i]);UI.save.login.claimed[dayKey()]=true;UI.save.stats.loginDays=(UI.save.stats.loginDays||0)+1;save();renderLogin();UI.refreshMenu()}return}const sh=e.target.closest('[data-shop]');if(sh)buy(sh.dataset.shop)});
 const gp=CherriftGame.prototype,oldD=gp.damageEnemy;gp.damageEnemy=function(e,d){const a=e&&!e.dead;oldD.call(this,e,d);if(a&&e.dead){normalize(this.save).stats.kills++;if(e.isBoss)this.save.stats.bosses++}};const oldC=gp.stageClear;gp.stageClear=function(...a){normalize(this.save).stats.clears++;return oldC.apply(this,a)};const oldS=gp.start;gp.start=async function(...a){normalize(this.save).stats.runs++;return oldS.apply(this,a)};const oldChest=UI.openChest?.bind(UI);if(oldChest)UI.openChest=function(...a){const n=this.save.inventory.length,r=oldChest(...a);if(this.save.inventory.length>n){normalize(this.save).stats.chests++;this.save.stats.gearFound++}return r};
 ensure();const oldInit=UI.init.bind(UI);UI.init=function(s,g){normalize(s);const r=oldInit(s,g);ensure();return r};window.CHERRIFT_V055A={version:'0.5.5a',normalize};console.info('[CHERRIFT] v0.5.5a loaded');
 })();
@@ -6058,9 +6059,7 @@ if (window.CHERRIFT_REMOTE_CONFIG?.skinBonuses) {
 
 function normalizeSave(save) {
   save.unlockedSkins = Array.isArray(save.unlockedSkins) ? save.unlockedSkins : [];
-  for (const skinId of ["ninja_cherry","succubus_cherry"]) {
-    if (!save.unlockedSkins.includes(skinId)) save.unlockedSkins.push(skinId);
-  }
+  if (!save.unlockedSkins.includes("cherry_default")) save.unlockedSkins.push("cherry_default");
   return save;
 }
 
@@ -7399,9 +7398,7 @@ if (!CHERRIFT_DATA.skins.some(s => s.id === "warrior_cherry")) {
 
 function normalizeSave(save) {
   save.unlockedSkins = Array.isArray(save.unlockedSkins) ? save.unlockedSkins : [];
-  for (const skin of ["ninja_cherry","succubus_cherry","warrior_cherry"]) {
-    if (!save.unlockedSkins.includes(skin)) save.unlockedSkins.push(skin);
-  }
+  if (!save.unlockedSkins.includes("cherry_default")) save.unlockedSkins.push("cherry_default");
   return save;
 }
 
@@ -9275,9 +9272,7 @@ function normalizeSave(save) {
     ? save.unlockedSkins
     : [];
 
-  if (!save.unlockedSkins.includes(SKIN_ID)) {
-    save.unlockedSkins.push(SKIN_ID);
-  }
+  if (!save.unlockedSkins.includes("cherry_default")) save.unlockedSkins.push("cherry_default");
   return save;
 }
 
@@ -14345,7 +14340,7 @@ const SLOT_ORDER = ["Weapon", "Helmet", "Armor", "Gloves", "Boots", "Ring", "Nec
 const SLOT_ICONS = { Weapon:"⚔", Helmet:"⛑", Armor:"🛡", Gloves:"🧤", Boots:"🥾", Ring:"◉", Necklace:"◇" };
 const STONE_ORDER = ["copper", "iron", "steel", "silver", "royal", "magical"];
 const RARITY_INDEX = { Common:0, Uncommon:1, Rare:2, Epic:3, Legendary:4 };
-const RARITY_SCRAP = { Common:2, Uncommon:4, Rare:8, Epic:18, Legendary:40 };
+const RARITY_SCRAP = { Common:3, Uncommon:5, Rare:8, Epic:20, Legendary:55 };
 const STAR_LEVEL_CAP = { 1:10, 2:25, 3:50, 4:100, 5:100 };
 const STAT_LABELS = {
   damage:"Attack", maxHp:"HP", armor:"Armor", crit:"Critical Rate",
@@ -14435,8 +14430,7 @@ function slotState(save, slot) {
 }
 function arsenalMultiplier(state) {
   const level = Math.max(1, Number(state?.level) || 1);
-  const stars = Math.max(1, Number(state?.stars) || 1);
-  return 1 + (level - 1) * 0.045 + (stars - 1) * 0.10;
+  return 1 + (level - 1) * (window.CHERRIFT_BALANCE?.arsenal?.levelMultiplier || 0.025);
 }
 function captureIntrinsicStats(item) {
   if (!item || typeof item !== "object") return item;
@@ -15165,7 +15159,14 @@ function pay(save,price){ if(price.gems) save.blossomGems-=price.gems; else save
 function buyShopItem(kind,key){
   const save=normalize(UI.save);
   let price;
-  if(kind==="chest") price={ common:{coins:480},rare:{gems:80},epic:{gems:260} }[key];
+  if(kind==="chest") price={ common:{coins:450},rare:{gems:window.CHERRIFT_BALANCE?.gacha?.prices?.rare?.one||80},epic:{gems:window.CHERRIFT_BALANCE?.gacha?.prices?.epic?.one||240} }[key];
+  else if(kind==="skin"){
+    const skin=(CHERRIFT_DATA.skins||[]).find(entry=>entry.id===key);
+    if(!skin||save.unlockedSkins.includes(key)){UI.toast?.(t("owned"));return false;}
+    const essenceCost=window.CHERRIFT_BALANCE?.gacha?.essenceShop?.[skin.rarity]||300;
+    if(save.sakuraEssence<essenceCost){UI.toast?.(`Sakura Essence ${essenceCost}`);return false;}
+    save.sakuraEssence-=essenceCost;save.unlockedSkins.push(key);saveProgress(t("bought"));return true;
+  }
   else price=FOOD_CATALOG[key]?.price;
   if(!price || !canAfford(save,price)){ UI.toast?.(t("notEnough")); return false; }
   pay(save,price);
@@ -15254,23 +15255,24 @@ function grantBonusAccountXp(save,amount){
     const need=Math.max(1,Number(save.account.xpNext)||CHERRIFT_V050.xpForLevel?.(save.account.level)||999999);
     save.account.xp-=need;
     save.account.level=Math.max(1,Number(save.account.level)||1)+1;
+    save.account.skillPoints=Math.max(0,Number(save.account.skillPoints)||0)+1;
     save.account.xpNext=CHERRIFT_V050.xpForLevel?.(save.account.level)||need;
   }
 }
 function grantStageChests(save,stage,buffs,wasFirst){
   const world=Math.max(1,Number(stage.world)||1); const out={common:0,rare:0,epic:0,gems:0};
   const modifier=1+(buffs.chestDrop||0);
-  const commonChance=clamp((0.42+world*0.055)*modifier,0,0.88);
-  const rareChance=world>=2?clamp((0.018+world*0.018)*modifier,0,0.25):0;
-  const epicChance=world>=4?clamp((world===4?0.006:0.012)*modifier,0,0.05):0;
-  if(Math.random()<commonChance){out.common++;save.chests.common++;if(Math.random()<0.10+world*0.02){out.common++;save.chests.common++;}}
+  const commonChance=clamp((0.07+world*0.018)*modifier,0,0.24);
+  const rareChance=world>=2?clamp((0.002+world*0.004)*modifier,0,0.045):0;
+  const epicChance=world>=4?clamp((world===4?0.0015:0.003)*modifier,0,0.012):0;
+  if(Math.random()<commonChance){out.common++;save.chests.common++;}
   if(Math.random()<rareChance){out.rare++;save.chests.rare++;}
   if(Math.random()<epicChance){out.epic++;save.chests.epic++;}
   if(wasFirst){
     if(world===1){out.common++;save.chests.common++;}
     else if(world<=3){out.rare++;save.chests.rare++;}
     else {out.epic++;save.chests.epic++;}
-    out.gems=5+world*3; save.blossomGems+=out.gems;
+    out.gems=0;
   }
   save.economy.stageChestDrops+=out.common+out.rare+out.epic;
   return out;
@@ -15340,8 +15342,9 @@ function renderBuffs(save){
   return `<section class="buff-summary-v080"><h2>${escapeHtml(t("accountBonus"))}</h2><div>${Object.entries(totals).filter(([,value])=>value>0).map(([key,value])=>`<span>${escapeHtml(EFFECT_LABELS[key]||key)} <b>+${Math.round(value*100)}%</b></span>`).join("")||"—"}</div></section><section class="bag-section-v080"><header><h2>${escapeHtml(t("temporary"))}</h2></header><div class="active-buffs-v080">${save.buffs.active.length?save.buffs.active.map(entry=>{const food=FOOD_CATALOG[entry.id];return `<article>${imageOrFallback(food.asset,food.icon,food.name)}<div><small>${escapeHtml(t("active"))}</small><h3>${escapeHtml(food.name)}</h3><p>+${Math.round((entry.value||food.value)*100)}% ${escapeHtml(EFFECT_LABELS[food.effect])} · ${entry.runs} ${escapeHtml(t("runs"))}</p></div></article>`;}).join(""):`<p class="empty-v080">${escapeHtml(t("noItems"))}</p>`}</div></section><section class="bag-section-v080"><header><h2>${escapeHtml(t("permanent"))}</h2></header><div class="permanent-grid-v080">${permanent.map(buff=>{const unlocked=!!save.buffs.permanent[buff.id];return `<article class="${unlocked?"unlocked":"locked"}"><span>${unlocked?"✓":"🔒"}</span><div><h3>${escapeHtml(buff.name)}</h3><p>${escapeHtml(buff.effect)}</p><small>${escapeHtml(buff.condition)} · ${escapeHtml(unlocked?t("completed"):t("locked"))}</small></div></article>`;}).join("")}<article class="supporter-v080 ${save.buffs.external.supporter?.verified?"unlocked":"locked"}"><span>💜</span><div><h3>${escapeHtml(t("supporter"))}</h3><p>+5% Coin · +3% XP · +3% Chest Drop</p><small>${escapeHtml(save.buffs.external.supporter?.verified?t("completed"):t("supporterPending"))}</small></div></article></div></section>`;
 }
 function renderShop(save){
-  const chestPrices={common:{coins:480},rare:{gems:80},epic:{gems:260}};
-  return `<section class="shop-intro-v080"><h2>${escapeHtml(t("shop"))}</h2><p>${escapeHtml(t("shopIntro"))}</p></section><section class="shop-grid-v080">${Object.entries(chestPrices).map(([type,price])=>`<article class="shop-card-v080"><span>${type==="common"?"📦":type==="rare"?"🧰":"🎁"}</span><h3>${escapeHtml(CHEST_DEFS[type].name)}</h3><b>${priceText(price)}</b><button type="button" data-v080-buy-chest="${type}" ${!canAfford(save,price)?"disabled":""}>${escapeHtml(t("buy"))}</button></article>`).join("")}</section><section class="bag-section-v080"><header><h2>${escapeHtml(t("food"))}</h2></header><div class="food-grid-v080">${Object.entries(FOOD_CATALOG).map(([key,food])=>`<article class="food-card-v080 rarity-${food.rarity.toLowerCase()}">${imageOrFallback(food.asset,food.icon,food.name)}<small>${escapeHtml(food.rarity)}</small><h3>${escapeHtml(food.name)}</h3><p>+${Math.round(food.value*100)}% ${escapeHtml(EFFECT_LABELS[food.effect])} · ${food.runs} ${escapeHtml(t("runs"))}</p><b>${priceText(food.price)}</b><button type="button" data-v080-buy-food="${key}" ${!canAfford(save,food.price)?"disabled":""}>${escapeHtml(t("buy"))}</button></article>`).join("")}</div></section>`;
+  const chestPrices={common:{coins:450},rare:{gems:window.CHERRIFT_BALANCE?.gacha?.prices?.rare?.one||80},epic:{gems:window.CHERRIFT_BALANCE?.gacha?.prices?.epic?.one||240}};
+  const skins=(CHERRIFT_DATA.skins||[]).filter(skin=>skin.id!=="cherry_default");const day=Math.floor(Date.now()/86400000);const offers=[0,1,2].map(offset=>skins[(day+offset*5)%skins.length]).filter(Boolean);
+  return `<section class="shop-intro-v080"><h2>${escapeHtml(t("shop"))}</h2><p>${escapeHtml(t("shopIntro"))}</p></section><section class="shop-grid-v080">${Object.entries(chestPrices).map(([type,price])=>`<article class="shop-card-v080"><span>${type==="common"?"📦":type==="rare"?"🧰":"🎁"}</span><h3>${escapeHtml(CHEST_DEFS[type].name)}</h3><b>${priceText(price)}</b><button type="button" data-v080-buy-chest="${type}" ${!canAfford(save,price)?"disabled":""}>${escapeHtml(t("buy"))}</button></article>`).join("")}</section><section class="bag-section-v080"><header><h2>Sakura Essence Skin Shop</h2><p>Daily rotating offers</p></header><div class="food-grid-v080">${offers.map(skin=>{const cost=window.CHERRIFT_BALANCE?.gacha?.essenceShop?.[skin.rarity]||300,owned=save.unlockedSkins.includes(skin.id);return `<article class="food-card-v080 rarity-${String(skin.rarity||"Common").toLowerCase()}">${imageOrFallback(skin.icon,skin.emoji||"🐰",skin.name)}<small>${escapeHtml(skin.rarity||"Common")}</small><h3>${escapeHtml(skin.name)}</h3><p>Unique skin offer</p><b>🌸 ${cost}</b><button type="button" data-v080-buy-skin="${escapeHtml(skin.id)}" ${owned||save.sakuraEssence<cost?"disabled":""}>${escapeHtml(owned?t("owned"):t("buy"))}</button></article>`;}).join("")}</div></section><section class="bag-section-v080"><header><h2>${escapeHtml(t("food"))}</h2></header><div class="food-grid-v080">${Object.entries(FOOD_CATALOG).map(([key,food])=>`<article class="food-card-v080 rarity-${food.rarity.toLowerCase()}">${imageOrFallback(food.asset,food.icon,food.name)}<small>${escapeHtml(food.rarity)}</small><h3>${escapeHtml(food.name)}</h3><p>+${Math.round(food.value*100)}% ${escapeHtml(EFFECT_LABELS[food.effect])} · ${food.runs} ${escapeHtml(t("runs"))}</p><b>${priceText(food.price)}</b><button type="button" data-v080-buy-food="${key}" ${!canAfford(save,food.price)?"disabled":""}>${escapeHtml(t("buy"))}</button></article>`).join("")}</div></section>`;
 }
 function patchNavigation(){
   if(UI.__v080Navigation)return;
@@ -15358,6 +15361,7 @@ function patchNavigation(){
     const open=event.target.closest?.("[data-v080-open-chest]");if(open){event.preventDefault();openChest(open.dataset.v080OpenChest);return;}
     const use=event.target.closest?.("[data-v080-use-food]");if(use){event.preventDefault();activateFood(use.dataset.v080UseFood);return;}
     const buyChest=event.target.closest?.("[data-v080-buy-chest]");if(buyChest){event.preventDefault();buyShopItem("chest",buyChest.dataset.v080BuyChest);return;}
+    const buySkin=event.target.closest?.("[data-v080-buy-skin]");if(buySkin){event.preventDefault();buyShopItem("skin",buySkin.dataset.v080BuySkin);return;}
     const buyFood=event.target.closest?.("[data-v080-buy-food]");if(buyFood){event.preventDefault();buyShopItem("food",buyFood.dataset.v080BuyFood);return;}
     const goto=event.target.closest?.("[data-v080-goto-gacha]");if(goto){event.preventDefault();view.selectedChest=goto.dataset.v080GotoGacha;view.tab="gacha";renderHub();return;}
     const openBag=event.target.closest?.("[data-v080-open-bag]");if(openBag){event.preventDefault();view.tab="bag";UI.open("chests");}
@@ -15572,7 +15576,7 @@ const DISPLAY_VERSION = "v0.8.2";
 const SAVE_SCHEMA = 9;
 const SLOT_ORDER = ["Weapon","Helmet","Armor","Gloves","Boots","Ring","Necklace"];
 const SLOT_ICONS = {Weapon:"⚔",Helmet:"⛑",Armor:"🛡",Gloves:"🧤",Boots:"🥾",Ring:"◉",Necklace:"◇"};
-const RARITY_SCRAP = {Common:2,Uncommon:4,Rare:8,Epic:18,Legendary:40};
+const RARITY_SCRAP = {Common:3,Uncommon:5,Rare:8,Epic:20,Legendary:55};
 
 const MATERIAL_SOURCES = {
   copper:["World 1–2","Common Chest","Shop","Gear dismantle"],
@@ -15765,8 +15769,8 @@ function normalize(save){
   migrateOldTree(out);
   out.account.tree={power:0,vitality:0,haste:0,fortune:0};
   out.profile=out.profile&&typeof out.profile==="object"?out.profile:{};
-  out.profile.activeTitle=String(out.profile.activeTitle||"new_bloom");
-  if(!TITLES.some(title=>title.id===out.profile.activeTitle&&title.test(out)))out.profile.activeTitle="new_bloom";
+  out.profile.activeTitle=String(out.profile.activeTitle||"");
+  if(out.profile.activeTitle&&!TITLES.some(title=>title.id===out.profile.activeTitle&&title.test(out))&&!out.ownedTitles?.includes(out.profile.activeTitle))out.profile.activeTitle="";
   out.uiV082=out.uiV082&&typeof out.uiV082==="object"?out.uiV082:{};
   out.uiV082.seenGearCount=Math.max(0,Number(out.uiV082.seenGearCount)||0);
   out.uiV082.seenBagCount=Math.max(0,Number(out.uiV082.seenBagCount)||0);
@@ -16077,20 +16081,22 @@ function compactArsenal(){
       <small>${escapeHtml(t("sourceHint"))}</small>`;
   }
   grid.innerHTML=SLOT_ORDER.map(slot=>{
-    const state=save.arsenal.slots[slot],cap=state.stars===1?10:state.stars===2?25:100;
+    const state=save.arsenal.slots[slot],cap=window.CHERRIFT_BALANCE?.arsenal?.maxLevel||30;
     const multiplier=window.CHERRIFT_V070.arsenalMultiplier(state);
-    const levelCost=window.CHERRIFT_V070.levelCost(state),starCost=window.CHERRIFT_V070.starCost(state,slot);
-    const atLevelCap=state.level>=cap,atStarCap=state.stars>=2;
-    const action=atLevelCap&&!atStarCap?{kind:"star",label:t("starUp"),cost:starCost}:atLevelCap?{kind:"max",label:t("max"),cost:null}:{kind:"level",label:t("levelUp"),cost:levelCost};
+    const levelCost=window.CHERRIFT_BALANCE?.arsenalCost?.(state.level+1)||window.CHERRIFT_V070.levelCost(state);
+    const atLevelCap=state.level>=cap;
+    const action=atLevelCap?{kind:"max",label:t("max"),cost:null}:{kind:"level",label:t("levelUp"),cost:levelCost};
     const cost=action.cost;
     const costHtml=!cost?"—":[
       `<span>🪙 ${cost.coins}</span>`,
       cost.stone?`<button type="button" data-v082-material="${cost.stone}">${escapeHtml(cost.stone)} ×${cost.stones}</button>`:"",
+      cost.copper?`<button type="button" data-v082-material="copper">Copper ×${cost.copper}</button>`:"",
+      cost.silver?`<button type="button" data-v082-material="silver">Silver ×${cost.silver}</button>`:"",
       cost.scrap?`<button type="button" data-v082-material="gearScrap">Gear Scrap ×${cost.scrap}</button>`:"",
       cost.cores?`<button type="button" data-v082-material="slotCore">${escapeHtml(slot)} Core ×${cost.cores}</button>`:""
     ].filter(Boolean).join("");
     return `<article class="arsenal-card-v070 arsenal-compact-v082" data-v070-slot-card="${slot}">
-      <header><span>${SLOT_ICONS[slot]}</span><div><small>${escapeHtml(slot)} Arsenal</small><h2>Lv.${state.level} · ${"★".repeat(state.stars)}${"☆".repeat(5-state.stars)}</h2></div><b>×${multiplier.toFixed(3)}</b></header>
+      <header><span>${SLOT_ICONS[slot]}</span><div><small>${escapeHtml(slot)} Arsenal</small><h2>Lv.${state.level} · ${"★".repeat(state.level<=10?1:state.level<=20?2:3)}${"☆".repeat(state.level<=10?2:state.level<=20?1:0)}</h2></div><b>×${multiplier.toFixed(3)}</b></header>
       <div class="arsenal-level-track-v070"><i style="width:${Math.min(100,state.level/cap*100)}%"></i></div>
       <div class="arsenal-compact-cost-v082"><small>${escapeHtml(t("requirements"))}</small><div>${costHtml}</div></div>
       <button type="button" class="arsenal-main-action-v082" ${action.kind==="level"?`data-v070-level="${slot}"`:action.kind==="star"?`data-v070-star="${slot}"`:"disabled"}>${escapeHtml(action.label)}</button>
@@ -16178,19 +16184,16 @@ function bulkDismantle(){
   const save=normalize(UI.save),items=selectedItems();
   if(!items.length){UI.toast?.(t("noSelection"));return;}
   const execute=()=>{
-    const ids=new Set(items.map(item=>item.id)),material=save.bag.materials;let scrap=0,cores=0;
+    const ids=new Set(items.map(item=>item.id)),material=save.bag.materials;let scrap=0,copper=0,silver=0;
     for(const item of items){
-      const gain=RARITY_SCRAP[item.rarity]||2;scrap+=gain;material.gearScrap+=gain;
-      const stone=stoneForItem(item);
-      material.stones[stone]=(material.stones[stone]||0)+Math.max(1,Math.floor((["Common","Uncommon","Rare","Epic","Legendary"].indexOf(item.rarity)+1)/2));
-      const state=save.arsenal.slots[item.slot];state.salvageCount=(state.salvageCount||0)+1;
-      while(state.salvageCount>=3){
-        state.salvageCount-=3;material.slotCores[item.slot]=(material.slotCores[item.slot]||0)+1;cores++;
-      }
+      const reward=window.CHERRIFT_BALANCE?.gear?.dismantle?.[item.rarity]||{scrap:RARITY_SCRAP[item.rarity]||3};
+      scrap+=reward.scrap||0;copper+=reward.copper||0;silver+=reward.silver||0;
+      if(reward.silverChance&&Math.random()<reward.silverChance)silver++;
     }
+    material.gearScrap+=scrap;material.stones.copper=(material.stones.copper||0)+copper;material.stones.silver=(material.stones.silver||0)+silver;
     save.inventory=save.inventory.filter(item=>!ids.has(item.id));
     runtime.selectedGear.clear();runtime.selectionMode=false;
-    saveProgress(`${t("bulkDismantled")}: ${items.length} · ⚙ ${scrap}${cores?` · ✥ ${cores}`:""}`);UI.renderGear?.();
+    saveProgress(`${t("bulkDismantled")}: ${items.length} · ⚙ ${scrap}${copper?` · Copper ${copper}`:""}${silver?` · Silver ${silver}`:""}`);UI.renderGear?.();
   };
   if(items.some(item=>["Epic","Legendary"].includes(item.rarity)))showConfirm(t("bulkConfirm"),execute);else execute();
 }
@@ -16212,14 +16215,14 @@ function renderWeekly(){
   body.innerHTML=`${panelHeader(t("weekly"),t("weeklyIntro"))}
     <main class="weekly-main-v082">
       <div class="weekly-goals-v082">${goals.map(goal=>`<article><span>${goal.icon}</span><div><small>${escapeHtml(goal.label)}</small><b>${Math.min(goal.target,goal.value)} / ${goal.target}</b><i><em style="width:${Math.min(100,goal.value/goal.target*100)}%"></em></i></div></article>`).join("")}</div>
-      <section class="weekly-reward-v082"><small>${escapeHtml(t("weeklyReward"))}</small><h2>🪙 800 · 💎 25 · 🔵 Rare Chest ×1</h2><button type="button" data-v082-claim-weekly ${!ready||weekly.claimed?"disabled":""}>${weekly.claimed?t("claimed"):t("claim")}</button></section>
+      <section class="weekly-reward-v082"><small>${escapeHtml(t("weeklyReward"))}</small><h2>🪙 3500 · 💎 20 · 🔵 Rare Chest ×1 · 🧪 Standard Energy</h2><button type="button" data-v082-claim-weekly ${!ready||weekly.claimed?"disabled":""}>${weekly.claimed?t("claimed"):t("claim")}</button></section>
     </main>`;
 }
 function claimWeekly(){
   const save=normalize(UI.save),weekly=normalizeWeekly(save),stats=save.stats||{};
   const ready=(stats.runs||0)-weekly.start.runs>=5&&(stats.clears||0)-weekly.start.clears>=3&&(stats.kills||0)-weekly.start.kills>=300;
   if(!ready||weekly.claimed)return;
-  weekly.claimed=true;save.coins+=800;save.blossomGems+=25;save.chests.rare+=1;
+  weekly.claimed=true;save.coins+=3500;save.bloomGems=(save.bloomGems||save.blossomGems||0)+20;save.blossomGems=save.bloomGems;save.chests.rare+=1;save.energyState=save.energyState||{};save.energyState.drinks=save.energyState.drinks||{};save.energyState.drinks.standard=(save.energyState.drinks.standard||0)+1;
   saveProgress(t("claimed"));
 }
 
@@ -16270,14 +16273,15 @@ function renderSocial(){
 function estimateStats(save=UI.save){
   const normalized=normalize(save),tree=skillBonuses(normalized),buff=window.CHERRIFT_V080.aggregateBuffs(normalized);
   const gear=UI.totalGearStats?.(normalized)||{};
+  const titles=window.CHERRIFT_PREBETA?.titleStats?.(normalized)||{damage:0,maxHp:0,allStats:0};
   const skin=CHERRIFT_DATA.skins.find(entry=>entry.id===normalized.selectedSkin)||CHERRIFT_DATA.skins[0]||{stats:{}};
-  const baseDamage=20+Number(skin.stats?.damage||0)+Number(gear.damage||0),baseHp=100+Number(gear.maxHp||0);
+  const baseDamage=20+Number(skin.stats?.damage||0)+Number(gear.damage||0)+Number(titles.damage||0)+Number(titles.allStats||0),baseHp=100+Number(gear.maxHp||0)+Number(titles.maxHp||0)+Number(titles.allStats||0);
   const damage=baseDamage*(1+(tree.damage||0)+(buff.damage||0)),hp=baseHp*(1+(tree.maxHp||0)+(buff.maxHp||0));
-  const move=(235+Number(skin.stats?.speed||0)+Number(gear.moveSpeed||0))*(1+(tree.movementSpeed||0)+(buff.moveSpeed||0));
+  const move=(235+Number(skin.stats?.speed||0)+Number(gear.moveSpeed||0)+Number(titles.allStats||0))*(1+(tree.movementSpeed||0)+(buff.moveSpeed||0));
   const crit=.05+Number(gear.crit||0)/100+(tree.critChance||0)+(buff.crit||0);
   const critDamage=1.5+Number(gear.critDamage||0)/100+(tree.critDamage||0);
   const attackSpeed=1+(tree.attackSpeed||0)+(buff.attackSpeed||0)+Number(gear.attackSpeed||0)/100;
-  const power=Math.round(100+Object.values(normalized.equipped||{}).filter(Boolean).reduce((sum,item)=>sum+(window.CHERRIFT_V050?.itemPower?.(item)||0),0));
+  const power=window.CHERRIFT_PREBETA?.calculatePower?.(normalized)||Math.round(100+Object.values(normalized.equipped||{}).filter(Boolean).reduce((sum,item)=>sum+(window.CHERRIFT_V050?.itemPower?.(item)||0),0));
   return {
     power,damage:Math.round(damage*10)/10,hp:Math.round(hp),move:Math.round(move),crit:Math.round(crit*1000)/10,
     critDamage:Math.round(critDamage*1000)/10,attackSpeed:Math.round(attackSpeed*1000)/10,
@@ -18352,7 +18356,7 @@ if (window.CHERRIFT_REMOTE_CONFIG?.skinBonuses) {
 function normalize(save) {
   if (!save) return save;
   save.unlockedSkins = Array.isArray(save.unlockedSkins) ? save.unlockedSkins : [];
-  for (const skin of SKINS) if (!save.unlockedSkins.includes(skin)) save.unlockedSkins.push(skin);
+  if (!save.unlockedSkins.includes("cherry_default")) save.unlockedSkins.push("cherry_default");
   if (!CHERRIFT_DATA.skins.some(skin => skin.id === save.selectedSkin)) save.selectedSkin = "cherry_default";
   return save;
 }
@@ -19275,9 +19279,7 @@ function configureSkinData() {
 function normalizeSave(save) {
   if (!save || typeof save !== "object") return save;
   save.unlockedSkins = Array.isArray(save.unlockedSkins) ? save.unlockedSkins : [];
-  for (const skinId of COMMON_IDS) {
-    if (!save.unlockedSkins.includes(skinId)) save.unlockedSkins.push(skinId);
-  }
+  if (!save.unlockedSkins.includes("cherry_default")) save.unlockedSkins.push("cherry_default");
   if (!CHERRIFT_DATA.skins.some(skin => skin.id === save.selectedSkin)) {
     save.selectedSkin = "cherry_default";
   }
@@ -21169,7 +21171,7 @@ const INVENTORY_CAP = 80;
 const STAR_CAP = 3;
 const RARITY_INDEX = { Common:0, Uncommon:1, Rare:2, Epic:3, Legendary:4 };
 const SKIN_ESSENCE = { Common:5, Uncommon:8, Rare:15, Epic:40, Legendary:100 };
-const GEAR_SCRAP = { Common:2, Uncommon:4, Rare:8, Epic:18, Legendary:40 };
+const GEAR_SCRAP = { Common:3, Uncommon:5, Rare:8, Epic:20, Legendary:55 };
 const ARSENAL_LEVEL_CAP = { 1:10, 2:25, 3:50, 4:100, 5:100 };
 const runtime = {
   gearSource:"world",
@@ -21568,7 +21570,7 @@ function ensureGearRarityFilters() {
   const nav = document.createElement("nav");
   nav.id = "gearRarityFiltersV0931";
   nav.className = "gear-rarity-filters-v0931";
-  nav.innerHTML = `<small>${copy("RITKASÁG", "RARITY")}</small><button type="button" data-v0931-gear-rarity="all" class="active">${copy("Összes", "All")}</button><button type="button" data-v0931-gear-rarity="Common">Common</button><button type="button" data-v0931-gear-rarity="Rare">Rare</button>`;
+  nav.innerHTML = `<small>${copy("RITKASÁG", "RARITY")}</small><button type="button" data-v0931-gear-rarity="all" class="active">${copy("Összes", "All")}</button><button type="button" data-v0931-gear-rarity="Common">Common</button><button type="button" data-v0931-gear-rarity="Uncommon">Uncommon</button><button type="button" data-v0931-gear-rarity="Rare">Rare</button>`;
   base.insertAdjacentElement("afterend", nav);
 }
 
@@ -21582,21 +21584,11 @@ function applyGearRarityFilter() {
 }
 
 function arsenalCost(state) {
-  const original = window.CHERRIFT_V070?.levelCost?.(state) || {};
-  const target = Math.max(2, Number(original.target) || count(state?.level) + 1);
-  return {
-    target,
-    coins:Math.floor((Number(original.coins) || 100) * 1.12 + target * 22),
-    stone:target <= 5 ? "copper" : (original.stone || "copper"),
-    stones:Math.max(1, Number(original.stones) || 1, Math.ceil(1 + target * .65)),
-    scrap:target <= 6
-      ? ({2:10,3:12,4:15,5:18,6:22}[target] || 10)
-      : Math.ceil(22 + (target - 6) * 3.2 + Math.pow(target - 6, 1.22))
-  };
+  return window.CHERRIFT_BALANCE?.arsenalCost?.(count(state?.level) + 1) || {target:count(state?.level)+1,coins:100,scrap:2,copper:0,silver:0};
 }
 
 function arsenalCostText(cost) {
-  return `🪙 ${cost.coins} · ${cost.stone} ×${cost.stones} · Gear Scrap ×${cost.scrap}`;
+  return `🪙 ${cost.coins} · Scrap ×${cost.scrap}${cost.copper ? ` · Copper ×${cost.copper}` : ""}${cost.silver ? ` · Silver ×${cost.silver}` : ""}`;
 }
 
 function decorateArsenalCosts() {
@@ -21605,7 +21597,7 @@ function decorateArsenalCosts() {
     const slot = card.dataset.v070SlotCard;
     const state = UI.save.arsenal.slots[slot];
     if (!state) return;
-    const cap = ARSENAL_LEVEL_CAP[state.stars] || 100;
+    const cap = window.CHERRIFT_BALANCE?.arsenal?.maxLevel || 30;
     if (state.level >= cap) return;
     const target = q(".arsenal-cost-v070 p", card);
     if (target) target.textContent = arsenalCostText(arsenalCost(state));
@@ -21617,18 +21609,24 @@ function upgradeArsenalHotfix(slot) {
   const save = api?.normalize?.(UI.save);
   const state = save?.arsenal?.slots?.[slot];
   if (!save || !state) return false;
-  const cap = ARSENAL_LEVEL_CAP[state.stars] || 100;
+  const cap = window.CHERRIFT_BALANCE?.arsenal?.maxLevel || 30;
   if (state.level >= cap) return false;
   const cost = arsenalCost(state);
+  if (cost?.target > count(save.account?.level || 1)) {
+    UI.toast?.(copy("Az Arsenal szint nem lehet magasabb a játékos szintjénél.", "Arsenal level cannot exceed player level."));
+    return false;
+  }
   const materials = save.bag.materials;
-  if (count(save.coins) < cost.coins || count(materials.stones?.[cost.stone]) < cost.stones || count(materials.gearScrap) < cost.scrap) {
-    UI.toast?.(copy("Nincs elég Coin, kő vagy Gear Scrap.", "Not enough Coins, stones or Gear Scrap."));
+  if (count(save.coins) < cost.coins || count(materials.stones?.copper) < cost.copper || count(materials.stones?.silver) < cost.silver || count(materials.gearScrap) < cost.scrap) {
+    UI.toast?.(copy("Nincs elég Coin, Scrap, Copper vagy Silver.", "Not enough Coins, Scrap, Copper or Silver."));
     return false;
   }
   save.coins -= cost.coins;
-  materials.stones[cost.stone] -= cost.stones;
+  materials.stones.copper -= cost.copper;
+  materials.stones.silver -= cost.silver;
   materials.gearScrap -= cost.scrap;
   state.level = cost.target;
+  state.stars = state.level <= 10 ? 1 : state.level <= 20 ? 2 : 3;
   api.syncAllItems?.(save);
   suppressRewardSave(save);
   UI.refreshMenu?.();
@@ -21901,6 +21899,7 @@ function commitRunCheckpoint(game, star, silent = false) {
   const stage = game.stage;
   if (!escrow || !stage || star <= escrow.currentStar) return;
   escrow.currentStar = clamp(star, 0, STAR_CAP);
+  if (escrow.currentStar >= 1) window.CHERRIFT_PREBETA?.commitStageEnergy?.(game);
   escrow.committed = rewardSnapshot(game.save);
   escrow.committedRunCoins = Number(game.runCoins) || 0;
   game.save.stageStars ||= {};
@@ -23509,6 +23508,18 @@ const WORLD_META = {
     descHu:"Vörös sivatag ritka, hatalmas sziklaóriásokkal a későbbi pályákon.",
     descEn:"Red desert with rare colossal rocks in the later stages.",
     art:'linear-gradient(180deg,rgba(41,8,4,.05),rgba(18,4,5,.70)),url("assets/map/world4/world4_splashart_1.png"),url("assets/map/world4/world4_splashart_2.png"),url("assets/map/world4/world4_ground_1.png")'
+  },
+  5:{
+    nameHu:"Desert Frontier", nameEn:"Desert Frontier",
+    descHu:"Pre-beta placeholder világ. A végleges World 5 assetek egy helyen cserélhetők.",
+    descEn:"Pre-beta placeholder world. Final World 5 assets can be replaced in one place.",
+    art:'linear-gradient(180deg,rgba(41,8,4,.05),rgba(18,4,5,.70)),url("assets/map/world4/world4_splashart_1.png"),url("assets/map/world4/world4_ground_1.png")'
+  },
+  6:{
+    nameHu:"Ancient Ruins", nameEn:"Ancient Ruins",
+    descHu:"Pre-beta placeholder világ a végleges romvidék assetek megérkezéséig.",
+    descEn:"Pre-beta placeholder world until the final ruins assets arrive.",
+    art:'linear-gradient(180deg,rgba(42,25,8,.10),rgba(18,9,4,.72)),url("assets/map/world3/world3_ground_1.png")'
   }
 };
 
@@ -23544,8 +23555,12 @@ const MAP_ASSETS = {
     rock3:"assets/map/world4/world_rock_3.png", rock4:"assets/map/world4/world_rock_4.png",
     veryBig1:"assets/map/world4/world4_rock_very_big_1.png", veryBig2:"assets/map/world4/world4_very_big_rock_2.png",
     tree:"assets/map/world4/world4_tree_1.png"
-  }
+  },
+  5:null,
+  6:null
 };
+MAP_ASSETS[5] = {...MAP_ASSETS[4]};
+MAP_ASSETS[6] = {...MAP_ASSETS[3]};
 
 const FIREFLY_CANDIDATES = [
   "assets/map/world2/world2_firefly_01.png"
@@ -23565,13 +23580,15 @@ function stageCleared(stage) {
 }
 function worldUnlocked(world) {
   const number = Number(world);
-  if (number <= 1 || isTestBuild()) return true;
+  if (window.CHERRIFT_PREBETA?.isWorldUnlocked) return CHERRIFT_PREBETA.isWorldUnlocked(number, UI.save);
+  if (number <= 1) return true;
   const previous = worldStages(number - 1);
   return previous.length > 0 && previous.every(stageCleared);
 }
 function stageUnlocked(stage) {
   if (!stage) return false;
-  if (stage.training) return true;
+  if (window.CHERRIFT_PREBETA?.isStageUnlocked) return CHERRIFT_PREBETA.isStageUnlocked(stage, UI.save);
+  if (stage.training) return false;
   return UI.save?.unlockedStages?.includes?.(stage.id) || (worldUnlocked(stage.world) && Number(stage.index) === 1);
 }
 function firstClearClaimed(stageId) {
@@ -23619,7 +23636,9 @@ function installStages() {
 function ensureSave(save = UI.save) {
   if (!save) return;
   save.unlockedStages = Array.isArray(save.unlockedStages) ? save.unlockedStages : ["world_1_1"];
-  if (!save.unlockedStages.includes("training_test")) save.unlockedStages.unshift("training_test");
+  const trainingAllowed = window.CHERRIFT_PREBETA?.hasEntitlement?.("training", save);
+  save.unlockedStages = save.unlockedStages.filter(stageId => stageId !== "training_test");
+  if (trainingAllowed) save.unlockedStages.unshift("training_test");
   save.clearedStages = save.clearedStages && typeof save.clearedStages === "object" ? save.clearedStages : {};
   save.stageStats = save.stageStats && typeof save.stageStats === "object" ? save.stageStats : {};
 }
@@ -23675,7 +23694,9 @@ function worldProgress(world) {
 }
 
 function renderWorldCards() {
-  return [0,1,2,3,4].map(world => {
+  const worlds=[1,2,3,4,5,6];
+  if (window.CHERRIFT_PREBETA?.hasEntitlement?.("training",UI.save)) worlds.unshift(0);
+  return worlds.map(world => {
     const unlocked = worldUnlocked(world);
     const progress = worldProgress(world);
     const training = world === 0;
@@ -25498,9 +25519,9 @@ const THEMES = Object.freeze({
   })
 });
 
-// A mostani teszt buildben mindhárom téma fel van oldva.
-// Később a Cozy és Summer ID egyszerűen kivehető innen, és rewardból oldható fel.
-const STARTER_UNLOCKS = Object.freeze(["default", "cozy_cherry", "summer_splash"]);
+// Pre-beta accounts begin with the Default theme. Existing owner saves keep
+// every theme they already own; Cozy and Summer are progression rewards.
+const STARTER_UNLOCKS = Object.freeze(["default"]);
 
 const uiText = Object.freeze({
   hu: {
@@ -25513,7 +25534,7 @@ const uiText = Object.freeze({
     defaultBadge: "ALAP",
     equippedToast: "Téma beállítva:",
     lockedToast: "Ez a téma még nincs feloldva.",
-    testHint: "A Cozy Cherry és a Summer Splash jelenleg feloldva érkezik teszteléshez."
+    testHint: "A Cozy Cherry és a Summer Splash progression jutalomként oldható fel."
   },
   en: {
     title: "Menu Theme",
@@ -25525,7 +25546,7 @@ const uiText = Object.freeze({
     defaultBadge: "DEFAULT",
     equippedToast: "Theme selected:",
     lockedToast: "This theme has not been unlocked yet.",
-    testHint: "Cozy Cherry and Summer Splash are currently unlocked for testing."
+    testHint: "Cozy Cherry and Summer Splash unlock through progression rewards."
   }
 });
 
@@ -25578,7 +25599,7 @@ function ensureCss() {
   const link = document.createElement("link");
   link.id = STYLE_ID;
   link.rel = "stylesheet";
-  link.href = "assets/ui/themes/theme_system.css?v=6";
+  link.href = "assets/ui/themes/theme_system.css?v=7";
   link.onload = () => document.documentElement.classList.add("cherrift-theme-css-ready");
   document.head.appendChild(link);
 }

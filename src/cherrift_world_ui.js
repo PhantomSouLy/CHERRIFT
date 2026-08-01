@@ -261,7 +261,8 @@
   function stageStars(stage) { return Math.min(3, number(UI.save?.stageStars?.[stage.id] || UI.save?.stageStats?.[stage.id]?.stars)); }
   function stageCleared(stage) { return !!(UI.save?.clearedStages?.[stage.id] || UI.save?.stageStats?.[stage.id]?.clears); }
   function stageUnlocked(stage) {
-    return stage?.training === true || /train|test/i.test(String(stage?.id || "")) || UI.save?.unlockedStages?.includes(stage.id) || stageCleared(stage) || stageIndex(stage) === 1;
+    if (window.CHERRIFT_PREBETA?.isStageUnlocked) return CHERRIFT_PREBETA.isStageUnlocked(stage, UI.save);
+    return UI.save?.unlockedStages?.includes(stage.id) || stageCleared(stage) || (stageWorld(stage) === 1 && stageIndex(stage) === 1);
   }
   function trainingStage() { return stages().find(stage => stage.training === true || /train|test/i.test(`${stage.id || ""} ${stage.name || ""}`)); }
   function worldStages(world) { return stages().filter(stage => stageWorld(stage) === Number(world) && stage !== trainingStage()).sort((a,b) => stageIndex(a)-stageIndex(b)); }
@@ -269,10 +270,11 @@
     const fromStages = Math.max(1, ...stages().map(stageWorld));
     // Only worlds with real, installed stages belong in the test selector.
     // The legacy UI advertised seven preview worlds, producing empty cards.
-    return Math.min(4, fromStages);
+    return Math.min(6, fromStages);
   }
   function worldUnlocked(world) {
-    if (world === 1 || isTestBuild()) return true;
+    if (window.CHERRIFT_PREBETA?.isWorldUnlocked) return CHERRIFT_PREBETA.isWorldUnlocked(world, UI.save);
+    if (world === 1) return true;
     const previous = worldStages(world - 1);
     return previous.length > 0 && previous.every(stageCleared);
   }
@@ -281,6 +283,8 @@
     if (world === 2) return "assets/map/world2/world2_splashart_1.png";
     if (world === 3) return "assets/map/world3/world3_splashart_1.png";
     if (world === 4) return "assets/map/world4/world4_splashart_1.png";
+    if (world === 5) return "assets/map/world4/world4_splashart_1.png";
+    if (world === 6) return "assets/map/world3/world3_splashart_1.png";
     return "assets/map/world1/world1_splashart_1.png";
   }
   function chapterArt(stage) {
@@ -290,12 +294,13 @@
       const artIndex = index <= 2 ? 1 : index <= 4 ? 2 : 3;
       return `assets/map/world1/world1_splashart_${artIndex}.png`;
     }
-    if (world === 4) {
+    if (world === 4 || world === 5) {
       // Chapter 5's final artwork has not been delivered yet. Chapter art 2 is an
       // intentional, documented placeholder and can be replaced in one place.
       const artIndex = index <= 2 ? 1 : 2;
       return stage.splash || stage.splashArt || stage.art || stage.image || `assets/map/world4/world4_splashart_${artIndex}.png`;
     }
+    if (world === 6) return stage.splash || stage.splashArt || stage.art || stage.image || `assets/map/world3/world3_splashart_${index <= 2 ? 1 : index <= 4 ? 2 : 3}.png`;
     const artIndex = index <= 2 ? 1 : index <= 4 ? 2 : 3;
     return stage.splash || stage.splashArt || stage.art || stage.image || `assets/map/world${world}/world${world}_splashart_${artIndex}.png`;
   }
@@ -329,7 +334,7 @@
   function worldEntries() {
     const entries = [];
     const training = trainingStage();
-    if (training) entries.push({ type:"training", world:0, stage:training, name:"Test Training", art:training.splash || training.art || "assets/map/world3/world3_ground_1.png", unlocked:true });
+    if (training && window.CHERRIFT_PREBETA?.hasEntitlement?.("training",UI.save)) entries.push({ type:"training", world:0, stage:training, name:"Training", art:training.splash || training.art || "assets/map/world3/world3_ground_1.png", unlocked:true });
     for (let world = 1; world <= worldCount(); world += 1) entries.push({ type:"world", world, name:`World ${world}`, art:worldArt(world), unlocked:worldUnlocked(world) });
     return entries;
   }

@@ -460,7 +460,8 @@
     return prettyTitle(match?.name || current);
   }
   function titleSources() {
-    return [window.CHERRIFT_TITLES, window.CHERRIFT_DATA?.titles, window.CHERRIFT_V082?.titles, window.CHERRIFT_V082?.titleCatalog, window.CHERRIFT_V084?.titles, window.UI?.titleCatalog];
+    if (Array.isArray(window.CHERRIFT_TITLES)) return [window.CHERRIFT_TITLES];
+    return [window.CHERRIFT_DATA?.titles, window.CHERRIFT_V082?.titles, window.CHERRIFT_V082?.titleCatalog, window.CHERRIFT_V084?.titles, window.UI?.titleCatalog];
   }
   function titleCatalog() {
     const found = new Map();
@@ -474,6 +475,7 @@
         name: prettyTitle(localize(entry.nameKey || entry.name || entry.title || titleId)),
         rarity: String(entry.rarity || "Common"),
         bonus: localize(entry.bonusKey || entry.bonus || entry.description || ""),
+        stats: entry.stats || entry.statBonuses || entry.bonuses || null,
         owned: entry.owned === true || entry.unlocked === true
       });
     };
@@ -548,7 +550,7 @@
     const skin = selectedSkin();
     const avatar = account.avatar || account.avatarUrl || account.avatar_url || skin.icon || skin.splash || "";
     const discordName = account.username || account.name || account.discordUsername || account.discord_id || account.discordId || "—";
-    const level = lifetimeStat("playerLevel", "level", "profile.level") || 1;
+    const level = lifetimeStat("account.level", "playerLevel", "level", "profile.level") || 1;
     const stats = [
       [t("achievements"), achievementCount()], [t("kills"), lifetimeStat("totalKills", "stats.kills", "lifetimeStats.kills")],
       [t("stageClears"), stageClearCount()], [t("totalXp"), lifetimeStat("totalXp", "xp", "stats.totalXp")],
@@ -605,7 +607,13 @@
       value:entry?.value ?? entry?.amount ?? 0,
       unit:String(entry?.unit || "")
     })).filter(entry => entry.label && (Number(entry.value) || String(entry.value).trim()));
-    if (typeof source === "object") return Object.entries(source).map(([key, value]) => ({ key, label:key, value, unit:"" })).filter(entry => Number(entry.value) || String(entry.value).trim());
+    if (typeof source === "object") {
+      const labels={maxHp:"HP",damage:"ATK",allStats:language()==="hu"?"Minden stat":"All stats",coinGain:language()==="hu"?"Bónusz Coin":"Bonus Coin",chestLuck:language()==="hu"?"Láda szerencse":"Chest luck"};
+      return Object.entries(source).map(([key, raw]) => {
+        const percentage=key==="coinGain"||key==="chestLuck";
+        return {key,label:labels[key]||key,value:percentage?Number(raw||0)*100:raw,unit:percentage?"%":""};
+      }).filter(entry => Number(entry.value) || String(entry.value).trim());
+    }
     return [];
   }
 

@@ -1,8 +1,25 @@
-# CHERRIFT v0.9.4 — Stabilization Test Build
+# CHERRIFT v0.9.5 — Pre-Beta
+
+The pre-beta build adds the production starter progression, central economy
+balance, first-star Energy commitment, six beta Worlds, stacking title stats,
+profile frames, Social and a weekly Power Top 50. Existing accounts present when
+the migration runs are preserved as owner accounts; new accounts start locked.
 
 Browseres akció-RPG tesztverzió, egységesített PC-, telefonos álló és telefonos fekvő nézettel.
 
-## A v0.9.4 fő javításai
+## A v0.9.5 pre-beta fő változásai
+
+- Valódi kezdőaccount: 500 Coin, 50 Energy, 3 Common Chest, Base Cherry és
+  World 1-1; minden teszt-unlock eltűnt az új fiókokból.
+- Központi currency-, Energy-, Gear-, Arsenal-, XP-, World- és enemy-balance.
+- World 1–6 progression, chapter lockok és cserélhető World 5–6 placeholder.
+- Halmozódó title statok és külön Title Stats összesítő.
+- Feloldható profilkeretek, Social rendszer és heti Power Top 50.
+- A meglévő migrációkori owner account teljes tartalma megmarad.
+
+A pontos értékek: [PREBETA_V095_BALANCE_HU.md](PREBETA_V095_BALANCE_HU.md).
+
+## A v0.9.4 stabilizálás fő javításai
 
 - A telefonos World Select most valódi, középre rendezett lapozó: Training + World 1–4, világonként 5 fejezettel.
 - A 844×390 körüli fekvő telefonokat a játék már mobilként kezeli, nem keskeny desktopként.
@@ -49,12 +66,14 @@ Ellenőrzi többek között a World Selectet, a Gachát és key-migrációt, a l
 
 Az `index.html` determinisztikus sorrendben tölti be az aktív rendszereket:
 
-1. `src/cherrift_app.js` — konszolidált játék-runtime
-2. `src/cherrift_gacha.js` — láda/Gacha
-3. `src/cherrift_live_services.js` — szerveres Mail és Redeem híd
-4. `src/cherrift_account_mail.js` — Account, Profile és Mail UI
-5. `src/cherrift_world_ui.js` — mobil World/Chapter selector
-6. `src/cherrift_stability.js` — egyetlen végső navigációs és stabilitási réteg
+1. `src/cherrift_balance.js` — központi pre-beta balansz
+2. `src/cherrift_app.js` — konszolidált játék-runtime
+3. `src/cherrift_gacha.js` — láda/Gacha
+4. `src/cherrift_live_services.js` — szerveres Mail és Redeem híd
+5. `src/cherrift_account_mail.js` — Account, Profile és Mail UI
+6. `src/cherrift_world_ui.js` — mobil World/Chapter selector
+7. `src/cherrift_stability.js` — egységes navigáció és stabilitás
+8. `src/cherrift_prebeta.js` — progression, Energy, title, frame, Social és Ranking
 
 A régi különálló `cherrift_bugfix_v094*.js`, `cherrift_v0933.js`, `cherrift_theme_system.js` és `v0933.css` fájlokat nem szabad visszatenni: aktív tartalmuk már a runtime-ban vagy a fenti modulokban van.
 
@@ -74,6 +93,8 @@ A böngészős `src/supabase_config.js` kizárólag publikus/publishable kulcsot
 
 ## English summary
 
-CHERRIFT v0.9.4 is a browser action-RPG stabilization build. It consolidates navigation, repairs desktop and mobile Gacha, adds a real phone World/Chapter carousel, handles landscape phones, migrates legacy keys without losing value, and protects Discord progress with a per-account local backup plus cloud retry.
+CHERRIFT v0.9.5-prebeta.1 adds production starter progression, central balance,
+Energy, six beta Worlds, stacking titles, profile frames, Social and weekly Power
+ranking on top of the consolidated desktop/mobile runtime.
 
 Run `npm ci && npm test` before every test release. See [ASSET_PLACEHOLDERS.md](ASSET_PLACEHOLDERS.md) for the intentionally temporary art mappings.

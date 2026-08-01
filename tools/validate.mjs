@@ -122,12 +122,12 @@ const packageJson = JSON.parse(readFileSync(join(root, "package.json"), "utf8"))
 for (const dependency of ["@supabase/supabase-js", "@supabase/ssr"]) {
   if (!packageJson.dependencies?.[dependency]) errors.push(`package.json: missing ${dependency}`);
 }
-if (packageJson.version !== "0.9.4") errors.push(`package.json: expected version 0.9.4, found ${packageJson.version}`);
+if (packageJson.version !== "0.9.5-prebeta.1") errors.push(`package.json: expected version 0.9.5-prebeta.1, found ${packageJson.version}`);
 for (const [file, contents] of [
   ["index.html", html],
   ["src/cherrift_app.js", runtime]
 ]) {
-  if (!contents.includes("0.9.4")) errors.push(`${file}: v0.9.4 build marker is missing`);
+  if (!contents.includes("0.9.5")) errors.push(`${file}: v0.9.5 build marker is missing`);
 }
 for (const marker of ["BEGIN src/cherrift_v091.js", "BEGIN src/cherrift_v092.js", "BEGIN src/cherrift_v093.js", "BEGIN src/locales/en.js", "BEGIN src/locales/hu.js", "BEGIN src/locales/index.js"]) {
   if (!runtime.includes(marker)) errors.push(`src/cherrift_app.js: missing bundled source marker ${marker}`);
@@ -138,7 +138,7 @@ if ((runtime.match(/BEGIN src\/cherrift_v0944\.js/g) || []).length !== 1) {
 if (/loadScript\(["']src\/cherrift_/.test(runtime)) errors.push("src/cherrift_app.js: legacy patch loader is still present");
 const authConfig = existsSync(authConfigPath) ? readFileSync(authConfigPath, "utf8") : "";
 if (/createElement\(["']script["']\)|loadExternalSystems/.test(authConfig)) errors.push("src/supabase_config.js: hidden runtime script loader must not be used");
-const moduleOrder = ["src/cherrift_app.js", "src/cherrift_gacha.js", "src/cherrift_live_services.js", "src/cherrift_account_mail.js", "src/cherrift_world_ui.js", "src/cherrift_stability.js"];
+const moduleOrder = ["src/cherrift_balance.js", "src/cherrift_app.js", "src/cherrift_gacha.js", "src/cherrift_live_services.js", "src/cherrift_account_mail.js", "src/cherrift_world_ui.js", "src/cherrift_stability.js", "src/cherrift_prebeta.js"];
 for (let index = 1; index < moduleOrder.length; index += 1) {
   if (html.indexOf(moduleOrder[index - 1]) < 0 || html.indexOf(moduleOrder[index]) <= html.indexOf(moduleOrder[index - 1])) {
     errors.push(`index.html: deterministic runtime order is broken at ${moduleOrder[index]}`);

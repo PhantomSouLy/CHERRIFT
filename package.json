@@ -1,6 +1,6 @@
 {
   "name": "cherrift",
-  "version": "0.9.4",
+  "version": "0.9.5-prebeta.1",
   "private": true,
   "type": "module",
   "scripts": {
