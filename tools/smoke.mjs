@@ -630,6 +630,13 @@ async function exercise(name,width,height){
       );
       assert.equal(succubusConfig.states.skill.frames,8,"desktop: Soul Drain uses the eight-frame skill strip");
       assert.equal(succubusConfig.states.skill.pivot.y,184,"desktop: Succubus ground pivot is exact");
+      assert.deepEqual(
+        {...window.CHERRIFT_SUCCUBUS_V095.burstLayout},
+        {cell:256,columns:3,frames:7},
+        "desktop: Soul Drain reads the real 3x3 / seven-frame effect atlas"
+      );
+      assert.equal(succubusConfig.meleeTriggerRange,158,"desktop: Succubus switches to melee before visual overlap");
+      assert.equal(succubusConfig.meleeRange,184,"desktop: Succubus claws reach the expanded melee distance");
       for(const state of window.CHERRIFT_SUCCUBUS_V095.states){
         assert.ok(UI.game.assets.get(`player_succubus_cherry_${state}_down`),`desktop: ${state} sprite loaded`);
       }
@@ -660,7 +667,7 @@ async function exercise(name,width,height){
       succubus.attackCastTimer=0;
       succubus.fireTimer=0;
       succubus.moving=false;
-      const meleeEnemy={x:succubus.x+62,y:succubus.y,r:20,hp:900,maxHp:900,speed:0,xp:1,dead:false};
+      const meleeEnemy={x:succubus.x+170,y:succubus.y,r:20,hp:900,maxHp:900,speed:0,xp:1,dead:false};
       UI.game.enemies=[meleeEnemy];
       UI.game.bullets=[];
       UI.game.effects=[];
@@ -687,6 +694,15 @@ async function exercise(name,width,height){
       for(let index=0;index<9;index++)UI.game.update(.05);
       assert.ok(UI.game.effects.some(effect=>effect.type==="succubus_skill_burst_v095"),"desktop: burst sheet starts on skill frame four");
       assert.ok(UI.game.bullets.some(bullet=>bullet.style==="succubus_soul_v095"),"desktop: multiple soul wisps launch with the burst");
+      const burstDraw=[];
+      const burstContext=canvasContext();
+      burstContext.drawImage=(...args)=>burstDraw.push(args);
+      UI.game.drawEffect(burstContext,{type:"succubus_skill_burst_v095",x:100,y:100,t:.2,life:.64});
+      assert.equal(burstDraw.length,1,"desktop: Soul Drain draws one atlas cell per effect frame");
+      assert.equal(burstDraw[0][3],256,"desktop: Soul Drain source cell width is 256px");
+      assert.equal(burstDraw[0][4],256,"desktop: Soul Drain source cell height is 256px");
+      assert.ok(burstDraw[0][7]<=232,"desktop: Soul Drain burst stays compact on the playfield");
+      assert.equal(burstContext.imageSmoothingEnabled,true,"desktop: Soul Drain scales with smoothing instead of pixelating");
       for(let index=0;index<16;index++)UI.game.update(.05);
       assert.ok(succubus.soulShield>0,"desktop: full-HP Soul Drain converts overheal into shield");
       assert.ok(UI.game.effects.some(effect=>effect.type==="succubus_overheal_v095"),"desktop: overheal uses the faint blood-shield effect");
