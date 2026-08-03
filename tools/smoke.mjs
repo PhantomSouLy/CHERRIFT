@@ -637,9 +637,15 @@ async function exercise(name,width,height){
       );
       assert.equal(succubusConfig.meleeTriggerRange,158,"desktop: Succubus switches to melee before visual overlap");
       assert.equal(succubusConfig.meleeRange,184,"desktop: Succubus claws reach the expanded melee distance");
+      assert.equal(window.CHERRIFT_SUCCUBUS_V095.walkAttackRenderSource,"walk","desktop: moving ranged attacks use the continuous walk body");
       for(const state of window.CHERRIFT_SUCCUBUS_V095.states){
         assert.ok(UI.game.assets.get(`player_succubus_cherry_${state}_down`),`desktop: ${state} sprite loaded`);
       }
+      assert.match(
+        UI.game.assets.get("player_succubus_cherry_walk_attack_ranged_down").src,
+        /succubus_cherry_walk_down\.png/,
+        "desktop: broken split-body walk-attack strips are not rendered"
+      );
       for(const key of ["succubus_claw_wave","succubus_claw_mark","succubus_claw_slash","succubus_front_slash","succubus_burst","succubus_wisp","succubus_hit","succubus_shield"]){
         assert.ok(UI.game.assets.get(key),`desktop: ${key} loaded from the skin bundle`);
       }

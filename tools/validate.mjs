@@ -360,6 +360,7 @@ for (const marker of [
   "attack_melee:{frames:6",
   "skill:{frames:8",
   "BURST_LAYOUT = Object.freeze({cell:256, columns:3, frames:7})",
+  "WALK_ATTACK_RENDER_SOURCE = \"walk\"",
   "meleeTriggerRange:158",
   "meleeRange:184",
   "succubus_skill_burst_v095",
