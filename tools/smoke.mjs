@@ -101,8 +101,8 @@ function installBrowserStubs(window, width, height, name) {
     constructor(){super();this.width=192;this.height=192;this.naturalWidth=192;this.naturalHeight=192;this.complete=false;this.onload=null;this.onerror=null;this.decoding="async";this._src="";}
     set src(value){
       this._src=String(value);
-      const strip=this._src.match(/_(idle|walk|ranged|skill|attack|melee|dash)_(?:down|up|left|right)\\.png/i);
-      if(strip){const frames=strip[1]==="idle"?4:6;this.width=this.naturalWidth=192*frames;this.height=this.naturalHeight=192;}
+      const strip=this._src.match(/_(idle2|walk_attack_ranged|attack_ranged|attack_melee|idle|walk|ranged|skill|attack|melee|dash)_(?:down|up|left|right)\.png/i);
+      if(strip){const frames=strip[1]==="idle"?4:strip[1]==="skill"&&this._src.includes("succubus_cherry")?8:6;this.width=this.naturalWidth=192*frames;this.height=this.naturalHeight=192;}
       if(this._src.includes("assets/effects/warrior_cherry/")){this.width=this.naturalWidth=1448;this.height=this.naturalHeight=1086;}
       window.setTimeout(()=>{this.complete=true;this.onload?.(new window.Event("load"));this.dispatchEvent(new window.Event("load"));},0);
     }
@@ -621,12 +621,75 @@ async function exercise(name,width,height){
       assert.ok(defensive.commonShieldTimer>1.9&&defensive.invuln>=1.9,"desktop: Defensive shield blocks damage");
 
       const succubus=await startSkin("succubus_cherry");
-      UI.game.player.skillTimer=0;
-      UI.game.skill();
-      assert.ok(UI.game.effects.some(effect=>effect.type==="succubus_cast_v0931"),"desktop: current Succubus cast VFX");
-      for(const key of ["succubus_claw","succubus_core","succubus_burst","succubus_wisp","succubus_hit","succubus_siphon","succubus_shield"]){
-        assert.ok(UI.game.assets.get(key),`desktop: ${key} loaded`);
+      UI.game.mode="paused";
+      const succubusConfig=window.CHERRIFT_CONFIG.player.skins.succubus_cherry;
+      assert.equal(
+        Array.from(window.CHERRIFT_SUCCUBUS_V095.states).join("|"),
+        "idle|idle2|walk|walk_attack_ranged|attack_ranged|attack_melee|skill",
+        "desktop: all Legendary Succubus animation states are registered"
+      );
+      assert.equal(succubusConfig.states.skill.frames,8,"desktop: Soul Drain uses the eight-frame skill strip");
+      assert.equal(succubusConfig.states.skill.pivot.y,184,"desktop: Succubus ground pivot is exact");
+      for(const state of window.CHERRIFT_SUCCUBUS_V095.states){
+        assert.ok(UI.game.assets.get(`player_succubus_cherry_${state}_down`),`desktop: ${state} sprite loaded`);
       }
+      for(const key of ["succubus_claw_wave","succubus_claw_mark","succubus_claw_slash","succubus_front_slash","succubus_burst","succubus_wisp","succubus_hit","succubus_shield"]){
+        assert.ok(UI.game.assets.get(key),`desktop: ${key} loaded from the skin bundle`);
+      }
+
+      UI.game.input.getMoveVector=()=>({x:0,y:0});
+      const rangedEnemy={x:succubus.x+360,y:succubus.y,r:20,hp:900,maxHp:900,speed:0,xp:1,dead:false};
+      UI.game.enemies=[rangedEnemy];
+      UI.game.bullets=[];
+      UI.game.effects=[];
+      succubus.fireTimer=0;
+      UI.game.autoFire();
+      assert.equal(succubus.__succubusAttackV095?.animation,"attack_ranged","desktop: stationary ranged animation starts");
+      assert.equal(UI.game.bullets.filter(bullet=>bullet.succubusV095).length,0,"desktop: claw wave waits for its event frame");
+      for(let index=0;index<5;index++)UI.game.update(.05);
+      assert.ok(UI.game.bullets.some(bullet=>bullet.style==="succubus_ranged_v095"),"desktop: claw wave spawns on the ranged event frame");
+
+      succubus.__succubusAttackV095=null;
+      succubus.attackCastTimer=0;
+      succubus.fireTimer=0;
+      succubus.moving=true;
+      UI.game.autoFire();
+      assert.equal(succubus.__succubusAttackV095?.animation,"walk_attack_ranged","desktop: moving attack keeps the alternating-leg ranged walk strip");
+
+      succubus.__succubusAttackV095=null;
+      succubus.attackCastTimer=0;
+      succubus.fireTimer=0;
+      succubus.moving=false;
+      const meleeEnemy={x:succubus.x+62,y:succubus.y,r:20,hp:900,maxHp:900,speed:0,xp:1,dead:false};
+      UI.game.enemies=[meleeEnemy];
+      UI.game.bullets=[];
+      UI.game.effects=[];
+      UI.game.autoFire();
+      assert.equal(succubus.__succubusAttackV095?.animation,"attack_melee","desktop: close target selects the melee strip");
+      for(let index=0;index<6;index++)UI.game.update(.05);
+      assert.ok(meleeEnemy.hp<900,"desktop: two-stage melee damages the target");
+      assert.ok(UI.game.effects.some(effect=>effect.type==="succubus_claw_mark_v095"),"desktop: melee leaves the claw mark on the enemy");
+      assert.ok(UI.game.effects.some(effect=>effect.type==="succubus_melee_slash_v095"&&effect.variant===1),"desktop: both melee slash effects are emitted");
+
+      succubus.__succubusAttackV095=null;
+      succubus.attackCastTimer=0;
+      succubus.fireTimer=999;
+      succubus.hp=succubus.maxHp;
+      succubus.soulShield=0;
+      const drainEnemy={x:succubus.x+42,y:succubus.y,r:24,hp:5000,maxHp:5000,speed:0,xp:1,dead:false};
+      UI.game.enemies=[drainEnemy];
+      UI.game.bullets=[];
+      UI.game.effects=[];
+      succubus.skillTimer=0;
+      UI.game.skill();
+      assert.ok(succubus.__succubusSkillV095,"desktop: Soul Drain cast state starts");
+      assert.equal(UI.game.effects.some(effect=>effect.type==="succubus_skill_burst_v095"),false,"desktop: Soul Drain burst waits for frame four");
+      for(let index=0;index<9;index++)UI.game.update(.05);
+      assert.ok(UI.game.effects.some(effect=>effect.type==="succubus_skill_burst_v095"),"desktop: burst sheet starts on skill frame four");
+      assert.ok(UI.game.bullets.some(bullet=>bullet.style==="succubus_soul_v095"),"desktop: multiple soul wisps launch with the burst");
+      for(let index=0;index<16;index++)UI.game.update(.05);
+      assert.ok(succubus.soulShield>0,"desktop: full-HP Soul Drain converts overheal into shield");
+      assert.ok(UI.game.effects.some(effect=>effect.type==="succubus_overheal_v095"),"desktop: overheal uses the faint blood-shield effect");
       assert.ok(UI.game.assets.get("wuxia_skill_sheet"),"desktop: Wuxia animated skill VFX loaded");
       UI.game.drawWorld(UI.game.ctx);
     }

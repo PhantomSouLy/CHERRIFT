@@ -268,6 +268,39 @@ for (const skin of commonSkins) {
   }
 }
 
+const succubusFolder = join(root, "assets", "player", "skins", "succubus_cherry");
+const succubusManifestPath = join(succubusFolder, "manifest.json");
+const succubusStates = {
+  idle:4,
+  idle2:6,
+  walk:6,
+  walk_attack_ranged:6,
+  attack_ranged:6,
+  attack_melee:6,
+  skill:8
+};
+if (!existsSync(succubusManifestPath)) errors.push("succubus_cherry: manifest.json is missing");
+else {
+  const manifest = JSON.parse(readFileSync(succubusManifestPath, "utf8"));
+  if (manifest.skin !== "succubus_cherry" || manifest.quality !== "legendary") {
+    errors.push("succubus_cherry: invalid Legendary-skin manifest identity");
+  }
+  if (manifest.cell?.width !== 192 || manifest.cell?.height !== 192 || manifest.pivot?.x !== 96 || manifest.pivot?.ground_y !== 184) {
+    errors.push("succubus_cherry: manifest must declare 192×192 cells and pivot (96,184)");
+  }
+}
+for (const [state, frames] of Object.entries(succubusStates)) {
+  for (const direction of ["down", "up", "left", "right"]) {
+    const name = `succubus_cherry_${state}_${direction}.png`;
+    const file = join(succubusFolder, name);
+    const info = existsSync(file) ? pngInfo(file) : null;
+    if (!info) errors.push(`succubus_cherry/${name}: missing or invalid PNG`);
+    else if (info.width !== frames * 192 || info.height !== 192 || info.colorType !== 6) {
+      errors.push(`succubus_cherry/${name}: expected ${frames * 192}×192 RGBA PNG`);
+    }
+  }
+}
+
 for (const name of [
   "basic_cherry_attack_offensive.png",
   "basic_cherry_attack_deffensive.png",
@@ -283,14 +316,6 @@ for (const name of [
 }
 
 const exactEffects = new Map([
-  ["succubus_cherry/succubus_crimson_claw_wave.png", [128, 128]],
-  ["succubus_cherry/succubus_soul_drain_core.png", [256, 256]],
-  ["succubus_cherry/succubus_soul_drain_burst_sheet.png", [768, 768]],
-  ["succubus_cherry/succubus_soul_wisp.png", [128, 128]],
-  ["succubus_cherry/succubus_soul_hit.png", [128, 128]],
-  ["succubus_cherry/succubus_lifesteal_siphon.png", [256, 256]],
-  ["succubus_cherry/succubus_blood_shield.png", [128, 128]],
-  ["succubus_cherry/succubus_soul_drain_release.png", [256, 256]],
   ["wuxia_sakura_cherry/attack_1.png", [128, 128]],
   ["wuxia_sakura_cherry/skill_effect_1.png", [256, 256]],
   ["wuxia_sakura_cherry/skill_effect_1_sheet.png", [768, 768]],
@@ -305,6 +330,39 @@ for (const [name, [width, height]] of exactEffects) {
   else if (info.width !== width || info.height !== height || info.colorType !== 6) {
     errors.push(`assets/effects/${name}: expected ${width}×${height} RGBA PNG`);
   }
+}
+
+const succubusEffects = new Map([
+  ["claw_mark.png", [128, 128]],
+  ["claw_slash.png", [128, 128]],
+  ["front_slash.png", [128, 128]],
+  ["succubus_blood_shield.png", [128, 128]],
+  ["succubus_crimson_claw_wave.png", [128, 128]],
+  ["succubus_soul_drain_burst_sheet.png", [768, 768]],
+  ["succubus_soul_hit.png", [128, 128]],
+  ["succubus_soul_wisp.png", [128, 128]]
+]);
+for (const [name, [width, height]] of succubusEffects) {
+  const file = join(succubusFolder, "effects", name);
+  const info = existsSync(file) ? pngInfo(file) : null;
+  if (!info) errors.push(`assets/player/skins/succubus_cherry/effects/${name}: missing or invalid PNG`);
+  else if (info.width !== width || info.height !== height || info.colorType !== 6) {
+    errors.push(`assets/player/skins/succubus_cherry/effects/${name}: expected ${width}×${height} RGBA PNG`);
+  }
+}
+
+if (runtime.includes("assets/effects/succubus_cherry")) {
+  errors.push("src/cherrift_app.js: legacy Succubus effect directory is still referenced");
+}
+for (const marker of [
+  "walk_attack_ranged:{frames:6",
+  "attack_ranged:{frames:6",
+  "attack_melee:{frames:6",
+  "skill:{frames:8",
+  "succubus_skill_burst_v095",
+  "succubus_overheal_v095"
+]) {
+  if (!runtime.includes(marker)) errors.push(`src/cherrift_app.js: Succubus integration marker is missing: ${marker}`);
 }
 
 for (const skin of ["archer_cherry", "wuxia_sakura_cherry"]) {

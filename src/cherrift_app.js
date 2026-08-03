@@ -6005,11 +6005,11 @@ const SKINS = {
         left:"assets/player/skins/succubus_cherry/succubus_cherry_walk_left.png?v=0553",
         right:"assets/player/skins/succubus_cherry/succubus_cherry_walk_right.png?v=0553"
       }},
-      skill:{fps:15,frames:6,duration:.55,dirs:{
-        down:"assets/player/skins/succubus_cherry/succubus_cherry_ranged_down.png?v=062",
-        up:"assets/player/skins/succubus_cherry/succubus_cherry_ranged_up.png?v=062",
-        left:"assets/player/skins/succubus_cherry/succubus_cherry_ranged_left.png?v=062",
-        right:"assets/player/skins/succubus_cherry/succubus_cherry_ranged_right.png?v=062"
+      skill:{fps:12,frames:8,duration:8/12,dirs:{
+        down:"assets/player/skins/succubus_cherry/succubus_cherry_skill_down.png?v=095sc",
+        up:"assets/player/skins/succubus_cherry/succubus_cherry_skill_up.png?v=095sc",
+        left:"assets/player/skins/succubus_cherry/succubus_cherry_skill_left.png?v=095sc",
+        right:"assets/player/skins/succubus_cherry/succubus_cherry_skill_right.png?v=095sc"
       }}
     }
   }
@@ -7328,10 +7328,15 @@ Object.assign(succubusConfig,{
   skillDrainRate:.10,
   shieldRate:.15,
   states:{
-    idle:{fps:3,frames:4,dirs:makeDirs("succubus_cherry","succubus_cherry","idle")},
-    walk:{fps:8,frames:6,dirs:makeDirs("succubus_cherry","succubus_cherry","walk")},
-    attack:{fps:18,frames:6,duration:.34,dirs:makeDirs("succubus_cherry","succubus_cherry","melee")},
-    skill:{fps:16,frames:6,duration:.55,dirs:makeDirs("succubus_cherry","succubus_cherry","ranged")}
+    idle:{fps:3,frames:4,pivot:{x:96,y:184},dirs:makeDirs("succubus_cherry","succubus_cherry","idle")},
+    idle2:{fps:5,frames:6,pivot:{x:96,y:184},dirs:makeDirs("succubus_cherry","succubus_cherry","idle2")},
+    walk:{fps:8,frames:6,pivot:{x:96,y:184},dirs:makeDirs("succubus_cherry","succubus_cherry","walk")},
+    walk_attack_ranged:{fps:10,frames:6,duration:.6,projectileFrame:4,pivot:{x:96,y:184},dirs:makeDirs("succubus_cherry","succubus_cherry","walk_attack_ranged")},
+    attack_ranged:{fps:16,frames:6,duration:.375,projectileFrame:3,pivot:{x:96,y:184},dirs:makeDirs("succubus_cherry","succubus_cherry","attack_ranged")},
+    attack_melee:{fps:18,frames:6,duration:1/3,hitFrames:[2,4],pivot:{x:96,y:184},dirs:makeDirs("succubus_cherry","succubus_cherry","attack_melee")},
+    attack:{fps:16,frames:6,duration:.375,projectileFrame:3,pivot:{x:96,y:184},dirs:makeDirs("succubus_cherry","succubus_cherry","attack_ranged")},
+    attackMove:{fps:10,frames:6,duration:.6,projectileFrame:4,pivot:{x:96,y:184},dirs:makeDirs("succubus_cherry","succubus_cherry","walk_attack_ranged")},
+    skill:{fps:12,frames:8,duration:8/12,burstFrame:4,pivot:{x:96,y:184},dirs:makeDirs("succubus_cherry","succubus_cherry","skill")}
   }
 });
 CHERRIFT_CONFIG.player.skins.succubus_cherry = succubusConfig;
@@ -19301,14 +19306,20 @@ const EFFECT_ASSETS = Object.freeze({
   ninja_shuriken_1:"assets/effects/ninja_cherry/shuriken_1.png?v=091",
   ninja_shuriken_2:"assets/effects/ninja_cherry/shuriken_2.png?v=091",
   ninja_hit:"assets/effects/ninja_cherry/shuriken_hit_effect.png?v=091",
-  succubus_claw:"assets/effects/succubus_cherry/succubus_crimson_claw_wave.png?v=091",
-  succubus_core:"assets/effects/succubus_cherry/succubus_soul_drain_core.png?v=091",
-  succubus_burst:"assets/effects/succubus_cherry/succubus_soul_drain_burst_sheet.png?v=091",
-  succubus_release:"assets/effects/succubus_cherry/succubus_soul_drain_release.png?v=091",
-  succubus_wisp:"assets/effects/succubus_cherry/succubus_soul_wisp.png?v=091",
-  succubus_hit:"assets/effects/succubus_cherry/succubus_soul_hit.png?v=091",
-  succubus_siphon:"assets/effects/succubus_cherry/succubus_lifesteal_siphon.png?v=091",
-  succubus_shield:"assets/effects/succubus_cherry/succubus_blood_shield.png?v=091",
+  succubus_claw:"assets/player/skins/succubus_cherry/effects/succubus_crimson_claw_wave.png?v=095sc",
+  succubus_claw_wave:"assets/player/skins/succubus_cherry/effects/succubus_crimson_claw_wave.png?v=095sc",
+  succubus_claw_mark:"assets/player/skins/succubus_cherry/effects/claw_mark.png?v=095sc",
+  succubus_claw_slash:"assets/player/skins/succubus_cherry/effects/claw_slash.png?v=095sc",
+  succubus_front_slash:"assets/player/skins/succubus_cherry/effects/front_slash.png?v=095sc",
+  succubus_burst:"assets/player/skins/succubus_cherry/effects/succubus_soul_drain_burst_sheet.png?v=095sc",
+  succubus_wisp:"assets/player/skins/succubus_cherry/effects/succubus_soul_wisp.png?v=095sc",
+  succubus_hit:"assets/player/skins/succubus_cherry/effects/succubus_soul_hit.png?v=095sc",
+  succubus_shield:"assets/player/skins/succubus_cherry/effects/succubus_blood_shield.png?v=095sc",
+  // Compatibility aliases keep older effect renderers safe while every source
+  // now comes from the skin-local bundle. No deleted legacy file is requested.
+  succubus_core:"assets/player/skins/succubus_cherry/effects/succubus_soul_hit.png?v=095sc",
+  succubus_release:"assets/player/skins/succubus_cherry/effects/succubus_soul_drain_burst_sheet.png?v=095sc",
+  succubus_siphon:"assets/player/skins/succubus_cherry/effects/succubus_soul_wisp.png?v=095sc",
   wuxia_attack:"assets/effects/wuxia_sakura_cherry/attack_1.png?v=091",
   wuxia_skill:"assets/effects/wuxia_sakura_cherry/skill_effect_1.png?v=091",
   wuxia_skill_sheet:"assets/effects/wuxia_sakura_cherry/skill_effect_1_sheet.png?v=091"
@@ -22337,7 +22348,7 @@ function patchSuccubusClaw() {
   if (proto.__v0932SuccubusClaw) return;
   proto.__v0932SuccubusClaw = true;
 
-  const source = `assets/effects/succubus_cherry/succubus_crimson_claw_wave.png?v=${CACHE_VERSION}`;
+  const source = `assets/player/skins/succubus_cherry/effects/succubus_crimson_claw_wave.png?v=${CACHE_VERSION}`;
   const previousDrawBullet = proto.drawBullet;
   proto.drawBullet = function drawBulletV0932(context, bullet) {
     if (bullet?.style !== "succubus_claw") return previousDrawBullet.call(this, context, bullet);
@@ -23012,7 +23023,7 @@ function patchSuccubusClaw() {
   if (proto.__v0933SuccubusClaw) return;
   proto.__v0933SuccubusClaw = true;
   const previousDrawBullet = proto.drawBullet;
-  const source = `assets/effects/succubus_cherry/succubus_crimson_claw_wave.png?v=${CACHE_VERSION}`;
+  const source = `assets/player/skins/succubus_cherry/effects/succubus_crimson_claw_wave.png?v=${CACHE_VERSION}`;
   cachedImage(source);
 
   proto.drawBullet = function drawBulletV0933(context, bullet) {
@@ -26867,3 +26878,712 @@ console.info("[CHERRIFT] Clean Runtime 1.4.0 loaded from src/cherrift_app.js: fl
   };
 })();
 /* ===== END Clean Runtime 1.4 gameplay notification hotfix ===== */
+
+
+/* ===== BEGIN Succubus Cherry legendary runtime integration ===== */
+(() => {
+  "use strict";
+
+  if (!window.CherriftGame || !window.CHERRIFT_CONFIG || typeof ImageAssets === "undefined") return;
+
+  const VERSION = "0.9.5-succubus-legendary-1";
+  const SKIN_ID = "succubus_cherry";
+  const FRAME_SIZE = 192;
+  const PIVOT = Object.freeze({x:96, y:184});
+  const DIRECTIONS = Object.freeze(["down", "up", "left", "right"]);
+  const ASSET_ROOT = "assets/player/skins/succubus_cherry";
+  const EFFECT_ROOT = `${ASSET_ROOT}/effects`;
+  const CACHE_VERSION = "095sc1";
+  const clampV095 = (value, min, max) => Math.max(min, Math.min(max, value));
+
+  const STATE_SPECS = Object.freeze({
+    idle:{frames:4, fps:3, loop:true},
+    idle2:{frames:6, fps:5, loop:false},
+    walk:{frames:6, fps:8, loop:true},
+    walk_attack_ranged:{frames:6, fps:10, duration:.6, projectileFrame:4, loop:false},
+    attack_ranged:{frames:6, fps:16, duration:.375, projectileFrame:3, loop:false},
+    attack_melee:{frames:6, fps:18, duration:1 / 3, hitFrames:[2, 4], loop:false},
+    skill:{frames:8, fps:12, duration:8 / 12, burstFrame:4, loop:false}
+  });
+
+  const EFFECT_SOURCES = Object.freeze({
+    succubus_claw_wave:`${EFFECT_ROOT}/succubus_crimson_claw_wave.png?v=${CACHE_VERSION}`,
+    succubus_claw_mark:`${EFFECT_ROOT}/claw_mark.png?v=${CACHE_VERSION}`,
+    succubus_claw_slash:`${EFFECT_ROOT}/claw_slash.png?v=${CACHE_VERSION}`,
+    succubus_front_slash:`${EFFECT_ROOT}/front_slash.png?v=${CACHE_VERSION}`,
+    succubus_burst:`${EFFECT_ROOT}/succubus_soul_drain_burst_sheet.png?v=${CACHE_VERSION}`,
+    succubus_wisp:`${EFFECT_ROOT}/succubus_soul_wisp.png?v=${CACHE_VERSION}`,
+    succubus_hit:`${EFFECT_ROOT}/succubus_soul_hit.png?v=${CACHE_VERSION}`,
+    succubus_shield:`${EFFECT_ROOT}/succubus_blood_shield.png?v=${CACHE_VERSION}`
+  });
+
+  function spriteSource(stateName, direction) {
+    return `${ASSET_ROOT}/${SKIN_ID}_${stateName}_${direction}.png?v=${CACHE_VERSION}`;
+  }
+
+  function spriteKey(stateName, direction) {
+    return `player_${SKIN_ID}_${stateName}_${direction}`;
+  }
+
+  function stateConfig(stateName) {
+    const spec = STATE_SPECS[stateName];
+    return {
+      ...spec,
+      pivot:PIVOT,
+      dirs:Object.fromEntries(DIRECTIONS.map(direction => [direction, spriteSource(stateName, direction)]))
+    };
+  }
+
+  function configureSkin() {
+    const config = CHERRIFT_CONFIG.player.skins[SKIN_ID] || {};
+    const idle = stateConfig("idle");
+    const idle2 = stateConfig("idle2");
+    const walk = stateConfig("walk");
+    const walkAttack = stateConfig("walk_attack_ranged");
+    const ranged = stateConfig("attack_ranged");
+    const melee = stateConfig("attack_melee");
+    const skill = stateConfig("skill");
+    Object.assign(config, {
+      id:SKIN_ID,
+      folder:SKIN_ID,
+      attackType:"ranged",
+      attackMovementMode:"mobile",
+      attackMoveSpeedMultiplier:.82,
+      skillType:"soul_drain",
+      hpDrainRate:.05,
+      skillDrainRate:.10,
+      shieldRate:.15,
+      meleeTriggerRange:108,
+      meleeRange:132,
+      meleeCone:116,
+      states:{
+        idle,
+        idle2,
+        walk,
+        walk_attack_ranged:walkAttack,
+        attack_ranged:ranged,
+        attack_melee:melee,
+        skill,
+        // Generic aliases keep the selector and old shared code compatible.
+        attack:ranged,
+        attackMove:walkAttack
+      }
+    });
+    CHERRIFT_CONFIG.player.skins[SKIN_ID] = config;
+    CHERRIFT_CONFIG.effects.succubusLegendary = {...EFFECT_SOURCES};
+  }
+
+  function patchAssetLoader() {
+    const prototype = ImageAssets.prototype;
+    if (prototype.__succubusLegendaryV095) return;
+    prototype.__succubusLegendaryV095 = true;
+    const previousLoadAll = prototype.loadAll;
+    prototype.loadAll = async function loadAllSuccubusV095(...args) {
+      const result = await previousLoadAll.apply(this, args);
+      const jobs = [];
+      for (const stateName of Object.keys(STATE_SPECS)) {
+        for (const direction of DIRECTIONS) {
+          const key = spriteKey(stateName, direction);
+          if (!this.get?.(key)) jobs.push(this.loadImage(key, spriteSource(stateName, direction)));
+        }
+      }
+      for (const [key, source] of Object.entries(EFFECT_SOURCES)) {
+        if (!this.get?.(key)) jobs.push(this.loadImage(key, source));
+      }
+      if (jobs.length) await Promise.all(jobs);
+      return result;
+    };
+  }
+
+  function livingTarget(game, x = game.player?.x || 0, y = game.player?.y || 0, range = Infinity) {
+    let best = null;
+    let bestDistance = range;
+    for (const enemy of game.enemies || []) {
+      if (!enemy || enemy.dead) continue;
+      const distance = Math.hypot(enemy.x - x, enemy.y - y);
+      if (distance < bestDistance) {
+        best = enemy;
+        bestDistance = distance;
+      }
+    }
+    return best;
+  }
+
+  function directionV095(dx, dy) {
+    return Math.abs(dx) > Math.abs(dy)
+      ? (dx < 0 ? "left" : "right")
+      : (dy < 0 ? "up" : "down");
+  }
+
+  function addEffect(game, type, data = {}) {
+    game.effects ||= [];
+    game.effects.push({type, t:0, life:.4, ...data});
+  }
+
+  function applyDrainV095(game, damage, rate, shieldOnFull) {
+    const player = game.player;
+    const amount = Math.max(0, Number(damage) || 0) * Math.max(0, Number(rate) || 0);
+    if (!player || !amount) return;
+
+    const missing = Math.max(0, player.maxHp - player.hp);
+    const restored = Math.min(missing, amount);
+    if (restored > 0) {
+      player.hp = Math.min(player.maxHp, player.hp + restored);
+      addEffect(game, "succubus_heal_v095", {
+        x:player.x,
+        y:player.y - 26,
+        amount:restored,
+        life:.55
+      });
+    }
+
+    const overflow = amount - restored;
+    if (!shieldOnFull || overflow <= .001) return;
+    const cap = Math.max(1, player.maxHp * .15);
+    const previousShield = Math.max(0, Number(player.soulShield) || 0);
+    const nextShield = Math.min(cap, previousShield + overflow);
+    if (nextShield <= previousShield + .001) return;
+    player.soulShield = nextShield;
+    player.soulShieldMax = cap;
+    player.__succubusShieldFxStartV095 = game.t || 0;
+    player.__succubusShieldFxUntilV095 = (game.t || 0) + .9;
+    addEffect(game, "succubus_overheal_v095", {
+      x:player.x,
+      y:player.y,
+      life:.72
+    });
+  }
+
+  function spawnRangedWave(game, attack) {
+    const player = game.player;
+    const target = attack.target && !attack.target.dead
+      ? attack.target
+      : livingTarget(game, player.x, player.y, 760);
+    const dx = target ? target.x - player.x : Math.cos(attack.angle);
+    const dy = target ? target.y - player.y : Math.sin(attack.angle);
+    const length = Math.hypot(dx, dy) || 1;
+    game.bullets.push({
+      succubusV095:true,
+      x:player.x,
+      y:player.y - 10,
+      vx:dx / length * 450,
+      vy:dy / length * 450,
+      r:16,
+      dmg:player.damage * 1.08,
+      life:.72,
+      maxLife:.72,
+      style:"succubus_ranged_v095",
+      drainRate:.05,
+      shieldOnFull:false,
+      pierce:1,
+      hitIds:new Set(),
+      angle:Math.atan2(dy, dx)
+    });
+  }
+
+  function meleeHitV095(game, attack, phase) {
+    const player = game.player;
+    const target = attack.target && !attack.target.dead ? attack.target : null;
+    const angle = target
+      ? Math.atan2(target.y - player.y, target.x - player.x)
+      : attack.angle;
+    const range = Number(game.activeSkinConfig?.().meleeRange) || 132;
+    const cone = Number(game.activeSkinConfig?.().meleeCone) || 116;
+    const threshold = Math.cos(cone * .5 * Math.PI / 180);
+    let hits = 0;
+
+    for (const enemy of game.enemies || []) {
+      if (!enemy || enemy.dead) continue;
+      const dx = enemy.x - player.x;
+      const dy = enemy.y - player.y;
+      const distance = Math.hypot(dx, dy) || 1;
+      if (distance > range + (enemy.r || 0)) continue;
+      const dot = dx / distance * Math.cos(angle) + dy / distance * Math.sin(angle);
+      if (dot < threshold) continue;
+      const damage = player.damage * (phase === 0 ? .52 : .60);
+      game.damageEnemy(enemy, damage);
+      applyDrainV095(game, damage, .05, false);
+      addEffect(game, "succubus_claw_mark_v095", {
+        x:enemy.x,
+        y:enemy.y,
+        angle:angle + (phase ? .16 : -.12),
+        variant:phase,
+        life:.38
+      });
+      hits++;
+    }
+
+    addEffect(game, "succubus_melee_slash_v095", {
+      x:player.x,
+      y:player.y - 8,
+      angle,
+      variant:phase,
+      connected:hits > 0,
+      life:phase === 0 ? .28 : .34
+    });
+  }
+
+  function spawnSoulWisps(game, cast) {
+    const player = game.player;
+    const living = (game.enemies || []).filter(enemy => enemy && !enemy.dead);
+    const soulCount = living.length ? Math.min(10, Math.max(6, living.length * 2)) : 6;
+    for (let index = 0; index < soulCount; index++) {
+      const angle = index / soulCount * Math.PI * 2 + (Math.random() - .5) * .16;
+      const target = living.length ? living[index % living.length] : null;
+      game.bullets.push({
+        succubusV095:true,
+        x:player.x,
+        y:player.y - 18,
+        vx:Math.cos(angle) * 250,
+        vy:Math.sin(angle) * 250,
+        speed:250,
+        r:9,
+        dmg:player.damage * .50,
+        life:2.35,
+        maxLife:2.35,
+        launchDelay:index * .025,
+        style:"succubus_soul_v095",
+        drainRate:.10,
+        shieldOnFull:true,
+        pierce:1,
+        target,
+        turnRate:5.2,
+        phase:Math.random() * Math.PI * 2,
+        hitIds:new Set()
+      });
+    }
+    cast.soulsSpawned = true;
+  }
+
+  function patchCombat() {
+    const prototype = CherriftGame.prototype;
+    if (prototype.__succubusLegendaryCombatV095) return;
+    prototype.__succubusLegendaryCombatV095 = true;
+
+    const previousStart = prototype.start;
+    prototype.start = async function startSuccubusLegendaryV095(...args) {
+      const result = await previousStart.apply(this, args);
+      const player = this.player;
+      if (player?.skin !== SKIN_ID) return result;
+      player.attackType = "ranged";
+      player.projectileCount = 1;
+      player.hpDrainRate = .05;
+      player.soulShield = Math.max(0, Number(player.soulShield) || 0);
+      player.soulShieldMax = Math.max(1, player.maxHp * .15);
+      player.__succubusAttackV095 = null;
+      player.__succubusSkillV095 = null;
+      player.__succubusIdle2StartV095 = 0;
+      player.__succubusIdle2UntilV095 = 0;
+      player.__succubusNextIdle2V095 = (this.t || 0) + 3.5 + Math.random() * 2.5;
+      return result;
+    };
+
+    const previousAutoFire = prototype.autoFire;
+    prototype.autoFire = function autoFireSuccubusLegendaryV095() {
+      const player = this.player;
+      if (!player || player.skin !== SKIN_ID) return previousAutoFire.call(this);
+      if (player.fireTimer > 0 || player.skillCastTimer > 0 || player.__succubusSkillV095 || player.__succubusAttackV095) return;
+      const target = livingTarget(this, player.x, player.y, 760);
+      if (!target) return;
+
+      const dx = target.x - player.x;
+      const dy = target.y - player.y;
+      const distance = Math.hypot(dx, dy);
+      const config = this.activeSkinConfig();
+      const melee = !player.moving && distance <= (Number(config.meleeTriggerRange) || 108) + (target.r || 0) * .35;
+      const animation = melee
+        ? "attack_melee"
+        : player.moving
+          ? "walk_attack_ranged"
+          : "attack_ranged";
+      const state = config.states[animation] || STATE_SPECS[animation];
+      const duration = Number(state.duration) || Number(state.frames) / Number(state.fps);
+      const now = this.t || 0;
+      player.fireTimer = player.fireInterval * (player.skillBuff > 0 ? .55 : 1);
+      player.attackCastDuration = duration;
+      player.attackCastTimer = duration;
+      player.attackDir = directionV095(dx, dy);
+      player.lastDir = player.attackDir;
+      player.__succubusIdle2UntilV095 = 0;
+      player.__succubusAttackV095 = {
+        animation,
+        target,
+        angle:Math.atan2(dy, dx),
+        elapsed:0,
+        duration,
+        startedAt:now,
+        rangedFired:false,
+        meleeHits:[false, false]
+      };
+    };
+
+    const previousSkill = prototype.skill;
+    prototype.skill = function skillSuccubusLegendaryV095() {
+      const player = this.player;
+      if (!player || player.skin !== SKIN_ID) return previousSkill.call(this);
+      if (player.skillTimer > 0 || player.__succubusSkillV095) return;
+      const state = this.activeSkinConfig()?.states?.skill || STATE_SPECS.skill;
+      const duration = Number(state.duration) || Number(state.frames) / Number(state.fps);
+      const now = this.t || 0;
+      player.skillTimer = player.skillCooldown;
+      player.skillCastDuration = duration;
+      player.skillCastTimer = duration;
+      player.skillDir = player.lastDir || "down";
+      player.attackCastTimer = 0;
+      player.__succubusAttackV095 = null;
+      player.__succubusIdle2UntilV095 = 0;
+      player.__succubusSkillV095 = {
+        elapsed:0,
+        duration,
+        startedAt:now,
+        burstAt:(Number(state.burstFrame) || 4) / (Number(state.fps) || 12),
+        burstSpawned:false,
+        soulsSpawned:false
+      };
+    };
+
+    const previousUpdate = prototype.update;
+    prototype.update = function updateSuccubusLegendaryV095(dt) {
+      const result = previousUpdate.call(this, dt);
+      const player = this.player;
+      if (!player || player.skin !== SKIN_ID) return result;
+      const delta = Math.max(0, Number(dt) || 0);
+      const now = this.t || 0;
+
+      const attack = player.__succubusAttackV095;
+      if (attack) {
+        attack.elapsed = Math.min(attack.duration, attack.elapsed + delta);
+        if (attack.animation === "attack_melee") {
+          const state = this.activeSkinConfig()?.states?.attack_melee || STATE_SPECS.attack_melee;
+          const frames = state.hitFrames || [2, 4];
+          frames.forEach((frame, phase) => {
+            if (!attack.meleeHits[phase] && attack.elapsed >= frame / (Number(state.fps) || 18)) {
+              attack.meleeHits[phase] = true;
+              meleeHitV095(this, attack, phase);
+            }
+          });
+        } else {
+          const state = this.activeSkinConfig()?.states?.[attack.animation] || STATE_SPECS[attack.animation];
+          const fireAt = (Number(state.projectileFrame) || (attack.animation === "walk_attack_ranged" ? 4 : 3)) / (Number(state.fps) || 16);
+          if (!attack.rangedFired && attack.elapsed >= fireAt) {
+            attack.rangedFired = true;
+            spawnRangedWave(this, attack);
+          }
+        }
+        player.attackCastDuration = attack.duration;
+        player.attackCastTimer = Math.max(0, attack.duration - attack.elapsed);
+        if (attack.elapsed >= attack.duration) {
+          player.attackCastTimer = 0;
+          player.__succubusAttackV095 = null;
+        }
+      }
+
+      const cast = player.__succubusSkillV095;
+      if (cast) {
+        cast.elapsed = Math.min(cast.duration, cast.elapsed + delta);
+        if (!cast.burstSpawned && cast.elapsed >= cast.burstAt) {
+          cast.burstSpawned = true;
+          addEffect(this, "succubus_skill_burst_v095", {
+            x:player.x,
+            y:player.y - 12,
+            life:.78
+          });
+          spawnSoulWisps(this, cast);
+        }
+        player.skillCastDuration = cast.duration;
+        player.skillCastTimer = Math.max(0, cast.duration - cast.elapsed);
+        if (cast.elapsed >= cast.duration) {
+          player.skillCastTimer = 0;
+          player.__succubusSkillV095 = null;
+        }
+      }
+
+      const busy = player.moving || player.__succubusAttackV095 || player.__succubusSkillV095;
+      if (busy) {
+        player.__succubusIdle2UntilV095 = 0;
+        player.__succubusNextIdle2V095 = Math.max(player.__succubusNextIdle2V095 || 0, now + 2.6);
+      } else if (now >= (player.__succubusNextIdle2V095 || Infinity)) {
+        player.__succubusIdle2StartV095 = now;
+        player.__succubusIdle2UntilV095 = now + STATE_SPECS.idle2.frames / STATE_SPECS.idle2.fps;
+        player.__succubusNextIdle2V095 = player.__succubusIdle2UntilV095 + 4 + Math.random() * 3.5;
+      }
+      return result;
+    };
+
+    const previousUpdateBullets = prototype.updateBullets;
+    prototype.updateBullets = function updateBulletsSuccubusLegendaryV095(dt) {
+      const custom = (this.bullets || []).filter(bullet => bullet?.succubusV095);
+      this.bullets = (this.bullets || []).filter(bullet => !bullet?.succubusV095);
+      previousUpdateBullets.call(this, dt);
+      const standard = this.bullets;
+      const delta = Math.max(0, Number(dt) || 0);
+
+      for (const bullet of custom) {
+        if (bullet.dead) continue;
+        if (bullet.launchDelay > 0) {
+          bullet.launchDelay = Math.max(0, bullet.launchDelay - delta);
+          continue;
+        }
+        if (bullet.style === "succubus_soul_v095") {
+          if (!bullet.target || bullet.target.dead) bullet.target = livingTarget(this, bullet.x, bullet.y, 920);
+          if (bullet.target && !bullet.target.dead) {
+            const dx = bullet.target.x - bullet.x;
+            const dy = bullet.target.y - bullet.y;
+            const length = Math.hypot(dx, dy) || 1;
+            const speed = Math.max(160, Number(bullet.speed) || Math.hypot(bullet.vx, bullet.vy) || 250);
+            const turn = Math.min(1, delta * (Number(bullet.turnRate) || 5.2));
+            bullet.vx += (dx / length * speed - bullet.vx) * turn;
+            bullet.vy += (dy / length * speed - bullet.vy) * turn;
+          }
+          const speed = Math.hypot(bullet.vx, bullet.vy) || 1;
+          const sway = Math.sin((this.t || 0) * 10 + (bullet.phase || 0)) * 24;
+          bullet.x += (-bullet.vy / speed * sway + bullet.vx) * delta;
+          bullet.y += (bullet.vx / speed * sway + bullet.vy) * delta;
+        } else {
+          bullet.x += bullet.vx * delta;
+          bullet.y += bullet.vy * delta;
+        }
+        bullet.life -= delta;
+        if (bullet.life <= 0) continue;
+
+        for (const enemy of this.enemies || []) {
+          if (!enemy || enemy.dead || bullet.hitIds.has(enemy)) continue;
+          if (Math.hypot(bullet.x - enemy.x, bullet.y - enemy.y) >= bullet.r + (enemy.r || 0)) continue;
+          bullet.hitIds.add(enemy);
+          let damage = bullet.dmg;
+          if (Math.random() < (this.player?.crit || 0)) {
+            damage *= this.player?.critDamage || 1.5;
+            addEffect(this, "crit", {x:enemy.x, y:enemy.y, life:.35});
+          }
+          this.damageEnemy(enemy, damage);
+          applyDrainV095(this, damage, bullet.drainRate, bullet.shieldOnFull);
+          addEffect(this, "succubus_ranged_hit_v095", {
+            x:enemy.x,
+            y:enemy.y,
+            soul:bullet.style === "succubus_soul_v095",
+            life:.34
+          });
+          bullet.pierce = (Number(bullet.pierce) || 1) - 1;
+          if (bullet.pierce <= 0) {
+            bullet.dead = true;
+            break;
+          }
+        }
+      }
+      this.bullets = standard.concat(custom.filter(bullet => !bullet.dead && bullet.life > 0));
+    };
+  }
+
+  function effectProgress(effect) {
+    return clampV095((Number(effect?.t) || 0) / Math.max(.001, Number(effect?.life) || .4), 0, .999999);
+  }
+
+  function drawImageV095(context, image, x, y, width, height = width, angle = 0, alpha = 1) {
+    if (!image) return false;
+    context.save();
+    context.globalAlpha *= alpha;
+    context.translate(x, y);
+    context.rotate(angle);
+    context.imageSmoothingEnabled = false;
+    context.drawImage(image, -width / 2, -height / 2, width, height);
+    context.restore();
+    return true;
+  }
+
+  function activeSpriteState(game, player) {
+    if (player.__succubusSkillV095) return "skill";
+    if (player.__succubusAttackV095) return player.__succubusAttackV095.animation;
+    if (!player.moving && (player.__succubusIdle2UntilV095 || 0) > (game.t || 0)) return "idle2";
+    return player.moving ? "walk" : "idle";
+  }
+
+  function spriteElapsed(game, player, stateName) {
+    if (stateName === "skill") return player.__succubusSkillV095?.elapsed || 0;
+    if (["walk_attack_ranged", "attack_ranged", "attack_melee"].includes(stateName)) {
+      return player.__succubusAttackV095?.elapsed || 0;
+    }
+    if (stateName === "idle2") return Math.max(0, (game.t || 0) - (player.__succubusIdle2StartV095 || 0));
+    return game.t || 0;
+  }
+
+  function drawSuccubusPlayer(game, context, player) {
+    const stateName = activeSpriteState(game, player);
+    const state = game.activeSkinConfig()?.states?.[stateName] || STATE_SPECS[stateName];
+    const direction = stateName === "skill"
+      ? player.skillDir || player.lastDir || "down"
+      : ["walk_attack_ranged", "attack_ranged", "attack_melee"].includes(stateName)
+        ? player.attackDir || player.lastDir || "down"
+        : player.lastDir || "down";
+    const image = game.assets.get(spriteKey(stateName, DIRECTIONS.includes(direction) ? direction : "down"))
+      || game.assets.get(spriteKey("idle", "down"));
+    if (!image) return false;
+    const realFrames = Math.max(1, Math.floor(Number(image.naturalWidth || image.width) / FRAME_SIZE));
+    const frames = Math.max(1, Math.min(Number(state.frames) || realFrames, realFrames));
+    const elapsed = spriteElapsed(game, player, stateName);
+    const frame = state.loop === false || ["idle2", "walk_attack_ranged", "attack_ranged", "attack_melee", "skill"].includes(stateName)
+      ? Math.min(frames - 1, Math.floor(elapsed * (Number(state.fps) || 6)))
+      : Math.floor(elapsed * (Number(state.fps) || 6)) % frames;
+    const displayWidth = Math.round((CHERRIFT_CONFIG.player.displayWidth || 116) * .98);
+    const displayHeight = Math.round((CHERRIFT_CONFIG.player.displayHeight || 116) * .98);
+    const pivot = state.pivot || PIVOT;
+    const destinationX = Math.round(player.x - pivot.x * displayWidth / FRAME_SIZE);
+    const destinationY = Math.round(player.y + 30 - pivot.y * displayHeight / FRAME_SIZE);
+
+    context.save();
+    context.globalAlpha = .20;
+    context.fillStyle = "#000";
+    context.beginPath();
+    context.ellipse(player.x, player.y + 25, 26, 8, 0, 0, Math.PI * 2);
+    context.fill();
+    context.restore();
+    context.save();
+    context.imageSmoothingEnabled = false;
+    context.drawImage(
+      image,
+      frame * FRAME_SIZE,
+      0,
+      FRAME_SIZE,
+      FRAME_SIZE,
+      destinationX,
+      destinationY,
+      displayWidth,
+      displayHeight
+    );
+    context.restore();
+
+    if ((player.__succubusShieldFxUntilV095 || 0) > (game.t || 0)) {
+      const shield = game.assets.get("succubus_shield");
+      const age = Math.max(0, (game.t || 0) - (player.__succubusShieldFxStartV095 || 0));
+      const remaining = player.__succubusShieldFxUntilV095 - (game.t || 0);
+      const alpha = Math.min(clampV095(age / .16, 0, 1), clampV095(remaining / .28, 0, 1)) * .42;
+      drawImageV095(context, shield, player.x, player.y - 17, 132, 132, 0, alpha);
+    }
+    return true;
+  }
+
+  function patchRenderer() {
+    const prototype = CherriftGame.prototype;
+    if (prototype.__succubusLegendaryRendererV095) return;
+    prototype.__succubusLegendaryRendererV095 = true;
+
+    const previousDrawPlayer = prototype.drawPlayer;
+    prototype.drawPlayer = function drawPlayerSuccubusLegendaryV095(context, player) {
+      if (player?.skin !== SKIN_ID) return previousDrawPlayer.call(this, context, player);
+      if (!drawSuccubusPlayer(this, context, player)) return previousDrawPlayer.call(this, context, player);
+    };
+
+    const previousDrawBullet = prototype.drawBullet;
+    prototype.drawBullet = function drawBulletSuccubusLegendaryV095(context, bullet) {
+      if (!bullet?.succubusV095) return previousDrawBullet.call(this, context, bullet);
+      if (bullet.launchDelay > 0) return;
+      const angle = Math.atan2(Number(bullet.vy) || 0, Number(bullet.vx) || 1);
+      const ratio = clampV095((Number(bullet.life) || 0) / Math.max(.001, Number(bullet.maxLife) || 1), 0, 1);
+      const alpha = Math.min(clampV095((1 - ratio) / .10, 0, 1), clampV095(ratio / .16, 0, 1));
+      if (bullet.style === "succubus_ranged_v095") {
+        const image = this.assets.get("succubus_claw_wave");
+        context.save();
+        context.shadowColor = "rgba(255,25,70,.78)";
+        context.shadowBlur = 7;
+        drawImageV095(context, image, bullet.x, bullet.y, 68, 68, angle + Math.PI / 4, .24 + alpha * .76);
+        context.restore();
+        return;
+      }
+      const image = this.assets.get("succubus_wisp");
+      context.save();
+      context.shadowColor = "rgba(255,38,84,.72)";
+      context.shadowBlur = 9;
+      drawImageV095(context, image, bullet.x, bullet.y, 42, 42, angle + Math.PI / 2, .28 + alpha * .72);
+      context.restore();
+    };
+
+    const previousDrawEffect = prototype.drawEffect;
+    prototype.drawEffect = function drawEffectSuccubusLegendaryV095(context, effect) {
+      const type = effect?.type;
+      if (!type?.startsWith?.("succubus_") || !type.endsWith("_v095")) {
+        return previousDrawEffect.call(this, context, effect);
+      }
+      const progress = effectProgress(effect);
+      const alpha = 1 - progress;
+
+      if (type === "succubus_skill_burst_v095") {
+        const image = this.assets.get("succubus_burst");
+        if (!image) return;
+        const frame = Math.min(13, Math.floor(progress * 14));
+        const column = frame % 4;
+        const row = Math.floor(frame / 4);
+        const size = 275 + Math.sin(progress * Math.PI) * 55;
+        context.save();
+        context.globalAlpha = Math.min(1, alpha * 1.30);
+        context.imageSmoothingEnabled = false;
+        context.drawImage(
+          image,
+          column * 192,
+          row * 192,
+          192,
+          192,
+          effect.x - size / 2,
+          effect.y - size / 2,
+          size,
+          size
+        );
+        context.restore();
+        return;
+      }
+
+      if (type === "succubus_melee_slash_v095") {
+        const image = this.assets.get(effect.variant ? "succubus_front_slash" : "succubus_claw_slash");
+        const size = effect.variant ? 138 : 126;
+        drawImageV095(context, image, effect.x, effect.y, size, size, (effect.angle || 0) + Math.PI / 4, alpha);
+        return;
+      }
+
+      if (type === "succubus_claw_mark_v095") {
+        const image = this.assets.get("succubus_claw_mark");
+        drawImageV095(context, image, effect.x, effect.y, 86 + progress * 10, 86 + progress * 10, effect.angle || 0, alpha * .92);
+        return;
+      }
+
+      if (type === "succubus_ranged_hit_v095") {
+        const image = this.assets.get("succubus_hit");
+        const size = (effect.soul ? 68 : 76) + progress * 28;
+        drawImageV095(context, image, effect.x, effect.y, size, size, 0, alpha);
+        return;
+      }
+
+      if (type === "succubus_overheal_v095") {
+        const image = this.assets.get("succubus_shield");
+        drawImageV095(context, image, effect.x, effect.y - 17, 112 + progress * 34, 112 + progress * 34, 0, alpha * .34);
+        return;
+      }
+
+      if (type === "succubus_heal_v095") {
+        context.save();
+        context.globalAlpha = alpha * .78;
+        context.translate(effect.x, effect.y - progress * 18);
+        context.fillStyle = "#ff6d91";
+        context.shadowColor = "#ff315f";
+        context.shadowBlur = 9;
+        context.font = "900 15px system-ui, sans-serif";
+        context.textAlign = "center";
+        context.fillText("♥", 0, 0);
+        context.restore();
+      }
+    };
+  }
+
+  configureSkin();
+  patchAssetLoader();
+  patchCombat();
+  patchRenderer();
+
+  window.CHERRIFT_SUCCUBUS_V095 = Object.freeze({
+    version:VERSION,
+    skinId:SKIN_ID,
+    states:Object.keys(STATE_SPECS),
+    effects:{...EFFECT_SOURCES},
+    frameSize:FRAME_SIZE,
+    pivot:PIVOT
+  });
+  console.info("[CHERRIFT] Succubus Cherry legendary sprites, frame events and local VFX loaded.");
+})();
+/* ===== END Succubus Cherry legendary runtime integration ===== */
