@@ -26886,19 +26886,24 @@ console.info("[CHERRIFT] Clean Runtime 1.4.0 loaded from src/cherrift_app.js: fl
 
   if (!window.CherriftGame || !window.CHERRIFT_CONFIG || typeof ImageAssets === "undefined") return;
 
-  const VERSION = "0.9.5-succubus-legendary-2";
+  const VERSION = "0.9.5-succubus-legendary-3";
   const SKIN_ID = "succubus_cherry";
   const FRAME_SIZE = 192;
   const PIVOT = Object.freeze({x:96, y:184});
   const DIRECTIONS = Object.freeze(["down", "up", "left", "right"]);
   const ASSET_ROOT = "assets/player/skins/succubus_cherry";
   const EFFECT_ROOT = `${ASSET_ROOT}/effects`;
-  const CACHE_VERSION = "095sc2";
+  const CACHE_VERSION = "095sc3";
   const clampV095 = (value, min, max) => Math.max(min, Math.min(max, value));
 
   // The Soul Drain sheet is a 3x3 atlas with seven populated 256px cells.
   // It is intentionally different from the character strips (192px cells).
   const BURST_LAYOUT = Object.freeze({cell:256, columns:3, frames:7});
+  // The generated walk-attack art moves its torso and lower body as separate
+  // masses in every direction. Until a hand-authored replacement exists, use
+  // the verified continuous walk strip while keeping the ranged frame event,
+  // projectile timing and movement speed unchanged.
+  const WALK_ATTACK_RENDER_SOURCE = "walk";
 
   const STATE_SPECS = Object.freeze({
     idle:{frames:4, fps:3, loop:true},
@@ -26922,7 +26927,8 @@ console.info("[CHERRIFT] Clean Runtime 1.4.0 loaded from src/cherrift_app.js: fl
   });
 
   function spriteSource(stateName, direction) {
-    return `${ASSET_ROOT}/${SKIN_ID}_${stateName}_${direction}.png?v=${CACHE_VERSION}`;
+    const sourceState = stateName === "walk_attack_ranged" ? WALK_ATTACK_RENDER_SOURCE : stateName;
+    return `${ASSET_ROOT}/${SKIN_ID}_${sourceState}_${direction}.png?v=${CACHE_VERSION}`;
   }
 
   function spriteKey(stateName, direction) {
@@ -27598,7 +27604,8 @@ console.info("[CHERRIFT] Clean Runtime 1.4.0 loaded from src/cherrift_app.js: fl
     pivot:PIVOT,
     burstLayout:BURST_LAYOUT,
     meleeTriggerRange:158,
-    meleeRange:184
+    meleeRange:184,
+    walkAttackRenderSource:WALK_ATTACK_RENDER_SOURCE
   });
   console.info("[CHERRIFT] Succubus Cherry legendary sprites, frame events and local VFX loaded.");
 })();
