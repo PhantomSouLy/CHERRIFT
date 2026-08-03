@@ -299,7 +299,15 @@
       if (dot) { state.tier = dot.dataset.gcoTier; render(); }
     });
     const carousel = id("gcoCarousel");
-    carousel.addEventListener("pointerdown", event => { state.dragStart = { x: event.clientX, y: event.clientY, id: event.pointerId }; carousel.setPointerCapture?.(event.pointerId); });
+    carousel.addEventListener("pointerdown", event => {
+      // Pointer capture retargets the following click to the carousel in real
+      // Chromium browsers. Never capture a press that started on an action;
+      // otherwise the visible Open button receives no click at all.
+      if (event.button != null && event.button !== 0) return;
+      if (event.target.closest("button,a,input,select,textarea,[role='button']")) return;
+      state.dragStart = { x: event.clientX, y: event.clientY, id: event.pointerId };
+      carousel.setPointerCapture?.(event.pointerId);
+    });
     carousel.addEventListener("pointerup", event => {
       if (!state.dragStart) return;
       const dx = event.clientX - state.dragStart.x;
