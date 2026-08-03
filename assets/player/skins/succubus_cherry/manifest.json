@@ -1,6 +1,6 @@
 {
   "skin": "succubus_cherry",
-  "source_design": "succubus_cherry_splashart(1).png",
+  "quality": "legendary",
   "format": "RGBA PNG",
   "cell": {
     "width": 192,
@@ -10,33 +10,63 @@
     "x": 96,
     "ground_y": 184
   },
+  "directions": ["down", "up", "right", "left"],
   "states": {
     "idle": {
       "frames": 4,
       "fps": 3,
-      "sheet_size": [768, 192]
+      "sheet_size": [768, 192],
+      "loop": true
+    },
+    "idle2": {
+      "frames": 6,
+      "fps": 5,
+      "sheet_size": [1152, 192],
+      "loop": true
     },
     "walk": {
       "frames": 6,
       "fps": 8,
-      "sheet_size": [1152, 192]
-    },
-    "melee": {
-      "frames": 6,
-      "fps": 18,
       "sheet_size": [1152, 192],
-      "vfx_baked_in": false,
-      "cherrift_alias": "attack"
+      "loop": true,
+      "leg_cycle": "left-right alternating"
     },
-    "ranged": {
+    "walk_attack_ranged": {
+      "frames": 6,
+      "fps": 10,
+      "sheet_size": [1152, 192],
+      "loop": false,
+      "projectile_spawn_frame": 4,
+      "leg_cycle": "copied from canonical walk frames"
+    },
+    "attack_ranged": {
       "frames": 6,
       "fps": 16,
       "sheet_size": [1152, 192],
-      "vfx_baked_in": false,
-      "cherrift_alias": "skill"
+      "loop": false,
+      "projectile_spawn_frames": [3, 4]
+    },
+    "attack_melee": {
+      "frames": 6,
+      "fps": 18,
+      "sheet_size": [1152, 192],
+      "loop": false,
+      "hit_frames": [2, 3, 4]
+    },
+    "skill": {
+      "frames": 8,
+      "fps": 12,
+      "sheet_size": [1536, 192],
+      "loop": false,
+      "burst_frame": 4,
+      "soul_spawn_frames": [4, 5]
     }
   },
-  "directions": ["down", "up", "left", "right"],
-  "canonical_file_count": 16,
-  "validation": "succubus_cherry_validation.json"
+  "canonical_sheet_count": 28,
+  "horizontal_direction_rule": "left is an exact per-cell mirror of right",
+  "vfx_baked_into_character": false,
+  "effects_directory": "effects",
+  "legacy_aliases_directory": "legacy_aliases",
+  "validation": "validation.json"
 }
+

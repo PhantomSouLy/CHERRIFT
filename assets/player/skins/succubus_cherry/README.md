@@ -1,36 +1,69 @@
-# Succubus Cherry sprite pack
+# Succubus Cherry — Legendary sprite pack
 
-Game-ready RGBA sprite sheets based on `succubus_cherry_splashart(1).png`.
+Játékra kész, valódi RGBA sprite sheet csomag. A karakter és az effektek külön fájlokban maradnak, ezért a támadások időzítése és az effektméret kódból szabadon állítható.
 
-## Canonical set
+## Technikai szabvány
 
-- Cell size: 192×192 px
-- Pivot: x=96, ground y=184
-- Idle: 4 frames, 768×192 px, 3 fps
-- Walk: 6 frames, 1152×192 px, 8 fps
-- Melee: 6 frames, 1152×192 px, suggested 18 fps
-- Ranged: 6 frames, 1152×192 px, suggested 15–16 fps
-- Directions: down, up, left, right
-- Format: true RGBA PNG with fully transparent background
-- VFX: not baked into character sheets
+- Cellaméret: `192×192 px`
+- Pivot: `x = 96`
+- Talajvonal: `y = 184` (az utolsó látható pixelsor `183`)
+- Irányok: `down`, `up`, `right`, `left`
+- Formátum: valódi `RGBA PNG`, teljesen átlátszó háttérrel
+- Frame-sorrend: balról jobbra
+- A `left` sheetek képkockánkénti, pixelpontos tükörképei a `right` sheeteknek
+- A karakter sheetekbe nincs nagy VFX beleégetve
 
-The Left sheets are exact per-cell mirrors of the Right sheets. Frame order is
-preserved, so the character design and animation timing cannot drift between
-horizontal directions.
+## Animációk
 
-## CHERRIFT compatibility
+| Állapot | Frame | Ajánlott FPS | Sheetméret | Megjegyzés |
+|---|---:|---:|---:|---|
+| `idle` | 4 | 3 | 768×192 | Alap nyugalmi loop |
+| `idle2` | 6 | 5 | 1152×192 | Részletes másodlagos idle, kéz/fej/szárny/farok mozgással |
+| `walk` | 6 | 8 | 1152×192 | Bal–jobb lábváltás |
+| `walk_attack_ranged` | 6 | 10 | 1152×192 | Mozgás közbeni ranged cast; a walk lábframe-jeit használja |
+| `attack_ranged` | 6 | 16 | 1152×192 | Helyben álló ranged támadás |
+| `attack_melee` | 6 | 18 | 1152×192 | Kétlépcsős karmolás |
+| `skill` | 8 | 12 | 1536×192 | Soul Drain: töltés, kitörés, tartás, recovery |
 
-The `compatibility_cherrift` folder contains filename aliases:
+Ajánlott eseményframe-ek, 0-alapú indexeléssel:
 
-- `melee` → `attack`
-- `ranged` → `skill`
+- `walk_attack_ranged`: projectile spawn `4`
+- `attack_ranged`: projectile spawn `3–4`
+- `attack_melee`: első találat `2`, második találat `3–4`
+- `skill`: Soul Drain burst `4`, soul wispek indítása `4–5`
 
-The current CHERRIFT Succubus implementation already uses separate code-drawn
-crimson claw and Soul Drain effects. Keep those effects separate from these
-character sheets.
+## Fájlelnevezés
 
-## Validation
+```text
+succubus_cherry_<state>_<direction>.png
+```
 
-`succubus_cherry_validation.json` records the checks for all 16 canonical files.
-Every frame is non-empty, centered on x=96, grounded at y=184, and stays inside
-its 192×192 cell.
+Példa: `succubus_cherry_walk_attack_ranged_right.png`.
+
+A korábbi `melee` és `ranged` nevű fájlok változatlan kompatibilitási másolatai a `legacy_aliases/` mappában vannak. Az új, egyértelmű nevek: `attack_melee` és `attack_ranged`.
+
+## Külön VFX-ek
+
+Az `effects/` mappa tartalma:
+
+- `claw_mark.png` — négy karmolásnyom az enemyn
+- `claw_slash.png` — melee támadás első effektje
+- `front_slash.png` — melee támadás második effektje
+- `succubus_crimson_claw_wave.png` — ranged projectile
+- `succubus_soul_hit.png` — ranged találati effekt
+- `succubus_soul_wisp.png` — skill után célra repülő lélek
+- `succubus_blood_shield.png` — rövid, halvány overheal shield
+- `succubus_soul_drain_burst_sheet.png` — külön Soul Drain kitörés effektforrás
+
+## Integráció
+
+1. A gyökérben lévő 28 karakter sheetet másold a skin sprite mappájába.
+2. A renderer cellaméretét állítsd `192×192`-re.
+3. A pivot legyen `(96, 184)`.
+4. A projectile/hit/shield/soul effekteket az animáció eseményframe-jein külön spawnold.
+5. A `left` fájlokat közvetlenül használd; futásidőben már nem szükséges újra tükrözni.
+
+## Ellenőrzés
+
+A `validation.json` szerint mind a 28 sheet megfelelő méretű, RGBA, nem üres, nem lóg ki a cellából, és minden jobb–bal pár pixelpontosan egyezik tükrözés után.
+

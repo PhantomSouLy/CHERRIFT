@@ -1,0 +1,35 @@
+{
+  "skin": "succubus_cherry",
+  "checked_sheet_count": 28,
+  "checked_states": [
+    "idle",
+    "idle2",
+    "walk",
+    "walk_attack_ranged",
+    "attack_ranged",
+    "attack_melee",
+    "skill"
+  ],
+  "checks": {
+    "expected_dimensions": "PASS",
+    "rgba_channels": "PASS",
+    "alpha_extrema_0_to_1": "PASS",
+    "all_frames_non_empty": "PASS",
+    "no_cell_edge_clipping": "PASS",
+    "maximum_visible_ground_pixel": 183,
+    "pivot_ground_coordinate": 184,
+    "right_to_left_mirror_absolute_error": {
+      "idle": 0,
+      "idle2": 0,
+      "walk": 0,
+      "walk_attack_ranged": 0,
+      "attack_ranged": 0,
+      "attack_melee": 0,
+      "skill": 0
+    },
+    "walk_leg_alternation": "PASS — canonical walk frames retained",
+    "walk_attack_ranged_leg_alternation": "PASS — lower body copied frame-for-frame from canonical walk",
+    "large_vfx_absent_from_character_sheets": "PASS"
+  },
+  "valid": true
+}
