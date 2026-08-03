@@ -638,6 +638,9 @@ async function exercise(name,width,height){
       assert.equal(succubusConfig.meleeTriggerRange,158,"desktop: Succubus switches to melee before visual overlap");
       assert.equal(succubusConfig.meleeRange,184,"desktop: Succubus claws reach the expanded melee distance");
       assert.equal(window.CHERRIFT_SUCCUBUS_V095.walkAttackRenderSource,"walk","desktop: moving ranged attacks use the continuous walk body");
+      assert.equal(window.CHERRIFT_SUCCUBUS_V095.meleeEffectRotation.claw,Math.PI/4,"desktop: claw slash cutting edge targets the enemy");
+      assert.equal(window.CHERRIFT_SUCCUBUS_V095.meleeEffectRotation.front,-Math.PI/4,"desktop: front slash cutting edge targets the enemy");
+      assert.equal(window.CHERRIFT_SUCCUBUS_V095.skillReveal,"center-out-radial-fade","desktop: Soul Drain uses a center-out reveal");
       for(const state of window.CHERRIFT_SUCCUBUS_V095.states){
         assert.ok(UI.game.assets.get(`player_succubus_cherry_${state}_down`),`desktop: ${state} sprite loaded`);
       }
@@ -668,6 +671,9 @@ async function exercise(name,width,height){
       succubus.moving=true;
       UI.game.autoFire();
       assert.equal(succubus.__succubusAttackV095?.animation,"walk_attack_ranged","desktop: moving attack keeps the alternating-leg ranged walk strip");
+      succubus.moving=false;
+      UI.game.update(.01);
+      assert.equal(succubus.__succubusAttackV095?.animation,"attack_ranged","desktop: releasing movement immediately stops the in-place walk animation");
 
       succubus.__succubusAttackV095=null;
       succubus.attackCastTimer=0;
@@ -682,7 +688,7 @@ async function exercise(name,width,height){
       for(let index=0;index<6;index++)UI.game.update(.05);
       assert.ok(meleeEnemy.hp<900,"desktop: two-stage melee damages the target");
       assert.ok(UI.game.effects.some(effect=>effect.type==="succubus_claw_mark_v095"),"desktop: melee leaves the claw mark on the enemy");
-      assert.ok(UI.game.effects.some(effect=>effect.type==="succubus_melee_slash_v095"&&effect.variant===1),"desktop: both melee slash effects are emitted");
+      assert.ok(UI.game.effects.filter(effect=>effect.type==="succubus_melee_slash_v095").every(effect=>[0,1].includes(effect.variant)),"desktop: melee randomly selects only the two calibrated slash effects");
 
       succubus.__succubusAttackV095=null;
       succubus.attackCastTimer=0;
@@ -709,6 +715,7 @@ async function exercise(name,width,height){
       assert.equal(burstDraw[0][4],256,"desktop: Soul Drain source cell height is 256px");
       assert.ok(burstDraw[0][7]<=232,"desktop: Soul Drain burst stays compact on the playfield");
       assert.equal(burstContext.imageSmoothingEnabled,true,"desktop: Soul Drain scales with smoothing instead of pixelating");
+      assert.ok(typeof burstContext.clip==="function","desktop: Soul Drain supports the radial center-out reveal clip");
       for(let index=0;index<16;index++)UI.game.update(.05);
       assert.ok(succubus.soulShield>0,"desktop: full-HP Soul Drain converts overheal into shield");
       assert.ok(UI.game.effects.some(effect=>effect.type==="succubus_overheal_v095"),"desktop: overheal uses the faint blood-shield effect");
