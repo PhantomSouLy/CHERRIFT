@@ -26886,15 +26886,19 @@ console.info("[CHERRIFT] Clean Runtime 1.4.0 loaded from src/cherrift_app.js: fl
 
   if (!window.CherriftGame || !window.CHERRIFT_CONFIG || typeof ImageAssets === "undefined") return;
 
-  const VERSION = "0.9.5-succubus-legendary-3";
+  const VERSION = "0.9.5-succubus-legendary-4";
   const SKIN_ID = "succubus_cherry";
   const FRAME_SIZE = 192;
   const PIVOT = Object.freeze({x:96, y:184});
   const DIRECTIONS = Object.freeze(["down", "up", "left", "right"]);
   const ASSET_ROOT = "assets/player/skins/succubus_cherry";
   const EFFECT_ROOT = `${ASSET_ROOT}/effects`;
-  const CACHE_VERSION = "095sc3";
+  const CACHE_VERSION = "095sc4";
   const clampV095 = (value, min, max) => Math.max(min, Math.min(max, value));
+  const smoothstepV095 = value => {
+    const amount = clampV095(value, 0, 1);
+    return amount * amount * (3 - 2 * amount);
+  };
 
   // The Soul Drain sheet is a 3x3 atlas with seven populated 256px cells.
   // It is intentionally different from the character strips (192px cells).
@@ -26904,6 +26908,10 @@ console.info("[CHERRIFT] Clean Runtime 1.4.0 loaded from src/cherrift_app.js: fl
   // the verified continuous walk strip while keeping the ranged frame event,
   // projectile timing and movement speed unchanged.
   const WALK_ATTACK_RENDER_SOURCE = "walk";
+  // Source art calibration: claw_slash points to the upper-right, while the
+  // marked cutting edge of front_slash points to the lower-right. Applying
+  // these separate offsets makes the actual damage edge face the target.
+  const MELEE_EFFECT_ROTATION = Object.freeze({claw:Math.PI / 4, front:-Math.PI / 4});
 
   const STATE_SPECS = Object.freeze({
     idle:{frames:4, fps:3, loop:true},
@@ -27033,6 +27041,19 @@ console.info("[CHERRIFT] Clean Runtime 1.4.0 loaded from src/cherrift_app.js: fl
     game.effects.push({type, t:0, life:.4, ...data});
   }
 
+  function randomMeleeVariantV095(player) {
+    let variant = Math.random() < .5 ? 0 : 1;
+    const previous = Number.isInteger(player.__succubusLastSlashVariantV095)
+      ? player.__succubusLastSlashVariantV095
+      : null;
+    const repeats = Number(player.__succubusSlashRepeatV095) || 0;
+    // Random pairs are allowed, but never let one graphic repeat forever.
+    if (previous === variant && repeats >= 2) variant = 1 - variant;
+    player.__succubusSlashRepeatV095 = previous === variant ? repeats + 1 : 1;
+    player.__succubusLastSlashVariantV095 = variant;
+    return variant;
+  }
+
   function applyDrainV095(game, damage, rate, shieldOnFull) {
     const player = game.player;
     const amount = Math.max(0, Number(damage) || 0) * Math.max(0, Number(rate) || 0);
@@ -27130,7 +27151,7 @@ console.info("[CHERRIFT] Clean Runtime 1.4.0 loaded from src/cherrift_app.js: fl
       x:player.x,
       y:player.y - 8,
       angle,
-      variant:phase,
+      variant:randomMeleeVariantV095(player),
       connected:hits > 0,
       life:phase === 0 ? .28 : .34
     });
@@ -27188,6 +27209,8 @@ console.info("[CHERRIFT] Clean Runtime 1.4.0 loaded from src/cherrift_app.js: fl
       player.__succubusIdle2StartV095 = 0;
       player.__succubusIdle2UntilV095 = 0;
       player.__succubusNextIdle2V095 = (this.t || 0) + 3.5 + Math.random() * 2.5;
+      player.__succubusLastSlashVariantV095 = null;
+      player.__succubusSlashRepeatV095 = 0;
       return result;
     };
 
@@ -27265,6 +27288,17 @@ console.info("[CHERRIFT] Clean Runtime 1.4.0 loaded from src/cherrift_app.js: fl
 
       const attack = player.__succubusAttackV095;
       if (attack) {
+        // A moving shot may finish after the player releases movement. Switch
+        // its remaining normalized timeline to the stationary ranged strip so
+        // Cherry never keeps walking in place or snaps back a frame.
+        if (attack.animation === "walk_attack_ranged" && !player.moving) {
+          const movingProgress = clampV095(attack.elapsed / Math.max(.001, attack.duration), 0, 1);
+          const standing = this.activeSkinConfig()?.states?.attack_ranged || STATE_SPECS.attack_ranged;
+          attack.animation = "attack_ranged";
+          attack.duration = Number(standing.duration) || Number(standing.frames) / Number(standing.fps);
+          attack.elapsed = Math.min(attack.duration, movingProgress * attack.duration);
+          attack.startedAt = now - attack.elapsed;
+        }
         attack.elapsed = Math.min(attack.duration, attack.elapsed + delta);
         if (attack.animation === "attack_melee") {
           const state = this.activeSkinConfig()?.states?.attack_melee || STATE_SPECS.attack_melee;
@@ -27529,11 +27563,16 @@ console.info("[CHERRIFT] Clean Runtime 1.4.0 loaded from src/cherrift_app.js: fl
         const frame = Math.min(BURST_LAYOUT.frames - 1, Math.floor(progress * BURST_LAYOUT.frames));
         const column = frame % BURST_LAYOUT.columns;
         const row = Math.floor(frame / BURST_LAYOUT.columns);
-        const size = 198 + Math.sin(progress * Math.PI) * 34;
+        const reveal = smoothstepV095(progress / .24);
+        const fadeOut = smoothstepV095((1 - progress) / .28);
+        const size = (198 + Math.sin(progress * Math.PI) * 34) * (.82 + reveal * .18);
         context.save();
-        context.globalAlpha = Math.min(.88, alpha * 1.12);
+        context.globalAlpha = Math.min(.88, reveal * fadeOut * 1.08);
         context.imageSmoothingEnabled = true;
         context.imageSmoothingQuality = "high";
+        context.beginPath();
+        context.arc(effect.x, effect.y, Math.max(3, size * .56 * reveal), 0, Math.PI * 2);
+        context.clip();
         context.drawImage(
           image,
           column * BURST_LAYOUT.cell,
@@ -27552,7 +27591,8 @@ console.info("[CHERRIFT] Clean Runtime 1.4.0 loaded from src/cherrift_app.js: fl
       if (type === "succubus_melee_slash_v095") {
         const image = this.assets.get(effect.variant ? "succubus_front_slash" : "succubus_claw_slash");
         const size = effect.variant ? 138 : 126;
-        drawImageV095(context, image, effect.x, effect.y, size, size, (effect.angle || 0) + Math.PI / 4, alpha);
+        const rotation = effect.variant ? MELEE_EFFECT_ROTATION.front : MELEE_EFFECT_ROTATION.claw;
+        drawImageV095(context, image, effect.x, effect.y, size, size, (effect.angle || 0) + rotation, alpha);
         return;
       }
 
@@ -27605,7 +27645,10 @@ console.info("[CHERRIFT] Clean Runtime 1.4.0 loaded from src/cherrift_app.js: fl
     burstLayout:BURST_LAYOUT,
     meleeTriggerRange:158,
     meleeRange:184,
-    walkAttackRenderSource:WALK_ATTACK_RENDER_SOURCE
+    walkAttackRenderSource:WALK_ATTACK_RENDER_SOURCE,
+    meleeEffectRotation:{...MELEE_EFFECT_ROTATION},
+    meleeEffectSelection:"random-with-two-repeat-cap",
+    skillReveal:"center-out-radial-fade"
   });
   console.info("[CHERRIFT] Succubus Cherry legendary sprites, frame events and local VFX loaded.");
 })();
