@@ -359,6 +359,13 @@ for (const marker of [
   "attack_ranged:{frames:6",
   "attack_melee:{frames:6",
   "skill:{frames:8",
+  "BURST_LAYOUT = Object.freeze({cell:256, columns:3, frames:7})",
+  "WALK_ATTACK_RENDER_SOURCE = \"walk\"",
+  "MELEE_EFFECT_ROTATION = Object.freeze({claw:Math.PI / 4, front:-Math.PI / 4})",
+  "randomMeleeVariantV095",
+  "center-out-radial-fade",
+  "meleeTriggerRange:158",
+  "meleeRange:184",
   "succubus_skill_burst_v095",
   "succubus_overheal_v095"
 ]) {
