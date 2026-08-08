@@ -1121,7 +1121,7 @@
   if (window.__CHERRIFT_FIXPACK_095_2__) return;
   window.__CHERRIFT_FIXPACK_095_2__ = true;
 
-  const VERSION = "0.9.5-fixpack-2.1-mobile-more";
+  const VERSION = "0.9.5-fixpack-4-strict-map-return";
   const id = value => document.getElementById(value);
   const q = (selector, root = document) => root?.querySelector?.(selector) || null;
   const qa = (selector, root = document) => Array.from(root?.querySelectorAll?.(selector) || []);
@@ -1433,6 +1433,7 @@
     // that retention was the source of World 4 assets appearing in World 5.
     game.obstacles = objects;
     game.__fixStrictWorldV0952 = world;
+    return objects;
   }
 
   function pattern(context, image) {
@@ -1520,10 +1521,15 @@
     const previousGenerateMap = proto.generateMap;
     if (typeof previousGenerateMap === "function") {
       proto.generateMap = function generateMapFix0952(...args) {
-        const result = previousGenerateMap.apply(this,args);
+        const legacyResult = previousGenerateMap.apply(this,args);
         const world = stageWorld(this);
-        if (WORLD_MAPS_STRICT[world]) buildStrictWorld(this,world);
-        return result;
+        if (WORLD_MAPS_STRICT[world]) {
+          // generateMap() is assigned directly to this.obstacles by the core
+          // runtime. Returning the legacy array here would immediately undo
+          // the strict world replacement even though buildStrictWorld() ran.
+          return buildStrictWorld(this,world);
+        }
+        return legacyResult;
       };
     }
 
@@ -1534,7 +1540,11 @@
         if (WORLD_MAPS_STRICT[worldBefore]) preloadWorld(worldBefore);
         const result = await previousStart.apply(this,args);
         const world = stageWorld(this);
-        if (WORLD_MAPS_STRICT[world] && this.__fixStrictWorldV0952 !== world) buildStrictWorld(this,world);
+        // Always perform a final deterministic replacement after the whole
+        // legacy start chain. Several older wrappers can write obstacles after
+        // generateMap(), so a marker alone is not sufficient evidence that the
+        // final array is still clean.
+        if (WORLD_MAPS_STRICT[world]) buildStrictWorld(this,world);
         return result;
       };
     }
@@ -1549,7 +1559,13 @@
     const previousDrawObstacle = proto.drawObstacle;
     if (typeof previousDrawObstacle === "function") {
       proto.drawObstacle = function drawObstacleFix0952(context, object) {
-        if (object?.__fixStrictWorldV0952) return drawStrictObject(context,object);
+        const world = stageWorld(this);
+        if (WORLD_MAPS_STRICT[world]) {
+          // World 1-6 are strict: never render a legacy/mismatched object even
+          // if an older asynchronous layer appends one after stage start.
+          if (!object?.__fixStrictWorldV0952 || Number(object.fixWorld) !== world) return;
+          return drawStrictObject(context,object);
+        }
         return previousDrawObstacle.call(this,context,object);
       };
     }
@@ -1749,7 +1765,7 @@
     addEventListener("resize",queue,{passive:true});
     addEventListener("cherrift:savechange",queue);
     addEventListener("cherrift:prebeta-ready",queue);
-    console.info(`[CHERRIFT] ${VERSION} loaded: strict World 1-6 maps, mobile layout and reliable More drawer active.`);
+    console.info(`[CHERRIFT] ${VERSION} loaded: strict World 1-6 maps (final-return guarded), mobile layout and reliable More drawer active.`);
   }
 
   window.CHERRIFT_FIXPACK_0952 = Object.freeze({

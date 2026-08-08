@@ -119,7 +119,7 @@ window.CHERRIFT_CONFIG = {
   if (document.getElementById(scriptId)) return;
   const script = document.createElement("script");
   script.id = scriptId;
-  script.src = "src/cherrift_fixpack_095.js?v=095fix3";
+  script.src = "src/cherrift_fixpack_095.js?v=095fix4";
   script.async = false;
   document.head.appendChild(script);
 })();
