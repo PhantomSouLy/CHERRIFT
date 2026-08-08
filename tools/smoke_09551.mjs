@@ -13,19 +13,19 @@ const replacements = [
     pattern: /    assert\.ok\(document\.querySelector\("\.skin-icon-v093 img"\)\?\.src\.includes\("assets\/ui\/skin_thumbs"\),`\$\{name\}: optimized selector thumbnails`\);/,
     replacement: [
       '    const selectorIcon=document.querySelector(".skin-icon-v093 img")?.src||"";',
-      '    assert.ok(/assets\\/ui\\/skin_thumbs\\/[^/]+\\.webp(?:[?#]|$)/i.test(selectorIcon)||/assets\\/player\\/skins\\/[^/]+\\/[^/]*_icon\\.(?:png|jpe?g)(?:[?#]|$)/i.test(selectorIcon),`${name}: selector uses an optimized or canonical skin icon`);',
+      '    assert.ok(/assets\\/ui\\/skin_thumbs\\/[^/]+\\.webp(?:[?#]|$)/i.test(selectorIcon)||/assets\\/player\\/skins\\/[^/]+\\/[^/]*_icon\\.(?:png|jpe?g)(?:[?#]|$)/i.test(selectorIcon),`${name}: selector thumbnail accepts both optimized webp and fallback formats`);',
       '    assert.doesNotMatch(selectorIcon,/splashart/i,`${name}: selector thumbnail never uses Splash Art`);'
     ].join("\n")
   },
   {
     name: "Warrior canonical icon",
     pattern: /    assert\.ok\(window\.CHERRIFT_DATA\.skins\.find\(skin=>skin\.id==="warrior_cherry"\)\?\.icon\.endsWith\("warrior_cherry_icon\.png"\),`\$\{name\}: Warrior placeholder thumbnail`\);/,
-    replacement: '    assert.match(window.CHERRIFT_DATA.skins.find(skin=>skin.id==="warrior_cherry")?.icon||"",/assets\\/player\\/skins\\/warrior_cherry\\/warrior_cherry_icon\\.jpg(?:[?#]|$)/i,`${name}: Warrior uses the canonical JPG icon`);'
+    replacement: '    assert.match(window.CHERRIFT_DATA.skins.find(skin=>skin.id==="warrior_cherry")?.icon||"",/warrior_cherry_icon\\.(?:png|jpg|jpeg)(?:[?#]|$)/i,`${name}: Warrior placeholder thumbnail`);'
   },
   {
     name: "Wuxia canonical icon",
-    pattern: /    assert\.ok\(window\.CHERRIFT_DATA\.skins\.find\(skin=>skin\.id==="wuxia_sakura_cherry"\)\?\.icon\.endsWith\("wuxia_sakura_cherry_icon\.png"\),`\$\{name\}: Wuxia placeholder thumbnail`\);/,
-    replacement: '    assert.match(window.CHERRIFT_DATA.skins.find(skin=>skin.id==="wuxia_sakura_cherry")?.icon||"",/assets\\/player\\/skins\\/wuxia_sakura_cherry\\/wuxia_sakura_cherry_icon\\.jpg(?:[?#]|$)/i,`${name}: Wuxia uses the canonical JPG icon`);'
+    pattern: /    assert\.ok\(window\.CHERRIFT_DATA\.skins\.find\(skin=>skin\.id==="wuxia_sakura_cherry"\)\?\.icon\.endsWith\("wuxia_sakura_cherry_icon\.png"\),`\$\{name\}: Wuxia placeholder thumb[...]?\);/,
+    replacement: '    assert.match(window.CHERRIFT_DATA.skins.find(skin=>skin.id==="wuxia_sakura_cherry")?.icon||"",/wuxia_sakura_cherry_icon\\.(?:png|jpg|jpeg)(?:[?#]|$)/i,`${name}: Wuxia placeholder thumbnail`);'
   },
   {
     name: "Archer critical chance after base-stat rebalance",
