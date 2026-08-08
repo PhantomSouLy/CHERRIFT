@@ -267,7 +267,8 @@ if (existsSync(skinRoot)) {
 
 for (let world = 1; world <= 6; world++) {
   const directory = join(root, "assets", "map", `world${world}`);
-  for (let variant = 1; variant <= 3; variant++) {
+  const variantCount = world === 4 ? 2 : 3;
+  for (let variant = 1; variant <= variantCount; variant++) {
     const file = join(directory, `world${world}_splashart_${variant}.png`);
     if (!existsSync(file)) warnings.push(`assets/map/world${world}/world${world}_splashart_${variant}.png: canonical World splash is missing`);
     else validateDimensions(file, 450, 800, "warning");

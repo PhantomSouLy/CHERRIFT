@@ -4,7 +4,7 @@
   if (window.__CHERRIFT_FIXPACK_095_ROUND5__) return;
   window.__CHERRIFT_FIXPACK_095_ROUND5__ = true;
 
-  const VERSION = "0.9.5-fixpack-5";
+  const VERSION = "0.9.5-fixpack-5.1";
   const id = value => document.getElementById(value);
   const q = (selector, root = document) => root?.querySelector?.(selector) || null;
   const qa = (selector, root = document) => Array.from(root?.querySelectorAll?.(selector) || []);
@@ -33,6 +33,7 @@
     legendary: "#f2c454",
     mythical: "#ff5f9e"
   });
+
 
   function language() {
     return window.CHERRIFT_LOCALIZATION?.language?.() === "en" || window.UI?.save?.settings?.language === "en" ? "en" : "hu";
@@ -203,15 +204,38 @@
     return holder?.dataset?.v093Skin || holder?.dataset?.skinId || holder?.dataset?.skin || "";
   }
 
+  const SELECTOR_CANONICAL_ONLY = new Set(["warrior_cherry", "wuxia_sakura_cherry"]);
+
+  function patchSelectorThumbs() {
+    const skins = window.CHERRIFT_DATA?.skins || [];
+    qa("#skins .skin-icon-v093[data-v093-skin]").forEach(card => {
+      const skin = skins.find(entry => entry.id === card.dataset.v093Skin);
+      const image = q("img", card);
+      if (!skin || !image) return;
+      // The selector keeps the tiny optimized WebP cache. Canonical 512x512
+      // icons remain the source of truth everywhere else. Marking the image as
+      // a legacy splash host intentionally opts it out of Fixpack 1's generic
+      // small-image rewrite, avoiding an observer src ping-pong.
+      image.classList.add("r5-optimized-selector-thumb", "fix-splash-host-v095");
+      const folder = skinFolder(skin);
+      const source = SELECTOR_CANONICAL_ONLY.has(skin.id)
+        ? skin.icon
+        : `assets/ui/skin_thumbs/${folder}.webp`;
+      if (source && image.getAttribute("src") !== source) image.setAttribute("src", source);
+    });
+  }
+
   function patchSmallSkinImages() {
     const skins = window.CHERRIFT_DATA?.skins || [];
     qa('img[src*="assets/player/skins/"]').forEach(image => {
-      if (!image.closest(".food-card-v080,.skin-icon-v093,.cherry-selector-thumb-v095,.mobile-profile-v0932,.cherry-nav-v0942,.cherry-nav-bf,.r5-skin-shop-card")) return;
+      if (image.closest(".skin-icon-v093")) return;
+      if (!image.closest(".food-card-v080,.cherry-selector-thumb-v095,.mobile-profile-v0932,.cherry-nav-v0942,.cherry-nav-bf,.r5-skin-shop-card")) return;
       const skinId = skinIdFromImage(image);
       const skin = skins.find(entry => entry.id === skinId);
       if (skin?.icon && image.getAttribute("src") !== skin.icon) image.setAttribute("src", skin.icon);
     });
   }
+
 
   function patchWorldSplashes() {
     const stages = window.CHERRIFT_V040?.stages || [];
@@ -219,7 +243,7 @@
       const world = Number(stage?.world || String(stage?.id || "").match(/world_(\d+)/)?.[1]);
       const chapter = Number(stage?.index || String(stage?.id || "").match(/_(\d+)$/)?.[1]);
       if (!(world >= 1 && world <= 6) || !(chapter >= 1 && chapter <= 5) || stage.training) continue;
-      const variant = chapter <= 2 ? 1 : chapter <= 4 ? 2 : 3;
+      const variant = chapter <= 2 ? 1 : chapter <= 4 ? 2 : world === 4 ? 2 : 3;
       stage.splash = `assets/map/world${world}/world${world}_splashart_${variant}.png`;
     }
   }
@@ -589,7 +613,14 @@
     if (state.uiWrapped || !window.UI) return;
     state.uiWrapped = true;
     const open = UI.open?.bind(UI);
-    if (open) UI.open = function openR5(...args) { const result = open(...args); schedulePatch(); return result; };
+    if (open) UI.open = function openR5(...args) {
+      const result = open(...args);
+      // Selector thumbnails must be corrected synchronously so smoke/UI never
+      // observes a transient canonical full-size icon in the tiny carousel.
+      if (args[0] === "skins") patchSelectorThumbs();
+      schedulePatch();
+      return result;
+    };
     const refresh = UI.refreshMenu?.bind(UI);
     if (refresh) UI.refreshMenu = function refreshR5(...args) { const result = refresh(...args); schedulePatch(); return result; };
   }
@@ -598,6 +629,7 @@
     if (!window.UI?.save) return;
     patchWorldSplashes();
     patchSplashStage();
+    patchSelectorThumbs();
     patchSmallSkinImages();
     ensureLobbySubnav();
     ensureEnergyPill();

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "validate": "node tools/validate.mjs",
-    "smoke": "node tools/smoke.mjs",
+    "smoke": "node tools/smoke_09551.mjs",
     "test": "npm run validate && npm run smoke"
   },
   "devDependencies": {
