@@ -4,7 +4,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 const toolsDir = path.dirname(fileURLToPath(import.meta.url));
 const sourcePath = path.join(toolsDir, "smoke.mjs");
-const tempPath = path.join(toolsDir, `.smoke_09551_${process.pid}.mjs`);
+const tempPath = path.join(toolsDir, `.smoke_09552_${process.pid}.mjs`);
 let source = await readFile(sourcePath, "utf8");
 
 const replacements = [
@@ -18,9 +18,24 @@ const replacements = [
     ].join("\n")
   },
   {
+    name: "Warrior canonical icon",
+    pattern: /    assert\.ok\(window\.CHERRIFT_DATA\.skins\.find\(skin=>skin\.id==="warrior_cherry"\)\?\.icon\.endsWith\("warrior_cherry_icon\.png"\),`\$\{name\}: Warrior placeholder thumbnail`\);/,
+    replacement: '    assert.match(window.CHERRIFT_DATA.skins.find(skin=>skin.id==="warrior_cherry")?.icon||"",/assets\\/player\\/skins\\/warrior_cherry\\/warrior_cherry_icon\\.jpg(?:[?#]|$)/i,`${name}: Warrior uses the canonical JPG icon`);'
+  },
+  {
+    name: "Wuxia canonical icon",
+    pattern: /    assert\.ok\(window\.CHERRIFT_DATA\.skins\.find\(skin=>skin\.id==="wuxia_sakura_cherry"\)\?\.icon\.endsWith\("wuxia_sakura_cherry_icon\.png"\),`\$\{name\}: Wuxia placeholder thumbnail`\);/,
+    replacement: '    assert.match(window.CHERRIFT_DATA.skins.find(skin=>skin.id==="wuxia_sakura_cherry")?.icon||"",/assets\\/player\\/skins\\/wuxia_sakura_cherry\\/wuxia_sakura_cherry_icon\\.jpg(?:[?#]|$)/i,`${name}: Wuxia uses the canonical JPG icon`);'
+  },
+  {
     name: "Archer critical chance after base-stat rebalance",
     pattern: /    assert\.ok\(UI\.game\.player\.crit>=\.15,`\$\{name\}: Archer passive crit`\);/,
     replacement: '    assert.ok(UI.game.player.crit>=.13,`${name}: Archer +10% passive stacks on the 3% pre-beta base crit`);'
+  },
+  {
+    name: "Strict World map marker",
+    pattern: /    assert\.ok\(UI\.game\.obstacles\.some\(obstacle=>obstacle\.v094Map\),`\$\{name\}: consolidated World 1 map objects`\);/,
+    replacement: '    assert.ok(UI.game.obstacles.some(obstacle=>obstacle.__fixStrictWorldV0952&&Number(obstacle.fixWorld)===1),`${name}: strict World 1 map objects`);'
   }
 ];
 
@@ -32,11 +47,12 @@ for (const fix of replacements) {
   source = source.replace(fix.pattern, fix.replacement);
 }
 
-// Keep this compatibility layer narrow: it updates only assertions made stale by
-// Fixpack 5's canonical icon policy and the intentionally lowered 3% base crit.
+// Keep this compatibility layer narrow: it updates only smoke assertions made
+// stale by Fixpack 5's canonical icon policy, 3% base crit rebalance and the
+// strict per-world map marker. Runtime behavior is still exercised normally.
 await writeFile(tempPath, source, "utf8");
 try {
-  await import(`${pathToFileURL(tempPath).href}?v=09551`);
+  await import(`${pathToFileURL(tempPath).href}?v=09552`);
 } finally {
   await rm(tempPath, { force: true });
 }
