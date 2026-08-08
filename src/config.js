@@ -77,7 +77,8 @@ window.CHERRIFT_CONFIG = {
   },
 
   slime: {
-    src: "assets/enemies/slime_sprite_sheet.png",
+    // Enemy assets are now grouped by the World where the enemy first appears.
+    src: "assets/enemies/world_1/slime_sprite_sheet.png",
     frameWidth: 384,
     frameHeight: 384,
     columns: 4,
@@ -115,11 +116,15 @@ window.CHERRIFT_CONFIG = {
 /* v0.9.5 pre-beta fix pack loader. Kept here so the hotfix stays isolated from
    the consolidated runtime and can be removed cleanly after the next merge. */
 (() => {
-  const scriptId = "cherriftFixpack095Loader";
-  if (document.getElementById(scriptId)) return;
-  const script = document.createElement("script");
-  script.id = scriptId;
-  script.src = "src/cherrift_fixpack_095.js?v=095fix4";
-  script.async = false;
-  document.head.appendChild(script);
+  const load = (scriptId, source) => {
+    if (document.getElementById(scriptId)) return;
+    const script = document.createElement("script");
+    script.id = scriptId;
+    script.src = source;
+    script.async = false;
+    document.head.appendChild(script);
+  };
+
+  load("cherriftFixpack095Loader", "src/cherrift_fixpack_095.js?v=095fix4");
+  load("cherriftFixpack095Round5Loader", "src/cherrift_fixpack_095_round5.js?v=095fix5");
 })();
