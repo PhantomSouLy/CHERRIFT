@@ -11,17 +11,17 @@ const replacements = [
   {
     name: "Warrior canonical icon",
     pattern: /assert\.ok\(window\.CHERRIFT_DATA\.skins\.find\(skin=>skin\.id==="warrior_cherry"\)\?\.icon\.endsWith\("warrior_cherry_icon\.png"\),`\$\{name\}: Warrior placeholder thumbnail`\);/,
-    replacement: 'assert.ok(window.CHERRIFT_DATA.skins.find(skin=>skin.id==="warrior_cherry")?.icon?.match(/warrior_cherry_icon\.(?:png|jpe?g)(?:[?#]|$)/i),`${name}: Warrior placeholder thumbnail`);'
+    replacement: 'assert.ok(window.CHERRIFT_DATA.skins.find(skin=>skin.id==="warrior_cherry")?.icon?.match(/warrior_cherry_icon\.(?:png|jpe?g)/),`${name}: Warrior placeholder thumbnail`);'
   },
   {
     name: "Wuxia canonical icon",
     pattern: /assert\.ok\(window\.CHERRIFT_DATA\.skins\.find\(skin=>skin\.id==="wuxia_sakura_cherry"\)\?\.icon\.endsWith\("wuxia_sakura_cherry_icon\.png"\),`\$\{name\}: Wuxia placeholder thumbnail`\);/,
-    replacement: 'assert.ok(window.CHERRIFT_DATA.skins.find(skin=>skin.id==="wuxia_sakura_cherry")?.icon?.match(/wuxia_sakura_cherry_icon\.(?:png|jpe?g)(?:[?#]|$)/i),`${name}: Wuxia placeholder thumbnail`);'
+    replacement: 'assert.ok(window.CHERRIFT_DATA.skins.find(skin=>skin.id==="wuxia_sakura_cherry")?.icon?.match(/wuxia_sakura_cherry_icon\.(?:png|jpe?g)/),`${name}: Wuxia placeholder thumbnail`);'
   },
   {
     name: "Archer critical chance after base-stat rebalance",
     pattern: /assert\.ok\(UI\.game\.player\.crit>=\.15,`\$\{name\}: Archer passive crit`\);/,
-    replacement: 'assert.ok(UI.game.player.crit>=.13,`${name}: Archer passive crit (13% base + 10% passive)`);'
+    replacement: 'assert.ok(UI.game.player.crit>=.13,`${name}: Archer passive crit`);'
   }
 ];
 
