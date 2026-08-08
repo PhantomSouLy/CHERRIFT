@@ -1121,7 +1121,7 @@
   if (window.__CHERRIFT_FIXPACK_095_2__) return;
   window.__CHERRIFT_FIXPACK_095_2__ = true;
 
-  const VERSION = "0.9.5-fixpack-2-mobile-map";
+  const VERSION = "0.9.5-fixpack-2.1-mobile-more";
   const id = value => document.getElementById(value);
   const q = (selector, root = document) => root?.querySelector?.(selector) || null;
   const qa = (selector, root = document) => Array.from(root?.querySelectorAll?.(selector) || []);
@@ -1135,7 +1135,9 @@
     queued:false,
     images:new Map(),
     patterns:new WeakMap(),
-    activeWorld:0
+    activeWorld:0,
+    morePointerOpen:null,
+    morePointerId:null
   };
 
   // IMPORTANT: every path in a world's map configuration must live inside
@@ -1630,6 +1632,82 @@
     }
   }
 
+  function moreButtonFromTarget(target) {
+    return target?.closest?.(
+      '#globalMobileNavV052 > button[data-v082-toggle-mobile],.mobile-nav-v090 > button[data-v082-toggle-mobile]'
+    ) || null;
+  }
+
+  function drawerIsOpen() {
+    const drawer = id("mobileMenuV082");
+    return !!drawer && !drawer.classList.contains("hidden") && !drawer.classList.contains("force-closed-v0942");
+  }
+
+  function forceMoreDrawer(open) {
+    const drawer = id("mobileMenuV082");
+    if (!drawer) return;
+    drawer.classList.toggle("hidden", !open);
+    drawer.classList.toggle("force-closed-v0942", !open);
+    drawer.setAttribute("aria-hidden", open ? "false" : "true");
+    if (open) {
+      drawer.style.removeProperty("display");
+      drawer.style.removeProperty("visibility");
+      drawer.style.removeProperty("opacity");
+      drawer.style.removeProperty("pointer-events");
+    }
+    document.body?.classList.toggle("mobile-menu-open-v082", open);
+    document.body?.classList.toggle("more-open", open);
+    document.body?.classList.toggle("drawer-open", open);
+    try { window.CHERRIFT_STABILITY?.syncNav?.(open ? "more" : "menu"); } catch (_) {}
+  }
+
+  function installMoreDrawerReliability() {
+    if (document.documentElement.dataset.fixMore09521 === "1") return;
+    document.documentElement.dataset.fixMore09521 = "1";
+
+    // Record the state at the beginning of the tap. Older navigation layers
+    // may toggle the drawer during the following click; after that click has
+    // finished we force the one intended final state.
+    document.addEventListener("pointerdown", event => {
+      if (!mobile()) return;
+      const button = moreButtonFromTarget(event.target);
+      if (!button || button.disabled) return;
+      state.morePointerOpen = drawerIsOpen();
+      state.morePointerId = event.pointerId;
+    }, true);
+
+    document.addEventListener("pointerup", event => {
+      if (!mobile()) return;
+      const button = moreButtonFromTarget(event.target);
+      if (!button || button.disabled) return;
+      if (state.morePointerId !== null && event.pointerId !== state.morePointerId) return;
+      const desiredOpen = !(state.morePointerOpen ?? drawerIsOpen());
+      state.morePointerOpen = null;
+      state.morePointerId = null;
+      setTimeout(() => {
+        forceMoreDrawer(desiredOpen);
+        ensureMobileMoreRoutes();
+      }, 0);
+    }, true);
+
+    document.addEventListener("pointercancel", event => {
+      if (state.morePointerId === event.pointerId) {
+        state.morePointerOpen = null;
+        state.morePointerId = null;
+      }
+    }, true);
+
+    // Keyboard/accessibility fallback.
+    document.addEventListener("keydown", event => {
+      if (!mobile() || !["Enter"," "].includes(event.key)) return;
+      const button = moreButtonFromTarget(event.target);
+      if (!button || button.disabled || event.repeat) return;
+      event.preventDefault();
+      forceMoreDrawer(!drawerIsOpen());
+      ensureMobileMoreRoutes();
+    }, true);
+  }
+
   function patchGearMobile() {
     if (!mobile()) return;
     const gear = id("gear");
@@ -1662,6 +1740,7 @@
     state.started = true;
     ensureCss();
     installMapPatch();
+    installMoreDrawerReliability();
     patchUi();
     if (document.body) {
       state.observer = new MutationObserver(queue);
@@ -1670,7 +1749,7 @@
     addEventListener("resize",queue,{passive:true});
     addEventListener("cherrift:savechange",queue);
     addEventListener("cherrift:prebeta-ready",queue);
-    console.info(`[CHERRIFT] ${VERSION} loaded: strict World 1-6 map pools and mobile layout fixes active.`);
+    console.info(`[CHERRIFT] ${VERSION} loaded: strict World 1-6 maps, mobile layout and reliable More drawer active.`);
   }
 
   window.CHERRIFT_FIXPACK_0952 = Object.freeze({
@@ -1682,4 +1761,3 @@
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded",() => start(),{once:true});
   else start();
 })();
-
