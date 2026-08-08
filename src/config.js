@@ -111,3 +111,15 @@ window.CHERRIFT_CONFIG = {
     ]
   }
 };
+
+/* v0.9.5 pre-beta fix pack loader. Kept here so the hotfix stays isolated from
+   the consolidated runtime and can be removed cleanly after the next merge. */
+(() => {
+  const scriptId = "cherriftFixpack095Loader";
+  if (document.getElementById(scriptId)) return;
+  const script = document.createElement("script");
+  script.id = scriptId;
+  script.src = "src/cherrift_fixpack_095.js?v=095fix2";
+  script.async = false;
+  document.head.appendChild(script);
+})();
