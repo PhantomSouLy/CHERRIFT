@@ -1093,6 +1093,8 @@
     window.addEventListener("cherrift:savechange", queuePatch);
     window.addEventListener("cherrift:economychange", queuePatch);
     window.addEventListener("cherrift:languagechange", queuePatch);
+    window.__CHERRIFT_FIXPACK_095_READY__ = true;
+    window.dispatchEvent(new CustomEvent("cherrift:fixpack-095-ready"));
     console.info(`[CHERRIFT] ${VERSION} loaded: UI, Gacha, Achievements, navigation, skin icons, Worlds 5-6 and enemy repo paths patched.`);
   }
 
@@ -1765,6 +1767,8 @@
     addEventListener("resize",queue,{passive:true});
     addEventListener("cherrift:savechange",queue);
     addEventListener("cherrift:prebeta-ready",queue);
+    window.__CHERRIFT_FIXPACK_0952_READY__ = true;
+    window.dispatchEvent(new CustomEvent("cherrift:fixpack-0952-ready"));
     console.info(`[CHERRIFT] ${VERSION} loaded: strict World 1-6 maps (final-return guarded), mobile layout and reliable More drawer active.`);
   }
 

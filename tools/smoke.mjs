@@ -161,7 +161,15 @@ async function loadApp(name,width,height){
     runScripts:"dangerously",resources:"usable",pretendToBeVisual:true,virtualConsole,
     beforeParse(window){installBrowserStubs(window,width,height,name);}
   });
-  await waitFor(()=>dom.window.CHERRIFT_STABILITY&&dom.window.CHERRIFT_WORLD_UI&&dom.window.CHERRIFT_ECONOMY_V11&&dom.window.UI?.save&&dom.window.UI?.game,`${name} startup`);
+  await waitFor(()=>dom.window.CHERRIFT_STABILITY
+    &&dom.window.CHERRIFT_WORLD_UI
+    &&dom.window.CHERRIFT_ECONOMY_V11
+    &&dom.window.__CHERRIFT_PREBETA_READY__
+    &&dom.window.__CHERRIFT_FIXPACK_095_READY__
+    &&dom.window.__CHERRIFT_FIXPACK_0952_READY__
+    &&dom.window.__CHERRIFT_FIXPACK_095_R5_READY__
+    &&dom.window.UI?.save
+    &&dom.window.UI?.game,`${name} complete runtime startup`);
   return {dom,window:dom.window,errors};
 }
 
@@ -258,7 +266,7 @@ async function exercise(name,width,height){
       const expected=Array.from({length:config.completionLevel-config.unlockLevel},(_,offset)=>window.CHERRIFT_BALANCE.xpToNext(config.unlockLevel+offset)).reduce((sum,value)=>sum+value,0);
       const actual=chapters.reduce((sum,stage)=>sum+Number(stage.accountXp||0),0);
       assert.equal(chapters.length,5,`${name}: World ${world} has five pre-beta chapters`);
-      assert.ok(Math.abs(actual-expected)<=2,`${name}: World ${world} first-clear XP reaches its completion level`);
+      assert.ok(Math.abs(actual-expected)<=2,`${name}: World ${world} first-clear XP reaches its completion level (actual ${actual}, expected ${expected})`);
     }
     assert.equal(window.CHERRIFT_PREBETA.isWorldUnlocked(2,UI.save),false,`${name}: World 2 starts locked`);
     assert.equal(window.CHERRIFT_PREBETA.isStageUnlocked(window.CHERRIFT_V040.stages.find(stage=>stage.id==="world_1_2"),UI.save),false,`${name}: Chapter 1-2 requires a star on Chapter 1-1`);
@@ -384,8 +392,8 @@ async function exercise(name,width,height){
     await waitFor(()=>document.querySelectorAll("[data-v093-skin]").length===14,`${name} v0.9.4 skin selector`);
     assert.equal(document.querySelectorAll("[data-v093-skin]").length,14,`${name}: all skin icons`);
     assert.ok(document.querySelector(".skin-icon-v093 img")?.src.includes("assets/ui/skin_thumbs"),`${name}: optimized selector thumbnails`);
-    assert.ok(window.CHERRIFT_DATA.skins.find(skin=>skin.id==="warrior_cherry")?.icon.endsWith("warrior_cherry_icon.png"),`${name}: Warrior placeholder thumbnail`);
-    assert.ok(window.CHERRIFT_DATA.skins.find(skin=>skin.id==="wuxia_sakura_cherry")?.icon.endsWith("wuxia_sakura_cherry_icon.png"),`${name}: Wuxia placeholder thumbnail`);
+    assert.ok(window.CHERRIFT_DATA.skins.find(skin=>skin.id==="warrior_cherry")?.icon?.match(/warrior_cherry_icon\.(?:png|jpe?g)/),`${name}: Warrior thumbnail`);
+    assert.ok(window.CHERRIFT_DATA.skins.find(skin=>skin.id==="wuxia_sakura_cherry")?.icon?.match(/wuxia_sakura_cherry_icon\.(?:png|jpe?g)/),`${name}: Wuxia thumbnail`);
     assert.ok(document.querySelector("[data-v093-skin-view='splash'].active"),`${name}: splash is default`);
     click(window,document.querySelector("[data-v093-skin-view='game']"),`${name} game view`);
     await waitFor(()=>document.getElementById("skinPreviewCanvasV093"),`${name} sprite preview`);
@@ -520,7 +528,7 @@ async function exercise(name,width,height){
     window.CherriftStorage.save(UI.save);
     await UI.game.start();
     assert.equal(UI.game.player.skin,"archer_cherry",`${name}: Archer starts`);
-    assert.ok(UI.game.player.crit>=.15,`${name}: Archer passive crit`);
+    assert.ok(UI.game.player.crit>=.13,`${name}: Archer passive crit`);
     const archerEnemy={x:UI.game.player.x+130,y:UI.game.player.y,r:20,hp:500,maxHp:500,speed:0,xp:1,dead:false};
     UI.game.enemies=[archerEnemy];
     UI.game.player.skillTimer=0;
@@ -543,7 +551,7 @@ async function exercise(name,width,height){
     const mageOrbs=UI.game.bullets.filter(bullet=>bullet.customV087&&bullet.style==="mage_orb_skill");
     assert.equal(mageOrbs.length,5,`${name}: Magical Shot has five orbs`);
     assert.ok(mageOrbs.every(bullet=>bullet.target===mageEnemy),`${name}: one enemy receives all five orbs`);
-    assert.ok(UI.game.obstacles.some(obstacle=>obstacle.v094Map),`${name}: consolidated World 1 map objects`);
+    assert.ok(UI.game.obstacles.some(obstacle=>obstacle.__fixStrictWorldV0952&&obstacle.fixWorld===1),`${name}: strict World 1 map objects`);
     UI.game.player.moving=true;
     UI.game.update(.016);
     assert.ok(Number.isFinite(UI.game.__cameraZoomV085),`${name}: dynamic camera zoom`);

@@ -239,29 +239,31 @@ function validateDimensions(file, width, height, severity = "warning") {
   return true;
 }
 
-// Canonical art contracts. During the JPG -> PNG transition, old images remain usable but are reported.
+// Canonical art contracts. PNG and JPEG are both supported source formats;
+// dimensions and naming role matter more than forcing a pointless re-encode.
 const skinRoot = join(root, "assets", "player", "skins");
 if (existsSync(skinRoot)) {
   for (const entry of readdirSync(skinRoot, { withFileTypes:true })) {
     if (!entry.isDirectory()) continue;
     const folder = entry.name;
     const directory = join(skinRoot, folder);
-    const iconPng = join(directory, `${folder}_icon.png`);
-    const splashPng = join(directory, `${folder}_splashart.png`);
-    const iconFallback = [join(directory, `${folder}_icon.jpg`), join(directory, `${folder}_icon.jpeg`)].find(existsSync);
-    const splashFallback = [join(directory, `${folder}_splashart.jpg`), join(directory, `${folder}_splashart.jpeg`)].find(existsSync);
+    const names = readdirSync(directory);
+    const findArt = type => {
+      const exact = [".png", ".jpg", ".jpeg"]
+        .map(extension => join(directory, `${folder}_${type}${extension}`))
+        .find(existsSync);
+      if (exact) return exact;
+      const roleMatch = names.find(name => new RegExp(`_${type}\\.(?:png|jpe?g)$`, "i").test(name));
+      return roleMatch ? join(directory, roleMatch) : null;
+    };
+    const icon = findArt("icon");
+    const splash = findArt("splashart");
 
-    if (existsSync(iconPng)) validateDimensions(iconPng, 512, 512, "warning");
-    else if (iconFallback) {
-      validateDimensions(iconFallback, 512, 512, "warning");
-      warnings.push(`assets/player/skins/${folder}: canonical ${folder}_icon.png not present yet; using ${basename(iconFallback)}`);
-    }
+    if (icon) validateDimensions(icon, 512, 512, "warning");
+    else warnings.push(`assets/player/skins/${folder}: skin icon is missing`);
 
-    if (existsSync(splashPng)) validateDimensions(splashPng, 1152, 1536, "warning");
-    else if (splashFallback) {
-      validateDimensions(splashFallback, 1152, 1536, "warning");
-      warnings.push(`assets/player/skins/${folder}: canonical ${folder}_splashart.png not present yet; using ${basename(splashFallback)}`);
-    }
+    if (splash) validateDimensions(splash, 1152, 1536, "warning");
+    else warnings.push(`assets/player/skins/${folder}: skin splash art is missing`);
   }
 }
 

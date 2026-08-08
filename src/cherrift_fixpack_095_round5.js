@@ -682,6 +682,8 @@
       addFriend,
       patchWorldSplashes
     });
+    window.__CHERRIFT_FIXPACK_095_R5_READY__ = true;
+    window.dispatchEvent(new CustomEvent("cherrift:fixpack-095-r5-ready"));
     console.info(`[CHERRIFT] ${VERSION} loaded: social, splash, progression and UI polish.`);
   }
 

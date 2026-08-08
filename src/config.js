@@ -112,19 +112,3 @@ window.CHERRIFT_CONFIG = {
     ]
   }
 };
-
-/* v0.9.5 pre-beta fix pack loader. Kept here so the hotfix stays isolated from
-   the consolidated runtime and can be removed cleanly after the next merge. */
-(() => {
-  const load = (scriptId, source) => {
-    if (document.getElementById(scriptId)) return;
-    const script = document.createElement("script");
-    script.id = scriptId;
-    script.src = source;
-    script.async = false;
-    document.head.appendChild(script);
-  };
-
-  load("cherriftFixpack095Loader", "src/cherrift_fixpack_095.js?v=095fix4");
-  load("cherriftFixpack095Round5Loader", "src/cherrift_fixpack_095_round5.js?v=095fix51");
-})();

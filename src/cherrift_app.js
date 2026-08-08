@@ -2597,32 +2597,32 @@ window.UI = {
   const ENEMY_SHEETS = {
     blue_slime: {
       key: "enemy_blue_slime_v041c",
-      src: "assets/enemies/blue_slime_sprite_sheet.png",
+      src: "assets/enemies/world_1/blue_slime_sprite_sheet.png",
       cols: 4, rows: 3, row: 1, fps: 7,
       displayW: 82, displayH: 64
     },
     tank_blue_slime: {
       key: "enemy_tank_blue_slime_v041c",
-      src: "assets/enemies/tank_blue_slime_sprite_sheet.png",
+      src: "assets/enemies/world_1/tank_blue_slime_sprite_sheet.png",
       cols: 4, rows: 4, row: 1, fps: 6,
       displayW: 112, displayH: 94
     },
     ghost_slime: {
       key: "enemy_ghost_slime_v041c",
-      src: "assets/enemies/ghost_slime_sprite_sheet.png",
+      src: "assets/enemies/world_2/ghost_slime_sprite_sheet.png",
       cols: 4, rows: 3, row: 1, fps: 9,
       displayW: 78, displayH: 64,
       alpha: .88
     },
     angry_mushroom: {
       key: "enemy_angry_mushroom_v041c",
-      src: "assets/enemies/angry_mushroom_sprite_sheet.png",
+      src: "assets/enemies/world_2/angry_mushroom_sprite_sheet.png",
       cols: 4, rows: 3, row: 1, fps: 6,
       displayW: 92, displayH: 80
     },
     shadow_bat: {
       key: "enemy_shadow_bat_v041c",
-      src: "assets/enemies/shadow_bat_sprite_sheet.png",
+      src: "assets/enemies/world_2/shadow_bat_sprite_sheet.png",
       cols: 4, rows: 3, row: 1, fps: 10,
       displayW: 84, displayH: 64,
       yOffset: -4
@@ -3056,32 +3056,32 @@ window.UI = {
   const ENEMY_SHEETS = {
     blue_slime: {
       key: "enemy_blue_slime_041e",
-      src: "assets/enemies/blue_slime_sprite_sheet.png",
+      src: "assets/enemies/world_1/blue_slime_sprite_sheet.png",
       cols: 4, rows: 3, row: 1, fps: 7,
       displayW: 82, displayH: 64
     },
     tank_blue_slime: {
       key: "enemy_tank_blue_slime_041e",
-      src: "assets/enemies/tank_blue_slime_sprite_sheet.png",
+      src: "assets/enemies/world_1/tank_blue_slime_sprite_sheet.png",
       cols: 4, rows: 4, row: 1, fps: 6,
       displayW: 112, displayH: 94
     },
     ghost_slime: {
       key: "enemy_ghost_slime_041e",
-      src: "assets/enemies/ghost_slime_sprite_sheet.png",
+      src: "assets/enemies/world_2/ghost_slime_sprite_sheet.png",
       cols: 4, rows: 3, row: 1, fps: 9,
       displayW: 78, displayH: 64,
       alpha: .88
     },
     angry_mushroom: {
       key: "enemy_angry_mushroom_041e",
-      src: "assets/enemies/angry_mushroom_sprite_sheet.png",
+      src: "assets/enemies/world_2/angry_mushroom_sprite_sheet.png",
       cols: 4, rows: 3, row: 1, fps: 6,
       displayW: 92, displayH: 80
     },
     shadow_bat: {
       key: "enemy_shadow_bat_041e",
-      src: "assets/enemies/shadow_bat_sprite_sheet.png",
+      src: "assets/enemies/world_2/shadow_bat_sprite_sheet.png",
       cols: 4, rows: 3, row: 1, fps: 10,
       displayW: 84, displayH: 64,
       yOffset: -4
@@ -7291,23 +7291,23 @@ const PATHS = {
   },
   fairy: {
     splash:"assets/player/skins/fairy_cherry/fairy_cherry_splashart.jpg",
-    icon:"assets/player/skins/fairy_cherry/fairy_cherry_icon.png"
+    icon:"assets/player/skins/fairy_cherry/fairy_cherry_icon.jpg"
   },
   beast: {
     splash:"assets/player/skins/beastclaw_cherry/beastclaw_cherry_splashart.png",
-    icon:"assets/player/skins/beastclaw_cherry/beastclaw_cherry_icon.png"
+    icon:"assets/player/skins/beastclaw_cherry/beatclaw_cherry_icon.jpg"
   },
   ninja: {
     splash:"assets/player/skins/ninja_cherry/ninja_cherry_splashart.png",
-    icon:"assets/player/skins/ninja_cherry/ninja_cherry_icon.png"
+    icon:"assets/player/skins/ninja_cherry/ninja_cherry_icon.jpg"
   },
   succubus: {
     splash:"assets/player/skins/succubus_cherry/succubus_cherry_splashart.png",
-    icon:"assets/player/skins/succubus_cherry/succubus_cherry_icon.png"
+    icon:"assets/player/skins/succubus_cherry/succubus_cherry_icon.jpg"
   },
   warrior: {
     splash:"assets/player/skins/warrior_cherry/warrior_cherry_splashart.png",
-    icon:"assets/player/skins/warrior_cherry/warrior_cherry_icon.png"
+    icon:"assets/player/skins/warrior_cherry/warrior_cherry_icon.jpg"
   }
 };
 
@@ -9255,7 +9255,7 @@ const wuxiaData = {
   splash:
     "assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_splashart.jpg?v=090-hf1",
   icon:
-    "assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_icon.png?v=090-hf1"
+    "assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_icon.jpg?v=090-hf1"
 };
 
 const existingSkinIndex = CHERRIFT_DATA.skins.findIndex(
@@ -10209,27 +10209,27 @@ const SKIN_ASSETS = {
     splash: "assets/player/skins/base_cherry/base_cherry_splashart.png?v=060"
   },
   fairy_cherry: {
-    icon: "assets/player/skins/fairy_cherry/fairy_cherry_icon.png?v=060",
+    icon: "assets/player/skins/fairy_cherry/fairy_cherry_icon.jpg?v=060",
     splash: "assets/player/skins/fairy_cherry/fairy_cherry_splashart.jpg?v=060"
   },
   beastclaw_cherry: {
-    icon: "assets/player/skins/beastclaw_cherry/beastclaw_cherry_icon.png?v=060",
+    icon: "assets/player/skins/beastclaw_cherry/beatclaw_cherry_icon.jpg?v=060",
     splash: "assets/player/skins/beastclaw_cherry/beastclaw_cherry_splashart.png?v=060"
   },
   ninja_cherry: {
-    icon: "assets/player/skins/ninja_cherry/ninja_cherry_icon.png?v=060",
+    icon: "assets/player/skins/ninja_cherry/ninja_cherry_icon.jpg?v=060",
     splash: "assets/player/skins/ninja_cherry/ninja_cherry_splashart.png?v=060"
   },
   succubus_cherry: {
-    icon: "assets/player/skins/succubus_cherry/succubus_cherry_icon.png?v=060",
+    icon: "assets/player/skins/succubus_cherry/succubus_cherry_icon.jpg?v=060",
     splash: "assets/player/skins/succubus_cherry/succubus_cherry_splashart.png?v=060"
   },
   warrior_cherry: {
-    icon: "assets/player/skins/warrior_cherry/warrior_cherry_icon.png?v=060",
+    icon: "assets/player/skins/warrior_cherry/warrior_cherry_icon.jpg?v=060",
     splash: "assets/player/skins/warrior_cherry/warrior_cherry_splashart.png?v=060"
   },
   wuxia_sakura_cherry: {
-    icon: "assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_icon.png?v=060",
+    icon: "assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_icon.jpg?v=060",
     splash: "assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_splashart.jpg?v=060"
   }
 };
@@ -16693,6 +16693,7 @@ const state = {
   snapshot: null,
   queue: [],
   active: false,
+  queueTimer: 0,
   observer: null,
   decorateQueued: false,
   suppressDepth: 0
@@ -17155,11 +17156,29 @@ function showRewards(items, options = {}) {
 }
 
 function closeCurrentReward() {
+  window.clearTimeout(state.queueTimer);
+  state.queueTimer = 0;
   const overlay = id("rewardOverlayV083");
   overlay?.classList.remove("open");
   document.body.classList.remove("reward-open-v083");
   state.active = false;
-  if (state.queue.length) window.setTimeout(() => renderRewardBatch(state.queue.shift()), 140);
+  if (state.queue.length) {
+    const nextBatch = state.queue.shift();
+    state.queueTimer = window.setTimeout(() => {
+      state.queueTimer = 0;
+      if (!state.active) renderRewardBatch(nextBatch);
+      else state.queue.unshift(nextBatch);
+    }, 140);
+  }
+}
+
+function resetRewardQueue() {
+  window.clearTimeout(state.queueTimer);
+  state.queueTimer = 0;
+  state.queue.length = 0;
+  state.active = false;
+  id("rewardOverlayV083")?.classList.remove("open");
+  document.body.classList.remove("reward-open-v083");
 }
 
 function patchRewardDetection() {
@@ -17260,6 +17279,7 @@ window.CHERRIFT_ITEM_ASSETS = ITEM_ASSETS;
 window.CHERRIFT_REWARDS = {
   show: showRewards,
   close: closeCurrentReward,
+  reset: resetRewardQueue,
   withSuppressed: withSuppressedRewards,
   collectRewards,
   snapshot
@@ -17620,7 +17640,7 @@ function drawEnemy(canvas, enemy = {}) {
       ctx.drawImage(sprite, 0, 0, frameWidth, frameHeight, (width - size) / 2, (height - size) / 2, size, size);
     };
     sprite.onerror = paintFallback;
-    sprite.src = window.CHERRIFT_CONFIG?.slime?.src || "assets/enemies/slime_sprite_sheet.png";
+    sprite.src = window.CHERRIFT_CONFIG?.slime?.src || "assets/enemies/world_1/slime_sprite_sheet.png";
     return;
   }
   paintFallback();
@@ -18338,7 +18358,7 @@ const skinData = [
     weapon:"Bloom Bow", skill:"Four Arrow Shot", passive:"+10% critical chance",
     desc:"A mobile ranged Cherry. Her skill fires four arrows in a wide cone while her raised bow stays clear during movement.",
     stats:{damage:2,speed:4}, gradient:["#ffb4ce","#5d392a"],
-    icon:"assets/player/skins/archer_cherry/archer_cherry_icon.png?v=090-hf1",
+    icon:"assets/player/skins/archer_cherry/archer_cherry_icon.jpg?v=090-hf1",
     splash:"assets/player/skins/archer_cherry/archer_cherry_splashart.png?v=090-hf1"
   }
 ];
@@ -18826,14 +18846,14 @@ function ensureCss(){
 
 const ART={
   cherry_default:["assets/player/skins/base_cherry/base_cherry_icon.png","assets/player/skins/base_cherry/base_cherry_splashart.png"],
-  fairy_cherry:["assets/player/skins/fairy_cherry/fairy_cherry_icon.png","assets/player/skins/fairy_cherry/fairy_cherry_splashart.jpg"],
-  beastclaw_cherry:["assets/player/skins/beastclaw_cherry/beastclaw_cherry_icon.png","assets/player/skins/beastclaw_cherry/beastclaw_cherry_splashart.png"],
-  ninja_cherry:["assets/player/skins/ninja_cherry/ninja_cherry_icon.png","assets/player/skins/ninja_cherry/ninja_cherry_splashart.png"],
-  succubus_cherry:["assets/player/skins/succubus_cherry/succubus_cherry_icon.png","assets/player/skins/succubus_cherry/succubus_cherry_splashart.png"],
-  warrior_cherry:["assets/player/skins/warrior_cherry/warrior_cherry_icon.png","assets/player/skins/warrior_cherry/warrior_cherry_splashart.png"],
-  wuxia_sakura_cherry:["assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_icon.png","assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_splashart.jpg"],
+  fairy_cherry:["assets/player/skins/fairy_cherry/fairy_cherry_icon.jpg","assets/player/skins/fairy_cherry/fairy_cherry_splashart.jpg"],
+  beastclaw_cherry:["assets/player/skins/beastclaw_cherry/beatclaw_cherry_icon.jpg","assets/player/skins/beastclaw_cherry/beastclaw_cherry_splashart.png"],
+  ninja_cherry:["assets/player/skins/ninja_cherry/ninja_cherry_icon.jpg","assets/player/skins/ninja_cherry/ninja_cherry_splashart.png"],
+  succubus_cherry:["assets/player/skins/succubus_cherry/succubus_cherry_icon.jpg","assets/player/skins/succubus_cherry/succubus_cherry_splashart.png"],
+  warrior_cherry:["assets/player/skins/warrior_cherry/warrior_cherry_icon.jpg","assets/player/skins/warrior_cherry/warrior_cherry_splashart.png"],
+  wuxia_sakura_cherry:["assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_icon.jpg","assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_splashart.jpg"],
   mage_cherry:["assets/player/skins/mage_cherry/mage_cherry_icon.png","assets/player/skins/mage_cherry/mage_cherry_splashart.png"],
-  archer_cherry:["assets/player/skins/archer_cherry/archer_cherry_icon.png","assets/player/skins/archer_cherry/archer_cherry_splashart.png"]
+  archer_cherry:["assets/player/skins/archer_cherry/archer_cherry_icon.jpg","assets/player/skins/archer_cherry/archer_cherry_splashart.png"]
 };
 for(const skin of CHERRIFT_DATA.skins||[]){
   if(ART[skin.id]){
@@ -20484,8 +20504,8 @@ const THUMB_FOLDERS = {
   sport_cherry:"sport_cherry"
 };
 const THUMB_PLACEHOLDERS = Object.freeze({
-  warrior_cherry:"assets/player/skins/warrior_cherry/warrior_cherry_icon.png",
-  wuxia_sakura_cherry:"assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_icon.png"
+  warrior_cherry:"assets/player/skins/warrior_cherry/warrior_cherry_icon.jpg",
+  wuxia_sakura_cherry:"assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_icon.jpg"
 });
 const WORLD_ART = {
   1:'linear-gradient(180deg,rgba(5,3,12,.02),rgba(5,3,12,.48)),url("assets/map/world1/world1_splashart_1.png")',

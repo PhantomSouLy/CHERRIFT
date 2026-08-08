@@ -521,5 +521,9 @@
   <script src="src/cherrift_world_ui.js?v=0945"></script>
   <script src="src/cherrift_stability.js?v=095pb3"></script>
   <script src="src/cherrift_prebeta.js?v=095pb2"></script>
+  <!-- Keep pre-beta layers in a deterministic order. Dynamic insertion from
+       config.js allowed the UI to become interactive before these patches. -->
+  <script src="src/cherrift_fixpack_095.js?v=095fix4"></script>
+  <script src="src/cherrift_fixpack_095_round5.js?v=095fix51"></script>
 </body>
 </html>

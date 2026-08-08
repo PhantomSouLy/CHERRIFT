@@ -452,6 +452,10 @@
       toast(text(amount === 10 ? "need" : "noChest", chestName(state.tier)));
       return;
     }
+    // The Gacha modal owns the entire chest-opening sequence. Clear any
+    // delayed generic reward batch before starting so a previously queued
+    // overlay cannot reopen above a skin reveal or the final Gacha summary.
+    window.CHERRIFT_REWARDS?.reset?.();
     state.busy = true;
     save.chests[state.tier] -= amount;
     const rewards = [];
