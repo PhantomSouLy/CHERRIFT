@@ -15909,6 +15909,12 @@ function rebuildRail(){
       ${railTextButton("achievements","Achievements","achievements")}
     </nav>
     <div class="rail-bottom-v060">
+      <div id="desktopCurrencyV0943" aria-label="Currencies" data-wallet-placeholder="true">
+        <span title="Coin"><img src="assets/items/coin.png" alt=""><b>0</b></span>
+        <span title="Bloom Gem"><img src="assets/items/blossom_gem.png" alt=""><b>0</b></span>
+        <span title="Sakura Essence"><img src="assets/items/sakura_potion.png" alt=""><b>0</b></span>
+        <span title="Scrap"><img src="assets/items/scraps.png" alt=""><b>0</b></span>
+      </div>
       <button type="button" class="rail-settings-v060" data-v082-open="settings" data-v082-route="settings"><i>⚙</i><b>${escapeHtml(t("settings"))}</b></button>
       <button type="button" class="rail-profile-v060" data-v082-open="profileV082" data-v082-route="profileV082">
         <span id="railProfileIconV082"></span><span><b id="railProfileNameV082">Cherry Player</b><small id="railProfileTitleV082">${escapeHtml(t("profile"))}</small></span>
@@ -15990,10 +15996,13 @@ function rebuildHome(){
   const dashboard=id("menuDashboardV060");if(!dashboard)return;
   const shortcuts=q(".dashboard-shortcuts-v060",dashboard);
   if(shortcuts){
+    shortcuts.setAttribute("data-i18n-ignore","true");
     shortcuts.innerHTML=`
       <button type="button" data-v082-open="loginRewards"><i><img src="assets/items/chests/common_chest.png" alt=""></i><span><b>Login</b><small>Login rewards</small></span></button>
-      <button type="button" data-v082-open="dailyQuests"><i><img src="assets/items/chests/rare_chest.png" alt=""></i><span><b>Quests</b><small>Daily & Weekly</small></span><em class="notice-dot-v082" data-v082-notice="weekly"></em></button>
-      <button type="button" data-v082-open="socialV082"><i><img src="assets/player/frames/frame_rank1.png" alt=""></i><span><b>Social</b><small>Friends & profiles</small></span></button>`;
+      <button type="button" data-v082-open="dailyQuests"><i><img src="assets/items/chests/rare_chest.png" alt=""></i><span><b>Quest</b><small>Daily & Weekly</small></span><em class="notice-dot-v082" data-v082-notice="weekly"></em></button>
+      <button type="button" data-v082-open="socialV082"><i><img src="assets/player/frames/frame_rank1.png" alt=""></i><span><b>Social</b><small>Friends & profiles</small></span></button>
+      <button type="button" data-v082-open="rankingPrebeta"><i><img src="assets/player/frames/frame_rank3.png" alt=""></i><span><b>Ranking</b><small>Weekly Power rank</small></span></button>
+      <button type="button" data-v082-open="buffsV082"><i><img src="assets/items/buffs/bag_buff.png" alt=""></i><span><b>Buff List</b><small>Active bonuses</small></span></button>`;
   }
   if(!id("menuToolsV082")){
     const tools=document.createElement("nav");
@@ -20632,6 +20641,9 @@ function renderSkinSelector() {
   state.selectedSkinId = skin.id;
   UI.skinIndex = Math.max(0, CHERRIFT_DATA.skins.findIndex(entry => entry.id === skin.id));
   const unlocked = isSkinUnlocked(skin.id);
+  // A locked Cherry may expose its Splash Art as a preview, but its in-game
+  // sprite sheet and animation controls are part of the unlock reward.
+  if (!unlocked && state.skinView === "game") state.skinView = "splash";
   const equipped = UI.save.selectedSkin === skin.id;
   const seen = new Set(UI.save.uiV093.seenSkins);
   const config = CHERRIFT_CONFIG.player.skins[skin.id] || {};
@@ -20665,16 +20677,16 @@ function renderSkinSelector() {
       <article class="skin-showcase-v093 rarity-${String(skin.rarity || "Common").toLowerCase()}">
         <div class="skin-view-tabs-v093" role="tablist">
           <button type="button" data-v093-skin-view="splash" class="${state.skinView === "splash" ? "active" : ""}">${escapeHtml(t("skin.splashArt"))}</button>
-          <button type="button" data-v093-skin-view="game" class="${state.skinView === "game" ? "active" : ""}">${escapeHtml(t("skin.gameView"))}</button>
+          ${unlocked ? `<button type="button" data-v093-skin-view="game" class="${state.skinView === "game" ? "active" : ""}">${escapeHtml(t("skin.gameView"))}</button>` : ""}
         </div>
         <div class="skin-art-v093 ${state.skinView === "splash" ? "" : "hidden"}" style='${splashStyle}' role="img" aria-label="${escapeHtml(skinName(skin))}"></div>
-        <div class="skin-game-view-v093 ${state.skinView === "game" ? "" : "hidden"}">
+        ${unlocked ? `<div class="skin-game-view-v093 ${state.skinView === "game" ? "" : "hidden"}">
           <canvas id="skinPreviewCanvasV093" aria-label="${escapeHtml(t("skin.gameView"))}"></canvas>
           <div class="skin-preview-controls-v093">
             <div><small>${escapeHtml(t("skin.direction"))}</small>${DIRECTIONS.map(direction => `<button type="button" data-v093-preview-direction="${direction}" class="${state.previewDirection === direction ? "active" : ""}">${{down:"↓",up:"↑",left:"←",right:"→"}[direction]}</button>`).join("")}</div>
             <div><small>${escapeHtml(t("skin.animation"))}</small>${ANIMATIONS.map(animation => `<button type="button" data-v093-preview-animation="${animation}" class="${state.previewAnimation === animation ? "active" : ""}">${escapeHtml(t(animation === "skill" ? "skin.skillAnimation" : `skin.${animation}`))}</button>`).join("")}</div>
           </div>
-        </div>
+        </div>` : ""}
       </article>
       <aside class="skin-details-v093">
         <div class="skin-title-v093"><span class="rarity-pill">${escapeHtml(skin.rarity || "Common")}</span><small>${escapeHtml(t(movementKey))}</small></div>
@@ -21056,6 +21068,11 @@ function bindEvents() {
     const skinView = target?.closest?.("[data-v093-skin-view]");
     if (skinView) {
       event.preventDefault();
+      if (skinView.dataset.v093SkinView === "game" && !isSkinUnlocked(selectedSkin().id)) {
+        state.skinView = "splash";
+        renderSkinSelector();
+        return;
+      }
       state.skinView = skinView.dataset.v093SkinView;
       renderSkinSelector();
       return;

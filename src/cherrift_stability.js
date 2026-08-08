@@ -494,9 +494,9 @@
       requestAnimationFrame(patchVisibleUi);
       return;
     }
-    if (target === "worlds" && window.CHERRIFT_WORLD_UI?.isMobile?.()) {
+    if (target === "worlds" && window.CHERRIFT_WORLD_UI?.openWorldSelector) {
       window.CHERRIFT_WORLD_UI.openWorldSelector();
-      syncGlobalNav("menu");
+      syncGlobalNav("worlds");
       requestAnimationFrame(patchVisibleUi);
       return;
     }

@@ -46,10 +46,10 @@
       #gear .gear-equipment-tools-v0942>.gear-bulk-tools-v082{display:flex!important;align-items:center!important;justify-content:flex-end!important;flex-wrap:wrap!important;gap:8px!important;margin:0!important}
       #gear .gear-equipment-tools-v0942 button{margin:0!important;min-width:82px!important;white-space:nowrap!important}
 
-      /* Shared mobile World / Chapter carousel. */
+      /* Shared responsive World / Chapter carousel. */
       .selector-v0942{overflow:hidden!important;height:var(--cherrift-viewport-height,100dvh)!important;min-height:0!important;color:#fff}
-      .selector-shell-v0942{width:min(760px,100%);height:100%;min-height:0;margin:auto;display:flex;flex-direction:column;padding:max(74px,calc(env(safe-area-inset-top) + 70px)) 12px calc(82px + env(safe-area-inset-bottom));overflow:hidden}
-      .selector-head-v0942{flex:0 0 auto;display:flex;align-items:center;gap:13px;margin-bottom:7px}.selector-head-v0942 h2{margin:0;font:700 clamp(35px,10vw,53px)/1 Georgia,serif}.selector-back-v0942{width:58px;height:58px;border:1px solid #ffffff26;border-radius:19px;color:#fff;background:#ffffff08;font-size:25px}
+      .selector-shell-v0942{width:min(920px,100%);height:100%;min-height:0;margin:auto;display:flex;flex-direction:column;padding:max(74px,calc(env(safe-area-inset-top) + 70px)) 12px calc(82px + env(safe-area-inset-bottom));overflow:hidden}
+      .selector-head-v0942{flex:0 0 auto;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:13px;margin-bottom:7px}.selector-head-v0942 h2{margin:0;font:700 clamp(35px,10vw,53px)/1 Georgia,serif}.selector-back-v0942{width:58px;height:58px;border:1px solid #ffffff26;border-radius:19px;color:#fff;background:#ffffff08;font-size:25px}.selector-total-v0942{display:grid;justify-items:end;gap:2px;padding:8px 12px;border:1px solid #ffffff26;border-radius:14px;background:#100817c9}.selector-total-v0942 small{color:#dda9c3;font-size:8px;font-weight:1000;letter-spacing:1px}.selector-total-v0942 b{color:#ffd467;font:900 15px/1 system-ui,sans-serif}
       .selector-carousel-v0942{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:42px minmax(0,1fr) 42px;align-items:stretch;gap:7px;touch-action:pan-y}
       .selector-arrow-v0942{align-self:center;height:66px;border:1px solid #ffffff22;border-radius:17px;color:#fff;background:#ffffff08;font-size:40px}.selector-arrow-v0942:disabled{opacity:.25}
       #worldCardV0942,#chapterCardV0942{align-self:stretch;min-width:0;min-height:280px;height:100%;display:block}
@@ -60,7 +60,15 @@
       .selector-copy-v0942{position:absolute;left:20px;right:20px;bottom:20px}.selector-copy-v0942 small{display:block;color:#ff93c6;font-size:11px;font-weight:1000;letter-spacing:2px;text-transform:uppercase}.selector-copy-v0942 h3{margin:5px 0 0;font:700 clamp(42px,11vw,62px)/.95 Georgia,serif}.selector-copy-v0942 p{margin:9px 0 0;color:#ead6e1;font-weight:800}.selector-dummy-v0942{display:inline-flex;margin-top:10px;padding:7px 11px;border:1px solid #ffffff24;border-radius:12px;background:#09040db5;font-weight:900}
       .selector-rewards-v0942{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:12px}.selector-rewards-v0942 span{min-width:0;padding:8px;border-radius:12px;background:#08040dbd;text-align:center}.selector-rewards-v0942 small{color:#dda9c3;font-size:8px;letter-spacing:.8px}.selector-rewards-v0942 b{display:block;margin-top:3px;font-size:12px}
       .selector-dots-v0942{flex:0 0 auto;display:flex;justify-content:center;gap:8px;padding:7px}.selector-dots-v0942 i{width:9px;height:9px;border-radius:50%;background:#ffffff2d}.selector-dots-v0942 i.active{width:24px;border-radius:99px;background:#ec4f9b}
+      .chapter-summary-v0942{flex:0 0 auto;display:grid;grid-template-columns:1.5fr repeat(5,minmax(0,1fr));gap:7px;margin:0 0 8px;padding:9px;border:1px solid #ffffff22;border-radius:17px;background:#120819e8}.chapter-summary-v0942>div{min-width:0;padding:7px 9px;border-radius:11px;background:#ffffff08}.chapter-summary-v0942 small{display:block;color:#dda9c3;font-size:7px;font-weight:1000;letter-spacing:.8px;text-transform:uppercase}.chapter-summary-v0942 b{display:block;margin-top:4px;overflow:hidden;color:#fff;font:900 11px/1.25 system-ui,sans-serif;text-overflow:ellipsis;white-space:nowrap}.chapter-summary-v0942 .chapter-summary-title-v0942 b{font-size:14px}
       .selector-actions-v0942{flex:0 0 auto;display:grid;gap:9px}.selector-actions-v0942.two{grid-template-columns:1fr 1.35fr}.selector-actions-v0942 button{min-height:58px;border:1px solid #ffffff2b;border-radius:17px;color:#fff;background:#ffffff09;font-size:20px;font-weight:1000}.selector-actions-v0942 button.primary{background:linear-gradient(115deg,#dc3281,#ed72ac)}.selector-actions-v0942 button:disabled{opacity:.38;filter:grayscale(1)}
+
+      @media(min-width:821px){
+        .selector-shell-v0942{padding:calc(var(--v0933-top,60px) + var(--v0933-sub,38px) + 16px) 24px 24px}
+        .selector-head-v0942 h2{font-size:42px}.selector-back-v0942{width:52px;height:52px;border-radius:15px}
+        #worldCardV0942,#chapterCardV0942{min-height:370px;max-height:520px}.selector-carousel-v0942{grid-template-columns:58px minmax(0,1fr) 58px;gap:14px}.selector-arrow-v0942{height:84px}
+        .selector-copy-v0942 h3{font-size:54px}.selector-actions-v0942{width:min(620px,100%);margin:0 auto}
+      }
 
       @media(max-width:820px){
         /* Bottom navigation: Cherry really opens Cherry Selector. */
@@ -94,6 +102,7 @@
 
         .selector-head-v0942 h2{font-size:clamp(32px,8vw,44px)}
         #worldCardV0942,#chapterCardV0942{min-height:clamp(300px,48dvh,520px)}
+        .chapter-summary-v0942{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;padding:7px}.chapter-summary-v0942 .chapter-summary-title-v0942{grid-column:1/-1}.chapter-summary-v0942>div{padding:6px 7px}
       }
 
       @media(max-width:820px) and (max-height:700px){
@@ -103,6 +112,7 @@
         #menu #mobilePlayBtn{min-height:48px!important}
         .selector-shell-v0942{padding-top:max(56px,calc(env(safe-area-inset-top) + 52px))}
         #worldCardV0942,#chapterCardV0942{min-height:230px}
+        .chapter-summary-v0942{margin-bottom:5px}.chapter-summary-v0942>div{padding:4px 6px}.chapter-summary-v0942 b{font-size:9px;margin-top:2px}.chapter-summary-v0942 small{font-size:6px}
       }
 
       @media(orientation:landscape) and (max-height:600px) and (pointer:coarse){
@@ -283,8 +293,8 @@
     if (world === 2) return "assets/map/world2/world2_splashart_1.png";
     if (world === 3) return "assets/map/world3/world3_splashart_1.png";
     if (world === 4) return "assets/map/world4/world4_splashart_1.png";
-    if (world === 5) return "assets/map/world4/world4_splashart_1.png";
-    if (world === 6) return "assets/map/world3/world3_splashart_1.png";
+    if (world === 5) return "assets/map/world5/world5_splashart_1.png";
+    if (world === 6) return "assets/map/world6/world6_splashart_1.png";
     return "assets/map/world1/world1_splashart_1.png";
   }
   function chapterArt(stage) {
@@ -294,13 +304,9 @@
       const artIndex = index <= 2 ? 1 : index <= 4 ? 2 : 3;
       return `assets/map/world1/world1_splashart_${artIndex}.png`;
     }
-    if (world === 4 || world === 5) {
-      // Chapter 5's final artwork has not been delivered yet. Chapter art 2 is an
-      // intentional, documented placeholder and can be replaced in one place.
-      const artIndex = index <= 2 ? 1 : 2;
-      return stage.splash || stage.splashArt || stage.art || stage.image || `assets/map/world4/world4_splashart_${artIndex}.png`;
-    }
-    if (world === 6) return stage.splash || stage.splashArt || stage.art || stage.image || `assets/map/world3/world3_splashart_${index <= 2 ? 1 : index <= 4 ? 2 : 3}.png`;
+    if (world === 4) return stage.splash || stage.splashArt || stage.art || stage.image || `assets/map/world4/world4_splashart_${index <= 2 ? 1 : 2}.png`;
+    if (world === 5) return `assets/map/world5/world5_splashart_${index <= 2 ? 1 : index <= 4 ? 2 : 3}.png`;
+    if (world === 6) return `assets/map/world6/world6_splashart_${index <= 2 ? 1 : index <= 4 ? 2 : 3}.png`;
     const artIndex = index <= 2 ? 1 : index <= 4 ? 2 : 3;
     return stage.splash || stage.splashArt || stage.art || stage.image || `assets/map/world${world}/world${world}_splashart_${artIndex}.png`;
   }
@@ -308,8 +314,10 @@
     if (!reward || typeof reward !== "object") return "—";
     const parts = [];
     if (reward.coins) parts.push(`${reward.coins} Coin`);
-    if (reward.keys) parts.push(`${reward.keys} ${copy("láda", "Chest")}`);
+    if (reward.keys) parts.push(`${reward.keys} ${copy("Common láda", "Common Chest")}`);
     if (reward.chests?.common) parts.push(`${reward.chests.common} ${copy("Common láda", "Common Chest")}`);
+    if (reward.chests?.rare) parts.push(`${reward.chests.rare} ${copy("Rare láda", "Rare Chest")}`);
+    if (reward.chests?.epic) parts.push(`${reward.chests.epic} ${copy("Epic láda", "Epic Chest")}`);
     if (reward.gems) parts.push(`${reward.gems} Gem`);
     return parts.join(" · ") || "—";
   }
@@ -320,11 +328,15 @@
     panel = document.createElement("section");
     panel.id = "worldSelectorV0942";
     panel.className = "panel selector-v0942 hidden";
-    panel.innerHTML = `<div class="selector-shell-v0942"><header class="selector-head-v0942"><h2 data-world-title></h2></header><div class="selector-carousel-v0942" data-selector-drag><button class="selector-arrow-v0942" data-world-step="-1" aria-label="Previous world">‹</button><div id="worldCardV0942" class="selector-card-host-v0942"></div><button class="selector-arrow-v0942" data-world-step="1" aria-label="Next world">›</button></div><div id="worldDotsV0942" class="selector-dots-v0942"></div><div class="selector-actions-v0942"><button class="primary" data-world-start></button></div></div>`;
+    panel.innerHTML = `<div class="selector-shell-v0942"><header class="selector-head-v0942"><button class="selector-back-v0942" type="button" data-world-back aria-label="Back">←</button><h2 data-world-title></h2><span class="selector-total-v0942"><small data-world-total-label></small><b id="worldTotalStarsV0942"></b></span></header><div class="selector-carousel-v0942" data-selector-drag><button class="selector-arrow-v0942" data-world-step="-1" aria-label="Previous world">‹</button><div id="worldCardV0942" class="selector-card-host-v0942"></div><button class="selector-arrow-v0942" data-world-step="1" aria-label="Next world">›</button></div><div id="worldDotsV0942" class="selector-dots-v0942"></div><div class="selector-actions-v0942"><button class="primary" data-world-start></button></div></div>`;
     id("app")?.appendChild(panel);
     panel.addEventListener("click", event => {
       const step = event.target.closest("[data-world-step]");
       if (step) { state.worldIndex += Number(step.dataset.worldStep); renderWorldSelector(); }
+      if (event.target.closest("[data-world-back]")) {
+        if (window.CHERRIFT_STABILITY?.open) window.CHERRIFT_STABILITY.open("menu");
+        else UI.open?.("menu");
+      }
       if (event.target.closest("[data-world-start]")) startSelectedWorld();
     });
     bindDrag(q("[data-selector-drag]", panel), delta => { state.worldIndex += delta; renderWorldSelector(); });
@@ -338,6 +350,13 @@
     for (let world = 1; world <= worldCount(); world += 1) entries.push({ type:"world", world, name:`World ${world}`, art:worldArt(world), unlocked:worldUnlocked(world) });
     return entries;
   }
+  function worldName(world) {
+    return ({1:"Blooming Meadow",2:"Night Bloom",3:"Sunlit Savanna",4:"Red Desert",5:"Sand Desert",6:"Dark Ruins"})[world] || `World ${world}`;
+  }
+  function allWorldStars() {
+    const list = stages().filter(stage => !stage.training && stageWorld(stage) >= 1 && stageWorld(stage) <= worldCount());
+    return { earned:list.reduce((sum, stage) => sum + stageStars(stage), 0), max:list.length * 3 };
+  }
   function renderWorldSelector() {
     const entries = worldEntries();
     if (!entries.length) return;
@@ -347,6 +366,9 @@
     const card = id("worldCardV0942");
     const start = q("[data-world-start]", id("worldSelectorV0942"));
     q("[data-world-title]", id("worldSelectorV0942")).textContent = copy("Világválasztás", "World Selection");
+    q("[data-world-total-label]", id("worldSelectorV0942")).textContent = copy("ÖSSZES CSILLAG", "TOTAL STARS");
+    const total = allWorldStars();
+    id("worldTotalStarsV0942").textContent = `★ ${total.earned} / ${total.max}`;
     start.textContent = copy("Kiválasztás", "Select");
     if (entry.type === "training") {
       card.innerHTML = `<article class="selector-card-v0942" style="background-image:url('${esc(entry.art)}')"><div class="selector-stars-v0942">${copy("TESZT", "TEST")}</div><div class="selector-copy-v0942"><small>${copy("Gyakorlópálya", "Training Ground")}</small><h3>${copy("Teszt Training", "Test Training")}</h3><span class="selector-dummy-v0942">∞ HP Dummy</span></div></article>`;
@@ -354,7 +376,7 @@
       const list = worldStages(entry.world);
       const earned = list.reduce((sum, stage) => sum + stageStars(stage), 0);
       const max = list.length * 3;
-      card.innerHTML = `<article class="selector-card-v0942 ${entry.unlocked ? "" : "locked"}" style="background-image:url('${esc(entry.art)}')"><div class="selector-stars-v0942">★ ${earned} / ${max || 15}</div><div class="selector-copy-v0942"><small>World ${entry.world}</small><h3>World ${entry.world}</h3>${entry.unlocked ? "" : `<p>${copy("Zárolva", "Locked")}</p>`}</div></article>`;
+      card.innerHTML = `<article class="selector-card-v0942 ${entry.unlocked ? "" : "locked"}" style="background-image:url('${esc(entry.art)}')"><div class="selector-stars-v0942">★ ${earned} / ${max || 15}</div><div class="selector-copy-v0942"><small>World ${entry.world}</small><h3>${esc(worldName(entry.world))}</h3>${entry.unlocked ? "" : `<p>${copy("Zárolva", "Locked")}</p>`}</div></article>`;
     }
     start.disabled = !entry.unlocked;
     id("worldDotsV0942").innerHTML = entries.map((_, index) => `<i class="${index === state.worldIndex ? "active" : ""}"></i>`).join("");
@@ -366,7 +388,7 @@
     panel = document.createElement("section");
     panel.id = "chapterSelectorV0942";
     panel.className = "panel selector-v0942 hidden";
-    panel.innerHTML = `<div class="selector-shell-v0942"><header class="selector-head-v0942"><h2 id="chapterWorldTitleV0942">World</h2></header><div class="selector-carousel-v0942" data-chapter-drag><button class="selector-arrow-v0942" data-chapter-step="-1" aria-label="Previous chapter">‹</button><div id="chapterCardV0942" class="selector-card-host-v0942"></div><button class="selector-arrow-v0942" data-chapter-step="1" aria-label="Next chapter">›</button></div><div id="chapterDotsV0942" class="selector-dots-v0942"></div><div class="selector-actions-v0942 two"><button data-chapter-back></button><button class="primary" data-chapter-play></button></div></div>`;
+    panel.innerHTML = `<div class="selector-shell-v0942"><header class="selector-head-v0942"><button class="selector-back-v0942" type="button" data-chapter-back aria-label="Back">←</button><h2 id="chapterWorldTitleV0942">World</h2><span class="selector-total-v0942"><small data-chapter-count-label></small><b id="chapterCountV0942"></b></span></header><div class="selector-carousel-v0942" data-chapter-drag><button class="selector-arrow-v0942" data-chapter-step="-1" aria-label="Previous chapter">‹</button><div id="chapterCardV0942" class="selector-card-host-v0942"></div><button class="selector-arrow-v0942" data-chapter-step="1" aria-label="Next chapter">›</button></div><div id="chapterDotsV0942" class="selector-dots-v0942"></div><section id="chapterSummaryV0942" class="chapter-summary-v0942"></section><div class="selector-actions-v0942"><button class="primary" data-chapter-play></button></div></div>`;
     id("app")?.appendChild(panel);
     panel.addEventListener("click", event => {
       const step = event.target.closest("[data-chapter-step]");
@@ -385,13 +407,20 @@
     const index = stageIndex(stage, state.chapterIndex + 1);
     const stars = stageStars(stage);
     const unlocked = stageUnlocked(stage);
-    id("chapterWorldTitleV0942").textContent = `World ${state.selectedWorld}`;
+    id("chapterWorldTitleV0942").textContent = worldName(state.selectedWorld);
+    q("[data-chapter-count-label]", id("chapterSelectorV0942")).textContent = copy("FEJEZET", "CHAPTER");
+    id("chapterCountV0942").textContent = `${index} / ${list.length}`;
     const chapterLabel = `${copy("Fejezet", "Chapter")} ${index}`;
-    id("chapterCardV0942").innerHTML = `<article class="selector-card-v0942 ${unlocked ? "" : "locked"}" style="background-image:url('${esc(chapterArt(stage))}')"><div class="selector-stars-v0942">${"★".repeat(stars)}${"☆".repeat(3-stars)}</div><div class="selector-copy-v0942"><small>${chapterLabel}</small><h3>${chapterLabel}</h3><div class="selector-rewards-v0942"><span><small>${copy("JUTALOM", "REWARD")}</small><b>${esc(rewardText(stage.reward || stage.repeatReward))}</b></span><span><small>${copy("ELSŐ TELJESÍTÉS", "FIRST CLEAR")}</small><b>${esc(rewardText(stage.firstClearReward || stage.firstClear))}</b></span></div></div></article>`;
+    id("chapterCardV0942").innerHTML = `<article class="selector-card-v0942 ${unlocked ? "" : "locked"}" style="background-image:url('${esc(chapterArt(stage))}')"><div class="selector-stars-v0942" aria-label="${stars}/3 stars">${"★".repeat(stars)}${"☆".repeat(3-stars)}</div><div class="selector-copy-v0942"><small>${chapterLabel}</small><h3>${esc(stage.title || chapterLabel)}</h3>${unlocked ? "" : `<p>${copy("Zárolva – megtekinthető, de még nem indítható.", "Locked – viewable, but not playable yet.")}</p>`}</div></article>`;
+    const balance = window.CHERRIFT_BALANCE?.worlds?.[state.selectedWorld];
+    const recommendedLevel = balance ? Math.min(balance.completionLevel, balance.unlockLevel + index - 1) : Math.max(1,(state.selectedWorld - 1) * 5 + index);
+    const powerRange = balance?.recommendedPower || [100,100];
+    const recommendedPower = Math.round(powerRange[0] + (powerRange[1] - powerRange[0]) * ((index - 1) / Math.max(1,list.length - 1)));
+    const energy = stage.training ? 0 : number(window.CHERRIFT_BALANCE?.energy?.stageCost || 5);
+    const firstReward = UI.save?.firstClearClaimed?.[stage.id] ? copy("Begyűjtve", "Claimed") : rewardText(stage.firstClearReward || stage.firstClear);
+    id("chapterSummaryV0942").innerHTML = `<div class="chapter-summary-title-v0942"><small>${copy("KIVÁLASZTOTT PÁLYA", "SELECTED STAGE")}</small><b>${esc(stage.name || chapterLabel)} · ${esc(stage.title || chapterLabel)}</b></div><div><small>${copy("CÉL", "OBJECTIVE")}</small><b>${number(stage.goalKills)} ${copy("ellenfél", "enemies")}</b></div><div><small>${copy("JUTALOM", "REWARD")}</small><b>${esc(rewardText(stage.repeatReward || stage.reward))}</b></div><div><small>${copy("ELSŐ JUTALOM", "FIRST REWARD")}</small><b>${esc(firstReward)}</b></div><div><small>ENERGY</small><b>⚡ ${energy}</b></div><div><small>${copy("AJÁNLOTT", "RECOMMENDED")}</small><b>Lv.${recommendedLevel} · ${recommendedPower} Power</b></div>`;
     const play = q("[data-chapter-play]", id("chapterSelectorV0942"));
-    const back = q("[data-chapter-back]", id("chapterSelectorV0942"));
     play.textContent = copy("Játék", "Play");
-    back.textContent = copy("Vissza", "Back");
     play.disabled = !unlocked;
     id("chapterDotsV0942").innerHTML = list.map((_, itemIndex) => `<i class="${itemIndex === state.chapterIndex ? "active" : ""}"></i>`).join("");
   }

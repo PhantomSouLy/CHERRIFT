@@ -364,17 +364,22 @@ async function exercise(name,width,height){
     assert.equal(document.getElementById("profileBugfixV0941").classList.contains("hidden"),true,`${name}: Profile panel closes behind global navigation`);
     if(window.CHERRIFT_WORLD_UI.isMobile())await assertActiveNav(window,name,'[data-v082-open="gear"]',"Gear");
     UI.open("menu");
+    if(!window.CHERRIFT_WORLD_UI.isMobile()){
+      const shortcutLabels=Array.from(document.querySelectorAll("#menuDashboardV060 .dashboard-shortcuts-v060 button b"),node=>node.textContent.trim());
+      assert.deepEqual(shortcutLabels,["Login","Quest","Social","Ranking","Buff List"],`${name}: desktop Lobby shortcut order`);
+      assert.equal(window.getComputedStyle(document.querySelector("#menu .news-card")).display,"none",`${name}: temporary Lobby News card is hidden`);
+      assert.deepEqual(Array.from(document.querySelectorAll("#menu .social-row.r5-support-links button"),button=>button.title),["Twitch","Website","Feedback","Bug Report"],`${name}: Lobby support links`);
+      const stableWallet=document.getElementById("desktopCurrencyV0943");
+      assert.ok(stableWallet&&stableWallet.parentElement?.classList.contains("rail-bottom-v060"),`${name}: desktop wallet space exists before route changes`);
+    }
     click(window,document.querySelector('#menuToolsV082 [data-v082-menu-tool="settings"]'),`${name} settings tool`);
     await waitFor(()=>!document.getElementById("settings")?.classList.contains("hidden"),`${name} settings panel`);
     if(window.CHERRIFT_WORLD_UI.isMobile())await assertActiveNav(window,name,"[data-v082-toggle-mobile]","Settings / More");
     UI.open("menu");
     click(window,document.getElementById("playBtn"),`${name} main Play`);
-    if(window.CHERRIFT_WORLD_UI.isMobile()){
-      await waitFor(()=>!document.getElementById("worldSelectorV0942")?.classList.contains("hidden"),`${name} mobile Play opens World Select`);
-      assert.equal(document.querySelectorAll("#worldDotsV0942 i").length,6,`${name}: six mobile beta Worlds`);
-    }else{
-      await waitFor(()=>!document.getElementById("worldsV094")?.classList.contains("hidden")||!document.getElementById("worlds")?.classList.contains("hidden"),`${name} desktop Play opens World Select`);
-    }
+    await waitFor(()=>!document.getElementById("worldSelectorV0942")?.classList.contains("hidden"),`${name} Play opens responsive World Select`);
+    assert.equal(document.querySelectorAll("#worldDotsV0942 i").length,6,`${name}: six beta Worlds`);
+    assert.match(document.getElementById("worldTotalStarsV0942")?.textContent||"",/★\s*\d+\s*\/\s*90/,`${name}: World Select total star counter`);
 
     UI.open("gear");
     await waitFor(()=>Array.from(document.querySelectorAll("#gear [data-v0560-slot]")).every(slot=>/LVL\d+/.test(slot.textContent)),`${name} Gear decoration`);
@@ -400,6 +405,10 @@ async function exercise(name,width,height){
     assert.ok(document.querySelectorAll("[data-v093-preview-direction]").length===4,`${name}: four preview directions`);
     assert.ok(document.querySelectorAll("[data-v093-preview-animation]").length===4,`${name}: four preview animations`);
     const beforeSelected=UI.save.selectedSkin;
+    click(window,document.querySelector('[data-v093-skin="fairy_cherry"]'),`${name} inspect locked Fairy Cherry`);
+    assert.equal(document.querySelector('[data-v093-skin-view="game"]'),null,`${name}: locked skin has no Game View tab`);
+    assert.equal(document.getElementById("skinPreviewCanvasV093"),null,`${name}: locked skin exposes no sprite preview`);
+    assert.ok(document.querySelector('[data-v093-skin-view="splash"].active'),`${name}: locked skin remains on Splash Art`);
     UI.save.unlockedSkins.push("cake_deliver_cherry");
     const cakeButton=document.querySelector('[data-v093-skin="cake_deliver_cherry"]');
     click(window,cakeButton,`${name} select Cake Deliver`);
@@ -414,22 +423,37 @@ async function exercise(name,width,height){
     UI.save.stageStars=UI.save.stageStars||{};
     for(let index=1;index<=5;index++)UI.save.stageStars[`world_1_${index}`]=1;
     UI.open("worlds");
-    if(window.CHERRIFT_WORLD_UI.isMobile()){
-      await waitFor(()=>!document.getElementById("worldSelectorV0942")?.classList.contains("hidden"),`${name} consolidated World selector`);
-      assert.equal(document.querySelectorAll("#worldDotsV0942 i").length,6,`${name}: exact mobile World count`);
-      assert.ok(document.querySelector("#worldCardV0942 > .selector-card-v0942"),`${name}: World card is rendered inside a sized host`);
-      click(window,document.querySelector('[data-world-step="1"]'),`${name} next mobile World`);
-      click(window,document.querySelector("[data-world-start]"),`${name} select mobile World`);
-      await waitFor(()=>!document.getElementById("chapterSelectorV0942")?.classList.contains("hidden"),`${name} mobile Chapter selector`);
-      assert.equal(document.querySelectorAll("#chapterDotsV0942 i").length,5,`${name}: five chapters in selected World`);
-      assert.ok(document.querySelector("#chapterCardV0942 > .selector-card-v0942"),`${name}: Chapter card is rendered inside a sized host`);
-      click(window,document.querySelector("[data-chapter-back]"),`${name} back to mobile Worlds`);
-    }else{
-      await waitFor(()=>document.querySelectorAll("[data-v094-world]").length>=6||document.querySelectorAll("[data-v0933-world]").length>=6,`${name} consolidated desktop World selector`);
-      assert.ok((window.CHERRIFT_V040?.stages||[]).filter(stage=>stage.world===4).length===5,`${name}: World 4 has five real stages`);
-      assert.equal((window.CHERRIFT_V040?.stages||[]).filter(stage=>stage.world===5).length,5,`${name}: World 5 has five placeholder stages`);
-      assert.equal((window.CHERRIFT_V040?.stages||[]).filter(stage=>stage.world===6).length,5,`${name}: World 6 has five placeholder stages`);
-    }
+    await waitFor(()=>!document.getElementById("worldSelectorV0942")?.classList.contains("hidden"),`${name} consolidated World selector`);
+    assert.equal(document.querySelectorAll("#worldDotsV0942 i").length,6,`${name}: exact World count`);
+    assert.ok(document.querySelector("#worldCardV0942 > .selector-card-v0942"),`${name}: World card is rendered inside a sized host`);
+    click(window,document.querySelector('[data-world-step="1"]'),`${name} next World`);
+    click(window,document.querySelector("[data-world-start]"),`${name} select World`);
+    await waitFor(()=>!document.getElementById("chapterSelectorV0942")?.classList.contains("hidden"),`${name} Chapter selector`);
+    assert.equal(document.querySelectorAll("#chapterDotsV0942 i").length,5,`${name}: five chapters in selected World`);
+    assert.ok(document.querySelector("#chapterCardV0942 > .selector-card-v0942"),`${name}: Chapter card is rendered inside a sized host`);
+    assert.equal(document.querySelectorAll("#chapterSummaryV0942 > div").length,6,`${name}: Chapter details include stage, objective, rewards, Energy and recommendation`);
+    click(window,document.querySelector("[data-chapter-back]"),`${name} back to Worlds`);
+    assert.ok((window.CHERRIFT_V040?.stages||[]).filter(stage=>stage.world===4).length===5,`${name}: World 4 has five real stages`);
+    assert.equal((window.CHERRIFT_V040?.stages||[]).filter(stage=>stage.world===5).length,5,`${name}: World 5 has five placeholder stages`);
+    assert.equal((window.CHERRIFT_V040?.stages||[]).filter(stage=>stage.world===6).length,5,`${name}: World 6 has five placeholder stages`);
+
+    for(let index=1;index<=5;index++)UI.save.stageStars[`world_1_${index}`]=3;
+    const achievementCoins=UI.save.coins;
+    const achievementRare=UI.save.chests.rare;
+    const achievementGems=UI.save.bloomGems;
+    UI.open("achievements");
+    await waitFor(()=>document.querySelector('[data-fix-ach-claim="perfect_meadow"]'),`${name} Cozy World achievement`);
+    const cozyClaim=document.querySelector('[data-fix-ach-claim="perfect_meadow"]');
+    assert.equal(cozyClaim.disabled,false,`${name}: Cozy World achievement unlocks retrospectively at 15/15`);
+    assert.match(cozyClaim.closest("article")?.textContent||"",/My First Cozy World/,`${name}: Cozy achievement name`);
+    click(window,cozyClaim,`${name} claim Cozy Cherry theme achievement`);
+    assert.equal(UI.save.coins,achievementCoins+100,`${name}: Cozy achievement Coin reward`);
+    assert.equal(UI.save.chests.rare,achievementRare+1,`${name}: Cozy achievement Rare Chest reward`);
+    assert.equal(UI.save.bloomGems,achievementGems+10,`${name}: Cozy achievement Bloom Gem reward`);
+    assert.ok(UI.save.unlockedThemes.includes("cozy_cherry"),`${name}: Cozy Cherry theme is persistently unlocked`);
+    const claimedCoins=UI.save.coins;
+    document.querySelector('[data-fix-ach-claim="perfect_meadow"]')?.click();
+    assert.equal(UI.save.coins,claimedCoins,`${name}: Cozy achievement cannot be claimed twice`);
 
     UI.save.keys=2;
     UI.save.resourceWallet={keys:{common:1,rare:1,epic:1}};
@@ -439,6 +463,7 @@ async function exercise(name,width,height){
     assert.deepEqual({...UI.save.chests},{common:4,rare:2,epic:2},`${name}: all legacy keys migrate to usable chests`);
     UI.open("gacha");
     await waitFor(()=>!document.getElementById("gachaChestOnlyV12")?.classList.contains("hidden"),`${name} Gacha panel`);
+    if(!window.CHERRIFT_WORLD_UI.isMobile())assert.equal(document.querySelectorAll("#desktopCurrencyV0943 > span").length,4,`${name}: desktop wallet remains present on Gacha without a header reflow`);
     assert.equal(document.querySelectorAll("[data-gco-tier]").length,3,`${name}: exactly three Gacha tiers`);
     assert.equal(document.querySelectorAll("#gcoWallet > b").length,4,`${name}: Gacha currency wallet is fully visible`);
     const commonBefore=UI.save.chests.common;

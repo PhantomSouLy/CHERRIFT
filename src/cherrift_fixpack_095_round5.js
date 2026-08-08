@@ -155,6 +155,34 @@
       .prebeta-avatar>img:not(.prebeta-avatar-frame){position:absolute!important;left:50%!important;top:50%!important;width:var(--r5-avatar-size,72%)!important;height:var(--r5-avatar-size,72%)!important;transform:translate(-50%,-50%)!important;border-radius:50%!important;object-fit:cover!important;object-position:center 38%!important;z-index:1!important}
       .prebeta-avatar>.prebeta-avatar-frame{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:contain!important;object-position:center!important;z-index:2!important;pointer-events:none!important;transform:none!important}
 
+      /* Every profile surface uses one coordinate system for the circular
+         portrait and its decorative frame. This also resets stale margins or
+         transforms left behind by an older profile renderer. */
+      .profile-avatar-bf,.profile-avatar-v082{position:relative!important;display:block!important;overflow:visible!important}
+      .profile-avatar-bf>.prebeta-avatar,.profile-avatar-v082>.prebeta-avatar{
+        position:absolute!important;inset:0!important;left:0!important;top:0!important;
+        width:100%!important;height:100%!important;margin:0!important;translate:none!important;
+        transform:none!important;box-sizing:border-box!important
+      }
+      .profile-avatar-bf>.prebeta-avatar>img:not(.prebeta-avatar-frame),
+      .profile-avatar-v082>.prebeta-avatar>img:not(.prebeta-avatar-frame){
+        left:50%!important;top:50%!important;width:var(--r5-avatar-size,72%)!important;
+        height:var(--r5-avatar-size,72%)!important;transform:translate(-50%,-50%)!important
+      }
+      .profile-avatar-bf>.prebeta-avatar>.prebeta-avatar-frame,
+      .profile-avatar-v082>.prebeta-avatar>.prebeta-avatar-frame{inset:0!important;margin:0!important;transform:none!important}
+      #railProfileIconV082,#railProfileIconV060{position:relative!important;overflow:visible!important}
+      #railProfileIconV082>.prebeta-avatar,#railProfileIconV060>.prebeta-avatar{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;margin:0!important}
+
+      /* The nav always reserves three stable columns. Currency values may
+         change, but routing can no longer re-centre or jump the menu. */
+      @media(min-width:821px){
+        body.v0933-desktop #globalRailV060.topnav-v0933{grid-template-columns:minmax(150px,1fr) auto minmax(150px,1fr)!important}
+        body.v0933-desktop .topnav-v0933 .rail-brand-v060{grid-column:1!important;justify-self:start!important}
+        body.v0933-desktop .topnav-v0933 .rail-text-nav-v095{grid-column:2!important;width:max-content!important;max-width:none!important;overflow:visible!important}
+        body.v0933-desktop .topnav-v0933 .rail-bottom-v060{grid-column:3!important;justify-self:end!important}
+      }
+
       /* The bottom-right Lobby shortcuts keep their compact footprint. */
       #menuToolsV082.r5-menu-tools{display:grid!important;grid-template-columns:repeat(4,minmax(42px,1fr))!important;gap:7px!important}
       #menuToolsV082.r5-menu-tools button{min-width:44px!important;min-height:44px!important;display:grid!important;place-items:center!important;position:relative!important}
@@ -546,6 +574,25 @@
       <button type="button" class="r5-compat-tool" data-v082-menu-tool="settings" aria-hidden="true" tabindex="-1">⚙</button>`;
   }
 
+  function ensureLobbyFooterLinks() {
+    const news = q("#menu .news-card");
+    if (news) {
+      news.hidden = true;
+      news.setAttribute("aria-hidden", "true");
+      news.style.setProperty("display", "none", "important");
+    }
+    const row = q("#menu .social-row");
+    if (!row) return;
+    if (row.dataset.r5SupportLinks === "1" && q('[data-r5-menu-tool="twitch"]', row)) return;
+    row.dataset.r5SupportLinks = "1";
+    row.classList.add("r5-support-links");
+    row.innerHTML = `
+      <button type="button" data-r5-menu-tool="twitch" title="Twitch" aria-label="Twitch"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 2h17v12l-5 5h-4l-3 3v-3H4V2zm2 2v13h5v2l2-2h4l2-2V4H6zm5 3h2v6h-2V7zm4 0h2v6h-2V7z"/></svg><small>Twitch</small></button>
+      <button type="button" data-r5-menu-tool="web" title="Website" aria-label="Website"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm6.9 6h-3.1a16 16 0 0 0-1.4-3.2A8.1 8.1 0 0 1 18.9 8ZM12 4c.9 1.1 1.6 2.4 1.9 4h-3.8c.3-1.6 1-2.9 1.9-4ZM4.3 14a8 8 0 0 1 0-4h3.5a18 18 0 0 0 0 4H4.3Zm.8 2h3.1c.3 1.2.8 2.3 1.4 3.2A8.1 8.1 0 0 1 5.1 16Zm3.1-8H5.1a8.1 8.1 0 0 1 4.5-3.2A16 16 0 0 0 8.2 8Zm3.8 12c-.9-1.1-1.6-2.4-1.9-4h3.8c-.3 1.6-1 2.9-1.9 4Zm2.3-6H9.7a16 16 0 0 1 0-4h4.6a16 16 0 0 1 0 4Zm.1 5.2c.6-.9 1.1-2 1.4-3.2h3.1a8.1 8.1 0 0 1-4.5 3.2ZM16.2 14a18 18 0 0 0 0-4h3.5a8 8 0 0 1 0 4h-3.5Z"/></svg><small>Web</small></button>
+      <button type="button" data-r5-menu-tool="feedback" title="Feedback" aria-label="Feedback"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3h16a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-9l-5 4v-4H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm2 5v2h12V8H6Zm0 4v2h8v-2H6Z"/></svg><small>Feedback</small></button>
+      <button type="button" data-r5-menu-tool="bug" title="Bug Report" aria-label="Bug Report"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.1 4 1.4-1.4 1.4 1.4-1.4 1.4c.7.7 1.2 1.6 1.4 2.6H20v2h-3v2h3v2h-3c-.2 1-.7 1.9-1.4 2.6L17 18l-1.4 1.4-1.4-1.4c-.7.4-1.4.7-2.2.8V7.2c-.8.1-1.5.4-2.2.8l-1.4-1.4L7 8l1.4 1.4C7.7 10.1 7.2 11 7 12H4v2h3c.2 1 .7 1.9 1.4 2.6L7 18l1.4 1.4 1.4-1.4c.7.4 1.4.7 2.2.8A6 6 0 0 0 18 13V9a6 6 0 0 0-3.9-5ZM12 2a3 3 0 0 1 3 3h-6a3 3 0 0 1 3-3Z"/></svg><small>Bug Report</small></button>`;
+  }
+
   function bindClicks() {
     if (state.clickBound) return;
     state.clickBound = true;
@@ -640,6 +687,7 @@
     patchProfileUsername();
     patchAvatarFrames();
     ensureLobbyTools();
+    ensureLobbyFooterLinks();
   }
 
   function schedulePatch() {

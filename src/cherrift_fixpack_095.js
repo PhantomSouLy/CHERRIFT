@@ -203,7 +203,7 @@
     {id:"chest_master",tier:1,name:"Chest Master",desc:"Open 100 chests.",test:s=>chestOpens(s)>=100,progress:s=>`${Math.min(100,chestOpens(s))}/100 chests`,reward:{coins:2500,chests:{epic:1},bloomGems:30}},
     {id:"cherry_garden",tier:1,name:"Cherry Garden",desc:"Own 10 Cherry skins.",test:s=>(s.unlockedSkins||[]).length>=10,progress:s=>`${Math.min(10,(s.unlockedSkins||[]).length)}/10 skins`,reward:{coins:2000,chests:{epic:1},bloomGems:35}},
     {id:"power_overflow",tier:1,name:"Power Overflow",desc:"Reach 2,500 total Power.",test:s=>power(s)>=2500,progress:s=>`${Math.min(2500,power(s))}/2500 Power`,reward:{coins:2800,chests:{epic:1},bloomGems:40}},
-    {id:"perfect_meadow",tier:1,name:"Perfect Meadow",desc:"Earn all 15 stars in World 1.",test:s=>worldStars(s,1)>=15,progress:s=>`${Math.min(15,worldStars(s,1))}/15 stars`,reward:{coins:2500,chests:{epic:1},bloomGems:30}},
+    {id:"perfect_meadow",tier:1,name:"My First Cozy World",desc:"Earn all 15 stars in World 1.",test:s=>worldStars(s,1)>=15,progress:s=>`${Math.min(15,worldStars(s,1))}/15 stars`,reward:{coins:100,chests:{rare:1},bloomGems:10,themes:["cozy_cherry"]}},
     {id:"veteran_bunny",tier:1,name:"Veteran Bunny",desc:"Reach Player Level 30.",test:s=>level(s)>=30,progress:s=>`${Math.min(30,level(s))}/30 level`,reward:{coins:4000,chests:{epic:2},bloomGems:50}}
   ]);
 
@@ -689,6 +689,7 @@
     if (reward.chests?.rare) parts.push(`${reward.chests.rare} Rare Chest`);
     if (reward.chests?.epic) parts.push(`${reward.chests.epic} Epic Chest`);
     if (reward.bloomGems) parts.push(`${reward.bloomGems} Bloom Gem`);
+    if (reward.themes?.includes("cozy_cherry")) parts.push("Cozy Cherry Theme");
     return parts.join(" · ") || "Special reward";
   }
 
@@ -738,6 +739,7 @@
       save.bloomGems = num(save.bloomGems ?? save.blossomGems) + num(reward.bloomGems);
       save.blossomGems = save.bloomGems;
     }
+    for (const themeId of reward.themes || []) window.CHERRIFT_THEMES?.unlock?.(themeId, save, {silent:true});
     save.fixAchievementsClaimed.push(achievementId);
     try { window.CherriftStorage?.save?.(save); } catch (_) {}
     try { window.UI?.refreshMenu?.(); } catch (_) {}
