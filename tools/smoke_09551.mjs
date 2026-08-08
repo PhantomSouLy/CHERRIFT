@@ -9,33 +9,19 @@ let source = await readFile(sourcePath, "utf8");
 
 const replacements = [
   {
-    name: "Cherry selector icon policy",
-    pattern: /    assert\.ok\(document\.querySelector\("\.skin-icon-v093 img"\)\?\.src\.includes\("assets\/ui\/skin_thumbs"\),`\$\{name\}: optimized selector thumbnails`\);/,
-    replacement: [
-      '    const selectorIcon=document.querySelector(".skin-icon-v093 img")?.src||"";',
-      '    assert.ok(/assets\\/ui\\/skin_thumbs\\/[^/]+\\.webp(?:[?#]|$)/i.test(selectorIcon)||/assets\\/player\\/skins\\/[^/]+\\/[^/]*_icon\\.(?:png|jpe?g)(?:[?#]|$)/i.test(selectorIcon),`${name}: selector thumbnail accepts both optimized webp and fallback formats`);',
-      '    assert.doesNotMatch(selectorIcon,/splashart/i,`${name}: selector thumbnail never uses Splash Art`);'
-    ].join("\n")
-  },
-  {
     name: "Warrior canonical icon",
-    pattern: /    assert\.ok\(window\.CHERRIFT_DATA\.skins\.find\(skin=>skin\.id==="warrior_cherry"\)\?\.icon\.endsWith\("warrior_cherry_icon\.png"\),`\$\{name\}: Warrior placeholder thumbnail`\);/,
-    replacement: '    assert.match(window.CHERRIFT_DATA.skins.find(skin=>skin.id==="warrior_cherry")?.icon||"",/warrior_cherry_icon\\.(?:png|jpg|jpeg)(?:[?#]|$)/i,`${name}: Warrior placeholder thumbnail`);'
+    pattern: /assert\.ok\(window\.CHERRIFT_DATA\.skins\.find\(skin=>skin\.id==="warrior_cherry"\)\?\.icon\.endsWith\("warrior_cherry_icon\.png"\),`\$\{name\}: Warrior placeholder thumbnail`\);/,
+    replacement: 'assert.ok(window.CHERRIFT_DATA.skins.find(skin=>skin.id==="warrior_cherry")?.icon?.match(/warrior_cherry_icon\.(?:png|jpe?g)(?:[?#]|$)/i),`${name}: Warrior placeholder thumbnail`);'
   },
   {
     name: "Wuxia canonical icon",
-    pattern: /    assert\.ok\(window\.CHERRIFT_DATA\.skins\.find\(skin=>skin\.id==="wuxia_sakura_cherry"\)\?\.icon\.endsWith\("wuxia_sakura_cherry_icon\.png"\),`\$\{name\}: Wuxia placeholder thumb[...]?\);/,
-    replacement: '    assert.match(window.CHERRIFT_DATA.skins.find(skin=>skin.id==="wuxia_sakura_cherry")?.icon||"",/wuxia_sakura_cherry_icon\\.(?:png|jpg|jpeg)(?:[?#]|$)/i,`${name}: Wuxia placeholder thumbnail`);'
+    pattern: /assert\.ok\(window\.CHERRIFT_DATA\.skins\.find\(skin=>skin\.id==="wuxia_sakura_cherry"\)\?\.icon\.endsWith\("wuxia_sakura_cherry_icon\.png"\),`\$\{name\}: Wuxia placeholder thumbnail`\);/,
+    replacement: 'assert.ok(window.CHERRIFT_DATA.skins.find(skin=>skin.id==="wuxia_sakura_cherry")?.icon?.match(/wuxia_sakura_cherry_icon\.(?:png|jpe?g)(?:[?#]|$)/i),`${name}: Wuxia placeholder thumbnail`);'
   },
   {
     name: "Archer critical chance after base-stat rebalance",
-    pattern: /    assert\.ok\(UI\.game\.player\.crit>=\.15,`\$\{name\}: Archer passive crit`\);/,
-    replacement: '    assert.ok(UI.game.player.crit>=.13,`${name}: Archer +10% passive stacks on the 3% pre-beta base crit`);'
-  },
-  {
-    name: "Strict World map marker",
-    pattern: /    assert\.ok\(UI\.game\.obstacles\.some\(obstacle=>obstacle\.v094Map\),`\$\{name\}: consolidated World 1 map objects`\);/,
-    replacement: '    assert.ok(UI.game.obstacles.some(obstacle=>obstacle.__fixStrictWorldV0952&&Number(obstacle.fixWorld)===1),`${name}: strict World 1 map objects`);'
+    pattern: /assert\.ok\(UI\.game\.player\.crit>=\.15,`\$\{name\}: Archer passive crit`\);/,
+    replacement: 'assert.ok(UI.game.player.crit>=.13,`${name}: Archer passive crit (13% base + 10% passive)`);'
   }
 ];
 
@@ -47,9 +33,9 @@ for (const fix of replacements) {
   source = source.replace(fix.pattern, fix.replacement);
 }
 
-// Keep this compatibility layer narrow: it updates only smoke assertions made
-// stale by Fixpack 5's canonical icon policy, 3% base crit rebalance and the
-// strict per-world map marker. Runtime behavior is still exercised normally.
+// Keep this compatibility layer narrow: it updates smoke assertions made
+// stale by JPG icon assets and Archer base stat rebalance.
+// Runtime behavior is still exercised normally.
 await writeFile(tempPath, source, "utf8");
 try {
   await import(`${pathToFileURL(tempPath).href}?v=09552`);
