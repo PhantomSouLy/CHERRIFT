@@ -131,10 +131,33 @@ html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .prebeta-player-r
   body.v0933-desktop #gachaChestOnlyV12:not(.hidden){padding-top:calc(var(--v0933-top) + var(--v0933-sub) + 18px)!important}
   body.v0933-desktop #rankingPrebeta .prebeta-back{width:auto;min-width:122px;padding:0 18px;font:900 15px/1 system-ui,sans-serif}
 }
-@media(min-width:821px) and (max-width:1280px){
-  body.v0933-desktop .topnav-v0933 #desktopCurrencyV0943 span{min-width:48px!important;padding:0 5px!important}
-  body.v0933-desktop .topnav-v0933 #desktopCurrencyV0943 img{width:17px!important;height:17px!important}
-  body.v0933-desktop .topnav-v0933 .rail-profile-v060{width:105px!important}
+@media(min-width:821px) and (max-width:1500px){
+  body.v0933-desktop #globalRailV060.topnav-v0933{
+    grid-template-columns:120px minmax(0,1fr) auto!important;column-gap:5px!important
+  }
+  body.v0933-desktop .topnav-v0933 .rail-brand-v060{width:116px!important;min-width:0!important}
+  body.v0933-desktop .topnav-v0933 .rail-brand-v060 strong{font-size:20px!important}
+  body.v0933-desktop .topnav-v0933 .rail-brand-v060 small{display:none!important}
+  body.v0933-desktop .topnav-v0933 .rail-text-nav-v095{
+    width:100%!important;min-width:0!important;justify-self:stretch!important;justify-content:center!important
+  }
+  body.v0933-desktop .topnav-v0933 .rail-text-nav-v095 .rail-text-v095{
+    padding:0 clamp(5px,.48vw,8px)!important
+  }
+  body.v0933-desktop .topnav-v0933 .rail-text-nav-v095 .rail-text-v095 b{
+    font-size:clamp(11px,.76vw,13px)!important
+  }
+  body.v0933-desktop .topnav-v0933 .rail-text-nav-v095 :is(.rail-play-v095,.rail-lobby-v095){
+    margin:0 2px!important;padding:0 clamp(9px,.66vw,12px)!important
+  }
+  body.v0933-desktop .topnav-v0933 .rail-bottom-v060{gap:2px!important}
+  body.v0933-desktop .topnav-v0933 #desktopCurrencyV0943{gap:2px!important;margin-right:1px!important}
+  body.v0933-desktop .topnav-v0933 #desktopCurrencyV0943 span{min-width:42px!important;height:34px!important;padding:0 4px!important;gap:3px!important}
+  body.v0933-desktop .topnav-v0933 #desktopCurrencyV0943 img{width:16px!important;height:16px!important}
+  body.v0933-desktop .topnav-v0933 #desktopCurrencyV0943 b{font-size:9px!important}
+  body.v0933-desktop .topnav-v0933 .rail-profile-v060{width:88px!important;padding:0 5px!important;gap:4px!important}
+  body.v0933-desktop .topnav-v0933 .rail-profile-v060 small{display:none!important}
+  body.v0933-desktop .topnav-v0933 .rail-settings-v060{width:34px!important;height:34px!important}
 }
 .economy-wallet-v080 img{width:21px;height:21px;object-fit:contain;vertical-align:middle}
 .mini-chests-v080 button>span img{display:block;width:44px;height:44px;object-fit:contain}

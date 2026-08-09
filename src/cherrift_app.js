@@ -10415,9 +10415,10 @@ function ensureMenuDashboard() {
   if (patchCard) {
     patchCard.tabIndex = 0;
     patchCard.dataset.v060PatchCard = "true";
+    const displayVersion = window.CHERRIFT_BUILD?.displayVersion || "v0.9.5-prebeta.1";
     patchCard.innerHTML = `
-      <header><h3>Bloom Update</h3><span>v0.9.0 <i class="v060-dot" data-v060-badge="patch"></i></span></header>
-      <p>Mobile Play, Library, camera, Gacha and responsive layout hotfix.</p>
+      <header><h3>Bloom Update</h3><span>${displayVersion} <i class="v060-dot" data-v060-badge="patch"></i></span></header>
+      <p>New Common Cherry skins and roles, PNG combat effects, corrected sprite timing and a darkened map boundary.</p>
       <div class="side-art">✦</div>`;
   }
 }
@@ -12296,11 +12297,10 @@ function activateExistingFeatures() {
   }
 
   const dashboard = q("#menuDashboardV060 .dashboard-shortcuts-v060");
-  if (dashboard && !q('[data-v062-open="shopV055"]', dashboard)) {
-    dashboard.insertAdjacentHTML("beforeend", `
-      <button type="button" data-v062-open="shopV055"><i>🛒</i><span><b>Shop</b><small>Daily offers</small></span></button>
-      <button type="button" data-v062-open="loginRewards"><i>🎁</i><span><b>Login Rewards</b><small>Seven-day track</small></span></button>`);
-  }
+  // Shop and Login have canonical destinations in the current header/Lobby.
+  // The v0.6 compatibility pass used to append duplicate shortcut buttons on
+  // every refresh, so remove any survivors instead of rebuilding old UI.
+  if (dashboard) qa('[data-v062-open="shopV055"],[data-v062-open="loginRewards"]', dashboard).forEach(button => button.remove());
 }
 
 function disableDecorativeControls() {
@@ -15894,6 +15894,16 @@ function railTextButton(route,label,notice="",className=""){
 }
 function rebuildRail(){
   const rail=id("globalRailV060");if(!rail)return;
+  // The rail used to be destroyed and rebuilt by every refresh/open wrapper.
+  // That briefly exposed the placeholder wallet and the selected-skin icon
+  // before the account/profile decorators ran. Build the canonical shell once
+  // and update only its live values afterwards.
+  if(rail.dataset.v095CanonicalRail==="1"&&q(".rail-text-nav-v095",rail)){
+    updateRailProfile();
+    return;
+  }
+  const railSave=UI.save||{};
+  const railMaterial=railSave.bag?.materials||{};
   rail.classList.add("rail-v082");
   rail.innerHTML=`
     <button type="button" class="rail-brand-v060" data-v082-open="menu"><strong>CHERRIFT</strong><small>${escapeHtml(t("menuSubtitle"))}</small></button>
@@ -15910,16 +15920,17 @@ function rebuildRail(){
     </nav>
     <div class="rail-bottom-v060">
       <div id="desktopCurrencyV0943" aria-label="Currencies" data-wallet-placeholder="true">
-        <span title="Coin"><img src="assets/items/coin.png" alt=""><b>0</b></span>
-        <span title="Bloom Gem"><img src="assets/items/blossom_gem.png" alt=""><b>0</b></span>
-        <span title="Sakura Essence"><img src="assets/items/sakura_potion.png" alt=""><b>0</b></span>
-        <span title="Scrap"><img src="assets/items/scraps.png" alt=""><b>0</b></span>
+        <span title="Coin"><img src="assets/items/coin.png" alt=""><b>${Math.floor(Number(railSave.coins)||0)}</b></span>
+        <span title="Bloom Gem"><img src="assets/items/blossom_gem.png" alt=""><b>${Math.floor(Number(railSave.blossomGems??railSave.bloomGems)||0)}</b></span>
+        <span title="Sakura Essence"><img src="assets/items/sakura_potion.png" alt=""><b>${Math.floor(Number(railSave.sakuraEssence)||0)}</b></span>
+        <span title="Scrap"><img src="assets/items/scraps.png" alt=""><b>${Math.floor(Number(railMaterial.gearScrap??railSave.gearScrap??railSave.scrap)||0)}</b></span>
       </div>
       <button type="button" class="rail-settings-v060" data-v082-open="settings" data-v082-route="settings"><i>⚙</i><b>${escapeHtml(t("settings"))}</b></button>
       <button type="button" class="rail-profile-v060" data-v082-open="profileV082" data-v082-route="profileV082">
         <span id="railProfileIconV082"></span><span><b id="railProfileNameV082">Cherry Player</b><small id="railProfileTitleV082">${escapeHtml(t("profile"))}</small></span>
       </button>
     </div>`;
+  rail.dataset.v095CanonicalRail="1";
   updateRailProfile();
 }
 function updateRailProfile(){
@@ -15994,6 +16005,12 @@ function bindMenuTools(){
 
 function rebuildHome(){
   const dashboard=id("menuDashboardV060");if(!dashboard)return;
+  // Keep the current Lobby controls alive across route changes. Replacing the
+  // entire block here allowed older version layers to flash for one frame.
+  if(dashboard.dataset.v095CanonicalHome==="1"){
+    bindMenuTools();
+    return;
+  }
   const shortcuts=q(".dashboard-shortcuts-v060",dashboard);
   if(shortcuts){
     shortcuts.setAttribute("data-i18n-ignore","true");
@@ -16014,6 +16031,7 @@ function rebuildHome(){
     <button type="button" data-v082-menu-tool="bug" title="${escapeHtml(t("bug"))}" aria-label="${escapeHtml(t("bug"))}">⚠<small>${escapeHtml(t("bug"))}</small></button>
     <button type="button" data-v082-menu-tool="mail" title="${escapeHtml(t("mail"))}" aria-label="${escapeHtml(t("mail"))}">✉<em class="mail-badge-v063" data-v063-mail-count></em></button>
     <button type="button" data-v082-menu-tool="settings" title="${escapeHtml(t("settings"))}" aria-label="${escapeHtml(t("settings"))}">⚙</button>`;
+  dashboard.dataset.v095CanonicalHome="1";
   bindMenuTools();
 }
 
@@ -18876,9 +18894,10 @@ CHERRIFT_DATA.version=VERSION;
 CHERRIFT_CONFIG.performance.renderScaleMax=Math.min(Number(CHERRIFT_CONFIG.performance.renderScaleMax)||1.5,Math.min(innerWidth||1280,innerHeight||720)<=860?1.3:1.5);
 
 function patchVersion(){
-  document.title=window.CHERRIFT_BUILD?.title||`CHERRIFT ${DISPLAY_VERSION} – TEST BUILD`;
+  const currentDisplayVersion=window.CHERRIFT_BUILD?.displayVersion||"v0.9.5-prebeta.1";
+  document.title=window.CHERRIFT_BUILD?.title||`CHERRIFT ${currentDisplayVersion} – PRE-BETA`;
   const boot=q(".boot-sub-v060");
-  if(boot)boot.textContent=`${language()==="hu"?"TESZTVERZIÓ":"TEST BUILD"} · ${DISPLAY_VERSION}`;
+  if(boot)boot.textContent=`${language()==="hu"?"TESZTVERZIÓ":"TEST BUILD"} · ${currentDisplayVersion}`;
   const menuVersion=id("menuBuildVersion");
   if(menuVersion)menuVersion.hidden=true;
   const banner=id("testBuildBannerV063");
@@ -18890,8 +18909,10 @@ function patchVersion(){
   const patch=q("#menu .patch-card");
   if(patch){
     const badge=q("header span",patch),copy=q(":scope > p",patch);
-    if(badge&&badge.textContent!==DISPLAY_VERSION)badge.textContent=DISPLAY_VERSION;
-    if(copy)copy.textContent="Combat feel, World 1 remaster, Mage & Archer Cherry, enemy/boss behavior, run loot and Night Bloom mobile polish.";
+    if(badge&&badge.textContent!==currentDisplayVersion)badge.textContent=currentDisplayVersion;
+    if(copy)copy.textContent=language()==="hu"
+      ?"Új Common Cherry skinek és szerepkörök, PNG harci effektek, javított sprite-időzítés és sötétedő map-határ."
+      :"New Common Cherry skins and roles, PNG combat effects, corrected sprite timing and a darkened map boundary.";
   }
 }
 
@@ -22975,7 +22996,7 @@ function installObserver(){
 }
 function patchVersion(){
   const patch=q("#menu .patch-card");
-  if(patch){const badge=q("header span",patch);if(badge)badge.textContent="v0.9.3.2";}
+  if(patch){const badge=q("header span",patch);if(badge)badge.textContent=window.CHERRIFT_BUILD?.displayVersion||"v0.9.5-prebeta.1";}
 }
 
 ensureCss();
@@ -25230,7 +25251,10 @@ proto.drawEnemy = function drawEnemyV0946(context, enemy) {
 const previousDrawWorld = proto.drawWorld;
 proto.drawWorld = function drawWorldV0946(context) {
   const world = worldFor(this);
-  if (!(world >= 0 && world <= 4) || !this.camera) return previousDrawWorld.call(this, context);
+  // Worlds 5-6 use the same large transparent map-object pipeline as the
+  // earlier worlds. Leaving them out rendered every high-resolution ruin
+  // prop, enemy, projectile and effect each frame, even far off camera.
+  if (!(world >= 0 && world <= 6) || !this.camera) return previousDrawWorld.call(this, context);
 
   const zoom = this.zoom || window.CHERRIFT_CONFIG?.performance?.cameraZoom || 1;
   const halfW = this.w / zoom / 2 + 340;
@@ -25271,6 +25295,7 @@ proto.drawWorld = function drawWorldV0946(context) {
 // Preserve the boundary-fog capability marker through this final performance
 // wrapper so diagnostics and future patches can detect the active implementation.
 proto.drawWorld.__v091BoundaryFog = true;
+proto.drawWorld.__v095CullWorlds = 6;
 
 const previousStart = proto.start;
 proto.start = async function startV0946(...args) {

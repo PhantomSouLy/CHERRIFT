@@ -280,6 +280,7 @@ async function exercise(name,width,height){
     const ownerSave=structuredClone(UI.save);ownerSave.prebeta.entitlements={allContent:true};ownerSave.unlockedSkins.push("mage_cherry");window.CHERRIFT_PREBETA.normalizeSave(ownerSave);
     assert.ok(ownerSave.unlockedSkins.includes("mage_cherry")&&window.CHERRIFT_PREBETA.isWorldUnlocked(6,ownerSave),`${name}: owner content is preserved`);
     assert.equal(window.CherriftGame.prototype.drawWorld.__v091BoundaryFog,true,`${name}: map boundary fog active`);
+    assert.equal(window.CherriftGame.prototype.drawWorld.__v095CullWorlds,6,`${name}: viewport culling covers every beta World, including World 6`);
     assert.equal(document.querySelectorAll("#globalMobileNavV052 > button").length,5,`${name}: five mobile destinations`);
     if(window.CHERRIFT_WORLD_UI.isMobile()){
       assert.equal(document.querySelectorAll('#globalMobileNavV052 [data-v082-open="worlds"]').length,0,`${name}: bottom Play route is completely replaced`);
@@ -367,10 +368,23 @@ async function exercise(name,width,height){
     if(!window.CHERRIFT_WORLD_UI.isMobile()){
       const shortcutLabels=Array.from(document.querySelectorAll("#menuDashboardV060 .dashboard-shortcuts-v060 button b"),node=>node.textContent.trim());
       assert.deepEqual(shortcutLabels,["Login","Quest","Social","Ranking","Buff List"],`${name}: desktop Lobby shortcut order`);
-      assert.equal(window.getComputedStyle(document.querySelector("#menu .news-card")).display,"none",`${name}: temporary Lobby News card is hidden`);
+      assert.equal(document.querySelector("#menu .news-card"),null,`${name}: temporary legacy Lobby News card is removed`);
       assert.deepEqual(Array.from(document.querySelectorAll("#menu .social-row.r5-support-links button"),button=>button.title),["Twitch","Website","Feedback","Bug Report"],`${name}: Lobby support links`);
       const stableWallet=document.getElementById("desktopCurrencyV0943");
       assert.ok(stableWallet&&stableWallet.parentElement?.classList.contains("rail-bottom-v060"),`${name}: desktop wallet space exists before route changes`);
+      const stableRail=document.querySelector("#globalRailV060 .rail-text-nav-v095");
+      const stableProfileIcon=document.getElementById("railProfileIconV082");
+      const stableLobby=document.getElementById("menuDashboardV060");
+      UI.open("gacha");
+      await waitFor(()=>!document.getElementById("gachaChestOnlyV12")?.classList.contains("hidden"),`${name}: canonical Gacha opens synchronously`);
+      assert.equal(document.querySelector("#globalRailV060 .rail-text-nav-v095"),stableRail,`${name}: Gacha does not replace the header with a legacy rail`);
+      assert.equal(document.getElementById("railProfileIconV082"),stableProfileIcon,`${name}: Gacha preserves the decorated profile icon node`);
+      assert.equal(document.querySelector("#desktopCurrencyV0943 [title='Coin'] b")?.textContent,String(UI.save.coins),`${name}: Gacha never exposes a zero-value placeholder wallet`);
+      UI.open("menu");
+      await waitFor(()=>!document.getElementById("menu")?.classList.contains("hidden"),`${name}: Lobby returns after flash regression check`);
+      assert.equal(document.querySelector("#globalRailV060 .rail-text-nav-v095"),stableRail,`${name}: Lobby does not replace the header with a legacy rail`);
+      assert.equal(document.getElementById("menuDashboardV060"),stableLobby,`${name}: Lobby keeps the canonical dashboard node`);
+      assert.doesNotMatch(document.querySelector("#menu .patch-card")?.textContent||"",/v0\.9\.0\b/,`${name}: Lobby never restores the legacy v0.9.0 patch card`);
     }
     click(window,document.querySelector('#menuToolsV082 [data-v082-menu-tool="settings"]'),`${name} settings tool`);
     await waitFor(()=>!document.getElementById("settings")?.classList.contains("hidden"),`${name} settings panel`);
@@ -426,12 +440,19 @@ async function exercise(name,width,height){
     await waitFor(()=>!document.getElementById("worldSelectorV0942")?.classList.contains("hidden"),`${name} consolidated World selector`);
     assert.equal(document.querySelectorAll("#worldDotsV0942 i").length,6,`${name}: exact World count`);
     assert.ok(document.querySelector("#worldCardV0942 > .selector-card-v0942"),`${name}: World card is rendered inside a sized host`);
+    const firstWorldName=document.querySelector("#worldCardV0942 h3")?.textContent;
     click(window,document.querySelector('[data-world-step="1"]'),`${name} next World`);
+    assert.notEqual(document.querySelector("#worldCardV0942 h3")?.textContent,firstWorldName,`${name}: World right arrow advances the carousel`);
+    assert.equal(window.getComputedStyle(document.querySelector("[data-selector-drag]")).userSelect,"none",`${name}: dragging the World carousel cannot select its text`);
     click(window,document.querySelector("[data-world-start]"),`${name} select World`);
     await waitFor(()=>!document.getElementById("chapterSelectorV0942")?.classList.contains("hidden"),`${name} Chapter selector`);
     assert.equal(document.querySelectorAll("#chapterDotsV0942 i").length,5,`${name}: five chapters in selected World`);
     assert.ok(document.querySelector("#chapterCardV0942 > .selector-card-v0942"),`${name}: Chapter card is rendered inside a sized host`);
     assert.equal(document.querySelectorAll("#chapterSummaryV0942 > div").length,6,`${name}: Chapter details include stage, objective, rewards, Energy and recommendation`);
+    const firstChapterName=document.querySelector("#chapterCardV0942 h3")?.textContent;
+    click(window,document.querySelector('[data-chapter-step="1"]'),`${name} next Chapter`);
+    assert.notEqual(document.querySelector("#chapterCardV0942 h3")?.textContent,firstChapterName,`${name}: Chapter right arrow advances the carousel`);
+    assert.equal(window.getComputedStyle(document.querySelector("[data-chapter-drag]")).userSelect,"none",`${name}: dragging the Chapter carousel cannot select its text`);
     click(window,document.querySelector("[data-chapter-back]"),`${name} back to Worlds`);
     assert.ok((window.CHERRIFT_V040?.stages||[]).filter(stage=>stage.world===4).length===5,`${name}: World 4 has five real stages`);
     assert.equal((window.CHERRIFT_V040?.stages||[]).filter(stage=>stage.world===5).length,5,`${name}: World 5 has five placeholder stages`);

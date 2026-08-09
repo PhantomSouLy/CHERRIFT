@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="style.css?v=041g" />
   <link rel="stylesheet" href="menu_v040.css?v=041g" />
   <link rel="stylesheet" href="assets/cherrift_app.css?v=clean-runtime-1-5" />
-  <link rel="stylesheet" href="assets/cherrift_prebeta.css?v=095pb4" />
+  <link rel="stylesheet" href="assets/cherrift_prebeta.css?v=095pb5" />
   <style id="v060BootCss">
     body.v060-booting #app,
     body.v060-booting #game { visibility:hidden!important; }
@@ -163,22 +163,11 @@
           <div class="side-art">☷</div>
         </div>
 
-        <div class="side-card glass news-card">
-          <header><h3>News</h3><span>LIVE</span></header>
-          <div class="news-row">
-            <div class="news-thumb">🐺</div>
-            <div>
-              <p><b id="selectedSkinText">Cherry</b></p><p><b id="selectedStageDesktop">World 1-1</b></p>
-              <p>Best: <span id="bestRun">00:00 · 0 kills</span></p>
-              <p>🪙 <b id="menuCoins">0</b> · 📦 <b id="menuKeys">3</b></p>
-            </div>
-          </div>
-        </div>
-
-        <div class="social-row" aria-label="Social links">
-          <button title="Discord">💬</button>
-          <button title="X / Twitter">🐦</button>
-          <button title="Website">🌐</button>
+        <div class="social-row r5-support-links" data-r5-support-links="1" aria-label="Support links">
+          <button type="button" data-r5-menu-tool="twitch" title="Twitch" aria-label="Twitch"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 2h17v12l-5 5h-4l-3 3v-3H4V2zm2 2v13h5v2l2-2h4l2-2V4H6zm5 3h2v6h-2V7zm4 0h2v6h-2V7z"/></svg><small>Twitch</small></button>
+          <button type="button" data-r5-menu-tool="web" title="Website" aria-label="Website"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm6.9 6h-3.1a16 16 0 0 0-1.4-3.2A8.1 8.1 0 0 1 18.9 8ZM12 4c.9 1.1 1.6 2.4 1.9 4h-3.8c.3-1.6 1-2.9 1.9-4ZM4.3 14a8 8 0 0 1 0-4h3.5a18 18 0 0 0 0 4H4.3Zm.8 2h3.1c.3 1.2.8 2.3 1.4 3.2A8.1 8.1 0 0 1 5.1 16Zm3.1-8H5.1a8.1 8.1 0 0 1 4.5-3.2A16 16 0 0 0 8.2 8Zm3.8 12c-.9-1.1-1.6-2.4-1.9-4h3.8c-.3 1.6-1 2.9-1.9 4Zm2.3-6H9.7a16 16 0 0 1 0-4h4.6a16 16 0 0 1 0 4Zm.1 5.2c.6-.9 1.1-2 1.4-3.2h3.1a8.1 8.1 0 0 1-4.5 3.2ZM16.2 14a18 18 0 0 0 0-4h3.5a8 8 0 0 1 0 4h-3.5Z"/></svg><small>Web</small></button>
+          <button type="button" data-r5-menu-tool="feedback" title="Feedback" aria-label="Feedback"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3h16a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-9l-5 4v-4H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm2 5v2h12V8H6Zm0 4v2h8v-2H6Z"/></svg><small>Feedback</small></button>
+          <button type="button" data-r5-menu-tool="bug" title="Bug Report" aria-label="Bug Report"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.1 4 1.4-1.4 1.4 1.4-1.4 1.4c.7.7 1.2 1.6 1.4 2.6H20v2h-3v2h3v2h-3c-.2 1-.7 1.9-1.4 2.6L17 18l-1.4 1.4-1.4-1.4c-.7.4-1.4.7-2.2.8V7.2c-.8.1-1.5.4-2.2.8l-1.4-1.4L7 8l1.4 1.4C7.7 10.1 7.2 11 7 12H4v2h3c.2 1 .7 1.9 1.4 2.6L7 18l1.4 1.4 1.4-1.4c.7.4 1.4.7 2.2.8A6 6 0 0 0 18 13V9a6 6 0 0 0-3.9-5ZM12 2a3 3 0 0 1 3 3h-6a3 3 0 0 1 3-3Z"/></svg><small>Bug Report</small></button>
         </div>
       </aside>
 
@@ -514,12 +503,12 @@
   <script src="src/supabase_config.js?v=0944"></script>
   <script src="src/config.js?v=095pb1"></script>
   <script src="src/cherrift_balance.js?v=095pb1"></script>
-  <script src="src/cherrift_app.js?v=095pb4"></script>
+  <script src="src/cherrift_app.js?v=095pb5"></script>
   <script src="src/cherrift_gacha.js?v=095pb3"></script>
   <script src="src/cherrift_live_services.js?v=0944"></script>
   <script src="src/cherrift_account_mail.js?v=0947"></script>
-  <script src="src/cherrift_world_ui.js?v=095ui1"></script>
-  <script src="src/cherrift_stability.js?v=095pb4"></script>
+  <script src="src/cherrift_world_ui.js?v=095ui2"></script>
+  <script src="src/cherrift_stability.js?v=095pb5"></script>
   <script src="src/cherrift_prebeta.js?v=095pb3"></script>
   <!-- Keep pre-beta layers in a deterministic order. Dynamic insertion from
        config.js allowed the UI to become interactive before these patches. -->

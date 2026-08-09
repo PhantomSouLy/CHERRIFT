@@ -50,8 +50,9 @@
       .selector-v0942{overflow:hidden!important;height:var(--cherrift-viewport-height,100dvh)!important;min-height:0!important;color:#fff}
       .selector-shell-v0942{width:min(920px,100%);height:100%;min-height:0;margin:auto;display:flex;flex-direction:column;padding:max(74px,calc(env(safe-area-inset-top) + 70px)) 12px calc(82px + env(safe-area-inset-bottom));overflow:hidden}
       .selector-head-v0942{flex:0 0 auto;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:13px;margin-bottom:7px}.selector-head-v0942 h2{margin:0;font:700 clamp(35px,10vw,53px)/1 Georgia,serif}.selector-back-v0942{width:58px;height:58px;border:1px solid #ffffff26;border-radius:19px;color:#fff;background:#ffffff08;font-size:25px}.selector-total-v0942{display:grid;justify-items:end;gap:2px;padding:8px 12px;border:1px solid #ffffff26;border-radius:14px;background:#100817c9}.selector-total-v0942 small{color:#dda9c3;font-size:8px;font-weight:1000;letter-spacing:1px}.selector-total-v0942 b{color:#ffd467;font:900 15px/1 system-ui,sans-serif}
-      .selector-carousel-v0942{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:42px minmax(0,1fr) 42px;align-items:stretch;gap:7px;touch-action:pan-y}
-      .selector-arrow-v0942{align-self:center;height:66px;border:1px solid #ffffff22;border-radius:17px;color:#fff;background:#ffffff08;font-size:40px}.selector-arrow-v0942:disabled{opacity:.25}
+      .selector-carousel-v0942{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:42px minmax(0,1fr) 42px;align-items:stretch;gap:7px;touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:grab}
+      .selector-carousel-v0942.dragging{cursor:grabbing}.selector-carousel-v0942 *{user-select:none;-webkit-user-select:none;-webkit-user-drag:none}.selector-carousel-v0942 img{pointer-events:none}
+      .selector-arrow-v0942{align-self:center;height:66px;border:1px solid #ffffff22;border-radius:17px;color:#fff;background:#ffffff08;font-size:40px;touch-action:manipulation;cursor:pointer}.selector-arrow-v0942:disabled{opacity:.25}
       #worldCardV0942,#chapterCardV0942{align-self:stretch;min-width:0;min-height:280px;height:100%;display:block}
       .selector-card-v0942{position:relative;height:100%;min-height:0;overflow:hidden;border:1px solid #ffffff28;border-radius:28px;background:#16091d center/cover no-repeat;box-shadow:0 18px 60px #0008;isolation:isolate}
       .selector-card-v0942::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,#06030b19 10%,#09040d16 40%,#08030dde 100%)}
@@ -328,11 +329,11 @@
     panel = document.createElement("section");
     panel.id = "worldSelectorV0942";
     panel.className = "panel selector-v0942 hidden";
-    panel.innerHTML = `<div class="selector-shell-v0942"><header class="selector-head-v0942"><button class="selector-back-v0942" type="button" data-world-back aria-label="Back">←</button><h2 data-world-title></h2><span class="selector-total-v0942"><small data-world-total-label></small><b id="worldTotalStarsV0942"></b></span></header><div class="selector-carousel-v0942" data-selector-drag><button class="selector-arrow-v0942" data-world-step="-1" aria-label="Previous world">‹</button><div id="worldCardV0942" class="selector-card-host-v0942"></div><button class="selector-arrow-v0942" data-world-step="1" aria-label="Next world">›</button></div><div id="worldDotsV0942" class="selector-dots-v0942"></div><div class="selector-actions-v0942"><button class="primary" data-world-start></button></div></div>`;
+    panel.innerHTML = `<div class="selector-shell-v0942"><header class="selector-head-v0942"><button class="selector-back-v0942" type="button" data-world-back aria-label="Back">←</button><h2 data-world-title></h2><span class="selector-total-v0942"><small data-world-total-label></small><b id="worldTotalStarsV0942"></b></span></header><div class="selector-carousel-v0942" data-selector-drag><button type="button" class="selector-arrow-v0942" data-world-step="-1" aria-label="Previous world">‹</button><div id="worldCardV0942" class="selector-card-host-v0942"></div><button type="button" class="selector-arrow-v0942" data-world-step="1" aria-label="Next world">›</button></div><div id="worldDotsV0942" class="selector-dots-v0942"></div><div class="selector-actions-v0942"><button type="button" class="primary" data-world-start></button></div></div>`;
     id("app")?.appendChild(panel);
     panel.addEventListener("click", event => {
       const step = event.target.closest("[data-world-step]");
-      if (step) { state.worldIndex += Number(step.dataset.worldStep); renderWorldSelector(); }
+      if (step) { event.preventDefault(); state.worldIndex += Number(step.dataset.worldStep); renderWorldSelector(); }
       if (event.target.closest("[data-world-back]")) {
         if (window.CHERRIFT_STABILITY?.open) window.CHERRIFT_STABILITY.open("menu");
         else UI.open?.("menu");
@@ -388,11 +389,11 @@
     panel = document.createElement("section");
     panel.id = "chapterSelectorV0942";
     panel.className = "panel selector-v0942 hidden";
-    panel.innerHTML = `<div class="selector-shell-v0942"><header class="selector-head-v0942"><button class="selector-back-v0942" type="button" data-chapter-back aria-label="Back">←</button><h2 id="chapterWorldTitleV0942">World</h2><span class="selector-total-v0942"><small data-chapter-count-label></small><b id="chapterCountV0942"></b></span></header><div class="selector-carousel-v0942" data-chapter-drag><button class="selector-arrow-v0942" data-chapter-step="-1" aria-label="Previous chapter">‹</button><div id="chapterCardV0942" class="selector-card-host-v0942"></div><button class="selector-arrow-v0942" data-chapter-step="1" aria-label="Next chapter">›</button></div><div id="chapterDotsV0942" class="selector-dots-v0942"></div><section id="chapterSummaryV0942" class="chapter-summary-v0942"></section><div class="selector-actions-v0942"><button class="primary" data-chapter-play></button></div></div>`;
+    panel.innerHTML = `<div class="selector-shell-v0942"><header class="selector-head-v0942"><button class="selector-back-v0942" type="button" data-chapter-back aria-label="Back">←</button><h2 id="chapterWorldTitleV0942">World</h2><span class="selector-total-v0942"><small data-chapter-count-label></small><b id="chapterCountV0942"></b></span></header><div class="selector-carousel-v0942" data-chapter-drag><button type="button" class="selector-arrow-v0942" data-chapter-step="-1" aria-label="Previous chapter">‹</button><div id="chapterCardV0942" class="selector-card-host-v0942"></div><button type="button" class="selector-arrow-v0942" data-chapter-step="1" aria-label="Next chapter">›</button></div><div id="chapterDotsV0942" class="selector-dots-v0942"></div><section id="chapterSummaryV0942" class="chapter-summary-v0942"></section><div class="selector-actions-v0942"><button type="button" class="primary" data-chapter-play></button></div></div>`;
     id("app")?.appendChild(panel);
     panel.addEventListener("click", event => {
       const step = event.target.closest("[data-chapter-step]");
-      if (step) { state.chapterIndex += Number(step.dataset.chapterStep); renderChapterSelector(); }
+      if (step) { event.preventDefault(); state.chapterIndex += Number(step.dataset.chapterStep); renderChapterSelector(); }
       if (event.target.closest("[data-chapter-back]")) openWorldSelector();
       if (event.target.closest("[data-chapter-play]")) playSelectedChapter();
     });
@@ -428,20 +429,44 @@
   function bindDrag(element, callback) {
     if (!element || element.__dragV0942) return;
     element.__dragV0942 = true;
+    let drag = null;
+    let suppressClick = false;
     element.addEventListener("pointerdown", event => {
-      state.drag = { x:event.clientX, y:event.clientY, pointerId:event.pointerId };
+      if (event.button !== 0 || event.target.closest?.("button")) return;
+      drag = { x:event.clientX, y:event.clientY, lastX:event.clientX, lastY:event.clientY, pointerId:event.pointerId, moved:false };
+      state.drag = drag;
       element.setPointerCapture?.(event.pointerId);
     });
+    element.addEventListener("pointermove", event => {
+      if (!drag || drag.pointerId !== event.pointerId) return;
+      drag.lastX = event.clientX;
+      drag.lastY = event.clientY;
+      if (Math.abs(drag.lastX - drag.x) > 7) {
+        drag.moved = true;
+        element.classList.add("dragging");
+        event.preventDefault();
+      }
+    }, {passive:false});
     element.addEventListener("pointerup", event => {
-      if (!state.drag) return;
-      const dx = event.clientX - state.drag.x;
-      const dy = event.clientY - state.drag.y;
-      state.drag = null;
+      if (!drag || drag.pointerId !== event.pointerId) return;
+      const dx = event.clientX - drag.x;
+      const dy = event.clientY - drag.y;
+      suppressClick = drag.moved;
+      if (suppressClick) setTimeout(() => { suppressClick = false; }, 0);
+      drag = null; state.drag = null;
+      element.classList.remove("dragging");
+      element.releasePointerCapture?.(event.pointerId);
       if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.2) callback(dx < 0 ? 1 : -1);
     });
-    const cancel = () => { state.drag = null; };
+    element.addEventListener("click", event => {
+      if (!suppressClick) return;
+      event.preventDefault();
+      event.stopPropagation();
+      suppressClick = false;
+    }, true);
+    const cancel = () => { drag = null; state.drag = null; element.classList.remove("dragging"); };
     element.addEventListener("pointercancel", cancel);
-    element.addEventListener("lostpointercapture", cancel);
+    element.addEventListener("dragstart", event => event.preventDefault());
   }
 
   function showOnly(panel) {

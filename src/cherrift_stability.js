@@ -307,6 +307,23 @@
     document.body.classList.remove("gacha-open", "gacha-v11-open", "economy-open");
   }
 
+  function syncCanonicalLobby() {
+    // News was a temporary v0.9.0 card. Removing it, instead of merely hiding
+    // it, prevents older observers from making it visible again on short
+    // desktop layouts.
+    qa("#menu .news-card").forEach(card => card.remove());
+    const patch = q("#menu .patch-card");
+    if (!patch) return;
+    const english = window.CHERRIFT_LOCALIZATION?.language?.() === "en" || UI.save?.settings?.language === "en";
+    const badge = q("header span", patch);
+    const copy = q(":scope > p", patch);
+    if (badge) badge.textContent = window.CHERRIFT_BUILD?.displayVersion || "v0.9.5-prebeta.1";
+    if (copy) copy.textContent = english
+      ? "New Common Cherry skins and roles, PNG combat effects, corrected sprite timing and a darkened map boundary."
+      : "Új Common Cherry skinek és szerepkörök, PNG harci effektek, javított sprite-időzítés és sötétedő map-határ.";
+    patch.dataset.canonicalLobby = "095";
+  }
+
   function normalizeRoute(route, element) {
     if (element?.classList?.contains("cherry-nav-v0942") || element?.classList?.contains("cherry-nav-bf")) return "skins";
     const value = String(route || "").trim();
@@ -462,6 +479,7 @@
     const target = normalizeRoute(route);
     closeMoreDrawer();
     document.body.style.overflow = "";
+    syncCanonicalLobby();
 
     // Prime the selected stage and Cherry thumbnail while Home is still
     // hidden. Older layers may render their World 1 defaults below, but the
@@ -472,17 +490,15 @@
       window.CHERRIFT_ACCOUNT_MAIL?.hide?.();
       window.CHERRIFT_WORLD_UI?.hide?.();
       window.CHERRIFT_ECONOMY_V11?.open?.(args[0]);
+      id("gachaChestOnlyV12")?.classList.remove("hidden");
+      window.CHERRIFT_ECONOMY_V11?.render?.();
       syncGlobalNav("gacha");
-      // The custom Gacha does not pass through the legacy panel router. A
-      // refresh is required so the desktop sub-navigation observes the real
-      // Gacha route instead of retaining the previously active section.
-      if(window.CHERRIFT_REWARDS?.withSuppressed)CHERRIFT_REWARDS.withSuppressed(()=>window.UI?.refreshMenu?.());
-      else window.UI?.refreshMenu?.();
-      requestAnimationFrame(() => {
-        id("gachaChestOnlyV12")?.classList.remove("hidden");
-        window.CHERRIFT_ECONOMY_V11?.render?.();
-        paintDesktopNav("gacha");
-      });
+      // Calling the full legacy refresh here rebuilt the old Gacha and header
+      // before the current chest-only view. The canonical view already owns
+      // its wallet and renderer, so update only the shared chrome.
+      window.CHERRIFT_V0933?.refresh?.();
+      patchVisibleUi();
+      paintDesktopNav("gacha");
       return;
     }
 
@@ -511,6 +527,7 @@
     }
     if (!state.upstreamOpen) return;
     const result = state.upstreamOpen(target, ...args);
+    syncCanonicalLobby();
     if (target === "menu") syncHomeFrame();
     syncGlobalNav(target);
     requestAnimationFrame(() => {
@@ -1029,6 +1046,7 @@
   }
 
   function patchVisibleUi() {
+    syncCanonicalLobby();
     window.CHERRIFT_ACCOUNT_MAIL?.patchVisibleRoute?.();
     window.CHERRIFT_WORLD_UI?.patchVisible?.();
     syncHomeFrame();
