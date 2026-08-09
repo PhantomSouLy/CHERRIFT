@@ -1183,7 +1183,7 @@
         rock3:{src:"assets/map/world2/world2_rock_3.png",count:8,w:82,h:64,anchor:.72,solid:true,r:24},
         tree1:{src:"assets/map/world2/world2_tree_1.png",count:8,w:132,h:178,anchor:.84,solid:true,r:25},
         tree2:{src:"assets/map/world2/world2_tree_2.png",count:7,w:142,h:192,anchor:.85,solid:true,r:27},
-        firefly:{src:"assets/map/world2/world2_firefly_01.png",count:7,w:18,h:18,anchor:.50,alpha:.96,glow:true}
+        firefly:{src:"assets/map/world2/world2_firefly_01.png",count:7,w:18,h:18,anchor:.50,alpha:.78,glow:true}
       })
     }),
     3:Object.freeze({
@@ -1368,10 +1368,16 @@
     for (const [key, spec] of Object.entries(config.objects)) preload(spec.src, `${world}:${key}`);
   }
 
-  function objectCount(baseCount) {
-    // Small, safe mobile optimization: fewer decorative draw calls only.
-    // Enemy counts, progression, hit timings and rewards remain untouched.
-    return Math.max(1, Math.round(baseCount * (mobile() ? .74 : 1)));
+  function objectCount(baseCount, world, key) {
+    // World 2 previously created almost one hundred decorative/collision
+    // objects.  That made its per-frame draw and collision work considerably
+    // heavier than every other world, especially on phones.  Keep every
+    // gameplay value untouched and retain all seven fireflies, but thin only
+    // the repeated scenery.  The deterministic placement still makes the
+    // night meadow look full without paying for off-screen duplicates.
+    if (Number(world) === 2 && key === "firefly") return Math.max(1, baseCount);
+    const factor = Number(world) === 2 ? (mobile() ? .45 : .55) : (mobile() ? .74 : 1);
+    return Math.max(1, Math.round(baseCount * factor));
   }
 
   function strictObjectSize(object, image) {
@@ -1398,7 +1404,7 @@
     const objects = [];
 
     for (const [key, spec] of Object.entries(config.objects)) {
-      for (let index = 0; index < objectCount(spec.count); index += 1) {
+      for (let index = 0; index < objectCount(spec.count, world, key); index += 1) {
         let x = 0, y = 0, attempts = 0;
         do {
           x = (random() * 2 - 1) * half;
@@ -1488,9 +1494,9 @@
     const canvas=document.createElement("canvas"); canvas.width=96; canvas.height=96;
     const ctx=canvas.getContext("2d");
     const gradient=ctx.createRadialGradient(48,48,1,48,48,46);
-    gradient.addColorStop(0,"rgba(255,248,151,.95)");
-    gradient.addColorStop(.12,"rgba(239,255,96,.62)");
-    gradient.addColorStop(.42,"rgba(205,242,64,.22)");
+    gradient.addColorStop(0,"rgba(255,248,151,.82)");
+    gradient.addColorStop(.12,"rgba(239,255,96,.48)");
+    gradient.addColorStop(.42,"rgba(205,242,64,.14)");
     gradient.addColorStop(1,"rgba(180,228,48,0)");
     ctx.fillStyle=gradient; ctx.fillRect(0,0,96,96);
     state.fireflyGlow=canvas;
@@ -1525,7 +1531,7 @@
     context.imageSmoothingEnabled = true;
     if ("imageSmoothingQuality" in context) context.imageSmoothingQuality = mobile() ? "medium" : "high";
     if (object.glow) {
-      const aura=mobile()?58:76;
+      const aura=mobile()?50:64;
       context.globalCompositeOperation="screen";
       context.drawImage(fireflyGlowCanvas(),Math.round(drawX-aura/2),Math.round(drawY-aura/2),aura,aura);
       context.globalCompositeOperation="source-over";

@@ -97,7 +97,7 @@
 
   function ensureLobbyButton(){
     const root=q("#menuDashboardV060 .dashboard-shortcuts-v060");
-    if(root&&!q("[data-prebeta-event-open]",root))root.insertAdjacentHTML("afterbegin",`<button type="button" data-prebeta-event-open><i><img src="assets/items/chests/epic_chest.png" alt=""></i><span><b>Event Hub</b><small>Closed Beta</small></span><em class="notice-dot-v082"></em></button>`);
+    if(root&&!q("[data-prebeta-event-open]",root))root.insertAdjacentHTML("afterbegin",`<button type="button" data-prebeta-event-open><i><img src="assets/items/chests/epic_chest.png" alt=""></i><span><b>Events</b><small>Closed Beta</small></span><em class="notice-dot-v082"></em></button>`);
   }
 
   function overview(event){
@@ -116,10 +116,10 @@
   function render(){
     const event=ensureSave(),panel=ensurePanel();if(!event||!panel)return;
     const content=state.tab==="login"?loginView(event):state.tab==="daily"?dailyView(event):state.tab==="shop"?shopView(event):overview(event);
-    panel.innerHTML=`<div class="event-shell-pb"><header><button data-event-back>←</button><div><small>CHERRIFT PRE-BETA</small><h1>Event Hub</h1></div></header><nav>${[["overview",copy("Áttekintés","Overview")],["login","7 Day Login"],["daily",copy("Napi Event","Daily Event")],["shop","Event Shop"]].map(([key,label])=>`<button class="${state.tab===key?"active":""}" data-event-tab="${key}">${label}</button>`).join("")}</nav><main>${content}</main></div>`;
+    panel.innerHTML=`<div class="event-shell-pb"><header><button data-event-back aria-label="Lobby" title="Lobby">←</button><div><small>CHERRIFT PRE-BETA</small><h1>Events</h1></div></header><nav>${[["overview",copy("Áttekintés","Overview")],["login","7 Day Login"],["daily",copy("Napi Event","Daily Event")],["shop","Event Shop"]].map(([key,label])=>`<button class="${state.tab===key?"active":""}" data-event-tab="${key}">${label}</button>`).join("")}</nav><main>${content}</main></div>`;
   }
 
-  function open(tab=state.tab){state.tab=tab;ensureSave();window.UI?.open?.("eventHubPrebeta");render();persist()}
+  function open(tab=state.tab){state.tab=tab;ensureSave();const panel=ensurePanel();window.UI?.open?.("menu");q("#menu")?.classList.add("hidden");document.querySelectorAll("#app > .panel").forEach(node=>node.classList.add("hidden"));panel.classList.remove("hidden");panel.style.removeProperty("display");document.body.classList.remove("is-playing","is-levelup","is-loading-stage");render();persist()}
 
   function claimLogin(day){const event=ensureSave();if(!event||event.loginDays.length<day||event.loginClaimed.includes(day))return;grant(LOGIN_REWARDS[day-1]);event.loginClaimed.push(day);persist();render();window.UI?.toast?.(copy("Login jutalom átvéve.","Login reward claimed."))}
   function claimDaily(taskId){const event=ensureSave(),task=DAILY_TASKS.find(item=>item.id===taskId),daily=event?.daily?.[dayKey()];if(!task||!daily||daily.claimed.includes(task.id)||dailyProgress(task,event)<task.goal)return;grant(task.reward);daily.claimed.push(task.id);persist();render();window.UI?.toast?.(copy("Napi eventjutalom átvéve.","Daily event reward claimed."))}

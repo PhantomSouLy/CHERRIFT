@@ -31,7 +31,7 @@
       account: "Fiók", displayName: "Megjelenített név", discord: "Discord", level: "Szint", cherrySkin: "Cherry skin",
       statDetails: "Részletes statok", achievements: "Teljesítmények", kills: "Ölések", stageClears: "Pályateljesítések",
       totalXp: "Összes XP", gear: "Felszerelés", gacha: "Gacha", arsenalAvg: "Arsenal átlag", power: "Erő",
-      titles: "Cím választása", titleCollection:"Címgyűjtemény", owned: "Megszerezve", equip: "Felszerelés", equipped: "Aktív", locked: "Nincs megszerezve",
+      titles: "Cím választása", titleCollection:"Címgyűjtemény", noTitle:"[Nincs Title]", owned: "Megszerezve", equip: "Felszerelés", equipped: "Aktív", locked: "Nincs megszerezve",
       editName: "Megjelenített név szerkesztése", save: "Mentés", nameRule: "3–24 karakter használható.",
       currentSkin: "Jelenlegi skin", gearEquipments: "Felszerelések", titleStats: "Title Stats", titleStatsEmpty: "Title stat bónuszok még nem érhetők el.", totalTitleStats: "Összesített title statok"
     },
@@ -44,7 +44,7 @@
       account: "Account", displayName: "Display Name", discord: "Discord", level: "Level", cherrySkin: "Cherry Skin",
       statDetails: "Stat Details", achievements: "Achievements", kills: "Kills", stageClears: "Stage Clears",
       totalXp: "Total XP", gear: "Gear", gacha: "Gacha", arsenalAvg: "Arsenal Avg", power: "Power",
-      titles: "Select Title", owned: "Owned", equip: "Equip", equipped: "Equipped", locked: "Not owned",
+      titles: "Select Title", noTitle:"[No Title]", owned: "Owned", equip: "Equip", equipped: "Equipped", locked: "Not owned",
       editName: "Edit Display Name", save: "Save", nameRule: "Use 3–24 characters.",
       currentSkin: "Current Skin", gearEquipments: "Gear Equipments", titleCollection:"Title Collection", titleStats: "Title Stats", titleStatsEmpty: "Title stat bonuses are not available yet.", totalTitleStats: "Total title stats"
     }

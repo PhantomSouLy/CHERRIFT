@@ -493,7 +493,8 @@
     const save = window.UI?.save;
     if (!save?.account) return;
     save.account.skillTreeV082 ||= { ranks: {} };
-    const earned = Math.max(0, Math.floor(Number(save.account.level) || 1) - 1);
+    // Level 1 owns its first point; every later player level adds one more.
+    const earned = Math.max(1, Math.floor(Number(save.account.level) || 1));
     const availableFromLevels = Math.max(0, earned - spentSkillPoints(save));
     const current = Math.max(0, Math.floor(Number(save.account.skillPoints) || 0));
     if (current < availableFromLevels) {

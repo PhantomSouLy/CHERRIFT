@@ -94,6 +94,12 @@
               <label><span>Módosítás indoka <em>kötelező, naplózva lesz</em></span><textarea id="profileReason" rows="3" maxlength="500" required placeholder="Például: elveszett jutalom visszaállítása"></textarea></label>
               <div id="profileDiff" class="diff-box">Még nincs módosítás.</div><button id="profileSaveBtn" class="primary submit" type="submit">Snapshot + profil mentése</button>
             </form>
+            <section class="card profile-reset-card" aria-labelledby="profileResetTitle">
+              <header><div><p class="eyebrow">VESZÉLYES MŰVELET</p><h3 id="profileResetTitle">Teljes játékos-reset</h3><p>A játékos teljes haladását a biztonságos kezdőállapotra állítja. Előtte szerveroldali snapshot és auditbejegyzés készül; a Discord-identitás nem változik.</p></div><span>SERVER ONLY</span></header>
+              <label><span>Reset indoka <em>kötelező, naplózva lesz</em></span><textarea id="profileResetReason" rows="3" maxlength="500" placeholder="Például: másik fiók lokális mentése került erre a profilra"></textarea></label>
+              <label><span>Megerősítés</span><input id="profileResetConfirm" maxlength="5" autocomplete="off" placeholder="Írd be: RESET"></label>
+              <button id="profileResetBtn" class="danger submit" type="button">Snapshot + teljes reset</button>
+            </section>
             <details class="card raw-save"><summary>Teljes mentés – csak olvasható</summary><pre id="rawSaveJson"></pre></details>
             <article class="card list-card"><header><h3>Legutóbbi műveletek</h3><button id="refreshActivity" class="ghost" type="button">Frissítés</button></header><div id="auditHistory" class="activity-list"><p class="empty">Még nincs adat.</p></div></article>
           </div>
@@ -107,6 +113,6 @@
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <script src="../vendor/supabase-js-2.110.7.js?v=gm-tool-12"></script>
   <script src="../src/supabase_config.js?v=gm-tool-12"></script>
-  <script src="gm.js?v=gm-tool-12"></script>
+  <script src="gm.js?v=gm-tool-13"></script>
 </body>
 </html>

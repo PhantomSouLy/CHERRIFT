@@ -105,6 +105,113 @@ function profileCode(userId: string): string {
   return `CH-${userId.replaceAll("-", "").slice(0, 10).toUpperCase()}`;
 }
 
+const GM_TITLE_IDS = new Set(["gm", "senior_gm", "head_gm"]);
+const MAX_SAVE_BYTES = 1_500_000;
+
+function discordProfile(user: any): JsonObject {
+  const metadata = user?.user_metadata ?? {};
+  return {
+    name: safeText(metadata.full_name || metadata.global_name || metadata.name || metadata.user_name || metadata.preferred_username, 80) || "Cherry Player",
+    authProvider: "discord",
+    discordUserId: String(user.id),
+    discordId: safeText(metadata.provider_id, 80),
+    discordUsername: safeText(metadata.user_name || metadata.preferred_username, 80),
+    avatarUrl: safeText(metadata.avatar_url || metadata.picture, 500),
+    activeTitle: "",
+    frameId: "frame0lvl",
+    createdAt: Date.now(),
+  };
+}
+
+function starterSave(user: any): JsonObject {
+  return {
+    coins: 500,
+    keys: 0,
+    bloomGems: 0,
+    blossomGems: 0,
+    sakuraEssence: 0,
+    heartTokens: 0,
+    chests: { common:3, rare:0, epic:0 },
+    selectedSkin: "cherry_default",
+    unlockedSkins: ["cherry_default"],
+    selectedStageId: "world_1_1",
+    unlockedStages: ["world_1_1"],
+    clearedStages: {},
+    stageStars: {},
+    stageStats: {},
+    firstClearClaimed: {},
+    inventory: [],
+    equipped: {},
+    account: {
+      level:1, xp:0, totalXp:0, skillPoints:1, manualV052:true,
+      tree:{ power:0, vitality:0, haste:0, fortune:0 },
+      skillTreeV082:{ ranks:{} }, skillTreeV082Migrated:true,
+    },
+    stats: { kills:0, clears:0, runs:0, coinsEarned:0, loginDays:0 },
+    economy: { lifetimeCoinsEarned:0, bestWeeklyRank:0, activePlayers:0 },
+    ownedTitles: [],
+    titleRewardsClaimed: [],
+    profile: discordProfile(user),
+    energy: 50,
+    energyState: { max:50, lastTick:Date.now(), refills:{}, drinks:{ small:0, standard:0, large:0 } },
+    bag: { materials:{ gearScrap:0, stones:{ copper:0, iron:0, steel:0, silver:0, royal:0, magical:0 }, slotCores:{} } },
+    settings: { volume:60, touchMode:true, fpsLimit:60, language:"hu" },
+    prebeta: { schema:"prebeta-1", version:"0.9.5-prebeta.2", starterCreated:true, isStarter:true },
+    security: { accountOwnerId:String(user.id), schema:2, initializedBy:"player-api" },
+  };
+}
+
+function bindAuthoritativeIdentity(value: unknown, user: any): JsonObject {
+  if (!isObject(value)) return starterSave(user);
+  const next = structuredClone(value) as JsonObject;
+  const previousProfile = isObject(next.profile) ? next.profile : {};
+  next.profile = {
+    ...previousProfile,
+    ...discordProfile(user),
+    activeTitle:safeText(previousProfile.activeTitle, 80),
+    frameId:safeText(previousProfile.frameId, 50) || "frame0lvl",
+    createdAt:Number(previousProfile.createdAt || Date.now()),
+  };
+  next.security = { accountOwnerId:String(user.id), schema:2, initializedBy:"player-api" };
+  return next;
+}
+
+function sanitizeProgressSave(value: unknown, current: JsonObject, user: any): JsonObject {
+  if (!isObject(value)) throw new Error("invalid_save_data");
+  const serialized = JSON.stringify(value);
+  if (new TextEncoder().encode(serialized).byteLength > MAX_SAVE_BYTES) throw new Error("save_too_large");
+  const claimedOwner = safeText(isObject(value.security) ? value.security.accountOwnerId : "", 80);
+  if (claimedOwner !== String(user.id)) throw new Error("account_owner_mismatch");
+  const next = structuredClone(value) as JsonObject;
+  const currentProfile = isObject(current.profile) ? current.profile : {};
+  const requestedProfile = isObject(next.profile) ? next.profile : {};
+  next.profile = {
+    ...requestedProfile,
+    ...discordProfile(user),
+    activeTitle:safeText(requestedProfile.activeTitle, 80),
+    frameId:safeText(requestedProfile.frameId, 50) || safeText(currentProfile.frameId, 50) || "frame0lvl",
+    createdAt:Number(currentProfile.createdAt || requestedProfile.createdAt || Date.now()),
+  };
+  const currentTitles = Array.isArray(current.ownedTitles) ? current.ownedTitles.filter((id) => typeof id === "string") : [];
+  const requestedTitles = Array.isArray(next.ownedTitles) ? next.ownedTitles.filter((id) => typeof id === "string" && !GM_TITLE_IDS.has(id)).slice(0, 500) : [];
+  next.ownedTitles = [...new Set([...requestedTitles, ...currentTitles.filter((id) => GM_TITLE_IDS.has(id))])];
+  const currentPrebeta = isObject(current.prebeta) ? current.prebeta : {};
+  const requestedPrebeta = isObject(next.prebeta) ? next.prebeta : {};
+  next.prebeta = { ...requestedPrebeta };
+  if (currentPrebeta.serverEdit !== undefined) next.prebeta.serverEdit = currentPrebeta.serverEdit;
+  if (currentPrebeta.gmAccessBackup !== undefined) next.prebeta.gmAccessBackup = currentPrebeta.gmAccessBackup;
+  next.security = { accountOwnerId:String(user.id), schema:2, initializedBy:"player-api" };
+  next.unlockedSkins = Array.isArray(next.unlockedSkins)
+    ? [...new Set(next.unlockedSkins.filter((id) => typeof id === "string" && id.length <= 80))].slice(0, 500)
+    : ["cherry_default"];
+  if (!next.unlockedSkins.includes("cherry_default")) next.unlockedSkins.unshift("cherry_default");
+  next.unlockedStages = Array.isArray(next.unlockedStages)
+    ? [...new Set(next.unlockedStages.filter((id) => typeof id === "string" && /^world_[0-9]+_[0-9]+$/.test(id)))].slice(0, 500)
+    : ["world_1_1"];
+  if (!next.unlockedStages.includes("world_1_1")) next.unlockedStages.unshift("world_1_1");
+  return next;
+}
+
 function mondayUtc(): string {
   const now = new Date();
   const day = now.getUTCDay() || 7;
@@ -169,6 +276,84 @@ Deno.serve(async (req: Request) => {
     const body = await req.json().catch(() => ({}));
     if (!isObject(body)) throw new Error("invalid_json_body");
     const action = typeof body.action === "string" ? body.action : "";
+
+    if (action === "bootstrap_save") {
+      const metadata = user.user_metadata ?? {};
+      const now = new Date().toISOString();
+      const { data: existing, error: selectError } = await adminClient.from("game_saves")
+        .select("save_data,save_version,created_at,updated_at").eq("user_id", user.id).maybeSingle();
+      if (selectError) throw selectError;
+      let row = existing;
+      let created = false;
+      if (!row) {
+        const initial = starterSave(user);
+        const { data: inserted, error: insertError } = await adminClient.from("game_saves").insert({
+          user_id:user.id, save_data:initial, save_version:"0.9.5-prebeta.2", updated_at:now,
+        }).select("save_data,save_version,created_at,updated_at").single();
+        if (insertError) {
+          // Parallel tabs may race on the first login. In that case load the
+          // row created by the winner; never use either tab's local save.
+          if (String(insertError.code) !== "23505") throw insertError;
+          const retry = await adminClient.from("game_saves").select("save_data,save_version,created_at,updated_at").eq("user_id", user.id).single();
+          if (retry.error) throw retry.error;
+          row = retry.data;
+        } else {
+          row = inserted;
+          created = true;
+        }
+      } else {
+        // Existing progress is authoritative, but identity fields are always
+        // rebound to the authenticated Discord UUID. This upgrades legacy
+        // saves without importing any browser-local state or resetting their
+        // legitimate progression.
+        const rebound = bindAuthoritativeIdentity(row.save_data, user);
+        const { data: reboundRow, error: reboundError } = await adminClient.from("game_saves").update({
+          save_data:rebound,
+          save_version:safeText(row.save_version, 40) || "0.9.5-prebeta.2",
+        }).eq("user_id", user.id).eq("updated_at", row.updated_at)
+          .select("save_data,save_version,created_at,updated_at").maybeSingle();
+        if (reboundError) throw reboundError;
+        if (reboundRow) row = reboundRow;
+        else {
+          const latest = await adminClient.from("game_saves").select("save_data,save_version,created_at,updated_at").eq("user_id", user.id).single();
+          if (latest.error) throw latest.error;
+          row = latest.data;
+        }
+      }
+      const displayName = safeText(metadata.full_name || metadata.name || metadata.user_name || metadata.preferred_username, 40) || "Cherry Player";
+      await adminClient.from("player_profiles").upsert({
+        user_id:user.id, public_code:profileCode(user.id), display_name:displayName,
+        discord_name:safeText(metadata.user_name || metadata.preferred_username, 80) || null,
+        avatar_url:safeText(metadata.avatar_url || metadata.picture, 500) || null,
+        level:Number((row?.save_data as any)?.account?.level || 1),
+        power:Number((row?.save_data as any)?.power || 0), last_active_at:now, updated_at:now,
+      }, { onConflict:"user_id" });
+      return json(req, { ok:true, requestId, created, save_data:row?.save_data, save_version:row?.save_version, updated_at:row?.updated_at });
+    }
+
+    if (action === "save_progress") {
+      const { data: existing, error: selectError } = await adminClient.from("game_saves")
+        .select("save_data,save_version,updated_at").eq("user_id", user.id).maybeSingle();
+      if (selectError) throw selectError;
+      if (!existing) throw new Error("save_not_initialized");
+      const expected = typeof body.expected_updated_at === "string" ? body.expected_updated_at : "";
+      if (expected && expected !== existing.updated_at) {
+        return json(req, { ok:false, conflict:true, requestId, save_data:existing.save_data, save_version:existing.save_version, updated_at:existing.updated_at });
+      }
+      const next = sanitizeProgressSave(body.save_data, existing.save_data as JsonObject, user);
+      const version = safeText(body.save_version, 40) || "0.9.5-prebeta.2";
+      let update = adminClient.from("game_saves").update({ save_data:next, save_version:version })
+        .eq("user_id", user.id).eq("updated_at", existing.updated_at)
+        .select("save_data,save_version,updated_at").maybeSingle();
+      const { data: saved, error: saveError } = await update;
+      if (saveError) throw saveError;
+      if (!saved) {
+        const latest = await adminClient.from("game_saves").select("save_data,save_version,updated_at").eq("user_id", user.id).single();
+        if (latest.error) throw latest.error;
+        return json(req, { ok:false, conflict:true, requestId, ...latest.data });
+      }
+      return json(req, { ok:true, requestId, save_data:saved.save_data, save_version:saved.save_version, updated_at:saved.updated_at });
+    }
 
     if (action === "bootstrap_profile") {
       const metadata = user.user_metadata ?? {};

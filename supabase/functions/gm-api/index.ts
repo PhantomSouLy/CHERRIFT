@@ -57,6 +57,12 @@ function isObject(value: unknown): value is JsonObject { return !!value && typeo
 function isUuid(value: unknown): value is string {
   return typeof value === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 }
+function safeText(value: unknown, max = 80): string {
+  return typeof value === "string" ? value.trim().replace(/[\u0000-\u001f]/g, "").slice(0, max) : "";
+}
+function profileCode(userId: string): string {
+  return `CH-${userId.replaceAll("-", "").slice(0, 10).toUpperCase()}`;
+}
 function integer(value: unknown, min: number, max: number, fallback: number | null = null): number {
   const number = Number(value);
   if (!Number.isInteger(number) || number < min || number > max) {
@@ -369,6 +375,46 @@ Deno.serve(async (req: Request) => {
       });
       if (error) throw error;
       return json(req, { ok: true, requestId, result: data });
+    }
+
+    if (action === "reset_profile") {
+      if (!hasPermission(admin, "profile.edit")) throw new Error("permission_denied:profile.edit");
+      if (!targetUserId) throw new Error("invalid_target_user_id");
+      const reason = typeof body.reason === "string" ? body.reason.trim() : "";
+      const confirmation = typeof body.confirmation === "string" ? body.confirmation.trim() : "";
+      if (reason.length < 3 || reason.length > 500) throw new Error("invalid_change_reason");
+      if (confirmation !== "RESET") throw new Error("invalid_reset_confirmation");
+      const { data:userRecord, error:userError } = await adminClient.auth.admin.getUserById(targetUserId);
+      if (userError || !userRecord.user) throw userError ?? new Error("player_not_found");
+      const metadata = userRecord.user.user_metadata ?? {};
+      const displayName = safeText(metadata.full_name || metadata.global_name || metadata.name || metadata.user_name || metadata.preferred_username, 40) || "Cherry Player";
+      const discordName = safeText(metadata.user_name || metadata.preferred_username, 80) || null;
+      const avatarUrl = safeText(metadata.avatar_url || metadata.picture, 500) || null;
+      const { data:knownProfile, error:profileReadError } = await adminClient.from("player_profiles").select("public_code").eq("user_id",targetUserId).maybeSingle();
+      if (profileReadError) throw profileReadError;
+      // Do not touch progression before the transactional RPC has obtained
+      // its lock and snapshot.  Existing profiles only receive fresh identity
+      // metadata here; level, Power, frame and entitlements are reset inside
+      // gm_reset_player_save as one audited transaction.
+      const profileMutation = knownProfile
+        ? adminClient.from("player_profiles").update({
+            display_name:displayName, discord_name:discordName, avatar_url:avatarUrl,
+            updated_at:new Date().toISOString(),
+          }).eq("user_id",targetUserId)
+        : adminClient.from("player_profiles").insert({
+            user_id:targetUserId, public_code:profileCode(targetUserId),
+            display_name:displayName, discord_name:discordName, avatar_url:avatarUrl,
+          });
+      const { error:profileWriteError } = await profileMutation;
+      if (profileWriteError) throw profileWriteError;
+      const { data, error } = await adminClient.rpc("gm_reset_player_save", {
+        p_admin_user_id:user.id,
+        p_target_user_id:targetUserId,
+        p_reason:reason,
+        p_request_id:requestId,
+      });
+      if (error) throw error;
+      return json(req, { ok:true, requestId, result:data });
     }
 
     if (action === "send_mail") {

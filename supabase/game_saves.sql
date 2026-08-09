@@ -16,7 +16,8 @@ create table if not exists public.game_saves (
 alter table public.game_saves enable row level security;
 
 revoke all on table public.game_saves from anon;
-grant select, insert, update, delete on table public.game_saves to authenticated;
+grant select on table public.game_saves to authenticated;
+grant all on table public.game_saves to service_role;
 
 drop policy if exists "Players can read their own CHERRIFT save" on public.game_saves;
 create policy "Players can read their own CHERRIFT save"
@@ -26,26 +27,8 @@ to authenticated
 using ((select auth.uid()) is not null and (select auth.uid()) = user_id);
 
 drop policy if exists "Players can create their own CHERRIFT save" on public.game_saves;
-create policy "Players can create their own CHERRIFT save"
-on public.game_saves
-for insert
-to authenticated
-with check ((select auth.uid()) is not null and (select auth.uid()) = user_id);
-
 drop policy if exists "Players can update their own CHERRIFT save" on public.game_saves;
-create policy "Players can update their own CHERRIFT save"
-on public.game_saves
-for update
-to authenticated
-using ((select auth.uid()) is not null and (select auth.uid()) = user_id)
-with check ((select auth.uid()) is not null and (select auth.uid()) = user_id);
-
 drop policy if exists "Players can delete their own CHERRIFT save" on public.game_saves;
-create policy "Players can delete their own CHERRIFT save"
-on public.game_saves
-for delete
-to authenticated
-using ((select auth.uid()) is not null and (select auth.uid()) = user_id);
 
 create or replace function public.set_cherrift_save_updated_at()
 returns trigger

@@ -103,8 +103,11 @@
     // A level-1 account has already earned the point that belongs to level 1.
     // This is deliberately applied only while creating a starter save, so an
     // existing tester/GM save is never reset or granted duplicate points.
-    save.account ||= {}; Object.assign(save.account,{level:1,xp:0,totalXp:0,skillPoints:1});
-    save.account.skillTreeV082 ||= {ranks:{}};
+    save.account ||= {}; Object.assign(save.account,{
+      level:1,xp:0,totalXp:0,skillPoints:1,manualV052:true,
+      tree:{power:0,vitality:0,haste:0,fortune:0},skillTreeV082Migrated:true
+    });
+    save.account.skillTreeV082 = {ranks:{}};
     save.stats = {...(save.stats || {}),kills:0,clears:0,runs:0,coinsEarned:0,loginDays:0};
     save.profile ||= {}; save.profile.activeTitle = ""; save.profile.frameId = "frame0lvl";
     save.ownedTitles = []; save.energy = B?.energy.starterMax || 50;
@@ -385,7 +388,7 @@
 
   function ensurePanel(panelId){let panel=id(panelId);if(!panel){panel=document.createElement("section");panel.id=panelId;panel.className="panel hidden prebeta-panel";id("app")?.appendChild(panel);}return panel;}
   function showCustom(panelId){qa("#app > section,.screen,.panel").forEach(panel=>panel.classList.toggle("hidden",panel.id!==panelId));document.body.classList.remove("is-playing");}
-  function head(title){return `<div class="prebeta-shell"><header class="prebeta-head"><button class="prebeta-back" data-prebeta-open="menu">← Lobby</button><h2>${escapeHtml(title)}</h2></header>`;}
+  function head(title){return `<div class="prebeta-shell"><header class="prebeta-head"><button class="prebeta-back" data-prebeta-open="menu" aria-label="Lobby" title="Lobby">←</button><h2>${escapeHtml(title)}</h2></header>`;}
 
   async function api(action,payload={}){try{return await window.CHERRIFT_LIVE_SERVICES?.invoke?.(action,payload)||{};}catch(error){UI.toast?.(`Online hiba: ${error.message}`);return {error:error.message};}}
   async function renderSocial(tab=state.socialTab){state.socialTab=tab;const panel=ensurePanel("socialV082");showCustom("socialV082");panel.innerHTML=`${head("Social")}<nav class="prebeta-social-tabs prebeta-card">${[["friends","Friends"],["requests","Requests"],["search","Search"],["blocked","Blocked"]].map(([key,label])=>`<button class="prebeta-button ${tab===key?"primary":""}" data-prebeta-social-tab="${key}">${label}</button>`).join("")}</nav><section class="prebeta-social-toolbar prebeta-card"><input id="prebetaSocialSearch" placeholder="Discord name or UUID" maxlength="80"><button class="prebeta-button primary" data-prebeta-search>Search</button></section><div id="prebetaSocialList" class="prebeta-social-list"><p class="prebeta-empty prebeta-card">Loading…</p></div></div>`;

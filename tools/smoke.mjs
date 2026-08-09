@@ -7,13 +7,30 @@ import { JSDOM, VirtualConsole } from "jsdom";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const gmApiSource = await readFile(path.join(root,"supabase/functions/gm-api/index.ts"),"utf8");
+const playerApiSource = await readFile(path.join(root,"supabase/functions/player-api/index.ts"),"utf8");
 const profileBundleMigration = await readFile(path.join(root,"supabase/migrations/20260809_profile_bundle_revision.sql"),"utf8");
+const accountIsolationMigration = await readFile(path.join(root,"supabase/migrations/20260809_account_save_isolation.sql"),"utf8");
+const playerResetMigration = await readFile(path.join(root,"supabase/migrations/20260809_gm_player_reset.sql"),"utf8");
 const cloudSaveSource = await readFile(path.join(root,"src/cherrift_app.js"),"utf8");
 assert.match(gmApiSource,/action === "update_profile_bundle"/,"GM Profile Editor uses the atomic bundle endpoint");
 assert.match(gmApiSource,/Object\.keys\(rawPatch\)\.length \? normalizeProfilePatch/,"GM profile bundle accepts resource-only/title-only changes");
 assert.match(profileBundleMigration,/gm_apply_profile_bundle/,"GM profile bundle migration is packaged");
 assert.match(profileBundleMigration,/serverEdit/,"GM profile writes stamp an authoritative server revision");
 assert.match(cloudSaveSource,/remoteRevision > localRevision/,"stale game tabs cannot overwrite a newer GM profile edit");
+assert.match(playerApiSource,/action === "bootstrap_save"/,"Discord saves are initialized by the authenticated player API");
+assert.match(playerApiSource,/claimedOwner !== String\(user\.id\)/,"Discord save payloads must claim the authenticated UUID");
+assert.match(playerApiSource,/unlockedSkins: \["cherry_default"\]/,"new Discord accounts start with Base Cherry only");
+assert.match(playerApiSource,/unlockedStages: \["world_1_1"\]/,"new Discord accounts start with World 1 Chapter 1 only");
+assert.match(playerApiSource,/skillPoints:1/,"new Discord accounts start with exactly one Skill Point");
+assert.match(playerApiSource,/manualV052:true[\s\S]{0,180}skillTreeV082Migrated:true/,"legacy progression migration cannot consume the starter Skill Point");
+assert.match(cloudSaveSource,/callPlayerApi\("save_progress"/,"browser progression writes use the authenticated Edge Function");
+assert.doesNotMatch(cloudSaveSource,/\.from\(CLOUD_TABLE\)[\s\S]{0,160}\.(?:insert|upsert|update|delete)\(/,"browser code cannot mutate game_saves directly");
+assert.match(accountIsolationMigration,/revoke all on table public\.game_saves from anon, authenticated/,"legacy direct save mutations are revoked");
+assert.match(accountIsolationMigration,/for select[\s\S]*to authenticated/,"only own-row authenticated save reads remain");
+assert.doesNotMatch(accountIsolationMigration,/for (?:insert|update|delete)/i,"no browser mutation policy is restored");
+assert.match(playerResetMigration,/profile_snapshots/,"GM full reset snapshots the previous save");
+assert.match(playerResetMigration,/profile\.full_reset/,"GM full reset is audit logged");
+assert.match(playerResetMigration,/confirmation|RESET|gm_reset_player_save/,"GM reset is an explicit server operation");
 const contentTypes = {
   ".css":"text/css; charset=utf-8",
   ".html":"text/html; charset=utf-8",
@@ -391,7 +408,7 @@ async function exercise(name,width,height){
     UI.open("menu");
     if(!window.CHERRIFT_WORLD_UI.isMobile()){
       const shortcutLabels=Array.from(document.querySelectorAll("#menuDashboardV060 .dashboard-shortcuts-v060 button b"),node=>node.textContent.trim());
-      assert.deepEqual(shortcutLabels,["Event Hub","Login","Quest","Social","Ranking","Buff List"],`${name}: desktop Lobby shortcut order`);
+      assert.deepEqual(shortcutLabels,["Events","Login","Quest","Social","Ranking","Buff List"],`${name}: desktop Lobby shortcut order`);
       assert.equal(document.querySelector("#menu .news-card"),null,`${name}: temporary legacy Lobby News card is removed`);
       assert.deepEqual(Array.from(document.querySelectorAll("#menu .social-row.r5-support-links button"),button=>button.title),["Twitch","Website","Feedback","Bug Report"],`${name}: Lobby support links`);
       const stableWallet=document.getElementById("desktopCurrencyV0943");
@@ -500,6 +517,18 @@ async function exercise(name,width,height){
     document.querySelector('[data-fix-ach-claim="perfect_meadow"]')?.click();
     assert.equal(UI.save.coins,claimedCoins,`${name}: Cozy achievement cannot be claimed twice`);
 
+    // Guest progression is intentionally capped after World 1 Chapter 2.
+    // Verify the real gate, then clear this synthetic smoke-fixture state so
+    // the remaining combat/skin tests can continue in the same DOM session.
+    window.CherriftStorage.save(UI.save);
+    assert.equal(window.CHERRIFT_SECURITY_UI.guestLocked(),true,`${name}: Guest is login-gated after World 1 Chapter 2`);
+    assert.ok(document.getElementById("guestDiscordCtaV095"),`${name}: Guest Discord CTA remains visible`);
+    UI.save.stageStars.world_1_2=0;
+    delete UI.save.stageStats?.world_1_2;
+    delete UI.save.clearedStages?.world_1_2;
+    delete UI.save.guestProgress;
+    window.CherriftStorage.save(UI.save);
+
     UI.save.keys=2;
     UI.save.resourceWallet={keys:{common:1,rare:1,epic:1}};
     UI.save.chests={common:1,rare:1,epic:1};
@@ -572,7 +601,7 @@ async function exercise(name,width,height){
     }
 
     UI.open("eventV093");
-    await waitFor(()=>document.querySelector("#eventHubPrebeta [data-event-tab=\"login\"]"),`${name} beta Event Hub`);
+    await waitFor(()=>document.querySelector("#eventHubPrebeta [data-event-tab=\"login\"]"),`${name} beta Events`);
     click(window,document.querySelector('#eventHubPrebeta [data-event-tab="login"]'),`${name} 7-day login Event`);
     await waitFor(()=>document.querySelector('[data-event-login-claim="1"]'),`${name} day-one Event reward`);
     const coinsBeforeEvent=Number(UI.save.coins)||0;
@@ -925,6 +954,17 @@ async function exerciseReturningSession(){
     window.CherriftStorage.save(window.UI.save);
     const backup=JSON.parse(window.localStorage.getItem("cherrift-discord-backup-v1:returning-user"));
     assert.equal(backup?.saveData?.coins,4321,"returning session: every Discord save is backed up synchronously");
+    const switchedSession={user:{id:"brand-new-discord-user",user_metadata:{full_name:"Brand New Cherry"},identities:[{provider:"discord",identity_data:{provider_id:"1122334455"}}]}};
+    await window.CHERRIFT_AUTH.applySessionForTesting(switchedSession);
+    assert.equal(window.CHERRIFT_AUTH.getState().account?.id,"brand-new-discord-user","account switch: authenticated UUID changes");
+    assert.equal(window.CHERRIFT_AUTH.getState().memoryOnly,true,"account switch: unavailable server remains isolated and memory-only");
+    assert.equal(window.UI.save.security?.accountOwnerId,"brand-new-discord-user","account switch: save owner is rebound to the new UUID");
+    assert.equal(window.UI.save.coins,500,"account switch: previous account currency is not inherited");
+    assert.deepEqual(Array.from(window.UI.save.unlockedSkins||[]),["cherry_default"],"account switch: previous account skins are not inherited");
+    assert.deepEqual(Array.from(window.UI.save.unlockedStages||[]),["world_1_1"],"account switch: previous account stages are not inherited");
+    assert.equal(window.UI.save.account?.level,1,"account switch: new account starts at level one");
+    assert.equal(window.UI.save.account?.skillPoints,1,"account switch: new account receives exactly one Skill Point");
+    assert.equal(window.document.getElementById("rewardOverlayV083")?.classList.contains("open"),false,"account switch: starter Skill Point is not presented as a newly obtained reward");
     await waitFor(()=>/0\.9\.5/.test(window.document.title),"returning session current version");
     assert.match(window.document.title,/0\.9\.5/,"returning session: current version");
     const meaningful=errors.filter(error=>!/Not implemented: HTMLCanvasElement/i.test(error));

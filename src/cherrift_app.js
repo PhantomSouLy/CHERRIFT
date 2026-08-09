@@ -71,10 +71,10 @@ window.CherriftStorage = {
   key: "cherrift_save_v025_polish",
   defaults() {
     return {
-      coins: 0,
-      keys: 3,
+      coins: 500,
+      keys: 0,
       selectedSkin: "cherry_default",
-      unlockedSkins: ["cherry_default", "fairy_cherry"],
+      unlockedSkins: ["cherry_default"],
       inventory: [],
       equipped: {},
       best: { time:0, kills:0 },
@@ -8337,8 +8337,8 @@ function ensureLayout() {
           <b>Drag & Drop</b>
           <p>Húzd az itemet a világító, megfelelő slotra.</p>
         </div>
-        <button type="button" class="gear-back-menu-v0560" data-v0560-open="menu">
-          ← Main Menu
+        <button type="button" class="gear-back-menu-v0560" data-v0560-open="menu" aria-label="Main Menu" title="Main Menu">
+          ←
         </button>
       </div>
     </aside>
@@ -13379,8 +13379,8 @@ console.info("[CHERRIFT] v0.6.3 test-build systems loaded.");
 (() => {
 "use strict";
 
-const VERSION = "0.9.4-auth.3-safe-cloud";
-const CLOUD_SAVE_VERSION = "0.9.4-cloud.2";
+const VERSION = "0.9.5-auth.4-account-isolation";
+const CLOUD_SAVE_VERSION = "0.9.5-prebeta.2";
 const CONFIG = window.CHERRIFT_SUPABASE_CONFIG || {};
 const CLOUD_TABLE = CONFIG.cloudSaveTable || "game_saves";
 const SAVE_DEBOUNCE_MS = 650;
@@ -13419,7 +13419,7 @@ const COPY = {
     accountMemoryOnly: "A Discord-fiók aktív, de ebben a tesztkörnyezetben nincs adatbázis-kapcsolat.",
     guestAccount: "Jelenleg vendégként játszol. A mentés csak ezen az eszközön található.",
     discordLogin: "Discord Login",
-    testBuild: "TESZTVERZIÓ · v0.9.4",
+    testBuild: "PRE-BÉTA · v0.9.5",
     language: "Nyelv"
   },
   en: {
@@ -13453,7 +13453,7 @@ const COPY = {
     accountMemoryOnly: "Discord is active, but this test environment has no database connection.",
     guestAccount: "You are currently playing as a guest. The save exists only on this device.",
     discordLogin: "Discord Login",
-    testBuild: "TEST BUILD · v0.9.4",
+    testBuild: "PRE-BETA · v0.9.5",
     language: "Language"
   }
 };
@@ -13482,6 +13482,7 @@ const runtime = {
   savePromise: Promise.resolve(),
   lastSavedJson: "",
   lastCloudSavedAt: "",
+  activeUserId: "",
   cloudErrorShown: false
 };
 
@@ -13631,8 +13632,12 @@ function readDiscordBackup(userId = runtime.session?.user?.id) {
   if (!key) return null;
   try {
     const value = JSON.parse(window.localStorage.getItem(key) || "null");
-    if (!isPlainObject(value?.saveData)) return null;
-    return { saveData:normalizeCloudSave(value.saveData), savedAt:String(value.savedAt || "") };
+    if (!isPlainObject(value?.saveData) || String(value.ownerUserId || "") !== String(userId || "")) return null;
+    return {
+      saveData:normalizeCloudSave(value.saveData),
+      savedAt:String(value.savedAt || ""),
+      cloudUpdatedAt:String(value.cloudUpdatedAt || "")
+    };
   } catch (error) {
     console.warn("[CHERRIFT Cloud Save] Local account backup could not be read:", error);
     return null;
@@ -13644,7 +13649,9 @@ function writeDiscordBackup(data, userId = runtime.session?.user?.id) {
   if (!key || !isPlainObject(data)) return false;
   try {
     window.localStorage.setItem(key, JSON.stringify({
+      ownerUserId:String(userId),
       savedAt:new Date().toISOString(),
+      cloudUpdatedAt:String(runtime.lastCloudSavedAt || ""),
       saveVersion:CLOUD_SAVE_VERSION,
       saveData:cloneJson(data)
     }));
@@ -13653,20 +13660,6 @@ function writeDiscordBackup(data, userId = runtime.session?.user?.id) {
     console.warn("[CHERRIFT Cloud Save] Local account backup could not be written:", error);
     return false;
   }
-}
-
-function newerLocalBackup(cloudRow, backup) {
-  if (!backup?.saveData) return false;
-  if (!cloudRow?.save_data) return true;
-  const localRevision = serverEditRevision(backup.saveData);
-  const cloudRevision = serverEditRevision(cloudRow.save_data);
-  // A GM/profile-editor write is authoritative. A tab that was already open
-  // may have a newer local backup timestamp, but it must never overwrite a
-  // later server edit with stale progression/profile data.
-  if (cloudRevision !== localRevision) return localRevision > cloudRevision;
-  const localTime = Date.parse(backup.savedAt || "") || 0;
-  const cloudTime = Date.parse(cloudRow.updated_at || "") || 0;
-  return localTime > cloudTime;
 }
 
 function serverEditRevision(save) {
@@ -13679,11 +13672,68 @@ function acceptAuthoritativeCloudSave(value) {
   writeDiscordBackup(save, runtime.session?.user?.id);
   runtime.lastSavedJson = JSON.stringify(save);
   runtime.pendingSave = null;
-  if (window.UI) window.UI.save = save;
-  if (window.UI?.game) window.UI.game.save = save;
-  window.UI?.refreshMenu?.();
-  window.dispatchEvent(new CustomEvent("cherrift:server-save-applied", { detail:{ source:"gm" } }));
+  const apply = () => {
+    if (window.UI) window.UI.save = save;
+    if (window.UI?.game) window.UI.game.save = save;
+    window.UI?.refreshMenu?.();
+  };
+  if (window.CHERRIFT_REWARDS?.withSuppressed) window.CHERRIFT_REWARDS.withSuppressed(apply);
+  else apply();
+  window.CHERRIFT_REWARDS?.reset?.();
+  window.dispatchEvent(new CustomEvent("cherrift:server-save-applied", { detail:{ source:"server" } }));
   return save;
+}
+
+function freshDiscordStarter(session = runtime.session) {
+  const save = normalizeCloudSave(window.CherriftStorage?.defaults?.() || {});
+  save.coins = Number(window.CHERRIFT_BALANCE?.currencies?.coins?.starter ?? 500);
+  save.keys = 0;
+  save.chests = { common:3, rare:0, epic:0 };
+  save.bloomGems = 0;
+  save.blossomGems = 0;
+  save.sakuraEssence = 0;
+  save.heartTokens = 0;
+  save.selectedSkin = "cherry_default";
+  save.unlockedSkins = ["cherry_default"];
+  save.inventory = [];
+  save.equipped = {};
+  save.selectedStageId = "world_1_1";
+  save.unlockedStages = ["world_1_1"];
+  save.clearedStages = {};
+  save.stageStars = {};
+  save.stageStats = {};
+  save.firstClearClaimed = {};
+  save.account = {
+    ...(save.account || {}), level:1, xp:0, totalXp:0, skillPoints:1,
+    manualV052:true, tree:{ power:0, vitality:0, haste:0, fortune:0 },
+    skillTreeV082:{ ranks:{} }, skillTreeV082Migrated:true
+  };
+  save.stats = { kills:0, clears:0, runs:0, coinsEarned:0, loginDays:0 };
+  save.ownedTitles = [];
+  save.titleRewardsClaimed = [];
+  save.profile = { ...(save.profile || {}), activeTitle:"", frameId:"frame0lvl" };
+  save.energy = 50;
+  save.energyState = { max:50, lastTick:Date.now(), refills:{}, drinks:{ small:0, standard:0, large:0 } };
+  save.bag = { ...(save.bag || {}), materials:{ gearScrap:0, stones:{ copper:0, iron:0, steel:0, silver:0, royal:0, magical:0 }, slotCores:{} } };
+  save.prebeta = { ...(save.prebeta || {}), schema:"prebeta-1", starterCreated:true, isStarter:true };
+  save.security = { accountOwnerId:String(session?.user?.id || ""), schema:2 };
+  applyDiscordProfileToSave(save, session);
+  return save;
+}
+
+async function callPlayerApi(action, payload = {}) {
+  if (typeof runtime.client?.functions?.invoke !== "function") throw new Error("player_api_unavailable");
+  const result = await runtime.client.functions.invoke("player-api", { body:{ action, ...payload } });
+  if (result?.error) throw result.error;
+  if (result?.data?.error) throw new Error(result.data.error);
+  return result?.data || {};
+}
+
+async function bootstrapCloudAccount() {
+  const response = await callPlayerApi("bootstrap_save");
+  if (!isPlainObject(response.save_data)) throw new Error("invalid_bootstrap_save");
+  runtime.lastCloudSavedAt = String(response.updated_at || "");
+  return { save:normalizeCloudSave(response.save_data), created:!!response.created };
 }
 
 async function selectCloudSave(userId) {
@@ -13699,26 +13749,25 @@ async function selectCloudSave(userId) {
 
 async function upsertCloudSnapshot(snapshot) {
   const account = accountFromSession();
-  if (!account || typeof runtime.client?.from !== "function") return false;
-  const current = await selectCloudSave(account.id);
-  const remoteRevision = serverEditRevision(current.row?.save_data);
-  const localRevision = serverEditRevision(snapshot);
-  if (remoteRevision > localRevision) {
-    acceptAuthoritativeCloudSave(current.row.save_data);
-    runtime.lastCloudSavedAt = current.row.updated_at || runtime.lastCloudSavedAt;
+  if (!account) return false;
+  if (String(snapshot?.security?.accountOwnerId || "") !== account.id) throw new Error("account_owner_mismatch");
+  const response = await callPlayerApi("save_progress", {
+    save_data:cloneJson(snapshot),
+    expected_updated_at:runtime.lastCloudSavedAt || null,
+    save_version:CLOUD_SAVE_VERSION
+  });
+  if (response.conflict && isPlainObject(response.save_data)) {
+    const remoteRevision = serverEditRevision(response.save_data);
+    const localRevision = serverEditRevision(snapshot);
+    if (remoteRevision > localRevision) {
+      console.warn("[CHERRIFT Cloud Save] A newer server/GM revision replaced this stale game tab.");
+    }
+    runtime.lastCloudSavedAt = String(response.updated_at || "");
+    acceptAuthoritativeCloudSave(response.save_data);
     return false;
   }
-  const payload = {
-    user_id: account.id,
-    save_data: cloneJson(snapshot),
-    save_version: CLOUD_SAVE_VERSION,
-    updated_at: new Date().toISOString()
-  };
-  const result = await runtime.client
-    .from(CLOUD_TABLE)
-    .upsert(payload, { onConflict: "user_id" });
-  if (result?.error) throw result.error;
-  runtime.lastCloudSavedAt = payload.updated_at;
+  if (!response.ok) throw new Error("cloud_save_rejected");
+  runtime.lastCloudSavedAt = String(response.updated_at || runtime.lastCloudSavedAt);
   return true;
 }
 
@@ -13753,49 +13802,31 @@ async function bootstrapSave(loadGuestSave) {
       }
 
       runtime.session = session;
+      runtime.activeUserId = session.user.id;
       runtime.mode = "discord";
       runtime.statusKey = "loadingCloud";
-      const backup = readDiscordBackup(session.user.id);
-      const cloud = await selectCloudSave(session.user.id);
-
-      if (!cloud.supported) {
-        const memorySave = normalizeCloudSave(backup?.saveData || loadGuest());
-        applyDiscordProfileToSave(memorySave, session);
-        runtime.memoryOnly = true;
-        runtime.cloudReady = false;
-        runtime.lastSavedJson = JSON.stringify(memorySave);
-        writeDiscordBackup(memorySave, session.user.id);
-        console.warn("[CHERRIFT Cloud Save] Database API is unavailable; using the local account backup until reconnection.");
-        return memorySave;
-      }
-
-      let save;
-      if (newerLocalBackup(cloud.row, backup)) {
-        save = normalizeCloudSave(backup.saveData);
-        applyDiscordProfileToSave(save, session);
-        await upsertCloudSnapshot(save);
-      } else if (cloud.row?.save_data) {
-        save = normalizeCloudSave(cloud.row.save_data);
-      } else {
-        save = normalizeCloudSave(backup?.saveData || loadGuest());
-        applyDiscordProfileToSave(save, session);
-        await upsertCloudSnapshot(save);
-      }
+      const bootstrapped = await bootstrapCloudAccount();
+      const save = bootstrapped.save;
 
       applyDiscordProfileToSave(save, session);
       writeDiscordBackup(save, session.user.id);
       runtime.cloudReady = true;
       runtime.memoryOnly = false;
       runtime.lastSavedJson = JSON.stringify(save);
-      runtime.lastCloudSavedAt = cloud.row?.updated_at || runtime.lastCloudSavedAt;
       return save;
     } catch (error) {
-      console.error("[CHERRIFT Cloud Save] Initial cloud load failed:", error);
+      console.warn("[CHERRIFT Cloud Save] Initial cloud load failed; using an isolated, memory-only starter view:", error);
       runtime.bootstrapErrorKey = "cloudUnavailable";
       runtime.bootstrapErrorDetail = cloudErrorDetail(error);
       runtime.cloudReady = false;
       if (runtime.session?.user) {
-        const fallback = normalizeCloudSave(readDiscordBackup(runtime.session.user.id)?.saveData || loadGuest());
+        // Local browser data is never authoritative for a Discord account.
+        // While the server is unavailable we expose an isolated starter view,
+        // keep it memory-only and replace it with the server row on reconnect.
+        // This deliberately refuses even same-UUID backups: old builds may
+        // have written already-contaminated data into those keys.
+        const fallback = normalizeCloudSave(freshDiscordStarter(runtime.session));
+        fallback.security = { ...(fallback.security || {}), quarantinedOffline:true };
         applyDiscordProfileToSave(fallback, runtime.session);
         writeDiscordBackup(fallback, runtime.session.user.id);
         runtime.memoryOnly = true;
@@ -14084,33 +14115,46 @@ function syncAccountUi() {
 
 async function completeDiscordSession(session) {
   if (!session?.user) return false;
+  if (runtime.activeUserId && runtime.activeUserId !== session.user.id) {
+    window.clearTimeout(runtime.saveTimer);
+    runtime.pendingSave = null;
+    runtime.lastSavedJson = "";
+    runtime.lastCloudSavedAt = "";
+    window.CHERRIFT_REWARDS?.reset?.();
+  }
   runtime.session = session;
-  runtime.mode = "discord";
+  runtime.activeUserId = session.user.id;
+  // Block all account-scoped actions while the authoritative row is loading.
+  // The previous account must not stay interactive for even a single frame.
+  runtime.mode = "checking";
+  runtime.gateVisible = true;
+  runtime.busy = true;
+  ensureGate().hidden = false;
+  document.body.classList.add("auth-gated-v064");
   runtime.statusKey = "loadingCloud";
+  renderGate();
   let save;
   try {
-    const backup = readDiscordBackup(session.user.id);
-    const cloud = await selectCloudSave(session.user.id);
-    if (cloud.supported && !newerLocalBackup(cloud.row, backup) && cloud.row?.save_data) {
-      save = normalizeCloudSave(cloud.row.save_data);
-    } else {
-      save = normalizeCloudSave(backup?.saveData || window.UI?.save || currentGuestSave());
-      if (cloud.supported) await upsertCloudSnapshot(save);
-    }
-    runtime.cloudReady = !!cloud.supported;
-    runtime.memoryOnly = !cloud.supported;
-    runtime.lastCloudSavedAt = cloud.row?.updated_at || runtime.lastCloudSavedAt;
+    save = (await bootstrapCloudAccount()).save;
+    runtime.cloudReady = true;
+    runtime.memoryOnly = false;
   } catch (error) {
-    console.error("[CHERRIFT Cloud Save] Session restore failed; local account backup remains active:", error);
-    save = normalizeCloudSave(readDiscordBackup(session.user.id)?.saveData || window.UI?.save || currentGuestSave());
+    console.warn("[CHERRIFT Cloud Save] Session restore failed; using an isolated, memory-only starter view:", error);
+    save = normalizeCloudSave(freshDiscordStarter(session));
+    save.security = { ...(save.security || {}), quarantinedOffline:true };
     runtime.cloudReady = false;
     runtime.memoryOnly = true;
   }
   applyDiscordProfileToSave(save, session);
   writeDiscordBackup(save, session.user.id);
   runtime.lastSavedJson = JSON.stringify(save);
-  if (window.UI) window.UI.save = save;
-  if (window.UI?.game) window.UI.game.save = save;
+  const apply = () => {
+    if (window.UI) window.UI.save = save;
+    if (window.UI?.game) window.UI.game.save = save;
+  };
+  if (window.CHERRIFT_REWARDS?.withSuppressed) window.CHERRIFT_REWARDS.withSuppressed(apply);
+  else apply();
+  window.CHERRIFT_REWARDS?.reset?.();
   closeGate("discord");
   syncAccountUi();
   window.UI?.refreshMenu?.();
@@ -14161,6 +14205,7 @@ async function signOut() {
     const result = runtime.client ? await runtime.client.auth.signOut({ scope: "local" }) : null;
     if (result?.error) throw result.error;
     runtime.session = null;
+    runtime.activeUserId = "";
     switchUiToGuestSave();
     openGate({ statusKey: "signedOut" });
     syncAccountUi();
@@ -14197,9 +14242,10 @@ function bindAuthSubscription() {
   const result = runtime.client.auth.onAuthStateChange((event, session) => {
     window.setTimeout(() => {
       if (!runtime.bootstrapDone) return;
-      if (session?.user && runtime.mode !== "discord") completeDiscordSession(session);
+      if (session?.user && (runtime.mode !== "discord" || runtime.activeUserId !== session.user.id)) completeDiscordSession(session);
       else if (event === "SIGNED_OUT" && runtime.mode === "discord") {
         runtime.session = null;
+        runtime.activeUserId = "";
         switchUiToGuestSave();
         openGate({ statusKey: "signedOut" });
         syncAccountUi();
@@ -14250,13 +14296,12 @@ document.addEventListener("visibilitychange", () => {
 window.addEventListener("online", async () => {
   if (runtime.mode !== "discord" || !runtime.memoryOnly || !runtime.session?.user || !window.UI?.save) return;
   try {
-    const cloud = await selectCloudSave(runtime.session.user.id);
-    if (!cloud.supported) return;
-    const backup = readDiscordBackup(runtime.session.user.id);
-    if (!cloud.row?.save_data || newerLocalBackup(cloud.row, backup)) await upsertCloudSnapshot(window.UI.save);
+    // Re-bootstrap first. The server row is authoritative after reconnection;
+    // an offline/local file is never allowed to initialize another account.
+    const remote = await bootstrapCloudAccount();
+    acceptAuthoritativeCloudSave(remote.save);
     runtime.memoryOnly = false;
     runtime.cloudReady = true;
-    runtime.lastSavedJson = JSON.stringify(window.UI.save);
     syncAccountUi();
   } catch (error) {
     console.warn("[CHERRIFT Cloud Save] Reconnect retry failed:", error);
@@ -23371,7 +23416,7 @@ function renderDesktopWorldSelect(force = false) {
     <header><small>CHERRIFT</small><h2>${runtime.worldMode === "worlds" ? copy("Világválasztás", "World Selection") : `${copy("Világ", "World")} ${runtime.world}`}</h2><p>${runtime.worldMode === "worlds" ? copy("Válassz világot.", "Choose a world.") : copy("Válassz pályát, majd indítsd el.", "Choose a stage, then start.")}</p></header>
     ${runtime.worldMode === "worlds"
       ? `<div class="world-card-grid-v0933">${renderWorldCards()}</div>`
-      : `<div class="chapter-world-banner-v0933" style='background-image:${escapeHtml(worldArt(runtime.world))}'><button type="button" data-v0933-worlds-back>‹ ${copy("Világok", "Worlds")}</button><div><small>WORLD ${runtime.world}</small><h3>${escapeHtml(worldName(runtime.world))}</h3></div></div><div class="chapter-card-grid-v0933">${chapterCards || `<p>${copy("Ebben a világban még nincs pálya.", "No stages are available in this world yet.")}</p>`}</div>${chapterDetail(stage)}`}
+      : `<div class="chapter-world-banner-v0933" style='background-image:${escapeHtml(worldArt(runtime.world))}'><button type="button" data-v0933-worlds-back aria-label="${copy("Világok", "Worlds")}" title="${copy("Világok", "Worlds")}">‹</button><div><small>WORLD ${runtime.world}</small><h3>${escapeHtml(worldName(runtime.world))}</h3></div></div><div class="chapter-card-grid-v0933">${chapterCards || `<p>${copy("Ebben a világban még nincs pálya.", "No stages are available in this world yet.")}</p>`}</div>${chapterDetail(stage)}`}
     <footer>
       <button type="button" class="secondary" data-v0933-back>${copy("Vissza", "Back")}</button>
       <button type="button" class="primary" data-v0933-play ${playable ? "" : "disabled"}>${copy("Játék", "Play")}</button>
@@ -23855,7 +23900,7 @@ function renderWorldSelector(force = false) {
       <header class="world-header-v094"><button type="button" data-v094-back aria-label="Back">←</button><div><small>CHERRIFT · WORLD UPDATE</small><h2>${runtime.view === "worlds" ? copy("Világválasztás", "World Selection") : escapeHtml(worldName(runtime.world))}</h2><p>${runtime.view === "worlds" ? copy("PC-szerű selector, telefonra igazított kártyákkal.", "PC-style selector with phone-sized cards.") : escapeHtml(worldDescription(runtime.world))}</p></div></header>
       ${runtime.view === "worlds"
         ? `<main class="world-card-grid-v094">${renderWorldCards()}</main>`
-        : `<main><section class="world-banner-v094" style='background-image:${worldArt(runtime.world)}'><button type="button" data-v094-worlds-back>‹ ${copy("Világok", "Worlds")}</button><div><small>${runtime.world === 0 ? copy("TESZT", "TEST") : `WORLD ${runtime.world}`}</small><h3>${escapeHtml(worldName(runtime.world))}</h3></div></section><section class="stage-card-grid-v094">${renderStageCards()}</section>${stageDetails(stage)}</main>`}
+        : `<main><section class="world-banner-v094" style='background-image:${worldArt(runtime.world)}'><button type="button" data-v094-worlds-back aria-label="${copy("Világok", "Worlds")}" title="${copy("Világok", "Worlds")}">‹</button><div><small>${runtime.world === 0 ? copy("TESZT", "TEST") : `WORLD ${runtime.world}`}</small><h3>${escapeHtml(worldName(runtime.world))}</h3></div></section><section class="stage-card-grid-v094">${renderStageCards()}</section>${stageDetails(stage)}</main>`}
       <footer class="world-footer-v094"><button type="button" class="secondary" data-v094-back>${copy("Vissza", "Back")}</button><button type="button" class="primary" data-v094-play ${playable ? "" : "disabled"}>${stage?.training ? copy("Training indítása", "Start Training") : copy("Játék", "Play")}</button></footer>
     </div>`;
   } finally {
@@ -25174,11 +25219,21 @@ function removeAccidentalSplashAssets(game) {
 
 const previousResize = proto.resize;
 proto.resize = function resizeV0946(...args) {
-  if (isMobile()) {
-    const cap = lowEndMobile() ? 1.10 : 1.20;
-    this.dpr = Math.min(Number(this.dpr) || cap, cap);
+  const result = previousResize.apply(this, args);
+  const world = Number(this.stage?.world || this.getSelectedStage?.()?.world);
+  const cap = world === 2 ? 1 : isMobile() ? (lowEndMobile() ? 1.10 : 1.20) : Number.POSITIVE_INFINITY;
+  const target = Math.max(1, Math.min(Number(this.dpr) || 1, cap));
+  if (target !== this.dpr) {
+    this.dpr = target;
+    this.canvas.width = Math.max(1, Math.floor(this.w * target));
+    this.canvas.height = Math.max(1, Math.floor(this.h * target));
+    this.ctx.setTransform(target, 0, 0, target, 0, 0);
   }
-  return previousResize.apply(this, args);
+  if (world === 2 && this.ctx) {
+    this.ctx.imageSmoothingEnabled = true;
+    this.ctx.imageSmoothingQuality = "medium";
+  }
+  return result;
 };
 
 function contactShadowV0946(context, object) {
