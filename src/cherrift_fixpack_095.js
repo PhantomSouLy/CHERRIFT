@@ -1142,7 +1142,7 @@
     activeWorld:0,
     morePointerOpen:null,
     morePointerId:null,
-    fireflyGlow:null
+    fireflySprites:new WeakMap()
   };
 
   // IMPORTANT: every path in a world's map configuration must live inside
@@ -1372,11 +1372,11 @@
     // World 2 previously created almost one hundred decorative/collision
     // objects.  That made its per-frame draw and collision work considerably
     // heavier than every other world, especially on phones.  Keep every
-    // gameplay value untouched and retain all seven fireflies, but thin only
-    // the repeated scenery.  The deterministic placement still makes the
-    // night meadow look full without paying for off-screen duplicates.
-    if (Number(world) === 2 && key === "firefly") return Math.max(1, baseCount);
-    const factor = Number(world) === 2 ? (mobile() ? .45 : .55) : (mobile() ? .74 : 1);
+    // gameplay value untouched, but thin only the repeated scenery. Five
+    // desktop / four mobile fireflies are still clearly visible; drawing all
+    // seven translucent glow layers was one of World 2's largest GPU costs.
+    if (Number(world) === 2 && key === "firefly") return mobile() ? 4 : 5;
+    const factor = Number(world) === 2 ? (mobile() ? .32 : .42) : (mobile() ? .74 : 1);
     return Math.max(1, Math.round(baseCount * factor));
   }
 
@@ -1449,6 +1449,9 @@
     // Strict replacement is intentional. Base/legacy objects are not retained:
     // that retention was the source of World 4 assets appearing in World 5.
     game.obstacles = objects;
+    // Collision is queried continuously while the player is moving. Keep a
+    // compact list so flowers, bushes and fireflies never enter that hot path.
+    game.__fixStrictSolidObjectsV0952 = objects.filter(object => object.solid);
     game.__fixStrictWorldV0952 = world;
     return objects;
   }
@@ -1489,17 +1492,30 @@
     context.restore();
   }
 
-  function fireflyGlowCanvas() {
-    if (state.fireflyGlow) return state.fireflyGlow;
-    const canvas=document.createElement("canvas"); canvas.width=96; canvas.height=96;
+  function fireflySpriteCanvas(image) {
+    let variants=state.fireflySprites.get(image);
+    if (!variants) {
+      variants=new Map();
+      state.fireflySprites.set(image,variants);
+    }
+    const key=mobile()?"mobile":"desktop";
+    if (variants.has(key)) return variants.get(key);
+    const edge=mobile()?56:68;
+    const canvas=document.createElement("canvas"); canvas.width=edge; canvas.height=edge;
     const ctx=canvas.getContext("2d");
-    const gradient=ctx.createRadialGradient(48,48,1,48,48,46);
-    gradient.addColorStop(0,"rgba(255,248,151,.82)");
-    gradient.addColorStop(.12,"rgba(239,255,96,.48)");
-    gradient.addColorStop(.42,"rgba(205,242,64,.14)");
+    const center=edge/2;
+    const gradient=ctx.createRadialGradient(center,center,1,center,center,edge*.48);
+    // Intentionally softer than Cherry's light aura.
+    gradient.addColorStop(0,"rgba(255,250,167,.58)");
+    gradient.addColorStop(.16,"rgba(237,255,111,.30)");
+    gradient.addColorStop(.48,"rgba(201,239,72,.09)");
     gradient.addColorStop(1,"rgba(180,228,48,0)");
-    ctx.fillStyle=gradient; ctx.fillRect(0,0,96,96);
-    state.fireflyGlow=canvas;
+    ctx.fillStyle=gradient; ctx.fillRect(0,0,edge,edge);
+    // Pre-compose the icon with its glow once. Runtime rendering now needs a
+    // single source-over draw instead of two draws plus a screen blend.
+    const icon=mobile()?15:17;
+    ctx.drawImage(image,Math.round(center-icon/2),Math.round(center-icon/2),icon,icon);
+    variants.set(key,canvas);
     return canvas;
   }
 
@@ -1531,11 +1547,10 @@
     context.imageSmoothingEnabled = true;
     if ("imageSmoothingQuality" in context) context.imageSmoothingQuality = mobile() ? "medium" : "high";
     if (object.glow) {
-      const aura=mobile()?50:64;
-      context.globalCompositeOperation="screen";
-      context.drawImage(fireflyGlowCanvas(),Math.round(drawX-aura/2),Math.round(drawY-aura/2),aura,aura);
-      context.globalCompositeOperation="source-over";
-      context.globalAlpha=clamp(number(object.alpha)||1,0,1);
+      const sprite=fireflySpriteCanvas(image);
+      context.drawImage(sprite,Math.round(drawX-sprite.width/2),Math.round(drawY-sprite.height/2));
+      context.restore();
+      return;
     }
     context.drawImage(
       image,
@@ -1549,7 +1564,8 @@
   function strictHit(game, previousHitObstacle) {
     const player = game.player;
     if (!player || !WORLD_MAPS_STRICT[stageWorld(game)]) return previousHitObstacle?.call(game) || false;
-    for (const object of game.obstacles || []) {
+    const solids = game.__fixStrictSolidObjectsV0952 || (game.obstacles || []).filter(object => object?.solid);
+    for (const object of solids) {
       if (!object?.__fixStrictWorldV0952 || !object.solid) continue;
       const radius = Math.max(1, number(object.collisionRadius || object.r));
       const width = Math.max(1, number(object.drawW || object.boxW));

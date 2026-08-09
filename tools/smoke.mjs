@@ -11,6 +11,7 @@ const playerApiSource = await readFile(path.join(root,"supabase/functions/player
 const profileBundleMigration = await readFile(path.join(root,"supabase/migrations/20260809_profile_bundle_revision.sql"),"utf8");
 const accountIsolationMigration = await readFile(path.join(root,"supabase/migrations/20260809_account_save_isolation.sql"),"utf8");
 const playerResetMigration = await readFile(path.join(root,"supabase/migrations/20260809_gm_player_reset.sql"),"utf8");
+const mailAndGmTitleMigration = await readFile(path.join(root,"supabase/migrations/20260809_prebeta_mail_and_gm_titles.sql"),"utf8");
 const cloudSaveSource = await readFile(path.join(root,"src/cherrift_app.js"),"utf8");
 assert.match(gmApiSource,/action === "update_profile_bundle"/,"GM Profile Editor uses the atomic bundle endpoint");
 assert.match(gmApiSource,/Object\.keys\(rawPatch\)\.length \? normalizeProfilePatch/,"GM profile bundle accepts resource-only/title-only changes");
@@ -23,6 +24,11 @@ assert.match(playerApiSource,/unlockedSkins: \["cherry_default"\]/,"new Discord 
 assert.match(playerApiSource,/unlockedStages: \["world_1_1"\]/,"new Discord accounts start with World 1 Chapter 1 only");
 assert.match(playerApiSource,/skillPoints:1/,"new Discord accounts start with exactly one Skill Point");
 assert.match(playerApiSource,/manualV052:true[\s\S]{0,180}skillTreeV082Migrated:true/,"legacy progression migration cannot consume the starter Skill Point");
+assert.match(mailAndGmTitleMigration,/audience_type in \('user', 'existing', 'all_future'\)/,"Mail has separate player, existing-account and current-plus-future audiences");
+assert.match(mailAndGmTitleMigration,/p_expires_at is not null and p_expires_at <= coalesce\(p_starts_at, now\(\)\)/,"scheduled Mail validates its independent start and end times");
+assert.match(mailAndGmTitleMigration,/users\.created_at <= v_cutoff/,"existing-account Mail snapshots the registration cutoff");
+assert.match(mailAndGmTitleMigration,/on conflict do nothing/,"Mail delivery and claiming remain idempotent");
+assert.match(mailAndGmTitleMigration,/gm_set_gm_titles[\s\S]*gm[\s\S]*senior_gm[\s\S]*head_gm/,"only the GM Tool Pack can grant the three GM titles");
 assert.match(cloudSaveSource,/callPlayerApi\("save_progress"/,"browser progression writes use the authenticated Edge Function");
 assert.doesNotMatch(cloudSaveSource,/\.from\(CLOUD_TABLE\)[\s\S]{0,160}\.(?:insert|upsert|update|delete)\(/,"browser code cannot mutate game_saves directly");
 assert.match(accountIsolationMigration,/revoke all on table public\.game_saves from anon, authenticated/,"legacy direct save mutations are revoked");
