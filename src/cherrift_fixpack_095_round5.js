@@ -177,10 +177,28 @@
       /* The nav always reserves three stable columns. Currency values may
          change, but routing can no longer re-centre or jump the menu. */
       @media(min-width:821px){
-        body.v0933-desktop #globalRailV060.topnav-v0933{grid-template-columns:minmax(150px,1fr) auto minmax(150px,1fr)!important}
+        body.v0933-desktop #globalRailV060.topnav-v0933{grid-template-columns:170px minmax(0,1fr) max-content!important;column-gap:12px!important}
         body.v0933-desktop .topnav-v0933 .rail-brand-v060{grid-column:1!important;justify-self:start!important}
-        body.v0933-desktop .topnav-v0933 .rail-text-nav-v095{grid-column:2!important;width:max-content!important;max-width:none!important;overflow:visible!important}
-        body.v0933-desktop .topnav-v0933 .rail-bottom-v060{grid-column:3!important;justify-self:end!important}
+        body.v0933-desktop .topnav-v0933 .rail-text-nav-v095{grid-column:2!important;width:max-content!important;max-width:100%!important;justify-self:center!important;overflow:visible!important}
+        body.v0933-desktop .topnav-v0933 .rail-bottom-v060{grid-column:3!important;justify-self:end!important;min-width:max-content!important;flex-wrap:nowrap!important;margin-left:8px!important}
+        body.v0933-desktop #desktopCurrencyV0943{flex:0 0 auto!important;margin-right:8px!important}
+        body.v0933-desktop #r5DesktopEnergy{order:1!important;flex:0 0 auto!important;margin:0 8px 0 0!important}
+        body.v0933-desktop .rail-profile-v060{order:2!important;flex:0 0 auto!important}
+        body.v0933-desktop .rail-settings-v060{order:3!important;flex:0 0 auto!important}
+      }
+      @media(min-width:821px) and (max-width:1900px){
+        body.v0933-desktop #globalRailV060.topnav-v0933{grid-template-columns:145px minmax(0,1fr) max-content!important;column-gap:6px!important;padding-inline:12px!important}
+        body.v0933-desktop .topnav-v0933 .rail-brand-v060{width:140px!important;min-width:0!important}
+        body.v0933-desktop .topnav-v0933 .rail-brand-v060 small{display:none!important}
+        body.v0933-desktop .topnav-v0933 .rail-text-nav-v095 .rail-text-v095{padding-inline:7px!important}
+        body.v0933-desktop .topnav-v0933 .rail-text-nav-v095 .rail-text-v095 b{font-size:12px!important}
+        body.v0933-desktop .topnav-v0933 .rail-text-nav-v095 :is(.rail-play-v095,.rail-lobby-v095){margin-inline:2px!important;padding-inline:12px!important}
+        body.v0933-desktop #desktopCurrencyV0943{gap:2px!important;margin-right:5px!important}
+        body.v0933-desktop #desktopCurrencyV0943 span{min-width:45px!important;height:34px!important;padding-inline:5px!important;gap:3px!important}
+        body.v0933-desktop #desktopCurrencyV0943 img{width:16px!important;height:16px!important}
+        body.v0933-desktop #r5DesktopEnergy{min-height:34px!important;padding-inline:7px!important;margin-right:5px!important}
+        body.v0933-desktop .rail-profile-v060{width:100px!important;padding-inline:5px!important}
+        body.v0933-desktop .rail-settings-v060{width:34px!important;height:34px!important}
       }
 
       /* The bottom-right Lobby shortcuts keep their compact footprint. */
@@ -437,7 +455,7 @@
       button.title = "Energy";
       button.setAttribute("aria-label", "Energy");
     }
-    const target = id("desktopCurrencyV0943") || id("resourceBarV082") || q("#globalRailV060 .rail-bottom-v060");
+    const target = q("#globalRailV060 .rail-bottom-v060") || id("resourceBarV082");
     if (target && button.parentElement !== target) target.appendChild(button);
     const save = window.UI.save;
     window.CHERRIFT_PREBETA?.refreshEnergy?.(save);

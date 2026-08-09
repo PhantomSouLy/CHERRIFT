@@ -13658,9 +13658,32 @@ function writeDiscordBackup(data, userId = runtime.session?.user?.id) {
 function newerLocalBackup(cloudRow, backup) {
   if (!backup?.saveData) return false;
   if (!cloudRow?.save_data) return true;
+  const localRevision = serverEditRevision(backup.saveData);
+  const cloudRevision = serverEditRevision(cloudRow.save_data);
+  // A GM/profile-editor write is authoritative. A tab that was already open
+  // may have a newer local backup timestamp, but it must never overwrite a
+  // later server edit with stale progression/profile data.
+  if (cloudRevision !== localRevision) return localRevision > cloudRevision;
   const localTime = Date.parse(backup.savedAt || "") || 0;
   const cloudTime = Date.parse(cloudRow.updated_at || "") || 0;
   return localTime > cloudTime;
+}
+
+function serverEditRevision(save) {
+  return Date.parse(save?.prebeta?.serverEdit?.at || "") || 0;
+}
+
+function acceptAuthoritativeCloudSave(value) {
+  const save = normalizeCloudSave(value || {});
+  applyDiscordProfileToSave(save, runtime.session);
+  writeDiscordBackup(save, runtime.session?.user?.id);
+  runtime.lastSavedJson = JSON.stringify(save);
+  runtime.pendingSave = null;
+  if (window.UI) window.UI.save = save;
+  if (window.UI?.game) window.UI.game.save = save;
+  window.UI?.refreshMenu?.();
+  window.dispatchEvent(new CustomEvent("cherrift:server-save-applied", { detail:{ source:"gm" } }));
+  return save;
 }
 
 async function selectCloudSave(userId) {
@@ -13677,6 +13700,14 @@ async function selectCloudSave(userId) {
 async function upsertCloudSnapshot(snapshot) {
   const account = accountFromSession();
   if (!account || typeof runtime.client?.from !== "function") return false;
+  const current = await selectCloudSave(account.id);
+  const remoteRevision = serverEditRevision(current.row?.save_data);
+  const localRevision = serverEditRevision(snapshot);
+  if (remoteRevision > localRevision) {
+    acceptAuthoritativeCloudSave(current.row.save_data);
+    runtime.lastCloudSavedAt = current.row.updated_at || runtime.lastCloudSavedAt;
+    return false;
+  }
   const payload = {
     user_id: account.id,
     save_data: cloneJson(snapshot),
@@ -13805,8 +13836,8 @@ async function flushCloudSave() {
 
   runtime.savePromise = runtime.savePromise.catch(() => {}).then(async () => {
     try {
-      await upsertCloudSnapshot(snapshot);
-      runtime.lastSavedJson = serialized;
+      const written = await upsertCloudSnapshot(snapshot);
+      if (written) runtime.lastSavedJson = serialized;
       runtime.cloudErrorShown = false;
       renderAccountSettings();
       return true;

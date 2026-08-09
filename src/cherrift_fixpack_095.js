@@ -1141,7 +1141,8 @@
     patterns:new WeakMap(),
     activeWorld:0,
     morePointerOpen:null,
-    morePointerId:null
+    morePointerId:null,
+    fireflyGlow:null
   };
 
   // IMPORTANT: every path in a world's map configuration must live inside
@@ -1182,7 +1183,7 @@
         rock3:{src:"assets/map/world2/world2_rock_3.png",count:8,w:82,h:64,anchor:.72,solid:true,r:24},
         tree1:{src:"assets/map/world2/world2_tree_1.png",count:8,w:132,h:178,anchor:.84,solid:true,r:25},
         tree2:{src:"assets/map/world2/world2_tree_2.png",count:7,w:142,h:192,anchor:.85,solid:true,r:27},
-        firefly:{src:"assets/map/world2/world2_firefly_01.png",count:18,w:20,h:20,anchor:.50,alpha:.90,glow:true}
+        firefly:{src:"assets/map/world2/world2_firefly_01.png",count:7,w:18,h:18,anchor:.50,alpha:.96,glow:true}
       })
     }),
     3:Object.freeze({
@@ -1428,6 +1429,12 @@
           r:spec.r || 0,
           collisionRadius:spec.r || 0
         };
+        if (object.glow) {
+          object.baseX=x; object.baseY=y;
+          object.phase=random()*Math.PI*2;
+          object.driftX=8+random()*9;
+          object.driftY=5+random()*7;
+        }
         if (object.solid) placedSolids.push({x,y,r:spec.r || 20});
         objects.push(object);
       }
@@ -1476,20 +1483,58 @@
     context.restore();
   }
 
-  function drawStrictObject(context, object) {
+  function fireflyGlowCanvas() {
+    if (state.fireflyGlow) return state.fireflyGlow;
+    const canvas=document.createElement("canvas"); canvas.width=96; canvas.height=96;
+    const ctx=canvas.getContext("2d");
+    const gradient=ctx.createRadialGradient(48,48,1,48,48,46);
+    gradient.addColorStop(0,"rgba(255,248,151,.95)");
+    gradient.addColorStop(.12,"rgba(239,255,96,.62)");
+    gradient.addColorStop(.42,"rgba(205,242,64,.22)");
+    gradient.addColorStop(1,"rgba(180,228,48,0)");
+    ctx.fillStyle=gradient; ctx.fillRect(0,0,96,96);
+    state.fireflyGlow=canvas;
+    return canvas;
+  }
+
+  function objectInView(game, object, margin=180) {
+    const camera=game.camera || {x:0,y:0};
+    const zoom=Math.max(.1,number(game.zoom)||1);
+    const width=Math.max(1,number(game.w)||innerWidth)/zoom;
+    const height=Math.max(1,number(game.h)||innerHeight)/zoom;
+    return Math.abs(number(object.x)-number(camera.x)) <= width/2+margin && Math.abs(number(object.y)-number(camera.y)) <= height/2+margin;
+  }
+
+  function drawStrictObject(game, context, object) {
+    if (!objectInView(game,object,object.glow?120:210)) return;
     const image = preload(WORLD_MAPS_STRICT[object.fixWorld]?.objects?.[object.fixKey]?.src, `${object.fixWorld}:${object.fixKey}`);
     if (!image?.complete || !(image.naturalWidth || image.width)) return;
     const size = strictObjectSize(object, image);
     const anchor = Number.isFinite(Number(object.anchor)) ? Number(object.anchor) : .72;
+    let drawX=number(object.x),drawY=number(object.y);
+    let pulse=1;
+    if (object.glow) {
+      const time=(number(game.t)||performance.now()/1000);
+      drawX=number(object.baseX||object.x)+Math.sin(time*.72+object.phase)*number(object.driftX||12);
+      drawY=number(object.baseY||object.y)+Math.cos(time*.58+object.phase)*number(object.driftY||8);
+      pulse=.82+.18*Math.sin(time*1.7+object.phase);
+      object.x=drawX; object.y=drawY;
+    }
     context.save();
-    context.globalAlpha = clamp(number(object.alpha) || 1, 0, 1);
+    context.globalAlpha = clamp((number(object.alpha) || 1)*pulse, 0, 1);
     context.imageSmoothingEnabled = true;
     if ("imageSmoothingQuality" in context) context.imageSmoothingQuality = mobile() ? "medium" : "high";
-    if (object.glow && "filter" in context) context.filter = "drop-shadow(0 0 7px rgba(255,226,108,.75))";
+    if (object.glow) {
+      const aura=mobile()?58:76;
+      context.globalCompositeOperation="screen";
+      context.drawImage(fireflyGlowCanvas(),Math.round(drawX-aura/2),Math.round(drawY-aura/2),aura,aura);
+      context.globalCompositeOperation="source-over";
+      context.globalAlpha=clamp(number(object.alpha)||1,0,1);
+    }
     context.drawImage(
       image,
-      Math.round(number(object.x) - size.width / 2),
-      Math.round(number(object.y) - size.height * anchor),
+      Math.round(drawX - size.width / 2),
+      Math.round(drawY - size.height * anchor),
       size.width,size.height
     );
     context.restore();
@@ -1568,7 +1613,7 @@
           // World 1-6 are strict: never render a legacy/mismatched object even
           // if an older asynchronous layer appends one after stage start.
           if (!object?.__fixStrictWorldV0952 || Number(object.fixWorld) !== world) return;
-          return drawStrictObject(context,object);
+          return drawStrictObject(this,context,object);
         }
         return previousDrawObstacle.call(this,context,object);
       };

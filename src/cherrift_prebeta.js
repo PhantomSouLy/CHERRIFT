@@ -12,6 +12,7 @@
   const clone = value => { try { return structuredClone(value); } catch (_) { return JSON.parse(JSON.stringify(value)); } };
   const escapeHtml = value => String(value ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;");
   const state = { entitlements:{}, socialTab:"friends", socialRows:[], ranking:[], frameSelection:null, patched:false, ready:false };
+  const GM_TITLE_IDS = new Set(["gm","senior_gm","head_gm"]);
 
   function dayKey(date = new Date()) { return `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`; }
   function stages() { return window.CHERRIFT_V040?.stages || []; }
@@ -32,6 +33,46 @@
   function hasEntitlement(name, save = window.UI?.save) {
     const rights = entitlementMap(save);
     return !!(rights.owner || rights.allContent || rights[name]);
+  }
+
+  function activeTitleId(save) {
+    return String(save?.profile?.activeTitle || save?.activeTitle || save?.selectedTitle || "");
+  }
+
+  function hasActiveGmAccess(save = window.UI?.save) {
+    return !!save && GM_TITLE_IDS.has(activeTitleId(save)) && (save.ownedTitles || []).includes(activeTitleId(save));
+  }
+
+  function syncGmAccess(save) {
+    if (!save || typeof save !== "object") return false;
+    save.prebeta ||= {};
+    const active = hasActiveGmAccess(save);
+    if (active) {
+      if (!save.prebeta.gmAccessActive) {
+        save.prebeta.gmAccessBackup = {
+          unlockedSkins:[...(save.unlockedSkins || [])],
+          unlockedStages:[...(save.unlockedStages || [])],
+          selectedSkin:save.selectedSkin || "cherry_default",
+          selectedStageId:save.selectedStageId || "world_1_1"
+        };
+      }
+      save.prebeta.gmAccessActive = true;
+      const skinIds = (window.CHERRIFT_DATA?.skins || []).map(skin=>skin.id).filter(Boolean);
+      const stageIds = stages().map(stage=>stage.id).filter(Boolean);
+      save.unlockedSkins = [...new Set([...(save.unlockedSkins || []),...skinIds])];
+      save.unlockedStages = [...new Set([...(save.unlockedStages || []),...stageIds])];
+      return true;
+    }
+    if (save.prebeta.gmAccessActive && save.prebeta.gmAccessBackup) {
+      const backup = save.prebeta.gmAccessBackup;
+      save.unlockedSkins = [...new Set(backup.unlockedSkins || ["cherry_default"])];
+      save.unlockedStages = [...new Set(backup.unlockedStages || ["world_1_1"])];
+      save.selectedSkin = save.unlockedSkins.includes(backup.selectedSkin) ? backup.selectedSkin : "cherry_default";
+      save.selectedStageId = save.unlockedStages.includes(backup.selectedStageId) ? backup.selectedStageId : "world_1_1";
+      delete save.prebeta.gmAccessBackup;
+    }
+    save.prebeta.gmAccessActive = false;
+    return false;
   }
 
   function normalizeMaterials(save) {
@@ -103,6 +144,7 @@
     save.economy.bestWeeklyRank = n(save.economy.bestWeeklyRank); save.economy.activePlayers = n(save.economy.activePlayers);
     normalizeMaterials(save);
     save.ownedTitles = Array.isArray(save.ownedTitles) ? [...new Set(save.ownedTitles)] : [];
+    syncGmAccess(save);
     save.titleRewardsClaimed = Array.isArray(save.titleRewardsClaimed) ? save.titleRewardsClaimed : [];
     if (save.arsenal?.slots) for (const slot of Object.values(save.arsenal.slots)) {
       slot.level = Math.min(B?.arsenal.maxLevel||30,Math.max(1,n(slot.level)));
@@ -169,6 +211,7 @@
   function isWorldUnlocked(world, save = window.UI?.save) {
     save = normalizeSave(save || {});
     const number = Number(world);
+    if (hasActiveGmAccess(save)) return number >= 0;
     if (hasEntitlement("allContent",save)) return number >= 0 && number <= 6;
     if (number === 0) return hasEntitlement("training",save);
     if (number === 1) return true;
@@ -181,6 +224,7 @@
   function isStageUnlocked(stage, save = window.UI?.save) {
     if (!stage) return false;
     save = normalizeSave(save || {});
+    if (hasActiveGmAccess(save)) return true;
     if (stage.training) return hasEntitlement("training",save);
     if (hasEntitlement("allContent",save)) return true;
     if (!isWorldUnlocked(stageWorld(stage),save)) return false;
@@ -364,7 +408,7 @@
 
   function start(){if(!window.UI?.save||!window.CherriftStorage)return setTimeout(start,100);patchUi();installPlaceholderStages();normalizeSave(UI.save);bindCapture();addNavigation();updateEnergyUi();decorateProfile();setInterval(()=>{if(UI.save){refreshEnergy(UI.save);updateEnergyUi();}},60000);window.CHERRIFT_LIVE_SERVICES?.onChange?.(event=>{if(event.type==="session"||event.type==="ready")bootstrapOnline();});state.ready=true;window.__CHERRIFT_PREBETA_READY__=true;window.dispatchEvent(new CustomEvent("cherrift:prebeta-ready"));bootstrapOnline();console.info(`[CHERRIFT] ${VERSION} progression, balance, energy, titles, frames, social and ranking loaded.`);}
 
-  window.CHERRIFT_PREBETA = Object.freeze({version:VERSION,normalizeSave,refreshEnergy,isWorldUnlocked,isStageUnlocked,hasEntitlement,commitStageEnergy,evaluateTitles,titleStats,calculatePower,ownedFrames,dismantleReward,showEnergyModal,open:openPrebetaPanel});
+  window.CHERRIFT_PREBETA = Object.freeze({version:VERSION,normalizeSave,refreshEnergy,isWorldUnlocked,isStageUnlocked,hasEntitlement,hasActiveGmAccess,syncGmAccess,commitStageEnergy,evaluateTitles,titleStats,calculatePower,ownedFrames,dismantleReward,showEnergyModal,open:openPrebetaPanel});
   patchStorage(); patchGame();
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
 })();

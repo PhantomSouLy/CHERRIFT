@@ -316,6 +316,34 @@ Deno.serve(async (req: Request) => {
       return json(req, { ok: true, requestId, result: data });
     }
 
+    if (action === "update_profile_bundle") {
+      if (!hasPermission(admin, "profile.edit")) throw new Error("permission_denied:profile.edit");
+      if (!targetUserId) throw new Error("invalid_target_user_id");
+      const reason = typeof body.reason === "string" ? body.reason.trim() : "";
+      if (reason.length < 3 || reason.length > 500) throw new Error("invalid_change_reason");
+      const rawPatch = isObject(body.patch) ? body.patch : {};
+      const rawValues = isObject(body.values) ? body.values : {};
+      const patch = Object.keys(rawPatch).length ? normalizeProfilePatch(rawPatch) : {};
+      const values = Object.keys(rawValues).length ? normalizeResourceValues(rawValues, await catalogRows()) : {};
+      const titles = body.titles === null || body.titles === undefined
+        ? null
+        : uniqueStrings(Array.isArray(body.titles) ? body.titles : [], 3);
+      const allowed = new Set(["gm", "senior_gm", "head_gm"]);
+      if (titles?.some((title) => !allowed.has(title))) throw new Error("invalid_gm_title");
+      if (!Object.keys(patch).length && !Object.keys(values).length && titles === null) throw new Error("empty_profile_bundle");
+      const { data, error } = await adminClient.rpc("gm_apply_profile_bundle", {
+        p_admin_user_id: user.id,
+        p_target_user_id: targetUserId,
+        p_patch: patch,
+        p_values: values,
+        p_titles: titles,
+        p_reason: reason,
+        p_request_id: requestId,
+      });
+      if (error) throw error;
+      return json(req, { ok: true, requestId, result: data });
+    }
+
     if (action === "update_profile_resources") {
       if (!hasPermission(admin, "profile.edit")) throw new Error("permission_denied:profile.edit");
       if (!targetUserId) throw new Error("invalid_target_user_id");

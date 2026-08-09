@@ -6,6 +6,14 @@ import { fileURLToPath } from "node:url";
 import { JSDOM, VirtualConsole } from "jsdom";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const gmApiSource = await readFile(path.join(root,"supabase/functions/gm-api/index.ts"),"utf8");
+const profileBundleMigration = await readFile(path.join(root,"supabase/migrations/20260809_profile_bundle_revision.sql"),"utf8");
+const cloudSaveSource = await readFile(path.join(root,"src/cherrift_app.js"),"utf8");
+assert.match(gmApiSource,/action === "update_profile_bundle"/,"GM Profile Editor uses the atomic bundle endpoint");
+assert.match(gmApiSource,/Object\.keys\(rawPatch\)\.length \? normalizeProfilePatch/,"GM profile bundle accepts resource-only/title-only changes");
+assert.match(profileBundleMigration,/gm_apply_profile_bundle/,"GM profile bundle migration is packaged");
+assert.match(profileBundleMigration,/serverEdit/,"GM profile writes stamp an authoritative server revision");
+assert.match(cloudSaveSource,/remoteRevision > localRevision/,"stale game tabs cannot overwrite a newer GM profile edit");
 const contentTypes = {
   ".css":"text/css; charset=utf-8",
   ".html":"text/html; charset=utf-8",
@@ -277,6 +285,16 @@ async function exercise(name,width,height){
     const gmTitles=window.CHERRIFT_BALANCE.titles.filter(title=>title.gmOnly);
     assert.equal(gmTitles.map(title=>title.id).join(","),"gm,senior_gm,head_gm",`${name}: three server-granted GM titles are registered`);
     assert.ok(gmTitles.every(title=>!UI.save.ownedTitles.includes(title.id)),`${name}: GM titles are never granted to a starter account`);
+    const gmAccessSave=structuredClone(UI.save);
+    const earnedSkins=[...gmAccessSave.unlockedSkins],earnedStages=[...gmAccessSave.unlockedStages];
+    gmAccessSave.ownedTitles.push("gm");gmAccessSave.profile.activeTitle="gm";
+    window.CHERRIFT_PREBETA.syncGmAccess(gmAccessSave);
+    assert.equal(gmAccessSave.unlockedSkins.length,window.CHERRIFT_DATA.skins.length,`${name}: equipped GM title temporarily unlocks every skin`);
+    assert.ok(window.CHERRIFT_PREBETA.isWorldUnlocked(6,gmAccessSave),`${name}: equipped GM title temporarily unlocks every World`);
+    gmAccessSave.profile.activeTitle="";gmAccessSave.activeTitle="";gmAccessSave.selectedTitle="";
+    window.CHERRIFT_PREBETA.syncGmAccess(gmAccessSave);
+    assert.deepEqual(JSON.parse(JSON.stringify(gmAccessSave.unlockedSkins)),earnedSkins,`${name}: unequipping GM title restores earned skins`);
+    assert.deepEqual(JSON.parse(JSON.stringify(gmAccessSave.unlockedStages)),earnedStages,`${name}: unequipping GM title restores earned stages`);
     const energySave={energy:50,energyState:{lastTick:Date.now()}},energyGame={save:energySave,__prebetaEnergy:{stageId:"world_1_1",cost:5,committed:false}};
     assert.equal(window.CHERRIFT_PREBETA.commitStageEnergy(energyGame),true,`${name}: first star commits Energy`);
     assert.equal(window.CHERRIFT_PREBETA.commitStageEnergy(energyGame),false,`${name}: Energy cannot be charged twice in one run`);
@@ -285,6 +303,8 @@ async function exercise(name,width,height){
     assert.ok(ownerSave.unlockedSkins.includes("mage_cherry")&&window.CHERRIFT_PREBETA.isWorldUnlocked(6,ownerSave),`${name}: owner content is preserved`);
     assert.equal(window.CherriftGame.prototype.drawWorld.__v091BoundaryFog,true,`${name}: map boundary fog active`);
     assert.equal(window.CherriftGame.prototype.drawWorld.__v095CullWorlds,6,`${name}: viewport culling covers every beta World, including World 6`);
+    assert.equal(window.CHERRIFT_FIXPACK_0952.worldMaps[2].objects.firefly.count,7,`${name}: World 2 uses the optimized firefly count`);
+    assert.equal(window.CHERRIFT_FIXPACK_0952.worldMaps[2].objects.firefly.glow,true,`${name}: World 2 fireflies retain their light aura`);
     assert.equal(document.querySelectorAll("#globalMobileNavV052 > button").length,5,`${name}: five mobile destinations`);
     if(window.CHERRIFT_WORLD_UI.isMobile()){
       assert.equal(document.querySelectorAll('#globalMobileNavV052 [data-v082-open="worlds"]').length,0,`${name}: bottom Play route is completely replaced`);
@@ -371,7 +391,7 @@ async function exercise(name,width,height){
     UI.open("menu");
     if(!window.CHERRIFT_WORLD_UI.isMobile()){
       const shortcutLabels=Array.from(document.querySelectorAll("#menuDashboardV060 .dashboard-shortcuts-v060 button b"),node=>node.textContent.trim());
-      assert.deepEqual(shortcutLabels,["Login","Quest","Social","Ranking","Buff List"],`${name}: desktop Lobby shortcut order`);
+      assert.deepEqual(shortcutLabels,["Event Hub","Login","Quest","Social","Ranking","Buff List"],`${name}: desktop Lobby shortcut order`);
       assert.equal(document.querySelector("#menu .news-card"),null,`${name}: temporary legacy Lobby News card is removed`);
       assert.deepEqual(Array.from(document.querySelectorAll("#menu .social-row.r5-support-links button"),button=>button.title),["Twitch","Website","Feedback","Bug Report"],`${name}: Lobby support links`);
       const stableWallet=document.getElementById("desktopCurrencyV0943");
@@ -552,15 +572,25 @@ async function exercise(name,width,height){
     }
 
     UI.open("eventV093");
-    await waitFor(()=>document.querySelector("[data-v093-event-claim]"),`${name} beta Event`);
+    await waitFor(()=>document.querySelector("#eventHubPrebeta [data-event-tab=\"login\"]"),`${name} beta Event Hub`);
+    click(window,document.querySelector('#eventHubPrebeta [data-event-tab="login"]'),`${name} 7-day login Event`);
+    await waitFor(()=>document.querySelector('[data-event-login-claim="1"]'),`${name} day-one Event reward`);
     const coinsBeforeEvent=Number(UI.save.coins)||0;
-    click(window,document.querySelector("[data-v093-event-claim]"),`${name} claim Event reward`);
-    assert.equal(UI.save.coins,coinsBeforeEvent+250,`${name}: Event grants Coin once`);
-    assert.equal(UI.save.chests.common,1,`${name}: Event grants one Common Chest`);
-    window.CHERRIFT_REWARDS.close();
-    window.CHERRIFT_V093.claimWelcomeEvent();
-    assert.equal(UI.save.coins,coinsBeforeEvent+250,`${name}: Event reward is idempotent`);
-    assert.equal(UI.save.chests.common,1,`${name}: Event chest cannot be claimed twice`);
+    click(window,document.querySelector('[data-event-login-claim="1"]'),`${name} claim Event reward`);
+    assert.equal(UI.save.coins,coinsBeforeEvent+300,`${name}: day-one Event grants Coin once`);
+    assert.equal(UI.save.events.closed_beta_2026.loginClaimed.filter(day=>day===1).length,1,`${name}: Event reward is idempotently recorded`);
+    click(window,document.querySelector('#eventHubPrebeta [data-event-tab="daily"]'),`${name} daily Event tab`);
+    await waitFor(()=>document.querySelector('[data-event-daily-claim="login"]'),`${name} daily Event progress`);
+    const coinsBeforeDaily=Number(UI.save.coins)||0;
+    click(window,document.querySelector('[data-event-daily-claim="login"]'),`${name} claim daily login Event reward`);
+    assert.equal(UI.save.coins,coinsBeforeDaily+100,`${name}: daily Event reward is claimable`);
+    assert.ok(UI.save.events.closed_beta_2026.daily[Object.keys(UI.save.events.closed_beta_2026.daily)[0]].claimed.includes("login"),`${name}: daily Event claim is persisted`);
+    click(window,document.querySelector('#eventHubPrebeta [data-event-tab="shop"]'),`${name} Event Shop tab`);
+    await waitFor(()=>document.querySelector('[data-event-buy="small_drink"]'),`${name} Event Shop offers`);
+    UI.save.coins=1000;
+    click(window,document.querySelector('[data-event-buy="small_drink"]'),`${name} Event Shop purchase`);
+    assert.equal(UI.save.coins,500,`${name}: Event Shop charges its balanced Coin price`);
+    assert.equal(UI.save.energyState.drinks.small,1,`${name}: Event Shop grants the purchased item`);
     UI.open("libraryV0551");
     click(window,document.querySelector('[data-library-tab="skins"]'),`${name} collection skins`);
     window.CHERRIFT_V084.renderCollection();

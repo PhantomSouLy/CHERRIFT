@@ -679,11 +679,12 @@
     if (!root) return;
     const current = activeTitle();
     const titles = titleCatalog().filter(title => !state.titleOwnedOnly || titleOwned(title));
-    root.innerHTML = titles.length ? titles.map(title => {
+    const noTitle = `<article class="title-row-bf"><div><strong>${esc(t("noTitle") || "No Title")}</strong><small>${language()==="hu"?"A cím levétele":"Unequip the active title"}</small></div><button type="button" data-title-equip="" ${current ? "" : "disabled"}>${current ? (language()==="hu"?"Levétel":"Unequip") : t("equipped")}</button></article>`;
+    root.innerHTML = noTitle + (titles.length ? titles.map(title => {
       const owned = titleOwned(title);
       const equipped = title.id === current || title.name === current;
       return `<article class="title-row-bf ${owned ? "" : "locked"}"><div><strong class="rarity-${esc(title.rarity.toLowerCase())}">[${esc(title.name)}]</strong>${title.bonus ? `<small>${esc(title.bonus)}</small>` : ""}</div><button type="button" data-title-equip="${esc(title.id)}" ${!owned || equipped ? "disabled" : ""}>${equipped ? t("equipped") : owned ? t("equip") : t("locked")}</button></article>`;
-    }).join("") : `<p>${t("noMail")}</p>`;
+    }).join("") : `<p>${t("noMail")}</p>`);
   }
   function openTitleModal() {
     const modal = ensureTitleModal();
@@ -692,12 +693,24 @@
     modal.classList.remove("hidden");
   }
   function equipTitle(titleId) {
+    if (!titleId) {
+      UI.save.profile = UI.save.profile && typeof UI.save.profile === "object" ? UI.save.profile : {};
+      UI.save.profile.activeTitle = "";
+      UI.save.activeTitle = "";
+      UI.save.selectedTitle = "";
+      window.CHERRIFT_PREBETA?.syncGmAccess?.(UI.save);
+      saveLocal();
+      renderTitleList();
+      renderProfile();
+      return;
+    }
     const title = titleCatalog().find(item => item.id === titleId);
     if (!title || !titleOwned(title)) return;
     UI.save.profile = UI.save.profile && typeof UI.save.profile === "object" ? UI.save.profile : {};
     UI.save.profile.activeTitle = title.id;
     UI.save.activeTitle = title.id;
     UI.save.selectedTitle = title.id;
+    window.CHERRIFT_PREBETA?.syncGmAccess?.(UI.save);
     saveLocal();
     renderTitleList();
     renderProfile();
