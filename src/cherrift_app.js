@@ -24004,7 +24004,10 @@ function generateWorldMap(stage) {
     addMapObjects(list,random,{assetKeys:["w2_rock1","w2_rock2","w2_rock3"],count:12,drawW:108,drawH:88,collisionRadius:36,solid:true,anchor:.60,density});
     addMapObjects(list,random,{assetKeys:["w2_bush1","w2_bush2","w2_bush3"],count:17,drawW:110,drawH:92,solid:false,anchor:.62,density});
     addMapObjects(list,random,{assetKeys:["w2_flower1","w2_flower2","w2_flower3"],count:24,drawW:56,drawH:52,solid:false,anchor:.55,density,spacing:12});
-    const fireflies = matchMedia("(max-width:820px)").matches ? 8 : 12;
+    // Fireflies are animated every frame, so keep the amount intentionally
+    // small. Their cached glow (drawn below) makes the scene feel populated
+    // without multiplying expensive canvas shadow operations.
+    const fireflies = matchMedia("(max-width:820px)").matches ? 5 : 8;
     addMapObjects(list,random,{kind:"fireflyV094",assetKey:"w2_firefly",count:fireflies,drawW:34,drawH:34,solid:false,anchor:.50,density:UI.save?.settings?.effectQuality === "low" ? .70 : 1,spacing:80,drift:16,minSpawnDistance:210});
   } else if (world === 3) {
     addMapObjects(list,random,{assetKeys:["w3_tree1","w3_tree2"],count:9,drawW:336,drawH:336,collisionRadius:92,placementRadius:132,solid:true,anchor:.82,density});
@@ -24371,12 +24374,32 @@ function patchGame() {
       const low = UI.save?.settings?.effectQuality === "low";
       const driftX = Math.sin(this.t*.42+object.phase)*(object.drift||14);
       const driftY = Math.cos(this.t*.31+object.phase*1.7)*(object.drift||14)*.55;
-      const pulse = .45 + (Math.sin(this.t*1.8+object.phase)*.5+.5)*.55;
+      const pulse = .42 + (Math.sin(this.t*1.8+object.phase)*.5+.5)*.44;
       const image = this.assets.get("w2_firefly");
+      this.__v095FireflySprites ||= new Map();
+      const cacheKey = `${low?"low":"high"}:${image?.src||"fallback"}`;
+      let sprite = this.__v095FireflySprites.get(cacheKey);
+      if (!sprite) {
+        const size = low ? 42 : 58;
+        sprite = document.createElement("canvas");
+        sprite.width = size; sprite.height = size;
+        const glow = sprite.getContext("2d");
+        const radius = size / 2;
+        const gradient = glow.createRadialGradient(radius,radius,0,radius,radius,radius);
+        gradient.addColorStop(0,"rgba(255,255,221,.92)");
+        gradient.addColorStop(.18,"rgba(255,235,137,.58)");
+        gradient.addColorStop(.52,"rgba(255,213,79,.16)");
+        gradient.addColorStop(1,"rgba(255,205,76,0)");
+        glow.fillStyle=gradient;glow.fillRect(0,0,size,size);
+        if (image) {
+          const imageSize=low?18:22;
+          glow.drawImage(image,radius-imageSize/2,radius-imageSize/2,imageSize,imageSize);
+        }
+        this.__v095FireflySprites.set(cacheKey,sprite);
+      }
       context.save();context.translate(object.x+driftX,object.y+driftY);context.globalAlpha=pulse;
-      context.globalCompositeOperation="lighter";context.shadowColor="#fff0a4";context.shadowBlur=low?4:16;
-      if (image) context.drawImage(image,-object.drawW/2,-object.drawH/2,object.drawW,object.drawH);
-      else { const gradient=context.createRadialGradient(0,0,0,0,0,14);gradient.addColorStop(0,"rgba(255,255,218,1)");gradient.addColorStop(.28,"rgba(255,226,115,.86)");gradient.addColorStop(1,"rgba(255,205,76,0)");context.fillStyle=gradient;context.beginPath();context.arc(0,0,14,0,Math.PI*2);context.fill(); }
+      context.globalCompositeOperation="source-over";
+      context.drawImage(sprite,-sprite.width/2,-sprite.height/2);
       context.restore();return;
     }
 

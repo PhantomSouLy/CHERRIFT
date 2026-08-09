@@ -354,7 +354,7 @@ Deno.serve(async (req: Request) => {
       const now = new Date();
       const { data: messages, error: messageError } = await adminClient
         .from("mail_messages")
-        .select("id,audience_type,target_user_id,title_hu,title_en,body_hu,body_en,attachments,starts_at,expires_at,created_at")
+        .select("id,audience_type,target_user_id,audience_cutoff_at,title_hu,title_en,body_hu,body_en,attachments,starts_at,expires_at,created_at")
         .eq("active", true)
         .lte("starts_at", now.toISOString())
         .order("created_at", { ascending: false })
@@ -362,7 +362,11 @@ Deno.serve(async (req: Request) => {
       if (messageError) throw messageError;
 
       const available = (messages ?? []).filter((message: any) => {
-        const audienceMatches = message.audience_type === "all" || message.target_user_id === user.id;
+        const accountCreatedAt = new Date(user.created_at ?? 0).getTime();
+        const audienceCutoff = new Date(message.audience_cutoff_at ?? message.created_at ?? 0).getTime();
+        const audienceMatches = message.audience_type === "all_future" ||
+          (message.audience_type === "existing" && accountCreatedAt <= audienceCutoff) ||
+          (message.audience_type === "user" && message.target_user_id === user.id);
         const notExpired = !message.expires_at || new Date(message.expires_at).getTime() > now.getTime();
         return audienceMatches && notExpired;
       });

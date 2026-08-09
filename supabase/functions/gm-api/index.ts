@@ -327,9 +327,26 @@ Deno.serve(async (req: Request) => {
       return json(req, { ok: true, requestId, result: data });
     }
 
+    if (action === "set_gm_titles") {
+      if (!hasPermission(admin, "profile.edit")) throw new Error("permission_denied:profile.edit");
+      if (!targetUserId) throw new Error("invalid_target_user_id");
+      const reason = typeof body.reason === "string" ? body.reason.trim() : "";
+      if (reason.length < 3 || reason.length > 500) throw new Error("invalid_change_reason");
+      const titles = uniqueStrings(Array.isArray(body.titles) ? body.titles : [], 3);
+      const allowed = new Set(["gm", "senior_gm", "head_gm"]);
+      if (titles.some((title) => !allowed.has(title))) throw new Error("invalid_gm_title");
+      const { data, error } = await adminClient.rpc("gm_set_gm_titles", {
+        p_admin_user_id: user.id, p_target_user_id: targetUserId,
+        p_titles: titles, p_reason: reason, p_request_id: requestId,
+      });
+      if (error) throw error;
+      return json(req, { ok: true, requestId, result: data });
+    }
+
     if (action === "send_mail") {
-      const audience = body.audience_type === "all" ? "all" : "user";
-      const requiredPermission = audience === "all" ? "mail.broadcast" : "mail.send";
+      const requestedAudience = typeof body.audience_type === "string" ? body.audience_type : "user";
+      const audience = ["user", "existing", "all_future"].includes(requestedAudience) ? requestedAudience : "user";
+      const requiredPermission = audience === "user" ? "mail.send" : "mail.broadcast";
       if (!hasPermission(admin, requiredPermission)) throw new Error(`permission_denied:${requiredPermission}`);
       const target = audience === "user" && isUuid(body.target_user_id) ? body.target_user_id : null;
       targetUserId = target;
@@ -376,7 +393,7 @@ Deno.serve(async (req: Request) => {
 
     if (action === "recent_mail") {
       if (!hasPermission(admin, "mail.send")) throw new Error("permission_denied:mail.send");
-      const { data, error } = await adminClient.from("mail_messages").select("id,audience_type,target_user_id,title_hu,attachments,starts_at,expires_at,active,created_at").order("created_at", { ascending: false }).limit(30);
+      const { data, error } = await adminClient.from("mail_messages").select("id,audience_type,target_user_id,audience_cutoff_at,title_hu,attachments,starts_at,expires_at,active,created_at").order("created_at", { ascending: false }).limit(30);
       if (error) throw error;
       return json(req, { ok: true, requestId, messages: data ?? [] });
     }

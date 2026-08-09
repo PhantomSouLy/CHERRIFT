@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#150b17">
   <title>CHERRIFT GM Tool Pack</title>
-  <link rel="stylesheet" href="gm.css?v=gm-tool-11">
+  <link rel="stylesheet" href="gm.css?v=gm-tool-12">
 </head>
 <body>
   <div class="ambient" aria-hidden="true"><i></i><i></i><i></i></div>
@@ -23,7 +23,7 @@
 
   <div id="gmApp" class="app hidden">
     <header class="topbar">
-      <div class="brand-small"><span>C</span><div><b>CHERRIFT</b><small>GM TOOL PACK v1.1</small></div></div>
+      <div class="brand-small"><span>C</span><div><b>CHERRIFT</b><small>GM TOOL PACK v1.2</small></div></div>
       <button id="accountBtn" class="account-button" type="button"><img id="adminAvatar" alt="" hidden><span id="adminAvatarFallback">GM</span><span><b id="adminName">Admin</b><small id="adminRole">—</small></span></button>
     </header>
     <section id="accountSheet" class="account-sheet hidden"><div><b id="accountSheetName">Admin</b><small id="accountSheetId"></small></div><button id="logoutBtn" class="danger ghost" type="button">Kijelentkezés</button></section>
@@ -40,12 +40,17 @@
           <header class="module-head"><div><p class="eyebrow">01 · DELIVERY</p><h2>Mail Sender</h2><p>Bármely aktív currency, key, chest, material, bag item vagy skin küldhető.</p></div><span class="security-chip">EDGE PROTECTED</span></header>
           <div class="grid two">
             <form id="mailForm" class="card form-card">
-              <fieldset class="segmented"><label><input type="radio" name="mailAudience" value="user" checked><span>Egy játékos</span></label><label><input type="radio" name="mailAudience" value="all"><span>Minden játékos</span></label></fieldset>
+              <fieldset class="segmented mail-audience-segmented">
+                <label><input type="radio" name="mailAudience" value="user" checked><span>Egy játékos</span></label>
+                <label><input type="radio" name="mailAudience" value="existing"><span>Jelenlegi fiókok</span></label>
+                <label><input type="radio" name="mailAudience" value="all_future"><span>Mindenki + új fiókok</span></label>
+              </fieldset>
+              <p class="audience-help"><b>Jelenlegi fiókok:</b> csak a levél létrehozásakor már regisztrált játékosok. <b>Mindenki + új fiókok:</b> a később regisztrálók is megkapják, amíg a levél aktív.</p>
               <section id="mailTargetBox" class="target-picker"><label><span>Játékos keresése</span><div class="input-action"><input id="mailPlayerSearch" autocomplete="off" placeholder="Discord név, ID vagy UUID"><button id="mailSearchBtn" type="button">Keresés</button></div></label><div id="mailPlayerResults" class="search-results"></div><div id="mailSelectedPlayer" class="selected-player hidden"></div></section>
               <div class="language-grid"><label><span>Magyar cím</span><input id="mailTitleHu" maxlength="120" required></label><label><span>Angol cím <em>opcionális</em></span><input id="mailTitleEn" maxlength="120"></label><label><span>Magyar szöveg</span><textarea id="mailBodyHu" rows="6" maxlength="4000" required></textarea></label><label><span>Angol szöveg <em>opcionális</em></span><textarea id="mailBodyEn" rows="6" maxlength="4000"></textarea></label></div>
               <section class="reward-builder"><header><h3>Jutalmak</h3><small>A lista a szerveres katalógusból töltődik.</small></header><div id="mailResourceFields" class="resource-groups"><p class="empty">Katalógus betöltése…</p></div><label><span>Skin ID-k <em>vesszővel vagy új sorban</em></span><textarea id="mailSkins" rows="3" placeholder="kimono_cherry, pajama_cherry"></textarea></label></section>
               <details class="advanced"><summary>Időzítés</summary><div class="two-fields"><label><span>Kezdés</span><input id="mailStartsAt" type="datetime-local"></label><label><span>Lejárat</span><input id="mailExpiresAt" type="datetime-local"></label></div></details>
-              <label id="broadcastConfirm" class="confirm-row hidden"><input id="broadcastConfirmCheck" type="checkbox"><span>Tudomásul veszem, hogy ez a levél minden játékosnak megjelenik.</span></label>
+              <label id="broadcastConfirm" class="confirm-row hidden"><input id="broadcastConfirmCheck" type="checkbox"><span id="broadcastConfirmText">Ellenőriztem a globális címzést és az időzítést.</span></label>
               <button id="mailSubmitBtn" class="primary submit" type="submit">Levél küldése</button>
             </form>
             <div class="stack"><article class="card preview-card"><p class="eyebrow">ELŐNÉZET</p><small id="mailPreviewAudience">Egy játékos</small><h3 id="mailPreviewTitle">A levél címe</h3><p id="mailPreviewBody">Itt jelenik meg a levél szövege.</p><div id="mailPreviewReward" class="reward-preview">Nincs melléklet</div></article><article class="card list-card"><header><h3>Legutóbbi levelek</h3><button id="refreshMailHistory" class="ghost" type="button">Frissítés</button></header><div id="mailHistory" class="activity-list"><p class="empty">Még nincs adat.</p></div></article></div>
@@ -77,6 +82,14 @@
               <section class="reward-builder"><header><h3>Currency, key, chest, material és item</h3><small>Itt pontos darabszámot állítasz be, nem hozzáadást.</small></header><div id="profileResourceFields" class="resource-groups"><p class="empty">Katalógus betöltése…</p></div></section>
               <div class="two-fields"><label><span>Kiválasztott skin</span><input id="profileSelectedSkin" maxlength="80"></label><label><span>Kiválasztott pálya</span><input id="profileSelectedStage" maxlength="80"></label></div>
               <div class="two-fields"><label><span>Feloldott skinek</span><textarea id="profileUnlockedSkins" rows="6"></textarea></label><label><span>Feloldott pályák</span><textarea id="profileUnlockedStages" rows="6"></textarea></label></div>
+              <section class="gm-title-picker">
+                <header><div><h3>GM Title-ok</h3><small>Ezeket a kliens nem tudja automatikusan feloldani; kizárólag innen adhatók.</small></div><span>SERVER ONLY</span></header>
+                <div>
+                  <label><input type="checkbox" data-gm-title="gm"><b>Game Master</b><small>Rare</small></label>
+                  <label><input type="checkbox" data-gm-title="senior_gm"><b>Senior Game Master</b><small>Epic</small></label>
+                  <label><input type="checkbox" data-gm-title="head_gm"><b>Head Game Master</b><small>Legendary</small></label>
+                </div>
+              </section>
               <div class="two-fields"><label><span>Inventory JSON</span><textarea id="profileInventory" class="mono" rows="10" spellcheck="false"></textarea></label><label><span>Equipped JSON</span><textarea id="profileEquipped" class="mono" rows="10" spellcheck="false"></textarea></label></div>
               <label><span>Módosítás indoka <em>kötelező, naplózva lesz</em></span><textarea id="profileReason" rows="3" maxlength="500" required placeholder="Például: elveszett jutalom visszaállítása"></textarea></label>
               <div id="profileDiff" class="diff-box">Még nincs módosítás.</div><button id="profileSaveBtn" class="primary submit" type="submit">Snapshot + profil mentése</button>
@@ -92,8 +105,8 @@
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script src="../vendor/supabase-js-2.110.7.js?v=gm-tool-11"></script>
-  <script src="../src/supabase_config.js?v=gm-tool-11"></script>
-  <script src="gm.js?v=gm-tool-11"></script>
+  <script src="../vendor/supabase-js-2.110.7.js?v=gm-tool-12"></script>
+  <script src="../src/supabase_config.js?v=gm-tool-12"></script>
+  <script src="gm.js?v=gm-tool-12"></script>
 </body>
 </html>

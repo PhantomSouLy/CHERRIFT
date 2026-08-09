@@ -115,6 +115,9 @@
   });
 
   const TITLES = Object.freeze([
+    { id:"gm", name:"Game Master", nameHu:"Game Master", nameEn:"Game Master", rarity:"Rare", gmOnly:true, requirement:{ type:"gmOnly" } },
+    { id:"senior_gm", name:"Senior Game Master", nameHu:"Senior Game Master", nameEn:"Senior Game Master", rarity:"Epic", gmOnly:true, requirement:{ type:"gmOnly" } },
+    { id:"head_gm", name:"Head Game Master", nameHu:"Head Game Master", nameEn:"Head Game Master", rarity:"Legendary", gmOnly:true, requirement:{ type:"gmOnly" } },
     { id:"rookie_bunny", name:"Rookie Bunny", rarity:"Rare", requirement:{ type:"level", value:5 } },
     { id:"meadow_explorer", name:"Meadow Explorer", rarity:"Rare", stats:{ maxHp:50 }, requirement:{ type:"worldStars", world:1 } },
     { id:"night_hunter", name:"Night Hunter", rarity:"Rare", stats:{ damage:10 }, requirement:{ type:"worldStars", world:2 } },

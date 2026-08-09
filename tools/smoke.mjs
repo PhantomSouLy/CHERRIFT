@@ -257,6 +257,7 @@ async function exercise(name,width,height){
     assert.equal(UI.save.coins,500,`${name}: starter Coin balance`);
     assert.equal(UI.save.energy,50,`${name}: starter Energy balance`);
     assert.equal(UI.save.chests.common,3,`${name}: starter Common Chests`);
+    assert.equal(UI.save.account.skillPoints,1,`${name}: level-1 starter receives exactly one Skill Point`);
     assert.ok(window.CHERRIFT_BALANCE&&window.CHERRIFT_PREBETA,`${name}: central pre-beta balance and progression modules`);
     assert.ok(window.CHERRIFT_BALANCE.gear.rarities.Uncommon,`${name}: Uncommon Gear tier remains available`);
     assert.equal(window.CHERRIFT_BALANCE.arsenal.maxLevel,30,`${name}: beta Arsenal cap`);
@@ -273,6 +274,9 @@ async function exercise(name,width,height){
     assert.deepEqual([...window.CHERRIFT_PREBETA.ownedFrames(UI.save)],["frame0lvl"],`${name}: starter owns only the default profile frame`);
     const stackedTitleSave={ownedTitles:["meadow_explorer","night_hunter","banker"]};
     assert.deepEqual(JSON.parse(JSON.stringify(window.CHERRIFT_PREBETA.titleStats(stackedTitleSave))),{maxHp:50,damage:10,allStats:0,coinGain:.01,chestLuck:0},`${name}: all owned title stats stack`);
+    const gmTitles=window.CHERRIFT_BALANCE.titles.filter(title=>title.gmOnly);
+    assert.equal(gmTitles.map(title=>title.id).join(","),"gm,senior_gm,head_gm",`${name}: three server-granted GM titles are registered`);
+    assert.ok(gmTitles.every(title=>!UI.save.ownedTitles.includes(title.id)),`${name}: GM titles are never granted to a starter account`);
     const energySave={energy:50,energyState:{lastTick:Date.now()}},energyGame={save:energySave,__prebetaEnergy:{stageId:"world_1_1",cost:5,committed:false}};
     assert.equal(window.CHERRIFT_PREBETA.commitStageEnergy(energyGame),true,`${name}: first star commits Energy`);
     assert.equal(window.CHERRIFT_PREBETA.commitStageEnergy(energyGame),false,`${name}: Energy cannot be charged twice in one run`);

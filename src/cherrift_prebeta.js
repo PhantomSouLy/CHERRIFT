@@ -59,7 +59,10 @@
     save.inventory = []; save.equipped = {};
     save.unlockedStages = ["world_1_1"]; save.clearedStages = {}; save.stageStars = {}; save.stageStats = {}; save.firstClearClaimed = {};
     save.selectedStageId = "world_1_1";
-    save.account ||= {}; Object.assign(save.account,{level:1,xp:0,totalXp:0,skillPoints:0});
+    // A level-1 account has already earned the point that belongs to level 1.
+    // This is deliberately applied only while creating a starter save, so an
+    // existing tester/GM save is never reset or granted duplicate points.
+    save.account ||= {}; Object.assign(save.account,{level:1,xp:0,totalXp:0,skillPoints:1});
     save.account.skillTreeV082 ||= {ranks:{}};
     save.stats = {...(save.stats || {}),kills:0,clears:0,runs:0,coinsEarned:0,loginDays:0};
     save.profile ||= {}; save.profile.activeTitle = ""; save.profile.frameId = "frame0lvl";
