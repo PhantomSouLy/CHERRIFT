@@ -182,6 +182,7 @@
     });
     if (state.session) await refreshCatalog();
     await refreshMail({ silent: true });
+    window.__CHERRIFT_LIVE_READY__ = true;
     emit("ready");
     console.info(`[CHERRIFT] Live Services ${VERSION} loaded without Mail-panel injection.`);
   }

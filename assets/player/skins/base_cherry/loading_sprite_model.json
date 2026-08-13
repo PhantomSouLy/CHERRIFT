@@ -1,0 +1,27 @@
+{
+  "id": "base_cherry_loading",
+  "version": 1,
+  "format": "horizontal-strip",
+  "frame": { "width": 192, "height": 192 },
+  "futureCombinedSheet": {
+    "path": "base_cherry_loading.png",
+    "columns": 16,
+    "rows": 1,
+    "canvas": { "width": 3072, "height": 192 }
+  },
+  "timeline": [
+    { "name": "run_in", "frames": [0, 1, 2, 3, 4, 5], "fps": 9, "loops": 3 },
+    { "name": "stop", "frames": [6, 7], "fps": 7, "loops": 1 },
+    { "name": "look_up_think", "frames": [8, 9, 10, 11, 12, 13], "fps": 6, "loops": 1 },
+    { "name": "resume", "frames": [14, 15], "fps": 8, "loops": 1 },
+    { "name": "run_loop", "frames": [0, 1, 2, 3, 4, 5], "fps": 9, "loops": 2 }
+  ],
+  "loop": true,
+  "notes": [
+    "Transparent RGBA background.",
+    "Base Cherry proportions, face, bunny ears, antenna and front pink hair strand stay unchanged.",
+    "Feet share the same baseline in every frame; nothing may be cropped.",
+    "The pause reads as cute curiosity, not surprise or fear.",
+    "Until the combined sheet exists, the boot controller uses the current walk-right and idle-down strips as a safe fallback."
+  ]
+}

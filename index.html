@@ -10,6 +10,8 @@
   <link rel="stylesheet" href="assets/cherrift_prebeta.css?v=095pb5" />
   <link rel="stylesheet" href="assets/cherrift_prebeta_event.css?v=095event1" />
   <link rel="stylesheet" href="assets/cherrift_security_ui.css?v=095security1" />
+  <link rel="stylesheet" href="assets/cherrift_boot.css?v=096boot1" />
+  <script src="src/cherrift_boot.js?v=096boot1" defer></script>
   <style id="v060BootCss">
     body.v060-booting #app,
     body.v060-booting #game { visibility:hidden!important; }
@@ -58,11 +60,15 @@
 <body class="v060-booting">
   <section id="bootV060" class="boot-v060" aria-live="polite" aria-label="CHERRIFT loading">
     <div class="boot-card-v060">
-      <div class="boot-mark-v060" aria-hidden="true">✦</div>
+      <div class="boot-cherry-v096" aria-hidden="true">
+        <div class="boot-cherry-run-v096"></div>
+        <div class="boot-cherry-think-v096"></div>
+        <i class="boot-thought-v096">?</i>
+      </div>
       <h1 class="boot-logo-v060">CHERRIFT</h1>
       <p class="boot-sub-v060">PRE-BETA · v0.9.5</p>
       <div class="boot-track-v060"><i id="bootFillV060"></i></div>
-      <div class="boot-status-v060">
+      <div class="boot-status-v060" hidden>
         <span id="bootTextV060">Cherry előkészítése…</span>
         <b id="bootPercentV060">3%</b>
       </div>

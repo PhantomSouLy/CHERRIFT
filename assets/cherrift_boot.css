@@ -1,0 +1,126 @@
+/* CHERRIFT v0.9.6 boot gate.
+   Keeps every application surface hidden until the first stable UI frame. */
+body.v060-booting {
+  overflow: hidden !important;
+  background: #0b0610;
+}
+
+body.v060-booting #app,
+body.v060-booting #game {
+  display: block !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.boot-card-v060 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.boot-cherry-v096 {
+  position: relative;
+  width: 192px;
+  height: 192px;
+  margin: 0 auto 2px;
+  overflow: visible;
+  filter: drop-shadow(0 12px 13px rgba(28, 4, 20, .55));
+}
+
+.boot-cherry-run-v096,
+.boot-cherry-think-v096 {
+  position: absolute;
+  inset: 0;
+  width: 192px;
+  height: 192px;
+  background-repeat: no-repeat;
+  image-rendering: auto;
+  transform-origin: 50% 85%;
+}
+
+.boot-cherry-run-v096 {
+  background-image: url("player/skins/base_cherry/base_cherry_walk_right.png");
+  background-size: 1152px 192px;
+  animation: cherryBootRunFramesV096 .66s steps(6) infinite;
+}
+
+.boot-cherry-think-v096 {
+  visibility: hidden;
+  opacity: 0;
+  background-image: url("player/skins/base_cherry/base_cherry_idle_down.png");
+  background-size: 768px 192px;
+  animation: cherryBootThinkFramesV096 1s steps(4) infinite;
+}
+
+.boot-thought-v096 {
+  position: absolute;
+  top: 14px;
+  right: 13px;
+  display: grid;
+  width: 29px;
+  height: 29px;
+  place-items: center;
+  border: 2px solid rgba(255, 224, 240, .9);
+  border-radius: 50%;
+  color: #6d254d;
+  background: rgba(255, 247, 252, .94);
+  box-shadow: 0 5px 14px rgba(255, 81, 166, .34);
+  font: 900 17px/1 system-ui, sans-serif;
+  opacity: 0;
+  transform: translateY(5px) scale(.7);
+}
+
+.boot-cherry-v096[data-phase="think"] .boot-cherry-run-v096 {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.boot-cherry-v096[data-phase="think"] .boot-cherry-think-v096 {
+  visibility: visible;
+  opacity: 1;
+  animation: cherryBootThinkFramesV096 1s steps(4) infinite,
+             cherryBootLookV096 1.65s ease-in-out infinite;
+}
+
+.boot-cherry-v096[data-phase="think"] .boot-thought-v096 {
+  animation: cherryBootQuestionV096 1.65s ease-in-out infinite;
+}
+
+.boot-v060.done + #game,
+body:not(.v060-booting) #app,
+body:not(.v060-booting) #game {
+  transition: opacity .24s ease;
+}
+
+@keyframes cherryBootRunFramesV096 {
+  to { background-position: -1152px 0; }
+}
+
+@keyframes cherryBootThinkFramesV096 {
+  to { background-position: -768px 0; }
+}
+
+@keyframes cherryBootLookV096 {
+  0%, 20%, 100% { transform: rotate(0) translateY(0); }
+  45%, 72% { transform: rotate(-3deg) translateY(-3px); }
+}
+
+@keyframes cherryBootQuestionV096 {
+  0%, 16%, 100% { opacity: 0; transform: translateY(5px) scale(.7); }
+  35%, 72% { opacity: 1; transform: translateY(0) scale(1); }
+  86% { opacity: 0; transform: translateY(-5px) scale(.9); }
+}
+
+@media (max-width: 620px) {
+  .boot-cherry-v096 {
+    margin-bottom: -5px;
+    transform: scale(.82);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boot-cherry-run-v096,
+  .boot-cherry-think-v096,
+  .boot-thought-v096 { animation: none !important; }
+}
