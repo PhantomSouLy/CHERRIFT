@@ -14223,17 +14223,17 @@ async function signOut() {
 function releaseBoot() {
   if (runtime.bootReleased) return;
   runtime.bootReleased = true;
-  const boot = id("bootV060");
   const fill = id("bootFillV060");
   const percent = id("bootPercentV060");
   const status = id("bootTextV060");
   if (fill) fill.style.width = "100%";
   if (percent) percent.textContent = "100%";
   if (status) status.textContent = text("welcomeBack");
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    document.body.classList.remove("v060-booting");
-    boot?.classList.add("done");
-    window.setTimeout(() => boot?.remove(), 500);
+  // The v0.9.6 start experience owns the splash lifetime. Auth only reports
+  // that the account/save layer is ready; the lobby stays hidden until the
+  // player activates CLICK TO START.
+  window.dispatchEvent(new CustomEvent("cherrift:runtime-ready", {
+    detail:{ mode:runtime.mode, signedIn:!!runtime.session?.user }
   }));
 }
 
@@ -26521,20 +26521,9 @@ function finishStartupExperience(openPanel = "") {
 function installStartupExperience() {
   if (uiPolishState.startupInstalled || !window.CHERRIFT_V060?.finishBoot) return;
   uiPolishState.startupInstalled = true;
-  const previousFinish = window.CHERRIFT_V060.finishBoot.bind(window.CHERRIFT_V060);
-  window.CHERRIFT_V060.finishBoot = function finishBootV5(...args) {
-    ensureStartupOverlay();
-    document.body.classList.remove("v060-booting");
-    const initialBoot = document.getElementById("bootV060");
-    initialBoot?.classList.add("done");
-    window.setTimeout(() => initialBoot?.remove(), 380);
-    const result = previousFinish(...args);
-    syncStartupExperience();
-    window.clearInterval(uiPolishState.startupTimer);
-    uiPolishState.startupTimer = window.setInterval(syncStartupExperience, 250);
-    return result;
-  };
-  window.addEventListener("cherrift:authgate", syncStartupExperience);
+  // v0.9.6 replaces the legacy second start overlay. The initial splash now
+  // stays above the whole app through loading and authentication, then exposes
+  // the lobby only after its own CLICK TO START action.
 }
 
 function addInteractionFeedback() {

@@ -10,68 +10,54 @@
   <link rel="stylesheet" href="assets/cherrift_prebeta.css?v=095pb5" />
   <link rel="stylesheet" href="assets/cherrift_prebeta_event.css?v=095event1" />
   <link rel="stylesheet" href="assets/cherrift_security_ui.css?v=095security1" />
-  <link rel="stylesheet" href="assets/cherrift_boot.css?v=096boot1" />
-  <script src="src/cherrift_boot.js?v=096boot1" defer></script>
+  <link rel="preload" as="image" href="assets/loading_pc_1920x1080.png?v=096boot2" media="(orientation:landscape)" />
+  <link rel="preload" as="image" href="assets/loading_mobile_1080x1920.png?v=096boot2" media="(orientation:portrait)" />
+  <link rel="stylesheet" href="assets/cherrift_boot.css?v=096boot2" />
+  <script src="src/cherrift_boot.js?v=096boot2" defer></script>
   <style id="v060BootCss">
+    html,body { margin:0; min-height:100%; background:#0b0610; }
     body.v060-booting #app,
-    body.v060-booting #game { visibility:hidden!important; }
+    body.v060-booting #game { visibility:hidden!important; opacity:0!important; }
     .boot-v060 {
-      position:fixed; inset:0; z-index:1000000; display:grid; place-items:center;
-      padding:24px; color:#fff; overflow:hidden;
-      background:
-        linear-gradient(180deg,rgba(8,5,15,.48),rgba(8,5,15,.76)),
-        url("assets/ui/mainmenu.png?v=clean-runtime-1-4") center/cover no-repeat;
-      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      transition:opacity .35s ease,visibility .35s ease;
+      position:fixed; inset:0; z-index:1000000; display:block; overflow:hidden;
+      color:#fff; background-color:#0b0610;
     }
-    .boot-v060::before {
-      content:""; position:absolute; inset:-20%; opacity:.28;
-      background-image:radial-gradient(circle,rgba(255,213,235,.9) 0 1px,transparent 1.6px);
-      background-size:54px 54px; transform:rotate(8deg);
-      animation:v060BootPetals 12s linear infinite;
-    }
-    .boot-v060.done { opacity:0; visibility:hidden; pointer-events:none; }
-    .boot-card-v060 { position:relative; width:min(520px,92vw); text-align:center; }
-    .boot-mark-v060 { width:70px; height:70px; margin:0 auto 22px; border-radius:50%;
-      border:1px solid rgba(255,224,240,.7); box-shadow:0 0 36px rgba(255,87,164,.48);
-      display:grid; place-items:center; color:#ffd8ec; font-size:28px;
-      background:radial-gradient(circle,rgba(255,115,180,.3),rgba(35,12,40,.72)); }
-    .boot-logo-v060 { margin:0; font-family:Georgia,"Times New Roman",serif;
-      font-size:clamp(48px,12vw,80px); line-height:.9; letter-spacing:-2px;
-      text-shadow:0 0 8px #fff,0 0 24px #ff70b4,0 0 52px rgba(255,47,150,.64); }
-    .boot-sub-v060 { margin:10px 0 26px; color:#e7bfd4; font-size:11px;
-      font-weight:900; letter-spacing:3px; text-transform:uppercase; }
-    .boot-track-v060 { height:9px; overflow:hidden; border-radius:99px;
-      border:1px solid rgba(255,208,232,.24); background:rgba(255,255,255,.07); }
-    .boot-track-v060 i { display:block; width:3%; height:100%; border-radius:inherit;
-      background:linear-gradient(90deg,#c73579,#ff75b8,#ffe1f0);
-      box-shadow:0 0 18px rgba(255,91,172,.72); transition:width .2s ease; }
-    .boot-status-v060 { display:flex; justify-content:space-between; gap:16px;
-      margin-top:10px; color:rgba(255,229,243,.72); font-size:12px; }
-    .boot-error-v062 { margin-top:18px; padding:14px; border:1px solid rgba(255,150,190,.5);
-      border-radius:14px; background:rgba(60,8,31,.72); }
-    .boot-error-v062 strong,.boot-error-v062 p { display:block; margin:0 0 7px; }
-    .boot-retry-v062 { min-height:42px; padding:0 18px; border:1px solid rgba(255,235,246,.8);
-      border-radius:10px; color:#fff; font-weight:900; background:linear-gradient(110deg,#d52f7d,#e784b4); }
-    @keyframes v060BootPetals { to { transform:translate3d(54px,54px,0) rotate(8deg); } }
-    @media (prefers-reduced-motion:reduce) { .boot-v060::before { animation:none; } }
   </style>
 </head>
 <body class="v060-booting">
-  <section id="bootV060" class="boot-v060" aria-live="polite" aria-label="CHERRIFT loading">
-    <div class="boot-card-v060">
-      <div class="boot-cherry-v096" aria-hidden="true">
-        <div class="boot-cherry-run-v096"></div>
-        <div class="boot-cherry-think-v096"></div>
-        <i class="boot-thought-v096">?</i>
-      </div>
+  <section id="bootV060" class="boot-v060" data-boot-phase="loading" aria-live="polite" aria-label="CHERRIFT loading">
+    <div class="boot-shade-v096" aria-hidden="true"></div>
+    <header class="boot-brand-v096" aria-label="CHERRIFT">
       <h1 class="boot-logo-v060">CHERRIFT</h1>
-      <p class="boot-sub-v060">PRE-BETA · v0.9.5</p>
-      <div class="boot-track-v060"><i id="bootFillV060"></i></div>
-      <div class="boot-status-v060" hidden>
-        <span id="bootTextV060">Cherry előkészítése…</span>
-        <b id="bootPercentV060">3%</b>
-      </div>
+      <p class="boot-sub-v060">SURVIVE · EVOLVE · BLOOM</p>
+    </header>
+
+    <div class="boot-stage-v096 boot-card-v060">
+      <section id="bootLoadingV096" class="boot-panel-v096 boot-loading-v096" aria-label="Loading progress">
+        <div class="boot-track-v060"><i id="bootFillV060"></i></div>
+        <div class="boot-status-v060">
+          <span id="bootTextV060">Cherry előkészítése…</span>
+          <b id="bootPercentV060">3%</b>
+        </div>
+      </section>
+
+      <section id="bootAuthV096" class="boot-panel-v096 boot-auth-v096" hidden role="dialog" aria-labelledby="bootAuthTitleV096">
+        <h2 id="bootAuthTitleV096">Folytatás</h2>
+        <p>Jelentkezz be Discorddal a felhőmentéshez, vagy folytasd vendégként ezen az eszközön.</p>
+        <div class="boot-auth-actions-v096">
+          <button id="bootDiscordV096" type="button" class="discord" data-boot-auth="discord">
+            <span aria-hidden="true">◉</span><b>DISCORD LOGIN</b>
+          </button>
+          <button id="bootGuestV096" type="button" class="guest" data-boot-auth="guest">
+            <span aria-hidden="true">◇</span><b>CONTINUE AS GUEST</b>
+          </button>
+        </div>
+        <small id="bootAuthStatusV096" aria-live="polite">A vendégmentés csak ebben a böngészőben marad meg.</small>
+      </section>
+
+      <button id="bootStartV096" class="boot-start-v096" type="button" hidden>
+        <span>CLICK TO START</span><i aria-hidden="true">◆</i>
+      </button>
     </div>
   </section>
   <canvas id="game"></canvas>

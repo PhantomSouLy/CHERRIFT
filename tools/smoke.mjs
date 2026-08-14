@@ -263,6 +263,10 @@ async function exercise(name,width,height){
     await waitFor(()=>window.CHERRIFT_AUTH.getState().gateVisible,`${name} auth gate`);
     click(window,document.getElementById("authGuestV064"),`${name} guest login`);
     await waitFor(()=>window.CHERRIFT_AUTH.getState().mode==="guest",`${name} guest mode`);
+    await waitFor(()=>window.CHERRIFT_BOOT?.getState().phase==="start",`${name} click-to-start phase`);
+    assert.equal(document.body.classList.contains("v060-booting"),true,`${name}: lobby remains covered before start`);
+    click(window,document.getElementById("bootStartV096"),`${name} click to start`);
+    await waitFor(()=>!document.body.classList.contains("v060-booting"),`${name} lobby release`);
 
     assert.equal(document.body.classList.contains("v062-startup-failed"),false,`${name}: no startup failure`);
     assert.ok(window.__CHERRIFT_CLEAN_RUNTIME__,`${name}: consolidated Clean Runtime is active`);
@@ -956,6 +960,10 @@ async function exerciseReturningSession(){
     assert.equal(window.CHERRIFT_AUTH.getState().gateVisible,false,"returning session: gate skipped");
     assert.equal(window.CHERRIFT_AUTH.getState().account?.discordId,"987654321","returning session: identity restored");
     assert.equal(window.CHERRIFT_AUTH.getState().memoryOnly,true,"returning session: local account backup mode when cloud API is unavailable");
+    await waitFor(()=>window.CHERRIFT_BOOT?.getState().phase==="start","returning session click-to-start phase");
+    assert.equal(window.document.body.classList.contains("v060-booting"),true,"returning session: lobby remains covered before start");
+    click(window,window.document.getElementById("bootStartV096"),"returning session click to start");
+    await waitFor(()=>!window.document.body.classList.contains("v060-booting"),"returning session lobby release");
     window.UI.save.coins=4321;
     window.CherriftStorage.save(window.UI.save);
     const backup=JSON.parse(window.localStorage.getItem("cherrift-discord-backup-v1:returning-user"));

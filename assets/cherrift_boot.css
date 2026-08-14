@@ -1,126 +1,280 @@
-/* CHERRIFT v0.9.6 boot gate.
-   Keeps every application surface hidden until the first stable UI frame. */
+/* CHERRIFT v0.9.6 start experience
+   One full-screen surface owns loading, first-time auth and click-to-start. */
+:root { --boot-safe-bottom-v096:max(24px, env(safe-area-inset-bottom)); }
+
 body.v060-booting {
-  overflow: hidden !important;
-  background: #0b0610;
+  overflow:hidden !important;
+  background:#0b0610;
 }
 
 body.v060-booting #app,
 body.v060-booting #game {
-  display: block !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
+  display:block !important;
+  visibility:hidden !important;
+  opacity:0 !important;
+  pointer-events:none !important;
 }
 
-.boot-card-v060 {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+body.v060-booting #authGateV064 {
+  display:none !important;
+  visibility:hidden !important;
+  pointer-events:none !important;
 }
 
-.boot-cherry-v096 {
-  position: relative;
-  width: 192px;
-  height: 192px;
-  margin: 0 auto 2px;
-  overflow: visible;
-  filter: drop-shadow(0 12px 13px rgba(28, 4, 20, .55));
+#bootV060.boot-v060 {
+  position:fixed;
+  inset:0;
+  z-index:1000000;
+  min-height:100svh;
+  color:#fff;
+  overflow:hidden;
+  isolation:isolate;
+  background-color:#0b0610 !important;
+  background-image:url("loading_pc_1920x1080.png?v=096boot2") !important;
+  background-position:center;
+  background-size:cover;
+  background-repeat:no-repeat;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  transition:opacity .55s ease,visibility .55s ease,filter .55s ease;
 }
 
-.boot-cherry-run-v096,
-.boot-cherry-think-v096 {
-  position: absolute;
-  inset: 0;
-  width: 192px;
-  height: 192px;
-  background-repeat: no-repeat;
-  image-rendering: auto;
-  transform-origin: 50% 85%;
+.boot-v060::before {
+  content:"";
+  position:absolute;
+  inset:-12%;
+  z-index:-1;
+  opacity:.18;
+  background-image:radial-gradient(circle,rgba(255,229,242,.9) 0 1px,transparent 1.8px);
+  background-size:64px 64px;
+  animation:bootPetalsV096 15s linear infinite;
 }
 
-.boot-cherry-run-v096 {
-  background-image: url("player/skins/base_cherry/base_cherry_walk_right.png");
-  background-size: 1152px 192px;
-  animation: cherryBootRunFramesV096 .66s steps(6) infinite;
+.boot-v060.done {
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  filter:blur(3px);
 }
 
-.boot-cherry-think-v096 {
-  visibility: hidden;
-  opacity: 0;
-  background-image: url("player/skins/base_cherry/base_cherry_idle_down.png");
-  background-size: 768px 192px;
-  animation: cherryBootThinkFramesV096 1s steps(4) infinite;
+.boot-shade-v096 {
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  background:
+    linear-gradient(180deg,rgba(8,4,15,.18) 0%,transparent 33%,transparent 58%,rgba(8,3,15,.52) 100%),
+    radial-gradient(ellipse at 50% 112%,rgba(9,3,18,.42),transparent 58%);
 }
 
-.boot-thought-v096 {
-  position: absolute;
-  top: 14px;
-  right: 13px;
-  display: grid;
-  width: 29px;
-  height: 29px;
-  place-items: center;
-  border: 2px solid rgba(255, 224, 240, .9);
-  border-radius: 50%;
-  color: #6d254d;
-  background: rgba(255, 247, 252, .94);
-  box-shadow: 0 5px 14px rgba(255, 81, 166, .34);
-  font: 900 17px/1 system-ui, sans-serif;
-  opacity: 0;
-  transform: translateY(5px) scale(.7);
+.boot-brand-v096 {
+  position:absolute;
+  top:clamp(26px,5.2vh,72px);
+  left:50%;
+  width:min(720px,86vw);
+  text-align:center;
+  transform:translateX(-50%);
+  filter:drop-shadow(0 10px 24px rgba(21,4,22,.56));
 }
 
-.boot-cherry-v096[data-phase="think"] .boot-cherry-run-v096 {
-  visibility: hidden;
-  opacity: 0;
+.boot-logo-v060 {
+  margin:0;
+  color:#fff7fb;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(54px,7.2vw,116px);
+  font-weight:700;
+  line-height:.86;
+  letter-spacing:clamp(2px,.55vw,10px);
+  text-shadow:0 1px 0 #8d345f,0 0 9px #fff,0 0 28px #ff75b7,0 0 65px rgba(255,57,151,.66);
 }
 
-.boot-cherry-v096[data-phase="think"] .boot-cherry-think-v096 {
-  visibility: visible;
-  opacity: 1;
-  animation: cherryBootThinkFramesV096 1s steps(4) infinite,
-             cherryBootLookV096 1.65s ease-in-out infinite;
+.boot-sub-v060 {
+  margin:15px 0 0;
+  color:#ffe1f0;
+  font-size:clamp(9px,.8vw,13px);
+  font-weight:900;
+  letter-spacing:clamp(3px,.65vw,9px);
+  text-shadow:0 2px 8px rgba(39,4,26,.75);
 }
 
-.boot-cherry-v096[data-phase="think"] .boot-thought-v096 {
-  animation: cherryBootQuestionV096 1.65s ease-in-out infinite;
+.boot-stage-v096 {
+  position:absolute;
+  left:50%;
+  bottom:clamp(72px,15vh,172px);
+  display:grid;
+  width:min(570px,84vw);
+  place-items:center;
+  transform:translateX(-50%);
 }
 
-.boot-v060.done + #game,
-body:not(.v060-booting) #app,
-body:not(.v060-booting) #game {
-  transition: opacity .24s ease;
+.boot-panel-v096 {
+  grid-area:1/1;
+  width:100%;
+  box-sizing:border-box;
 }
 
-@keyframes cherryBootRunFramesV096 {
-  to { background-position: -1152px 0; }
+.boot-track-v060 {
+  height:10px;
+  overflow:hidden;
+  border:1px solid rgba(255,230,242,.58);
+  border-radius:999px;
+  background:rgba(25,5,29,.48);
+  box-shadow:0 5px 20px rgba(12,2,16,.5),inset 0 1px 3px rgba(0,0,0,.32);
+  backdrop-filter:blur(8px);
 }
 
-@keyframes cherryBootThinkFramesV096 {
-  to { background-position: -768px 0; }
+.boot-track-v060 i {
+  display:block;
+  width:3%;
+  height:100%;
+  border-radius:inherit;
+  background:linear-gradient(90deg,#d33582,#ff72b5 55%,#fff3f9);
+  box-shadow:0 0 20px rgba(255,91,172,.9);
+  transition:width .24s ease;
 }
 
-@keyframes cherryBootLookV096 {
-  0%, 20%, 100% { transform: rotate(0) translateY(0); }
-  45%, 72% { transform: rotate(-3deg) translateY(-3px); }
+.boot-status-v060 {
+  display:flex;
+  justify-content:space-between;
+  gap:18px;
+  margin-top:10px;
+  color:rgba(255,237,246,.92);
+  font-size:12px;
+  font-weight:750;
+  letter-spacing:.4px;
+  text-shadow:0 2px 8px rgba(20,2,15,.9);
 }
 
-@keyframes cherryBootQuestionV096 {
-  0%, 16%, 100% { opacity: 0; transform: translateY(5px) scale(.7); }
-  35%, 72% { opacity: 1; transform: translateY(0) scale(1); }
-  86% { opacity: 0; transform: translateY(-5px) scale(.9); }
+.boot-auth-v096 {
+  padding:23px 25px 20px;
+  border:1px solid rgba(255,224,240,.44);
+  border-radius:24px;
+  text-align:center;
+  background:linear-gradient(145deg,rgba(24,8,31,.73),rgba(65,14,48,.64));
+  box-shadow:0 20px 55px rgba(8,2,13,.52),inset 0 1px rgba(255,255,255,.14);
+  backdrop-filter:blur(15px) saturate(1.15);
 }
 
-@media (max-width: 620px) {
-  .boot-cherry-v096 {
-    margin-bottom: -5px;
-    transform: scale(.82);
+.boot-auth-v096 h2 {
+  margin:0 0 6px;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(25px,3vw,35px);
+  letter-spacing:.8px;
+}
+
+.boot-auth-v096 p {
+  max-width:470px;
+  margin:0 auto 17px;
+  color:#f4d9e8;
+  font-size:13px;
+  line-height:1.45;
+}
+
+.boot-auth-actions-v096 {
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:11px;
+}
+
+.boot-auth-actions-v096 button {
+  display:flex;
+  min-height:52px;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  padding:0 17px;
+  border:1px solid rgba(255,235,245,.52);
+  border-radius:14px;
+  color:#fff;
+  cursor:pointer;
+  font:900 12px/1 system-ui,sans-serif;
+  letter-spacing:.8px;
+  transition:transform .16s ease,filter .16s ease,box-shadow .16s ease;
+}
+
+.boot-auth-actions-v096 button:hover,
+.boot-auth-actions-v096 button:focus-visible {
+  transform:translateY(-2px);
+  filter:brightness(1.08);
+  box-shadow:0 10px 24px rgba(0,0,0,.25);
+}
+
+.boot-auth-actions-v096 button:disabled { opacity:.54; cursor:wait; transform:none; }
+.boot-auth-actions-v096 .discord { background:linear-gradient(135deg,#5865f2,#9b61e6); }
+.boot-auth-actions-v096 .guest { background:linear-gradient(135deg,rgba(90,39,75,.94),rgba(153,60,109,.94)); }
+.boot-auth-v096 small { display:block; margin-top:12px; color:#e9c4d8; font-size:11px; line-height:1.35; }
+
+.boot-start-v096 {
+  grid-area:1/1;
+  display:flex;
+  min-width:min(390px,80vw);
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  padding:14px 26px;
+  border:0;
+  color:#fff;
+  cursor:pointer;
+  background:transparent;
+  font:900 clamp(18px,2.3vw,29px)/1.2 system-ui,sans-serif;
+  letter-spacing:clamp(2px,.55vw,7px);
+  text-shadow:0 2px 3px #551337,0 0 9px #fff,0 0 22px #ff5aa6;
+  animation:bootStartPulseV096 1.75s ease-in-out infinite;
+}
+
+.boot-start-v096 i { color:#ffd8eb; font-size:.62em; }
+.boot-v060 [hidden] { display:none !important; }
+
+.boot-error-v062 {
+  grid-area:1/1;
+  width:100%;
+  box-sizing:border-box;
+  padding:18px;
+  border:1px solid rgba(255,150,190,.55);
+  border-radius:18px;
+  text-align:center;
+  background:rgba(60,8,31,.82);
+  backdrop-filter:blur(14px);
+}
+
+.boot-error-v062 strong,.boot-error-v062 p { display:block; margin:0 0 8px; }
+.boot-retry-v062 { min-height:42px; padding:0 18px; border:1px solid rgba(255,235,246,.8); border-radius:10px; color:#fff; font-weight:900; background:linear-gradient(110deg,#d52f7d,#e784b4); }
+
+@keyframes bootPetalsV096 { to { transform:translate3d(64px,64px,0); } }
+@keyframes bootStartPulseV096 { 0%,100% { opacity:.72; transform:scale(.985); } 50% { opacity:1; transform:scale(1.025); } }
+
+@media (orientation:portrait), (max-width:620px) {
+  #bootV060.boot-v060 {
+    background-image:url("loading_mobile_1080x1920.png?v=096boot2") !important;
+    background-position:center;
   }
+  .boot-shade-v096 {
+    background:linear-gradient(180deg,rgba(8,4,15,.1),transparent 28%,transparent 50%,rgba(8,3,15,.56) 100%);
+  }
+  .boot-brand-v096 { top:max(24px,calc(env(safe-area-inset-top) + 17px)); width:92vw; }
+  .boot-logo-v060 { font-size:clamp(45px,14vw,75px); letter-spacing:clamp(1px,1vw,5px); }
+  .boot-sub-v060 { margin-top:11px; font-size:9px; letter-spacing:3.5px; }
+  .boot-stage-v096 { bottom:calc(var(--boot-safe-bottom-v096) + 12.5vh); width:min(430px,84vw); }
+  .boot-auth-v096 { padding:19px 17px 17px; border-radius:20px; }
+  .boot-auth-v096 h2 { font-size:27px; }
+  .boot-auth-v096 p { font-size:12px; }
+  .boot-auth-actions-v096 { grid-template-columns:1fr; }
+  .boot-auth-actions-v096 button { min-height:49px; }
+  .boot-start-v096 { min-width:82vw; font-size:clamp(17px,5.5vw,24px); }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .boot-cherry-run-v096,
-  .boot-cherry-think-v096,
-  .boot-thought-v096 { animation: none !important; }
+@media (orientation:landscape) and (max-height:520px) {
+  .boot-brand-v096 { top:18px; }
+  .boot-logo-v060 { font-size:45px; }
+  .boot-sub-v060 { margin-top:7px; }
+  .boot-stage-v096 { bottom:22px; width:min(500px,70vw); }
+  .boot-auth-v096 { padding:14px 18px 12px; }
+  .boot-auth-v096 h2 { font-size:23px; }
+  .boot-auth-v096 p { margin-bottom:10px; }
+  .boot-auth-actions-v096 button { min-height:42px; }
+  .boot-auth-v096 small { margin-top:7px; }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .boot-v060::before,.boot-start-v096 { animation:none !important; }
+  .boot-v060,.boot-auth-actions-v096 button { transition:none !important; }
 }
