@@ -16703,6 +16703,8 @@ console.info("[CHERRIFT] v0.8.2 Systems, navigation, Arsenal, Gear and Skill Tre
 const VERSION = "0.8.3-item-art-reward-overlay";
 const DISPLAY_VERSION = "v0.8.3";
 const RARITIES = new Set(["Common", "Uncommon", "Rare", "Epic", "Legendary"]);
+const REWARD_SOUND_PATH = "assets/audio/rewardsfx.wav?v=096reward1";
+const REWARD_SOUND_VOLUME = .55;
 
 const ITEM_ASSETS = Object.freeze({
   currency: Object.freeze({
@@ -16799,7 +16801,8 @@ const state = {
   queueTimer: 0,
   observer: null,
   decorateQueued: false,
-  suppressDepth: 0
+  suppressDepth: 0,
+  rewardSound: null
 };
 
 const id = name => document.getElementById(name);
@@ -16833,6 +16836,34 @@ function preloadAssets() {
     const image = new Image();
     image.decoding = "async";
     image.src = source;
+  }
+}
+
+function rewardSoundVolume() {
+  const master = Number(window.UI?.save?.settings?.volume);
+  const multiplier = Number.isFinite(master) ? Math.max(0, Math.min(1, master / 100)) : 1;
+  return REWARD_SOUND_VOLUME * multiplier;
+}
+
+function ensureRewardSound() {
+  if (state.rewardSound || typeof Audio !== "function") return state.rewardSound;
+  state.rewardSound = new Audio(REWARD_SOUND_PATH);
+  state.rewardSound.preload = "auto";
+  return state.rewardSound;
+}
+
+function playRewardSound() {
+  const volume = rewardSoundVolume();
+  const sound = ensureRewardSound();
+  if (!sound || volume <= 0) return false;
+  try {
+    sound.pause();
+    sound.currentTime = 0;
+    sound.volume = volume;
+    sound.play()?.catch?.(() => {});
+    return true;
+  } catch (_) {
+    return false;
   }
 }
 
@@ -17247,6 +17278,7 @@ function renderRewardBatch(batch) {
   overlay.classList.add("open");
   document.body.classList.add("reward-open-v083");
   state.active = true;
+  playRewardSound();
   window.setTimeout(() => continueButton?.focus({ preventScroll:true }), 80);
 }
 
@@ -17384,6 +17416,7 @@ window.CHERRIFT_REWARDS = {
   close: closeCurrentReward,
   reset: resetRewardQueue,
   withSuppressed: withSuppressedRewards,
+  playSound: playRewardSound,
   collectRewards,
   snapshot
 };
@@ -18909,6 +18942,7 @@ if(previousShowStageClear){
     let holder=id("runSummaryV089");
     if(!holder){holder=document.createElement("div");holder.id="runSummaryV089";id("v080StageRewards")?.insertAdjacentElement("afterend",holder)||document.querySelector("#stageClearModal .stage-clear-summary")?.insertAdjacentElement("afterend",holder);}
     if(holder)holder.innerHTML=summaryMarkup(game);
+    window.CHERRIFT_REWARDS?.playSound?.();
     return result;
   };
 }

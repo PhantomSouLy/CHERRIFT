@@ -400,6 +400,7 @@
     // of Gear or the main menu.
     modal.classList.remove("hidden");
     modal.innerHTML = `<div class="gco-modal-card"><h3>${esc(text("rewards"))}</h3>${summaryMarkup(rewards)}<button class="gco-close" type="button">${esc(text("close"))}</button></div>`;
+    window.CHERRIFT_REWARDS?.playSound?.();
     q(".gco-close", modal).onclick = () => modal.classList.add("hidden");
   }
 
@@ -412,6 +413,7 @@
       if (!reward) return showGlobalSummary(normalRewards);
       modal.classList.remove("hidden");
       modal.innerHTML = `<div class="gco-modal-card gco-skin-reveal"><small>${esc(reward.rarity)} Skin</small>${reward.asset ? `<img class="gco-skin-art" src="${esc(reward.asset)}" alt="" onerror="this.hidden=true">` : `<div class="gco-skin-fallback">${reward.icon || "🐰"}</div>`}<h3>${esc(reward.label)}</h3><p>${esc(reward.duplicate ? text("duplicate") : text("unlocked"))}</p><button class="gco-next" type="button">${esc(queue.length || normalRewards.length ? text("continue") : text("close"))}</button></div>`;
+      window.CHERRIFT_REWARDS?.playSound?.();
       q(".gco-next", modal).onclick = () => {
         if (queue.length) nextSkin();
         else if (normalRewards.length) showGlobalSummary(normalRewards);
