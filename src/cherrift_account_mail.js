@@ -33,7 +33,7 @@
       totalXp: "Összes XP", gear: "Felszerelés", gacha: "Gacha", arsenalAvg: "Arsenal átlag", power: "Erő",
       titles: "Cím választása", titleCollection:"Címgyűjtemény", noTitle:"[Nincs Title]", owned: "Megszerezve", equip: "Felszerelés", equipped: "Aktív", locked: "Nincs megszerezve",
       editName: "Megjelenített név szerkesztése", save: "Mentés", nameRule: "3–24 karakter használható.",
-      currentSkin: "Jelenlegi skin", gearEquipments: "Felszerelések", titleStats: "Title statok", titleStatsEmpty: "Title stat bónuszok még nem érhetők el.", totalTitleStats: "Összesített title statok",
+      currentSkin: "Jelenlegi skin", gearEquipments: "Felszerelések", titleStats: "Title Stats", titleStatsEmpty: "Title stat bónuszok még nem érhetők el.", totalTitleStats: "Összesített title statok",
       activeTitleStats:"Aktív Title", ownedTitleBonuses:"Megszerezett Title bónuszok"
     },
     en: {
