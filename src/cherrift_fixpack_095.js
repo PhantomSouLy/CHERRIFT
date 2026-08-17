@@ -1028,7 +1028,12 @@
   function installClickHandlers() {
     document.addEventListener("click", event => {
       if (document.body.classList.contains("is-playing")) return;
-      if (!event.target.closest?.("#fixClickPetalLayerV095")) sakuraBurst(event.clientX,event.clientY);
+      const celebratory = event.target.closest?.(
+        ".menu-btn.primary,.bf-button:not(.secondary):not(.danger)," +
+        "[data-v093-equip],[data-v080-open-chest],[data-v082-claim-weekly]," +
+        "[data-v083-continue],[data-v094-play],[data-fix-ach-claim]"
+      );
+      if (celebratory && !event.target.closest?.("#fixClickPetalLayerV095")) sakuraBurst(event.clientX,event.clientY);
     }, {passive:true});
 
     document.addEventListener("click", event => {

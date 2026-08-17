@@ -26651,7 +26651,12 @@ function addInteractionFeedback() {
     const start = pointers.get(event.pointerId);
     pointers.delete(event.pointerId);
     if (!start) return;
-    if (Math.hypot(event.clientX - start.x, event.clientY - start.y) <= 12) {
+    const celebratoryAction = event.target.closest?.(
+      ".menu-btn.primary,.bf-button:not(.secondary):not(.danger)," +
+      ".reward-continue-v083,[data-v083-continue],[data-v094-play]," +
+      "[data-v093-equip],[data-v080-open-chest],[data-v082-claim-weekly]"
+    );
+    if (!window.__CHERRIFT_FIXPACK_095_READY__ && celebratoryAction && Math.hypot(event.clientX - start.x, event.clientY - start.y) <= 12) {
       createPetalBurst(event.clientX, event.clientY);
     }
     requestAnimationFrame(scheduleDynamicPolish);

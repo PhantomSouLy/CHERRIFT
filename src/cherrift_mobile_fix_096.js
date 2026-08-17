@@ -88,15 +88,8 @@
   function enhanceSkinSelector() {
     const art = q("#skins .skin-art-v093");
     if (!art) return;
-    const skin = window.CHERRIFT_DATA?.skins?.[window.UI?.skinIndex || 0] || window.CHERRIFT_DATA?.skins?.find?.(entry => entry.id === window.UI?.save?.selectedSkin);
-    const signature = `${skin?.id || "skin"}:${skin?.rarity || "Common"}`;
-    if (art.dataset.v096Card === signature && q(".v096-art-card-ui", art)) return;
-    art.dataset.v096Card = signature;
     q(".v096-art-card-ui", art)?.remove();
-    const badges = document.createElement("div");
-    badges.className = "v096-art-card-ui";
-    badges.innerHTML = `<span>${skin?.rarity || "Common"}</span><span>${skin?.name || "Cherry"}</span>`;
-    art.appendChild(badges);
+    art.removeAttribute("data-v096-card");
   }
 
   function normalizeDrawer() {
@@ -145,10 +138,12 @@
 
   function start() {
     // Earlier modules create runtime <style> nodes during DOMContentLoaded.
-    // Re-appending this already loaded sheet makes the focused fix layer the
-    // final cascade without another request or a desktop-specific override.
+    // Re-append both loaded sheets in their intentional order: reliability
+    // first, then the shared visual system as the final cascade layer.
     const css = id("cherriftMobileFix096Css");
     if (css && css.parentElement === document.head) document.head.appendChild(css);
+    const gameUiCss = id("cherriftGameUi097Css");
+    if (gameUiCss && gameUiCss.parentElement === document.head) document.head.appendChild(gameUiCss);
     ensurePortraitGuard();
     document.addEventListener("click", bindEnergyTap, true);
     document.addEventListener("pointerup", tryPortraitLock, {once:true,passive:true});

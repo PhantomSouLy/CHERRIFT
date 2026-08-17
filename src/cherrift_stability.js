@@ -1039,8 +1039,14 @@
     if (document.documentElement.dataset.v0943Petals === "true") return;
     document.documentElement.dataset.v0943Petals = "true";
     document.addEventListener("click", event => {
+      if (window.__CHERRIFT_FIXPACK_095_READY__) return;
       if (event.button !== 0) return;
       if (event.target.closest?.("canvas,#gameCanvas,input,textarea,select")) return;
+      if (!event.target.closest?.(
+        ".menu-btn.primary,.bf-button:not(.secondary):not(.danger)," +
+        "[data-v093-equip],[data-v080-open-chest],[data-v082-claim-weekly]," +
+        "[data-v083-continue],[data-v094-play],[data-fix-ach-claim]"
+      )) return;
       petalBurst(event.clientX, event.clientY);
     }, false);
   }
