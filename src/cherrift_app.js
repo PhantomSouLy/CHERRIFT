@@ -5548,7 +5548,7 @@ const CONFIG={xpMultiplier:1,coinMultiplier:1,skinBonuses:{cherry_default:{coin:
 const EXTRA=[{id:'stars10',name:'Rising Star',desc:'Earn 10 stage stars.',icon:'⭐',reward:{coins:250},test:s=>Object.values(s.stageStars||{}).reduce((a,b)=>a+b,0)>=10},{id:'stars20',name:'Star Collector',desc:'Earn 20 stage stars.',icon:'🌟',reward:{coins:500,keys:2},test:s=>Object.values(s.stageStars||{}).reduce((a,b)=>a+b,0)>=20},{id:'world3',name:'Savannah Hero',desc:'Clear World 3-5.',icon:'🦁',reward:{coins:700,keys:3},test:s=>!!s.clearedStages?.world_3_5},{id:'power1000',name:'Powerful Bloom',desc:'Reach 1000 total power.',icon:'💥',reward:{coins:350},test:s=>100+Object.values(s.equipped||{}).reduce((a,g)=>a+(CHERRIFT_V050?.itemPower?.(g)||0),0)>=1000}];if(window.CHERRIFT_V052?.ACH&&!CHERRIFT_V052.ACH.some(x=>x.id==='stars10'))CHERRIFT_V052.ACH.push(...EXTRA);
 function normalize(s){s.stageStars=s.stageStars||{};return s}
 function stars(game){let n=1;if((game.player?.hp||0)>0)n++;if((game.time||999)<150)n++;return n}
-const gp=CherriftGame.prototype,oldClear=gp.stageClear;gp.stageClear=function(...a){const st=this.stage,n=stars(this),r=oldClear.apply(this,a);if(st){normalize(this.save).stageStars[st.id]=Math.max(this.save.stageStars[st.id]||0,n);CherriftStorage.save(this.save)}return r};const oldStart=gp.start;gp.start=async function(...a){const r=await oldStart.apply(this,a),b=CONFIG.skinBonuses[this.save.selectedSkin]||{};if(this.player){if(b.crit)this.player.crit+=b.crit;if(b.xp)this.player.xpBonus=b.xp;if(b.coin)this.player.coinBonus=b.coin}return r};const oldPick=gp.updatePickups;gp.updatePickups=function(dt){const before=this.save.coins;oldPick.call(this,dt);const gained=this.save.coins-before;if(gained>0){const b=CONFIG.skinBonuses[this.save.selectedSkin]?.coin||0;if(b){const extra=Math.floor(gained*b);this.save.coins+=extra;this.runCoins+=extra}CHERRIFT_V055A.normalize(this.save).stats.coinsEarned+=gained}};
+const gp=CherriftGame.prototype,oldClear=gp.stageClear;gp.stageClear=function(...a){const st=this.stage,n=stars(this),r=oldClear.apply(this,a);if(st){normalize(this.save).stageStars[st.id]=Math.max(this.save.stageStars[st.id]||0,n);CherriftStorage.save(this.save)}return r};const oldStart=gp.start;gp.start=async function(...a){const r=await oldStart.apply(this,a),b=CONFIG.skinBonuses[this.save.selectedSkin]||{};if(this.player){if(b.crit)this.player.crit+=b.crit;if(b.xp)this.player.xpBonus=b.xp;if(b.coin)this.player.coinBonus=b.coin}return r};const oldPick=gp.updatePickups;gp.updatePickups=function(dt){const before=this.save.coins;oldPick.call(this,dt);const gained=this.save.coins-before;if(gained>0){const b=CONFIG.skinBonuses[this.save.selectedSkin]?.coin||0;if(b){const extra=Math.floor(gained*b);this.save.coins+=extra;this.runCoins+=extra}const titleRate=Math.max(0,Number(window.CHERRIFT_PREBETA?.titleStats?.(this.save)?.coinGain)||0);this.__v096TitleCoinFraction=(Number(this.__v096TitleCoinFraction)||0)+gained*titleRate;const titleExtra=Math.floor(this.__v096TitleCoinFraction);if(titleExtra>0){this.__v096TitleCoinFraction-=titleExtra;this.save.coins+=titleExtra;this.runCoins+=titleExtra}CHERRIFT_V055A.normalize(this.save).stats.coinsEarned+=gained}};
 const oldWorld=UI.renderWorldPanel?.bind(UI);if(oldWorld)UI.renderWorldPanel=function(...a){const r=oldWorld(...a),st=CHERRIFT_V040.stages[this.worldCarouselIndex||0];if(!st)return r;let box=id('worldPreviewV055');if(!box){box=document.createElement('div');box.id='worldPreviewV055';box.className='glass v055-world-preview';id('worldSelectedInfo')?.insertAdjacentElement('afterend',box)}const types=[...new Set(st.enemyPool||[])].map(x=>CHERRIFT_V040.enemies[x]?.name||x).slice(0,4),n=normalize(this.save).stageStars[st.id]||0;box.innerHTML=`<div><small>RECOMMENDED POWER</small><b>${CONFIG.recommendedPower[st.world]||900}</b></div><div><small>ENEMIES</small><b>${types.join(', ')||'Unknown'}</b></div><div><small>BOSS</small><b>${st.boss?(CHERRIFT_V040.enemies[st.boss]?.name||st.boss):'None'}</b></div><div><small>STARS</small><b>${'⭐'.repeat(n)}${'☆'.repeat(3-n)}</b></div>`;return r};
 const oldSkin=UI.renderSkinCarousel.bind(UI);UI.renderSkinCarousel=function(...a){const r=oldSkin(...a),skin=CHERRIFT_DATA.skins[this.skinIndex],b=CONFIG.skinBonuses[skin?.id]||{};let el=id('skinBonusV055');if(!el){el=document.createElement('div');el.id='skinBonusV055';el.className='glass v055-skin-bonus';id('skinEquip')?.insertAdjacentElement('beforebegin',el)}const p=[];if(b.coin)p.push(`+${b.coin*100}% Coins`);if(b.xp)p.push(`+${b.xp*100}% XP`);if(b.crit)p.push(`+${b.crit*100}% Crit`);el.innerHTML=`<small>PASSIVE BONUS</small><b>${p.join(' · ')||'No passive bonus'}</b>`;return r};normalize(UI.save||{});window.CHERRIFT_V055C={version:'0.5.5c',CONFIG};console.info('[CHERRIFT] v0.5.5c loaded');
 })();
@@ -15060,7 +15060,7 @@ if (!window.CherriftStorage || !window.UI || !window.CHERRIFT_V050 || !window.CH
   return;
 }
 
-const view = { tab:"gacha", selectedChest:"common", reward:null };
+const view = { tab:"gacha", selectedChest:"common", reward:null, shopCategory:"chests" };
 function language(){ return window.CHERRIFT_I18N?.language === "en" || UI.save?.settings?.language === "en" ? "en" : "hu"; }
 function t(key){ return COPY[language()][key] || COPY.en[key] || key; }
 function escapeHtml(value){ return String(value ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;"); }
@@ -15421,7 +15421,13 @@ function renderBuffs(save){
 function renderShop(save){
   const chestPrices={common:{coins:450},rare:{gems:window.CHERRIFT_BALANCE?.gacha?.prices?.rare?.one||80},epic:{gems:window.CHERRIFT_BALANCE?.gacha?.prices?.epic?.one||240}};
   const skins=(CHERRIFT_DATA.skins||[]).filter(skin=>skin.id!=="cherry_default");const day=Math.floor(Date.now()/86400000);const offers=[0,1,2].map(offset=>skins[(day+offset*5)%skins.length]).filter(Boolean);
-  return `<section class="shop-intro-v080"><h2>${escapeHtml(t("shop"))}</h2><p>${escapeHtml(t("shopIntro"))}</p></section><section class="shop-grid-v080">${Object.entries(chestPrices).map(([type,price])=>`<article class="shop-card-v080"><span><img src="${CHEST_DEFS[type].asset}" alt=""></span><h3>${escapeHtml(CHEST_DEFS[type].name)}</h3><b>${priceText(price)}</b><button type="button" data-v080-buy-chest="${type}" ${!canAfford(save,price)?"disabled":""}>${escapeHtml(t("buy"))}</button></article>`).join("")}</section><section class="bag-section-v080"><header><h2>Sakura Essence Skin Shop</h2><p>Daily rotating offers</p></header><div class="food-grid-v080">${offers.map(skin=>{const cost=window.CHERRIFT_BALANCE?.gacha?.essenceShop?.[skin.rarity]||300,owned=save.unlockedSkins.includes(skin.id);return `<article class="food-card-v080 rarity-${String(skin.rarity||"Common").toLowerCase()}">${imageOrFallback(skin.icon,"CHERRY",skin.name)}<small>${escapeHtml(skin.rarity||"Common")}</small><h3>${escapeHtml(skin.name)}</h3><p>Unique skin offer</p><b><img src="assets/items/sakura_potion.png" alt=""> ${cost}</b><button type="button" data-v080-buy-skin="${escapeHtml(skin.id)}" ${owned||save.sakuraEssence<cost?"disabled":""}>${escapeHtml(owned?t("owned"):t("buy"))}</button></article>`;}).join("")}</div></section><section class="bag-section-v080"><header><h2>${escapeHtml(t("food"))}</h2></header><div class="food-grid-v080">${Object.entries(FOOD_CATALOG).map(([key,food])=>`<article class="food-card-v080 rarity-${food.rarity.toLowerCase()}">${imageOrFallback(food.asset,food.icon,food.name)}<small>${escapeHtml(food.rarity)}</small><h3>${escapeHtml(food.name)}</h3><p>+${Math.round(food.value*100)}% ${escapeHtml(EFFECT_LABELS[food.effect])} · ${food.runs} ${escapeHtml(t("runs"))}</p><b>${priceText(food.price)}</b><button type="button" data-v080-buy-food="${key}" ${!canAfford(save,food.price)?"disabled":""}>${escapeHtml(t("buy"))}</button></article>`).join("")}</div></section>`;
+  const categories=[["chests",t("chests")],["essence","Essence Shop"],["food",t("food")]];
+  const selected=categories.some(([key])=>key===view.shopCategory)?view.shopCategory:"chests";
+  return `<section class="shop-intro-v080"><h2>${escapeHtml(t("shop"))}</h2><p>${escapeHtml(t("shopIntro"))}</p></section>
+    <nav class="shop-categories-v096" aria-label="Shop categories">${categories.map(([key,label])=>`<button type="button" data-v080-shop-category="${key}" class="${selected===key?"active":""}" aria-pressed="${selected===key}">${escapeHtml(label)}</button>`).join("")}</nav>
+    <div class="shop-category-panel-v096 ${selected==="chests"?"active":""}" data-v096-shop-panel="chests"><section class="shop-grid-v080">${Object.entries(chestPrices).map(([type,price])=>`<article class="shop-card-v080"><span><img src="${CHEST_DEFS[type].asset}" alt=""></span><h3>${escapeHtml(CHEST_DEFS[type].name)}</h3><b>${priceText(price)}</b><button type="button" data-v080-buy-chest="${type}" ${!canAfford(save,price)?"disabled":""}>${escapeHtml(t("buy"))}</button></article>`).join("")}</section></div>
+    <div class="shop-category-panel-v096 ${selected==="essence"?"active":""}" data-v096-shop-panel="essence"><section class="bag-section-v080"><header><h2>Sakura Essence Skin Shop</h2><p>Daily rotating offers</p></header><div class="food-grid-v080">${offers.map(skin=>{const cost=window.CHERRIFT_BALANCE?.gacha?.essenceShop?.[skin.rarity]||300,owned=save.unlockedSkins.includes(skin.id);return `<article class="food-card-v080 rarity-${String(skin.rarity||"Common").toLowerCase()}">${imageOrFallback(skin.icon,"CHERRY",skin.name)}<small>${escapeHtml(skin.rarity||"Common")}</small><h3>${escapeHtml(skin.name)}</h3><p>Unique skin offer</p><b><img src="assets/items/sakura_potion.png" alt=""> ${cost}</b><button type="button" data-v080-buy-skin="${escapeHtml(skin.id)}" ${owned||save.sakuraEssence<cost?"disabled":""}>${escapeHtml(owned?t("owned"):t("buy"))}</button></article>`;}).join("")}</div></section></div>
+    <div class="shop-category-panel-v096 ${selected==="food"?"active":""}" data-v096-shop-panel="food"><section class="bag-section-v080"><header><h2>${escapeHtml(t("food"))}</h2></header><div class="food-grid-v080">${Object.entries(FOOD_CATALOG).map(([key,food])=>`<article class="food-card-v080 rarity-${food.rarity.toLowerCase()}">${imageOrFallback(food.asset,food.icon,food.name)}<small>${escapeHtml(food.rarity)}</small><h3>${escapeHtml(food.name)}</h3><p>+${Math.round(food.value*100)}% ${escapeHtml(EFFECT_LABELS[food.effect])} · ${food.runs} ${escapeHtml(t("runs"))}</p><b>${priceText(food.price)}</b><button type="button" data-v080-buy-food="${key}" ${!canAfford(save,food.price)?"disabled":""}>${escapeHtml(t("buy"))}</button></article>`).join("")}</div></section></div>`;
 }
 function patchNavigation(){
   if(UI.__v080Navigation)return;
@@ -15435,6 +15441,7 @@ function patchNavigation(){
   document.addEventListener("click",event=>{
     const back=event.target.closest?.("[data-v080-back]");if(back){event.preventDefault();UI.open("menu");return;}
     const tab=event.target.closest?.("[data-v080-tab]");if(tab){event.preventDefault();view.tab=tab.dataset.v080Tab;view.reward=null;renderHub();return;}
+    const shopCategory=event.target.closest?.("[data-v080-shop-category]");if(shopCategory){event.preventDefault();view.shopCategory=shopCategory.dataset.v080ShopCategory;renderHub();return;}
     const open=event.target.closest?.("[data-v080-open-chest]");if(open){event.preventDefault();openChest(open.dataset.v080OpenChest);return;}
     const use=event.target.closest?.("[data-v080-use-food]");if(use){event.preventDefault();activateFood(use.dataset.v080UseFood);return;}
     const buyChest=event.target.closest?.("[data-v080-buy-chest]");if(buyChest){event.preventDefault();buyShopItem("chest",buyChest.dataset.v080BuyChest);return;}
@@ -16041,7 +16048,12 @@ function renderMobileDrawer(){
   const drawer=id("mobileMenuV082");if(!drawer)return;
   drawer.innerHTML=`
     <button type="button" class="mobile-menu-close-v082" data-v082-toggle-mobile>×</button>
-    <h2>CHERRIFT</h2>
+    <header class="mobile-more-head-v096"><h2>CHERRIFT</h2><nav class="mobile-more-support-v096" aria-label="CHERRIFT links">
+      <button type="button" data-r5-menu-tool="twitch" title="Twitch" aria-label="Twitch"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 2h17v12l-5 5h-4l-3 3v-3H4V2zm2 2v13h5v2l2-2h4l2-2V4H6zm5 3h2v6h-2V7zm4 0h2v6h-2V7z"/></svg></button>
+      <button type="button" data-r5-menu-tool="web" title="Website" aria-label="Website">🌐</button>
+      <button type="button" data-r5-menu-tool="feedback" title="Feedback" aria-label="Feedback">💬</button>
+      <button type="button" data-r5-menu-tool="bug" title="Bug report" aria-label="Bug report">🐞</button>
+    </nav></header>
     <div class="mobile-menu-grid-v082">
       ${railButton("skins","🐰",t("skins"))}${railButton("arsenalV070","✥",t("arsenal"))}
       ${railButton("playerUpgrade","✦",t("upgrade"))}${railButton("bagV082","🎒",t("bag"))}
@@ -16126,7 +16138,8 @@ function ensurePlayerUpgrade(){
     <div id="skillTreeScrollV082" class="skill-tree-scroll-v082">
       <div id="skillTreeTrackV082" class="skill-tree-track-v082"></div>
     </div>
-    <p class="skill-tree-help-v082">↔ ${language()==="hu"?"Kattints/tapints és húzd oldalra. PC-n az egérgörgő is mozgatja.":"Click/tap and drag sideways. The mouse wheel also scrolls on PC."}</p>`;
+    <aside id="skillInfoV096" class="skill-info-v096" hidden aria-live="polite"></aside>
+    <p class="skill-tree-help-v082">↕↔ ${language()==="hu"?"Húzd szabadon a fát. PC-n vidd az egeret, telefonon tappints egy ikonra a részletekhez.":"Drag the tree freely. Hover on PC or tap an icon on mobile for details."}</p>`;
   bindTreeScroller();
 }
 function renderSkillTree(){
@@ -16135,43 +16148,61 @@ function renderSkillTree(){
   if(id("skillPlayerLevelV082"))id("skillPlayerLevelV082").textContent=level;
   if(id("skillPointsV082"))id("skillPointsV082").textContent=save.account.skillPoints;
   const track=id("skillTreeTrackV082");if(!track)return;
-  track.innerHTML=SKILL_TIERS.map((tier,index)=>`
+  const infoPanel=id("skillInfoV096");if(infoPanel)infoPanel.hidden=true;
+  const ordered=[...SKILL_TIERS].reverse();
+  track.innerHTML=ordered.map((tier,index)=>{
+    const tierIndex=SKILL_TIERS.findIndex(entry=>entry.level===tier.level)+1;
+    const rangeStart=Math.max(1,tier.level),nextTier=SKILL_TIERS[tierIndex],range=nextTier?`${rangeStart}–${nextTier.level-1}`:`${rangeStart}+`;
+    return `
     <section class="skill-tier-v082 ${level<tier.level?"locked":""}" data-tier="${tier.level}">
-      <header><span>LEVEL ${tier.level}</span><b>${level>=tier.level?"UNLOCKED":`${t("levelNeeded")} ${tier.level}`}</b></header>
+      <header><span>${tierIndex}. ${language()==="hu"?"SZINT":"TIER"}</span><b>${language()==="hu"?"Játékosszint":"Player level"} ${range} · ${level>=tier.level?"UNLOCKED":`${t("levelNeeded")} ${tier.level}`}</b></header>
       <div class="skill-tier-nodes-v082">
         ${tier.nodes.map(node=>{
           const rank=ranks[node.id]||0,locked=level<node.unlock,maxed=rank>=node.max;
           const current=node.unit==="%"?formatPercent(rank*node.value):Math.round(rank*node.value*100)/100;
           const next=node.unit==="%"?formatPercent(Math.min(node.max,rank+1)*node.value):Math.round(Math.min(node.max,rank+1)*node.value*100)/100;
-          return `<article class="skill-node-v082 ${locked?"locked":""} ${maxed?"maxed":""}">
+          return `<article class="skill-node-v082 ${locked?"locked":""} ${maxed?"maxed":""}" tabindex="0" role="group" data-v096-skill-card data-v096-name="${escapeHtml(nodeName(node))}" data-v096-desc="${escapeHtml(nodeDesc(node))}" data-v096-current="${escapeHtml(String(current))}" data-v096-next="${escapeHtml(String(next))}" data-v096-unlock="${node.unlock}" data-v096-rank="${rank}/${node.max}">
             <span class="skill-node-icon-v082">${node.icon}</span>
-            <div><small>${escapeHtml(nodeName(node))}</small><h3>${escapeHtml(t("rank"))} ${rank}/${node.max}</h3><p>${escapeHtml(nodeDesc(node))}</p>
-              <em>${escapeHtml(t("current"))}: ${current}${maxed?"":` · ${escapeHtml(t("next"))}: ${next}`}</em></div>
-            <button type="button" data-v082-skill="${node.id}" ${locked||maxed||save.account.skillPoints<1?"disabled":""}>${maxed?t("max"):"+"}</button>
+            <b class="skill-rank-v096">${rank}/${node.max}</b>
+            <button type="button" data-v082-skill="${node.id}" aria-label="${escapeHtml(nodeName(node))}: ${maxed?t("max"):"+"}" ${locked||maxed||save.account.skillPoints<1?"disabled":""}>${maxed?"✓":"+"}</button>
           </article>`;
         }).join("")}
       </div>
-    </section>${index<SKILL_TIERS.length-1?'<i class="skill-connector-v082">›</i>':""}`).join("");
+    </section>${index<ordered.length-1?'<i class="skill-connector-v082" aria-hidden="true">↑</i>':""}`;
+  }).join("");
+  const scroller=id("skillTreeScrollV082");
+  requestAnimationFrame(()=>{if(scroller&&!scroller.dataset.v096Initial){scroller.dataset.v096Initial="1";scroller.scrollTop=scroller.scrollHeight;scroller.scrollLeft=Math.max(0,(scroller.scrollWidth-scroller.clientWidth)/2);}});
 }
 function bindTreeScroller(){
   const scroller=id("skillTreeScrollV082");if(!scroller||scroller.dataset.bound)return;
   scroller.dataset.bound="1";
   scroller.addEventListener("wheel",event=>{
-    if(Math.abs(event.deltaY)<=Math.abs(event.deltaX))return;
-    event.preventDefault();scroller.scrollLeft+=event.deltaY;
+    if(event.shiftKey||Math.abs(event.deltaX)>Math.abs(event.deltaY)){event.preventDefault();scroller.scrollLeft+=event.deltaX||event.deltaY;}
   },{passive:false});
   scroller.addEventListener("pointerdown",event=>{
-    if(event.target.closest("button"))return;
-    runtime.draggingTree=true;runtime.treeMoved=false;runtime.treeStartX=event.clientX;runtime.treeStartScroll=scroller.scrollLeft;
+    if(event.target.closest("button,[data-v096-skill-card]"))return;
+    runtime.draggingTree=true;runtime.treeMoved=false;runtime.treeStartX=event.clientX;runtime.treeStartY=event.clientY;runtime.treeStartScroll=scroller.scrollLeft;runtime.treeStartScrollTop=scroller.scrollTop;
     scroller.setPointerCapture?.(event.pointerId);scroller.classList.add("dragging");
   });
   scroller.addEventListener("pointermove",event=>{
     if(!runtime.draggingTree)return;
-    const dx=event.clientX-runtime.treeStartX;if(Math.abs(dx)>4)runtime.treeMoved=true;
+    const dx=event.clientX-runtime.treeStartX,dy=event.clientY-runtime.treeStartY;if(Math.abs(dx)>4||Math.abs(dy)>4)runtime.treeMoved=true;
     scroller.scrollLeft=runtime.treeStartScroll-dx;
+    scroller.scrollTop=runtime.treeStartScrollTop-dy;
   });
   const end=()=>{runtime.draggingTree=false;scroller.classList.remove("dragging");};
   scroller.addEventListener("pointerup",end);scroller.addEventListener("pointercancel",end);
+  const showSkillInfo=card=>{
+    if(!card)return;qa("[data-v096-skill-card]",scroller).forEach(node=>node.classList.toggle("selected",node===card));
+    const panel=id("skillInfoV096");if(!panel)return;
+    const locked=card.classList.contains("locked"),maxed=card.classList.contains("maxed");
+    panel.innerHTML=`<button type="button" data-v096-skill-info-close aria-label="Close">×</button><small>${escapeHtml(t("rank"))} ${escapeHtml(card.dataset.v096Rank||"")}</small><h3>${escapeHtml(card.dataset.v096Name||"")}</h3><p>${escapeHtml(card.dataset.v096Desc||"")}</p><div><span>${escapeHtml(t("current"))}: <b>${escapeHtml(card.dataset.v096Current||"0")}</b></span>${maxed?"":`<span>${escapeHtml(t("next"))}: <b>${escapeHtml(card.dataset.v096Next||"0")}</b></span>`}<em>${locked?`${escapeHtml(t("levelNeeded"))} ${escapeHtml(card.dataset.v096Unlock||"1")}`:""}</em></div>`;
+    panel.hidden=false;
+  };
+  scroller.addEventListener("click",event=>{const card=event.target.closest("[data-v096-skill-card]");if(card&&!event.target.closest("button"))showSkillInfo(card);});
+  scroller.addEventListener("focusin",event=>{const card=event.target.closest("[data-v096-skill-card]");if(card)showSkillInfo(card);});
+  scroller.addEventListener("pointerover",event=>{if(matchMedia("(hover:hover)").matches){const card=event.target.closest("[data-v096-skill-card]");if(card)showSkillInfo(card);}});
+  id("playerUpgrade")?.addEventListener("click",event=>{if(event.target.closest("[data-v096-skill-info-close]")){const panel=id("skillInfoV096");if(panel)panel.hidden=true;qa("[data-v096-skill-card]",scroller).forEach(node=>node.classList.remove("selected"));}});
 }
 
 function compactArsenal(){
@@ -16605,7 +16636,7 @@ function bindEvents(){
     const mobile=event.target.closest("[data-v082-toggle-mobile]");
     if(mobile){event.preventDefault();id("mobileMenuV082")?.classList.toggle("hidden");return;}
     const opener=event.target.closest("[data-v082-open]");
-    if(opener){event.preventDefault();event.stopImmediatePropagation();UI.open(opener.dataset.v082Open);return;}
+    if(opener){event.preventDefault();event.stopImmediatePropagation();closeMobileDrawer();UI.open(opener.dataset.v082Open);return;}
     const support=event.target.closest("[data-v082-support]");
     if(support){
       event.preventDefault();UI.open("supportV063");
@@ -16955,9 +16986,14 @@ function decorateResourceBars() {
     const asset = titleMap[pill.getAttribute("title")];
     if (!asset || pill.dataset.v083Decorated === asset) return;
     pill.dataset.v083Decorated = asset;
-    const oldImage = q(".resource-icon-v083", pill);
-    oldImage?.remove();
-    pill.insertAdjacentHTML("afterbegin", imageMarkup(asset, pill.getAttribute("title") || "Item", "resource-icon-v083"));
+    const images = qa(":scope > img", pill);
+    const icon = images.shift();
+    for (const duplicate of images) duplicate.remove();
+    if (icon) {
+      icon.src = asset;
+      icon.alt = pill.getAttribute("title") || "Item";
+      icon.classList.add("resource-icon-v083");
+    } else pill.insertAdjacentHTML("afterbegin", imageMarkup(asset, pill.getAttribute("title") || "Item", "resource-icon-v083"));
     const textNodes = Array.from(pill.childNodes).filter(node => node.nodeType === Node.TEXT_NODE);
     for (const node of textNodes) if (node.textContent.trim()) node.textContent = " ";
   });
@@ -16974,7 +17010,14 @@ function decorateResourceBars() {
     pill.dataset.v083Decorated = asset;
     const textNodes = Array.from(pill.childNodes).filter(node => node.nodeType === Node.TEXT_NODE);
     for (const node of textNodes) if (node.textContent.trim()) node.textContent = " ";
-    pill.insertAdjacentHTML("afterbegin", imageMarkup(asset, label, "resource-icon-v083"));
+    const images = qa(":scope > img", pill);
+    const icon = images.shift();
+    for (const duplicate of images) duplicate.remove();
+    if (icon) {
+      icon.src = asset;
+      icon.alt = label;
+      icon.classList.add("resource-icon-v083");
+    } else pill.insertAdjacentHTML("afterbegin", imageMarkup(asset, label, "resource-icon-v083"));
   }
 }
 
@@ -17744,7 +17787,7 @@ function drawSpriteFrame(canvas, source, frames = 4) {
   img.src = source;
 }
 
-function drawEnemy(canvas, enemy = {}) {
+function drawEnemy(canvas, enemy = {}, enemyId = "") {
   if (!canvas) return;
   const paintFallback = () => {
     const dpr = Math.min(2, devicePixelRatio || 1), width = canvas.clientWidth || 120, height = canvas.clientHeight || 120;
@@ -17764,19 +17807,41 @@ function drawEnemy(canvas, enemy = {}) {
     ctx.restore();
   };
 
+  const repositorySheet=window.CHERRIFT_FIXPACK_095?.enemySheets?.[enemyId];
+  if (repositorySheet) {
+    const sprite = new Image();
+    sprite.onload = () => {
+      const dpr = Math.min(2, devicePixelRatio || 1), width = canvas.clientWidth || 120, height = canvas.clientHeight || 120;
+      canvas.width = Math.round(width * dpr); canvas.height = Math.round(height * dpr);
+      const ctx = canvas.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, width, height); ctx.imageSmoothingEnabled = true;
+      if ("imageSmoothingQuality" in ctx) ctx.imageSmoothingQuality = "high";
+      const columns=Math.max(1,Number(repositorySheet.cols)||4);
+      const inferredRows=Math.round((sprite.naturalHeight*columns)/Math.max(1,sprite.naturalWidth));
+      const rows=inferredRows>=1&&inferredRows<=8?inferredRows:Math.max(1,Number(repositorySheet.rows)||3);
+      const frameWidth=Math.floor(sprite.naturalWidth/columns),frameHeight=Math.floor(sprite.naturalHeight/rows);
+      const scale=Math.min(width/frameWidth,height/frameHeight)*(enemy.boss?.9:.78);
+      const drawWidth=frameWidth*scale,drawHeight=frameHeight*scale;
+      // Bestiary previews deliberately use idle frame 0 only. Never draw the
+      // complete repository sprite sheet into a collection card.
+      ctx.drawImage(sprite,0,0,frameWidth,frameHeight,(width-drawWidth)/2,(height-drawHeight)/2,drawWidth,drawHeight);
+    };
+    sprite.onerror = paintFallback;
+    sprite.src = repositorySheet.src;
+    return;
+  }
   if (enemy.visualStyle === "slimeSprite" || enemy.visualStyle === "bossSlime") {
     const sprite = new Image();
     sprite.onload = () => {
       const dpr = Math.min(2, devicePixelRatio || 1), width = canvas.clientWidth || 120, height = canvas.clientHeight || 120;
       canvas.width = Math.round(width * dpr); canvas.height = Math.round(height * dpr);
       const ctx = canvas.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, width, height); ctx.imageSmoothingEnabled = true;
-      const frameWidth = Number(window.CHERRIFT_CONFIG?.slime?.frameWidth) || 384;
-      const frameHeight = Number(window.CHERRIFT_CONFIG?.slime?.frameHeight) || 384;
-      const size = Math.min(width, height) * (enemy.boss ? .92 : .76);
-      ctx.drawImage(sprite, 0, 0, frameWidth, frameHeight, (width - size) / 2, (height - size) / 2, size, size);
+      const columns=Math.max(1,Number(window.CHERRIFT_CONFIG?.slime?.columns)||4),rows=3;
+      const frameWidth=Math.floor(sprite.naturalWidth/columns),frameHeight=Math.floor(sprite.naturalHeight/rows);
+      const scale=Math.min(width/frameWidth,height/frameHeight)*(enemy.boss?.9:.78),drawWidth=frameWidth*scale,drawHeight=frameHeight*scale;
+      ctx.drawImage(sprite,0,0,frameWidth,frameHeight,(width-drawWidth)/2,(height-drawHeight)/2,drawWidth,drawHeight);
     };
-    sprite.onerror = paintFallback;
-    sprite.src = window.CHERRIFT_CONFIG?.slime?.src || "assets/enemies/world_1/slime_sprite_sheet.png";
+    sprite.onerror=paintFallback;
+    sprite.src=window.CHERRIFT_CONFIG?.slime?.src||"assets/enemies/world_1/slime_sprite_sheet.png";
     return;
   }
   paintFallback();
@@ -17785,6 +17850,10 @@ function drawEnemy(canvas, enemy = {}) {
 function collectionSignature(tab) {
   const save=UI.save||{};
   return JSON.stringify({tab,lang:language(),skins:save.unlockedSkins,enemies:save.discoveredEnemies,stages:save.clearedStages,stars:save.stageStars,inventory:save.inventory?.length});
+}
+
+function collectionEnemies(){
+  return {...(window.CHERRIFT_V040?.enemies||{}),...(window.CHERRIFT_FIXPACK_095?.enemyDefs||{})};
 }
 
 function renderCollection() {
@@ -17800,9 +17869,9 @@ function renderCollection() {
   if(tab==="skins"){
     body.innerHTML=`<div class="collection-grid-v084 skins-v084">${(CHERRIFT_DATA.skins||[]).map(skin=>{const unlocked=(save.unlockedSkins||[]).includes(skin.id);return `<button type="button" class="collection-card-v084 rarity-${String(skin.rarity||"Common").toLowerCase()} ${unlocked?"":"locked"}" ${unlocked?`data-v084-skin="${escapeHtml(skin.id)}"`:"disabled"}><span>${unlocked?image(skin.icon,skin.name):"?"}</span><b>${escapeHtml(unlocked?skin.name:t("collectionLocked"))}</b><small>${escapeHtml(unlocked?skin.rarity:t("collectionLocked"))}</small></button>`}).join("")}</div>`;
   }else if(tab==="enemies"){
-    const enemies=window.CHERRIFT_V040?.enemies||{};
+    const enemies=collectionEnemies();
     body.innerHTML=`<div class="collection-grid-v084 enemies-v084">${Object.entries(enemies).map(([key,enemy])=>{const seen=!!save.discoveredEnemies?.[key];return `<button type="button" class="collection-card-v084 enemy-card-v084 ${seen?"":"locked"}" ${seen?`data-v084-enemy="${escapeHtml(key)}"`:"disabled"}><canvas data-v084-enemy-canvas="${escapeHtml(key)}"></canvas><b>${escapeHtml(seen?enemy.name:t("collectionLocked"))}</b><small>${escapeHtml(seen?`HP ${enemy.hp} · ${t("discovered")}`:t("defeatToDiscover"))}</small></button>`}).join("")}</div>`;
-    qa("[data-v084-enemy-canvas]",body).forEach(canvas=>drawEnemy(canvas,enemies[canvas.dataset.v084EnemyCanvas]));
+    qa("[data-v084-enemy-canvas]",body).forEach(canvas=>drawEnemy(canvas,enemies[canvas.dataset.v084EnemyCanvas],canvas.dataset.v084EnemyCanvas));
   }else if(tab==="worlds"){
     const worlds=[...new Set((CHERRIFT_V040?.stages||[]).map(stage=>stage.world))];
     body.innerHTML=`<div class="collection-grid-v084 worlds-v084">${worlds.map(world=>{const stages=CHERRIFT_V040.stages.filter(s=>s.world===world),done=stages.filter(s=>save.clearedStages?.[s.id]).length,stars=stages.reduce((sum,s)=>sum+(save.stageStars?.[s.id]||0),0);return `<article class="collection-card-v084 world-card-v084"><span>W${world}</span><b>World ${world}</b><small>${done}/${stages.length} · ${stars}/${stages.length*3} ★</small></article>`}).join("")}</div>`;
@@ -17822,11 +17891,11 @@ function openSkinDetail(skinId) {
 }
 
 function openEnemyDetail(enemyId) {
-  const enemy=window.CHERRIFT_V040?.enemies?.[enemyId];if(!enemy)return;
+  const enemy=collectionEnemies()[enemyId];if(!enemy)return;
   ensureCollectionModal();
   const attack=enemy.damage??enemy.atk??enemy.contactDamage??"—";
   id("collectionModalBodyV084").innerHTML=`<section class="collection-detail-v084 enemy-detail-v084"><header><small>${escapeHtml(t("discovered"))}</small><h2>${escapeHtml(enemy.name)}</h2></header><div class="enemy-detail-grid-v084"><canvas id="enemyDetailCanvasV084"></canvas><div><h3>${escapeHtml(t("stats"))}</h3><dl><div><dt>HP</dt><dd>${escapeHtml(enemy.hp)}</dd></div><div><dt>ATK</dt><dd>${escapeHtml(attack)}</dd></div><div><dt>Speed</dt><dd>${escapeHtml(enemy.speed)}</dd></div><div><dt>XP</dt><dd>${escapeHtml(enemy.xp||0)}</dd></div></dl></div></div></section>`;
-  id("collectionModalV084").classList.remove("hidden");drawEnemy(id("enemyDetailCanvasV084"),enemy);
+  id("collectionModalV084").classList.remove("hidden");drawEnemy(id("enemyDetailCanvasV084"),enemy,enemyId);
 }
 
 function closeCollectionModal(){id("collectionModalV084")?.classList.add("hidden");}
@@ -19061,8 +19130,12 @@ function decorateSkinNavigation(){
 }
 
 function ensureSkinNotice(){
-  const unseen=["mage_cherry","archer_cherry"].some(skin=>!UI.save?.noticesSeenV090?.skins?.includes(skin));
-  for(const button of qa('[data-v082-open="skins"],[data-v060-open="skins"]')){
+  if(!UI.save)return;
+  const unlocked=[...new Set(UI.save.unlockedSkins||[])];
+  UI.save.noticesSeenV090||={};
+  if(!Array.isArray(UI.save.noticesSeenV090.skins))UI.save.noticesSeenV090.skins=[...unlocked];
+  const unseen=unlocked.some(skin=>!UI.save.noticesSeenV090.skins.includes(skin));
+  for(const button of qa('[data-v082-open="skins"],[data-v060-open="skins"],.cherry-nav-bf')){
     let dot=q('[data-v090-notice="skins"]',button);
     if(!dot){dot=document.createElement("em");dot.className="notice-dot-v082";dot.dataset.v090Notice="skins";button.appendChild(dot);}
     dot.classList.toggle("show",unseen);
@@ -19084,7 +19157,7 @@ function stabilizeSkinSplash(){
 function markSkinsSeen(){
   if(!UI.save)return;
   UI.save.noticesSeenV090||={};
-  UI.save.noticesSeenV090.skins=["mage_cherry","archer_cherry"];
+  UI.save.noticesSeenV090.skins=[...new Set(UI.save.unlockedSkins||[])];
   window.CherriftStorage?.save?.(UI.save);
   ensureSkinNotice();
 }
@@ -19125,7 +19198,7 @@ if(previousCarousel&&!UI.__v090Carousel){
 }
 
 document.addEventListener("click",event=>{
-  if(event.target.closest?.('[data-v082-open="skins"],[data-v060-open="skins"],[data-open="skins"]'))setTimeout(markSkinsSeen,0);
+  if(event.target.closest?.('[data-v082-open="skins"],[data-v060-open="skins"],[data-open="skins"],.cherry-nav-bf'))setTimeout(markSkinsSeen,0);
 },true);
 
 if(window.CHERRIFT_V060?.preload&&!window.CHERRIFT_V060.preload.__v090){

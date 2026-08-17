@@ -1041,6 +1041,10 @@
       }
       event.preventDefault();
       event.stopPropagation();
+      if (target.closest("#mobileMenuV082")) {
+        id("mobileMenuV082")?.classList.add("hidden");
+        id("mobileMenuV082")?.setAttribute("aria-hidden","true");
+      }
       if (target.dataset.fixMail !== undefined) return window.CHERRIFT_ACCOUNT_MAIL?.openMail?.();
       if (target.dataset.fixLobbyBack !== undefined) return forceLobbyOpen();
       if (target.dataset.fixLobbyRoute) {
