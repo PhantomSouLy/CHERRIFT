@@ -130,12 +130,12 @@ body.v096-phone-landscape #portraitOnlyV096{
     max-height:none!important;padding:20px 16px 16px!important;overflow:auto!important;border:2px solid var(--v096-line)!important;border-radius:24px!important;
     color:var(--v096-text)!important;background:color-mix(in srgb,var(--v096-surface) 97%,transparent)!important;box-shadow:0 24px 70px var(--v096-shadow)!important
   }
-  #mobileMenuV082 .mobile-more-head-v096{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 44px 14px 0}
+  #mobileMenuV082 .mobile-more-head-v096{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px}
   #mobileMenuV082 .mobile-more-head-v096 h2{margin:0!important;color:var(--v096-text)!important;font-size:clamp(30px,9vw,46px)!important}
   #mobileMenuV082 .mobile-more-support-v096{display:flex;gap:5px}
   #mobileMenuV082 .mobile-more-support-v096 button{width:36px;height:36px;padding:0;border:1px solid var(--v096-line);border-radius:10px;color:var(--v096-text);background:var(--v096-surface-2);font-size:16px}
   #mobileMenuV082 .mobile-more-support-v096 svg{width:18px;height:18px;fill:currentColor}
-  #mobileMenuV082 .mobile-menu-close-v082{z-index:2;color:var(--v096-text)!important;border:1px solid var(--v096-line);background:var(--v096-surface-2)!important}
+  #mobileMenuV082 .mobile-menu-close-v082{display:none!important}
   #mobileMenuV082 .mobile-menu-grid-v082 button{min-height:58px!important;color:var(--v096-text)!important;border-color:var(--v096-line)!important;background:var(--v096-surface-2)!important}
 
   /* Keep every wallet readable and compact after the one-icon normalization. */

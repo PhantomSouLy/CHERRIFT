@@ -183,7 +183,20 @@ html[data-cherrift-theme] #bootV060.boot-v060,
 }
 
 /* Shop: segmented categories, stronger artwork and clear rarity framing. */
+.shop-catalog-v097{
+  width:100%;
+  min-width:0;
+  padding:12px;
+  overflow:hidden;
+  border:1px solid var(--game-line);
+  border-radius:22px;
+  background:var(--game-surface);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.11),0 13px 30px var(--game-shadow);
+}
 .shop-categories-v096{
+  width:100%;
+  min-width:0;
+  box-sizing:border-box;
   padding:6px!important;
   border-color:var(--game-line)!important;
   background:var(--game-surface)!important;
@@ -348,44 +361,127 @@ html[data-cherrift-theme] #bootV060.boot-v060,
     transform:translateY(-4px)!important;
   }
 
-  /* Compact Cherry selector. There is no page scroll: art, details, CTA and
-     the complete horizontal icon rail remain inside the usable viewport. */
+  /* The complete Shop catalogue is one bounded phone panel. Categories and
+     cards share its width, so no child can enlarge the page horizontally. */
+  #chests.economy-v080{
+    box-sizing:border-box!important;
+    overflow-x:hidden!important;
+  }
+  #chests .economy-body-v080,
+  #chests .shop-intro-v080,
+  #chests .shop-catalog-v097,
+  #chests .shop-category-panel-v096,
+  #chests :is(.shop-grid-v080,.food-grid-v080,.bag-section-v080){
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+  }
+  #chests .economy-body-v080{
+    margin-right:0!important;
+    margin-left:0!important;
+    overflow-x:hidden!important;
+  }
+  #chests .shop-intro-v080{overflow:hidden!important}
+  #chests .shop-catalog-v097{
+    padding:8px!important;
+    border-radius:19px!important;
+  }
+  #chests .shop-categories-v096{
+    width:100%!important;
+    max-width:100%!important;
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:4px!important;
+    margin:0 0 8px!important;
+    padding:4px!important;
+    overflow:hidden!important;
+    scroll-snap-type:none!important;
+  }
+  #chests .shop-categories-v096 button{
+    width:100%!important;
+    min-width:0!important;
+    min-height:43px!important;
+    padding:5px 3px!important;
+    overflow:hidden!important;
+    font-size:clamp(9px,2.8vw,12px)!important;
+    line-height:1.08!important;
+    text-align:center!important;
+    text-overflow:ellipsis;
+    white-space:normal!important;
+    touch-action:manipulation!important;
+  }
+  #chests :is(.shop-grid-v080,.food-grid-v080){
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:10px!important;
+  }
+  #chests :is(.shop-card-v080,.food-card-v080){
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+    overflow:hidden!important;
+  }
+  #chests :is(.shop-card-v080,.food-card-v080)>button{
+    width:100%!important;
+    max-width:100%!important;
+    box-sizing:border-box!important;
+  }
+
+  /* The selector itself disappears into the screen background. The splash is
+     the only large surface: a filled, layered portrait card with real depth. */
   #skins .skin-selector-v093{
     height:calc(var(--cherrift-viewport-height,100dvh) - 116px - 68px)!important;
     min-height:0!important;
     display:grid!important;
     grid-template-columns:1fr!important;
-    grid-template-rows:minmax(205px,1fr) 104px 76px!important;
-    gap:7px!important;
-    padding:7px!important;
-    overflow:hidden!important;
-    border-radius:19px!important;
+    grid-template-rows:minmax(220px,1fr) 104px 76px!important;
+    gap:9px!important;
+    padding:6px 8px 9px!important;
+    overflow:visible!important;
+    border:0!important;
+    border-radius:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+    backdrop-filter:none!important;
+    perspective:950px;
   }
   #skins .skin-showcase-v093{
     grid-column:1!important;
     grid-row:1!important;
     min-height:0!important;
     overflow:hidden!important;
-    border:2px solid color-mix(in srgb,var(--game-primary) 66%,var(--game-line))!important;
-    border-radius:19px!important;
+    border:2px solid color-mix(in srgb,var(--game-primary) 78%,#fff)!important;
+    border-radius:22px!important;
     background:var(--theme-stage-bg,var(--game-surface-2))!important;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 11px 26px var(--game-shadow)!important;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.26),
+      inset 0 -18px 30px rgba(0,0,0,.17),
+      0 5px 0 color-mix(in srgb,var(--game-primary-strong) 72%,#371226),
+      0 12px 0 color-mix(in srgb,var(--game-primary-strong) 24%,transparent),
+      0 22px 34px var(--game-shadow-strong)!important;
+    transform:rotateX(.65deg) rotateY(-.55deg) translateZ(0)!important;
+    transform-origin:50% 100%!important;
   }
   #skins .skin-showcase-v093::after{
-    inset:6px!important;
-    border-color:color-mix(in srgb,var(--game-primary) 38%,transparent)!important;
-    border-radius:14px!important;
+    z-index:2!important;
+    inset:7px!important;
+    border:1px solid rgba(255,255,255,.24)!important;
+    border-radius:15px!important;
+    box-shadow:inset 0 0 34px rgba(0,0,0,.12)!important;
+    pointer-events:none!important;
   }
   #skins .skin-art-v093,
   #skins .skin-art-v093.theme-full-splash-v5{
     position:absolute!important;
-    inset:6px!important;
+    inset:0!important;
     min-height:0!important;
     background-color:transparent!important;
-    background-position:center!important;
+    background-position:center 28%!important;
     background-repeat:no-repeat!important;
-    background-size:contain!important;
-    border-radius:13px!important;
+    background-size:cover!important;
+    border-radius:19px!important;
   }
   #skins .skin-view-tabs-v093{
     top:9px!important;
