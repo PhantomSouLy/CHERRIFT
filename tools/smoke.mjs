@@ -925,8 +925,8 @@ async function exercise(name,width,height){
 
       click(window,moreButton,`${name} reopen More drawer from Settings`);
       await waitFor(()=>!drawer.classList.contains("hidden")&&window.getComputedStyle(drawer).display!=="none",`${name}: More drawer reopens from a subpage`);
-      click(window,drawer.querySelector("[data-v082-toggle-mobile]"),`${name} close More drawer`);
-      await waitFor(()=>drawer.classList.contains("hidden"),`${name}: More close button works`);
+      click(window,moreButton,`${name} close More drawer with bottom navigation toggle`);
+      await waitFor(()=>drawer.classList.contains("hidden"),`${name}: More bottom navigation toggle closes drawer`);
       await assertActiveNav(window,name,"[data-v082-toggle-mobile]","Settings after closing More");
 
       UI.open("dailyQuests");
