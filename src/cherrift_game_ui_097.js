@@ -23,8 +23,9 @@
   }
 
   function profileFor(object){
-    if (!object?.v094Map || object.solid || object.kind === "fireflyV094") return null;
-    const key = String(object.assetKey || "");
+    const currentMapObject = object?.v094Map || object?.__fixWorldObjectV095 || object?.__fixStrictWorldV0952;
+    if (!currentMapObject || object.solid || object.kind === "fireflyV094" || object.glow) return null;
+    const key = `${String(object.assetKey || "")} ${String(object.fixKey || "")} ${String(object.kind || "")}`;
     if (!REACTIVE_ASSET.test(key)) return null;
 
     const drawW = Math.max(24, Number(object.drawW) || 64);
@@ -34,10 +35,10 @@
     const isFlower = /flower|mushroom|plant/i.test(key);
 
     return Object.freeze({
-      radius:Math.max(36, Math.min(86, drawW * (isBush ? .56 : .48))),
-      amplitude:(isBush ? 8.5 : isGrass ? 11 : isFlower ? 9.5 : 8) * Math.PI / 180,
-      compression:isBush ? .055 : isGrass ? .075 : .065,
-      duration:isBush ? .56 : isGrass ? .46 : .50,
+      radius:Math.max(48, Math.min(108, drawW * (isBush ? .72 : .64))),
+      amplitude:(isBush ? 12 : isGrass ? 16 : isFlower ? 14 : 12) * Math.PI / 180,
+      compression:isBush ? .07 : isGrass ? .10 : .085,
+      duration:isBush ? .60 : isGrass ? .49 : .54,
       drawW,
       drawH,
       anchor:Number.isFinite(Number(object.anchor)) ? Number(object.anchor) : .72
@@ -99,8 +100,27 @@
     return Math.sin(Number(object.phase) || 0) >= 0 ? 1 : -1;
   }
 
+  function distanceSqToSegment(pointX, pointY, startX, startY, endX, endY){
+    const segmentX = endX - startX;
+    const segmentY = endY - startY;
+    const lengthSq = segmentX * segmentX + segmentY * segmentY;
+    if (lengthSq <= .0001) {
+      const dx = pointX - endX;
+      const dy = pointY - endY;
+      return dx * dx + dy * dy;
+    }
+    const projection = Math.max(0, Math.min(1,
+      ((pointX - startX) * segmentX + (pointY - startY) * segmentY) / lengthSq
+    ));
+    const closestX = startX + segmentX * projection;
+    const closestY = startY + segmentY * projection;
+    const dx = pointX - closestX;
+    const dy = pointY - closestY;
+    return dx * dx + dy * dy;
+  }
+
   function updateFoliage(game){
-    if (REDUCED_MOTION.matches || game.mode !== "playing" || !game.player) return;
+    if ((game.mode !== "playing" && !document.body.classList.contains("is-playing")) || !game.player) return;
     const controller = controllerFor(game);
     const now = seconds(game);
 
@@ -114,8 +134,10 @@
 
     const playerX = Number(game.player.x) || 0;
     const playerY = Number(game.player.y) || 0;
-    const dx = playerX - controller.lastX;
-    const dy = playerY - controller.lastY;
+    const previousX = controller.lastX;
+    const previousY = controller.lastY;
+    const dx = playerX - previousX;
+    const dy = playerY - previousY;
     const distanceMoved = Math.hypot(dx, dy);
     controller.lastScanAt = now;
     controller.lastX = playerX;
@@ -128,37 +150,50 @@
 
     const nextInside = new Set();
     const playerRadius = Math.max(8, Number(game.player.r) || 18);
-    const cellX = Math.floor(playerX / CELL_SIZE);
-    const cellY = Math.floor(playerY / CELL_SIZE);
+    const nearbyCells = new Set();
+    for (const [sampleX, sampleY] of [[previousX, previousY], [playerX, playerY]]) {
+      const cellX = Math.floor(sampleX / CELL_SIZE);
+      const cellY = Math.floor(sampleY / CELL_SIZE);
+      for (let offsetY = -1; offsetY <= 1; offsetY++) {
+        for (let offsetX = -1; offsetX <= 1; offsetX++) nearbyCells.add(`${cellX + offsetX}:${cellY + offsetY}`);
+      }
+    }
 
-    for (let offsetY = -1; offsetY <= 1; offsetY++) {
-      for (let offsetX = -1; offsetX <= 1; offsetX++) {
-        const bucket = controller.grid.get(`${cellX + offsetX}:${cellY + offsetY}`);
+    const visited = new Set();
+    for (const key of nearbyCells) {
+        const bucket = controller.grid.get(key);
         if (!bucket) continue;
         for (const entry of bucket) {
           const object = entry.object;
+          if (visited.has(object)) continue;
+          visited.add(object);
           const reach = entry.profile.radius + playerRadius;
           const ox = playerX - Number(object.x || 0);
           const oy = playerY - Number(object.y || 0);
-          if (ox * ox + oy * oy > reach * reach) continue;
-          nextInside.add(object);
+          const currentDistanceSq = ox * ox + oy * oy;
+          if (currentDistanceSq <= reach * reach) nextInside.add(object);
 
-          if (distanceMoved < .8 || controller.inside.has(object)) continue;
+          const sweptDistanceSq = distanceSqToSegment(
+            Number(object.x || 0), Number(object.y || 0), previousX, previousY, playerX, playerY
+          );
+          if (sweptDistanceSq > reach * reach) continue;
+
+          if (distanceMoved < .45 || controller.inside.has(object)) continue;
           if (now < (controller.cooldown.get(object) || -Infinity)) continue;
 
-          const intensity = Math.max(.55, Math.min(1, distanceMoved / 10));
+          const intensity = Math.max(.72, Math.min(1, distanceMoved / 9));
+          const motionScale = REDUCED_MOTION.matches ? .35 : 1;
           const duration = entry.profile.duration * (.96 + ((Number(object.phase) || 0) % 1) * .08);
           controller.active.set(object, {
             startedAt:now,
             duration,
-            amplitude:entry.profile.amplitude * intensity,
-            compression:entry.profile.compression * intensity,
+            amplitude:entry.profile.amplitude * intensity * motionScale,
+            compression:entry.profile.compression * intensity * motionScale,
             direction:leanDirection(object, dx, playerX),
             profile:entry.profile
           });
           controller.cooldown.set(object, now + duration + .22);
         }
-      }
     }
 
     controller.inside = nextInside;
@@ -175,7 +210,7 @@
   proto.drawObstacle = function drawObstacleV097(context, object){
     const controller = this.__v097Foliage;
     const state = controller?.active?.get(object);
-    if (!state || REDUCED_MOTION.matches) return previousDrawObstacle.call(this, context, object);
+    if (!state) return previousDrawObstacle.call(this, context, object);
 
     const progress = (seconds(this) - state.startedAt) / state.duration;
     if (progress >= 1 || progress < 0) {
@@ -206,6 +241,10 @@
     version:VERSION,
     cellSize:CELL_SIZE,
     isReactive:object => !!profileFor(object),
+    inspect(game){
+      const controller = game ? controllerFor(game) : null;
+      return controller ? {indexed:[...controller.grid.values()].reduce((sum,bucket)=>sum+bucket.length,0),active:controller.active.size,revision:controller.revision} : null;
+    },
     refresh(game){
       if (!game) return false;
       buildController(game);
