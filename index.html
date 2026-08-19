@@ -10,14 +10,14 @@
   <link rel="stylesheet" href="assets/cherrift_prebeta.css?v=095pb5" />
   <link rel="stylesheet" href="assets/cherrift_prebeta_event.css?v=095event1" />
   <link rel="stylesheet" href="assets/cherrift_security_ui.css?v=095security1" />
-  <link id="cherriftMobileFix096Css" rel="stylesheet" href="assets/cherrift_mobile_fix_096.css?v=096m2" />
   <link rel="preload" as="image" href="assets/loading_pc_1920x1080.png?v=096boot2" media="(orientation:landscape)" />
   <link rel="preload" as="image" href="assets/loading_mobile_1080x1920.png?v=096boot2" media="(orientation:portrait)" />
   <link rel="stylesheet" href="assets/cherrift_boot.css?v=096boot2" />
   <link id="cherriftGameUi097Css" rel="stylesheet" href="assets/cherrift_game_ui_097.css?v=0972" />
   <link id="cherriftElementalCss" rel="stylesheet" href="assets/cherrift_elemental.css?v=el0951" />
   <link id="cherriftSkillBuilderCss" rel="stylesheet" href="assets/cherrift_skill_builder.css?v=sb0951" />
-  <script src="src/cherrift_boot.js?v=096boot2" defer></script>
+  <link id="cherriftRuntimeCss" rel="stylesheet" href="assets/cherrift_runtime.css?v=095clean1" />
+  <script src="src/cherrift_boot.js?v=095clean1" defer></script>
   <style id="v060BootCss">
     html,body { margin:0; min-height:100%; background:#0b0610; }
     body.v060-booting #app,
@@ -163,7 +163,7 @@
 
         <div class="social-row r5-support-links" data-r5-support-links="1" aria-label="Support links">
           <button type="button" data-r5-menu-tool="twitch" title="Twitch" aria-label="Twitch"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 2h17v12l-5 5h-4l-3 3v-3H4V2zm2 2v13h5v2l2-2h4l2-2V4H6zm5 3h2v6h-2V7zm4 0h2v6h-2V7z"/></svg><small>Twitch</small></button>
-          <button type="button" data-r5-menu-tool="web" title="Website" aria-label="Website"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm6.9 6h-3.1a16 16 0 0 0-1.4-3.2A8.1 8.1 0 0 1 18.9 8ZM12 4c.9 1.1 1.6 2.4 1.9 4h-3.8c.3-1.6 1-2.9 1.9-4ZM4.3 14a8 8 0 0 1 0-4h3.5a18 18 0 0 0 0 4H4.3Zm.8 2h3.1c.3 1.2.8 2.3 1.4 3.2A8.1 8.1 0 0 1 5.1 16Zm3.1-8H5.1a8.1 8.1 0 0 1 4.5-3.2A16 16 0 0 0 8.2 8Zm3.8 12c-.9-1.1-1.6-2.4-1.9-4h3.8c-.3 1.6-1 2.9-1.9 4Zm2.3-6H9.7a16 16 0 0 1 0-4h4.6a16 16 0 0 1 0 4Zm.1 5.2c.6-.9 1.1-2 1.4-3.2h3.1a8.1 8.1 0 0 1-4.5 3.2ZM16.2 14a18 18 0 0 0 0-4h3.5a8 8 0 0 1 0 4h-3.5Z"/></svg><small>Web</small></button>
+          <button type="button" data-r5-menu-tool="web" title="Website" aria-label="Website"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm6.9 6h-3.1a16 16 0 0 0-1.4-3.2A8.1 8.1 0 0 1 18.9 8ZM12 4c.9 1.1 1.6 2.4 1.9 4h-3.8c.3-1.6 1-2.9 1.9-4ZM4.3 14a8 8 0 0 1 0-4h3.5a18 18 0 0 0 0 4H4.3Zm.8 2h3.1c.3 1.2.8 2.3 1.4 3.2A8.1 8.1 0 0 1 5.1 16Zm3.1-8H5.1a8.1 8.1 0 0 1 4.5-3.2A16 16 0 0 0 8.2 8Zm3.8 12c-.9-1.1-1.6-2.4-1.9-4h3.8c-.3 1.6-1.1 2.4-1.9 4Zm2.3-6H9.7a16 16 0 0 1 0-4h4.6a16 16 0 0 1 0 4Zm.1 5.2c.6-.9 1.1-2 1.4-3.2h3.1a8.1 8.1 0 0 1-4.5 3.2ZM16.2 14a18 18 0 0 0 0-4h3.5a8 8 0 0 1 0 4h-3.5Z"/></svg><small>Web</small></button>
           <button type="button" data-r5-menu-tool="feedback" title="Feedback" aria-label="Feedback"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3h16a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-9l-5 4v-4H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm2 5v2h12V8H6Zm0 4v2h8v-2H6Z"/></svg><small>Feedback</small></button>
           <button type="button" data-r5-menu-tool="bug" title="Bug Report" aria-label="Bug Report"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.1 4 1.4-1.4 1.4 1.4-1.4 1.4c.7.7 1.2 1.6 1.4 2.6H20v2h-3v2h3v2h-3c-.2 1-.7 1.9-1.4 2.6L17 18l-1.4 1.4-1.4-1.4c-.7.4-1.4.7-2.2.8V7.2c-.8.1-1.5.4-2.2.8l-1.4-1.4L7 8l1.4 1.4C7.7 10.1 7.2 11 7 12H4v2h3c.2 1 .7 1.9 1.4 2.6L7 18l1.4 1.4 1.4-1.4c.7.4 1.4.7 2.2.8A6 6 0 0 0 18 13V9a6 6 0 0 0-3.9-5ZM12 2a3 3 0 0 1 3 3h-6a3 3 0 0 1 3-3Z"/></svg><small>Bug Report</small></button>
         </div>
@@ -268,8 +268,6 @@
         <div id="chestResult" class="result"></div>
       </div>
     </section>
-
-    
 
     <section id="worlds" class="panel hidden world-select-panel">
       <header class="panel-head world-select-head">
@@ -414,7 +412,6 @@
       <button id="pause" class="pause-btn">Ⅱ</button>
     </section>
 
-
     <aside id="stageHud" class="stage-hud hidden">
       <div class="stage-box">
         <div class="tiny">Current Stage</div>
@@ -456,8 +453,6 @@
       </div>
     </section>
 
-    
-
     <section id="stageClearModal" class="modal hidden">
       <div class="modal-card">
         <h2 id="stageClearTitle">Stage Clear!</h2>
@@ -484,7 +479,6 @@
       </div>
     </section>
 
-
     <section id="stageLoading" class="stage-loading hidden">
       <div class="loading-card">
         <div class="loading-logo">CHERRIFT</div>
@@ -506,18 +500,11 @@
   <script src="src/cherrift_live_services.js?v=0944"></script>
   <script src="src/cherrift_account_mail.js?v=0971"></script>
   <script src="src/cherrift_world_ui.js?v=095ui2"></script>
-  <script src="src/cherrift_stability.js?v=0971"></script>
   <script src="src/cherrift_prebeta.js?v=0971"></script>
-  <!-- Keep pre-beta layers in a deterministic order. Dynamic insertion from
-       config.js allowed the UI to become interactive before these patches. -->
-  <script src="src/cherrift_fixpack_095.js?v=0971"></script>
-  <script src="src/cherrift_fixpack_095_round5.js?v=0971"></script>
   <script src="src/cherrift_prebeta_event.js?v=095event2"></script>
   <script src="src/cherrift_security_ui.js?v=095security1"></script>
-  <script src="src/cherrift_mobile_fix_096.js?v=096m1"></script>
+  <script src="src/cherrift_runtime.js?v=095clean1"></script>
   <script src="src/cherrift_game_ui_097.js?v=0972"></script>
-  <!-- Loaded last so Elemental Resonance wraps the final save, navigation
-       and combat methods instead of an obsolete compatibility layer. -->
   <script src="src/cherrift_elemental.js?v=el0951"></script>
   <script src="src/cherrift_skill_builder.js?v=sb0951"></script>
 </body>
