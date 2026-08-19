@@ -1,0 +1,755 @@
+/* CHERRIFT v0.9.7 — shared Cute Sakura Fantasy game UI layer.
+   This file intentionally sits last in the cascade. It consolidates visual
+   hierarchy, input feedback and the small-screen selector fixes in one place. */
+
+:root{
+  --game-surface:var(--theme-surface,#251521);
+  --game-surface-2:var(--theme-surface-2,#321c2e);
+  --game-surface-3:var(--theme-surface-3,#3e2438);
+  --game-glass:var(--theme-surface-glass,rgba(37,21,33,.94));
+  --game-text:var(--theme-text,#fff6fb);
+  --game-muted:var(--theme-muted,#d7b5c6);
+  --game-primary:var(--theme-primary,#eb66a4);
+  --game-primary-strong:var(--theme-primary-strong,#ad356f);
+  --game-accent:var(--theme-accent,#ffd36b);
+  --game-line:var(--theme-outline-soft,rgba(255,207,230,.24));
+  --game-line-strong:var(--theme-outline,rgba(255,220,237,.48));
+  --game-shadow:var(--theme-shadow,rgba(23,7,17,.36));
+  --game-shadow-strong:var(--theme-shadow-strong,rgba(14,4,11,.56));
+  --game-panel-radius:22px;
+  --game-card-radius:17px;
+  --game-button-radius:13px;
+  --rarity-common:#f0e5eb;
+  --rarity-uncommon:#6edb8b;
+  --rarity-rare:#61c7ff;
+  --rarity-epic:#c87aff;
+  --rarity-legendary:#ffc85f;
+  --rarity-mythical:#ff6ca9;
+}
+
+/* A selected theme must never replace the boot illustration with the page
+   colour. The art asset remains the single source for the start screen. */
+html[data-cherrift-theme] #bootV060.boot-v060,
+#bootV060.boot-v060{
+  background-color:#0d0710!important;
+  background-image:linear-gradient(180deg,rgba(9,4,12,.03),rgba(9,4,12,.16)),url("loading_pc_1920x1080.png?v=0971")!important;
+  background-position:center!important;
+  background-repeat:no-repeat!important;
+  background-size:cover!important;
+}
+
+/* Type hierarchy: display faces are limited to page titles; compact labels
+   remain system UI type for fast scanning. */
+:is(.panel-head,.panel-head-v060,.v082-panel-head,.economy-head-v080,.bf-head) h2,
+.economy-head-v080 h1{
+  color:var(--game-text)!important;
+  font-family:Georgia,"Times New Roman",serif!important;
+  font-weight:800!important;
+  letter-spacing:-.035em!important;
+  text-wrap:balance;
+}
+:is(.panel-head,.panel-head-v060,.v082-panel-head,.economy-head-v080,.bf-head) p{
+  color:var(--game-muted)!important;
+  font-size:12px!important;
+  font-weight:700!important;
+  line-height:1.45!important;
+}
+:is(.dashboard-section-title-v060,.bag-section-v080,.shop-intro-v080,.buff-summary-v080,.history-v080,.v052-tree) h3,
+:is(.bag-section-v080,.shop-intro-v080,.buff-summary-v080,.history-v080) h2{
+  color:var(--game-text)!important;
+  letter-spacing:-.02em;
+}
+
+/* Shared layered surfaces. */
+:is(
+  .glass,.bf-card,.settings-shell-v060,.shop-intro-v080,.bag-section-v080,
+  .buff-summary-v080,.history-v080,.v055-bonus,.v052-level-card,.v052-tree,
+  .mail-toolbar-bf,.mail-detail-bf,.profile-stat-bf,.title-stats-active-v096,
+  .title-stats-total-bf,.title-stats-owned-v096
+){
+  border:1px solid var(--game-line)!important;
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.075),transparent 38%),
+    var(--game-surface)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.14),
+    0 13px 32px var(--game-shadow)!important;
+}
+
+:is(
+  .material-grid-v080 article,.food-card-v080,.shop-card-v080,
+  .active-buffs-v080 article,.permanent-grid-v080 article,.mini-chests-v080 button,
+  .collection-card-v084,.v052-achievement,.v055-card,.mail-row-bf,
+  .profile-stat-bf,.title-stats-row-bf
+){
+  border:1px solid var(--game-line)!important;
+  background:
+    linear-gradient(155deg,rgba(255,255,255,.065),transparent 45%),
+    var(--game-surface-2)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 8px 20px var(--game-shadow)!important;
+}
+
+:is(.shop-intro-v080,.bag-section-v080,.buff-summary-v080,.history-v080,.bf-card,.settings-shell-v060){
+  border-radius:var(--game-panel-radius)!important;
+}
+
+/* Buttons feel physical without introducing continuous animation. */
+:is(
+  .menu-btn,.bf-button,.selector-actions-v0942 button,.selector-back-v0942,
+  .selector-arrow-v0942,.economy-tabs-v080 button,.shop-categories-v096 button,
+  .chest-card-v080>button,.food-card-v080 button,.shop-card-v080 button,
+  .settings-action-v060,.settings-link-v060,.skin-equip-v093,.skin-preview-controls-v093 button,
+  .v052-achievement button,.v052-node button,.gear-equipment-tools-v0942 button
+){
+  position:relative;
+  border-radius:var(--game-button-radius)!important;
+  font-weight:900!important;
+  letter-spacing:.01em;
+  transition:transform .12s ease,filter .14s ease,box-shadow .14s ease!important;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+
+:is(
+  .bf-button,.selector-actions-v0942 button.primary,.chest-card-v080>button,
+  .food-card-v080 button,.shop-card-v080 button,.skin-equip-v093,
+  #mobilePlayBtn,#playBtn,[data-world-start],[data-chapter-play]
+){
+  color:#fff!important;
+  border:1px solid rgba(255,255,255,.6)!important;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.2),transparent 44%),
+    linear-gradient(120deg,var(--game-primary-strong),var(--game-primary))!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.32),
+    inset 0 -3px 0 rgba(66,10,41,.22),
+    0 5px 0 color-mix(in srgb,var(--game-primary-strong) 70%,#54122f),
+    0 10px 22px color-mix(in srgb,var(--game-primary) 28%,transparent)!important;
+  text-shadow:0 1px 2px rgba(64,8,38,.42);
+}
+
+:is(#mobilePlayBtn,#playBtn,[data-world-start],[data-chapter-play]){
+  min-height:56px!important;
+  text-transform:uppercase;
+  letter-spacing:.08em!important;
+}
+
+@media(hover:hover){
+  :is(
+    .menu-btn,.bf-button,.selector-actions-v0942 button,.selector-back-v0942,
+    .selector-arrow-v0942,.economy-tabs-v080 button,.shop-categories-v096 button,
+    .chest-card-v080>button,.food-card-v080 button,.shop-card-v080 button,
+    .settings-action-v060,.settings-link-v060,.skin-equip-v093,.skin-preview-controls-v093 button,
+    .v052-achievement button,.collection-card-v084,.mail-row-bf
+  ):not(:disabled):hover{
+    z-index:1;
+    filter:brightness(1.08) saturate(1.05);
+    transform:translateY(-2px);
+  }
+}
+
+:is(
+  .menu-btn,.bf-button,.selector-actions-v0942 button,.selector-back-v0942,
+  .selector-arrow-v0942,.economy-tabs-v080 button,.shop-categories-v096 button,
+  .chest-card-v080>button,.food-card-v080 button,.shop-card-v080 button,
+  .settings-action-v060,.settings-link-v060,.skin-equip-v093,.skin-preview-controls-v093 button,
+  .v052-achievement button,.collection-card-v084,.mail-row-bf
+):not(:disabled):active{
+  filter:brightness(.96);
+  transform:translateY(2px) scale(.985)!important;
+}
+
+:is(button,[role="button"]):focus-visible{
+  outline:3px solid color-mix(in srgb,var(--game-accent) 82%,#fff)!important;
+  outline-offset:3px!important;
+}
+
+:is(button,[role="button"]):disabled{
+  cursor:not-allowed!important;
+  transform:none!important;
+  box-shadow:none!important;
+}
+
+/* Wallet and HUD clusters read as game resources, not loose text. */
+:is(.economy-wallet-v080,#resourceBarV082,.gco-wallet,.hud-resources-v082) > :is(span,div){
+  min-height:36px;
+  border:1px solid var(--game-line)!important;
+  border-radius:12px!important;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.1),transparent 55%),
+    var(--game-surface-2)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 5px 13px var(--game-shadow)!important;
+  font-variant-numeric:tabular-nums;
+}
+
+/* Shop: segmented categories, stronger artwork and clear rarity framing. */
+.shop-catalog-v097{
+  width:100%;
+  min-width:0;
+  padding:12px;
+  overflow:hidden;
+  border:1px solid var(--game-line);
+  border-radius:22px;
+  background:var(--game-surface);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.11),0 13px 30px var(--game-shadow);
+}
+.shop-categories-v096{
+  width:100%;
+  min-width:0;
+  box-sizing:border-box;
+  padding:6px!important;
+  border-color:var(--game-line)!important;
+  background:var(--game-surface)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.11),0 9px 22px var(--game-shadow)!important;
+}
+.shop-categories-v096 button{
+  color:var(--game-muted)!important;
+  border-color:transparent!important;
+  background:transparent!important;
+}
+.shop-categories-v096 button.active{
+  color:#fff!important;
+  border-color:rgba(255,255,255,.44)!important;
+  background:linear-gradient(125deg,var(--game-primary-strong),var(--game-primary))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 5px 14px color-mix(in srgb,var(--game-primary) 25%,transparent)!important;
+}
+
+:is(.shop-rarity-card-v084,.r5-skin-shop-card,.collection-card-v084){
+  --rarity:var(--rarity-common);
+  position:relative!important;
+  overflow:hidden!important;
+  isolation:isolate;
+  border-color:color-mix(in srgb,var(--rarity) 62%,var(--game-line))!important;
+}
+:is(.shop-rarity-card-v084,.r5-skin-shop-card,.collection-card-v084)::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 50% 18%,color-mix(in srgb,var(--rarity) 26%,transparent),transparent 43%),
+    linear-gradient(90deg,var(--rarity),transparent 55%) top/100% 3px no-repeat;
+}
+:is(.shop-rarity-card-v084,.r5-skin-shop-card,.collection-card-v084).rarity-common{--rarity:var(--rarity-common)}
+:is(.shop-rarity-card-v084,.r5-skin-shop-card,.collection-card-v084).rarity-uncommon{--rarity:var(--rarity-uncommon)}
+:is(.shop-rarity-card-v084,.r5-skin-shop-card,.collection-card-v084).rarity-rare{--rarity:var(--rarity-rare)}
+:is(.shop-rarity-card-v084,.r5-skin-shop-card,.collection-card-v084).rarity-epic{--rarity:var(--rarity-epic)}
+:is(.shop-rarity-card-v084,.r5-skin-shop-card,.collection-card-v084).rarity-legendary{--rarity:var(--rarity-legendary)}
+:is(.shop-rarity-card-v084,.r5-skin-shop-card,.collection-card-v084).rarity-mythical{--rarity:var(--rarity-mythical)}
+
+:is(.shop-rarity-card-v084,.r5-skin-shop-card) :is(.v080-art,.r5-skin-shop-art),
+:is(.shop-rarity-card-v084,.r5-skin-shop-card)>span:first-child{
+  border:1px solid color-mix(in srgb,var(--rarity) 38%,var(--game-line))!important;
+  background:
+    radial-gradient(circle,color-mix(in srgb,var(--rarity) 22%,transparent),transparent 64%),
+    color-mix(in srgb,var(--game-surface-2) 90%,transparent)!important;
+  box-shadow:inset 0 0 24px color-mix(in srgb,var(--rarity) 12%,transparent)!important;
+}
+.shop-price-v084{
+  width:max-content;
+  max-width:100%;
+  padding:6px 9px!important;
+  border:1px solid color-mix(in srgb,var(--game-accent) 52%,var(--game-line))!important;
+  border-radius:10px!important;
+  color:var(--game-text)!important;
+  background:color-mix(in srgb,var(--game-accent) 12%,var(--game-surface))!important;
+  font-weight:950!important;
+}
+
+/* Lists, buffs and account data get visual grouping and state accents. */
+.material-grid-v080 article>span,
+.permanent-grid-v080 article>span,
+.v052-achievement>span,
+.mail-dot-bf{
+  border:1px solid var(--game-line)!important;
+  background:radial-gradient(circle at 35% 25%,rgba(255,255,255,.2),transparent 42%),var(--game-surface-3)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.13)!important;
+}
+.active-buffs-v080 article{
+  border-left:4px solid var(--game-primary)!important;
+}
+.permanent-grid-v080 article.unlocked,
+.v052-achievement.unlocked{
+  border-color:color-mix(in srgb,#6dde92 48%,var(--game-line))!important;
+  background:linear-gradient(135deg,rgba(62,164,92,.17),transparent 48%),var(--game-surface-2)!important;
+}
+.permanent-grid-v080 article.locked,
+.v052-achievement.locked{
+  opacity:.58!important;
+  filter:saturate(.55);
+}
+.mail-row-bf{
+  border-left:4px solid transparent!important;
+  text-align:left;
+}
+.mail-row-bf.unread{
+  border-left-color:var(--game-primary)!important;
+  background:linear-gradient(90deg,color-mix(in srgb,var(--game-primary) 14%,transparent),transparent 42%),var(--game-surface-2)!important;
+}
+.profile-stat-bf{
+  position:relative;
+  overflow:hidden;
+}
+.profile-stat-bf::after{
+  content:"";
+  position:absolute;
+  right:-28px;
+  bottom:-38px;
+  width:110px;
+  height:110px;
+  border-radius:50%;
+  background:radial-gradient(circle,color-mix(in srgb,var(--game-primary) 16%,transparent),transparent 68%);
+  pointer-events:none;
+}
+
+/* Title bonus popup: concise, scannable and visually separated. */
+#profileTitleStatsModalV0945 .bf-modal-card{
+  width:min(620px,calc(100vw - 26px))!important;
+  border-radius:24px!important;
+  background:
+    radial-gradient(circle at 88% 0,color-mix(in srgb,var(--game-primary) 18%,transparent),transparent 30%),
+    var(--game-surface)!important;
+}
+#profileTitleStatsModalV0945 .bf-modal-card>h3{
+  margin:0 46px 6px 0!important;
+  font:800 clamp(27px,6vw,38px)/1 Georgia,serif!important;
+}
+#profileTitleStatsModalV0945 .title-stat-chips-v096>span{
+  border-color:var(--game-line)!important;
+  background:var(--game-surface)!important;
+}
+#profileTitleStatsModalV0945 .title-stat-chips-v096 em{
+  color:var(--game-primary)!important;
+}
+#profileTitleStatsModalV0945 .title-stats-owned-v096 summary{
+  min-height:28px;
+  color:var(--game-text)!important;
+}
+
+/* Bottom navigation is a thumb dock. Only the selected destination rises. */
+@media(max-width:820px){
+  #globalMobileNavV052.mobile-nav-v090{
+    left:max(7px,env(safe-area-inset-left))!important;
+    right:max(7px,env(safe-area-inset-right))!important;
+    bottom:max(7px,env(safe-area-inset-bottom))!important;
+    gap:3px!important;
+    padding:6px!important;
+    border:1px solid var(--game-line-strong)!important;
+    border-radius:22px!important;
+    background:color-mix(in srgb,var(--game-surface) 95%,transparent)!important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 15px 36px var(--game-shadow-strong)!important;
+    backdrop-filter:blur(18px) saturate(1.1)!important;
+  }
+  .mobile-nav-v090>button{
+    min-height:55px!important;
+    color:var(--game-muted)!important;
+    border:1px solid transparent!important;
+    border-radius:15px!important;
+    background:transparent!important;
+    box-shadow:none!important;
+  }
+  .mobile-nav-v090>button :is(span,b){color:inherit!important}
+  .mobile-nav-v090>button.active,
+  .mobile-nav-v090>button.theme-nav-active{
+    color:#fff!important;
+    border-color:rgba(255,255,255,.58)!important;
+    background:
+      linear-gradient(180deg,rgba(255,255,255,.18),transparent 52%),
+      linear-gradient(140deg,var(--game-primary),var(--game-primary-strong))!important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 5px 0 color-mix(in srgb,var(--game-primary-strong) 70%,#581832),0 8px 18px color-mix(in srgb,var(--game-primary) 28%,transparent)!important;
+    transform:translateY(-4px)!important;
+  }
+
+  /* The complete Shop catalogue is one bounded phone panel. Categories and
+     cards share its width, so no child can enlarge the page horizontally. */
+  #chests.economy-v080{
+    box-sizing:border-box!important;
+    overflow-x:hidden!important;
+  }
+  #chests .economy-body-v080,
+  #chests .shop-intro-v080,
+  #chests .shop-catalog-v097,
+  #chests .shop-category-panel-v096,
+  #chests :is(.shop-grid-v080,.food-grid-v080,.bag-section-v080){
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+  }
+  #chests .economy-body-v080{
+    margin-right:0!important;
+    margin-left:0!important;
+    overflow-x:hidden!important;
+  }
+  #chests .shop-intro-v080{overflow:hidden!important}
+  #chests .shop-catalog-v097{
+    padding:8px!important;
+    border-radius:19px!important;
+  }
+  #chests .shop-categories-v096{
+    width:100%!important;
+    max-width:100%!important;
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:4px!important;
+    margin:0 0 8px!important;
+    padding:4px!important;
+    overflow:hidden!important;
+    scroll-snap-type:none!important;
+  }
+  #chests .shop-categories-v096 button{
+    width:100%!important;
+    min-width:0!important;
+    min-height:43px!important;
+    padding:5px 3px!important;
+    overflow:hidden!important;
+    font-size:clamp(9px,2.8vw,12px)!important;
+    line-height:1.08!important;
+    text-align:center!important;
+    text-overflow:ellipsis;
+    white-space:normal!important;
+    touch-action:manipulation!important;
+  }
+  #chests :is(.shop-grid-v080,.food-grid-v080){
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:10px!important;
+  }
+  #chests :is(.shop-card-v080,.food-card-v080){
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+    overflow:hidden!important;
+  }
+  #chests :is(.shop-card-v080,.food-card-v080)>button{
+    width:100%!important;
+    max-width:100%!important;
+    box-sizing:border-box!important;
+  }
+
+  /* The selector itself disappears into the screen background. The splash is
+     the only large surface: a filled, layered portrait card with real depth. */
+  #skins .skin-selector-v093{
+    height:calc(var(--cherrift-viewport-height,100dvh) - 116px - 68px)!important;
+    min-height:0!important;
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    grid-template-rows:minmax(220px,1fr) 104px 76px!important;
+    gap:9px!important;
+    padding:6px 8px 9px!important;
+    overflow:visible!important;
+    border:0!important;
+    border-radius:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+    backdrop-filter:none!important;
+    perspective:950px;
+  }
+  #skins .skin-showcase-v093{
+    grid-column:1!important;
+    grid-row:1!important;
+    min-height:0!important;
+    overflow:hidden!important;
+    border:2px solid color-mix(in srgb,var(--game-primary) 78%,#fff)!important;
+    border-radius:22px!important;
+    background:var(--theme-stage-bg,var(--game-surface-2))!important;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.26),
+      inset 0 -18px 30px rgba(0,0,0,.17),
+      0 5px 0 color-mix(in srgb,var(--game-primary-strong) 72%,#371226),
+      0 12px 0 color-mix(in srgb,var(--game-primary-strong) 24%,transparent),
+      0 22px 34px var(--game-shadow-strong)!important;
+    transform:rotateX(.65deg) rotateY(-.55deg) translateZ(0)!important;
+    transform-origin:50% 100%!important;
+  }
+  #skins .skin-showcase-v093::after{
+    z-index:2!important;
+    inset:7px!important;
+    border:1px solid rgba(255,255,255,.24)!important;
+    border-radius:15px!important;
+    box-shadow:inset 0 0 34px rgba(0,0,0,.12)!important;
+    pointer-events:none!important;
+  }
+  #skins .skin-art-v093,
+  #skins .skin-art-v093.theme-full-splash-v5{
+    position:absolute!important;
+    inset:0!important;
+    min-height:0!important;
+    background-color:transparent!important;
+    background-position:center 28%!important;
+    background-repeat:no-repeat!important;
+    background-size:cover!important;
+    border-radius:19px!important;
+  }
+  #skins .skin-view-tabs-v093{
+    top:9px!important;
+    right:9px!important;
+    left:9px!important;
+    gap:4px!important;
+  }
+  #skins .skin-view-tabs-v093 button{
+    min-height:27px!important;
+    padding:3px 8px!important;
+    font-size:8px!important;
+  }
+  #skins .skin-game-view-v093{
+    padding:38px 5px 4px!important;
+  }
+  #skins .skin-game-view-v093 canvas{
+    min-height:120px!important;
+  }
+  #skins .skin-preview-controls-v093{
+    gap:4px!important;
+    padding:3px!important;
+  }
+  #skins .skin-preview-controls-v093 small{display:none!important}
+  #skins .skin-preview-controls-v093 button{min-height:25px!important;padding:2px 6px!important;font-size:8px!important}
+  #skins .skin-details-v093{
+    grid-column:1!important;
+    grid-row:2!important;
+    max-height:none!important;
+    min-height:0!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) auto!important;
+    grid-template-rows:auto auto 1fr!important;
+    gap:3px 7px!important;
+    padding:7px 9px!important;
+    overflow:hidden!important;
+    border:1px solid var(--game-line)!important;
+    border-radius:14px!important;
+    background:var(--game-surface)!important;
+  }
+  #skins .skin-title-v093{grid-column:1!important;grid-row:1!important;min-width:0!important}
+  #skins .skin-title-v093 .rarity-pill{padding:3px 6px!important;font-size:7px!important}
+  #skins .skin-details-v093 h3{
+    grid-column:1!important;
+    grid-row:2!important;
+    min-width:0!important;
+    margin:0!important;
+    overflow:hidden;
+    color:var(--game-text)!important;
+    font-size:clamp(18px,5vw,23px)!important;
+    line-height:1!important;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  #skins .skin-details-v093>p{display:none!important}
+  #skins .skin-stats-v093{
+    grid-column:1!important;
+    grid-row:3!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:4px!important;
+    margin:1px 0 0!important;
+    overflow:hidden!important;
+  }
+  #skins .skin-stats-v093>div{padding:4px 6px!important;border-radius:8px!important}
+  #skins .skin-stats-v093 dt{font-size:6px!important}
+  #skins .skin-stats-v093 dd{margin-top:1px!important;font-size:9px!important}
+  #skins :is(.skin-equip-v093,.skill-card-v093){
+    grid-column:2!important;
+    min-width:92px!important;
+    min-height:36px!important;
+    padding:4px 8px!important;
+    font-size:9px!important;
+  }
+  #skins .skin-equip-v093{grid-row:1/3!important;align-self:center!important}
+  #skins .skill-card-v093{
+    grid-row:3!important;
+    align-self:end!important;
+    width:100%!important;
+    gap:4px!important;
+  }
+  #skins .skill-card-v093>span{width:24px!important;height:24px!important;border-radius:7px!important;font-size:11px!important}
+  #skins .skill-card-v093 div{min-width:0!important}
+  #skins .skill-card-v093 small{display:none!important}
+  #skins .skill-card-v093 b{overflow:hidden;font-size:7px!important;text-overflow:ellipsis;white-space:nowrap}
+  #skins .skill-card-v093 i{display:none!important}
+  #skins .skin-list-v093{
+    grid-column:1!important;
+    grid-row:3!important;
+    display:flex!important;
+    flex-direction:row!important;
+    gap:6px!important;
+    padding:5px!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    border:1px solid var(--game-line)!important;
+    border-radius:14px!important;
+    background:var(--game-surface-2)!important;
+    scrollbar-width:none!important;
+    scroll-snap-type:x proximity;
+  }
+  #skins .skin-list-v093::-webkit-scrollbar{display:none!important}
+  #skins .skin-icon-v093{
+    flex:0 0 62px!important;
+    width:62px!important;
+    height:64px!important;
+    min-height:0!important;
+    padding:3px!important;
+    border-radius:11px!important;
+    scroll-snap-align:start;
+  }
+  #skins .skin-icon-v093 img{
+    width:100%!important;
+    height:100%!important;
+    border-radius:8px!important;
+    background:var(--game-surface)!important;
+    object-fit:contain!important;
+  }
+  #skins .skin-icon-v093 :is(b,small){font-size:6px!important}
+  #skins .v096-art-card-ui{display:none!important}
+
+  /* World / Chapter header: the small counter lives above the title line and
+     can no longer collide with the display heading. */
+  .selector-v0942 .selector-shell-v0942{
+    padding:max(70px,calc(env(safe-area-inset-top) + 66px)) 8px calc(80px + env(safe-area-inset-bottom))!important;
+    gap:0!important;
+  }
+  .selector-v0942 .selector-head-v0942{
+    position:relative!important;
+    min-height:48px!important;
+    grid-template-columns:48px minmax(0,1fr) 48px!important;
+    gap:6px!important;
+    margin-bottom:6px!important;
+  }
+  .selector-v0942 .selector-head-v0942 h2{
+    grid-column:2!important;
+    margin:0!important;
+    overflow:hidden;
+    color:#fff!important;
+    font-size:clamp(29px,8vw,40px)!important;
+    line-height:1!important;
+    text-align:center;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .selector-v0942 .selector-back-v0942{
+    grid-column:1!important;
+    width:46px!important;
+    height:46px!important;
+    border-radius:14px!important;
+  }
+  .selector-v0942 .selector-total-v0942{
+    position:absolute!important;
+    z-index:4!important;
+    top:-34px!important;
+    right:2px!important;
+    min-width:91px!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:6px!important;
+    padding:6px 9px!important;
+    border:1px solid rgba(255,255,255,.3)!important;
+    border-radius:999px!important;
+    background:rgba(22,8,27,.88)!important;
+    box-shadow:0 6px 14px rgba(0,0,0,.25)!important;
+  }
+  .selector-v0942 .selector-total-v0942 small{font-size:6px!important;white-space:nowrap!important}
+  .selector-v0942 .selector-total-v0942 b{font-size:12px!important;white-space:nowrap!important}
+
+  /* Chapter has a compact, bounded hero card. Its summary and start button
+     reserve their own space instead of being pushed below the viewport. */
+  #chapterSelectorV0942 .selector-carousel-v0942{
+    flex:0 0 clamp(205px,31dvh,275px)!important;
+    min-height:0!important;
+    grid-template-columns:34px minmax(0,1fr) 34px!important;
+    gap:5px!important;
+  }
+  #chapterSelectorV0942 #chapterCardV0942{
+    min-height:0!important;
+    max-height:none!important;
+    height:100%!important;
+  }
+  #chapterSelectorV0942 .selector-card-v0942{
+    min-height:0!important;
+    border-radius:20px!important;
+  }
+  #chapterSelectorV0942 .selector-arrow-v0942{
+    height:54px!important;
+    border-radius:14px!important;
+    font-size:32px!important;
+  }
+  #chapterSelectorV0942 .selector-stars-v0942{
+    top:8px!important;
+    padding:5px 9px!important;
+    font-size:18px!important;
+  }
+  #chapterSelectorV0942 .selector-copy-v0942{
+    right:12px!important;
+    bottom:10px!important;
+    left:12px!important;
+  }
+  #chapterSelectorV0942 .selector-copy-v0942 small{font-size:7px!important;letter-spacing:1px!important}
+  #chapterSelectorV0942 .selector-copy-v0942 h3{
+    margin-top:2px!important;
+    font-size:clamp(29px,8vw,39px)!important;
+  }
+  #chapterSelectorV0942 .selector-copy-v0942 p{
+    margin-top:4px!important;
+    overflow:hidden;
+    font-size:10px!important;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  #chapterSelectorV0942 .selector-rewards-v0942{gap:4px!important;margin-top:5px!important}
+  #chapterSelectorV0942 .selector-rewards-v0942 span{padding:4px!important;border-radius:8px!important}
+  #chapterSelectorV0942 .selector-rewards-v0942 small{font-size:6px!important}
+  #chapterSelectorV0942 .selector-rewards-v0942 b{margin-top:1px!important;font-size:9px!important}
+  #chapterSelectorV0942 .selector-dots-v0942{padding:4px!important}
+  #chapterSelectorV0942 .chapter-summary-v0942{
+    flex:0 0 auto!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:4px!important;
+    margin:0 0 6px!important;
+    padding:5px!important;
+    border-radius:13px!important;
+  }
+  #chapterSelectorV0942 .chapter-summary-v0942 .chapter-summary-title-v0942{
+    grid-column:1/-1!important;
+  }
+  #chapterSelectorV0942 .chapter-summary-v0942>div{
+    min-width:0!important;
+    padding:4px 5px!important;
+    border-radius:8px!important;
+  }
+  #chapterSelectorV0942 .chapter-summary-v0942 small{font-size:5px!important;letter-spacing:.45px!important}
+  #chapterSelectorV0942 .chapter-summary-v0942 b{margin-top:1px!important;font-size:8px!important;line-height:1.1!important}
+  #chapterSelectorV0942 .chapter-summary-v0942 .chapter-summary-title-v0942 b{font-size:10px!important}
+  #chapterSelectorV0942 .selector-actions-v0942 button{
+    min-height:50px!important;
+    font-size:17px!important;
+  }
+}
+
+@media(max-width:820px) and (max-height:720px){
+  #skins .skin-selector-v093{
+    grid-template-rows:minmax(158px,1fr) 92px 66px!important;
+  }
+  #skins .skin-icon-v093{flex-basis:53px!important;width:53px!important;height:54px!important}
+  #skins .skin-view-tabs-v093{top:6px!important}
+  #chapterSelectorV0942 .selector-carousel-v0942{flex-basis:clamp(165px,27dvh,205px)!important}
+  #chapterSelectorV0942 .selector-copy-v0942 h3{font-size:27px!important}
+  #chapterSelectorV0942 .selector-copy-v0942 p{display:none!important}
+  #chapterSelectorV0942 .selector-actions-v0942 button{min-height:44px!important}
+  #chapterSelectorV0942 .chapter-summary-v0942>div{padding:3px 4px!important}
+}
+
+@media(orientation:portrait),(max-width:620px){
+  html[data-cherrift-theme] #bootV060.boot-v060,
+  #bootV060.boot-v060{
+    background-image:linear-gradient(180deg,rgba(9,4,12,.02),rgba(9,4,12,.12)),url("loading_mobile_1080x1920.png?v=0971")!important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  :is(button,[role="button"],.collection-card-v084,.mail-row-bf){
+    scroll-behavior:auto!important;
+    transition:none!important;
+  }
+  :is(button,[role="button"],.collection-card-v084,.mail-row-bf):not(:disabled):active{
+    transform:none!important;
+  }
+}

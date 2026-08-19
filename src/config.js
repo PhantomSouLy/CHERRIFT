@@ -2,7 +2,10 @@ window.CHERRIFT_BUILD = Object.freeze({
   version: "0.9.5-prebeta.1",
   displayVersion: "v0.9.5-prebeta.1",
   title: "CHERRIFT v0.9.5 – PRE-BETA",
-  label: "PRE-BETA · v0.9.5"
+  label: "PRE-BETA · v0.9.5",
+  // Elemental Resonance reads this explicit release channel. Change only
+  // this value to "live" for the Level 30 production unlock threshold.
+  channel: "beta"
 });
 
 window.CHERRIFT_CONFIG = {

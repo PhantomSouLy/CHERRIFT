@@ -33,7 +33,8 @@
       totalXp: "Összes XP", gear: "Felszerelés", gacha: "Gacha", arsenalAvg: "Arsenal átlag", power: "Erő",
       titles: "Cím választása", titleCollection:"Címgyűjtemény", noTitle:"[Nincs Title]", owned: "Megszerezve", equip: "Felszerelés", equipped: "Aktív", locked: "Nincs megszerezve",
       editName: "Megjelenített név szerkesztése", save: "Mentés", nameRule: "3–24 karakter használható.",
-      currentSkin: "Jelenlegi skin", gearEquipments: "Felszerelések", titleStats: "Title Stats", titleStatsEmpty: "Title stat bónuszok még nem érhetők el.", totalTitleStats: "Összesített title statok"
+      currentSkin: "Jelenlegi skin", gearEquipments: "Felszerelések", titleStats: "Title Stats", titleStatsEmpty: "Title stat bónuszok még nem érhetők el.", totalTitleStats: "Összesített title statok",
+      activeTitleStats:"Aktív Title", ownedTitleBonuses:"Megszerezett Title bónuszok"
     },
     en: {
       mail: "Mail", inbox: "Inbox", unread: "unread", claimAll: "Claim All", delete: "Delete", deleteAll: "Delete All",
@@ -46,7 +47,8 @@
       totalXp: "Total XP", gear: "Gear", gacha: "Gacha", arsenalAvg: "Arsenal Avg", power: "Power",
       titles: "Select Title", noTitle:"[No Title]", owned: "Owned", equip: "Equip", equipped: "Equipped", locked: "Not owned",
       editName: "Edit Display Name", save: "Save", nameRule: "Use 3–24 characters.",
-      currentSkin: "Current Skin", gearEquipments: "Gear Equipments", titleCollection:"Title Collection", titleStats: "Title Stats", titleStatsEmpty: "Title stat bonuses are not available yet.", totalTitleStats: "Total title stats"
+      currentSkin: "Current Skin", gearEquipments: "Gear Equipments", titleCollection:"Title Collection", titleStats: "Title Stats", titleStatsEmpty: "Title stat bonuses are not available yet.", totalTitleStats: "Total title stats",
+      activeTitleStats:"Active Title", ownedTitleBonuses:"Owned Title bonuses"
     }
   };
 
@@ -653,7 +655,12 @@
         current.value += numeric;
         totals.set(key, current);
       }
-      root.innerHTML = `<div class="title-stats-list-bf">${titles.map(entry => `<article class="title-stats-row-bf"><strong>${esc(entry.title.name)}</strong><span>${entry.stats.map(stat => `${esc(stat.label)} ${esc(formatTitleStat(stat))}`).join(" · ")}</span></article>`).join("")}</div><section class="title-stats-total-bf"><strong>${esc(t("totalTitleStats"))}</strong><span>${totals.size ? [...totals.values()].map(stat => `${esc(stat.label)} ${esc(formatTitleStat(stat))}`).join(" · ") : "—"}</span></section>`;
+      const currentId=activeTitle();
+      const active=titles.find(entry=>entry.title.id===currentId||entry.title.name===currentId);
+      const totalValues=[...totals.values()];
+      root.innerHTML = `<section class="title-stats-active-v096"><small>${esc(t("activeTitleStats"))}</small><h4>${esc(activeTitleName())}</h4><div class="title-stat-chips-v096">${active?.stats?.length?active.stats.map(stat=>`<span><b>${esc(stat.label)}</b><em>${esc(formatTitleStat(stat))}</em></span>`).join(""):`<span class="empty">${esc(t("titleStatsEmpty"))}</span>`}</div></section>
+        <section class="title-stats-total-bf"><small>${esc(t("totalTitleStats"))}</small><div class="title-stat-chips-v096">${totalValues.length?totalValues.map(stat=>`<span><b>${esc(stat.label)}</b><em>${esc(formatTitleStat(stat))}</em></span>`).join(""):`<span class="empty">—</span>`}</div></section>
+        <details class="title-stats-owned-v096"><summary>${esc(t("ownedTitleBonuses"))} <b>${titles.length}</b></summary><div class="title-stats-list-bf">${titles.map(entry => `<article class="title-stats-row-bf"><strong>${esc(entry.title.name)}</strong><span>${entry.stats.map(stat => `${esc(stat.label)} ${esc(formatTitleStat(stat))}`).join(" · ")}</span></article>`).join("")}</div></details>`;
     }
     modal.classList.remove("hidden");
   }
@@ -886,6 +893,10 @@
       if (route === "mailV063" || title === "mail") {
         event.preventDefault();
         event.stopImmediatePropagation();
+        const drawer = id("mobileMenuV082");
+        drawer?.classList.add("hidden");
+        drawer?.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("mobile-menu-open-v082", "more-open", "drawer-open");
         openMail();
         return;
       }

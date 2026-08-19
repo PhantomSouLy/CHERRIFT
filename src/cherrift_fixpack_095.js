@@ -1028,7 +1028,12 @@
   function installClickHandlers() {
     document.addEventListener("click", event => {
       if (document.body.classList.contains("is-playing")) return;
-      if (!event.target.closest?.("#fixClickPetalLayerV095")) sakuraBurst(event.clientX,event.clientY);
+      const celebratory = event.target.closest?.(
+        ".menu-btn.primary,.bf-button:not(.secondary):not(.danger)," +
+        "[data-v093-equip],[data-v080-open-chest],[data-v082-claim-weekly]," +
+        "[data-v083-continue],[data-v094-play],[data-fix-ach-claim]"
+      );
+      if (celebratory && !event.target.closest?.("#fixClickPetalLayerV095")) sakuraBurst(event.clientX,event.clientY);
     }, {passive:true});
 
     document.addEventListener("click", event => {
@@ -1041,6 +1046,10 @@
       }
       event.preventDefault();
       event.stopPropagation();
+      if (target.closest("#mobileMenuV082")) {
+        id("mobileMenuV082")?.classList.add("hidden");
+        id("mobileMenuV082")?.setAttribute("aria-hidden","true");
+      }
       if (target.dataset.fixMail !== undefined) return window.CHERRIFT_ACCOUNT_MAIL?.openMail?.();
       if (target.dataset.fixLobbyBack !== undefined) return forceLobbyOpen();
       if (target.dataset.fixLobbyRoute) {

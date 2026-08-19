@@ -661,6 +661,9 @@
       }
       if (target.matches("[data-r5-menu-tool]")) {
         event.preventDefault(); event.stopPropagation(); event.stopImmediatePropagation();
+        const drawer = id("mobileMenuV082");
+        drawer?.classList.add("hidden");
+        drawer?.setAttribute("aria-hidden", "true");
         const action = target.dataset.r5MenuTool;
         if (action === "feedback" || action === "bug") openSupport(action);
         else if (action === "web") window.open("https://www.happycherrychan.hu", "_blank", "noopener,noreferrer");

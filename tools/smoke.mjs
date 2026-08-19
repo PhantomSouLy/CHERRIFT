@@ -24,6 +24,8 @@ assert.match(playerApiSource,/unlockedSkins: \["cherry_default"\]/,"new Discord 
 assert.match(playerApiSource,/unlockedStages: \["world_1_1"\]/,"new Discord accounts start with World 1 Chapter 1 only");
 assert.match(playerApiSource,/skillPoints:1/,"new Discord accounts start with exactly one Skill Point");
 assert.match(playerApiSource,/manualV052:true[\s\S]{0,180}skillTreeV082Migrated:true/,"legacy progression migration cannot consume the starter Skill Point");
+assert.match(playerApiSource,/elementalResonance:starterElementalResonance\(\)/,"new Discord accounts receive an isolated Elemental Resonance state");
+assert.match(playerApiSource,/sanitizeElementalResonance\(next\.elementalResonance\)/,"Elemental Resonance cloud payloads are bounded server-side");
 assert.match(mailAndGmTitleMigration,/audience_type in \('user', 'existing', 'all_future'\)/,"Mail has separate player, existing-account and current-plus-future audiences");
 assert.match(mailAndGmTitleMigration,/p_expires_at is not null and p_expires_at <= coalesce\(p_starts_at, now\(\)\)/,"scheduled Mail validates its independent start and end times");
 assert.match(mailAndGmTitleMigration,/users\.created_at <= v_cutoff/,"existing-account Mail snapshots the registration cutoff");
@@ -294,6 +296,41 @@ async function exercise(name,width,height){
     assert.equal(UI.save.chests.common,3,`${name}: starter Common Chests`);
     assert.equal(UI.save.account.skillPoints,1,`${name}: level-1 starter receives exactly one Skill Point`);
     assert.ok(window.CHERRIFT_BALANCE&&window.CHERRIFT_PREBETA,`${name}: central pre-beta balance and progression modules`);
+    const elemental=window.CHERRIFT_ELEMENTAL;
+    assert.ok(elemental,`${name}: Elemental Resonance module loaded`);
+    assert.equal(elemental.unlockLevel(),15,`${name}: Beta Resonance unlock is Player Level 15`);
+    assert.equal(elemental.isUnlocked(UI.save),false,`${name}: starter Resonance remains locked`);
+    assert.equal(elemental.skinElements.cherry_default,"cute",`${name}: Base Cherry has cosmetic Cute affinity`);
+    assert.deepEqual(
+      JSON.parse(JSON.stringify(Object.fromEntries([
+        "archer_cherry","beastclaw_cherry","cake_deliver_cherry","fairy_cherry","kimono_cherry","mage_cherry","ninja_cherry","pajama_cherry","school_uniform_cherry","sport_cherry","succubus_cherry","warrior_cherry","wuxia_sakura_cherry"
+      ].map(skinId=>[skinId,elemental.skinElements[skinId]])))),
+      {archer_cherry:"windborne",beastclaw_cherry:"stoneveil",cake_deliver_cherry:"blaze",fairy_cherry:"windborne",kimono_cherry:"tidecall",mage_cherry:"blaze",ninja_cherry:"windborne",pajama_cherry:"tidecall",school_uniform_cherry:"blaze",sport_cherry:"stoneveil",succubus_cherry:"abyssal",warrior_cherry:"stoneveil",wuxia_sakura_cherry:"celestial"},
+      `${name}: all non-default skins have exactly one approved affinity`
+    );
+    const resonanceLevel15=structuredClone(UI.save);
+    resonanceLevel15.account.level=15;
+    resonanceLevel15.elementalResonance.lastRewardedLevel=14;
+    resonanceLevel15.elementalResonance.points=0;
+    resonanceLevel15.elementalResonance.totalEarned=0;
+    elemental.normalizeSave(resonanceLevel15);
+    assert.equal(resonanceLevel15.elementalResonance.points,1,`${name}: reaching unlock grants one Resonance Point`);
+    assert.equal(elemental.canSpend(resonanceLevel15,"blaze","power"),true,`${name}: first Blaze node accepts the unlock point`);
+    assert.equal(elemental.canSpend(resonanceLevel15,"blaze","skillDamage"),false,`${name}: linear branch gates the second node until the first is maxed`);
+    const gmResonance=structuredClone(UI.save);
+    gmResonance.ownedTitles.push("gm");
+    gmResonance.profile.activeTitle="gm";
+    const playerSaveBeforeGm=UI.save;
+    UI.save=gmResonance;
+    assert.equal(elemental.isUnlocked(gmResonance),true,`${name}: equipped GM title bypasses Resonance level gate`);
+    assert.equal(elemental.availablePoints(gmResonance),20,`${name}: equipped GM title receives 20 temporary test points`);
+    assert.equal(elemental.spendPoint("blaze","power"),true,`${name}: GM test point can be assigned`);
+    assert.equal(gmResonance.elementalResonance.branches.blaze.power,0,`${name}: GM allocation never mutates permanent Resonance ranks`);
+    assert.equal(elemental.availablePoints(gmResonance),19,`${name}: GM allocation consumes only temporary points`);
+    gmResonance.profile.activeTitle="";
+    assert.equal(elemental.isUnlocked(gmResonance),false,`${name}: removing GM title immediately removes temporary access`);
+    UI.save=playerSaveBeforeGm;
+    elemental.isUnlocked(UI.save);
     assert.ok(window.CHERRIFT_BALANCE.gear.rarities.Uncommon,`${name}: Uncommon Gear tier remains available`);
     assert.equal(window.CHERRIFT_BALANCE.arsenal.maxLevel,30,`${name}: beta Arsenal cap`);
     for(const world of [1,2,3,4,5,6]){
@@ -925,8 +962,8 @@ async function exercise(name,width,height){
 
       click(window,moreButton,`${name} reopen More drawer from Settings`);
       await waitFor(()=>!drawer.classList.contains("hidden")&&window.getComputedStyle(drawer).display!=="none",`${name}: More drawer reopens from a subpage`);
-      click(window,drawer.querySelector("[data-v082-toggle-mobile]"),`${name} close More drawer`);
-      await waitFor(()=>drawer.classList.contains("hidden"),`${name}: More close button works`);
+      click(window,moreButton,`${name} close More drawer with bottom navigation toggle`);
+      await waitFor(()=>drawer.classList.contains("hidden"),`${name}: More bottom navigation toggle closes drawer`);
       await assertActiveNav(window,name,"[data-v082-toggle-mobile]","Settings after closing More");
 
       UI.open("dailyQuests");
