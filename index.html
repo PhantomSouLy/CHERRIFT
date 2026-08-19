@@ -15,6 +15,7 @@
   <link rel="preload" as="image" href="assets/loading_mobile_1080x1920.png?v=096boot2" media="(orientation:portrait)" />
   <link rel="stylesheet" href="assets/cherrift_boot.css?v=096boot2" />
   <link id="cherriftGameUi097Css" rel="stylesheet" href="assets/cherrift_game_ui_097.css?v=0972" />
+  <link id="cherriftElementalCss" rel="stylesheet" href="assets/cherrift_elemental.css?v=el0951" />
   <script src="src/cherrift_boot.js?v=096boot2" defer></script>
   <style id="v060BootCss">
     html,body { margin:0; min-height:100%; background:#0b0610; }
@@ -514,5 +515,8 @@
   <script src="src/cherrift_security_ui.js?v=095security1"></script>
   <script src="src/cherrift_mobile_fix_096.js?v=096m1"></script>
   <script src="src/cherrift_game_ui_097.js?v=0972"></script>
+  <!-- Loaded last so Elemental Resonance wraps the final save, navigation
+       and combat methods instead of an obsolete compatibility layer. -->
+  <script src="src/cherrift_elemental.js?v=el0951"></script>
 </body>
 </html>
