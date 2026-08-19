@@ -107,6 +107,52 @@ function profileCode(userId: string): string {
 
 const GM_TITLE_IDS = new Set(["gm", "senior_gm", "head_gm"]);
 const MAX_SAVE_BYTES = 1_500_000;
+const ELEMENTAL_IDS = ["blaze", "tidecall", "stoneveil", "windborne", "celestial", "abyssal"] as const;
+const ELEMENTAL_NODE_MAX = {
+  power:5, skillDamage:3, skinAttackSpeed:1, calling:1,
+  ring:3, passive:3, skin:3, capstone:1,
+} as const;
+
+function boundedInteger(value: unknown, maximum: number): number {
+  return Math.min(maximum, Math.max(0, Math.floor(Number(value) || 0)));
+}
+
+function starterElementalResonance(): JsonObject {
+  const branches: JsonObject = {};
+  for (const element of ELEMENTAL_IDS) {
+    branches[element] = Object.fromEntries(Object.keys(ELEMENTAL_NODE_MAX).map((node) => [node, 0]));
+  }
+  return {
+    schema:1,
+    channel:"beta",
+    points:0,
+    totalEarned:0,
+    lastRewardedLevel:1,
+    resetsUsed:0,
+    branches,
+  };
+}
+
+function sanitizeElementalResonance(value: unknown): JsonObject {
+  const source = isObject(value) ? value : starterElementalResonance();
+  const rawBranches = isObject(source.branches) ? source.branches : {};
+  const branches: JsonObject = {};
+  for (const element of ELEMENTAL_IDS) {
+    const rawRanks = isObject(rawBranches[element]) ? rawBranches[element] : {};
+    branches[element] = Object.fromEntries(
+      Object.entries(ELEMENTAL_NODE_MAX).map(([node, maximum]) => [node, boundedInteger(rawRanks[node], maximum)])
+    );
+  }
+  return {
+    schema:1,
+    channel:source.channel === "live" ? "live" : "beta",
+    points:boundedInteger(source.points, 9999),
+    totalEarned:boundedInteger(source.totalEarned, 9999),
+    lastRewardedLevel:Math.max(1, boundedInteger(source.lastRewardedLevel, 9999)),
+    resetsUsed:boundedInteger(source.resetsUsed, 9999),
+    branches,
+  };
+}
 
 function discordProfile(user: any): JsonObject {
   const metadata = user?.user_metadata ?? {};
@@ -147,6 +193,7 @@ function starterSave(user: any): JsonObject {
       tree:{ power:0, vitality:0, haste:0, fortune:0 },
       skillTreeV082:{ ranks:{} }, skillTreeV082Migrated:true,
     },
+    elementalResonance:starterElementalResonance(),
     stats: { kills:0, clears:0, runs:0, coinsEarned:0, loginDays:0 },
     economy: { lifetimeCoinsEarned:0, bestWeeklyRank:0, activePlayers:0 },
     ownedTitles: [],
@@ -172,6 +219,7 @@ function bindAuthoritativeIdentity(value: unknown, user: any): JsonObject {
     frameId:safeText(previousProfile.frameId, 50) || "frame0lvl",
     createdAt:Number(previousProfile.createdAt || Date.now()),
   };
+  next.elementalResonance = sanitizeElementalResonance(next.elementalResonance);
   next.security = { accountOwnerId:String(user.id), schema:2, initializedBy:"player-api" };
   return next;
 }
@@ -200,6 +248,7 @@ function sanitizeProgressSave(value: unknown, current: JsonObject, user: any): J
   next.prebeta = { ...requestedPrebeta };
   if (currentPrebeta.serverEdit !== undefined) next.prebeta.serverEdit = currentPrebeta.serverEdit;
   if (currentPrebeta.gmAccessBackup !== undefined) next.prebeta.gmAccessBackup = currentPrebeta.gmAccessBackup;
+  next.elementalResonance = sanitizeElementalResonance(next.elementalResonance);
   next.security = { accountOwnerId:String(user.id), schema:2, initializedBy:"player-api" };
   next.unlockedSkins = Array.isArray(next.unlockedSkins)
     ? [...new Set(next.unlockedSkins.filter((id) => typeof id === "string" && id.length <= 80))].slice(0, 500)
