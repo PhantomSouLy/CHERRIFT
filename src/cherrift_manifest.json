@@ -1,5 +1,5 @@
 {
-  "runtimeVersion": "1.6.0-clean-runtime",
+  "runtimeVersion": "1.6.1-clean-runtime-boot-recovery",
   "gameVersion": "0.9.5-prebeta.1",
   "javascript": "src/cherrift_app.js",
   "runtime": "src/cherrift_runtime.js",
@@ -14,6 +14,9 @@
     "vendor/supabase-js-2.110.7.js"
   ],
   "includedHotfixes": [
+    "Startup progress reports the subsystem it is waiting for instead of silently stalling",
+    "Clean Runtime registers before player save initialization and emits canonical runtime-ready events",
+    "Two-phase startup removes the Auth/Save/Pre-beta boot dependency cycle",
     "Single clean runtime replaces the legacy stability, fixpack and mobile patch chain",
     "Clean startup transition and mobile first-paint alignment",
     "Canonical Cherry selector and Gacha rendering without frame-delayed repatching",
