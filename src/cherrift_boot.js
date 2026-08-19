@@ -16,36 +16,6 @@
   const byId = value => document.getElementById(value);
   const boot = () => byId("bootV060");
 
-  // This runs from the deferred boot script, before the normal runtime layers.
-  // It prevents the progress card from briefly inheriting a stale/right-shifted
-  // mobile layout during the very first paint.
-  function installMobileFirstPaintFix() {
-    if (document.getElementById("cherriftBootMobileFirstPaint097")) return;
-    const style = document.createElement("style");
-    style.id = "cherriftBootMobileFirstPaint097";
-    style.textContent = `
-      @media (orientation:portrait), (max-width:620px) {
-        #bootV060 .boot-stage-v096{
-          left:50%!important;right:auto!important;
-          width:min(430px,84vw)!important;max-width:84vw!important;
-          margin:0!important;box-sizing:border-box!important;
-          transform:translate3d(-50%,0,0)!important;
-        }
-        #bootV060 .boot-panel-v096,
-        #bootV060 .boot-track-v060,
-        #bootV060 .boot-status-v060{
-          width:100%!important;max-width:100%!important;
-          margin-left:0!important;margin-right:0!important;
-          box-sizing:border-box!important;
-        }
-        #bootAuthV096>p{display:none!important}
-        #bootAuthStatusV096{white-space:pre-line!important;line-height:1.45!important}
-      }
-    `;
-    document.head.appendChild(style);
-  }
-  installMobileFirstPaintFix();
-
   function isPhoneBoot() {
     const touch = Number(navigator.maxTouchPoints) > 0 || matchMedia("(pointer:coarse)").matches;
     return touch && Math.min(innerWidth || 9999, innerHeight || 9999, screen.width || 9999, screen.height || 9999) <= 820;
@@ -221,7 +191,7 @@
   requestAnimationFrame(tick);
 
   window.CHERRIFT_BOOT = Object.freeze({
-    version:"0.9.7-start-screen.1",
+    version:"0.9.5-clean-boot.1",
     getState:() => ({ ...state, progress:shownProgress }),
     showAuth,
     showStart,
