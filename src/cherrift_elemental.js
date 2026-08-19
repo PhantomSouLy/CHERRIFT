@@ -790,6 +790,42 @@
     window.UI?.toast?.(`${copy[0]} ${text("rank")} ${next}/${skill.max}`);
   }
 
+  // Test Map tooling uses these helpers to change only the current run. They
+  // deliberately never touch the save or Resonance point allocation.
+  function setRunSkillLevel(game, id, value) {
+    const skill = SKILLS[id];
+    if (!skill || !game?.player || !isUnlocked(game.save)) return false;
+    const next = integer(value, skill.max);
+    game.player.elementalSkills ||= {};
+    game.player.elementalCooldowns ||= {};
+    if (next > 0) {
+      game.player.elementalSkills[id] = next;
+      if (skill.kind !== "ring" && !Number.isFinite(Number(game.player.elementalCooldowns[id]))) game.player.elementalCooldowns[id] = .12;
+    } else {
+      delete game.player.elementalSkills[id];
+      delete game.player.elementalCooldowns[id];
+      game.__elementalProjectiles = (game.__elementalProjectiles || []).filter(projectile => projectile.skillId !== id);
+      if (id === "blaze_meteor") game.__elementalDelayed = [];
+    }
+    updateRings(game);
+    return next;
+  }
+
+  function resetRunSkills(game) {
+    if (!game?.player) return false;
+    game.player.elementalSkills = {};
+    game.player.elementalCooldowns = {};
+    game.__elementalProjectiles = [];
+    game.__elementalDelayed = [];
+    updateRings(game);
+    return true;
+  }
+
+  function skillCopy(id) {
+    const copy = COPY[language()].skills[id];
+    return copy ? {name:copy[0], description:copy[1]} : null;
+  }
+
   function weightedOptions(game, count=3) {
     const general = (window.CHERRIFT_DATA.upgrades || []).map(upgrade => ({value:upgrade, weight:1}));
     if (!isUnlocked(game.save)) return general.sort(() => Math.random() - .5).slice(0,count).map(entry => entry.value);
@@ -1278,6 +1314,10 @@
     branchSpent,
     spendPoint,
     resetCost,
+    getRunSkillLevel:skillLevel,
+    setRunSkillLevel,
+    resetRunSkills,
+    skillCopy,
     render:renderResonance,
     runtime
   });

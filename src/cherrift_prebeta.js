@@ -217,7 +217,9 @@
     const number = Number(world);
     if (hasActiveGmAccess(save)) return number >= 0;
     if (hasEntitlement("allContent",save)) return number >= 0 && number <= 6;
-    if (number === 0) return hasEntitlement("training",save);
+    // The Test Map is an active staff tool, not an account entitlement.
+    // Owning a GM title is not enough: it has to be equipped.
+    if (number === 0) return hasActiveGmAccess(save);
     if (number === 1) return true;
     const config = B?.worlds?.[number];
     if (!config || save.account.level < config.unlockLevel) return false;
@@ -229,7 +231,7 @@
     if (!stage) return false;
     save = normalizeSave(save || {});
     if (hasActiveGmAccess(save)) return true;
-    if (stage.training) return hasEntitlement("training",save);
+    if (stage.training) return hasActiveGmAccess(save);
     if (hasEntitlement("allContent",save)) return true;
     if (!isWorldUnlocked(stageWorld(stage),save)) return false;
     const index = stageIndex(stage);

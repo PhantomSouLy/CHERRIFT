@@ -347,7 +347,7 @@
   function worldEntries() {
     const entries = [];
     const training = trainingStage();
-    if (training && window.CHERRIFT_PREBETA?.hasEntitlement?.("training",UI.save)) entries.push({ type:"training", world:0, stage:training, name:"Training", art:training.splash || training.art || "assets/map/world3/world3_ground_1.png", unlocked:true });
+    if (training && window.CHERRIFT_PREBETA?.hasActiveGmAccess?.(UI.save)) entries.push({ type:"training", world:0, stage:training, name:"Training", art:training.splash || training.art || "assets/map/world3/world3_ground_1.png", unlocked:true });
     for (let world = 1; world <= worldCount(); world += 1) entries.push({ type:"world", world, name:`World ${world}`, art:worldArt(world), unlocked:worldUnlocked(world) });
     return entries;
   }

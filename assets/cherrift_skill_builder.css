@@ -1,0 +1,148 @@
+/* CHERRIFT GM Test Map Skill Builder */
+.skill-builder-launch-v095{
+  position:fixed;
+  z-index:9700;
+  top:max(70px,calc(env(safe-area-inset-top) + 64px));
+  right:max(14px,env(safe-area-inset-right));
+  min-height:44px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 13px 7px 8px;
+  border:1px solid rgba(166,220,255,.55);
+  border-radius:13px;
+  color:#eefaff;
+  background:linear-gradient(135deg,rgba(36,117,179,.94),rgba(22,48,91,.96));
+  box-shadow:0 10px 28px rgba(0,0,0,.34),inset 0 0 18px rgba(139,219,255,.12);
+  backdrop-filter:blur(8px);
+  font:950 11px/1 system-ui,sans-serif;
+  letter-spacing:.45px;
+}
+.skill-builder-launch-v095.hidden{display:none!important}
+.skill-builder-launch-v095>span{width:31px;height:31px;display:grid;place-items:center;border-radius:9px;color:#bceaff;background:rgba(255,255,255,.10);font-size:18px}
+.skill-builder-launch-v095:hover,.skill-builder-launch-v095:focus-visible{border-color:#d8f5ff;filter:brightness(1.10)}
+
+.skill-builder-overlay-v095{
+  position:fixed;
+  z-index:2147482500;
+  inset:0;
+  display:grid;
+  place-items:center;
+  padding:max(14px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));
+}
+.skill-builder-overlay-v095.hidden{display:none!important}
+.skill-builder-backdrop-v095{position:absolute;inset:0;border:0;background:rgba(4,7,14,.56);backdrop-filter:blur(2px)}
+.skill-builder-shell-v095{
+  position:relative;
+  z-index:1;
+  width:min(1120px,100%);
+  height:min(900px,calc(100dvh - 28px));
+  min-height:0;
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr) auto;
+  overflow:hidden;
+  border:1px solid rgba(168,222,255,.35);
+  border-radius:23px;
+  color:#eff8ff;
+  background:linear-gradient(155deg,rgba(17,34,57,.97),rgba(13,17,31,.97) 48%,rgba(24,13,31,.97));
+  box-shadow:0 34px 100px rgba(0,0,0,.64),inset 0 1px rgba(255,255,255,.08);
+}
+.skill-builder-shell-v095>header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  padding:17px 18px;
+  border-bottom:1px solid rgba(187,226,255,.14);
+  background:linear-gradient(90deg,rgba(72,153,211,.12),transparent 58%);
+}
+.skill-builder-shell-v095>header small{color:#83d4ff;font:1000 9px/1 system-ui;letter-spacing:1.8px}
+.skill-builder-shell-v095>header h2{margin:3px 0 2px;font:800 clamp(27px,4vw,39px)/1 Georgia,serif}
+.skill-builder-shell-v095>header p{margin:0;color:rgba(225,241,255,.65);font:600 11px/1.3 system-ui}
+.skill-builder-shell-v095>header>div:last-child{display:flex;align-items:center;gap:8px}
+.skill-builder-shell-v095>header button{min-height:40px;padding:0 14px;border:1px solid rgba(194,229,255,.25);border-radius:11px;color:#eef9ff;background:rgba(255,255,255,.07);font:900 10px/1 system-ui}
+.skill-builder-shell-v095>header button:hover{background:rgba(255,255,255,.12)}
+.skill-builder-shell-v095>header .skill-builder-close-v095{width:42px;padding:0;font-size:25px}
+#skillBuilderContentV095{
+  min-height:0;
+  overflow:auto;
+  overscroll-behavior:contain;
+  padding:15px 17px 26px;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(111,195,242,.55) transparent;
+}
+.skill-builder-group-v095{margin:0 0 19px}
+.skill-builder-group-v095>header{display:flex;align-items:center;gap:8px;margin:0 2px 8px}
+.skill-builder-group-v095>header>i{width:7px;height:25px;border-radius:8px;background:var(--group-color);box-shadow:0 0 14px color-mix(in srgb,var(--group-color) 55%,transparent)}
+.skill-builder-group-v095>header h3{margin:0;color:#f6fbff;font:800 20px/1 Georgia,serif}
+.skill-builder-group-v095>header span{margin-left:auto;color:color-mix(in srgb,var(--group-color) 78%,white);font:900 9px/1 system-ui;text-transform:uppercase}
+.skill-builder-group-v095>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.skill-builder-card-v095{
+  min-width:0;
+  display:grid;
+  grid-template-columns:60px minmax(0,1fr) auto;
+  align-items:center;
+  gap:11px;
+  min-height:91px;
+  padding:9px 10px;
+  border:1px solid color-mix(in srgb,var(--skill-color) 27%,rgba(255,255,255,.08));
+  border-radius:15px;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--skill-color) 7%,rgba(255,255,255,.035)),rgba(255,255,255,.025));
+  transition:filter .15s ease,border-color .15s ease,background .15s ease;
+}
+.skill-builder-card-v095.inactive{filter:grayscale(.88) brightness(.67);border-color:rgba(187,200,215,.13)}
+.skill-builder-card-v095.active{border-color:color-mix(in srgb,var(--skill-color) 57%,rgba(255,255,255,.12));background:linear-gradient(135deg,color-mix(in srgb,var(--skill-color) 15%,rgba(255,255,255,.04)),rgba(255,255,255,.025));box-shadow:inset 0 0 22px color-mix(in srgb,var(--skill-color) 8%,transparent)}
+.skill-builder-icon-v095{width:58px;height:58px;display:grid;place-items:center;border:1px solid color-mix(in srgb,var(--skill-color) 38%,transparent);border-radius:15px;background:rgba(0,0,0,.19)}
+.skill-builder-icon-v095 img{width:52px;height:52px;object-fit:contain;filter:drop-shadow(0 0 10px color-mix(in srgb,var(--skill-glow) 40%,transparent))}
+.skill-builder-icon-v095 span{color:var(--skill-color);font:1000 13px/1 system-ui;letter-spacing:-.3px}
+.skill-builder-copy-v095{min-width:0}
+.skill-builder-copy-v095 small{display:block;margin-bottom:3px;color:var(--skill-color);font:1000 8px/1 system-ui;letter-spacing:1px}
+.skill-builder-copy-v095 h4{margin:0 0 4px;overflow:hidden;color:#fff;font:850 16px/1.05 system-ui;text-overflow:ellipsis;white-space:nowrap}
+.skill-builder-copy-v095 p{margin:0;display:-webkit-box;overflow:hidden;color:rgba(224,235,246,.62);font:600 10px/1.32 system-ui;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.skill-builder-rank-v095{display:grid;grid-template-columns:37px 48px 48px;align-items:center;gap:4px}
+.skill-builder-rank-v095 button{height:38px;min-width:0;padding:0;border:1px solid color-mix(in srgb,var(--skill-color) 46%,rgba(255,255,255,.14));border-radius:10px;color:#fff;background:color-mix(in srgb,var(--skill-color) 16%,rgba(255,255,255,.05));font:1000 18px/1 system-ui}
+.skill-builder-rank-v095 button:last-child{font-size:12px}
+.skill-builder-rank-v095 button:disabled{opacity:.28;filter:grayscale(1)}
+.skill-builder-rank-v095 b{color:#fff;font:1000 13px/1 system-ui;text-align:center}
+.skill-builder-shell-v095>footer{display:flex;align-items:center;justify-content:center;gap:20px;min-height:42px;padding:8px 14px;border-top:1px solid rgba(187,226,255,.12);color:rgba(219,238,252,.66);background:rgba(0,0,0,.16);font:850 9px/1 system-ui;text-transform:uppercase}
+
+body.skill-builder-open-v095{overflow:hidden!important}
+body.skill-builder-open-v095 :is(#globalRailV060,#globalMobileNavV052,#mobileMenuV082,#pauseModal,#levelModal,#gameOver,#stageClearModal){display:none!important}
+body.skill-builder-open-v095 #game{visibility:visible!important;opacity:1!important}
+
+@media (max-width:820px){
+  .skill-builder-launch-v095{top:max(74px,calc(env(safe-area-inset-top) + 66px));right:max(9px,env(safe-area-inset-right));min-height:40px;padding:5px 9px 5px 6px;font-size:9px}
+  .skill-builder-launch-v095>span{width:29px;height:29px}
+  .skill-builder-overlay-v095{padding:max(7px,env(safe-area-inset-top)) max(7px,env(safe-area-inset-right)) max(7px,env(safe-area-inset-bottom)) max(7px,env(safe-area-inset-left))}
+  .skill-builder-shell-v095{height:calc(100dvh - 14px);border-radius:17px}
+  .skill-builder-shell-v095>header{align-items:flex-start;padding:12px 11px;gap:8px}
+  .skill-builder-shell-v095>header h2{font-size:25px}
+  .skill-builder-shell-v095>header p{max-width:220px;font-size:9px}
+  .skill-builder-shell-v095>header>div:last-child{gap:5px}
+  .skill-builder-shell-v095>header button{min-height:36px;padding:0 8px;font-size:8px}
+  .skill-builder-shell-v095>header .skill-builder-close-v095{width:36px;font-size:23px}
+  #skillBuilderContentV095{padding:10px 8px 20px}
+  .skill-builder-group-v095{margin-bottom:15px}
+  .skill-builder-group-v095>header h3{font-size:18px}
+  .skill-builder-group-v095>div{grid-template-columns:1fr;gap:6px}
+  .skill-builder-card-v095{grid-template-columns:48px minmax(0,1fr) auto;min-height:78px;gap:8px;padding:7px}
+  .skill-builder-icon-v095{width:47px;height:47px;border-radius:12px}
+  .skill-builder-icon-v095 img{width:43px;height:43px}
+  .skill-builder-icon-v095 span{font-size:11px}
+  .skill-builder-copy-v095 h4{font-size:14px}
+  .skill-builder-copy-v095 p{font-size:9px}
+  .skill-builder-rank-v095{grid-template-columns:31px 39px 40px;gap:3px}
+  .skill-builder-rank-v095 button{height:34px;border-radius:8px;font-size:17px}
+  .skill-builder-rank-v095 button:last-child{font-size:10px}
+  .skill-builder-rank-v095 b{font-size:11px}
+  .skill-builder-shell-v095>footer{justify-content:flex-start;gap:11px;overflow-x:auto;font-size:7px;white-space:nowrap}
+}
+
+@media (max-width:390px){
+  .skill-builder-shell-v095>header p{display:none}
+  .skill-builder-shell-v095>header button[data-builder-reset]{max-width:75px;line-height:1.15}
+  .skill-builder-copy-v095 p{display:none}
+  .skill-builder-card-v095{min-height:66px}
+}
+
+@media (prefers-reduced-motion:reduce){.skill-builder-card-v095{transition:none}}

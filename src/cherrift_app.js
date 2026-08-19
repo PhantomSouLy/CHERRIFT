@@ -18170,7 +18170,9 @@ proto.update = function updateV085(dt) {
   player.__renderSpeedV085 = speed;
   player.__renderLeanV085 = clamp(dx / Math.max(.001, dt) / Math.max(1, player.speed), -1, 1);
   this.__introZoomV085 = Math.max(0, (this.__introZoomV085 || 0) - dt / 2.2);
-  const base = isMobile() ? (innerHeight >= innerWidth ? 1.39 : 1.32) : 1.34;
+  // Phones need a wider tactical view than desktop. The former 1.39/1.32
+  // values made portrait combat feel heavily zoomed in.
+  const base = isMobile() ? (innerHeight >= innerWidth ? 1.12 : 1.08) : 1.34;
   const viewZoom = [1, 1.1, 1.2].includes(Number(this.save?.settings?.viewZoom)) ? Number(this.save.settings.viewZoom) : 1;
   const motion = motionLevel(this, "cameraMotion");
   const speedFactor = clamp(speed / Math.max(1, player.speed * 1.8), 0, 1);
@@ -18337,7 +18339,7 @@ proto.drawWorld = function drawWorldV085(context) {
   const night = this.stage?.world === 2 || this.stage?.theme === "forest_night";
   context.fillStyle = night ? "#101c2d" : "#1f7d45";
   context.fillRect(0, 0, this.w, this.h);
-  const zoom = clamp(this.__cameraZoomV085 || (isMobile() ? 1.39 : 1.34), 1.05, 1.72);
+  const zoom = clamp(this.__cameraZoomV085 || (isMobile() ? (innerHeight >= innerWidth ? 1.12 : 1.08) : 1.34), 1.05, 1.72);
   this.zoom = zoom;
   const viewWidth = this.w / zoom, viewHeight = this.h / zoom;
   const shake = (this.__shakeV085 || 0) * (isMobile() ? 4 : 6);
@@ -23903,7 +23905,7 @@ function installStages() {
 function ensureSave(save = UI.save) {
   if (!save) return;
   save.unlockedStages = Array.isArray(save.unlockedStages) ? save.unlockedStages : ["world_1_1"];
-  const trainingAllowed = window.CHERRIFT_PREBETA?.hasEntitlement?.("training", save);
+  const trainingAllowed = window.CHERRIFT_PREBETA?.hasActiveGmAccess?.(save);
   save.unlockedStages = save.unlockedStages.filter(stageId => stageId !== "training_test");
   if (trainingAllowed) save.unlockedStages.unshift("training_test");
   save.clearedStages = save.clearedStages && typeof save.clearedStages === "object" ? save.clearedStages : {};
@@ -23962,7 +23964,7 @@ function worldProgress(world) {
 
 function renderWorldCards() {
   const worlds=[1,2,3,4,5,6];
-  if (window.CHERRIFT_PREBETA?.hasEntitlement?.("training",UI.save)) worlds.unshift(0);
+  if (window.CHERRIFT_PREBETA?.hasActiveGmAccess?.(UI.save)) worlds.unshift(0);
   return worlds.map(world => {
     const unlocked = worldUnlocked(world);
     const progress = worldProgress(world);

@@ -298,6 +298,7 @@ async function exercise(name,width,height){
     assert.ok(window.CHERRIFT_BALANCE&&window.CHERRIFT_PREBETA,`${name}: central pre-beta balance and progression modules`);
     const elemental=window.CHERRIFT_ELEMENTAL;
     assert.ok(elemental,`${name}: Elemental Resonance module loaded`);
+    assert.ok(window.CHERRIFT_SKILL_BUILDER,`${name}: GM Test Map Skill Builder module loaded`);
     assert.equal(elemental.unlockLevel(),15,`${name}: Beta Resonance unlock is Player Level 15`);
     assert.equal(elemental.isUnlocked(UI.save),false,`${name}: starter Resonance remains locked`);
     assert.equal(elemental.skinElements.cherry_default,"cute",`${name}: Base Cherry has cosmetic Cute affinity`);
@@ -482,6 +483,67 @@ async function exercise(name,width,height){
     await waitFor(()=>!document.getElementById("worldSelectorV0942")?.classList.contains("hidden"),`${name} Play opens responsive World Select`);
     assert.equal(document.querySelectorAll("#worldDotsV0942 i").length,6,`${name}: six beta Worlds`);
     assert.match(document.getElementById("worldTotalStarsV0942")?.textContent||"",/★\s*\d+\s*\/\s*90/,`${name}: World Select total star counter`);
+
+    if(name==="desktop"){
+      const builder=window.CHERRIFT_SKILL_BUILDER;
+      const trainingStage=window.CHERRIFT_V040.stages.find(stage=>stage.training);
+      assert.ok(trainingStage,"desktop: Test Map stage exists");
+      assert.equal(window.CHERRIFT_PREBETA.isStageUnlocked(trainingStage,UI.save),false,"desktop: Test Map is locked without an equipped GM title");
+      UI.save.selectedStageId=trainingStage.id;
+      assert.equal(await UI.game.start(),false,"desktop: direct Test Map start is blocked for non-GM players");
+      assert.equal(UI.save.selectedStageId,"world_1_1","desktop: blocked direct Test Map start falls back safely");
+
+      UI.save.ownedTitles.push("gm");
+      UI.save.profile.activeTitle="gm";
+      window.CHERRIFT_PREBETA.syncGmAccess(UI.save);
+      UI.open("worlds");
+      await waitFor(()=>document.querySelectorAll("#worldDotsV0942 i").length===7,"desktop: equipped GM sees Test Map");
+      click(window,document.querySelector('[data-world-step="-1"]'),"desktop: cycle to GM Test Map");
+      await waitFor(()=>/TEST|TESZT/i.test(document.getElementById("worldCardV0942")?.textContent||""),"desktop: GM Test Map card");
+
+      UI.save.selectedStageId=trainingStage.id;
+      await UI.game.start();
+      await waitFor(()=>UI.game.stage?.training&&!document.getElementById("skillBuilderButtonV095")?.classList.contains("hidden"),"desktop: Test Map Skill Builder launcher");
+      const saveBeforeBuilder=JSON.stringify({
+        resonance:UI.save.elementalResonance,
+        accountSkillPoints:UI.save.account.skillPoints,
+        coins:UI.save.coins,
+        bloomGems:UI.save.bloomGems,
+        blossomGems:UI.save.blossomGems
+      });
+      const baseDamage=UI.game.player.damage;
+      assert.equal(builder.open(),true,"desktop: Skill Builder opens on Test Map");
+      assert.equal(UI.game.mode,"paused","desktop: opening Skill Builder pauses simulation");
+      assert.equal(document.getElementById("skillBuilderV095").classList.contains("hidden"),false,"desktop: Skill Builder overlay visible");
+      assert.equal(document.getElementById("menu").classList.contains("hidden"),true,"desktop: Lobby stays hidden behind Skill Builder");
+      assert.equal(document.querySelectorAll("[data-builder-card]").length,19,"desktop: builder lists current General and implemented Elemental skills only");
+      assert.equal(document.querySelector('[data-builder-group="celestial"]'),null,"desktop: future Celestial skills are not advertised early");
+      assert.equal(document.querySelector('[data-builder-group="abyssal"]'),null,"desktop: future Abyssal skills are not advertised early");
+
+      click(window,document.querySelector('[data-builder-skill="damage_core"][data-builder-delta="1"]'),"desktop Skill Builder add damage");
+      assert.equal(builder.getLevel(UI.game,"damage_core"),1,"desktop: General skill rank increments");
+      assert.ok(Math.abs(UI.game.player.damage-baseDamage*1.15)<.001,"desktop: General skill applies immediately");
+      click(window,document.querySelector('[data-builder-skill="blaze_meteor"][data-builder-delta="1"]'),"desktop Skill Builder add Meteor");
+      assert.equal(UI.game.player.elementalSkills.blaze_meteor,1,"desktop: Elemental skill applies immediately");
+      assert.equal(JSON.stringify({resonance:UI.save.elementalResonance,accountSkillPoints:UI.save.account.skillPoints,coins:UI.save.coins,bloomGems:UI.save.bloomGems,blossomGems:UI.save.blossomGems}),saveBeforeBuilder,"desktop: Skill Builder never mutates persistent progression");
+
+      click(window,document.querySelector("[data-builder-reset]"),"desktop Skill Builder reset all");
+      assert.equal(builder.getLevel(UI.game,"damage_core"),0,"desktop: Reset All clears General ranks");
+      assert.equal(builder.getLevel(UI.game,"blaze_meteor"),0,"desktop: Reset All clears Elemental ranks");
+      assert.ok(Math.abs(UI.game.player.damage-baseDamage)<.001,"desktop: Reset All restores the captured run baseline");
+      builder.close();
+      assert.equal(UI.game.mode,"playing","desktop: closing Skill Builder resumes the run");
+      UI.quit();
+      assert.equal(Object.hasOwn(UI.game,"__skillBuilderV095"),false,"desktop: leaving Test Map clears builder state");
+      assert.equal(document.getElementById("skillBuilderButtonV095").classList.contains("hidden"),true,"desktop: launcher hides outside Test Map");
+
+      UI.save.profile.activeTitle="";
+      window.CHERRIFT_PREBETA.syncGmAccess(UI.save);
+      UI.save.selectedStageId="world_1_1";
+      UI.open("worlds");
+      await waitFor(()=>document.querySelectorAll("#worldDotsV0942 i").length===6,"desktop: unequipped GM title hides Test Map");
+      assert.equal(window.CHERRIFT_PREBETA.isStageUnlocked(trainingStage,UI.save),false,"desktop: owning but not wearing GM title grants no Test Map access");
+    }
 
     UI.open("gear");
     await waitFor(()=>Array.from(document.querySelectorAll("#gear [data-v0560-slot]")).every(slot=>/LVL\d+/.test(slot.textContent)),`${name} Gear decoration`);
@@ -709,9 +771,11 @@ async function exercise(name,width,height){
     assert.ok(mageOrbs.every(bullet=>bullet.target===mageEnemy),`${name}: one enemy receives all five orbs`);
     assert.ok(UI.game.obstacles.some(obstacle=>obstacle.__fixStrictWorldV0952&&obstacle.fixWorld===1),`${name}: strict World 1 map objects`);
     UI.game.player.moving=true;
+    if(window.CHERRIFT_WORLD_UI.isMobile())UI.game.__introZoomV085=0;
     UI.game.update(.016);
     assert.ok(Number.isFinite(UI.game.__cameraZoomV085),`${name}: dynamic camera zoom`);
     UI.game.drawWorld(UI.game.ctx);
+    if(window.CHERRIFT_WORLD_UI.isMobile())assert.ok(UI.game.zoom<=1.15,`${name}: mobile gameplay camera is widened (${UI.game.zoom})`);
     assert.match(window.CHERRIFT_V089.summaryMarkup(UI.game),/Damage/,`${name}: run summary`);
 
     const bossType=UI.game.stage?.boss;
