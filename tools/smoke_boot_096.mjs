@@ -133,6 +133,28 @@ function installBrowserStubs(window) {
       async signOut(){window.__authSession=null;window.__authStateCallback?.("SIGNED_OUT",null);return {error:null};}
     }
   });
+
+  // Mock CherriftStorage für Smoke Test
+  if (!window.CherriftStorage) {
+    window.CherriftStorage = {
+      key: "cherrift-save",
+      defaults: () => ({
+        prebeta: { schema: "prebeta-1", version: "1.0.0", starterCreated: true },
+        account: { level: 1, xp: 0, totalXp: 0, skillPoints: 0 },
+        coins: 1000,
+        unlockedSkins: ["cherry_default"],
+        unlockedStages: ["world_1_1"],
+        selectedSkin: "cherry_default"
+      }),
+      load: function() {
+        try { return JSON.parse(localStorage.getItem(this.key) || "{}"); }
+        catch { return this.defaults(); }
+      },
+      save: function(data) {
+        localStorage.setItem(this.key, JSON.stringify(data));
+      }
+    };
+  }
 }
 
 async function waitFor(check,message,timeout=30000) {
