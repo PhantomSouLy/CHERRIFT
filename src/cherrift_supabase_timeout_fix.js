@@ -1,12 +1,33 @@
 (() => {
   "use strict";
 
-  if (window.__CHERRIFT_SUPABASE_SINGLETON_V0975__) return;
-  window.__CHERRIFT_SUPABASE_SINGLETON_V0975__ = true;
+  // CHERRIFT v0.9.7.6
+  // Supabase startup guard / singleton + bounded Auth cleanup.
+  //
+  // Why this exists:
+  // supabase-js serializes several Auth operations behind an internal lock.
+  // If a session operation stalls, a recovery signOut() can otherwise wait on
+  // the same lock forever. The game bootstrap then remains pending forever.
+  // Every Auth operation used during startup/recovery is therefore bounded.
 
-  const VERSION = "0.9.7.5-singleton";
-  const AUTH_SESSION_TIMEOUT_MS = 8000;
-  const FUNCTION_TIMEOUT_MS = 15000;
+  if (window.__CHERRIFT_SUPABASE_SINGLETON_V0976__) return;
+  window.__CHERRIFT_SUPABASE_SINGLETON_V0976__ = true;
+
+  const VERSION = "0.9.7.6-auth-deadlock-guard";
+
+  const timeoutConfig = window.CHERRIFT_TIMEOUTS || {};
+
+  function configuredTimeout(name, fallback) {
+    const value = Number(timeoutConfig[name]);
+    return Number.isFinite(value) && value > 0 ? value : fallback;
+  }
+
+  const AUTH_SESSION_TIMEOUT_MS = configuredTimeout("authSessionMs", 8000);
+  const AUTH_SIGN_OUT_TIMEOUT_MS = configuredTimeout("authSignOutMs", 2000);
+  const AUTH_REFRESH_TIMEOUT_MS = configuredTimeout("authRefreshMs", 8000);
+  const AUTH_SET_SESSION_TIMEOUT_MS = configuredTimeout("authSetSessionMs", 8000);
+  const AUTH_GET_USER_TIMEOUT_MS = configuredTimeout("authGetUserMs", 8000);
+  const FUNCTION_TIMEOUT_MS = configuredTimeout("functionInvokeMs", 15000);
 
   const namespace = window.supabase;
   const cache = new Map();
@@ -14,6 +35,11 @@
     nativeCreates: 0,
     reuses: 0,
     authTimeouts: 0,
+    authSessionTimeouts: 0,
+    authSignOutTimeouts: 0,
+    authRefreshTimeouts: 0,
+    authSetSessionTimeouts: 0,
+    authGetUserTimeouts: 0,
     functionTimeouts: 0
   };
 
@@ -25,9 +51,20 @@
     return error;
   }
 
-  function withTimeout(value, ms, code, onTimeout) {
+  function withTimeout(valueOrFactory, ms, code, onTimeout) {
     let timer = 0;
     let settled = false;
+    let value;
+
+    // Accept a factory so synchronous throws are converted to a rejected
+    // Promise instead of escaping before the timeout wrapper is installed.
+    try {
+      value = typeof valueOrFactory === "function"
+        ? valueOrFactory()
+        : valueOrFactory;
+    } catch (error) {
+      return Promise.reject(error);
+    }
 
     const source = Promise.resolve(value).then(
       result => {
@@ -53,44 +90,102 @@
     });
   }
 
-  function authStorageKey(url, options = {}) {
-    const explicit = options?.auth?.storageKey;
-    if (explicit) return String(explicit);
-
+  function markFunction(fn, marker) {
     try {
-      const project = new URL(String(url)).hostname.split(".")[0];
-      return project ? `sb-${project}-auth-token` : "supabase.auth.token";
-    } catch (_) {
-      return "supabase.auth.token";
-    }
+      Object.defineProperty(fn, marker, {
+        value: true,
+        configurable: false,
+        enumerable: false
+      });
+    } catch (_) {}
+    return fn;
   }
 
-  function clientKey(url, publishableKey, options = {}) {
-    return [
-      String(url || ""),
-      String(publishableKey || ""),
-      authStorageKey(url, options)
-    ].join("::");
+  function wrapAuthMethod(auth, methodName, ms, code, timeoutStatKey) {
+    const original = auth?.[methodName];
+    if (typeof original !== "function") return;
+
+    const marker = `__CHERRIFT_AUTH_TIMEOUT_${methodName.toUpperCase()}_V0976__`;
+    if (original[marker]) return;
+
+    const bound = original.bind(auth);
+    const wrapped = (...args) =>
+      withTimeout(
+        () => bound(...args),
+        ms,
+        code,
+        () => {
+          stats.authTimeouts += 1;
+          if (timeoutStatKey && timeoutStatKey in stats) {
+            stats[timeoutStatKey] += 1;
+          }
+        }
+      );
+
+    markFunction(wrapped, marker);
+
+    try {
+      auth[methodName] = wrapped;
+    } catch (error) {
+      console.warn(
+        `[CHERRIFT Supabase] Could not wrap auth.${methodName}; startup guard is partially active.`,
+        error
+      );
+    }
   }
 
   function wrapAuth(client) {
     const auth = client?.auth;
-    if (!auth || typeof auth.getSession !== "function") return;
+    if (!auth) return;
+    if (auth.__CHERRIFT_AUTH_GUARD_V0976__) return;
 
-    if (auth.__CHERRIFT_GET_SESSION_TIMEOUT_V0975__) return;
+    wrapAuthMethod(
+      auth,
+      "getSession",
+      AUTH_SESSION_TIMEOUT_MS,
+      "auth_session_timeout",
+      "authSessionTimeouts"
+    );
 
-    const originalGetSession = auth.getSession.bind(auth);
+    // CRITICAL: bootstrap recovery calls signOut({ scope: "local" }). If the
+    // Supabase Auth lock is already wedged, awaiting signOut without a bound
+    // can keep CHERRIFT at auth.bootstrapSave forever.
+    wrapAuthMethod(
+      auth,
+      "signOut",
+      AUTH_SIGN_OUT_TIMEOUT_MS,
+      "auth_signout_timeout",
+      "authSignOutTimeouts"
+    );
 
-    auth.getSession = (...args) =>
-      withTimeout(
-        originalGetSession(...args),
-        AUTH_SESSION_TIMEOUT_MS,
-        "auth_session_timeout",
-        () => { stats.authTimeouts += 1; }
-      );
+    // Keep the other lock-backed Auth operations bounded too. These do not
+    // change successful behavior; only a never-settling call is cut off.
+    wrapAuthMethod(
+      auth,
+      "refreshSession",
+      AUTH_REFRESH_TIMEOUT_MS,
+      "auth_refresh_timeout",
+      "authRefreshTimeouts"
+    );
+
+    wrapAuthMethod(
+      auth,
+      "setSession",
+      AUTH_SET_SESSION_TIMEOUT_MS,
+      "auth_set_session_timeout",
+      "authSetSessionTimeouts"
+    );
+
+    wrapAuthMethod(
+      auth,
+      "getUser",
+      AUTH_GET_USER_TIMEOUT_MS,
+      "auth_get_user_timeout",
+      "authGetUserTimeouts"
+    );
 
     try {
-      Object.defineProperty(auth, "__CHERRIFT_GET_SESSION_TIMEOUT_V0975__", {
+      Object.defineProperty(auth, "__CHERRIFT_AUTH_GUARD_V0976__", {
         value: true,
         configurable: false,
         enumerable: false
@@ -100,7 +195,7 @@
 
   function wrapFunctionsInstance(functions) {
     if (!functions || typeof functions.invoke !== "function") return functions;
-    if (functions.__CHERRIFT_FUNCTION_TIMEOUT_V0975__) return functions;
+    if (functions.__CHERRIFT_FUNCTION_TIMEOUT_V0976__) return functions;
 
     const originalInvoke = functions.invoke.bind(functions);
 
@@ -116,7 +211,7 @@
       }
 
       return withTimeout(
-        originalInvoke(name, nextOptions),
+        () => originalInvoke(name, nextOptions),
         FUNCTION_TIMEOUT_MS,
         "supabase_function_timeout",
         () => { stats.functionTimeouts += 1; }
@@ -124,7 +219,7 @@
     };
 
     try {
-      Object.defineProperty(functions, "__CHERRIFT_FUNCTION_TIMEOUT_V0975__", {
+      Object.defineProperty(functions, "__CHERRIFT_FUNCTION_TIMEOUT_V0976__", {
         value: true,
         configurable: false,
         enumerable: false
@@ -145,13 +240,12 @@
   }
 
   function wrapFunctions(client) {
-    if (!client || client.__CHERRIFT_FUNCTIONS_GETTER_V0975__) return;
+    if (!client || client.__CHERRIFT_FUNCTIONS_GETTER_V0976__) return;
 
     const descriptor = findFunctionsDescriptor(client);
 
     // SupabaseClient.functions is a prototype getter in supabase-js 2.110.7.
-    // The old patch modified one temporary FunctionsClient and then discarded
-    // it. Shadow the getter on the client so EVERY future access is wrapped.
+    // Shadow it on the client so every future access gets the same guard.
     if (descriptor?.get) {
       const originalGetter = descriptor.get;
 
@@ -170,14 +264,14 @@
         );
       }
     } else {
-      // Test/fake clients often expose functions as a stable plain object.
+      // Smoke/custom environments often expose functions as a stable object.
       try {
         wrapFunctionsInstance(client.functions);
       } catch (_) {}
     }
 
     try {
-      Object.defineProperty(client, "__CHERRIFT_FUNCTIONS_GETTER_V0975__", {
+      Object.defineProperty(client, "__CHERRIFT_FUNCTIONS_GETTER_V0976__", {
         value: true,
         configurable: false,
         enumerable: false
@@ -195,9 +289,29 @@
     return client;
   }
 
+  function authStorageKey(url, options = {}) {
+    const explicit = options?.auth?.storageKey;
+    if (explicit) return String(explicit);
+
+    try {
+      const project = new URL(String(url)).hostname.split(".")[0];
+      return project ? `sb-${project}-auth-token` : "supabase.auth.token";
+    } catch (_) {
+      return "supabase.auth.token";
+    }
+  }
+
+  function clientKey(url, publishableKey, options = {}) {
+    return [
+      String(url || ""),
+      String(publishableKey || ""),
+      authStorageKey(url, options)
+    ].join("::");
+  }
+
   function makeSingletonFactory(factory, owner = null) {
     if (typeof factory !== "function") return factory;
-    if (factory.__CHERRIFT_SINGLETON_FACTORY_V0975__) return factory;
+    if (factory.__CHERRIFT_SINGLETON_FACTORY_V0976__) return factory;
 
     const wrapped = function cherriftCreateSupabaseSingleton(
       url,
@@ -223,14 +337,7 @@
       return client;
     };
 
-    try {
-      Object.defineProperty(wrapped, "__CHERRIFT_SINGLETON_FACTORY_V0975__", {
-        value: true,
-        configurable: false,
-        enumerable: false
-      });
-    } catch (_) {}
-
+    markFunction(wrapped, "__CHERRIFT_SINGLETON_FACTORY_V0976__");
     return wrapped;
   }
 
@@ -257,10 +364,19 @@
   window.CHERRIFT_SUPABASE_STARTUP_GUARD = Object.freeze({
     version: VERSION,
     authSessionTimeoutMs: AUTH_SESSION_TIMEOUT_MS,
+    authSignOutTimeoutMs: AUTH_SIGN_OUT_TIMEOUT_MS,
+    authRefreshTimeoutMs: AUTH_REFRESH_TIMEOUT_MS,
+    authSetSessionTimeoutMs: AUTH_SET_SESSION_TIMEOUT_MS,
+    authGetUserTimeoutMs: AUTH_GET_USER_TIMEOUT_MS,
     functionTimeoutMs: FUNCTION_TIMEOUT_MS,
     get nativeCreates() { return stats.nativeCreates; },
     get reuses() { return stats.reuses; },
     get authTimeouts() { return stats.authTimeouts; },
+    get authSessionTimeouts() { return stats.authSessionTimeouts; },
+    get authSignOutTimeouts() { return stats.authSignOutTimeouts; },
+    get authRefreshTimeouts() { return stats.authRefreshTimeouts; },
+    get authSetSessionTimeouts() { return stats.authSetSessionTimeouts; },
+    get authGetUserTimeouts() { return stats.authGetUserTimeouts; },
     get functionTimeouts() { return stats.functionTimeouts; },
     get cachedClients() { return cache.size; },
     wrapClient
@@ -268,6 +384,7 @@
 
   console.info(
     `[CHERRIFT] Supabase singleton guard ${VERSION} active. ` +
-    `Auth timeout ${AUTH_SESSION_TIMEOUT_MS} ms, Functions timeout ${FUNCTION_TIMEOUT_MS} ms.`
+    `Auth session ${AUTH_SESSION_TIMEOUT_MS} ms, signOut ${AUTH_SIGN_OUT_TIMEOUT_MS} ms, ` +
+    `Functions ${FUNCTION_TIMEOUT_MS} ms.`
   );
 })();
