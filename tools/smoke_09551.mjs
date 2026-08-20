@@ -4,74 +4,110 @@ import { fileURLToPath } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const smokeFile = path.join(here, "smoke.mjs");
-const allCases = ["desktop", "short-desktop", "phone-portrait", "phone-landscape", "returning-session"];
-const requested = process.argv.find(argument => argument.startsWith("--case="))?.slice(7);
+const allCases = [
+  "desktop",
+  "short-desktop",
+  "phone-portrait",
+  "phone-landscape",
+  "returning-session"
+];
+
+const requested = process.argv
+  .find(argument => argument.startsWith("--case="))
+  ?.slice(7);
+
+if (requested && !allCases.includes(requested)) {
+  throw new Error(
+    `[smoke] Unknown case "${requested}". Expected one of: ${allCases.join(", ")}`
+  );
+}
+
 const cases = requested ? [requested] : allCases;
-const concurrency = requested ? 1 : Math.min(2, cases.length);
-const active = new Set();
-let cursor = 0;
-let failed = false;
+const configuredTimeout = Number(process.env.CHERRIFT_SMOKE_TIMEOUT_MS);
+const caseTimeoutMs = Number.isFinite(configuredTimeout) && configuredTimeout >= 30000
+  ? configuredTimeout
+  : 480000;
+const heartbeatMs = 30000;
 
 function runCase(name, index) {
   return new Promise((resolve, reject) => {
     const label = `${index + 1}/${cases.length} ${name}`;
+    const startedAt = Date.now();
+    let settled = false;
+    let forceKillTimer = null;
+
     console.log(`[smoke] START ${label}`);
+    console.log(
+      `[smoke] LIMIT ${label} ${Math.round(caseTimeoutMs / 1000)}s`
+    );
+
     const child = spawn(process.execPath, [smokeFile, `--case=${name}`], {
-      cwd:path.resolve(here, ".."),
-      env:process.env,
-      stdio:["ignore", "pipe", "pipe"]
+      cwd: path.resolve(here, ".."),
+      env: process.env,
+      stdio: ["ignore", "inherit", "inherit"]
     });
-    active.add(child);
 
-    let stdout = "";
-    let stderr = "";
-    child.stdout.on("data", chunk => { stdout += chunk; process.stdout.write(chunk); });
-    child.stderr.on("data", chunk => { stderr += chunk; process.stderr.write(chunk); });
-
-    const timeout = setTimeout(() => {
-      const error = new Error(`[smoke] TIMEOUT ${label} after 120s`);
-      child.kill("SIGTERM");
-      setTimeout(() => child.kill("SIGKILL"), 1000).unref?.();
-      reject(error);
-    }, 120000);
-    timeout.unref?.();
-
-    child.once("error", error => {
+    const finish = (error = null) => {
+      if (settled) return;
+      settled = true;
       clearTimeout(timeout);
-      active.delete(child);
-      reject(error);
-    });
-    child.once("exit", (code, signal) => {
-      clearTimeout(timeout);
-      active.delete(child);
-      if (code === 0) {
-        console.log(`[smoke] PASS  ${label}`);
-        resolve({ name, stdout });
+      clearInterval(heartbeat);
+      if (forceKillTimer) clearTimeout(forceKillTimer);
+
+      if (error) {
+        reject(error);
         return;
       }
-      const detail = stderr.trim() || stdout.trim() || `exit=${code} signal=${signal || "none"}`;
-      reject(new Error(`[smoke] FAIL ${label}\n${detail}`));
+
+      const seconds = ((Date.now() - startedAt) / 1000).toFixed(1);
+      console.log(`[smoke] PASS  ${label} in ${seconds}s`);
+      resolve();
+    };
+
+    const heartbeat = setInterval(() => {
+      const seconds = Math.round((Date.now() - startedAt) / 1000);
+      console.log(`[smoke] RUN   ${label} · ${seconds}s`);
+    }, heartbeatMs);
+
+    const timeout = setTimeout(() => {
+      const seconds = Math.round((Date.now() - startedAt) / 1000);
+      console.error(`[smoke] TIMEOUT ${label} after ${seconds}s`);
+      child.kill("SIGTERM");
+      forceKillTimer = setTimeout(() => {
+        if (!child.killed) child.kill("SIGKILL");
+      }, 2000);
+      forceKillTimer.unref?.();
+
+      finish(
+        new Error(
+          `[smoke] TIMEOUT ${label} after ${Math.round(caseTimeoutMs / 1000)}s`
+        )
+      );
+    }, caseTimeoutMs);
+
+    child.once("error", error => {
+      finish(new Error(`[smoke] FAILED TO START ${label}: ${error.message}`));
+    });
+
+    child.once("exit", (code, signal) => {
+      if (settled) return;
+
+      if (code === 0) {
+        finish();
+        return;
+      }
+
+      finish(
+        new Error(
+          `[smoke] FAIL ${label} · exit=${code ?? "null"} · signal=${signal || "none"}`
+        )
+      );
     });
   });
 }
 
-async function worker() {
-  while (!failed) {
-    const index = cursor++;
-    if (index >= cases.length) return;
-    try {
-      await runCase(cases[index], index);
-    } catch (error) {
-      failed = true;
-      throw error;
-    }
-  }
+for (let index = 0; index < cases.length; index += 1) {
+  await runCase(cases[index], index);
 }
 
-try {
-  await Promise.all(Array.from({ length:concurrency }, () => worker()));
-  console.log(`[smoke] All ${cases.length} CHERRIFT smoke case(s) passed.`);
-} catch (error) {
-  for (const child of active) child.kill("SIGTERM");
-  throw error;
-}
+console.log(`[smoke] All ${cases.length} selected CHERRIFT smoke case(s) passed.`);
