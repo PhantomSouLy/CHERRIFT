@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  // CHERRIFT v0.9.7.6
+  // CHERRIFT v0.9.7.7
   // Supabase startup guard / singleton + bounded Auth cleanup.
   //
   // Why this exists:
@@ -10,10 +10,10 @@
   // the same lock forever. The game bootstrap then remains pending forever.
   // Every Auth operation used during startup/recovery is therefore bounded.
 
-  if (window.__CHERRIFT_SUPABASE_SINGLETON_V0976__) return;
-  window.__CHERRIFT_SUPABASE_SINGLETON_V0976__ = true;
+  if (window.__CHERRIFT_SUPABASE_SINGLETON_V0977__) return;
+  window.__CHERRIFT_SUPABASE_SINGLETON_V0977__ = true;
 
-  const VERSION = "0.9.7.6-auth-deadlock-guard";
+  const VERSION = "0.9.7.7-bounded-auth-lock";
 
   const timeoutConfig = window.CHERRIFT_TIMEOUTS || {};
 
@@ -27,6 +27,7 @@
   const AUTH_REFRESH_TIMEOUT_MS = configuredTimeout("authRefreshMs", 8000);
   const AUTH_SET_SESSION_TIMEOUT_MS = configuredTimeout("authSetSessionMs", 8000);
   const AUTH_GET_USER_TIMEOUT_MS = configuredTimeout("authGetUserMs", 8000);
+  const AUTH_LOCK_TIMEOUT_MS = configuredTimeout("authLockMs", 6000);
   const FUNCTION_TIMEOUT_MS = configuredTimeout("functionInvokeMs", 15000);
 
   const namespace = window.supabase;
@@ -40,6 +41,7 @@
     authRefreshTimeouts: 0,
     authSetSessionTimeouts: 0,
     authGetUserTimeouts: 0,
+    authLockTimeouts: 0,
     functionTimeouts: 0
   };
 
@@ -105,7 +107,7 @@
     const original = auth?.[methodName];
     if (typeof original !== "function") return;
 
-    const marker = `__CHERRIFT_AUTH_TIMEOUT_${methodName.toUpperCase()}_V0976__`;
+    const marker = `__CHERRIFT_AUTH_TIMEOUT_${methodName.toUpperCase()}_V0977__`;
     if (original[marker]) return;
 
     const bound = original.bind(auth);
@@ -137,7 +139,7 @@
   function wrapAuth(client) {
     const auth = client?.auth;
     if (!auth) return;
-    if (auth.__CHERRIFT_AUTH_GUARD_V0976__) return;
+    if (auth.__CHERRIFT_AUTH_GUARD_V0977__) return;
 
     wrapAuthMethod(
       auth,
@@ -185,7 +187,7 @@
     );
 
     try {
-      Object.defineProperty(auth, "__CHERRIFT_AUTH_GUARD_V0976__", {
+      Object.defineProperty(auth, "__CHERRIFT_AUTH_GUARD_V0977__", {
         value: true,
         configurable: false,
         enumerable: false
@@ -195,7 +197,7 @@
 
   function wrapFunctionsInstance(functions) {
     if (!functions || typeof functions.invoke !== "function") return functions;
-    if (functions.__CHERRIFT_FUNCTION_TIMEOUT_V0976__) return functions;
+    if (functions.__CHERRIFT_FUNCTION_TIMEOUT_V0977__) return functions;
 
     const originalInvoke = functions.invoke.bind(functions);
 
@@ -219,7 +221,7 @@
     };
 
     try {
-      Object.defineProperty(functions, "__CHERRIFT_FUNCTION_TIMEOUT_V0976__", {
+      Object.defineProperty(functions, "__CHERRIFT_FUNCTION_TIMEOUT_V0977__", {
         value: true,
         configurable: false,
         enumerable: false
@@ -240,7 +242,7 @@
   }
 
   function wrapFunctions(client) {
-    if (!client || client.__CHERRIFT_FUNCTIONS_GETTER_V0976__) return;
+    if (!client || client.__CHERRIFT_FUNCTIONS_GETTER_V0977__) return;
 
     const descriptor = findFunctionsDescriptor(client);
 
@@ -271,7 +273,7 @@
     }
 
     try {
-      Object.defineProperty(client, "__CHERRIFT_FUNCTIONS_GETTER_V0976__", {
+      Object.defineProperty(client, "__CHERRIFT_FUNCTIONS_GETTER_V0977__", {
         value: true,
         configurable: false,
         enumerable: false
@@ -287,6 +289,78 @@
     wrapAuth(client);
     wrapFunctions(client);
     return client;
+  }
+
+  function boundedAuthLock(name, acquireTimeout, fn) {
+    const lockApi = window.navigator?.locks;
+    if (!lockApi || typeof lockApi.request !== "function") {
+      return Promise.resolve().then(fn);
+    }
+
+    const requested = Number(acquireTimeout);
+    const ms = Number.isFinite(requested) && requested > 0
+      ? Math.min(requested, AUTH_LOCK_TIMEOUT_MS)
+      : AUTH_LOCK_TIMEOUT_MS;
+
+    if (typeof AbortController !== "function") {
+      return withTimeout(
+        () => lockApi.request(String(name), { mode:"exclusive" }, fn),
+        ms,
+        "auth_lock_timeout",
+        () => {
+          stats.authTimeouts += 1;
+          stats.authLockTimeouts += 1;
+        }
+      );
+    }
+
+    const controller = new AbortController();
+    let timer = 0;
+    let timedOut = false;
+
+    timer = window.setTimeout(() => {
+      timedOut = true;
+      try {
+        controller.abort(new DOMException("CHERRIFT auth lock timeout", "TimeoutError"));
+      } catch (_) {
+        controller.abort();
+      }
+    }, ms);
+
+    return Promise.resolve()
+      .then(() =>
+        lockApi.request(
+          String(name),
+          { mode:"exclusive", signal:controller.signal },
+          () => Promise.resolve().then(fn)
+        )
+      )
+      .catch(error => {
+        if (timedOut || error?.name === "AbortError" || error?.name === "TimeoutError") {
+          stats.authTimeouts += 1;
+          stats.authLockTimeouts += 1;
+          throw timeoutError("auth_lock_timeout", ms);
+        }
+        throw error;
+      })
+      .finally(() => {
+        window.clearTimeout(timer);
+      });
+  }
+
+  function clientOptionsWithBoundedLock(options = {}) {
+    const next = { ...(options || {}) };
+    const auth = { ...(next.auth || {}) };
+
+    // Supabase auth normally waits on the browser Web Locks API. A stale lock
+    // can leave getSession() pending forever. Keep the lock semantics, but make
+    // acquisition bounded so bootstrap can safely fall back instead of hanging.
+    if (typeof auth.lock !== "function") {
+      auth.lock = boundedAuthLock;
+    }
+
+    next.auth = auth;
+    return next;
   }
 
   function authStorageKey(url, options = {}) {
@@ -311,7 +385,7 @@
 
   function makeSingletonFactory(factory, owner = null) {
     if (typeof factory !== "function") return factory;
-    if (factory.__CHERRIFT_SINGLETON_FACTORY_V0976__) return factory;
+    if (factory.__CHERRIFT_SINGLETON_FACTORY_V0977__) return factory;
 
     const wrapped = function cherriftCreateSupabaseSingleton(
       url,
@@ -325,8 +399,9 @@
         return cache.get(key);
       }
 
+      const guardedOptions = clientOptionsWithBoundedLock(options);
       const client = wrapClient(
-        factory.call(owner || this, url, publishableKey, options)
+        factory.call(owner || this, url, publishableKey, guardedOptions)
       );
 
       if (client) {
@@ -337,7 +412,7 @@
       return client;
     };
 
-    markFunction(wrapped, "__CHERRIFT_SINGLETON_FACTORY_V0976__");
+    markFunction(wrapped, "__CHERRIFT_SINGLETON_FACTORY_V0977__");
     return wrapped;
   }
 
@@ -356,8 +431,14 @@
   // Give it the same persistent guards without changing its public contract.
   if (typeof window.__CHERRIFT_SUPABASE_FACTORY__ === "function") {
     const customFactory = window.__CHERRIFT_SUPABASE_FACTORY__;
-    window.__CHERRIFT_SUPABASE_FACTORY__ = function(...args) {
-      return wrapClient(customFactory(...args));
+    window.__CHERRIFT_SUPABASE_FACTORY__ = function(url, publishableKey, options = {}) {
+      return wrapClient(
+        customFactory(
+          url,
+          publishableKey,
+          clientOptionsWithBoundedLock(options)
+        )
+      );
     };
   }
 
@@ -368,6 +449,7 @@
     authRefreshTimeoutMs: AUTH_REFRESH_TIMEOUT_MS,
     authSetSessionTimeoutMs: AUTH_SET_SESSION_TIMEOUT_MS,
     authGetUserTimeoutMs: AUTH_GET_USER_TIMEOUT_MS,
+    authLockTimeoutMs: AUTH_LOCK_TIMEOUT_MS,
     functionTimeoutMs: FUNCTION_TIMEOUT_MS,
     get nativeCreates() { return stats.nativeCreates; },
     get reuses() { return stats.reuses; },
@@ -377,14 +459,16 @@
     get authRefreshTimeouts() { return stats.authRefreshTimeouts; },
     get authSetSessionTimeouts() { return stats.authSetSessionTimeouts; },
     get authGetUserTimeouts() { return stats.authGetUserTimeouts; },
+    get authLockTimeouts() { return stats.authLockTimeouts; },
     get functionTimeouts() { return stats.functionTimeouts; },
     get cachedClients() { return cache.size; },
+    boundedAuthLock,
     wrapClient
   });
 
   console.info(
     `[CHERRIFT] Supabase singleton guard ${VERSION} active. ` +
-    `Auth session ${AUTH_SESSION_TIMEOUT_MS} ms, signOut ${AUTH_SIGN_OUT_TIMEOUT_MS} ms, ` +
-    `Functions ${FUNCTION_TIMEOUT_MS} ms.`
+    `Auth session ${AUTH_SESSION_TIMEOUT_MS} ms, auth lock ${AUTH_LOCK_TIMEOUT_MS} ms, ` +
+    `signOut ${AUTH_SIGN_OUT_TIMEOUT_MS} ms, Functions ${FUNCTION_TIMEOUT_MS} ms.`
   );
 })();

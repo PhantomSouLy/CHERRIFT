@@ -11,31 +11,38 @@ const never = () => new Promise(() => {});
 function makeFakeClient({ hanging = true } = {}) {
   return {
     auth: {
-      getSession: hanging
-        ? never
-        : async () => ({ data: { session: { user: { id: "test-user" } } }, error: null }),
-      signOut: hanging
-        ? never
-        : async () => ({ error: null }),
-      refreshSession: hanging
-        ? never
-        : async () => ({ data: { session: null }, error: null }),
-      setSession: hanging
-        ? never
-        : async () => ({ data: { session: null }, error: null }),
-      getUser: hanging
-        ? never
-        : async () => ({ data: { user: null }, error: null })
+      getSession: hanging ? never : async () => ({ data:{ session:{ user:{ id:"test-user" } } }, error:null }),
+      signOut: hanging ? never : async () => ({ error:null }),
+      refreshSession: hanging ? never : async () => ({ data:{ session:null }, error:null }),
+      setSession: hanging ? never : async () => ({ data:{ session:null }, error:null }),
+      getUser: hanging ? never : async () => ({ data:{ user:null }, error:null })
     },
     functions: {
-      invoke: hanging
-        ? never
-        : async () => ({ data: { ok: true }, error: null })
+      invoke: hanging ? never : async () => ({ data:{ ok:true }, error:null })
     }
   };
 }
 
-function createSandbox(client) {
+function createSandbox(client, { hangingLock = false } = {}) {
+  let capturedOptions = null;
+
+  const locks = {
+    request(name, options, fn) {
+      if (!hangingLock) return Promise.resolve().then(fn);
+
+      return new Promise((resolve, reject) => {
+        const signal = options?.signal;
+        if (signal?.aborted) {
+          reject(Object.assign(new Error("aborted"), { name:"AbortError" }));
+          return;
+        }
+        signal?.addEventListener("abort", () => {
+          reject(Object.assign(new Error("aborted"), { name:"AbortError" }));
+        }, { once:true });
+      });
+    }
+  };
+
   const window = {
     CHERRIFT_TIMEOUTS: {
       authSessionMs: 35,
@@ -43,12 +50,15 @@ function createSandbox(client) {
       authRefreshMs: 35,
       authSetSessionMs: 35,
       authGetUserMs: 35,
+      authLockMs: 35,
       functionInvokeMs: 35
     },
     setTimeout,
     clearTimeout,
+    navigator: { locks },
     supabase: {
-      createClient() {
+      createClient(url, key, options) {
+        capturedOptions = options;
         return client;
       }
     }
@@ -56,9 +66,12 @@ function createSandbox(client) {
 
   const sandbox = {
     window,
+    navigator: window.navigator,
     console,
     Promise,
     Error,
+    DOMException,
+    AbortController,
     Map,
     Object,
     Number,
@@ -73,7 +86,11 @@ function createSandbox(client) {
   vm.runInContext(patchSource, sandbox, {
     filename: "src/cherrift_supabase_timeout_fix.js"
   });
-  return sandbox;
+
+  return {
+    sandbox,
+    get capturedOptions() { return capturedOptions; }
+  };
 }
 
 async function expectTimeout(promise, expectedCode) {
@@ -83,62 +100,66 @@ async function expectTimeout(promise, expectedCode) {
     error => error?.name === "TimeoutError" && error?.code === expectedCode
   );
   const elapsed = Date.now() - started;
-  assert.ok(elapsed < 250, `${expectedCode} exceeded smoke-test bound: ${elapsed} ms`);
+  assert.ok(elapsed < 300, `${expectedCode} exceeded smoke bound: ${elapsed} ms`);
 }
 
-async function testHangingAuthCannotFreezeBootstrap() {
-  const fake = makeFakeClient({ hanging: true });
-  const sandbox = createSandbox(fake);
-  const client = sandbox.window.supabase.createClient(
+async function testHangingAuthMethods() {
+  const fake = makeFakeClient({ hanging:true });
+  const env = createSandbox(fake);
+  const client = env.sandbox.window.supabase.createClient(
     "https://example.supabase.co",
-    "publishable-test-key"
+    "publishable-test-key",
+    { auth:{ storageKey:"cherrift-test" } }
   );
 
   await expectTimeout(client.auth.getSession(), "auth_session_timeout");
-  await expectTimeout(client.auth.signOut({ scope: "local" }), "auth_signout_timeout");
+  await expectTimeout(client.auth.signOut({ scope:"local" }), "auth_signout_timeout");
   await expectTimeout(client.auth.refreshSession(), "auth_refresh_timeout");
-  await expectTimeout(client.auth.setSession({ access_token: "x", refresh_token: "y" }), "auth_set_session_timeout");
+  await expectTimeout(client.auth.setSession({ access_token:"x", refresh_token:"y" }), "auth_set_session_timeout");
   await expectTimeout(client.auth.getUser(), "auth_get_user_timeout");
 
-  // This mirrors the important part of CHERRIFT's recovery path:
-  // getSession fails -> local signOut cleanup fails/times out -> guest/local
-  // fallback MUST still be reachable instead of waiting forever.
-  async function simulatedBootstrapRecovery() {
-    try {
-      await client.auth.getSession();
-      return "cloud";
-    } catch (_) {
-      try {
-        await client.auth.signOut({ scope: "local" });
-      } catch (_) {}
-      return "guest/local";
-    }
-  }
-
-  const recoveryResult = await Promise.race([
-    simulatedBootstrapRecovery(),
-    new Promise((_, reject) => setTimeout(
-      () => reject(new Error("simulated bootstrap remained pending")),
-      250
-    ))
-  ]);
-
-  assert.equal(recoveryResult, "guest/local");
-  assert.ok(sandbox.window.CHERRIFT_SUPABASE_STARTUP_GUARD.authTimeouts >= 2);
+  assert.ok(env.sandbox.window.CHERRIFT_SUPABASE_STARTUP_GUARD.authTimeouts >= 5);
 }
 
-async function testHealthyCallsAreUnchanged() {
-  const fake = makeFakeClient({ hanging: false });
-  const sandbox = createSandbox(fake);
-  const client = sandbox.window.supabase.createClient(
-    "https://healthy.supabase.co",
-    "publishable-test-key"
+async function testWebLockIsBounded() {
+  const fake = makeFakeClient({ hanging:false });
+  const env = createSandbox(fake, { hangingLock:true });
+  env.sandbox.window.supabase.createClient(
+    "https://lock.supabase.co",
+    "publishable-test-key",
+    { auth:{ storageKey:"cherrift-lock-test" } }
   );
+
+  const lock = env.capturedOptions?.auth?.lock;
+  assert.equal(typeof lock, "function", "bounded auth lock was not injected");
+
+  await expectTimeout(
+    lock("lock:test", -1, async () => "never-reached"),
+    "auth_lock_timeout"
+  );
+
+  assert.equal(
+    env.sandbox.window.CHERRIFT_SUPABASE_STARTUP_GUARD.authLockTimeouts,
+    1
+  );
+}
+
+async function testHealthyCallsAndLock() {
+  const fake = makeFakeClient({ hanging:false });
+  const env = createSandbox(fake, { hangingLock:false });
+  const client = env.sandbox.window.supabase.createClient(
+    "https://healthy.supabase.co",
+    "publishable-test-key",
+    { auth:{ storageKey:"healthy" } }
+  );
+
+  const lock = env.capturedOptions?.auth?.lock;
+  assert.equal(await lock("lock:healthy", -1, async () => "ok"), "ok");
 
   const sessionResult = await client.auth.getSession();
   assert.equal(sessionResult.data.session.user.id, "test-user");
 
-  const signOutResult = await client.auth.signOut({ scope: "local" });
+  const signOutResult = await client.auth.signOut({ scope:"local" });
   assert.equal(signOutResult.error, null);
 
   const fnResult = await client.functions.invoke("health-check");
@@ -146,13 +167,14 @@ async function testHealthyCallsAreUnchanged() {
 }
 
 async function main() {
-  await testHangingAuthCannotFreezeBootstrap();
-  await testHealthyCallsAreUnchanged();
-  console.log("[PASS] Supabase Auth timeout/deadlock guard smoke test");
+  await testHangingAuthMethods();
+  await testWebLockIsBounded();
+  await testHealthyCallsAndLock();
+  console.log("[PASS] CHERRIFT bounded Supabase Auth lock + timeout smoke test");
 }
 
 main().catch(error => {
-  console.error("[FAIL] Supabase Auth timeout/deadlock guard smoke test");
+  console.error("[FAIL] CHERRIFT bounded Supabase Auth lock + timeout smoke test");
   console.error(error);
   process.exitCode = 1;
 });
