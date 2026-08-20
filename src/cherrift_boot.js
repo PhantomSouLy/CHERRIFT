@@ -65,6 +65,8 @@
     state.live = state.live || window.__CHERRIFT_LIVE_READY__ === true;
     state.runtime = state.runtime || window.__CHERRIFT_RUNTIME_READY__ === true || window.__CHERRIFT_CLEAN_RUNTIME__ === true || Boolean(window.CHERRIFT_RUNTIME);
     state.loaded = state.loaded || document.readyState === "complete";
+    // Live services (Mail/catalog) are deliberately non-blocking. A slow or offline
+    // Supabase connection must never keep the player behind the loading screen.
     state.stable = state.dom && state.ui && state.authReady && state.saveReady && state.prebeta && state.runtime && state.loaded;
     return current;
   }
@@ -85,7 +87,12 @@
     if (!state.dom) return copy("CHERRIFT indítása…", "Starting CHERRIFT…");
     if (!state.ui) return copy("Felület előkészítése…", "Preparing interface…");
     if (!state.authReady) return copy("Bejelentkezés ellenőrzése…", "Checking sign-in…");
-    if (!state.saveReady) return copy("Profil előkészítése…", "Preparing profile…");
+    if (!state.saveReady) {
+      const mode = authMode();
+      if (mode === "discord") return copy("Felhőmentés betöltése…", "Loading cloud save…");
+      if (mode === "guest") return copy("Helyi mentés betöltése…", "Loading local save…");
+      return copy("Profil előkészítése…", "Preparing profile…");
+    }
     if (!state.prebeta) return copy("Játékrendszerek betöltése…", "Loading game systems…");
     if (!state.runtime) return copy("Felület véglegesítése…", "Finalizing interface…");
     if (!state.live) return copy("Online szolgáltatások kapcsolása…", "Connecting online services…");
@@ -320,7 +327,7 @@
   startLoadingLoop();
 
   window.CHERRIFT_BOOT = Object.freeze({
-    version:"0.9.5-clean-boot.2",
+    version:"0.9.5-clean-boot.3",
     getState:() => ({ ...state, progress:shownProgress, waitingFor:waitingFor() }),
     showAuth,
     showStart,

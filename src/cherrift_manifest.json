@@ -1,5 +1,5 @@
 {
-  "runtimeVersion": "1.6.1-clean-runtime-boot-recovery",
+  "runtimeVersion": "1.6.2-clean-runtime-network-recovery",
   "gameVersion": "0.9.5-prebeta.1",
   "javascript": "src/cherrift_app.js",
   "runtime": "src/cherrift_runtime.js",
@@ -14,6 +14,9 @@
     "vendor/supabase-js-2.110.7.js"
   ],
   "includedHotfixes": [
+    "Smoke cases run as an isolated two-worker matrix with per-case progress and a hard timeout",
+    "Mail and reward live services connect in the background and no longer block the Start screen",
+    "Supabase requests are bounded so a stalled cloud endpoint cannot freeze startup",
     "Startup progress reports the subsystem it is waiting for instead of silently stalling",
     "Clean Runtime registers before player save initialization and emits canonical runtime-ready events",
     "Two-phase startup removes the Auth/Save/Pre-beta boot dependency cycle",
@@ -44,6 +47,8 @@
   ],
   "updateFiles": [
     "index.html",
+    "tools/smoke_09551.mjs",
+    "src/cherrift_network_guard.js",
     "src/cherrift_boot.js",
     "src/cherrift_runtime.js",
     "assets/cherrift_runtime.css",
