@@ -4,7 +4,7 @@
   if (window.__CHERRIFT_BOOT_V096__) return;
   window.__CHERRIFT_BOOT_V096__ = true;
 
-  const VERSION = "0.9.7.8-startup-trace";
+  const VERSION = "0.9.7.9-preload-rootfix";
   const startedAt = performance.now();
   const minimumVisibleMs = 900;
   const warningAfterMs = 12000;
