@@ -1,0 +1,33 @@
+CHERRIFT v0.9.7.8 STARTUP TRACE
+
+Ez SZÁNDÉKOSAN diagnosztikai patch, nem újabb találomra startup-fix.
+
+CSERÉLD:
+- index.html
+- src/cherrift_boot.js
+
+ADD HOZZÁ:
+- src/cherrift_startup_trace.js
+
+Mit csinál?
+A valódi app startup előtt becsomagolja és csak MÉRI ezeket:
+- CherriftStorage.load
+- CHERRIFT_AUTH.bootstrapSave
+- CHERRIFT_V060.preload
+- UI.init
+- CHERRIFT_V060.initAfterUI
+- CHERRIFT_AUTH.start
+
+Nem változtatja meg a visszatérési értéküket és nem ad hozzá új timeoutot.
+
+A loading felirat most DIAG formában kiírja az éppen futó lépést, például:
+- DIAG · auth.bootstrapSave FUT · 8s
+- DIAG · v060.preload FUT · 12s
+- DIAG · UI.init START
+
+Ha újra megáll:
+1. várj legalább 15 másodpercet,
+2. készíts egy screenshotot,
+3. a DIAG sorból pontosan meglesz, melyik hívás nem tér vissza.
+
+A 0.9.7.7 auth sequencing fix érintetlenül benne marad.

@@ -4,7 +4,7 @@
   if (window.__CHERRIFT_BOOT_V096__) return;
   window.__CHERRIFT_BOOT_V096__ = true;
 
-  const VERSION = "0.9.7.7-auth-sequence";
+  const VERSION = "0.9.7.8-startup-trace";
   const startedAt = performance.now();
   const minimumVisibleMs = 900;
   const warningAfterMs = 12000;
@@ -163,6 +163,12 @@
   }
 
   function loadingMessage() {
+    const startupTrace = window.__CHERRIFT_STARTUP_TRACE__;
+    if (startupTrace?.active && typeof startupTrace.display === "function") {
+      const diagnostic = startupTrace.display();
+      if (diagnostic) return `DIAG · ${diagnostic}`;
+    }
+
     if (!state.dom) {
       return copy(
         "CHERRIFT indítása…",
