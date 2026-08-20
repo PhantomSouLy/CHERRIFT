@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const smokeFile = path.join(here, "smoke_boot_096.mjs");
+
 const allCases = [
   "desktop",
   "short-desktop",
@@ -23,31 +24,41 @@ if (requested && !allCases.includes(requested)) {
 }
 
 const cases = requested ? [requested] : allCases;
-const timeoutMs = Number(process.env.CHERRIFT_SMOKE_TIMEOUT_MS) || 120000;
+const configuredTimeout = Number(process.env.CHERRIFT_SMOKE_TIMEOUT_MS);
+const timeoutMs =
+  Number.isFinite(configuredTimeout) && configuredTimeout >= 30000
+    ? Math.min(configuredTimeout, 120000)
+    : 120000;
+
+function killProcess(child) {
+  if (!child || child.exitCode !== null || child.signalCode !== null) return;
+  try { child.kill("SIGTERM"); } catch (_) {}
+  const hardKill = setTimeout(() => {
+    if (child.exitCode === null && child.signalCode === null) {
+      try { child.kill("SIGKILL"); } catch (_) {}
+    }
+  }, 1500);
+  hardKill.unref?.();
+}
 
 async function runCase(name, index) {
   const label = `${index + 1}/${cases.length} ${name}`;
   const startedAt = Date.now();
 
   console.log(`[smoke] START ${label}`);
+  console.log(`[smoke] LIMIT ${label} ${Math.round(timeoutMs / 1000)}s`);
 
   await new Promise((resolve, reject) => {
     let settled = false;
 
     const child = spawn(process.execPath, [smokeFile, `--case=${name}`], {
-      cwd:path.resolve(here, ".."),
-      env:process.env,
-      stdio:["ignore", "inherit", "inherit"]
+      cwd: path.resolve(here, ".."),
+      env: {
+        ...process.env,
+        CHERRIFT_BOOT_SMOKE: "1"
+      },
+      stdio: ["ignore", "inherit", "inherit"]
     });
-
-    const finish = error => {
-      if (settled) return;
-      settled = true;
-      clearTimeout(timeout);
-      clearInterval(heartbeat);
-      if (error) reject(error);
-      else resolve();
-    };
 
     const heartbeat = setInterval(() => {
       const seconds = Math.round((Date.now() - startedAt) / 1000);
@@ -55,14 +66,24 @@ async function runCase(name, index) {
     }, 15000);
 
     const timeout = setTimeout(() => {
-      child.kill("SIGTERM");
-      setTimeout(() => child.kill("SIGKILL"), 1500).unref?.();
+      const seconds = Math.round((Date.now() - startedAt) / 1000);
+      console.error(`[smoke] WATCHDOG ${label} after ${seconds}s`);
+      killProcess(child);
       finish(
         new Error(
           `[smoke] TIMEOUT ${label} after ${Math.round(timeoutMs / 1000)}s`
         )
       );
     }, timeoutMs);
+
+    function finish(error = null) {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timeout);
+      clearInterval(heartbeat);
+      if (error) reject(error);
+      else resolve();
+    }
 
     child.once("error", error => {
       finish(
@@ -93,4 +114,6 @@ for (let index = 0; index < cases.length; index += 1) {
   await runCase(cases[index], index);
 }
 
-console.log(`[smoke] All ${cases.length} selected CHERRIFT boot smoke case(s) passed.`);
+console.log(
+  `[smoke] All ${cases.length} selected CHERRIFT boot smoke case(s) passed.`
+);
