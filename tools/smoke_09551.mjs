@@ -23,7 +23,7 @@ if (requested && !allCases.includes(requested)) {
 }
 
 const cases = requested ? [requested] : allCases;
-const timeoutMs = Math.min(Number(process.env.CHERRIFT_SMOKE_TIMEOUT_MS) || 120000, 180000);
+const timeoutMs = Number(process.env.CHERRIFT_SMOKE_TIMEOUT_MS) || 120000;
 
 async function runCase(name, index) {
   const label = `${index + 1}/${cases.length} ${name}`;
