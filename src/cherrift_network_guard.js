@@ -6,7 +6,7 @@
 
   // Keep the compatibility global used by older CHERRIFT modules/tools.
   window.__CHERRIFT_NETWORK_GUARD__ = Object.freeze({
-    version:"0.9.7.3-startup-recovery",
+    version:"0.9.7.4-supabase-startup-recovery",
     active:typeof window.fetch === "function" && typeof AbortController === "function",
     timeoutMs:NETWORK_TIMEOUT_MS,
     optionalPreloadTimeoutMs:OPTIONAL_PRELOAD_TIMEOUT_MS
@@ -28,8 +28,8 @@
   }
 
   function installNetworkGuard() {
-    if (window.__CHERRIFT_NETWORK_GUARD_V0973__) return;
-    window.__CHERRIFT_NETWORK_GUARD_V0973__ = true;
+    if (window.__CHERRIFT_NETWORK_GUARD_V0974__) return;
+    window.__CHERRIFT_NETWORK_GUARD_V0974__ = true;
 
     const originalFetch = typeof window.fetch === "function"
       ? window.fetch.bind(window)
@@ -38,7 +38,7 @@
     if (
       !originalFetch ||
       typeof AbortController !== "function" ||
-      originalFetch.__cherriftTimeoutGuardV0973
+      originalFetch.__cherriftTimeoutGuardV0974
     ) return;
 
     const guardedFetch = function cherriftGuardedFetch(input, init = {}) {
@@ -83,7 +83,7 @@
         });
     };
 
-    guardedFetch.__cherriftTimeoutGuardV0973 = true;
+    guardedFetch.__cherriftTimeoutGuardV0974 = true;
     window.fetch = guardedFetch;
   }
 
@@ -96,7 +96,7 @@
   function installOptionalPreloadRecovery() {
     const runtime = window.CHERRIFT_V060;
     const originalPreload = runtime?.preload;
-    if (typeof originalPreload !== "function" || originalPreload.__cherriftStartupRecoveryV0973) {
+    if (typeof originalPreload !== "function" || originalPreload.__cherriftStartupRecoveryV0974) {
       return;
     }
 
@@ -176,7 +176,7 @@
       };
     };
 
-    wrappedPreload.__cherriftStartupRecoveryV0973 = true;
+    wrappedPreload.__cherriftStartupRecoveryV0974 = true;
     wrappedPreload.__original = originalPreload;
     runtime.preload = wrappedPreload;
   }
@@ -212,7 +212,7 @@
       return current;
     }
 
-    recoveredGetState.__cherriftStartupRecoveryV0973 = true;
+    recoveredGetState.__cherriftStartupRecoveryV0974 = true;
 
     try {
       api.getState = recoveredGetState;
@@ -234,7 +234,6 @@
 
   function installStartupRecovery() {
     installOptionalPreloadRecovery();
-    installDeferredAuthGate();
   }
 
   installNetworkGuard();
@@ -252,6 +251,6 @@
   }
 
   console.info(
-    `[CHERRIFT] Network/startup guard v0.9.7.3 active (${NETWORK_TIMEOUT_MS} ms network, ${OPTIONAL_PRELOAD_TIMEOUT_MS} ms optional preload).`
+    `[CHERRIFT] Network/startup guard v0.9.7.4 active (${NETWORK_TIMEOUT_MS} ms network, ${OPTIONAL_PRELOAD_TIMEOUT_MS} ms optional preload).`
   );
 })();
