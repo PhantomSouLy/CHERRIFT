@@ -3,7 +3,7 @@
   if (window.__CHERRIFT_RUNTIME_CLEAN__) return;
   window.__CHERRIFT_RUNTIME_CLEAN__ = true;
 
-  const VERSION = "0.9.5-clean-runtime-2";
+  const VERSION = "0.9.5-clean-runtime-3";
   const id = value => document.getElementById(value);
   const q = (selector, root = document) => root?.querySelector?.(selector) || null;
   const qa = (selector, root = document) => Array.from(root?.querySelectorAll?.(selector) || []);
@@ -15,6 +15,7 @@
   const state = {
     started:false,
     queued:false,
+    applying:false,
     observer:null,
     wrapped:false,
     clickBound:false,
@@ -253,7 +254,27 @@
 
   function applyDesktop(){patchWorldSplashes();patchSkinMetadata();patchSkinThumbs();patchSkin();patchAvatarFrames();patchLockedEnemies();patchShopCards();patchProfileUsername();reconcileSkillPoints();ensureDesktopEnergy();ensureLobbySubnav();if(findAchievementsPanel())renderAchievements()}
   function applyPhone(){if(!isPhone())return;ensurePortraitGuard();patchSkin();patchEquipment();patchArsenal();patchGacha();patchSkillTree();patchBagShop();patchCollection();patchStats();patchBuffs();patchMore();patchLobbyAvatar();patchCoinText();patchBottomNavAndPlay();patchPhoneHeaders();const achievements=sectionForHeading("Eredmények");if(achievements)hideExact("Állandó mérföldkövek és jutalmak.",achievements)}
-  function applyUi(){state.queued=false;if(!window.UI?.save)return;applyDesktop();applyPhone()}
+  function applyUi(){
+    state.queued=false;
+    if(state.applying||!window.UI?.save)return;
+
+    // The runtime observes third-party panel changes so it can decorate newly
+    // rendered UI. Its own decorators also add/remove DOM nodes, therefore the
+    // observer must be paused while a patch pass is running. Without this guard
+    // every pass schedules another pass in the same microtask checkpoint and
+    // the browser never reaches rendering, leaving the boot facade at 3%.
+    state.applying=true;
+    state.observer?.disconnect();
+    try{
+      applyDesktop();
+      applyPhone();
+    }finally{
+      state.applying=false;
+      if(state.observer&&document.body){
+        state.observer.observe(document.body,{subtree:true,childList:true});
+      }
+    }
+  }
   function queuePatch(){if(state.queued)return;state.queued=true;queueMicrotask(applyUi)}
   function wrapUi(){if(state.wrapped||!window.UI)return;state.wrapped=true;const open=window.UI.open?.bind(window.UI);if(open)window.UI.open=function(...args){const result=open(...args);applyUi();return result};const refresh=window.UI.refreshMenu?.bind(window.UI);if(refresh)window.UI.refreshMenu=function(...args){const result=refresh(...args);applyUi();return result}}
   function start(attempt=0){if(state.started)return;if(!document.body||!window.UI||!window.CherriftGame||!window.CHERRIFT_DATA?.skins){if(attempt<180)return setTimeout(()=>start(attempt+1),50);console.error("[CHERRIFT Runtime] Core dependencies did not become ready.");return}state.started=true;patchSkinMetadata();patchWorldSplashes();installGameRuntime();wrapUi();bindClicks();bindSkinTilt();resolveSkinAssets().finally(queuePatch);state.observer=new MutationObserver(queuePatch);state.observer.observe(document.body,{subtree:true,childList:true});for(const event of["resize","orientationchange","cherrift:savechange","cherrift:economychange","cherrift:languagechange","cherrift:themechange","cherrift:prebeta-ready"])addEventListener(event,queuePatch,{passive:event==="resize"||event==="orientationchange"});const api=Object.freeze({version:VERSION,refresh:applyUi,open:(route,...args)=>window.UI?.open?.(route,...args),syncNav:applyUi,normalizeMap:game=>{const world=stageWorld(game);return WORLD_MAPS[world]?buildWorld(game,world):game?.obstacles},worldMaps:WORLD_MAPS,worldPools:WORLD_POOLS,enemyDefs:ENEMY_DEFS,enemySheets:ENEMY_SHEETS,achievements:ACHIEVEMENTS,resolveSkinAssets,isPhone});window.CHERRIFT_RUNTIME=api;window.CHERRIFT_FIXPACK_095=api;window.CHERRIFT_FIXPACK_0952=api;window.CHERRIFT_FIXPACK_095_R5=api;window.CHERRIFT_FIXPACK_095_ROUND5=api;window.CHERRIFT_STABILITY=api;window.CHERRIFT_BUGFIX_V0943=api;window.CHERRIFT_MOBILE_FIX_096=api;window.__CHERRIFT_RUNTIME_READY__=true;window.__CHERRIFT_CLEAN_RUNTIME__=true;window.__CHERRIFT_FIXPACK_095_READY__=true;window.__CHERRIFT_FIXPACK_095_1__=true;window.__CHERRIFT_FIXPACK_095_2__=true;window.__CHERRIFT_FIXPACK_0952_READY__=true;window.__CHERRIFT_FIXPACK_095_ROUND5__=true;window.__CHERRIFT_FIXPACK_095_R5_READY__=true;window.__CHERRIFT_BUGFIX_V0943__=true;window.__CHERRIFT_MOBILE_FIX_096__=true;window.__CHERRIFT_MOBILE_POLISH_097__=true;applyUi();window.dispatchEvent(new CustomEvent("cherrift:runtime-ready",{detail:{version:VERSION}}));window.dispatchEvent(new CustomEvent("cherrift:runtime-clean-ready",{detail:{version:VERSION}}));console.info(`[CHERRIFT] ${VERSION} loaded.`)}

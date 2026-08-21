@@ -34,6 +34,10 @@ let activeWindow = null;
 let authGetSessionCalls = 0;
 let authGetSessionBeforeUi = 0;
 let cloudBootstrapCalls = 0;
+const activeMutationObservers = new Set();
+const maxMutationObserverCallbacks = 5000;
+let mutationObserverCallbacks = 0;
+let mutationObserverRunaway = false;
 
 function log(message) {
   console.log(`[boot-smoke] ${requested} · ${message}`);
@@ -667,15 +671,37 @@ function installBrowserStubs(window) {
     value: { writeText: async () => {} }
   });
 
-  // The boot smoke validates startup/auth/save/runtime only. UI-polish
-  // MutationObservers are intentionally disabled here because they repeatedly
-  // rescan the full JSDOM tree and can monopolize one runner CPU core.
+  // Keep production MutationObserver behavior enabled. A previous smoke stub
+  // hid a real runtime feedback loop that starved rendering and left the live
+  // loading facade at 3%. Track and bound callbacks so future observer storms
+  // fail deterministically instead of hanging the CI worker.
+  const NativeMutationObserver = window.MutationObserver;
   window.MutationObserver = class BootSmokeMutationObserver {
-    constructor(_callback) {}
-    observe() {}
-    unobserve() {}
-    disconnect() {}
-    takeRecords() { return []; }
+    constructor(callback) {
+      this.inner = new NativeMutationObserver(records => {
+        mutationObserverCallbacks += 1;
+
+        if (mutationObserverCallbacks > maxMutationObserverCallbacks) {
+          if (!mutationObserverRunaway) {
+            mutationObserverRunaway = true;
+            for (const observer of activeMutationObservers) {
+              observer.disconnect();
+            }
+            recordRuntimeError("mutation-observer-runaway", [
+              `more than ${maxMutationObserverCallbacks} callbacks during boot`
+            ]);
+          }
+          return;
+        }
+
+        callback(records, this);
+      });
+      activeMutationObservers.add(this);
+    }
+
+    observe(...args) { return this.inner.observe(...args); }
+    disconnect() { return this.inner.disconnect(); }
+    takeRecords() { return this.inner.takeRecords(); }
   };
 
   window.addEventListener("error", event => {
@@ -1056,15 +1082,39 @@ try {
     `${requested}: no runtime errors`
   );
 
+  assert.equal(
+    mutationObserverRunaway,
+    false,
+    `${requested}: MutationObservers remain bounded during startup`
+  );
+
   log("PASS");
   console.log(
-    `PASS ${requested} ${width}x${height} · deterministic Clean Runtime boot`
+    `PASS ${requested} ${width}x${height} · deterministic Clean Runtime boot · ` +
+    `observer callbacks=${mutationObserverCallbacks}`
   );
 } catch (error) {
   console.error(diagnosticText("case failed"));
   throw error;
 } finally {
   activeWindow = dom?.window || activeWindow;
+
+  for (const observer of activeMutationObservers) {
+    try { observer.disconnect(); }
+    catch (_) {}
+  }
+
+
+  // A MutationObserver callback may already have queued one final UI microtask.
+  // Drain it before JSDOM invalidates window.document, then disconnect again in
+  // case that last patch pass reattached an observer.
+  await Promise.resolve();
+  await Promise.resolve();
+  for (const observer of activeMutationObservers) {
+    try { observer.disconnect(); }
+    catch (_) {}
+  }
+  activeMutationObservers.clear();
 
   if (dom) {
     try { dom.window.close(); }
