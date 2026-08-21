@@ -15915,6 +15915,21 @@ function railButton(route,icon,label,notice=""){
 function railTextButton(route,label,notice="",className=""){
   return `<button type="button" class="rail-text-v095 ${escapeHtml(className)}" data-v082-open="${route}" data-v082-route="${route}"><b>${escapeHtml(label)}</b>${notice?`<em class="notice-dot-v082" data-v082-notice="${notice}"></em>`:""}</button>`;
 }
+function updateDesktopWallet(){
+  const wallet=id("desktopCurrencyV0943");
+  if(!wallet||!UI.save)return;
+  const save=normalize(UI.save),material=save.bag?.materials||{};
+  const values={
+    "Coin":save.coins,
+    "Bloom Gem":save.blossomGems??save.bloomGems,
+    "Sakura Essence":save.sakuraEssence,
+    "Scrap":material.gearScrap??save.gearScrap??save.scrap
+  };
+  qa(":scope > span[title]",wallet).forEach(pill=>{
+    const value=q("b",pill),amount=Number(values[pill.title]);
+    if(value)value.textContent=String(Math.max(0,Math.floor(Number.isFinite(amount)?amount:0)));
+  });
+}
 function rebuildRail(){
   const rail=id("globalRailV060");if(!rail)return;
   // The rail used to be destroyed and rebuilt by every refresh/open wrapper.
@@ -15922,6 +15937,7 @@ function rebuildRail(){
   // before the account/profile decorators ran. Build the canonical shell once
   // and update only its live values afterwards.
   if(rail.dataset.v095CanonicalRail==="1"&&q(".rail-text-nav-v095",rail)){
+    updateDesktopWallet();
     updateRailProfile();
     return;
   }
@@ -15942,7 +15958,7 @@ function rebuildRail(){
       ${railTextButton("achievements","Achievements","achievements")}
     </nav>
     <div class="rail-bottom-v060">
-      <div id="desktopCurrencyV0943" aria-label="Currencies" data-wallet-placeholder="true">
+      <div id="desktopCurrencyV0943" aria-label="Currencies" data-wallet-live="true">
         <span title="Coin"><img src="assets/items/coin.png" alt=""><b>${Math.floor(Number(railSave.coins)||0)}</b></span>
         <span title="Bloom Gem"><img src="assets/items/blossom_gem.png" alt=""><b>${Math.floor(Number(railSave.blossomGems??railSave.bloomGems)||0)}</b></span>
         <span title="Sakura Essence"><img src="assets/items/sakura_potion.png" alt=""><b>${Math.floor(Number(railSave.sakuraEssence)||0)}</b></span>
@@ -15954,6 +15970,7 @@ function rebuildRail(){
       </button>
     </div>`;
   rail.dataset.v095CanonicalRail="1";
+  updateDesktopWallet();
   updateRailProfile();
 }
 function updateRailProfile(){
@@ -16604,6 +16621,7 @@ function bindEvents(){
     }
   },true);
   window.addEventListener("resize",refreshAll);
+  window.addEventListener("cherrift:savechange",updateDesktopWallet);
   window.addEventListener("cherrift:languagechange",()=>{
     requestAnimationFrame(()=>{
       const panel=id("playerUpgrade");

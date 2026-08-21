@@ -12,6 +12,7 @@ const requested =
 
 const cases = {
   desktop: [1440, 900],
+  "wide-desktop": [1920, 1080],
   "short-desktop": [1128, 584],
   "phone-portrait": [390, 844],
   "phone-landscape": [844, 390],
@@ -34,6 +35,7 @@ let activeWindow = null;
 let authGetSessionCalls = 0;
 let authGetSessionBeforeUi = 0;
 let cloudBootstrapCalls = 0;
+let delayedSubresourceRequested = false;
 const activeMutationObservers = new Set();
 const maxMutationObserverCallbacks = 5000;
 let mutationObserverCallbacks = 0;
@@ -127,6 +129,25 @@ function safeFile(urlPath) {
 }
 
 const server = createServer(async (request, response) => {
+  const pathname = decodeURIComponent(
+    new URL(request.url || "/", "http://localhost").pathname
+  );
+
+  if (
+    requested === "wide-desktop" &&
+    pathname === "/__boot-smoke-delayed-subresource.html"
+  ) {
+    delayedSubresourceRequested = true;
+    response.writeHead(200, {
+      "content-type": "text/html; charset=utf-8",
+      "cache-control": "no-store"
+    });
+    // Intentionally leave this optional subresource unfinished. DOMContentLoaded
+    // has already made the game interactive, while window.load must remain
+    // pending. The boot controller must not wait for this response.
+    return;
+  }
+
   const file = safeFile(request.url || "/");
 
   if (!file) {
@@ -475,6 +496,20 @@ function createFakeSupabase(window) {
 
 function installBrowserStubs(window) {
   window.__CHERRIFT_BOOT_SMOKE__ = true;
+
+  if (requested === "wide-desktop") {
+    window.document.addEventListener(
+      "DOMContentLoaded",
+      () => {
+        const frame = window.document.createElement("iframe");
+        frame.hidden = true;
+        frame.title = "";
+        frame.src = "__boot-smoke-delayed-subresource.html";
+        window.document.body.appendChild(frame);
+      },
+      { once: true }
+    );
+  }
 
   if (authTimeoutCase || cloudTimeoutCase) {
     window.CHERRIFT_TIMEOUTS = {
@@ -845,7 +880,9 @@ try {
   log("opening app");
 
   dom = await JSDOM.fromURL(
-    `${baseUrl}?smoke=${encodeURIComponent(requested)}`,
+    requested === "desktop"
+      ? `${baseUrl}?test=${encodeURIComponent(requested)}`
+      : `${baseUrl}?smoke=${encodeURIComponent(requested)}`,
     {
       runScripts: "dangerously",
       resources: "usable",
@@ -946,6 +983,14 @@ try {
   const state = window.CHERRIFT_BOOT.getState();
   const auth = window.CHERRIFT_AUTH?.getState?.();
 
+  if (requested === "desktop") {
+    assert.equal(
+      window.__CHERRIFT_STARTUP_TRACE__?.active,
+      false,
+      "desktop: startup diagnostics stay disabled on a normal page URL"
+    );
+  }
+
   assert.equal(
     authGetSessionBeforeUi,
     0,
@@ -1025,6 +1070,59 @@ try {
     true,
     `${requested}: runtime ready`
   );
+
+  if (requested === "wide-desktop") {
+    await waitFor(
+      () => delayedSubresourceRequested,
+      "wide-desktop delayed optional subresource request",
+      5000
+    );
+    assert.notEqual(
+      document.readyState,
+      "complete",
+      "wide-desktop: lobby becomes ready before the global load event"
+    );
+
+    const wallet = document.getElementById("desktopCurrencyV0943");
+    assert.ok(wallet, "wide-desktop: canonical desktop wallet exists");
+    assert.equal(
+      wallet.querySelectorAll(":scope > span[title]").length,
+      4,
+      "wide-desktop: canonical desktop wallet has four compact currencies"
+    );
+
+    window.UI.save.coins = 987654;
+    window.dispatchEvent(
+      new window.CustomEvent("cherrift:savechange", {
+        detail: { source: "wide-desktop-smoke" }
+      })
+    );
+    await waitFor(
+      () => wallet.querySelector(':scope > span[title="Coin"] b')?.textContent === "987654",
+      "wide-desktop live wallet refresh",
+      5000
+    );
+
+    const prebetaCss = await readFile(
+      path.join(root, "assets/cherrift_prebeta.css"),
+      "utf8"
+    );
+    const compactBreakpoint = prebetaCss.indexOf(
+      "@media(min-width:821px) and (max-width:1500px)"
+    );
+    assert.ok(compactBreakpoint > 0, "wide-desktop: compact breakpoint exists");
+    const wideDesktopCss = prebetaCss.slice(0, compactBreakpoint);
+    assert.match(
+      wideDesktopCss,
+      /#desktopCurrencyV0943 img\{[^}]*width:18px!important[^}]*height:18px!important/,
+      "wide-desktop: currency images are bounded outside the 1500px breakpoint"
+    );
+    assert.match(
+      wideDesktopCss,
+      /#resourceBarV082\{display:none!important\}/,
+      "wide-desktop: duplicate legacy resource bar is hidden"
+    );
+  }
 
   assert.ok(
     window.UI?.save,

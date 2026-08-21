@@ -43,6 +43,7 @@ jobs:
       matrix:
         case:
           - desktop
+          - wide-desktop
           - short-desktop
           - phone-portrait
           - phone-landscape

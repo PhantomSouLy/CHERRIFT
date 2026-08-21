@@ -7,6 +7,7 @@ const smokeFile = path.join(here, "smoke_boot_096.mjs");
 
 const allCases = [
   "desktop",
+  "wide-desktop",
   "short-desktop",
   "phone-portrait",
   "phone-landscape",

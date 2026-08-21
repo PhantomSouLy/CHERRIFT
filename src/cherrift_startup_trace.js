@@ -3,9 +3,38 @@
 
   if (window.__CHERRIFT_STARTUP_TRACE__?.active) return;
 
+  const traceEnabled = (() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      return (
+        params.get("diag") === "startup" ||
+        params.get("cherrift_diag") === "startup" ||
+        params.has("smoke")
+      );
+    } catch (_) {
+      return false;
+    }
+  })();
+
+  // Startup tracing wraps core storage/auth/UI methods and is intended for
+  // diagnostics only. Keep it available through ?diag=startup and in smoke
+  // tests, but do not expose DIAG labels or wrapper overhead to normal users.
+  if (!traceEnabled) {
+    window.__CHERRIFT_STARTUP_TRACE__ = Object.freeze({
+      active: false,
+      version: "0.9.8.1-startup-trace-opt-in",
+      display: () => "",
+      snapshot: () => ({
+        active: false,
+        reason: "disabled"
+      })
+    });
+    return;
+  }
+
   const state = {
     active: true,
-    version: "0.9.7.8-startup-trace",
+    version: "0.9.8.1-startup-trace-opt-in",
     installedAt: Date.now(),
     sequence: 0,
     last: "trace READY",

@@ -4,7 +4,7 @@
   if (window.__CHERRIFT_BOOT_V096__) return;
   window.__CHERRIFT_BOOT_V096__ = true;
 
-  const VERSION = "0.9.7.9-preload-rootfix";
+  const VERSION = "0.9.8.1-dom-ready-gate";
   const startedAt = performance.now();
   const minimumVisibleMs = 900;
   const warningAfterMs = 12000;
@@ -107,9 +107,13 @@
       window.__CHERRIFT_CLEAN_RUNTIME__ === true ||
       Boolean(window.CHERRIFT_RUNTIME);
 
+    // The interactive app is initialized from DOMContentLoaded. Waiting for
+    // window.load here also waits for every decorative image requested by the
+    // historical game bundle. On a cold/incognito cache one slow artwork file
+    // could therefore pin an otherwise ready lobby at 98% indefinitely.
     state.loaded =
       state.loaded ||
-      document.readyState === "complete";
+      document.readyState !== "loading";
 
     // Mail/catalog are optional. They must never gate the lobby.
     state.stable =
@@ -828,6 +832,7 @@
     "DOMContentLoaded",
     () => {
       state.dom = true;
+      state.loaded = true;
       syncCopy();
     },
     { once:true }
@@ -835,9 +840,6 @@
 
   if (document.readyState !== "loading") {
     state.dom = true;
-  }
-
-  if (document.readyState === "complete") {
     state.loaded = true;
   }
 

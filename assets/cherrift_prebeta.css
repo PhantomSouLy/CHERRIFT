@@ -30,6 +30,24 @@ html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .prebeta-player-r
   }
   body.v0933-desktop .topnav-v0933 .rail-brand-v060{grid-column:1!important;justify-self:start!important}
   body.v0933-desktop .topnav-v0933 .rail-bottom-v060{grid-column:3!important;justify-self:end!important}
+  body.v0933-desktop .topnav-v0933 #desktopCurrencyV0943{
+    min-width:0;display:flex!important;align-items:center;justify-content:flex-end;
+    gap:3px;margin-right:2px
+  }
+  body.v0933-desktop .topnav-v0933 #desktopCurrencyV0943 span{
+    min-width:48px;height:36px;display:flex;align-items:center;justify-content:center;
+    gap:4px;padding:0 6px;overflow:hidden;border:1px solid rgba(255,205,231,.13);
+    border-radius:9px;background:rgba(255,255,255,.035);box-sizing:border-box
+  }
+  body.v0933-desktop .topnav-v0933 #desktopCurrencyV0943 img{
+    display:block;width:18px!important;height:18px!important;max-width:18px!important;
+    object-fit:contain;flex:0 0 18px
+  }
+  body.v0933-desktop .topnav-v0933 #desktopCurrencyV0943 b{
+    min-width:0;overflow:hidden;text-overflow:ellipsis;color:#fff;
+    font:900 10px/1 system-ui,sans-serif;white-space:nowrap
+  }
+  body.v0933-desktop #resourceBarV082{display:none!important}
   body.v0933-desktop .topnav-v0933 .rail-text-nav-v095 .rail-text-v095{
     position:relative!important;min-width:0!important;height:100%!important;
     padding:0 clamp(10px,.78vw,16px)!important;gap:0!important;
