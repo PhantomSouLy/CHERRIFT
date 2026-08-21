@@ -880,9 +880,15 @@ try {
     );
 
     if (authTimeoutCase) {
-      assert.ok(
-        authGetSessionCalls > 0,
-        "auth-timeout: the never-settling background session probe is active"
+      // startAuthGate intentionally schedules session discovery on the next
+      // timer turn so the local Guest UI is usable first. Depending on runner
+      // timing, the gate can therefore become observable one turn before
+      // getSession starts. Wait for that intended background transition instead
+      // of sampling it synchronously and producing a flaky failure.
+      await waitFor(
+        () => authGetSessionCalls > 0,
+        "auth-timeout background session probe",
+        5000
       );
     }
 
