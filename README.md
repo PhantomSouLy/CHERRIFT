@@ -2,8 +2,8 @@
 
 The pre-beta build adds the production starter progression, central economy
 balance, first-star Energy commitment, six beta Worlds, stacking title stats,
-profile frames, Social and a weekly Power Top 50. Existing accounts present when
-the migration runs are preserved as owner accounts; new accounts start locked.
+profile frames, Social and a weekly Power Top 50. Only an active GM owner keeps
+owner entitlements; normal and newly created accounts use locked progression.
 
 Browseres akció-RPG tesztverzió, egységesített PC-, telefonos álló és telefonos fekvő nézettel.
 
@@ -30,6 +30,10 @@ A pontos értékek: [PREBETA_V095_BALANCE_HU.md](PREBETA_V095_BALANCE_HU.md).
 - Discord módban minden mentés előtt fiókonkénti helyi biztonsági másolat készül. Hálózati hiba esetén ebből folytatódik a játék, majd online állapotban újrapróbálja a felhőmentést.
 - A World 3–4 pályadefiníciók és map objectek a tényleges assetekre mutatnak; a régi, nem létező fájlútvonalak kikerültek.
 - A mobil More menüből kikerültek a duplikált Daily/Weekly/Login/Mail elemek.
+- Az Auth v3 helyi mentéssel, szinkron módon indít: sem Supabase, sem Discord,
+  sem a `player-api` nem tarthatja a Guest felületet a loading screen mögött.
+- A korábbi bundle-ben maradt 30, már nem létező verziózott CSS-kérés kikerült;
+  ezek szabályai az egyetlen `assets/cherrift_app.css` fájlban vannak.
 
 ## Indítás
 
@@ -49,7 +53,9 @@ Ne nyisd meg közvetlenül `file://` URL-lel, mert a böngésző biztonsági sza
 
 ```bash
 npm run validate
+npm run audit
 npm run smoke
+npm run verify:supabase-public
 ```
 
 A smoke teszt az alábbi nézeteket járja végig:
@@ -59,23 +65,28 @@ A smoke teszt az alábbi nézeteket járja végig:
 - 390×844 telefon álló nézet
 - 844×390 telefon fekvő nézet
 - visszatérő Discord-munkamenet
+- végtelen Supabase Auth/Web Lock várakozás közbeni Guest belépés
+- végtelen `player-api/bootstrap_save` közbeni fiókhoz kötött fallback
 
-Ellenőrzi többek között a World Selectet, a Gachát és key-migrációt, a login gate-et, a Gear/BAG felületet, a skineket, a jutalmakat és a játékindítást.
+Az audit minden Git-tracked fájlhoz SHA-256-ot, típus-/szignatúra- vagy
+szintaxisellenőrzést és hivatkozási leltárt készít. A publikus Supabase-próba
+ellenőrzi a Discord OAuth redirectet, a CORS-t és a `player-api` JWT-határát;
+nem használ service-role kulcsot és nem módosít játékosadatot.
 
 ## Runtime felépítés
 
 Az `index.html` determinisztikus sorrendben tölti be az aktív rendszereket:
 
-1. `src/cherrift_balance.js` — központi pre-beta balansz
-2. `src/cherrift_app.js` — konszolidált játék-runtime
-3. `src/cherrift_gacha.js` — láda/Gacha
-4. `src/cherrift_live_services.js` — szerveres Mail és Redeem híd
-5. `src/cherrift_account_mail.js` — Account, Profile és Mail UI
-6. `src/cherrift_world_ui.js` — mobil World/Chapter selector
-7. `src/cherrift_stability.js` — egységes navigáció és stabilitás
-8. `src/cherrift_prebeta.js` — progression, Energy, title, frame, Social és Ranking
+1. Network/Supabase guard, publikus konfiguráció és központi balansz.
+2. `src/cherrift_app.js` — a konszolidált játék-runtime.
+3. `src/cherrift_auth.js` — az egyetlen aktív Guest/Discord Auth modul; a
+   session- és cloud-felderítés csak a teljes `UI.init` után, háttérben indul.
+4. Gacha, Live Services, Account/Mail, World UI és Clean Runtime modulok.
+5. Pre-beta Event/Security/Game UI, Elemental és Skill Builder modulok.
 
-A régi különálló `cherrift_bugfix_v094*.js`, `cherrift_v0933.js`, `cherrift_theme_system.js` és `v0933.css` fájlokat nem szabad visszatenni: aktív tartalmuk már a runtime-ban vagy a fenti modulokban van.
+A régi különálló fixpack/stability/mobile patch fájlokat nem szabad újra
+betölteni: aktív tartalmuk már a konszolidált runtime-ban van. A karbantartott
+törlési lista és a teljes vizsgálat a `REPO_CLEANUP_AUDIT_HU.md` fájlban van.
 
 ## Ideiglenes assetek
 
@@ -86,6 +97,7 @@ A jelenleg hiányzó optimalizált képekhez meglévő, biztonságos helyettesí
 - [Supabase cloud save beállítás](SUPABASE_CLOUD_SAVE_SETUP_HU_EN.md)
 - [Discord OAuth beállítás](SUPABASE_DISCORD_SETUP_HU_EN.md)
 - [GM Tool Pack beállítás](GM_TOOL_PACK_SETUP_HU.md)
+- [Auth v3 és runtime recovery](AUTH_BOOTSTRAP_V3_HU.md)
 
 A böngészős `src/supabase_config.js` kizárólag publikus/publishable kulcsot tartalmazhat. Service-role vagy más titkos kulcs nem kerülhet kliensoldali fájlba.
 

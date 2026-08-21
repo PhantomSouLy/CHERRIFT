@@ -1,7 +1,0 @@
-index.html — opcionális cache-bust
-
-KERESD:
-<script src="src/cherrift_supabase_timeout_fix.js?v=097singleton1"></script>
-
-CSERÉLD ERRE:
-<script src="src/cherrift_supabase_timeout_fix.js?v=097singleton2"></script>

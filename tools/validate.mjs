@@ -167,7 +167,7 @@ else {
   }
 }
 
-for (const required of ["src/cherrift_app.js", "src/cherrift_auth.js", "assets/cherrift_app.css", "src/config.js", "src/cherrift_fixpack_095.js"]) {
+for (const required of ["src/cherrift_app.js", "src/cherrift_auth.js", "assets/cherrift_app.css", "src/config.js"]) {
   if (!existsSync(join(root, required))) errors.push(`${required}: required runtime file is missing`);
 }
 
@@ -187,13 +187,22 @@ if (existsSync(runtimePath)) {
   for (const marker of ["__CHERRIFT_EXTERNAL_AUTH__", "0.9.5"]) {
     if (!runtime.includes(marker)) errors.push(`src/cherrift_app.js: runtime marker is missing: ${marker}`);
   }
+  if (/\b(?:mobile_v051|v\d+)\.css(?:\?|["'`])/i.test(runtime)) {
+    errors.push("src/cherrift_app.js: historical standalone CSS must not be requested; it is consolidated in assets/cherrift_app.css");
+  }
+  if (/await\s+window\.CHERRIFT_AUTH\.bootstrapSave/.test(runtime)) {
+    errors.push("src/cherrift_app.js: Guest bootstrap must never await Supabase/Auth");
+  }
 }
 
 const authPath = join(root, "src", "cherrift_auth.js");
 if (existsSync(authPath)) {
   const auth = readFileSync(authPath, "utf8");
-  for (const marker of ["signInWithOAuth", 'provider:"discord"', "auth_session_timeout", "player_api_${action}_timeout", "cherrift-discord-backup-v2", "guestEnabled", "getClient"]) {
+  for (const marker of ["3.0.0-local-first-bootstrap", "function bootstrapSave", "discoverSession", "signInWithOAuth", 'provider:"discord"', "auth_session_timeout", "player_api_${action}_timeout", "cherrift-discord-backup-v2", "guestEnabled", "getClient"]) {
     if (!auth.includes(marker)) errors.push(`src/cherrift_auth.js: auth safety marker is missing: ${marker}`);
+  }
+  if (/async\s+function\s+bootstrapSave/.test(auth)) {
+    errors.push("src/cherrift_auth.js: bootstrapSave must remain synchronous and local-only");
   }
 }
 
@@ -203,6 +212,30 @@ else {
   const authConfig = readFileSync(authConfigPath, "utf8");
   if (/sb_(?:secret|service_role)_[A-Za-z0-9_-]+/i.test(authConfig)) errors.push("src/supabase_config.js: service-role material must never be shipped to the browser");
   if (!authConfig.includes("__CHERRIFT_EXTERNAL_AUTH__")) errors.push("src/supabase_config.js: standalone auth activation marker is missing");
+}
+
+const supabaseFunctionConfigPath = join(root, "supabase", "config.toml");
+if (!existsSync(supabaseFunctionConfigPath)) errors.push("supabase/config.toml: missing Edge Function configuration");
+else {
+  const functionConfig = readFileSync(supabaseFunctionConfigPath, "utf8");
+  for (const marker of ["[functions.player-api]", "[functions.gm-api]", "[functions.submit-report]"]) {
+    if (!functionConfig.includes(marker)) errors.push(`supabase/config.toml: missing ${marker}`);
+  }
+}
+
+const prebetaMigrationPath = join(root, "supabase", "migrations", "20260801_prebeta_v095.sql");
+if (existsSync(prebetaMigrationPath)) {
+  const migration = readFileSync(prebetaMigrationPath, "utf8");
+  if (!/join public\.gm_admins[\s\S]{0,180}admins\.role = 'owner'[\s\S]{0,100}admins\.active = true/.test(migration)) {
+    errors.push("supabase/migrations/20260801_prebeta_v095.sql: owner entitlements must be restricted to an active GM owner");
+  }
+}
+
+for (const requiredSql of [
+  "supabase/VERIFY_CURRENT_SCHEMA.sql",
+  "supabase/migrations/20260821_auth_runtime_guard.sql"
+]) {
+  if (!existsSync(join(root, requiredSql))) errors.push(`${requiredSql}: required Auth/RLS recovery SQL is missing`);
 }
 
 function pngInfo(file) {

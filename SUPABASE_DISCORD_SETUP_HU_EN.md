@@ -44,7 +44,10 @@ A GitHub Pages útvonal kis- és nagybetűérzékeny, ezért a `CHERRIFT` részt
 
 ### 4. Felhőmentés
 
-A Discord Auth önmagában csak a felhasználót azonosítja. A játékmentéshez futtasd a repository `supabase/game_saves.sql` fájlját a Supabase SQL Editorban. A részletes lépések a `SUPABASE_CLOUD_SAVE_SETUP_HU_EN.md` fájlban vannak.
+A Discord Auth önmagában csak a felhasználót azonosítja. A játékmentéshez
+futtasd a repository `supabase/migrations/20260821_auth_runtime_guard.sql`
+fájlját a Supabase SQL Editorban. A részletes lépések a
+`SUPABASE_CLOUD_SAVE_SETUP_HU_EN.md` fájlban vannak.
 
 ### 5. Teszt
 
@@ -55,6 +58,15 @@ python -m http.server 8000
 ```
 
 Nyisd meg a `http://localhost:8000/` címet, várd meg a loadert, majd válaszd a Discord Login lehetőséget. Sikeres belépés után a Discord-név és avatar megjelenik a főmenüben és a Settings → Account oldalon. A Table Editor → `game_saves` alatt meg kell jelennie a felhasználó mentéssorának is.
+
+Deploy előtt/után futtasd:
+
+```bash
+npm run verify:supabase-public
+```
+
+Ez ellenőrzi, hogy a GitHub Pages callbacket a Supabase elfogadja és valóban a
+Discord OAuth oldalra irányítja. Nem végez belépést és nem ír játékosadatot.
 
 ### Fontos
 
@@ -75,6 +87,7 @@ The client integration is ready, but the Discord Developer Portal and Supabase D
 
 2. Enable Discord under Supabase Dashboard → Authentication → Providers and enter the Discord Client ID and Client Secret there.
 3. Under Authentication → URL Configuration set the Site URL to `https://phantomsouly.github.io/CHERRIFT/` and allow the game and GM paths on both GitHub Pages and `http://localhost:8000/` as Redirect URLs. Keep the existing player URLs when adding the GM URLs.
-4. Run the repository's `supabase/game_saves.sql` file in the Supabase SQL Editor. See `SUPABASE_CLOUD_SAVE_SETUP_HU_EN.md` for details.
+4. Run `supabase/migrations/20260821_auth_runtime_guard.sql` in the Supabase SQL Editor. See `SUPABASE_CLOUD_SAVE_SETUP_HU_EN.md` for details.
 5. Never commit the Discord Client Secret or a Supabase service-role key.
 6. Guest progress stays in localStorage. Discord progress is stored in the protected `game_saves` table.
+7. Run `npm run verify:supabase-public` to verify the OAuth redirect, CORS and player-api JWT boundary.

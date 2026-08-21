@@ -1,10 +1,10 @@
 (() => {
   "use strict";
 
-  if (window.__CHERRIFT_AUTH_V2__) return;
-  window.__CHERRIFT_AUTH_V2__ = true;
+  if (window.__CHERRIFT_AUTH_V3__) return;
+  window.__CHERRIFT_AUTH_V3__ = true;
 
-  const VERSION = "2.0.0-deterministic-bootstrap";
+  const VERSION = "3.0.0-local-first-bootstrap";
   const SAVE_VERSION = "0.9.5-prebeta.2";
   const CONFIG = window.CHERRIFT_SUPABASE_CONFIG || {};
   const PLAYER_FUNCTION = CONFIG.playerFunctionName || "player-api";
@@ -104,9 +104,13 @@
     statusKey:"checking",
     errorKey:"",
     errorDetail:"",
-    bootstrapPromise:null,
+    bootstrapSave:null,
     bootstrapDone:false,
-    startPromise:null,
+    started:false,
+    discovering:false,
+    discoveryPromise:null,
+    authAttempt:0,
+    guestExplicit:false,
     subscription:null,
     loadGuestSave:null,
     storageInstalled:false,
@@ -743,72 +747,50 @@
     }
   }
 
-  async function completeDiscordSession(session) {
+  async function completeDiscordSession(session, attempt = runtime.authAttempt) {
     if (!session?.user) return false;
-    runtime.mode = "checking";
+    if (attempt !== runtime.authAttempt || runtime.guestExplicit) return false;
+    runtime.mode = "gate";
     runtime.gateVisible = true;
-    runtime.busy = true;
+    // Cloud recovery must never disable Guest. If Supabase is slow, the
+    // player can always choose the already-loaded local profile.
+    runtime.busy = false;
     runtime.statusKey = "loadingCloud";
     ensureGate().hidden = false;
     document.body.classList.add("auth-gated-v064");
     renderGate();
     const save = await resolveDiscordSave(session);
+    if (attempt !== runtime.authAttempt || runtime.guestExplicit) {
+      runtime.session = null;
+      runtime.activeUserId = "";
+      runtime.cloudReady = false;
+      runtime.offlineAccount = false;
+      runtime.pendingSave = null;
+      return false;
+    }
     applySaveToUi(save, "discord-session");
     closeGate("discord");
     syncAccountUi();
     return true;
   }
 
-  async function bootstrapSave(loadGuestSave) {
-    if (runtime.bootstrapPromise) return runtime.bootstrapPromise;
+  /*
+   * CRITICAL STARTUP CONTRACT
+   * -------------------------
+   * This function is intentionally synchronous. Guest startup and UI.init()
+   * must not depend on Supabase Auth, Web Locks, Discord, an Edge Function or
+   * any network timeout. Session/cloud discovery starts only after the UI and
+   * the real login gate exist (startAuthGate()).
+   */
+  function bootstrapSave(loadGuestSave) {
+    if (runtime.bootstrapSave) return runtime.bootstrapSave;
     runtime.loadGuestSave = typeof loadGuestSave === "function" ? loadGuestSave : null;
     installStorageBridge();
-    runtime.bootstrapPromise = (async () => {
-      const oauthError = oauthErrorFromUrl();
-      try {
-        if (!runtime.client) {
-          runtime.mode = "gate";
-          runtime.errorKey = "serviceUnavailable";
-          return currentGuestSave();
-        }
-        runtime.mode = "checking";
-        runtime.statusKey = "checking";
-        const sessionResult = await deadline(
-          () => runtime.client.auth.getSession(),
-          AUTH_TIMEOUT_MS,
-          "auth_session_timeout"
-        );
-        if (sessionResult?.error) throw sessionResult.error;
-        const session = sessionResult?.data?.session;
-        if (!session?.user) {
-          runtime.mode = "gate";
-          if (oauthError) {
-            runtime.errorKey = "loginFailed";
-            runtime.errorDetail = oauthError;
-          }
-          return currentGuestSave();
-        }
-        runtime.mode = "discord";
-        return await resolveDiscordSave(session);
-      } catch (error) {
-        console.warn("[CHERRIFT Auth] Session bootstrap recovered to the login gate.", error);
-        runtime.session = null;
-        runtime.activeUserId = "";
-        runtime.mode = "gate";
-        runtime.cloudReady = false;
-        runtime.offlineAccount = false;
-        runtime.errorKey = oauthError ? "loginFailed" : "serviceUnavailable";
-        runtime.errorDetail = oauthError || "";
-        return currentGuestSave();
-      } finally {
-        runtime.bootstrapDone = true;
-        cleanOAuthUrl();
-        if (runtime.pendingAuthEvent) {
-          window.setTimeout(processPendingAuthEvent, 0);
-        }
-      }
-    })();
-    return runtime.bootstrapPromise;
+    runtime.bootstrapSave = currentGuestSave();
+    runtime.mode = "gate";
+    runtime.statusKey = "";
+    runtime.bootstrapDone = true;
+    return runtime.bootstrapSave;
   }
 
   function continueAsGuest() {
@@ -817,6 +799,8 @@
       renderGate();
       return false;
     }
+    runtime.guestExplicit = true;
+    runtime.authAttempt += 1;
     runtime.session = null;
     runtime.activeUserId = "";
     const save = switchUiToGuestSave();
@@ -829,6 +813,8 @@
 
   async function signInWithDiscord() {
     if (!runtime.client || runtime.busy) return false;
+    runtime.guestExplicit = false;
+    runtime.authAttempt += 1;
     runtime.busy = true;
     runtime.statusKey = "redirecting";
     runtime.errorKey = "";
@@ -874,6 +860,8 @@
       console.warn("[CHERRIFT Auth] Sign-out required local recovery.", error);
       clearLocalAuthArtifacts();
     }
+    runtime.guestExplicit = true;
+    runtime.authAttempt += 1;
     runtime.session = null;
     runtime.activeUserId = "";
     switchUiToGuestSave();
@@ -926,12 +914,15 @@
   }
 
   function processPendingAuthEvent() {
-    if (!runtime.bootstrapDone || !runtime.pendingAuthEvent) return;
+    if (!runtime.bootstrapDone || !runtime.started || !runtime.pendingAuthEvent) return;
+    if (runtime.discovering) return;
     const { event, session } = runtime.pendingAuthEvent;
     runtime.pendingAuthEvent = null;
     if (session?.user) {
+      if (runtime.guestExplicit) return;
       if (runtime.mode !== "discord" || runtime.activeUserId !== String(session.user.id)) {
-        completeDiscordSession(session).catch(error => {
+        const attempt = ++runtime.authAttempt;
+        completeDiscordSession(session, attempt).catch(error => {
           console.error("[CHERRIFT Auth] Session completion failed:", error);
         });
       }
@@ -946,50 +937,107 @@
     }
   }
 
-  async function startAuthGate() {
-    if (runtime.startPromise) return runtime.startPromise;
-    runtime.startPromise = (async () => {
-      ensureGate();
+  async function discoverSession() {
+    if (runtime.discoveryPromise) return runtime.discoveryPromise;
+    runtime.discoveryPromise = (async () => {
+      const oauthError = oauthErrorFromUrl();
+      const attempt = ++runtime.authAttempt;
+      runtime.discovering = true;
+      runtime.statusKey = "checking";
       renderGate();
-      if (runtime.bootstrapPromise) await runtime.bootstrapPromise;
-      if (runtime.session?.user && runtime.mode === "discord") {
-        closeGate("discord");
-      } else {
-        openGate({
-          errorKey:runtime.errorKey,
-          errorDetail:runtime.errorDetail
-        });
+
+      try {
+        if (!runtime.client) throw new Error("supabase_client_unavailable");
+        const sessionResult = await deadline(
+          () => runtime.client.auth.getSession(),
+          AUTH_TIMEOUT_MS,
+          "auth_session_timeout"
+        );
+        if (sessionResult?.error) throw sessionResult.error;
+        if (attempt !== runtime.authAttempt || runtime.guestExplicit) return false;
+
+        const session = sessionResult?.data?.session;
+        if (!session?.user) {
+          runtime.statusKey = "";
+          if (oauthError) {
+            runtime.errorKey = "loginFailed";
+            runtime.errorDetail = oauthError;
+          }
+          renderGate();
+          return false;
+        }
+
+        runtime.pendingAuthEvent = null;
+        return await completeDiscordSession(session, attempt);
+      } catch (error) {
+        if (attempt !== runtime.authAttempt || runtime.guestExplicit) return false;
+        console.warn("[CHERRIFT Auth] Background session discovery failed; Guest remains available.", error);
+        runtime.session = null;
+        runtime.activeUserId = "";
+        runtime.cloudReady = false;
+        runtime.offlineAccount = false;
+        runtime.statusKey = "";
+        runtime.errorKey = oauthError ? "loginFailed" : "serviceUnavailable";
+        runtime.errorDetail = oauthError || "";
+        renderGate();
+        return false;
+      } finally {
+        runtime.discovering = false;
+        cleanOAuthUrl();
+        window.setTimeout(processPendingAuthEvent, 0);
       }
-      syncAccountUi();
-      window.dispatchEvent(new CustomEvent("cherrift:runtime-ready", {
-        detail:{ mode:runtime.mode, signedIn:!!runtime.session?.user }
-      }));
-      return true;
     })();
-    return runtime.startPromise;
+    return runtime.discoveryPromise;
+  }
+
+  function startAuthGate() {
+    if (runtime.started) return true;
+    runtime.started = true;
+
+    if (!runtime.bootstrapDone) bootstrapSave(runtime.loadGuestSave);
+    if (!runtime.client) runtime.client = createClient();
+    openGate({
+      errorKey:runtime.errorKey,
+      errorDetail:runtime.errorDetail
+    });
+    syncAccountUi();
+    window.dispatchEvent(new CustomEvent("cherrift:runtime-ready", {
+      detail:{ mode:runtime.mode, signedIn:false }
+    }));
+
+    // Deliberately detached: neither a stuck browser Auth lock nor a slow
+    // player-api call can own the loading screen or disable Guest.
+    window.setTimeout(() => {
+      discoverSession().catch(error => {
+        console.error("[CHERRIFT Auth] Detached session discovery failed:", error);
+      });
+    }, 0);
+    // Register after the discovery timer. Even a custom client that invokes
+    // INITIAL_SESSION synchronously cannot start a second competing bootstrap
+    // before discoverSession() marks the attempt as active.
+    bindAuthSubscription();
+    return true;
   }
 
   function installRuntimeBridges() {
     installStorageBridge();
-    if (window.CHERRIFT_V060?.finishBoot && !window.CHERRIFT_V060.finishBoot.__authV2) {
-      const finish = function finishBootWithAuthV2() { return startAuthGate(); };
-      finish.__authV2 = true;
+    if (window.CHERRIFT_V060?.finishBoot && !window.CHERRIFT_V060.finishBoot.__authV3) {
+      const finish = function finishBootWithAuthV3() { return startAuthGate(); };
+      finish.__authV3 = true;
       window.CHERRIFT_V060.finishBoot = finish;
     }
     const previousInit = window.UI?.init?.bind(window.UI);
-    if (previousInit && !window.UI.init.__authV2) {
-      const wrapped = function initAuthV2(...args) {
+    if (previousInit && !window.UI.init.__authV3) {
+      const wrapped = function initAuthV3(...args) {
         const result = previousInit(...args);
         syncAccountUi();
         return result;
       };
-      wrapped.__authV2 = true;
+      wrapped.__authV3 = true;
       window.UI.init = wrapped;
     }
   }
 
-  runtime.client = createClient();
-  bindAuthSubscription();
   ensureGate();
   renderGate();
   installRuntimeBridges();
@@ -1052,5 +1100,5 @@
     applySessionForTesting:completeDiscordSession
   };
 
-  console.info(`[CHERRIFT] Auth ${VERSION} loaded with bounded Guest/Discord bootstrap.`);
+  console.info(`[CHERRIFT] Auth ${VERSION} loaded: local startup is independent from Supabase.`);
 })();

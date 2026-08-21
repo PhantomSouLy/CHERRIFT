@@ -26,12 +26,20 @@ create table if not exists public.account_entitlements (
   constraint account_entitlements_object check (jsonb_typeof(entitlements)='object')
 );
 
--- At migration time the project has one tester account. Preserve every existing
--- save as the owner account; accounts registered later receive normal progression.
+-- Only a real, active GM owner receives the owner entitlement. The previous
+-- version selected every game_saves row, so rerunning it after launch could
+-- accidentally promote every existing player. Joining gm_admins makes this
+-- migration genuinely safe to rerun without changing normal accounts.
 insert into public.account_entitlements (user_id,entitlements)
-select user_id,'{"owner":true,"allContent":true,"training":true,"allFrames":true,"beta":true,"preRegistration":true}'::jsonb
-from public.game_saves
-on conflict (user_id) do nothing;
+select saves.user_id,'{"owner":true,"allContent":true,"training":true,"allFrames":true,"beta":true,"preRegistration":true}'::jsonb
+from public.game_saves saves
+join public.gm_admins admins
+ on admins.user_id = saves.user_id
+ and admins.role = 'owner'
+ and admins.active = true
+on conflict (user_id) do update
+set entitlements = public.account_entitlements.entitlements || excluded.entitlements,
+    updated_at = now();
 
 create table if not exists public.player_profiles (
   user_id uuid primary key references auth.users(id) on delete cascade,

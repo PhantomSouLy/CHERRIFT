@@ -29,7 +29,11 @@ const authTimeoutCase = requested === "auth-timeout";
 const cloudTimeoutCase = requested === "cloud-timeout";
 const returning = requested === "returning-session" || cloudTimeoutCase;
 const runtimeErrors = [];
+const missingLocalRequests = [];
 let activeWindow = null;
+let authGetSessionCalls = 0;
+let authGetSessionBeforeUi = 0;
+let cloudBootstrapCalls = 0;
 
 function log(message) {
   console.log(`[boot-smoke] ${requested} · ${message}`);
@@ -139,6 +143,7 @@ const server = createServer(async (request, response) => {
     });
     response.end(await readFile(target));
   } catch (_) {
+    missingLocalRequests.push(String(request.url || ""));
     response.writeHead(404);
     response.end("Not found");
   }
@@ -289,6 +294,7 @@ function createFakeSupabase(window) {
 
     switch (action) {
       case "bootstrap_save": {
+        cloudBootstrapCalls += 1;
         if (cloudTimeoutCase) return new Promise(() => {});
         const save = fallbackStarterSave(window, session?.user?.id || "");
         return {
@@ -370,6 +376,10 @@ function createFakeSupabase(window) {
   const client = {
     auth: {
       async getSession() {
+        authGetSessionCalls += 1;
+        if (!window.UI?.save || !window.UI?.game) {
+          authGetSessionBeforeUi += 1;
+        }
         if (authTimeoutCase) return new Promise(() => {});
         return { data: { session }, error: null };
       },
@@ -390,7 +400,10 @@ function createFakeSupabase(window) {
 
       onAuthStateChange(callback) {
         authListeners.add(callback);
-        queueMicrotask(() => callback("INITIAL_SESSION", session));
+        // Returning-session deliberately invokes synchronously. Auth v3 must
+        // still deduplicate this event with its detached getSession probe.
+        if (requested === "returning-session") callback("INITIAL_SESSION", session);
+        else queueMicrotask(() => callback("INITIAL_SESSION", session));
 
         return {
           data: {
@@ -461,7 +474,10 @@ function installBrowserStubs(window) {
 
   if (authTimeoutCase || cloudTimeoutCase) {
     window.CHERRIFT_TIMEOUTS = {
-      authBootstrapMs:120,
+      // The auth-timeout case intentionally outlives the whole Guest login
+      // assertion. Passing proves that getSession() is detached from startup,
+      // rather than merely hidden behind another short timeout.
+      authBootstrapMs:authTimeoutCase ? 30000 : 120,
       authSessionMs:100,
       authLockMs:100,
       cloudBootstrapMs:180,
@@ -863,6 +879,13 @@ try {
       20000
     );
 
+    if (authTimeoutCase) {
+      assert.ok(
+        authGetSessionCalls > 0,
+        "auth-timeout: the never-settling background session probe is active"
+      );
+    }
+
     log("choosing Guest");
     click(
       window,
@@ -891,6 +914,12 @@ try {
   const state = window.CHERRIFT_BOOT.getState();
   const auth = window.CHERRIFT_AUTH?.getState?.();
 
+  assert.equal(
+    authGetSessionBeforeUi,
+    0,
+    `${requested}: Supabase session discovery never runs before UI/save/game initialization`
+  );
+
   if (cloudTimeoutCase) {
     assert.equal(auth?.mode, "discord", "cloud-timeout: Discord identity remains active");
     assert.equal(auth?.cloudReady, false, "cloud-timeout: unavailable cloud is not reported ready");
@@ -899,6 +928,14 @@ try {
       window.UI?.save?.security?.accountOwnerId,
       "returning-user",
       "cloud-timeout: fallback remains bound to the authenticated account"
+    );
+  }
+
+  if (returning) {
+    assert.equal(
+      cloudBootstrapCalls,
+      1,
+      `${requested}: INITIAL_SESSION and getSession share one cloud bootstrap`
     );
   }
 
@@ -969,6 +1006,12 @@ try {
     window.__CHERRIFT_CLEAN_RUNTIME__ ||
       window.__CHERRIFT_RUNTIME_READY__,
     `${requested}: Clean Runtime active`
+  );
+
+  assert.deepEqual(
+    missingLocalRequests,
+    [],
+    `${requested}: active startup makes no missing local file request`
   );
 
   assert.equal(

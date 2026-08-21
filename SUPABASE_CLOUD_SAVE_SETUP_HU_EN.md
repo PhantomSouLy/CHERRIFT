@@ -9,10 +9,13 @@ A Discord-login és a játékmentés két külön Supabase-rész. Az Auth már a
 1. Nyisd meg a Supabase Dashboardot.
 2. Válaszd ki a CHERRIFT projektet.
 3. Menj a **SQL Editor** oldalra.
-4. Nyisd meg a repositoryban található `supabase/game_saves.sql` fájlt.
+4. Nyisd meg a repositoryban található
+   `supabase/migrations/20260821_auth_runtime_guard.sql` fájlt.
 5. Másold be a teljes tartalmát, majd nyomd meg a **Run** gombot.
 6. A Table Editorban ellenőrizd, hogy megjelent-e a `game_saves` tábla.
 7. A játékban jelentkezz be Discorddal.
+8. Futtasd a `supabase/VERIFY_CURRENT_SCHEMA.sql` ellenőrzőt. Minden kötelező
+   sornak `PASS` állapotúnak kell lennie.
 
 Az első Discord-belépéskor:
 
@@ -33,16 +36,26 @@ Az első Discord-belépéskor:
 
 Discord-belépés után a Table Editor → `game_saves` alatt egy sornak kell megjelennie. A `user_id` a Supabase Authentication → Users oldalon látható felhasználói UUID-vel egyezik meg. A teljes játékállás a `save_data` JSONB mezőben található.
 
+A publikus, adatot nem módosító élő ellenőrzés:
+
+```bash
+npm run verify:supabase-public
+```
+
 ## English
 
 Discord authentication and game saving are separate Supabase features. Auth identifies the player; cloud saving also requires the `public.game_saves` table and per-user Row Level Security policies.
 
 1. Open the Supabase Dashboard and select the CHERRIFT project.
 2. Open **SQL Editor**.
-3. Copy and run the complete `supabase/game_saves.sql` file from this repository.
+3. Copy and run the complete
+   `supabase/migrations/20260821_auth_runtime_guard.sql` file from this repository.
 4. Confirm that `game_saves` appears in Table Editor.
 5. Sign in to the game with Discord.
+6. Run `supabase/VERIFY_CURRENT_SCHEMA.sql` and require PASS for every mandatory check.
 
 On the first Discord sign-in, an existing cloud save is loaded. If no cloud row exists yet, `player-api` creates a clean starter save dedicated to that Discord account; Guest progress is never silently imported into another identity. Guest progress remains separate in the browser. Discord progress is written to Supabase and to an account-bound local safety backup. Signing out restores the separate Guest save.
 
 RLS allows authenticated players to read only the row whose `user_id` matches their Supabase Auth UUID. Browser writes are disabled; all mutations go through `player-api`, which verifies the JWT again and binds the payload to that UUID. The anonymous role has no table access.
+
+Run `npm run verify:supabase-public` for the non-mutating public deployment check.

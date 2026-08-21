@@ -5,8 +5,11 @@
   "type": "module",
   "scripts": {
     "validate": "node tools/validate.mjs",
+    "audit": "node --no-warnings tools/audit_repo.mjs",
+    "verify:supabase-public": "node tools/verify_supabase_public.mjs",
+    "smoke:supabase-lock": "node tools/smoke_supabase_auth_timeout_fix.mjs",
     "smoke": "node tools/smoke_09551.mjs",
-    "test": "npm run validate && npm run smoke"
+    "test": "npm run validate && npm run audit && npm run smoke:supabase-lock && npm run smoke"
   },
   "devDependencies": {
     "css-tree": "^3.1.0",

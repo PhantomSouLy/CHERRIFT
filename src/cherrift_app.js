@@ -4463,13 +4463,7 @@ console.info(`[CHERRIFT] ${VERSION} loaded. Mode: ${enabled ? "ON" : "OFF"}`);
   }
 
   function injectUI() {
-    if (!id("v050Style")) {
-      const link = document.createElement("link");
-      link.id = "v050Style";
-      link.rel = "stylesheet";
-      link.href = "v050.css?v=050";
-      document.head.appendChild(link);
-    }
+    document.documentElement.dataset.v050Css = "bundled";
 
     const news = q(".news-card .news-row");
     if (news && !id("accountProgressV050")) {
@@ -4814,12 +4808,7 @@ console.info(`[CHERRIFT] ${VERSION} loaded. Mode: ${enabled ? "ON" : "OFF"}`);
   }
 
   function ensureStyles() {
-    if (document.getElementById("mobileV051Styles")) return;
-    const link = document.createElement("link");
-    link.id = "mobileV051Styles";
-    link.rel = "stylesheet";
-    link.href = "mobile_v051.css?v=051";
-    document.head.appendChild(link);
+    document.documentElement.dataset.mobileV051Css = "bundled";
   }
 
   function isPhoneMode() {
@@ -5077,7 +5066,7 @@ const id=n=>document.getElementById(n);
 const q=(s,r=document)=>r.querySelector(s);
 const qa=(s,r=document)=>Array.from(r.querySelectorAll(s));
 if(!window.UI||!window.CherriftStorage||!window.CherriftGame||!window.CHERRIFT_V040){console.error("[CHERRIFT v0.5.2] Dependencies missing");return;}
-function ensureCss(){if(id("v052css"))return;const l=document.createElement("link");l.id="v052css";l.rel="stylesheet";l.href="v052.css?v=052";document.head.appendChild(l);}
+function ensureCss(){document.documentElement.dataset.v052Css="bundled";}
 function levelCost(level){return window.CHERRIFT_BALANCE?.xpToNext?.(level)||Math.floor(500+Math.pow(Math.max(1,level),1.72)*260);}
 const TREE={
  power:{name:"Bloom Power",icon:"⚔️",desc:"+3% base damage per rank",max:10},
@@ -5224,12 +5213,7 @@ console.info("[CHERRIFT v0.5.2] Manual progression, achievements and fixed mobil
   const levelCost = CHERRIFT_V052.levelCost;
 
   function ensureCss() {
-    if (id("v053css")) return;
-    const link = document.createElement("link");
-    link.id = "v053css";
-    link.rel = "stylesheet";
-    link.href = "v053.css?v=053";
-    document.head.appendChild(link);
+    document.documentElement.dataset.v053Css = "bundled";
   }
 
   function normalize(save) {
@@ -5477,7 +5461,7 @@ console.info("[CHERRIFT v0.5.2] Manual progression, achievements and fixed mobil
 'use strict';
 const id=n=>document.getElementById(n), q=(s,r=document)=>r.querySelector(s), qa=(s,r=document)=>[...r.querySelectorAll(s)];
 if(!window.UI||!window.CherriftStorage||!window.CHERRIFT_V053)return console.error('[v0.5.5a] v0.5.3 required');
-if(!id('v055css')){const l=document.createElement('link');l.id='v055css';l.rel='stylesheet';l.href='v055.css?v=055';document.head.appendChild(l)}
+document.documentElement.dataset.v055Css='bundled';
 const dayKey=(date=new Date())=>[
  date.getFullYear(),
  String(date.getMonth()+1).padStart(2,'0'),
@@ -5571,12 +5555,7 @@ if (!window.UI || !window.CHERRIFT_V055C || !window.CHERRIFT_V053) {
 }
 
 function ensureCss() {
-  if (id("v0551css")) return;
-  const link = document.createElement("link");
-  link.id = "v0551css";
-  link.rel = "stylesheet";
-  link.href = "v0551.css?v=0551";
-  document.head.appendChild(link);
+  document.documentElement.dataset.v0551Css = "bundled";
 }
 
 function hideMobileNavDuringGameStates() {
@@ -5918,7 +5897,7 @@ console.info("[CHERRIFT] v0.5.5.1 mobile hotfix loaded.");
 const VERSION="0.5.5.2-mobile-animated-gear-layout";
 const id=n=>document.getElementById(n),q=(s,r=document)=>r.querySelector(s),qa=(s,r=document)=>Array.from(r.querySelectorAll(s)),mobile=()=>matchMedia("(max-width:820px)").matches;
 if(!window.UI||!window.CHERRIFT_V0551||!window.CHERRIFT_CONFIG){console.error("[CHERRIFT v0.5.5.2] v0.5.5.1 required.");return;}
-function ensureCss(){if(id("v0552css"))return;const l=document.createElement("link");l.id="v0552css";l.rel="stylesheet";l.href="v0552.css?v=0552";document.head.appendChild(l)}
+function ensureCss(){document.documentElement.dataset.v0552Css="bundled";}
 function itemPower(item){return window.CHERRIFT_V050?.itemPower?.(item)||Math.round(Object.values(item?.stats||{}).reduce((a,b)=>a+(+b||0),0))}
 function rarityClass(item){return `rarity-${String(item?.rarity||"Common").toLowerCase()}`}
 function gearEmoji(item){return item?(UI.gearEmoji?.(item)||"⚙️"):"＋"}
@@ -7275,12 +7254,7 @@ if (!window.CherriftGame || !window.CHERRIFT_V0556 || !window.CHERRIFT_CONFIG ||
 }
 
 function addCss() {
-  if (id("v0557css")) return;
-  const link = document.createElement("link");
-  link.id = "v0557css";
-  link.rel = "stylesheet";
-  link.href = "v0557.css?v=0557";
-  document.head.appendChild(link);
+  document.documentElement.dataset.v0557Css = "bundled";
   document.body.classList.add("ui-assets-v0557");
 }
 
@@ -7962,11 +7936,6 @@ if (!window.CherriftGame || !window.CHERRIFT_V0558) {
 function restoreClassicUi() {
   document.body.classList.remove("ui-assets-v0557");
 
-  const stylesheet = document.getElementById("v0557css");
-  if (stylesheet) {
-    stylesheet.href = "v0557.css?v=0559-classic-reset";
-  }
-
   /*
    * These backgrounds were supplied only by the removed stylesheet.
    * Clearing inline remnants keeps the old CSS UI authoritative.
@@ -8207,12 +8176,7 @@ let dragCandidate = null;
 let activeDrag = null;
 
 function ensureCss() {
-  if (id("v0560css")) return;
-  const link = document.createElement("link");
-  link.id = "v0560css";
-  link.rel = "stylesheet";
-  link.href = "v0560.css?v=0560";
-  document.head.appendChild(link);
+  document.documentElement.dataset.v0560Css = "bundled";
 }
 
 function escapeHtml(value) {
@@ -9186,12 +9150,7 @@ if (
 }
 
 function ensureCss() {
-  if (id("v0561css")) return;
-  const link = document.createElement("link");
-  link.id = "v0561css";
-  link.rel = "stylesheet";
-  link.href = "v0561.css?v=0561";
-  document.head.appendChild(link);
+  document.documentElement.dataset.v0561Css = "bundled";
 }
 
 function makeDirections(state) {
@@ -12147,12 +12106,7 @@ CHERRIFT_CONFIG.version = VERSION;
 CHERRIFT_DATA.version = VERSION;
 
 function ensureCss() {
-  if (id("v062css")) return;
-  const link = document.createElement("link");
-  link.id = "v062css";
-  link.rel = "stylesheet";
-  link.href = "v062.css?v=062";
-  document.head.appendChild(link);
+  document.documentElement.dataset.v062Css = "bundled";
 }
 
 function clearCombatChrome() {
@@ -12763,12 +12717,7 @@ function patchGearIcons() {
 }
 
 function ensureCss() {
-  if (id("v063css")) return;
-  const link = document.createElement("link");
-  link.id = "v063css";
-  link.rel = "stylesheet";
-  link.href = "v063.css?v=063";
-  document.head.appendChild(link);
+  document.documentElement.dataset.v063Css = "bundled";
 }
 
 function ensurePanels() {
@@ -14744,12 +14693,7 @@ function patchStageRewards() {
 }
 
 function ensureCss() {
-  if (id("v070css")) return;
-  const link = document.createElement("link");
-  link.id = "v070css";
-  link.rel = "stylesheet";
-  link.href = "v070.css?v=070";
-  document.head.appendChild(link);
+  document.documentElement.dataset.v070Css = "bundled";
 }
 function ensurePanel() {
   if (id("arsenalV070")) return;
@@ -15374,7 +15318,7 @@ function patchCoinSelling(){
   }
   UI.__v080SellBuff=true;
 }
-function ensureCss(){if(id("v080css"))return;const link=document.createElement("link");link.id="v080css";link.rel="stylesheet";link.href="v080.css?v=080";document.head.appendChild(link);}
+function ensureCss(){document.documentElement.dataset.v080Css="bundled";}
 function imageOrFallback(asset,icon,label){return `<span class="v080-art"><img src="${escapeHtml(asset||"")}" alt="${escapeHtml(label)}" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><i hidden>${icon||"✦"}</i></span>`;}
 function ensureHub(){
   const panel=id("chests"); if(!panel||panel.dataset.v080Ready)return;
@@ -15509,12 +15453,7 @@ if (!window.UI || !window.CHERRIFT_V070) {
 }
 
 function ensureCss() {
-  if (id("v081css")) return;
-  const link = document.createElement("link");
-  link.id = "v081css";
-  link.rel = "stylesheet";
-  link.href = "v081.css?v=081";
-  document.head.appendChild(link);
+  document.documentElement.dataset.v081Css = "bundled";
 }
 
 function arsenalPanel() {
@@ -15914,10 +15853,7 @@ function resetSkillTree(){
 }
 
 function ensureCss(){
-  if(id("v082css"))return;
-  const link=document.createElement("link");
-  link.id="v082css";link.rel="stylesheet";link.href="v082.css?v=082";
-  document.head.appendChild(link);
+  document.documentElement.dataset.v082Css="bundled";
 }
 function ensureModal(){
   if(id("v082Modal"))return;
@@ -16902,12 +16838,7 @@ function playRewardSound() {
 }
 
 function ensureCss() {
-  if (id("v083css")) return;
-  const link = document.createElement("link");
-  link.id = "v083css";
-  link.rel = "stylesheet";
-  link.href = "v083.css?v=083";
-  document.head.appendChild(link);
+  document.documentElement.dataset.v083Css = "bundled";
 }
 
 function imageMarkup(source, alt, className = "item-icon-v083") {
@@ -17556,12 +17487,7 @@ function safeCount(value) { return Math.max(0, Math.floor(Number(value) || 0)); 
 function visible(element) { return !!element && !element.classList.contains("hidden") && getComputedStyle(element).display !== "none"; }
 
 function ensureCss() {
-  if (id("v084css")) return;
-  const link = document.createElement("link");
-  link.id = "v084css";
-  link.rel = "stylesheet";
-  link.href = "v084.css?v=084";
-  document.head.appendChild(link);
+  document.documentElement.dataset.v084Css = "bundled";
 }
 
 function hideCustomPanelsExcept(panelId = "") {
@@ -18026,12 +17952,7 @@ const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 if (!window.CherriftGame || !window.UI || !window.CHERRIFT_CONFIG) return;
 
 function ensureCss() {
-  if (id("v085css")) return;
-  const link = document.createElement("link");
-  link.id = "v085css";
-  link.rel = "stylesheet";
-  link.href = "v085.css?v=090";
-  document.head.appendChild(link);
+  document.documentElement.dataset.v085Css = "bundled";
 }
 
 function normalizeSettings(save) {
@@ -18383,12 +18304,7 @@ const DISPLAY_VERSION = "v0.8.6";
 if (!window.CherriftGame || !window.UI) return;
 
 function ensureCss() {
-  if (document.getElementById("v086css")) return;
-  const link = document.createElement("link");
-  link.id = "v086css";
-  link.rel = "stylesheet";
-  link.href = "v086.css?v=090";
-  document.head.appendChild(link);
+  document.documentElement.dataset.v086Css = "bundled";
 }
 
 function hash(seed) {
@@ -18511,12 +18427,7 @@ const DIRECTIONS = ["down", "up", "left", "right"];
 if (!window.CherriftGame || !window.CHERRIFT_CONFIG || !window.CHERRIFT_DATA || !window.CherriftStorage) return;
 
 function ensureCss() {
-  if (document.getElementById("v087css")) return;
-  const link = document.createElement("link");
-  link.id = "v087css";
-  link.rel = "stylesheet";
-  link.href = "v087.css?v=090";
-  document.head.appendChild(link);
+  document.documentElement.dataset.v087Css = "bundled";
 }
 
 function state(folder, name, frames, fps, duration) {
@@ -18809,10 +18720,7 @@ const DISPLAY_VERSION = "v0.8.8";
 if (!window.CherriftGame) return;
 
 function ensureCss() {
-  if (document.getElementById("v088css")) return;
-  const link=document.createElement("link");
-  link.id="v088css";link.rel="stylesheet";link.href="v088.css?v=090";
-  document.head.appendChild(link);
+  document.documentElement.dataset.v088Css="bundled";
 }
 
 const proto=CherriftGame.prototype;
@@ -18937,8 +18845,7 @@ if(!window.CherriftGame||!window.UI)return;
 const id=value=>document.getElementById(value);
 
 function ensureCss(){
-  if(id("v089css"))return;
-  const link=document.createElement("link");link.id="v089css";link.rel="stylesheet";link.href="v089.css?v=090";document.head.appendChild(link);
+  document.documentElement.dataset.v089Css="bundled";
 }
 
 const proto=CherriftGame.prototype;
@@ -19051,8 +18958,7 @@ if(!window.UI||!window.CHERRIFT_CONFIG||!window.CHERRIFT_DATA)return;
 const language=()=>window.CHERRIFT_I18N?.language==="en"||window.UI?.save?.settings?.language==="en"?"en":"hu";
 
 function ensureCss(){
-  if(id("v090css"))return;
-  const link=document.createElement("link");link.id="v090css";link.rel="stylesheet";link.href=`v090.css?v=${CACHE_VERSION}`;document.head.appendChild(link);
+  document.documentElement.dataset.v090Css="bundled";
 }
 
 const ART={
@@ -20233,12 +20139,7 @@ function patchGameplay() {
 }
 
 function ensureCss() {
-  if (id("v091css")) return;
-  const link = document.createElement("link");
-  link.id = "v091css";
-  link.rel = "stylesheet";
-  link.href = `v091.css?v=${CACHE_VERSION}`;
-  document.head.appendChild(link);
+  document.documentElement.dataset.v091Css = "bundled";
 }
 
 function archetypeLabel(archetype) {
@@ -20411,12 +20312,7 @@ if (!window.CherriftGame || !window.CHERRIFT_CONFIG || !window.UI || !window.Che
 }
 
 function ensureCss() {
-  if (id("v092css")) return;
-  const link = document.createElement("link");
-  link.id = "v092css";
-  link.rel = "stylesheet";
-  link.href = "v092.css?v=092";
-  document.head.appendChild(link);
+  document.documentElement.dataset.v092Css = "bundled";
 }
 
 function language() {
@@ -20766,12 +20662,7 @@ const state = {
 };
 
 function ensureCss() {
-  if (id("v093css")) return;
-  const link = document.createElement("link");
-  link.id = "v093css";
-  link.rel = "stylesheet";
-  link.href = "v093.css?v=093";
-  document.head.appendChild(link);
+  document.documentElement.dataset.v093Css = "bundled";
 }
 
 function ensureSave(save = UI.save) {
@@ -21460,12 +21351,7 @@ function deepClone(value) {
 }
 
 function ensureCss() {
-  if (id("v0931css")) return;
-  const link = document.createElement("link");
-  link.id = "v0931css";
-  link.rel = "stylesheet";
-  link.href = `v0931.css?v=${CACHE_VERSION}`;
-  document.head.appendChild(link);
+  document.documentElement.dataset.v0931Css = "bundled";
 }
 
 function suppressRewardSave(save) {
@@ -22566,12 +22452,7 @@ function deepClone(value) {
   return JSON.parse(JSON.stringify(value ?? null));
 }
 function ensureCss() {
-  if (id("v0932css")) return;
-  const link = document.createElement("link");
-  link.id = "v0932css";
-  link.rel = "stylesheet";
-  link.href = `v0932.css?v=${CACHE_VERSION}`;
-  document.head.appendChild(link);
+  document.documentElement.dataset.v0932Css = "bundled";
 }
 function cachedImage(source) {
   if (!source) return null;
@@ -23915,12 +23796,7 @@ function ensureSave(save = UI.save) {
 }
 
 function ensureCss() {
-  if (id("v094css")) return;
-  const link = document.createElement("link");
-  link.id = "v094css";
-  link.rel = "stylesheet";
-  link.href = `v094.css?v=${CACHE_VERSION}`;
-  document.head.appendChild(link);
+  document.documentElement.dataset.v094Css = "bundled";
 }
 
 function ensureWorldScreen() {
@@ -25903,13 +25779,8 @@ function isUnlocked(themeId, save = window.UI?.save) {
 }
 
 function ensureCss() {
-  if (document.getElementById(STYLE_ID)) return;
-  const link = document.createElement("link");
-  link.id = STYLE_ID;
-  link.rel = "stylesheet";
-  link.href = "assets/ui/themes/theme_system.css?v=7";
-  link.onload = () => document.documentElement.classList.add("cherrift-theme-css-ready");
-  document.head.appendChild(link);
+  document.documentElement.dataset.themeSystemCss = "bundled";
+  document.documentElement.classList.add("cherrift-theme-css-ready");
 }
 
 function updateBrowserThemeColor(themeId) {
@@ -27108,8 +26979,11 @@ window.addEventListener("DOMContentLoaded", async () => {
     updateBoot(38, "Checking account and save…");
     const loadGuestSave = () => CherriftStorage.load();
     const save = window.CHERRIFT_AUTH?.bootstrapSave
-      ? await window.CHERRIFT_AUTH.bootstrapSave(loadGuestSave)
+      ? window.CHERRIFT_AUTH.bootstrapSave(loadGuestSave)
       : loadGuestSave();
+    if (!save || typeof save.then === "function") {
+      throw new Error("auth_bootstrap_must_be_synchronous");
+    }
     updateBoot(44, window.CHERRIFT_AUTH?.getState?.().mode === "discord" ? "Loading cloud save…" : "Reading local progress…");
 
     if (window.CHERRIFT_V060?.preload) {

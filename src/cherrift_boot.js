@@ -645,12 +645,14 @@
 
     const target = targetProgress();
 
+    const remaining = Math.max(0, target - shownProgress);
+    const step = remaining > 0
+      ? Math.min(remaining, Math.max(1, remaining * .09))
+      : 0;
+
+    // Never fabricate progress past the readiness phase that actually exists.
     paintProgress(
-      shownProgress +
-        Math.max(
-          .25,
-          (target - shownProgress) * .09
-        ),
+      Math.min(target, shownProgress + step),
       loadingMessage()
     );
 

@@ -1,9 +1,0 @@
-index.html kötelező cache-bust
-
-KERESD:
-<script src="src/cherrift_supabase_timeout_fix.js?v=097singleton1"></script>
-
-CSERÉLD:
-<script src="src/cherrift_supabase_timeout_fix.js?v=0977lock1"></script>
-
-Ha nálad már ?v=097singleton2 szerepel, azt is ?v=0977lock1-re cseréld.

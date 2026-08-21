@@ -3,3 +3,8 @@ verify_jwt = true
 
 [functions.player-api]
 verify_jwt = true
+
+# Guest players can submit the in-game feedback form. The function validates
+# payload/file limits and owns the private Discord webhook server-side.
+[functions.submit-report]
+verify_jwt = false
