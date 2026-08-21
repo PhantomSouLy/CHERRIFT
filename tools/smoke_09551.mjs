@@ -10,7 +10,9 @@ const allCases = [
   "short-desktop",
   "phone-portrait",
   "phone-landscape",
-  "returning-session"
+  "returning-session",
+  "auth-timeout",
+  "cloud-timeout"
 ];
 
 const requested = process.argv

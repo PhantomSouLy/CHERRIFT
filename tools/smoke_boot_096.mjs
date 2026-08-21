@@ -15,7 +15,9 @@ const cases = {
   "short-desktop": [1128, 584],
   "phone-portrait": [390, 844],
   "phone-landscape": [844, 390],
-  "returning-session": [1280, 760]
+  "returning-session": [1280, 760],
+  "auth-timeout": [1280, 760],
+  "cloud-timeout": [390, 844]
 };
 
 if (!cases[requested]) {
@@ -23,7 +25,9 @@ if (!cases[requested]) {
 }
 
 const [width, height] = cases[requested];
-const returning = requested === "returning-session";
+const authTimeoutCase = requested === "auth-timeout";
+const cloudTimeoutCase = requested === "cloud-timeout";
+const returning = requested === "returning-session" || cloudTimeoutCase;
 const runtimeErrors = [];
 let activeWindow = null;
 
@@ -285,6 +289,7 @@ function createFakeSupabase(window) {
 
     switch (action) {
       case "bootstrap_save": {
+        if (cloudTimeoutCase) return new Promise(() => {});
         const save = fallbackStarterSave(window, session?.user?.id || "");
         return {
           data: {
@@ -365,6 +370,7 @@ function createFakeSupabase(window) {
   const client = {
     auth: {
       async getSession() {
+        if (authTimeoutCase) return new Promise(() => {});
         return { data: { session }, error: null };
       },
 
@@ -452,6 +458,18 @@ function createFakeSupabase(window) {
 
 function installBrowserStubs(window) {
   window.__CHERRIFT_BOOT_SMOKE__ = true;
+
+  if (authTimeoutCase || cloudTimeoutCase) {
+    window.CHERRIFT_TIMEOUTS = {
+      authBootstrapMs:120,
+      authSessionMs:100,
+      authLockMs:100,
+      cloudBootstrapMs:180,
+      functionInvokeMs:150,
+      oauthStartMs:120,
+      authSignOutMs:120
+    };
+  }
 
   // IMPORTANT: do not globally shorten browser timers.
   // The previous 20 ms clamp accelerated polling/refresh loops until JSDOM
@@ -872,6 +890,41 @@ try {
 
   const state = window.CHERRIFT_BOOT.getState();
   const auth = window.CHERRIFT_AUTH?.getState?.();
+
+  if (cloudTimeoutCase) {
+    assert.equal(auth?.mode, "discord", "cloud-timeout: Discord identity remains active");
+    assert.equal(auth?.cloudReady, false, "cloud-timeout: unavailable cloud is not reported ready");
+    assert.equal(auth?.offlineAccount, true, "cloud-timeout: account-bound fallback is active");
+    assert.equal(
+      window.UI?.save?.security?.accountOwnerId,
+      "returning-user",
+      "cloud-timeout: fallback remains bound to the authenticated account"
+    );
+  }
+
+  if (requested === "returning-session") {
+    window.UI.save.coins = 4321;
+    window.CherriftStorage.save(window.UI.save);
+    const backup = JSON.parse(
+      window.localStorage.getItem("cherrift-discord-backup-v2:returning-user") || "null"
+    );
+    assert.equal(backup?.saveData?.coins, 4321, "returning-session: account backup is synchronous");
+
+    await window.CHERRIFT_AUTH.applySessionForTesting({
+      user:{
+        id:"brand-new-discord-user",
+        user_metadata:{ full_name:"Brand New Cherry" },
+        identities:[{
+          provider:"discord",
+          identity_data:{ provider_id:"1122334455" }
+        }]
+      }
+    });
+
+    assert.equal(window.CHERRIFT_AUTH.getState().account?.id, "brand-new-discord-user", "returning-session: account switch changes UUID");
+    assert.equal(window.UI.save.security?.accountOwnerId, "brand-new-discord-user", "returning-session: save owner follows switched UUID");
+    assert.equal(window.UI.save.coins, 500, "returning-session: previous account currency is not inherited");
+  }
 
   log(
     `ready · mode=${auth?.mode || "unknown"} · ` +

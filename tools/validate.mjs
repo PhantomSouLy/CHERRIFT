@@ -159,9 +159,15 @@ else {
     if (/^(?:https?:|data:|#)/i.test(reference)) continue;
     if (!existsSync(join(root, reference))) errors.push(`index.html: missing local dependency ${reference}`);
   }
+
+  const appScriptIndex = html.indexOf('src="src/cherrift_app.js');
+  const authScriptIndex = html.indexOf('src="src/cherrift_auth.js');
+  if (appScriptIndex < 0 || authScriptIndex < 0 || authScriptIndex < appScriptIndex) {
+    errors.push("index.html: standalone auth must load immediately after cherrift_app.js");
+  }
 }
 
-for (const required of ["src/cherrift_app.js", "assets/cherrift_app.css", "src/config.js", "src/cherrift_fixpack_095.js"]) {
+for (const required of ["src/cherrift_app.js", "src/cherrift_auth.js", "assets/cherrift_app.css", "src/config.js", "src/cherrift_fixpack_095.js"]) {
   if (!existsSync(join(root, required))) errors.push(`${required}: required runtime file is missing`);
 }
 
@@ -178,8 +184,16 @@ else {
 const runtimePath = join(root, "src", "cherrift_app.js");
 if (existsSync(runtimePath)) {
   const runtime = readFileSync(runtimePath, "utf8");
-  for (const marker of ["signInWithOAuth", 'provider: "discord"', "persistSession", "signOut", "0.9.5"]) {
-    if (!runtime.includes(marker)) errors.push(`src/cherrift_app.js: bundled runtime marker is missing: ${marker}`);
+  for (const marker of ["__CHERRIFT_EXTERNAL_AUTH__", "0.9.5"]) {
+    if (!runtime.includes(marker)) errors.push(`src/cherrift_app.js: runtime marker is missing: ${marker}`);
+  }
+}
+
+const authPath = join(root, "src", "cherrift_auth.js");
+if (existsSync(authPath)) {
+  const auth = readFileSync(authPath, "utf8");
+  for (const marker of ["signInWithOAuth", 'provider:"discord"', "auth_session_timeout", "player_api_${action}_timeout", "cherrift-discord-backup-v2", "guestEnabled", "getClient"]) {
+    if (!auth.includes(marker)) errors.push(`src/cherrift_auth.js: auth safety marker is missing: ${marker}`);
   }
 }
 
@@ -188,6 +202,7 @@ if (!existsSync(authConfigPath)) errors.push("src/supabase_config.js: missing pu
 else {
   const authConfig = readFileSync(authConfigPath, "utf8");
   if (/sb_(?:secret|service_role)_[A-Za-z0-9_-]+/i.test(authConfig)) errors.push("src/supabase_config.js: service-role material must never be shipped to the browser");
+  if (!authConfig.includes("__CHERRIFT_EXTERNAL_AUTH__")) errors.push("src/supabase_config.js: standalone auth activation marker is missing");
 }
 
 function pngInfo(file) {

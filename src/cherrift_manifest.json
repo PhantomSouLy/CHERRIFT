@@ -1,8 +1,9 @@
 {
-  "runtimeVersion": "1.6.2-clean-runtime-network-recovery",
+  "runtimeVersion": "1.7.0-auth-bootstrap-v2",
   "gameVersion": "0.9.5-prebeta.1",
   "javascript": "src/cherrift_app.js",
   "runtime": "src/cherrift_runtime.js",
+  "auth": "src/cherrift_auth.js",
   "stylesheet": "assets/cherrift_app.css",
   "runtimeStylesheet": "assets/cherrift_runtime.css",
   "externalConfiguration": [
@@ -14,6 +15,10 @@
     "vendor/supabase-js-2.110.7.js"
   ],
   "includedHotfixes": [
+    "Standalone deterministic Guest and Discord auth with hard session and cloud deadlines",
+    "One shared Supabase client for Auth, cloud save, Mail and reward services",
+    "Verified per-Discord-account local backup with safe cloud conflict recovery",
+    "Smoke coverage for stalled Auth sessions and stalled cloud bootstrap calls",
     "Smoke cases run as an isolated two-worker matrix with per-case progress and a hard timeout",
     "Mail and reward live services connect in the background and no longer block the Start screen",
     "Supabase requests are bounded so a stalled cloud endpoint cannot freeze startup",
@@ -48,11 +53,15 @@
   "updateFiles": [
     "index.html",
     "tools/smoke_09551.mjs",
+    "tools/smoke_boot_096.mjs",
+    ".github/workflows/ci.yml",
     "src/cherrift_network_guard.js",
     "src/cherrift_boot.js",
     "src/cherrift_runtime.js",
     "assets/cherrift_runtime.css",
     "src/supabase_config.js",
+    "src/cherrift_auth.js",
+    "AUTH_BOOTSTRAP_V2_HU.md",
     "src/cherrift_live_services.js",
     "src/cherrift_gacha.js",
     "src/cherrift_account_mail.js",

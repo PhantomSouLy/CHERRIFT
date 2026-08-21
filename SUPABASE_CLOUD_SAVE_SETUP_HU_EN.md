@@ -17,16 +17,16 @@ A Discord-login és a játékmentés két külön Supabase-rész. Az Auth már a
 Az első Discord-belépéskor:
 
 - ha ehhez a Discord-fiókhoz már tartozik mentés, a játék azt tölti be;
-- ha még nincs felhőmentés, a jelenlegi Guest-mentés egyszer felmásolódik a Discord-fiókhoz;
+- ha még nincs felhőmentés, a `player-api` külön, tiszta kezdőmentést hoz létre ehhez a Discord-fiókhoz;
 - a Guest-mentés ettől nem törlődik, külön helyi mentésként megmarad;
-- Discord módban a további változások kizárólag a Supabase `game_saves` táblájába kerülnek;
+- Discord módban a további változások a Supabase `game_saves` táblájába kerülnek, és ugyanahhoz a hitelesített UUID-hez kötött helyi biztonsági másolat is készül;
 - kijelentkezéskor a játék visszatölti a különálló Guest-mentést.
 
 ### Biztonság
 
 - A böngésző csak a nyilvános publishable kulcsot használja.
 - A Discord Client Secret és a Supabase service-role kulcs továbbra sem kerülhet a repositoryba.
-- A Row Level Security miatt egy bejelentkezett játékos csak azt a sort olvashatja és írhatja, amelynek `user_id` értéke a saját Supabase Auth azonosítója.
+- A Row Level Security miatt egy bejelentkezett játékos csak a saját sorát olvashatja közvetlenül. Minden módosítás a JWT-t újra ellenőrző `player-api` Edge Functionön keresztül történik.
 - Az `anon` szerepkör nem kap hozzáférést a mentéstáblához.
 
 ### Ellenőrzés
@@ -43,6 +43,6 @@ Discord authentication and game saving are separate Supabase features. Auth iden
 4. Confirm that `game_saves` appears in Table Editor.
 5. Sign in to the game with Discord.
 
-On the first Discord sign-in, an existing cloud save is loaded. If no cloud row exists yet, the current Guest save is copied to the Discord account once. Guest progress remains as a separate browser-local save. While Discord mode is active, subsequent progress is written only to Supabase. Signing out restores the separate Guest save.
+On the first Discord sign-in, an existing cloud save is loaded. If no cloud row exists yet, `player-api` creates a clean starter save dedicated to that Discord account; Guest progress is never silently imported into another identity. Guest progress remains separate in the browser. Discord progress is written to Supabase and to an account-bound local safety backup. Signing out restores the separate Guest save.
 
-RLS restricts every authenticated player to the row whose `user_id` matches their own Supabase Auth UUID. The anonymous role has no table access.
+RLS allows authenticated players to read only the row whose `user_id` matches their Supabase Auth UUID. Browser writes are disabled; all mutations go through `player-api`, which verifies the JWT again and binds the payload to that UUID. The anonymous role has no table access.

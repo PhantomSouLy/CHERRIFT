@@ -44,6 +44,8 @@ jobs:
           - phone-portrait
           - phone-landscape
           - returning-session
+          - auth-timeout
+          - cloud-timeout
 
     steps:
       - name: Check out repository

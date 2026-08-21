@@ -35,7 +35,9 @@ Supabase Dashboard → Authentication → URL Configuration:
 
   ```text
   https://phantomsouly.github.io/CHERRIFT/
+  https://phantomsouly.github.io/CHERRIFT/gm/
   http://localhost:8000/
+  http://localhost:8000/gm/
   ```
 
 A GitHub Pages útvonal kis- és nagybetűérzékeny, ezért a `CHERRIFT` részt pontosan így add meg.
@@ -72,7 +74,7 @@ The client integration is ready, but the Discord Developer Portal and Supabase D
    ```
 
 2. Enable Discord under Supabase Dashboard → Authentication → Providers and enter the Discord Client ID and Client Secret there.
-3. Under Authentication → URL Configuration set the Site URL to `https://phantomsouly.github.io/CHERRIFT/` and allow both that URL and `http://localhost:8000/` as Redirect URLs.
+3. Under Authentication → URL Configuration set the Site URL to `https://phantomsouly.github.io/CHERRIFT/` and allow the game and GM paths on both GitHub Pages and `http://localhost:8000/` as Redirect URLs. Keep the existing player URLs when adding the GM URLs.
 4. Run the repository's `supabase/game_saves.sql` file in the Supabase SQL Editor. See `SUPABASE_CLOUD_SAVE_SETUP_HU_EN.md` for details.
 5. Never commit the Discord Client Secret or a Supabase service-role key.
 6. Guest progress stays in localStorage. Discord progress is stored in the protected `game_saves` table.

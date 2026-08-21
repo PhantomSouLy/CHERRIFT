@@ -309,12 +309,16 @@
         return;
       }
 
+      const sharedAuthClient = window.CHERRIFT_AUTH?.getClient?.() || null;
       const factory = window.supabase?.createClient;
 
       if (
-        typeof factory !== "function" ||
-        !CONFIG.url ||
-        !CONFIG.publishableKey
+        !sharedAuthClient &&
+        (
+          typeof factory !== "function" ||
+          !CONFIG.url ||
+          !CONFIG.publishableKey
+        )
       ) {
         finishReady();
         return;
@@ -324,7 +328,7 @@
       // the SAME project/auth-storage client already owned by CHERRIFT Auth.
       // This removes the second GoTrueClient that previously raced for the
       // same browser lock/storage key.
-      state.client = factory(
+      state.client = sharedAuthClient || factory(
         CONFIG.url,
         CONFIG.publishableKey,
         {

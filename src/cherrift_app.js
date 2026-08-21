@@ -13379,6 +13379,8 @@ console.info("[CHERRIFT] v0.6.3 test-build systems loaded.");
 (() => {
 "use strict";
 
+if (window.__CHERRIFT_EXTERNAL_AUTH__) return;
+
 const VERSION = "0.9.5-auth.4-account-isolation";
 const CLOUD_SAVE_VERSION = "0.9.5-prebeta.2";
 const CONFIG = window.CHERRIFT_SUPABASE_CONFIG || {};
