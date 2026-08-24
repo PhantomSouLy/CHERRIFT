@@ -9,6 +9,8 @@
   --cr-line:rgba(255,203,228,.25);
   --cr-shadow:rgba(0,0,0,.38)
 }
+
+.gco-opening{position:relative;overflow:hidden}
 html[data-cherrift-theme]:not([data-cherrift-theme="default"]){
   --cr-surface:var(--theme-surface);
   --cr-surface-2:var(--theme-surface-2);
@@ -82,3 +84,41 @@ html[data-cherrift-theme]:not([data-cherrift-theme="default"]){
 }
 @media(max-width:680px){.cr-ach-shell{width:min(100% - 18px,720px)}.cr-ach-grid{grid-template-columns:1fr}.cr-ach-card{grid-template-columns:58px 1fr;min-height:120px}.cr-ach-action{grid-column:2;justify-self:start}}
 @media(max-width:520px){#skins .skin-art-v093{height:400px!important;min-height:400px!important}}
+
+/* v0.9.6: one canonical, three-branch player upgrade tree. */
+#playerUpgrade .skill-tree-track-v082{position:relative!important;box-sizing:border-box!important;width:max(940px,100%)!important;min-width:940px!important;min-height:720px!important;display:flex!important;flex-direction:column!important;align-items:center!important;gap:34px!important;padding:34px 42px 72px!important}
+#playerUpgrade .skill-root-v096{position:relative;z-index:3;width:132px;height:132px;display:grid;place-items:center;align-content:center;gap:5px;border:2px solid #ffc4df;border-radius:50%;color:#fff;background:radial-gradient(circle at 50% 35%,#e75c9e,#6d234d 70%,#2a1024);box-shadow:0 0 0 10px rgba(230,85,155,.09),0 0 42px rgba(237,90,166,.42)}
+#playerUpgrade .skill-root-v096::after{content:"";position:absolute;z-index:-1;top:100%;left:50%;width:2px;height:55px;background:linear-gradient(#ff9dcc,#ff9dcc55)}
+#playerUpgrade .skill-root-v096 span{font-size:34px}#playerUpgrade .skill-root-v096 b{font:800 17px/1 Georgia,serif}#playerUpgrade .skill-root-v096 small{color:#ffd1e5;font:950 9px/1 system-ui;letter-spacing:.09em}
+#playerUpgrade .skill-branches-v096{position:relative;width:100%;display:grid;grid-template-columns:repeat(3,minmax(250px,1fr));align-items:start;gap:28px}
+#playerUpgrade .skill-branches-v096::before{content:"";position:absolute;top:-20px;left:16.67%;right:16.67%;height:2px;background:linear-gradient(90deg,#ff9dcc55,#ff9dcc,#ff9dcc55)}
+#playerUpgrade .skill-branch-v096{position:relative;display:grid;gap:12px}
+#playerUpgrade .skill-branch-v096::before{content:"";position:absolute;left:50%;bottom:100%;width:2px;height:22px;background:#ff9dcc88}
+#playerUpgrade .skill-branch-v096>header{position:relative;z-index:2;min-height:52px;display:flex;align-items:center;justify-content:center;gap:9px;border:1px solid var(--cr-line);border-radius:16px;color:var(--cr-text);background:var(--cr-surface-2);box-shadow:0 10px 30px var(--cr-shadow)}
+#playerUpgrade .skill-branch-v096>header span{font-size:23px}#playerUpgrade .skill-branch-v096>header b{font:900 15px/1 system-ui}
+#playerUpgrade .skill-branch-v096>div{position:relative;display:grid;justify-items:center;gap:24px;padding:4px 0}
+#playerUpgrade .skill-branch-v096>div::before{content:"";position:absolute;z-index:0;top:0;bottom:24px;left:50%;width:2px;background:linear-gradient(#ff9dcc99,#ff9dcc33)}
+#playerUpgrade .skill-node-v082{position:relative!important;z-index:1!important;box-sizing:border-box!important;width:230px!important;min-height:88px!important;display:grid!important;grid-template-columns:54px minmax(0,1fr) 34px!important;grid-template-rows:1fr 28px!important;gap:5px 10px!important;padding:9px!important;overflow:visible!important;border:1px solid rgba(255,211,232,.24)!important;border-radius:18px!important;background:color-mix(in srgb,var(--cr-surface-2) 96%,transparent)!important;box-shadow:0 10px 26px rgba(0,0,0,.25)!important}
+#playerUpgrade .skill-node-v082.locked{filter:grayscale(.72);opacity:.48!important}#playerUpgrade .skill-node-v082.maxed{border-color:#7ee4a4!important;box-shadow:0 0 22px rgba(126,228,164,.2)!important}
+#playerUpgrade .skill-node-icon-v082{grid-row:1/3!important;width:54px!important;height:54px!important;align-self:center!important;border:1px solid rgba(255,190,220,.3)!important;border-radius:50%!important;background:radial-gradient(circle,#68264c,#23101f)!important;font-size:24px!important}
+#playerUpgrade .skill-node-name-v096{align-self:end;overflow:hidden;font:900 12px/1.15 system-ui;text-overflow:ellipsis;white-space:nowrap}#playerUpgrade .skill-node-name-v096 small{display:block!important;margin-top:4px;color:var(--cr-muted)!important;font:800 9px/1 system-ui!important}
+#playerUpgrade .skill-rank-v096{align-self:start;color:#ffb5d6;font:900 11px/1 system-ui}#playerUpgrade .skill-node-v082>button{grid-column:3;grid-row:1/3;align-self:center;width:32px!important;height:32px!important;border-radius:50%!important}
+
+/* Compact item surfaces and toolbars. */
+.bag-grid-v084{grid-template-columns:repeat(auto-fill,minmax(74px,1fr))!important;gap:10px!important}.bag-item-v084{position:relative!important;aspect-ratio:1!important;min-height:74px!important;display:grid!important;place-items:center!important;padding:8px!important;border-width:2px!important}.bag-item-v084 .bag-item-art-v084{width:100%!important;height:100%!important;display:grid!important;place-items:center!important}.bag-item-v084 .bag-item-art-v084 img{width:76%!important;height:76%!important;object-fit:contain!important}.bag-item-v084>small,.bag-item-v084>b{display:none!important}.bag-item-v084>em{position:absolute!important;right:5px!important;bottom:5px!important;padding:3px 6px!important;border-radius:8px!important;background:#09050bcf!important;color:#fff!important;font:950 11px/1 system-ui!important}
+#gear .gear-arsenal-level-v0932{right:4px!important;bottom:4px!important;max-width:calc(100% - 8px)!important;padding:3px 5px!important;border-radius:7px!important;font:950 11px/1 system-ui!important;letter-spacing:0!important;white-space:nowrap!important}
+#gear .gear-equipment-tools-v0942{display:grid!important;grid-template-columns:repeat(2,minmax(86px,1fr))!important;align-items:stretch!important;gap:7px!important;max-width:100%!important}#gear .gear-equipment-tools-v0942>.gear-bulk-tools-v082{display:contents!important}#gear .gear-equipment-tools-v0942 button{min-width:0!important;width:100%!important;margin:0!important}
+
+/* Skin selector: the old top-left view strip is replaced by one clear eye action. */
+#skins .skin-view-tabs-v093{display:none!important}#skins .skin-showcase-v093{position:relative!important}.cr-skin-view-button{position:absolute!important;z-index:8!important;right:12px!important;top:50%!important;translate:0 -50%!important;width:58px!important;height:58px!important;display:grid!important;place-items:center!important;border:1px solid color-mix(in srgb,var(--cr-rarity,var(--cr-primary)) 70%,#fff)!important;border-radius:50%!important;color:#fff!important;background:color-mix(in srgb,var(--cr-surface) 92%,transparent)!important;box-shadow:0 8px 24px rgba(0,0,0,.32)!important;font-size:24px!important}.cr-skin-tools{align-self:end!important;justify-self:end!important}
+
+/* Universal item details. */
+.cr-item-tooltip{position:fixed;z-index:2147483647;width:min(310px,calc(100vw - 24px));padding:13px 14px;border:2px solid var(--item-rarity,#f4e8ef);border-radius:15px;color:var(--cr-text);background:color-mix(in srgb,var(--cr-surface) 98%,transparent);box-shadow:0 18px 48px rgba(0,0,0,.5),0 0 22px color-mix(in srgb,var(--item-rarity,#fff) 22%,transparent);pointer-events:none}.cr-item-tooltip small{display:block;color:var(--item-rarity,#f4e8ef);font:950 10px/1 system-ui;letter-spacing:.12em;text-transform:uppercase}.cr-item-tooltip h3{margin:6px 0 5px;font:800 19px/1.1 Georgia,serif}.cr-item-tooltip p{margin:0;color:var(--cr-muted);font:700 12px/1.42 system-ui}.cr-item-tooltip dl{display:grid;gap:3px;margin:9px 0 0}.cr-item-tooltip dl div{display:flex;justify-content:space-between;gap:12px}.cr-item-tooltip dt,.cr-item-tooltip dd{margin:0;font:800 11px/1.3 system-ui}.cr-item-tooltip dd{color:#fff}
+
+@media(max-width:820px){
+  #gachaChestOnlyV12 #gcoWallet{display:flex!important;overflow-x:auto!important;justify-content:flex-start!important;scrollbar-width:none!important}#gachaChestOnlyV12 #gcoWallet b{flex:0 0 auto!important}
+  #playerUpgrade .skill-tree-track-v082{width:900px!important;min-width:900px!important;min-height:690px!important;padding:26px 34px 74px!important}#playerUpgrade .skill-branches-v096{gap:22px!important}#playerUpgrade .skill-node-v082{width:215px!important}
+  #skins .skin-selector-v093{display:flex!important;flex-direction:column!important;gap:10px!important}#skins .skin-showcase-v093{order:1!important}#skins .skin-details-v093{order:2!important}#skins .skin-list-v093{order:3!important;display:flex!important;overflow-x:auto!important;scroll-snap-type:x proximity!important}#skins .skin-icon-v093{flex:0 0 82px!important}.cr-skin-view-button{right:10px!important;top:50%!important;width:54px!important;height:54px!important}
+  #gear .gear-equipment-tools-v0942{width:100%!important;margin:7px 0 0!important;grid-template-columns:1fr 1fr!important}
+}
+@media(max-width:520px){#skins .skin-art-v093{height:min(55dvh,470px)!important;min-height:360px!important}.cr-item-tooltip{left:12px!important;right:12px!important;bottom:calc(88px + env(safe-area-inset-bottom))!important;top:auto!important;width:auto!important}}

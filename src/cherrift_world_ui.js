@@ -3,7 +3,7 @@
   if (window.__CHERRIFT_BUGFIX_V0942__) return;
   window.__CHERRIFT_BUGFIX_V0942__ = true;
 
-  const VERSION = "0.9.4.5-consolidated-world-ui";
+  const VERSION = "0.9.6-carousel-rework";
   const MOBILE_QUERY = "(max-width:820px)";
   const id = value => document.getElementById(value);
   const q = (selector, root = document) => root?.querySelector?.(selector) || null;
@@ -22,7 +22,8 @@
     worldIndex: 0,
     chapterIndex: 0,
     selectedWorld: 1,
-    drag: null
+    drag: null,
+    transitionTimer: 0
   };
 
   function language() {
@@ -60,9 +61,10 @@
       .selector-stars-v0942{position:absolute;left:50%;top:16px;translate:-50% 0;display:flex;align-items:center;justify-content:center;gap:3px;padding:7px 13px;border-radius:999px;background:#08040dbd;color:#ffd467;font:900 clamp(20px,6vw,31px)/1 Georgia,serif;white-space:nowrap;text-shadow:0 0 15px #ffc44a88}
       .selector-copy-v0942{position:absolute;left:20px;right:20px;bottom:20px}.selector-copy-v0942 small{display:block;color:#ff93c6;font-size:11px;font-weight:1000;letter-spacing:2px;text-transform:uppercase}.selector-copy-v0942 h3{margin:5px 0 0;font:700 clamp(42px,11vw,62px)/.95 Georgia,serif}.selector-copy-v0942 p{margin:9px 0 0;color:#ead6e1;font-weight:800}.selector-dummy-v0942{display:inline-flex;margin-top:10px;padding:7px 11px;border:1px solid #ffffff24;border-radius:12px;background:#09040db5;font-weight:900}
       .selector-rewards-v0942{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:12px}.selector-rewards-v0942 span{min-width:0;padding:8px;border-radius:12px;background:#08040dbd;text-align:center}.selector-rewards-v0942 small{color:#dda9c3;font-size:8px;letter-spacing:.8px}.selector-rewards-v0942 b{display:block;margin-top:3px;font-size:12px}
-      .selector-dots-v0942{flex:0 0 auto;display:flex;justify-content:center;gap:8px;padding:7px}.selector-dots-v0942 i{width:9px;height:9px;border-radius:50%;background:#ffffff2d}.selector-dots-v0942 i.active{width:24px;border-radius:99px;background:#ec4f9b}
+      .selector-dots-v0942{flex:0 0 auto;display:flex;justify-content:center;gap:8px;padding:7px}.selector-dots-v0942 button{display:grid;place-items:center;min-width:25px;height:25px;padding:0 7px;border:1px solid #ffffff25;border-radius:99px;color:#d9b8ce;background:#ffffff0b;font:900 11px/1 system-ui,sans-serif}.selector-dots-v0942 button.active{border-color:#ffacd2;color:#fff;background:#ec4f9b;box-shadow:0 0 18px #ec4f9b66}.selector-dots-v0942 button.locked{opacity:.42}.selector-card-host-v0942.switching{animation:selectorCardInV096 .24s ease both}
       .chapter-summary-v0942{flex:0 0 auto;display:grid;grid-template-columns:1.5fr repeat(5,minmax(0,1fr));gap:7px;margin:0 0 8px;padding:9px;border:1px solid #ffffff22;border-radius:17px;background:#120819e8}.chapter-summary-v0942>div{min-width:0;padding:7px 9px;border-radius:11px;background:#ffffff08}.chapter-summary-v0942 small{display:block;color:#dda9c3;font-size:7px;font-weight:1000;letter-spacing:.8px;text-transform:uppercase}.chapter-summary-v0942 b{display:block;margin-top:4px;overflow:hidden;color:#fff;font:900 11px/1.25 system-ui,sans-serif;text-overflow:ellipsis;white-space:nowrap}.chapter-summary-v0942 .chapter-summary-title-v0942 b{font-size:14px}
       .selector-actions-v0942{flex:0 0 auto;display:grid;gap:9px}.selector-actions-v0942.two{grid-template-columns:1fr 1.35fr}.selector-actions-v0942 button{min-height:58px;border:1px solid #ffffff2b;border-radius:17px;color:#fff;background:#ffffff09;font-size:20px;font-weight:1000}.selector-actions-v0942 button.primary{background:linear-gradient(115deg,#dc3281,#ed72ac)}.selector-actions-v0942 button:disabled{opacity:.38;filter:grayscale(1)}
+      @keyframes selectorCardInV096{from{opacity:.35;transform:translateX(18px) scale(.985)}to{opacity:1;transform:none}}
 
       @media(min-width:821px){
         .selector-shell-v0942{padding:calc(var(--v0933-top,60px) + var(--v0933-sub,38px) + 16px) 24px 24px}
@@ -278,10 +280,10 @@
   function trainingStage() { return stages().find(stage => stage.training === true || /train|test/i.test(`${stage.id || ""} ${stage.name || ""}`)); }
   function worldStages(world) { return stages().filter(stage => stageWorld(stage) === Number(world) && stage !== trainingStage()).sort((a,b) => stageIndex(a)-stageIndex(b)); }
   function worldCount() {
-    const fromStages = Math.max(1, ...stages().map(stageWorld));
-    // Only worlds with real, installed stages belong in the test selector.
-    // The legacy UI advertised seven preview worlds, producing empty cards.
-    return Math.min(6, fromStages);
+    // The selector is the permanent World 1–6 carousel. Worlds without an
+    // installed chapter set remain visible as locked previews and cannot open
+    // the chapter screen, so there are no empty playable cards.
+    return 6;
   }
   function worldUnlocked(world) {
     if (window.CHERRIFT_PREBETA?.isWorldUnlocked) return CHERRIFT_PREBETA.isWorldUnlocked(world, UI.save);
@@ -333,14 +335,16 @@
     id("app")?.appendChild(panel);
     panel.addEventListener("click", event => {
       const step = event.target.closest("[data-world-step]");
-      if (step) { event.preventDefault(); state.worldIndex += Number(step.dataset.worldStep); renderWorldSelector(); }
+      if (step) { event.preventDefault(); moveWorld(Number(step.dataset.worldStep)); }
+      const dot = event.target.closest("[data-world-index]");
+      if (dot) { event.preventDefault(); setWorldIndex(Number(dot.dataset.worldIndex)); }
       if (event.target.closest("[data-world-back]")) {
         if (window.CHERRIFT_STABILITY?.open) window.CHERRIFT_STABILITY.open("menu");
         else UI.open?.("menu");
       }
       if (event.target.closest("[data-world-start]")) startSelectedWorld();
     });
-    bindDrag(q("[data-selector-drag]", panel), delta => { state.worldIndex += delta; renderWorldSelector(); });
+    bindDrag(q("[data-selector-drag]", panel), moveWorld);
     return panel;
   }
 
@@ -361,7 +365,7 @@
   function renderWorldSelector() {
     const entries = worldEntries();
     if (!entries.length) return;
-    state.worldIndex = (state.worldIndex % entries.length + entries.length) % entries.length;
+    state.worldIndex = Math.max(0, Math.min(entries.length - 1, state.worldIndex));
     const entry = entries[state.worldIndex];
     state.selectedWorld = entry.world;
     const card = id("worldCardV0942");
@@ -380,8 +384,23 @@
       card.innerHTML = `<article class="selector-card-v0942 ${entry.unlocked ? "" : "locked"}" style="background-image:url('${esc(entry.art)}')"><div class="selector-stars-v0942">★ ${earned} / ${max || 15}</div><div class="selector-copy-v0942"><small>World ${entry.world}</small><h3>${esc(worldName(entry.world))}</h3>${entry.unlocked ? "" : `<p>${copy("Zárolva", "Locked")}</p>`}</div></article>`;
     }
     start.disabled = !entry.unlocked;
-    id("worldDotsV0942").innerHTML = entries.map((_, index) => `<i class="${index === state.worldIndex ? "active" : ""}"></i>`).join("");
+    id("worldDotsV0942").innerHTML = entries.map((item, index) => `<button type="button" class="${index === state.worldIndex ? "active" : ""} ${item.unlocked ? "" : "locked"}" data-world-index="${index}" aria-label="${esc(item.type === "training" ? "Training" : `World ${item.world}`)}">${item.type === "training" ? "T" : item.world}</button>`).join("");
+    const previous = q('[data-world-step="-1"]', id("worldSelectorV0942"));
+    const next = q('[data-world-step="1"]', id("worldSelectorV0942"));
+    if (previous) previous.disabled = state.worldIndex <= 0;
+    if (next) next.disabled = state.worldIndex >= entries.length - 1;
+    card.classList.remove("switching");
+    requestAnimationFrame(() => card.classList.add("switching"));
   }
+
+  function setWorldIndex(index) {
+    const entries = worldEntries();
+    const next = Math.max(0, Math.min(entries.length - 1, number(index)));
+    if (next === state.worldIndex) return;
+    state.worldIndex = next;
+    renderWorldSelector();
+  }
+  function moveWorld(step) { setWorldIndex(state.worldIndex + Number(step || 0)); }
 
   function ensureChapterPanel() {
     let panel = id("chapterSelectorV0942");
@@ -389,21 +408,23 @@
     panel = document.createElement("section");
     panel.id = "chapterSelectorV0942";
     panel.className = "panel selector-v0942 hidden";
-    panel.innerHTML = `<div class="selector-shell-v0942"><header class="selector-head-v0942"><button class="selector-back-v0942" type="button" data-chapter-back aria-label="Back">←</button><h2 id="chapterWorldTitleV0942">World</h2><span class="selector-total-v0942"><small data-chapter-count-label></small><b id="chapterCountV0942"></b></span></header><div class="selector-carousel-v0942" data-chapter-drag><button type="button" class="selector-arrow-v0942" data-chapter-step="-1" aria-label="Previous chapter">‹</button><div id="chapterCardV0942" class="selector-card-host-v0942"></div><button type="button" class="selector-arrow-v0942" data-chapter-step="1" aria-label="Next chapter">›</button></div><div id="chapterDotsV0942" class="selector-dots-v0942"></div><section id="chapterSummaryV0942" class="chapter-summary-v0942"></section><div class="selector-actions-v0942"><button type="button" class="primary" data-chapter-play></button></div></div>`;
+    panel.innerHTML = `<div class="selector-shell-v0942"><header class="selector-head-v0942"><button class="selector-back-v0942" type="button" data-chapter-back aria-label="Back">←</button><h2 id="chapterWorldTitleV0942">World</h2><span class="selector-total-v0942"><small data-chapter-count-label></small><b id="chapterCountV0942"></b></span></header><div class="selector-carousel-v0942" data-chapter-drag><button type="button" class="selector-arrow-v0942" data-chapter-step="-1" aria-label="Previous chapter">‹</button><div id="chapterCardV0942" class="selector-card-host-v0942"></div><button type="button" class="selector-arrow-v0942" data-chapter-step="1" aria-label="Next chapter">›</button></div><div id="chapterDotsV0942" class="selector-dots-v0942"></div><section id="chapterSummaryV0942" class="chapter-summary-v0942"></section><div class="selector-actions-v0942 two"><button type="button" data-chapter-back></button><button type="button" class="primary" data-chapter-play></button></div></div>`;
     id("app")?.appendChild(panel);
     panel.addEventListener("click", event => {
       const step = event.target.closest("[data-chapter-step]");
-      if (step) { event.preventDefault(); state.chapterIndex += Number(step.dataset.chapterStep); renderChapterSelector(); }
+      if (step) { event.preventDefault(); moveChapter(Number(step.dataset.chapterStep)); }
+      const dot = event.target.closest("[data-chapter-index]");
+      if (dot) { event.preventDefault(); setChapterIndex(Number(dot.dataset.chapterIndex)); }
       if (event.target.closest("[data-chapter-back]")) openWorldSelector();
       if (event.target.closest("[data-chapter-play]")) playSelectedChapter();
     });
-    bindDrag(q("[data-chapter-drag]", panel), delta => { state.chapterIndex += delta; renderChapterSelector(); });
+    bindDrag(q("[data-chapter-drag]", panel), moveChapter);
     return panel;
   }
   function renderChapterSelector() {
     const list = worldStages(state.selectedWorld);
     if (!list.length) return openWorldSelector();
-    state.chapterIndex = (state.chapterIndex % list.length + list.length) % list.length;
+    state.chapterIndex = Math.max(0, Math.min(list.length - 1, state.chapterIndex));
     const stage = list[state.chapterIndex];
     const index = stageIndex(stage, state.chapterIndex + 1);
     const stars = stageStars(stage);
@@ -423,8 +444,25 @@
     const play = q("[data-chapter-play]", id("chapterSelectorV0942"));
     play.textContent = copy("Játék", "Play");
     play.disabled = !unlocked;
-    id("chapterDotsV0942").innerHTML = list.map((_, itemIndex) => `<i class="${itemIndex === state.chapterIndex ? "active" : ""}"></i>`).join("");
+    qa("[data-chapter-back]", id("chapterSelectorV0942")).forEach(button => { if (!button.textContent.trim() || button.closest(".selector-actions-v0942")) button.textContent = button.closest(".selector-actions-v0942") ? copy("Vissza", "Back") : "←"; });
+    id("chapterDotsV0942").innerHTML = list.map((item, itemIndex) => `<button type="button" class="${itemIndex === state.chapterIndex ? "active" : ""} ${stageUnlocked(item) ? "" : "locked"}" data-chapter-index="${itemIndex}" aria-label="${copy("Fejezet", "Chapter")} ${itemIndex + 1}">${itemIndex + 1}</button>`).join("");
+    const previous = q('[data-chapter-step="-1"]', id("chapterSelectorV0942"));
+    const next = q('[data-chapter-step="1"]', id("chapterSelectorV0942"));
+    if (previous) previous.disabled = state.chapterIndex <= 0;
+    if (next) next.disabled = state.chapterIndex >= list.length - 1;
+    const host = id("chapterCardV0942");
+    host?.classList.remove("switching");
+    requestAnimationFrame(() => host?.classList.add("switching"));
   }
+
+  function setChapterIndex(index) {
+    const list = worldStages(state.selectedWorld);
+    const next = Math.max(0, Math.min(list.length - 1, number(index)));
+    if (next === state.chapterIndex) return;
+    state.chapterIndex = next;
+    renderChapterSelector();
+  }
+  function moveChapter(step) { setChapterIndex(state.chapterIndex + Number(step || 0)); }
 
   function bindDrag(element, callback) {
     if (!element || element.__dragV0942) return;

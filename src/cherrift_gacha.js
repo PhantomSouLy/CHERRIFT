@@ -3,7 +3,7 @@
   if (window.__CHERRIFT_ECONOMY_CHEST_ONLY__) return;
   window.__CHERRIFT_ECONOMY_CHEST_ONLY__ = true;
 
-  const VERSION = "1.4.0-consolidated-gacha";
+  const VERSION = "2.0.0-equipment-chest-rework";
   const TIERS = ["common", "rare", "epic"];
   const DEF = {
     common: { name: "Common Chest", names:{hu:"Common láda",en:"Common Chest"}, itemText:{hu:"Common tárgyak",en:"Common Items"}, pity: 10, rarity: "Common", asset: "assets/items/chests/common_chest.png" },
@@ -19,7 +19,7 @@
 
   const COPY = Object.freeze({
     hu: {
-      title:"Gacha", back:"Vissza", guaranteed:"Garantált skin", empty:name => `Nincs ${name}.`,
+      title:"Felszerelés ládák", back:"Vissza", guaranteed:"Skin garancia", opened:"Kinyitva", remaining:"A garanciáig", empty:name => `Nincs ${name}.`,
       need:name => `10 ${name} szükséges.`, openOne:"Nyitás 1×", openTen:"Nyitás 10×",
       opening:"Láda nyitása…", rewards:"Jutalmak", close:"Bezárás", continue:"Tovább",
       duplicate:"Duplikált skin Sakura Essence-re váltva.", unlocked:"Új Cherry skin feloldva!",
@@ -27,7 +27,7 @@
       previous:"Előző láda", next:"Következő láda"
     },
     en: {
-      title:"Gacha", back:"Back", guaranteed:"Guaranteed Skin", empty:name => `You don't have any ${name}s.`,
+      title:"Equipment Chests", back:"Back", guaranteed:"Skin Guarantee", opened:"Opened", remaining:"Until Guarantee", empty:name => `You don't have any ${name}s.`,
       need:name => `You need 10 ${name}s.`, openOne:"Open 1×", openTen:"Open 10×",
       opening:"Opening chest…", rewards:"Rewards", close:"Close", continue:"Continue",
       duplicate:"Duplicate skin converted to Sakura Essence.", unlocked:"New Cherry skin unlocked!",
@@ -55,10 +55,12 @@
     for (const tier of TIERS) save.chests[tier] = number(save.chests[tier]);
     save.gacha = save.gacha && typeof save.gacha === "object" ? save.gacha : {};
     save.gacha.pity = save.gacha.pity && typeof save.gacha.pity === "object" ? save.gacha.pity : {};
+    save.gacha.opened = save.gacha.opened && typeof save.gacha.opened === "object" ? save.gacha.opened : {};
     save.gacha.history = Array.isArray(save.gacha.history) ? save.gacha.history.slice(0, 50) : [];
     for (const tier of TIERS) {
       const value = number(save.gacha.pity[tier]);
       save.gacha.pity[tier] = DEF[tier]?.pity ? value % DEF[tier].pity : value;
+      save.gacha.opened[tier] = number(save.gacha.opened[tier]);
     }
     save.economy = save.economy && typeof save.economy === "object" ? save.economy : {};
     save.economy.totalChestOpens = number(save.economy.totalChestOpens);
@@ -118,7 +120,7 @@
     if (duplicate) {
       const amount = window.CHERRIFT_BALANCE?.gacha?.duplicateEssence?.[rarity] || 5;
       save.sakuraEssence += amount;
-      return { kind: "skin", duplicate: true, rarity, amount, skinId: skin.id, label: `${skin.name} · Duplicate +${amount} Essence`, icon: skin.icon || skin.emoji || "🐰", asset: skin.splash || skin.icon || "" };
+      return { kind: "skin", duplicate: true, rarity, amount, skinId: skin.id, label: skin.name, icon: skin.icon || skin.emoji || "🐰", asset: skin.splash || skin.icon || "" };
     }
     return { kind: "skin", duplicate: false, rarity, skinId: skin.id, label: skin.name || skin.id, icon: skin.icon || skin.emoji || "🐰", asset: skin.splash || skin.icon || "" };
   }
@@ -243,13 +245,15 @@
       .gco-shell{width:min(920px,100%);min-height:var(--cherrift-viewport-height,100dvh);margin:0 auto;padding:18px 18px 64px}
       .gco-head{display:flex;align-items:center;gap:16px;margin-bottom:14px}.gco-head h2{margin:0;font:700 clamp(42px,8vw,64px)/1 Georgia,serif}.gco-back{width:72px;height:72px;border:1px solid #ffffff25;border-radius:22px;color:#fff;background:#ffffff08;font-size:28px}
       .gco-wallet,.gco-chests{display:flex;justify-content:center;flex-wrap:wrap;gap:9px}.gco-wallet{margin:8px 0 12px}.gco-wallet b,.gco-chests b{display:flex;align-items:center;gap:8px;min-height:50px;padding:8px 14px;border:1px solid #ffffff1f;border-radius:15px;background:#ffffff08}.gco-wallet img{width:28px;height:28px;object-fit:contain}.gco-chests{margin:0 0 18px}.gco-chests img{width:38px;height:38px;object-fit:contain}
-      .gco-carousel{position:relative;display:grid;grid-template-columns:54px minmax(0,1fr) 54px;align-items:center;gap:10px;user-select:none}.gco-arrow{height:64px;border:1px solid #ffffff22;border-radius:18px;color:#fff;background:#ffffff08;font-size:36px}.gco-card{min-height:clamp(480px,calc(100dvh - 250px),650px);padding:22px;border:1px solid #ffffff24;border-radius:30px;background:linear-gradient(160deg,#2a102fdd,#120817f2);box-shadow:0 24px 80px #0007;touch-action:pan-y}
+      .gco-carousel{position:relative;display:grid;grid-template-columns:54px minmax(0,1fr) 54px;align-items:center;gap:10px;user-select:none}.gco-arrow{height:64px;border:1px solid #ffffff22;border-radius:18px;color:#fff;background:#ffffff08;font-size:36px}.gco-arrow:disabled{opacity:.22;cursor:not-allowed}.gco-card{min-height:clamp(480px,calc(100dvh - 250px),650px);padding:22px;border:1px solid #ffffff24;border-radius:30px;background:linear-gradient(160deg,#2a102fdd,#120817f2);box-shadow:0 24px 80px #0007;touch-action:pan-y}
       .gco-card.common{border-top:7px solid #63dd8a}.gco-card.rare{border-top:7px solid #58adff}.gco-card.epic{border-top:7px solid #c060ff}.gco-art{height:clamp(180px,28dvh,260px);display:grid;place-items:center;border-radius:24px;background:#ffffff05}.gco-art img{max-width:230px;max-height:220px;object-fit:contain;filter:drop-shadow(0 18px 25px #0008)}.gco-art-fallback{display:none;font-size:72px}.gco-art img[hidden]+.gco-art-fallback{display:block}
-      .gco-rarity{margin:20px 0 3px;font-weight:1000;letter-spacing:4px;text-transform:uppercase}.gco-card h3{margin:0;font:700 clamp(38px,7vw,58px)/1.05 Georgia,serif}.gco-copy{margin:18px 0 8px;color:#e7c9db;font-size:18px}.gco-empty-note{margin:0 0 14px;padding:9px 12px;border:1px solid #ffb4d13d;border-radius:12px;color:#ffb4d1;background:#b9276414;font-weight:850}.gco-pity{padding:15px 18px;border-radius:18px;background:#ffffff07}.gco-pity header{display:flex;justify-content:space-between;font-size:19px}.gco-track{height:10px;margin-top:10px;border-radius:99px;background:#ffffff0d;overflow:hidden}.gco-track i{display:block;height:100%;background:linear-gradient(90deg,#e34b98,#b65cff)}
+      .gco-rarity{margin:20px 0 3px;font-weight:1000;letter-spacing:4px;text-transform:uppercase}.gco-card h3{margin:0;font:700 clamp(38px,7vw,58px)/1.05 Georgia,serif}.gco-copy{margin:18px 0 8px;color:#e7c9db;font-size:18px}.gco-empty-note{margin:0 0 14px;padding:9px 12px;border:1px solid #ffb4d13d;border-radius:12px;color:#ffb4d1;background:#b9276414;font-weight:850}.gco-pity{padding:15px 18px;border-radius:18px;background:#ffffff07}.gco-pity header{display:flex;justify-content:space-between;font-size:19px}.gco-pity-meta{display:flex;justify-content:space-between;gap:12px;margin-top:8px;color:#d9b8ce;font-size:12px;font-weight:850}.gco-track{height:10px;margin-top:10px;border-radius:99px;background:#ffffff0d;overflow:hidden}.gco-track i{display:block;height:100%;background:linear-gradient(90deg,#e34b98,#b65cff)}
       .gco-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.gco-actions button{min-height:70px;border:0;border-radius:18px;color:#fff;background:linear-gradient(115deg,#d72f7d,#ea70ac);font-size:19px;font-weight:1000}.gco-actions button:disabled{color:#ffffff55;background:#64718a55;box-shadow:none}
       .gco-dots{display:flex;justify-content:center;gap:9px;margin-top:16px}.gco-dots button{width:11px;height:11px;padding:0;border:0;border-radius:50%;background:#ffffff30}.gco-dots button.active{background:#f15aa3;transform:scale(1.3)}
-      .gco-modal{position:fixed;inset:0;z-index:100050;display:grid;place-items:center;padding:18px;background:#07030ce8;backdrop-filter:blur(8px)}.gco-modal.hidden{display:none!important}.gco-modal-card{width:min(600px,100%);max-height:min(780px,90dvh);overflow:auto;padding:24px;border:1px solid #ffffff25;border-radius:28px;background:linear-gradient(155deg,#34133deb,#120817);text-align:center}.gco-opening img{width:min(280px,65vw);height:240px;object-fit:contain;animation:gcoOpen 1.45s cubic-bezier(.2,.72,.2,1) both}.gco-opening-fallback{display:none;height:240px;place-items:center;font-size:92px;animation:gcoOpen 1.45s cubic-bezier(.2,.72,.2,1) both}.gco-opening img[hidden]+.gco-opening-fallback{display:grid}.gco-skin-art{width:100%;height:330px;object-fit:contain;border-radius:20px;background:#ffffff06}.gco-modal h3{font:700 38px Georgia,serif;margin:12px 0}.gco-next,.gco-close{width:100%;min-height:58px;border:0;border-radius:16px;color:#fff;background:linear-gradient(115deg,#d72f7d,#ea70ac);font-weight:1000}.gco-summary{display:grid;gap:9px;text-align:left}.gco-summary-row{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:#ffffff07}.gco-summary-row img{width:48px;height:48px;object-fit:contain}.gco-summary-row span{font-size:28px}.gco-summary-row b{margin-left:auto}.gco-toast{position:fixed;z-index:100080;top:max(14px,env(safe-area-inset-top));left:50%;translate:-50% -120%;max-width:min(520px,90vw);padding:12px 18px;border:1px solid #ffbad8aa;border-radius:14px;background:#2f1029ed;color:#fff;font-weight:900;transition:translate .22s}.gco-toast.show{translate:-50% 0}
+      .gco-modal{position:fixed;inset:0;z-index:100050;display:grid;place-items:center;padding:18px;background:#07030ce8;backdrop-filter:blur(8px)}.gco-modal.hidden{display:none!important}.gco-modal-card{width:min(600px,100%);max-height:min(780px,90dvh);overflow:auto;padding:24px;border:1px solid #ffffff25;border-radius:28px;background:linear-gradient(155deg,#34133deb,#120817);text-align:center}.gco-opening::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;animation:gcoFlash 2.2s ease-in-out both}.gco-opening.common::before{background:radial-gradient(circle,#63dd8a 0,transparent 62%)}.gco-opening.rare::before{background:radial-gradient(circle,#58adff 0,transparent 62%)}.gco-opening.epic::before{background:radial-gradient(circle,#c060ff 0,transparent 62%)}.gco-opening img{position:relative;width:min(280px,65vw);height:240px;object-fit:contain;animation:gcoOpen 2.05s cubic-bezier(.2,.72,.2,1) both}.gco-opening-fallback{display:none;height:240px;place-items:center;font-size:92px;animation:gcoOpen 2.05s cubic-bezier(.2,.72,.2,1) both}.gco-opening img[hidden]+.gco-opening-fallback{display:grid}.gco-skin-art{width:100%;height:330px;object-fit:contain;border-radius:20px;background:#ffffff06}.gco-skin-reveal.duplicate .gco-skin-art{animation:gcoDuplicate 1s .15s ease both}.gco-duplicate-conversion{font-weight:950;color:#f6afd4}.gco-modal h3{font:700 38px Georgia,serif;margin:12px 0}.gco-next,.gco-close{width:100%;min-height:58px;border:0;border-radius:16px;color:#fff;background:linear-gradient(115deg,#d72f7d,#ea70ac);font-weight:1000}.gco-summary{display:grid;gap:9px;text-align:left}.gco-summary-row{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid color-mix(in srgb,var(--reward-rarity,#ffffff) 62%,transparent);border-radius:14px;background:#ffffff07}.gco-summary-row img{width:48px;height:48px;object-fit:contain}.gco-summary-row span{font-size:28px}.gco-summary-row b{margin-left:auto}.gco-toast{position:fixed;z-index:100080;top:max(14px,env(safe-area-inset-top));left:50%;translate:-50% -120%;max-width:min(520px,90vw);padding:12px 18px;border:1px solid #ffbad8aa;border-radius:14px;background:#2f1029ed;color:#fff;font-weight:900;transition:translate .22s}.gco-toast.show{translate:-50% 0}
       @keyframes gcoOpen{0%{transform:scale(.58) translateY(20px) rotate(-6deg);filter:brightness(.42)}32%{transform:scale(.92) translateY(0) rotate(3deg);filter:brightness(.9)}68%{transform:scale(1.16) rotate(-1deg);filter:brightness(1.8) drop-shadow(0 0 42px #ff77bd)}100%{transform:scale(1);filter:brightness(1.12) drop-shadow(0 0 24px #ff77bd88)}}
+      @keyframes gcoFlash{0%,35%{opacity:0}60%{opacity:.95}100%{opacity:0}}
+      @keyframes gcoDuplicate{0%{transform:scale(1);filter:none}25%{transform:scale(1.06);filter:brightness(1.5)}55%{transform:scale(.96);filter:grayscale(.25)}100%{transform:scale(1);filter:grayscale(1) brightness(.48)}}
       @media(max-width:700px){.gco-shell{padding:12px 12px 130px}.gco-head h2{font-size:48px}.gco-back{width:64px;height:64px}.gco-carousel{grid-template-columns:38px minmax(0,1fr) 38px;gap:6px}.gco-arrow{height:58px;border-radius:14px}.gco-card{min-height:570px;padding:16px;border-radius:25px}.gco-art{height:210px}.gco-art img{max-height:190px;max-width:200px}.gco-actions button{min-height:64px}.gco-wallet b{padding:7px 10px}.gco-chests b{padding:5px 8px;font-size:13px}.gco-chests img{width:32px;height:32px}}
       @media(max-width:820px){
         #gachaChestOnlyV12{height:var(--cherrift-viewport-height,100dvh)!important;min-height:0!important;overflow:hidden!important;overscroll-behavior:none!important}
@@ -337,6 +341,8 @@
     const def = DEF[state.tier];
     const count = number(save.chests[state.tier]);
     const pity = number(save.gacha.pity[state.tier]);
+    const opened = number(save.gacha.opened[state.tier]);
+    const remaining = Math.max(0, def.pity - pity);
     const title = q("[data-gco-title]", panel);
     if (title) title.textContent = text("title");
     const back = q("[data-gco-back]", panel);
@@ -344,13 +350,18 @@
     const scrap = number(save.gearScrap ?? save.scrap ?? save.bag?.materials?.gearScrap ?? save.arsenal?.materials?.gearScrap);
     id("gcoWallet").innerHTML = `<b title="Coin"><img src="assets/items/coin.png" alt=""><span>${number(save.coins)}</span></b><b title="Bloom Gem"><img src="assets/items/blossom_gem.png" alt=""><span>${number(save.bloomGems ?? save.blossomGems)}</span></b><b title="Sakura Essence"><img src="assets/items/sakura_potion.png" alt=""><span>${number(save.sakuraEssence)}</span></b><b title="Scrap"><img src="assets/items/scraps.png" alt=""><span>${scrap}</span></b>`;
     id("gcoChestWallet").innerHTML = TIERS.map(tier => `<b><img src="${DEF[tier].asset}" alt=""><span>${number(save.chests[tier])}</span></b>`).join("");
-    id("gcoCard").innerHTML = `<article class="gco-card ${state.tier}" data-gco-card><div class="gco-art"><img src="${def.asset}" alt="${esc(chestName(state.tier))}" onerror="this.hidden=true"><span class="gco-art-fallback" aria-hidden="true">CHEST</span></div><div class="gco-rarity">${state.tier}</div><h3>${esc(chestName(state.tier))}</h3><p class="gco-copy">${esc(chestItems(state.tier))}</p>${count < 1 ? `<p class="gco-empty-note">${esc(text("empty", chestName(state.tier)))}</p>` : ""}<section class="gco-pity"><header><span>${esc(text("guaranteed"))}</span><b>${pity} / ${def.pity}</b></header><div class="gco-track"><i style="width:${Math.min(100, pity / def.pity * 100)}%"></i></div></section><div class="gco-actions"><button type="button" data-gco-open="1" ${count < 1 || state.busy ? "disabled" : ""}>${esc(text("openOne"))}</button><button type="button" data-gco-open="10" ${count < 10 || state.busy ? "disabled" : ""}>${esc(text("openTen"))}</button></div></article>`;
+    id("gcoCard").innerHTML = `<article class="gco-card ${state.tier}" data-gco-card><div class="gco-art"><img src="${def.asset}" alt="${esc(chestName(state.tier))}" onerror="this.hidden=true"><span class="gco-art-fallback" aria-hidden="true">CHEST</span></div><div class="gco-rarity">${state.tier}</div><h3>${esc(chestName(state.tier))}</h3><p class="gco-copy">${esc(chestItems(state.tier))}</p>${count < 1 ? `<p class="gco-empty-note">${esc(text("empty", chestName(state.tier)))}</p>` : ""}<section class="gco-pity"><header><span>${esc(text("guaranteed"))}</span><b>${pity} / ${def.pity}</b></header><div class="gco-track"><i style="width:${Math.min(100, pity / def.pity * 100)}%"></i></div><div class="gco-pity-meta"><span>${esc(text("opened"))}: ${opened}</span><span>${esc(text("remaining"))}: ${remaining}</span></div></section><div class="gco-actions"><button type="button" data-gco-open="1" ${count < 1 || state.busy ? "disabled" : ""}>${esc(text("openOne"))}</button><button type="button" data-gco-open="10" ${count < 10 || state.busy ? "disabled" : ""}>${esc(text("openTen"))}</button></div></article>`;
     id("gcoDots").innerHTML = TIERS.map(tier => `<button type="button" class="${tier === state.tier ? "active" : ""}" data-gco-tier="${tier}" aria-label="${esc(chestName(tier))}"></button>`).join("");
+    const tierIndex = TIERS.indexOf(state.tier);
+    const previous = q('[data-gco-step="-1"]', panel);
+    const next = q('[data-gco-step="1"]', panel);
+    if (previous) previous.disabled = tierIndex <= 0;
+    if (next) next.disabled = tierIndex >= TIERS.length - 1;
   }
 
   function changeTier(step) {
     const current = TIERS.indexOf(state.tier);
-    state.tier = TIERS[(current + step + TIERS.length) % TIERS.length];
+    state.tier = TIERS[Math.max(0, Math.min(TIERS.length - 1, current + step))];
     render();
   }
 
@@ -389,7 +400,7 @@
   function summaryMarkup(rewards) {
     const rows = aggregate(rewards);
     if (!rows.length) return `<p>All rewards were shown above.</p>`;
-    return `<div class="gco-summary">${rows.map(reward => `<div class="gco-summary-row">${reward.asset ? `<img src="${esc(reward.asset)}" alt="">` : `<span>${reward.icon || "•"}</span>`}<strong>${esc(reward.label)}</strong><b>×${number(reward.amount || 1)}</b></div>`).join("")}</div>`;
+    return `<div class="gco-summary">${rows.map(reward => `<div class="gco-summary-row" tabindex="0" data-cr-item-key="${esc(reward.item?.id || reward.label)}" data-cr-item-name="${esc(reward.label)}" data-cr-item-rarity="${esc(reward.rarity || "Common")}" data-cr-item-description="${esc(reward.item?.description || reward.label)}" style="--reward-rarity:${({common:"#63dd8a",uncommon:"#79d85c",rare:"#58adff",epic:"#c060ff",legendary:"#ffb341"})[String(reward.rarity || "common").toLowerCase()] || "#ffffff"}">${reward.asset ? `<img src="${esc(reward.asset)}" alt="">` : `<span>${reward.icon || "•"}</span>`}<strong>${esc(reward.label)}</strong><b>×${number(reward.amount || 1)}</b></div>`).join("")}</div>`;
   }
 
   function showGlobalSummary(rewards) {
@@ -412,7 +423,7 @@
       const reward = queue.shift();
       if (!reward) return showGlobalSummary(normalRewards);
       modal.classList.remove("hidden");
-      modal.innerHTML = `<div class="gco-modal-card gco-skin-reveal"><small>${esc(reward.rarity)} Skin</small>${reward.asset ? `<img class="gco-skin-art" src="${esc(reward.asset)}" alt="" onerror="this.hidden=true">` : `<div class="gco-skin-fallback">${reward.icon || "🐰"}</div>`}<h3>${esc(reward.label)}</h3><p>${esc(reward.duplicate ? text("duplicate") : text("unlocked"))}</p><button class="gco-next" type="button">${esc(queue.length || normalRewards.length ? text("continue") : text("close"))}</button></div>`;
+      modal.innerHTML = `<div class="gco-modal-card gco-skin-reveal ${reward.duplicate ? "duplicate" : ""}"><small>${esc(reward.rarity)} Skin</small>${reward.asset ? `<img class="gco-skin-art" src="${esc(reward.asset)}" alt="" onerror="this.hidden=true">` : `<div class="gco-skin-fallback">${reward.icon || "🐰"}</div>`}<h3>${esc(reward.label)}</h3><p class="${reward.duplicate ? "gco-duplicate-conversion" : ""}">${esc(reward.duplicate ? `${text("duplicate")} +${number(reward.amount)} Sakura Essence` : text("unlocked"))}</p><button class="gco-next" type="button">${esc(queue.length || normalRewards.length ? text("continue") : text("close"))}</button></div>`;
       window.CHERRIFT_REWARDS?.playSound?.();
       q(".gco-next", modal).onclick = () => {
         if (queue.length) nextSkin();
@@ -434,10 +445,10 @@
     }
     clearTimeout(state.openingTimer);
     modal.classList.remove("hidden");
-    modal.innerHTML = `<div class="gco-modal-card gco-opening" role="status" aria-live="polite"><img src="${esc(DEF[tier].asset)}" alt="${esc(chestName(tier))}" onerror="this.hidden=true"><span class="gco-opening-fallback" aria-hidden="true">CHEST</span><h3>${esc(text("opening"))}</h3></div>`;
+    modal.innerHTML = `<div class="gco-modal-card gco-opening ${tier}" role="status" aria-live="polite"><img src="${esc(DEF[tier].asset)}" alt="${esc(chestName(tier))}" onerror="this.hidden=true"><span class="gco-opening-fallback" aria-hidden="true">CHEST</span><h3>${esc(text("opening"))}</h3></div>`;
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
     const testDuration = Number(window.__CHERRIFT_GACHA_OPENING_MS__);
-    const openingDuration = Number.isFinite(testDuration) && testDuration >= 100 ? testDuration : reducedMotion ? 700 : 1800;
+    const openingDuration = Number.isFinite(testDuration) && testDuration >= 100 ? testDuration : reducedMotion ? 700 : 2300;
     state.openingTimer = setTimeout(() => {
       state.openingTimer = 0;
       state.busy = false;
@@ -463,6 +474,7 @@
     const rewards = [];
     for (let index = 0; index < amount; index += 1) rewards.push(roll(save, state.tier));
     save.economy.totalChestOpens += amount;
+    save.gacha.opened[state.tier] += amount;
     save.gacha.history = Array.isArray(save.gacha.history) ? save.gacha.history : [];
     const openedAt = Date.now();
     for (const reward of rewards) {

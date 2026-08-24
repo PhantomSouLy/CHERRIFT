@@ -12,6 +12,44 @@
   }
   window.__CHERRIFT_CLEAN_RUNTIME__ = Object.freeze({version:"1.5.0", build:"0.9.5-prebeta.1"});
   window.CHERRIFT_RUNTIME_CSS_BUNDLED = true;
+
+  /*
+   * Legacy UI modules still use MutationObserver to decorate freshly rendered
+   * panels. None of those decorators are part of combat, but before this guard
+   * every HUD text change woke all of them and triggered full-document query
+   * passes. Keep them live in menus and suspend them while the game canvas owns
+   * the screen. Leaving combat produces a body mutation, so they resume and
+   * reconcile the visible menu automatically.
+   */
+  if (!window.__CHERRIFT_MENU_OBSERVER_GUARD__ && typeof window.MutationObserver === "function") {
+    const NativeMutationObserver = window.MutationObserver;
+    window.MutationObserver = class CherriftMenuMutationObserver extends NativeMutationObserver {
+      constructor(callback) {
+        let queued = false;
+        let pending = [];
+        super((records, observer) => {
+          if (document.body?.classList.contains("is-playing")) {
+            pending.length = 0;
+            return;
+          }
+          pending.push(...records);
+          if (queued) return;
+          queued = true;
+          requestAnimationFrame(() => {
+            queued = false;
+            if (document.body?.classList.contains("is-playing")) {
+              pending.length = 0;
+              return;
+            }
+            const batch = pending;
+            pending = [];
+            if (batch.length) callback(batch, observer);
+          });
+        });
+      }
+    };
+    window.__CHERRIFT_MENU_OBSERVER_GUARD__ = true;
+  }
   const styleMarkers = ["mobileV051Styles", "v050Style", "v052css", "v053css", "v055css", "v0551css", "v0552css", "v0557css", "v0560css", "v0561css", "v060css", "v062css", "v063css", "v070css", "v080css", "v081css", "v082css", "v083css", "v084css", "v085css", "v086css", "v087css", "v088css", "v089css", "v090css", "v091css", "v092css", "v093css", "v0931css", "v0932css", "v0933css", "v094css", "v0946css", "cherriftThemeSystemCss"];
   for (const markerId of styleMarkers) {
     if (document.getElementById(markerId)) continue;
@@ -8496,11 +8534,11 @@ function startAnimationLoop() {
   if (animationRequest) return;
 
   const loop = timestamp => {
-    animationRequest = requestAnimationFrame(loop);
-
     const panel = id("gear");
     const canvas = id("gearCherryCanvasV0560");
-    if (!canvas || !panel || panel.classList.contains("hidden")) return;
+    const visible = canvas && panel && !panel.classList.contains("hidden") && !document.hidden && !document.body.classList.contains("is-playing");
+    animationRequest = window.setTimeout(() => requestAnimationFrame(loop), visible ? 55 : 300);
+    if (!visible) return;
 
     updateSkinAnimation();
 
@@ -11005,8 +11043,9 @@ function drawStablePreview(canvas, timestamp) {
 function startStablePreviews() {
   if (runtime.previewRequest) return;
   const loop = timestamp => {
-    runtime.previewRequest = requestAnimationFrame(loop);
-    qa("canvas.v060-stable-sprite").forEach(canvas => drawStablePreview(canvas, timestamp));
+    const canvases=qa("canvas.v060-stable-sprite"),visible=!document.hidden&&!document.body.classList.contains("is-playing")&&canvases.some(canvas=>canvas.offsetParent!==null);
+    runtime.previewRequest=window.setTimeout(()=>requestAnimationFrame(loop),visible?70:320);
+    if(visible)canvases.forEach(canvas => drawStablePreview(canvas, timestamp));
   };
   runtime.previewRequest = requestAnimationFrame(loop);
 }
@@ -16105,29 +16144,24 @@ function renderSkillTree(){
   if(id("skillPointsV082"))id("skillPointsV082").textContent=save.account.skillPoints;
   const track=id("skillTreeTrackV082");if(!track)return;
   const infoPanel=id("skillInfoV096");if(infoPanel)infoPanel.hidden=true;
-  const ordered=[...SKILL_TIERS].reverse();
-  track.innerHTML=ordered.map((tier,index)=>{
-    const tierIndex=SKILL_TIERS.findIndex(entry=>entry.level===tier.level)+1;
-    const rangeStart=Math.max(1,tier.level),nextTier=SKILL_TIERS[tierIndex],range=nextTier?`${rangeStart}–${nextTier.level-1}`:`${rangeStart}+`;
-    return `
-    <section class="skill-tier-v082 ${level<tier.level?"locked":""}" data-tier="${tier.level}">
-      <header><span>${tierIndex}. ${language()==="hu"?"SZINT":"TIER"}</span><b>${language()==="hu"?"Játékosszint":"Player level"} ${range} · ${level>=tier.level?"UNLOCKED":`${t("levelNeeded")} ${tier.level}`}</b></header>
-      <div class="skill-tier-nodes-v082">
-        ${tier.nodes.map(node=>{
-          const rank=ranks[node.id]||0,locked=level<node.unlock,maxed=rank>=node.max;
-          const current=node.unit==="%"?formatPercent(rank*node.value):Math.round(rank*node.value*100)/100;
-          const next=node.unit==="%"?formatPercent(Math.min(node.max,rank+1)*node.value):Math.round(Math.min(node.max,rank+1)*node.value*100)/100;
-          return `<article class="skill-node-v082 ${locked?"locked":""} ${maxed?"maxed":""}" tabindex="0" role="group" data-v096-skill-card data-v096-name="${escapeHtml(nodeName(node))}" data-v096-desc="${escapeHtml(nodeDesc(node))}" data-v096-current="${escapeHtml(String(current))}" data-v096-next="${escapeHtml(String(next))}" data-v096-unlock="${node.unlock}" data-v096-rank="${rank}/${node.max}">
-            <span class="skill-node-icon-v082">${node.icon}</span>
-            <b class="skill-rank-v096">${rank}/${node.max}</b>
-            <button type="button" data-v082-skill="${node.id}" aria-label="${escapeHtml(nodeName(node))}: ${maxed?t("max"):"+"}" ${locked||maxed||save.account.skillPoints<1?"disabled":""}>${maxed?"✓":"+"}</button>
-          </article>`;
-        }).join("")}
-      </div>
-    </section>${index<ordered.length-1?'<i class="skill-connector-v082" aria-hidden="true">↑</i>':""}`;
-  }).join("");
+  const branchDefinitions=[
+    {id:"attack",icon:"⚔",hu:"Támadás",en:"Attack",nodes:["damage","attackSpeed","critChance","critDamage","skillDamage","bossDamage"]},
+    {id:"defense",icon:"♥",hu:"Védelem",en:"Defense",nodes:["maxHp","movementSpeed","damageReduction","hpRegen","cooldownReduction","eliteDamage"]},
+    {id:"utility",icon:"✦",hu:"Hasznosság",en:"Utility",nodes:["orbXp","luckChance","pickupRange","coinGain","itemDrop","chestDrop"]}
+  ];
+  const nodeMarkup=node=>{
+    const rank=ranks[node.id]||0,locked=level<node.unlock,maxed=rank>=node.max;
+    const current=node.unit==="%"?formatPercent(rank*node.value):Math.round(rank*node.value*100)/100;
+    const next=node.unit==="%"?formatPercent(Math.min(node.max,rank+1)*node.value):Math.round(Math.min(node.max,rank+1)*node.value*100)/100;
+    return `<article class="skill-node-v082 ${locked?"locked":""} ${maxed?"maxed":""}" tabindex="0" role="group" data-v096-skill-card data-v096-name="${escapeHtml(nodeName(node))}" data-v096-desc="${escapeHtml(nodeDesc(node))}" data-v096-current="${escapeHtml(String(current))}" data-v096-next="${escapeHtml(String(next))}" data-v096-unlock="${node.unlock}" data-v096-rank="${rank}/${node.max}">
+      <span class="skill-node-icon-v082">${node.icon}</span><span class="skill-node-name-v096">${escapeHtml(nodeName(node))}<small>${node.unlock?`Lv. ${node.unlock}`:(language()==="hu"?"Nyitva":"Open")}</small></span>
+      <b class="skill-rank-v096">${rank}/${node.max}</b>
+      <button type="button" data-v082-skill="${node.id}" aria-label="${escapeHtml(nodeName(node))}: ${maxed?t("max"):"+"}" ${locked||maxed||save.account.skillPoints<1?"disabled":""}>${maxed?"✓":"+"}</button>
+    </article>`;
+  };
+  track.innerHTML=`<section class="skill-root-v096" aria-label="${escapeHtml(language()==="hu"?"Kezdőpont":"Starting point")}"><span>✦</span><b>${escapeHtml(language()==="hu"?"Cherry mag":"Cherry Core")}</b><small>${escapeHtml(language()==="hu"?"MEGSZEREZVE":"OWNED")}</small></section><div class="skill-branches-v096">${branchDefinitions.map(branch=>`<section class="skill-branch-v096 branch-${branch.id}" data-skill-branch="${branch.id}"><header><span>${branch.icon}</span><b>${escapeHtml(language()==="hu"?branch.hu:branch.en)}</b></header><div>${branch.nodes.map(nodeId=>nodeMarkup(SKILL_NODES[nodeId])).join("")}</div></section>`).join("")}</div>`;
   const scroller=id("skillTreeScrollV082");
-  requestAnimationFrame(()=>{if(scroller&&!scroller.dataset.v096Initial){scroller.dataset.v096Initial="1";scroller.scrollTop=scroller.scrollHeight;scroller.scrollLeft=Math.max(0,(scroller.scrollWidth-scroller.clientWidth)/2);}});
+  requestAnimationFrame(()=>{if(scroller&&!scroller.dataset.v096Initial){scroller.dataset.v096Initial="1";scroller.scrollTop=0;scroller.scrollLeft=Math.max(0,(scroller.scrollWidth-scroller.clientWidth)/2);}});
 }
 function bindTreeScroller(){
   const scroller=id("skillTreeScrollV082");if(!scroller||scroller.dataset.bound)return;
@@ -16764,16 +16798,16 @@ const ITEM_ASSETS = Object.freeze({
 
 const COPY = {
   hu: {
-    obtained: "Megszerezve",
-    continue: "Folytatás",
+    obtained: "OBTAINED",
+    continue: "KATTINTS AZ ÁTVÉTELHEZ",
     commonChestKey: "Common ládakulcs",
     skillPoint: "Skill Point",
     moreRewards: "További jutalmak",
     rewardCount: "jutalom"
   },
   en: {
-    obtained: "Obtained",
-    continue: "Continue",
+    obtained: "OBTAINED",
+    continue: "CLICK TO CLAIM",
     commonChestKey: "Common Chest Key",
     skillPoint: "Skill Point",
     moreRewards: "More rewards",
@@ -17254,7 +17288,7 @@ function rewardArt(item) {
 
 function rewardCard(item) {
   const rarity = safeRarity(item.rarity);
-  return `<article class="reward-item-v083 rarity-${rarity.toLowerCase()}">
+  return `<article class="reward-item-v083 rarity-${rarity.toLowerCase()}" tabindex="0" data-cr-item-key="${escapeHtml(item.key)}" data-cr-item-name="${escapeHtml(item.name)}" data-cr-item-kind="${escapeHtml(item.kind)}" data-cr-item-rarity="${escapeHtml(rarity)}" data-cr-item-subtitle="${escapeHtml(item.subtitle)}">
     <div class="reward-amount-v083">${item.amount > 1 ? `×${item.amount}` : ""}</div>
     ${rewardArt(item)}
     <div class="reward-copy-v083"><h3>${escapeHtml(item.name)}</h3>${item.subtitle ? `<p>${escapeHtml(item.subtitle)}</p>` : ""}</div>
@@ -17268,7 +17302,9 @@ function renderRewardBatch(batch) {
   const list = id("rewardItemsV083");
   const continueButton = id("rewardContinueV083");
   if (title) title.textContent = batch.title || t("obtained");
-  if (continueButton) continueButton.textContent = t("continue");
+  if (continueButton) continueButton.textContent = matchMedia("(pointer:coarse)").matches
+    ? (language() === "hu" ? "ÉRINTSD MEG AZ ÁTVÉTELHEZ" : "TAP TO CLAIM")
+    : t("continue");
   if (list) list.innerHTML = batch.items.map(rewardCard).join("");
   overlay.classList.add("open");
   document.body.classList.add("reward-open-v083");
@@ -17382,7 +17418,7 @@ function patchVersion() {
 
 function bindGlobalEvents() {
   document.addEventListener("keydown", event => {
-    if (!state.active || !["Escape", "Enter", " "].includes(event.key)) return;
+    if (!state.active || event.key !== " ") return;
     event.preventDefault();
     closeCurrentReward();
   });
@@ -17671,8 +17707,8 @@ function renderBagInventory() {
   if (selected && !filtered.some(item => item.id === selected.id)) selected = filtered[0] || selected;
   if (selected) state.bagSelected = selected.id;
   const categories = [["all",t("all")],["enhancement",t("enhancement")],["stones",t("stones")],["cores",t("cores")],["buffs",t("buffs")],["chests",t("chests")]];
-  const cards = filtered.length ? filtered.map(item => `<button type="button" class="bag-item-v084 rarity-${String(item.rarity).toLowerCase()} ${item.id===selected?.id?"active":""}" data-v084-bag-item="${escapeHtml(item.id)}">
-    <span class="bag-item-art-v084">${image(item.asset,item.name)}</span><small>${escapeHtml(item.rarity)}</small><b>${escapeHtml(item.name)}</b><em>×${item.count}</em>
+  const cards = filtered.length ? filtered.map(item => `<button type="button" class="bag-item-v084 rarity-${String(item.rarity).toLowerCase()} ${item.id===selected?.id?"active":""}" data-v084-bag-item="${escapeHtml(item.id)}" data-cr-item-name="${escapeHtml(item.name)}" data-cr-item-rarity="${escapeHtml(item.rarity)}" data-cr-item-description="${escapeHtml(item.description)}" aria-label="${escapeHtml(`${item.name}, ${item.count}`)}">
+    <span class="bag-item-art-v084">${image(item.asset,item.name)}</span><em>×${item.count}</em>
   </button>`).join("") : `<div class="bag-empty-v084"><p>${escapeHtml(t("noItems"))}</p><div class="bag-empty-slots-v092" aria-hidden="true">${Array.from({length:9},()=>'<span class="bag-empty-slot-v092"></span>').join("")}</div></div>`;
   const action = !selected ? "" : selected.action === "use" ? `<button type="button" class="primary" data-v084-bag-use="${escapeHtml(selected.itemId)}" ${selected.count<1?"disabled":""}>${escapeHtml(t("use"))}</button>` : selected.action === "gacha" ? `<button type="button" class="primary" data-v084-bag-gacha="${escapeHtml(selected.chestType)}">${escapeHtml(t("openGacha"))}</button>` : "";
   body.innerHTML = `<section class="bag-inventory-v084">
@@ -20898,8 +20934,9 @@ function drawSkinPreview(timestamp) {
 function startPreviewLoop() {
   if (state.previewRequest) return;
   const loop = timestamp => {
-    state.previewRequest = requestAnimationFrame(loop);
-    drawSkinPreview(timestamp);
+    const visible=!document.hidden&&!document.body.classList.contains("is-playing")&&!id("skins")?.classList.contains("hidden")&&state.skinView==="game";
+    state.previewRequest=window.setTimeout(()=>requestAnimationFrame(loop),visible?45:320);
+    if(visible)drawSkinPreview(timestamp);
   };
   state.previewRequest = requestAnimationFrame(loop);
 }
@@ -22799,7 +22836,7 @@ function decorateLoadoutSlots() {
     const signature = `${item?.id || "empty"}|${arsenalLevel}`;
     if (button.dataset.v0932Slot !== signature || !q(".gear-slot-icon-v0932", button) || !q(".gear-arsenal-level-v0932", button)) {
       button.dataset.v0932Slot = signature;
-      button.innerHTML = `<span class="gear-slot-icon-v0932">${art}</span><i class="gear-arsenal-level-v0932">LVL${arsenalLevel}</i>`;
+      button.innerHTML = `<span class="gear-slot-icon-v0932">${art}</span><i class="gear-arsenal-level-v0932">Lv. ${arsenalLevel}</i>`;
     }
     button.setAttribute("aria-label", `${slot} · Level ${arsenalLevel}`);
   });

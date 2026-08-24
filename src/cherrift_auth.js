@@ -4,7 +4,7 @@
   if (window.__CHERRIFT_AUTH_V3__) return;
   window.__CHERRIFT_AUTH_V3__ = true;
 
-  const VERSION = "3.0.0-local-first-bootstrap";
+  const VERSION = "3.0.0-local-first-bootstrap+3.1.0-deterministic-pkce";
   const SAVE_VERSION = "0.9.5-prebeta.2";
   const CONFIG = window.CHERRIFT_SUPABASE_CONFIG || {};
   const PLAYER_FUNCTION = CONFIG.playerFunctionName || "player-api";
@@ -222,6 +222,14 @@
       url.searchParams.get("error") || "", 180);
   }
 
+  function oauthCodeFromUrl() {
+    try {
+      return safeText(new URL(window.location.href).searchParams.get("code") || "", 2048);
+    } catch (_) {
+      return "";
+    }
+  }
+
   function cleanOAuthUrl() {
     const url = new URL(window.location.href);
     let changed = false;
@@ -256,7 +264,11 @@
           storageKey:CONFIG.authStorageKey || "cherrift-supabase-auth-v063",
           persistSession:true,
           autoRefreshToken:true,
-          detectSessionInUrl:true,
+          // Callback processing is owned by discoverSession(). Letting
+          // supabase-js auto-detect at the same time can race the explicit
+          // PKCE exchange and consume the verifier before CHERRIFT sees the
+          // resulting session (most visible in Opera/GX and cold tabs).
+          detectSessionInUrl:false,
           flowType:"pkce"
         }
       });
@@ -750,14 +762,14 @@
   async function completeDiscordSession(session, attempt = runtime.authAttempt) {
     if (!session?.user) return false;
     if (attempt !== runtime.authAttempt || runtime.guestExplicit) return false;
-    runtime.mode = "gate";
-    runtime.gateVisible = true;
-    // Cloud recovery must never disable Guest. If Supabase is slow, the
-    // player can always choose the already-loaded local profile.
-    runtime.busy = false;
+    // A returning Discord session stays behind the boot screen. Showing the
+    // login choice here caused the cleanup-era Discord -> gate -> start flash.
+    runtime.mode = "checking";
+    runtime.gateVisible = false;
+    runtime.busy = true;
     runtime.statusKey = "loadingCloud";
-    ensureGate().hidden = false;
-    document.body.classList.add("auth-gated-v064");
+    ensureGate().hidden = true;
+    document.body.classList.remove("auth-gated-v064");
     renderGate();
     const save = await resolveDiscordSave(session);
     if (attempt !== runtime.authAttempt || runtime.guestExplicit) {
@@ -787,8 +799,9 @@
     runtime.loadGuestSave = typeof loadGuestSave === "function" ? loadGuestSave : null;
     installStorageBridge();
     runtime.bootstrapSave = currentGuestSave();
-    runtime.mode = "gate";
-    runtime.statusKey = "";
+    runtime.mode = "checking";
+    runtime.gateVisible = false;
+    runtime.statusKey = "checking";
     runtime.bootstrapDone = true;
     return runtime.bootstrapSave;
   }
@@ -941,6 +954,7 @@
     if (runtime.discoveryPromise) return runtime.discoveryPromise;
     runtime.discoveryPromise = (async () => {
       const oauthError = oauthErrorFromUrl();
+      const oauthCode = oauthCodeFromUrl();
       const attempt = ++runtime.authAttempt;
       runtime.discovering = true;
       runtime.statusKey = "checking";
@@ -948,15 +962,32 @@
 
       try {
         if (!runtime.client) throw new Error("supabase_client_unavailable");
-        const sessionResult = await deadline(
-          () => runtime.client.auth.getSession(),
-          AUTH_TIMEOUT_MS,
-          "auth_session_timeout"
-        );
-        if (sessionResult?.error) throw sessionResult.error;
+        let session = null;
+
+        if (oauthCode) {
+          if (typeof runtime.client.auth.exchangeCodeForSession !== "function") {
+            throw new Error("pkce_exchange_unavailable");
+          }
+          const exchangeResult = await deadline(
+            () => runtime.client.auth.exchangeCodeForSession(oauthCode),
+            AUTH_TIMEOUT_MS,
+            "auth_exchange_timeout"
+          );
+          if (exchangeResult?.error) throw exchangeResult.error;
+          session = exchangeResult?.data?.session || null;
+        }
+
+        if (!session?.user) {
+          const sessionResult = await deadline(
+            () => runtime.client.auth.getSession(),
+            AUTH_TIMEOUT_MS,
+            "auth_session_timeout"
+          );
+          if (sessionResult?.error) throw sessionResult.error;
+          session = sessionResult?.data?.session || null;
+        }
         if (attempt !== runtime.authAttempt || runtime.guestExplicit) return false;
 
-        const session = sessionResult?.data?.session;
         if (!session?.user) {
           runtime.statusKey = "";
           if (oauthError) {
@@ -983,6 +1014,9 @@
         return false;
       } finally {
         runtime.discovering = false;
+        // Only the single callback owner may remove the PKCE response. At
+        // this point the exchange has either produced a session or a visible,
+        // retryable error; it is never silently discarded before exchange.
         cleanOAuthUrl();
         window.setTimeout(processPendingAuthEvent, 0);
       }
@@ -996,10 +1030,14 @@
 
     if (!runtime.bootstrapDone) bootstrapSave(runtime.loadGuestSave);
     if (!runtime.client) runtime.client = createClient();
-    openGate({
-      errorKey:runtime.errorKey,
-      errorDetail:runtime.errorDetail
-    });
+    runtime.mode = "checking";
+    runtime.gateVisible = false;
+    runtime.busy = true;
+    runtime.statusKey = oauthCodeFromUrl() ? "redirecting" : "checking";
+    const gate = ensureGate();
+    gate.hidden = true;
+    document.body.classList.remove("auth-gated-v064");
+    renderGate();
     syncAccountUi();
     window.dispatchEvent(new CustomEvent("cherrift:runtime-ready", {
       detail:{ mode:runtime.mode, signedIn:false }
@@ -1008,9 +1046,20 @@
     // Deliberately detached: neither a stuck browser Auth lock nor a slow
     // player-api call can own the loading screen or disable Guest.
     window.setTimeout(() => {
-      discoverSession().catch(error => {
-        console.error("[CHERRIFT Auth] Detached session discovery failed:", error);
-      });
+      discoverSession()
+        .then(signedIn => {
+          if (signedIn || runtime.guestExplicit || runtime.mode === "discord") return;
+          openGate({
+            errorKey:runtime.errorKey,
+            errorDetail:runtime.errorDetail
+          });
+        })
+        .catch(error => {
+          console.error("[CHERRIFT Auth] Detached session discovery failed:", error);
+          if (!runtime.guestExplicit) {
+            openGate({ errorKey:"serviceUnavailable" });
+          }
+        });
     }, 0);
     // Register after the discovery timer. Even a custom client that invokes
     // INITIAL_SESSION synchronously cannot start a second competing bootstrap
