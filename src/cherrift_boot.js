@@ -167,12 +167,6 @@
   }
 
   function loadingMessage() {
-    const startupTrace = window.__CHERRIFT_STARTUP_TRACE__;
-    if (startupTrace?.active && typeof startupTrace.display === "function") {
-      const diagnostic = startupTrace.display();
-      if (diagnostic) return `DIAG · ${diagnostic}`;
-    }
-
     if (!state.dom) {
       return copy(
         "CHERRIFT indítása…",

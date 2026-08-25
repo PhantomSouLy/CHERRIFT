@@ -8367,7 +8367,7 @@ function ensureLayout() {
       <section class="gear-loadout-v0560">
         <div class="gear-loadout-title-v0560">
           <div>
-            <small>CURRENT LOADOUT</small>
+            <small>CURRENT APPEARANCE</small>
             <h2 id="gearSkinNameV0560">Cherry</h2>
           </div>
           <span id="gearEquippedCountV0560">0 / 7 equipped</span>
@@ -10434,9 +10434,7 @@ function ensureSettingsLayout() {
         <button type="button" data-v060-settings="audio"><i>♪</i><b>Audio</b></button>
         <button type="button" data-v060-settings="display"><i>▣</i><b>Display</b></button>
         <button type="button" data-v060-settings="controls"><i>⌁</i><b>Controls</b></button>
-        <button type="button" data-v060-settings="gameplay"><i>◇</i><b>Gameplay UI</b></button>
-        <button type="button" data-v060-settings="accessibility"><i>◉</i><b>Accessibility</b></button>
-        <button type="button" data-v060-settings="account"><i>♙</i><b>Account</b><em>Later</em></button>
+        <button type="button" data-v060-settings="account"><i>♙</i><b>Account</b></button>
       </nav>
       <main class="settings-content-v060">
         <section class="settings-page-v060 active" data-v060-settings-page="general">
@@ -10453,10 +10451,14 @@ function ensureSettingsLayout() {
         </section>
         <section class="settings-page-v060" data-v060-settings-page="display">
           <header><small>DISPLAY</small><h3>Performance &amp; screen</h3><p>Balanced defaults are recommended.</p></header>
-          <label class="setting-line-v060"><span><b>FPS limit</b><small>Maximum rendered frames per second</small></span><select id="fpsLimit"><option value="30">30 FPS</option><option value="60">60 FPS</option></select></label>
-          <label class="setting-line-v060"><span><b>View zoom</b><small>A fair, closer combat view on every screen</small></span><select id="viewZoom"><option value="1.00">Balanced</option><option value="1.10">Closer</option><option value="1.20">Close-up</option></select></label>
           <button type="button" id="fullscreen" class="setting-action-v060">⛶ Toggle fullscreen</button>
           <button type="button" id="settingsFullscreen" hidden aria-hidden="true">Toggle fullscreen</button>
+          <label class="setting-line-v060"><span><b>FPS limit</b><small>Maximum rendered frames per second</small></span><select id="fpsLimit"><option value="30">30 FPS</option><option value="60">60 FPS</option></select></label>
+          <label class="setting-line-v060"><span><b>View zoom</b><small>A fair, closer combat view on every screen</small></span><select id="viewZoom"><option value="1.00">Balanced</option><option value="1.10">Closer</option><option value="1.20">Close-up</option></select></label>
+          <label class="setting-line-v060"><span><b>Compact objective HUD</b><small>Use the smaller stage objective display</small></span><input id="compactHud" type="checkbox" checked></label>
+          <label class="setting-line-v060"><span><b>Damage numbers</b><small>Show damage dealt above enemies</small></span><input id="damageNumbersToggle" type="checkbox" checked></label>
+          <label class="setting-line-v060"><span><b>Reduce motion</b><small>Minimize decorative movement and reveal effects</small></span><input id="reducedMotionV060" type="checkbox"></label>
+          <label class="setting-line-v060"><span><b>High contrast UI</b><small>Increase text and control contrast</small></span><input id="highContrastV060" type="checkbox"></label>
         </section>
         <section class="settings-page-v060" data-v060-settings-page="controls">
           <header><small>CONTROLS</small><h3>Desktop &amp; mobile input</h3><p>Mobile controls remain optimized for full-screen touch.</p></header>
@@ -10464,19 +10466,8 @@ function ensureSettingsLayout() {
           <label class="setting-line-v060"><span><b>UI scale</b><small>HUD and skill-button size</small></span><input id="uiScale" type="range" min="85" max="125" step="5" value="100"></label>
           <div class="setting-info-v060"><i>⌁</i><p>The skill button stays separate in the lower-right corner on mobile.</p></div>
         </section>
-        <section class="settings-page-v060" data-v060-settings-page="gameplay">
-          <header><small>GAMEPLAY UI</small><h3>Combat information</h3><p>Choose how much information appears during a run.</p></header>
-          <label class="setting-line-v060"><span><b>Compact objective HUD</b><small>Use the smaller stage objective display</small></span><input id="compactHud" type="checkbox" checked></label>
-          <label class="setting-line-v060"><span><b>Damage numbers</b><small>Show damage dealt above enemies</small></span><input id="damageNumbersToggle" type="checkbox" checked></label>
-        </section>
-        <section class="settings-page-v060" data-v060-settings-page="accessibility">
-          <header><small>ACCESSIBILITY</small><h3>Comfort options</h3><p>Visual settings also affect Gacha and menu effects.</p></header>
-          <label class="setting-line-v060"><span><b>Reduce motion</b><small>Minimize decorative movement and reveal effects</small></span><input id="reducedMotionV060" type="checkbox"></label>
-          <label class="setting-line-v060"><span><b>High contrast UI</b><small>Increase text and control contrast</small></span><input id="highContrastV060" type="checkbox"></label>
-        </section>
         <section class="settings-page-v060" data-v060-settings-page="account">
-          <header><small>ACCOUNT</small><h3>CHERRIFT Account</h3><p>This area is prepared for a future account system.</p></header>
-          <div class="account-coming-v060"><i>♙</i><h4>Account sync is coming later</h4><p>Login, cloud saves, linked profiles and account security will appear here without another settings redesign.</p><button type="button" disabled>COMING SOON</button></div>
+          <header><small>ACCOUNT</small><h3>CHERRIFT Account</h3></header>
         </section>
       </main>
     </div>
@@ -10676,7 +10667,7 @@ function ensureMobilePanelTabs() {
       inventory.dataset.v061GearPane = "inventory";
       header.insertAdjacentHTML("afterend", `
         <nav id="gearTabsV061" class="mobile-panel-tabs-v061" aria-label="Gear sections">
-          <button type="button" data-v061-gear-tab="loadout" class="active">Loadout</button>
+          <button type="button" data-v061-gear-tab="loadout" class="active">Equipped</button>
           <button type="button" data-v061-gear-tab="inventory">Inventory</button>
         </nav>`);
       selectGearTab("loadout");
@@ -11448,7 +11439,7 @@ const pairs = [
   ["Legendary dual-sword melee skin. Every 10 defeated enemies reduces the remaining Blossom Spin cooldown by 30%.", "Legendás, kétkardos közelharci kinézet. Minden 10 legyőzött ellenfél 30%-kal csökkenti a Blossom Spin hátralévő töltési idejét."],
   ["Blossom Spin cuts a medium area and grants a 2% movement-speed burst that fades to zero over one second.", "A Blossom Spin közepes területet vág le, és 2% mozgásisebesség-löketet ad, amely egy másodperc alatt lecseng."],
 
-  ["Current loadout", "Jelenlegi összeállítás"], ["Loadout", "Összeállítás"], ["Inventory", "Tárgylista"],
+  ["Current Appearance", "Jelenlegi kinézet"], ["Equipped", "Felszerelt"], ["Inventory", "Tárgylista"],
   ["Equipment collection", "Felszerelésgyűjtemény"], ["My collection", "Gyűjteményem"], ["Total power", "Összerő"],
   ["Total stats", "Összes stat"], ["Item power", "Tárgyerő"], ["Compared to equipped", "Összevetés a felszerelttel"],
   ["No equipment equipped yet.", "Még nincs felszerelt tárgy."], ["No gear collected.", "Még nincs gyűjtött felszerelés."],
@@ -15411,9 +15402,9 @@ function renderShop(save){
   return `<section class="shop-intro-v080"><h2>${escapeHtml(t("shop"))}</h2><p>${escapeHtml(t("shopIntro"))}</p></section>
     <section class="shop-catalog-v097">
     <nav class="shop-categories-v096" aria-label="Shop categories">${categories.map(([key,label])=>`<button type="button" data-v080-shop-category="${key}" class="${selected===key?"active":""}" aria-pressed="${selected===key}">${escapeHtml(label)}</button>`).join("")}</nav>
-    <div class="shop-category-panel-v096 ${selected==="chests"?"active":""}" data-v096-shop-panel="chests"><section class="shop-grid-v080">${Object.entries(chestPrices).map(([type,price])=>`<article class="shop-card-v080"><span><img src="${CHEST_DEFS[type].asset}" alt=""></span><h3>${escapeHtml(CHEST_DEFS[type].name)}</h3><b>${priceText(price)}</b><button type="button" data-v080-buy-chest="${type}" ${!canAfford(save,price)?"disabled":""}>${escapeHtml(t("buy"))}</button></article>`).join("")}</section></div>
-    <div class="shop-category-panel-v096 ${selected==="essence"?"active":""}" data-v096-shop-panel="essence"><section class="bag-section-v080"><header><h2>Sakura Essence Skin Shop</h2><p>Daily rotating offers</p></header><div class="food-grid-v080">${offers.map(skin=>{const cost=window.CHERRIFT_BALANCE?.gacha?.essenceShop?.[skin.rarity]||300,owned=save.unlockedSkins.includes(skin.id);return `<article class="food-card-v080 rarity-${String(skin.rarity||"Common").toLowerCase()}">${imageOrFallback(skin.icon,"CHERRY",skin.name)}<small>${escapeHtml(skin.rarity||"Common")}</small><h3>${escapeHtml(skin.name)}</h3><p>Unique skin offer</p><b><img src="assets/items/sakura_potion.png" alt=""> ${cost}</b><button type="button" data-v080-buy-skin="${escapeHtml(skin.id)}" ${owned||save.sakuraEssence<cost?"disabled":""}>${escapeHtml(owned?t("owned"):t("buy"))}</button></article>`;}).join("")}</div></section></div>
-    <div class="shop-category-panel-v096 ${selected==="food"?"active":""}" data-v096-shop-panel="food"><section class="bag-section-v080"><header><h2>${escapeHtml(t("food"))}</h2></header><div class="food-grid-v080">${Object.entries(FOOD_CATALOG).map(([key,food])=>`<article class="food-card-v080 rarity-${food.rarity.toLowerCase()}">${imageOrFallback(food.asset,food.icon,food.name)}<small>${escapeHtml(food.rarity)}</small><h3>${escapeHtml(food.name)}</h3><p>+${Math.round(food.value*100)}% ${escapeHtml(EFFECT_LABELS[food.effect])} · ${food.runs} ${escapeHtml(t("runs"))}</p><b>${priceText(food.price)}</b><button type="button" data-v080-buy-food="${key}" ${!canAfford(save,food.price)?"disabled":""}>${escapeHtml(t("buy"))}</button></article>`).join("")}</div></section></div>
+    <div class="shop-category-panel-v096 ${selected==="chests"?"active":""}" data-v096-shop-panel="chests"><section class="shop-grid-v080">${Object.entries(chestPrices).map(([type,price])=>`<article class="shop-card-v080 rarity-${type}"><span><img src="${CHEST_DEFS[type].asset}" alt=""></span><h3>${escapeHtml(CHEST_DEFS[type].name)}</h3><b>${priceText(price)}</b><button type="button" data-v080-buy-chest="${type}" ${!canAfford(save,price)?"disabled":""}>${escapeHtml(t("buy"))}</button></article>`).join("")}</section></div>
+    <div class="shop-category-panel-v096 ${selected==="essence"?"active":""}" data-v096-shop-panel="essence"><section class="bag-section-v080 shop-square-section-v096"><div class="food-grid-v080">${offers.map(skin=>{const cost=window.CHERRIFT_BALANCE?.gacha?.essenceShop?.[skin.rarity]||300,owned=save.unlockedSkins.includes(skin.id);return `<article class="food-card-v080 rarity-${String(skin.rarity||"Common").toLowerCase()}">${imageOrFallback(skin.icon,"CHERRY",skin.name)}<h3>${escapeHtml(skin.name)}</h3><b><img src="assets/items/sakura_potion.png" alt=""> ${cost}</b><button type="button" data-v080-buy-skin="${escapeHtml(skin.id)}" ${owned||save.sakuraEssence<cost?"disabled":""}>${escapeHtml(owned?t("owned"):t("buy"))}</button></article>`;}).join("")}</div></section></div>
+    <div class="shop-category-panel-v096 ${selected==="food"?"active":""}" data-v096-shop-panel="food"><section class="bag-section-v080 shop-square-section-v096"><div class="food-grid-v080">${Object.entries(FOOD_CATALOG).map(([key,food])=>`<article class="food-card-v080 rarity-${food.rarity.toLowerCase()}">${imageOrFallback(food.asset,food.icon,food.name)}<h3>${escapeHtml(food.name)}</h3><b>${priceText(food.price)}</b><button type="button" data-v080-buy-food="${key}" ${!canAfford(save,food.price)?"disabled":""}>${escapeHtml(t("buy"))}</button></article>`).join("")}</div></section></div>
     </section>`;
 }
 function patchNavigation(){
@@ -15770,7 +15761,7 @@ if(!window.UI||!window.CherriftStorage||!window.CHERRIFT_V070||!window.CHERRIFT_
 
 const runtime = {
   route:"menu",selectionMode:false,selectedGear:new Set(),draggingTree:false,treeStartX:0,
-  treeStartScroll:0,treeMoved:false,economyRoute:"gacha",observers:[]
+  treeStartScroll:0,treeMoved:false,economyRoute:"gacha",skillBranch:"attack",observers:[]
 };
 
 function language(){return window.CHERRIFT_I18N?.language==="en"||UI.save?.settings?.language==="en"?"en":"hu";}
@@ -16027,7 +16018,7 @@ function ensureMobileDrawer(){
   if(nav&&(!nav.dataset.v082Ready||!q("[data-v082-toggle-mobile]",nav))){
     nav.dataset.v082Ready="1";nav.classList.add("mobile-nav-v082");
     nav.innerHTML=`
-      <button type="button" data-v082-open="worlds"><span>▶</span><b>${escapeHtml(t("play"))}</b></button>
+      <button type="button" data-v082-open="skins"><span class="mobile-skin-icon-v096"></span><b>Cherry</b><em class="notice-dot-v082" data-v090-notice="skins"></em></button>
       <button type="button" data-v082-open="gear"><span>⚔</span><b>${escapeHtml(t("gear"))}</b><em class="notice-dot-v082" data-v082-notice="gear"></em></button>
       <button type="button" data-v082-open="menu" class="home"><span>⌂</span><b>Home</b></button>
       <button type="button" data-v082-open="gachaV082"><span>◇</span><b>${escapeHtml(t("gacha"))}</b><em class="notice-dot-v082" data-v082-notice="gacha"></em></button>
@@ -16045,12 +16036,12 @@ function renderMobileDrawer(){
   drawer.innerHTML=`
     <header class="mobile-more-head-v096"><h2>CHERRIFT</h2><nav class="mobile-more-support-v096" aria-label="CHERRIFT links">
       <button type="button" data-r5-menu-tool="twitch" title="Twitch" aria-label="Twitch"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 2h17v12l-5 5h-4l-3 3v-3H4V2zm2 2v13h5v2l2-2h4l2-2V4H6zm5 3h2v6h-2V7zm4 0h2v6h-2V7z"/></svg></button>
-      <button type="button" data-r5-menu-tool="web" title="Website" aria-label="Website">🌐</button>
-      <button type="button" data-r5-menu-tool="feedback" title="Feedback" aria-label="Feedback">💬</button>
-      <button type="button" data-r5-menu-tool="bug" title="Bug report" aria-label="Bug report">🐞</button>
+      <button type="button" data-r5-menu-tool="web" title="Website" aria-label="Website"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3.5 12h17M12 3c2.3 2.5 3.5 5.5 3.5 9S14.3 18.5 12 21M12 3C9.7 5.5 8.5 8.5 8.5 12S9.7 18.5 12 21"/></svg></button>
+      <button type="button" data-r5-menu-tool="feedback" title="Feedback" aria-label="Feedback"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v12H9l-5 4V4z"/><path d="M8 9h8M8 12h5"/></svg></button>
+      <button type="button" data-r5-menu-tool="bug" title="Bug report" aria-label="Bug report"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 8h8v9a4 4 0 0 1-8 0V8zM9 5l3 3 3-3M4 11h4M16 11h4M4 16h4M16 16h4"/></svg></button>
     </nav></header>
     <div class="mobile-menu-grid-v082">
-      ${railButton("skins","🐰",t("skins"))}${railButton("arsenalV070","✥",t("arsenal"))}
+      ${railButton("arsenalV070","✥",t("arsenal"))}
       ${railButton("playerUpgrade","✦",t("upgrade"))}${railButton("bagV082","🎒",t("bag"))}
       ${railButton("shopV082","▤",t("shop"))}${railButton("collectionV082","▣",t("collection"))}
       ${railButton("achievements","♛",t("achievements"))}${railButton("profileV082","👤",t("profile"))}
@@ -16130,11 +16121,11 @@ function ensurePlayerUpgrade(){
       <button type="button" data-v082-open="statSummaryV082">≡ ${escapeHtml(t("statSummary"))}</button>
       <button type="button" data-v082-reset-tree>↺ ${escapeHtml(t("reset"))}</button>
     </section>
+    <nav id="skillBranchTabsV096" class="skill-branch-tabs-v096" aria-label="Player Upgrade categories"></nav>
     <div id="skillTreeScrollV082" class="skill-tree-scroll-v082">
       <div id="skillTreeTrackV082" class="skill-tree-track-v082"></div>
     </div>
-    <aside id="skillInfoV096" class="skill-info-v096" hidden aria-live="polite"></aside>
-    <p class="skill-tree-help-v082">↕↔ ${language()==="hu"?"Húzd szabadon a fát. PC-n vidd az egeret, telefonon tappints egy ikonra a részletekhez.":"Drag the tree freely. Hover on PC or tap an icon on mobile for details."}</p>`;
+    <aside id="skillInfoV096" class="skill-info-v096" hidden aria-live="polite"></aside>`;
   bindTreeScroller();
 }
 function renderSkillTree(){
@@ -16149,50 +16140,25 @@ function renderSkillTree(){
     {id:"defense",icon:"♥",hu:"Védelem",en:"Defense",nodes:["maxHp","movementSpeed","damageReduction","hpRegen","cooldownReduction","eliteDamage"]},
     {id:"utility",icon:"✦",hu:"Hasznosság",en:"Utility",nodes:["orbXp","luckChance","pickupRange","coinGain","itemDrop","chestDrop"]}
   ];
+  const selectedBranch=branchDefinitions.find(branch=>branch.id===runtime.skillBranch)||branchDefinitions[0];
+  runtime.skillBranch=selectedBranch.id;
+  const tabs=id("skillBranchTabsV096");
+  if(tabs)tabs.innerHTML=branchDefinitions.map(branch=>`<button type="button" class="${branch.id===selectedBranch.id?"active":""}" data-v096-skill-branch="${branch.id}" aria-pressed="${branch.id===selectedBranch.id}"><span>${branch.icon}</span><b>${escapeHtml(language()==="hu"?branch.hu:branch.en)}</b></button>`).join("");
   const nodeMarkup=node=>{
     const rank=ranks[node.id]||0,locked=level<node.unlock,maxed=rank>=node.max;
     const current=node.unit==="%"?formatPercent(rank*node.value):Math.round(rank*node.value*100)/100;
     const next=node.unit==="%"?formatPercent(Math.min(node.max,rank+1)*node.value):Math.round(Math.min(node.max,rank+1)*node.value*100)/100;
-    return `<article class="skill-node-v082 ${locked?"locked":""} ${maxed?"maxed":""}" tabindex="0" role="group" data-v096-skill-card data-v096-name="${escapeHtml(nodeName(node))}" data-v096-desc="${escapeHtml(nodeDesc(node))}" data-v096-current="${escapeHtml(String(current))}" data-v096-next="${escapeHtml(String(next))}" data-v096-unlock="${node.unlock}" data-v096-rank="${rank}/${node.max}">
-      <span class="skill-node-icon-v082">${node.icon}</span><span class="skill-node-name-v096">${escapeHtml(nodeName(node))}<small>${node.unlock?`Lv. ${node.unlock}`:(language()==="hu"?"Nyitva":"Open")}</small></span>
-      <b class="skill-rank-v096">${rank}/${node.max}</b>
+    return `<article class="skill-node-v082 ${maxed?"maxed":""}" role="group" data-v096-skill-card data-v096-name="${escapeHtml(nodeName(node))}" data-v096-desc="${escapeHtml(nodeDesc(node))}" data-v096-current="${escapeHtml(String(current))}" data-v096-next="${escapeHtml(String(next))}" data-v096-unlock="${node.unlock}" data-v096-rank="${rank}/${node.max}">
+      <span class="skill-node-icon-v082">${node.icon}</span><span class="skill-node-name-v096"><b>${escapeHtml(nodeName(node))}</b><small>${escapeHtml(nodeDesc(node))}</small>${locked?`<em>${language()==="hu"?"Szükséges szint":"Required level"}: ${node.unlock}</em>`:""}</span>
+      <b class="skill-rank-v096">${language()==="hu"?"Szint":"Level"} ${rank}/${node.max}</b>
       <button type="button" data-v082-skill="${node.id}" aria-label="${escapeHtml(nodeName(node))}: ${maxed?t("max"):"+"}" ${locked||maxed||save.account.skillPoints<1?"disabled":""}>${maxed?"✓":"+"}</button>
     </article>`;
   };
-  track.innerHTML=`<section class="skill-root-v096" aria-label="${escapeHtml(language()==="hu"?"Kezdőpont":"Starting point")}"><span>✦</span><b>${escapeHtml(language()==="hu"?"Cherry mag":"Cherry Core")}</b><small>${escapeHtml(language()==="hu"?"MEGSZEREZVE":"OWNED")}</small></section><div class="skill-branches-v096">${branchDefinitions.map(branch=>`<section class="skill-branch-v096 branch-${branch.id}" data-skill-branch="${branch.id}"><header><span>${branch.icon}</span><b>${escapeHtml(language()==="hu"?branch.hu:branch.en)}</b></header><div>${branch.nodes.map(nodeId=>nodeMarkup(SKILL_NODES[nodeId])).join("")}</div></section>`).join("")}</div>`;
-  const scroller=id("skillTreeScrollV082");
-  requestAnimationFrame(()=>{if(scroller&&!scroller.dataset.v096Initial){scroller.dataset.v096Initial="1";scroller.scrollTop=0;scroller.scrollLeft=Math.max(0,(scroller.scrollWidth-scroller.clientWidth)/2);}});
+  track.innerHTML=`<header class="skill-list-head-v096"><span>${selectedBranch.icon}</span><div><small>PLAYER UPGRADE</small><h2>${escapeHtml(language()==="hu"?selectedBranch.hu:selectedBranch.en)}</h2></div><b>${selectedBranch.nodes.reduce((sum,nodeId)=>sum+Number(ranks[nodeId]||0),0)} / ${selectedBranch.nodes.reduce((sum,nodeId)=>sum+SKILL_NODES[nodeId].max,0)}</b></header><div class="skill-list-v096">${selectedBranch.nodes.map(nodeId=>nodeMarkup(SKILL_NODES[nodeId])).join("")}</div>`;
 }
 function bindTreeScroller(){
   const scroller=id("skillTreeScrollV082");if(!scroller||scroller.dataset.bound)return;
   scroller.dataset.bound="1";
-  scroller.addEventListener("wheel",event=>{
-    if(event.shiftKey||Math.abs(event.deltaX)>Math.abs(event.deltaY)){event.preventDefault();scroller.scrollLeft+=event.deltaX||event.deltaY;}
-  },{passive:false});
-  scroller.addEventListener("pointerdown",event=>{
-    if(event.target.closest("button,[data-v096-skill-card]"))return;
-    runtime.draggingTree=true;runtime.treeMoved=false;runtime.treeStartX=event.clientX;runtime.treeStartY=event.clientY;runtime.treeStartScroll=scroller.scrollLeft;runtime.treeStartScrollTop=scroller.scrollTop;
-    scroller.setPointerCapture?.(event.pointerId);scroller.classList.add("dragging");
-  });
-  scroller.addEventListener("pointermove",event=>{
-    if(!runtime.draggingTree)return;
-    const dx=event.clientX-runtime.treeStartX,dy=event.clientY-runtime.treeStartY;if(Math.abs(dx)>4||Math.abs(dy)>4)runtime.treeMoved=true;
-    scroller.scrollLeft=runtime.treeStartScroll-dx;
-    scroller.scrollTop=runtime.treeStartScrollTop-dy;
-  });
-  const end=()=>{runtime.draggingTree=false;scroller.classList.remove("dragging");};
-  scroller.addEventListener("pointerup",end);scroller.addEventListener("pointercancel",end);
-  const showSkillInfo=card=>{
-    if(!card)return;qa("[data-v096-skill-card]",scroller).forEach(node=>node.classList.toggle("selected",node===card));
-    const panel=id("skillInfoV096");if(!panel)return;
-    const locked=card.classList.contains("locked"),maxed=card.classList.contains("maxed");
-    panel.innerHTML=`<button type="button" data-v096-skill-info-close aria-label="Close">×</button><small>${escapeHtml(t("rank"))} ${escapeHtml(card.dataset.v096Rank||"")}</small><h3>${escapeHtml(card.dataset.v096Name||"")}</h3><p>${escapeHtml(card.dataset.v096Desc||"")}</p><div><span>${escapeHtml(t("current"))}: <b>${escapeHtml(card.dataset.v096Current||"0")}</b></span>${maxed?"":`<span>${escapeHtml(t("next"))}: <b>${escapeHtml(card.dataset.v096Next||"0")}</b></span>`}<em>${locked?`${escapeHtml(t("levelNeeded"))} ${escapeHtml(card.dataset.v096Unlock||"1")}`:""}</em></div>`;
-    panel.hidden=false;
-  };
-  scroller.addEventListener("click",event=>{const card=event.target.closest("[data-v096-skill-card]");if(card&&!event.target.closest("button"))showSkillInfo(card);});
-  scroller.addEventListener("focusin",event=>{const card=event.target.closest("[data-v096-skill-card]");if(card)showSkillInfo(card);});
-  scroller.addEventListener("pointerover",event=>{if(matchMedia("(hover:hover)").matches){const card=event.target.closest("[data-v096-skill-card]");if(card)showSkillInfo(card);}});
-  id("playerUpgrade")?.addEventListener("click",event=>{if(event.target.closest("[data-v096-skill-info-close]")){const panel=id("skillInfoV096");if(panel)panel.hidden=true;qa("[data-v096-skill-card]",scroller).forEach(node=>node.classList.remove("selected"));}});
 }
 
 function compactArsenal(){
@@ -16246,10 +16212,15 @@ function installGearTools(){
     tools.id="gearBulkToolsV082";tools.className="gear-bulk-tools-v082";
     tools.innerHTML=`
       <button type="button" data-v082-select-mode>${escapeHtml(t("select"))}</button>
-      <button type="button" data-v082-select-common class="hidden">${escapeHtml(t("selectCommon"))}</button>
-      <span id="gearSelectedCountV082" class="hidden">0 ${escapeHtml(t("selected"))}</span>
-      <button type="button" data-v082-bulk-sell class="hidden">${escapeHtml(t("sellSelected"))}</button>
-      <button type="button" data-v082-bulk-dismantle class="hidden">${escapeHtml(t("dismantleSelected"))}</button>`;
+      <div class="gear-selection-picks-v096 hidden">
+        <button type="button" data-v082-select-common>Common</button>
+        <button type="button" data-v0932-select-rare>Rare</button>
+        <span id="gearSelectedCountV082">0 / 0</span>
+      </div>
+      <div class="gear-selection-actions-v096 hidden">
+        <button type="button" data-v082-bulk-sell>${escapeHtml(t("sellSelected"))}</button>
+        <button type="button" data-v082-bulk-dismantle>${escapeHtml(t("dismantleSelected"))}</button>
+      </div>`;
     header.appendChild(tools);
   }
   decorateGearSelection();
@@ -16264,12 +16235,13 @@ function decorateGearSelection(){
   });
   const tools=id("gearBulkToolsV082");
   if(tools){
-    qa("button,span",tools).forEach((element,index)=>{
-      if(index===0)return;element.classList.toggle("hidden",!runtime.selectionMode);
-    });
+    qa(".gear-selection-picks-v096,.gear-selection-actions-v096",tools).forEach(group=>group.classList.toggle("hidden",!runtime.selectionMode));
     const first=q("[data-v082-select-mode]",tools);if(first)first.textContent=runtime.selectionMode?t("cancel"):t("select");
   }
-  if(id("gearSelectedCountV082"))id("gearSelectedCountV082").textContent=`${runtime.selectedGear.size} ${t("selected")}`;
+  if(id("gearSelectedCountV082")){
+    const selectable=(UI.save?.inventory||[]).filter(item=>item&&!item.locked).length;
+    id("gearSelectedCountV082").textContent=`${runtime.selectedGear.size} / ${selectable}`;
+  }
 }
 function toggleSelectionMode(){
   runtime.selectionMode=!runtime.selectionMode;
@@ -16635,6 +16607,8 @@ function bindEvents(){
     }
     const skillButton=event.target.closest("[data-v082-skill]");
     if(skillButton){event.preventDefault();upgradeSkill(skillButton.dataset.v082Skill);return;}
+    const skillBranch=event.target.closest("[data-v096-skill-branch]");
+    if(skillBranch){event.preventDefault();runtime.skillBranch=skillBranch.dataset.v096SkillBranch;renderSkillTree();return;}
     if(event.target.closest("[data-v082-reset-tree]")){event.preventDefault();resetSkillTree();return;}
     const material=event.target.closest("[data-v082-material]");
     if(material){event.preventDefault();event.stopPropagation();materialInfo(material.dataset.v082Material);return;}
@@ -16819,6 +16793,7 @@ const state = {
   ready: false,
   snapshot: null,
   queue: [],
+  deferred: [],
   active: false,
   queueTimer: 0,
   observer: null,
@@ -17156,7 +17131,7 @@ function gearReward(item) {
   const rarity = safeRarity(item?.rarity);
   const slot = item?.slot || "Gear";
   const type = item?.type || "";
-  const label = [rarity, type, slot].filter(Boolean).join(" ");
+  const label = [type, slot].filter(Boolean).join(" ") || slot;
   const rendered = window.UI?.gearEmoji?.(item);
   const html = typeof rendered === "string" && rendered.includes("<") ? rendered : "";
   const glyph = html ? "" : (typeof rendered === "string" ? rendered : "⚙");
@@ -17254,7 +17229,8 @@ function collectRewards(before, after) {
 }
 
 function gameplayActive() {
-  return document.body?.classList.contains("is-playing") === true;
+  const mode = window.UI?.game?.mode;
+  return mode === "playing" || mode === "paused" || document.body?.classList.contains("ingame-settings-open") === true;
 }
 
 function ensureRewardOverlay() {
@@ -17315,9 +17291,20 @@ function renderRewardBatch(batch) {
 
 function showRewards(items, options = {}) {
   const normalized = Array.isArray(items) ? items.filter(Boolean).map(item => rewardItem(item)) : [];
-  if (!normalized.length || gameplayActive() || state.suppressDepth > 0) return false;
+  if (!normalized.length || state.suppressDepth > 0) return false;
+  if (gameplayActive()) {
+    state.deferred.push({ title:options.title || t("obtained"), items:normalized });
+    return true;
+  }
   state.queue.push({ title:options.title || t("obtained"), items:normalized });
   if (!state.active) renderRewardBatch(state.queue.shift());
+  return true;
+}
+
+function flushDeferredRewards() {
+  if (gameplayActive() || state.active || !state.deferred.length) return false;
+  state.queue.push(...state.deferred.splice(0));
+  if (!state.active && state.queue.length) renderRewardBatch(state.queue.shift());
   return true;
 }
 
@@ -17335,13 +17322,16 @@ function closeCurrentReward() {
       if (!state.active) renderRewardBatch(nextBatch);
       else state.queue.unshift(nextBatch);
     }, 140);
+  } else {
+    requestAnimationFrame(flushDeferredRewards);
   }
 }
 
-function resetRewardQueue() {
+function resetRewardQueue(options = {}) {
   window.clearTimeout(state.queueTimer);
   state.queueTimer = 0;
   state.queue.length = 0;
+  if (options.clearDeferred === true) state.deferred.length = 0;
   state.active = false;
   id("rewardOverlayV083")?.classList.remove("open");
   document.body.classList.remove("reward-open-v083");
@@ -17355,7 +17345,7 @@ function patchRewardDetection() {
     const result = previousSave(save);
     const after = snapshot(save);
     state.snapshot = after;
-    if (state.ready && state.suppressDepth === 0 && !gameplayActive()) {
+    if (state.ready && state.suppressDepth === 0) {
       const rewards = collectRewards(before, after);
       if (rewards.length) showRewards(rewards);
     }
@@ -17394,6 +17384,15 @@ function patchUiLifecycle() {
     UI.open = function openV083(...args) {
       const result = previousOpen(...args);
       scheduleDecorate();
+      requestAnimationFrame(flushDeferredRewards);
+      return result;
+    };
+  }
+  const previousStageClear = UI.showStageClear?.bind(UI);
+  if (previousStageClear) {
+    UI.showStageClear = function showStageClearV083(...args) {
+      const result = previousStageClear(...args);
+      requestAnimationFrame(flushDeferredRewards);
       return result;
     };
   }
@@ -17431,6 +17430,9 @@ function bindGlobalEvents() {
     scheduleDecorate();
     patchVersion();
   });
+  for (const eventName of ["cherrift:run-reward-ready", "cherrift:run-exit", "cherrift:reward-flush"]) {
+    window.addEventListener(eventName, () => requestAnimationFrame(flushDeferredRewards));
+  }
 }
 
 ensureCss();
@@ -17447,6 +17449,7 @@ window.CHERRIFT_REWARDS = {
   close: closeCurrentReward,
   reset: resetRewardQueue,
   withSuppressed: withSuppressedRewards,
+  flush: flushDeferredRewards,
   playSound: playRewardSound,
   collectRewards,
   snapshot
@@ -18032,7 +18035,7 @@ function addSetting(page, key, label, help, options) {
 function ensureSettings() {
   normalizeSettings(UI.save);
   const display = document.querySelector('[data-v060-settings-page="display"]');
-  const gameplay = document.querySelector('[data-v060-settings-page="gameplay"]');
+  const gameplay = display;
   addSetting(display, "effectQuality", "Effect quality", "Particle density and glow cost", [["low", "Low"], ["medium", "Medium"], ["high", "High"]]);
   addSetting(display, "cameraMotion", "Camera motion", "Speed zoom, dash kick and look-ahead", [["off", "Off"], ["low", "Low"], ["full", "Full"]]);
   addSetting(gameplay, "screenShake", "Screen shake", "Impact feedback without moving the HUD", [["off", "Off"], ["low", "Low"], ["full", "Full"]]);
@@ -19075,7 +19078,7 @@ function ensureMobileNav(){
   nav.classList.add("mobile-nav-v090");
   const buttons=qa(":scope > button",nav);
   if(buttons.length!==5&&window.CHERRIFT_V082?.refresh){window.CHERRIFT_V082.refresh();return;}
-  const labels=["Play","Gear","Home","Gacha","More"];
+  const labels=["Cherry","Gear","Home","Gacha","More"];
   qa(":scope > button b",nav).forEach((label,index)=>{if(labels[index])label.textContent=labels[index];});
 }
 
@@ -22848,12 +22851,11 @@ function comparisonRows(item) {
     const value = Number(item.stats?.[key]) || 0;
     const oldValue = Number(equipped?.stats?.[key]) || 0;
     const delta = equipped?.id === item.id ? 0 : value - oldValue;
-    const contribution = arsenalContribution(item, key);
     const className = delta > .0001 ? "good" : delta < -.0001 ? "bad" : "same";
     const arrow = delta > .0001 ? "↑" : delta < -.0001 ? "↓" : "•";
     const stat = String(key).replace(/([A-Z])/g," $1").replace(/^./,char=>char.toUpperCase());
     const percent = ["crit","critDamage","attackSpeed","moveSpeed"].includes(key) ? "%" : "";
-    return `<div class="gear-compare-row-v0932 ${className}"><span>${escapeHtml(stat)}</span><b>${formatNumber(value)}${percent}</b><em>${arrow} ${delta > 0 ? "+" : ""}${formatNumber(delta)}${percent}</em><small>(${copy("Arsenal", "Arsenal")} ${contribution >= 0 ? "+" : ""}${formatNumber(contribution)}${percent})</small></div>`;
+    return `<div class="gear-compare-row-v0932 ${className}"><span>${escapeHtml(stat)}</span><b>${formatNumber(oldValue)}${percent} → ${formatNumber(value)}${percent}</b><em>${arrow} ${delta > 0 ? "+" : ""}${formatNumber(delta)}${percent}</em></div>`;
   }).join("");
 }
 function decorateGearModal(itemId = runtime.pendingGearId) {
@@ -22868,7 +22870,10 @@ function decorateGearModal(itemId = runtime.pendingGearId) {
     comparison.className = "gear-comparison-v0932";
     q(".gear-detail-head-v0560", body)?.insertAdjacentElement("afterend", comparison);
   }
-  const markup = `<header><h4>${copy("Stat összehasonlítás", "Stat comparison")}</h4><small>${copy("Zöld: nyereség · Piros: veszteség", "Green: gain · Red: loss")}</small></header>${comparisonRows(item)}`;
+  const heading=q(".gear-detail-head-v0560",body),name=q("h3",heading),meta=q("small",heading);
+  if(name)name.textContent=String(name.textContent||"").replace(new RegExp(`^${item.rarity}\\s+`,"i"),"").trim();
+  if(meta){meta.textContent=`${item.rarity} ${item.slot||item.type||""}`.trim();meta.className=`rarity-${String(item.rarity||"common").toLowerCase()}`;}
+  const markup = `<header><h4>Stats</h4></header>${comparisonRows(item)}`;
   if (comparison.dataset.v0932Signature !== markup) {
     comparison.dataset.v0932Signature = markup;
     comparison.innerHTML = markup;
@@ -26151,11 +26156,10 @@ function localizedText(hu, en) {
 
 
 function currentRouteBucket(route = uiPolishState.route) {
-  if (["worlds", "worldsV094"].includes(route)) return "play";
+  if (["skins", "cherry"].includes(route)) return "cherry";
   if (route === "gear") return "gear";
-  if (["menu", "home"].includes(route)) return "home";
   if (["chests", "gachaV082"].includes(route)) return "gacha";
-  return "more";
+  return "home";
 }
 
 function setMobileNavigationState(route = uiPolishState.route) {
@@ -26525,7 +26529,7 @@ function syncStartupExperience() {
   const coarse = matchMedia?.("(pointer:coarse)")?.matches === true;
   setTextIfChanged(overlay.querySelector(".startup-version-v5"), buildLabel());
   const button = overlay.querySelector(".startup-continue-v5");
-  setTextIfChanged(button, coarse ? "Tap to Continue" : "Click to Continue");
+  setTextIfChanged(button, coarse ? "Tap here" : "Click here");
   button.disabled = !ready;
   overlay.classList.toggle("ready", ready);
   overlay.classList.toggle("waiting-auth", !ready);

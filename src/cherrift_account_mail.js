@@ -14,6 +14,7 @@
     previousOpen: null,
     mailView: "list",
     selectedMailId: "",
+    selectedMailIds: new Set(),
     titleOwnedOnly: false,
     settingsRedeemBusy: false,
     observer: null,
@@ -23,12 +24,12 @@
 
   const COPY = {
     hu: {
-      mail: "Mail", inbox: "Beérkezett levelek", unread: "olvasatlan", claimAll: "Összes átvétele", delete: "Törlés", deleteAll: "Összes törlése",
+      mail: "Mail", inbox: "Beérkezett levelek", unread: "olvasatlan", claimAll: "Összes átvétele", selectAll:"Összes kijelölése", clearSelection:"Kijelölés törlése", delete: "Törlés", deleteAll: "Összes törlése",
       noMail: "Nincs megjeleníthető levél.", back: "Vissza", claim: "Átvétel", claimed: "Átvéve",
       deleteConfirm: "Biztosan törlöd ezt a levelet?", deleteAllConfirm: "Biztosan törlöd az összes törölhető levelet?", deleteBlocked: "Előbb vedd át a levél jutalmát.", deleted: "Levél törölve", protectedMail: "jutalmas levél megtartva",
       reward: "Jutalom", redeemCode: "Redeem Code", redeemHint: "Írd be a beváltókódot.",
       confirm: "Confirm", cancel: "Back", invalidCode: "Adj meg egy érvényes kódot.", redeemSuccess: "A kupon jutalma megérkezett.",
-      account: "Fiók", displayName: "Megjelenített név", discord: "Discord", level: "Szint", cherrySkin: "Cherry skin",
+      account: "Fiók", profile:"Profil", displayName: "Megjelenített név", discord: "Username", level: "Szint", cherrySkin: "Cherry skin",
       statDetails: "Részletes statok", achievements: "Teljesítmények", kills: "Ölések", stageClears: "Pályateljesítések",
       totalXp: "Összes XP", gear: "Felszerelés", gacha: "Gacha", arsenalAvg: "Arsenal átlag", power: "Erő",
       titles: "Cím választása", titleCollection:"Címgyűjtemény", noTitle:"[Nincs Title]", owned: "Megszerezve", equip: "Felszerelés", equipped: "Aktív", locked: "Nincs megszerezve",
@@ -37,12 +38,12 @@
       activeTitleStats:"Aktív Title", ownedTitleBonuses:"Megszerezett Title bónuszok"
     },
     en: {
-      mail: "Mail", inbox: "Inbox", unread: "unread", claimAll: "Claim All", delete: "Delete", deleteAll: "Delete All",
+      mail: "Mail", inbox: "Inbox", unread: "unread", claimAll: "Claim All", selectAll:"Select All", clearSelection:"Clear Selection", delete: "Delete", deleteAll: "Delete All",
       noMail: "There are no messages to show.", back: "Back", claim: "Claim", claimed: "Claimed",
       deleteConfirm: "Delete this mail?", deleteAllConfirm: "Delete every eligible mail?", deleteBlocked: "Claim this mail's reward first.", deleted: "Mail deleted", protectedMail: "reward mail kept",
       reward: "Reward", redeemCode: "Redeem Code", redeemHint: "Enter your redeem code.",
       confirm: "Confirm", cancel: "Back", invalidCode: "Enter a valid code.", redeemSuccess: "The redeem reward has been added.",
-      account: "Account", displayName: "Display Name", discord: "Discord", level: "Level", cherrySkin: "Cherry Skin",
+      account: "Account", profile:"Profile", displayName: "Display Name", discord: "Username", level: "Level", cherrySkin: "Cherry Skin",
       statDetails: "Stat Details", achievements: "Achievements", kills: "Kills", stageClears: "Stage Clears",
       totalXp: "Total XP", gear: "Gear", gacha: "Gacha", arsenalAvg: "Arsenal Avg", power: "Power",
       titles: "Select Title", noTitle:"[No Title]", owned: "Owned", equip: "Equip", equipped: "Equipped", locked: "Not owned",
@@ -90,10 +91,10 @@
       .bf-panel{overflow-y:auto!important;overflow-x:hidden!important;min-height:100dvh;padding-bottom:130px;color:#fff;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
       .bf-shell{width:min(980px,100%);margin:0 auto;padding:18px 18px 140px}.bf-head{display:flex;align-items:center;gap:16px;margin-bottom:18px}.bf-head h2{margin:0;font:700 clamp(42px,8vw,64px)/1 Georgia,serif}.bf-back{width:72px;height:72px;border:1px solid #ffffff26;border-radius:22px;color:#fff;background:#ffffff08;font-size:28px}
       .bf-card{border:1px solid #ffffff22;border-radius:25px;background:linear-gradient(145deg,#2a102fdd,#100715ed);box-shadow:0 20px 70px #0005}.bf-button{min-height:52px;padding:0 18px;border:0;border-radius:15px;color:#fff;background:linear-gradient(115deg,#d52f7d,#ec70aa);font-weight:1000}.bf-button:disabled{opacity:.42}.bf-button.secondary{border:1px solid #ffffff25;background:#ffffff08}.bf-button.danger{border:1px solid #ff8b9f55;background:linear-gradient(115deg,#8f2948,#c44163)}
-      .mail-toolbar-bf{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:17px 20px;border-bottom:1px solid #ffffff18}.mail-toolbar-bf h3{margin:0;font:700 30px Georgia,serif}.mail-toolbar-actions-bf{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}.mail-toolbar-actions-bf .bf-button{min-height:46px;padding:0 13px}.mail-list-bf{display:grid}.mail-row-bf{width:100%;min-height:92px;display:grid;grid-template-columns:12px minmax(0,1fr) auto;align-items:center;gap:14px;padding:15px 20px;border:0;border-bottom:1px solid #ffffff12;color:#fff;background:transparent;text-align:left}.mail-row-bf:hover{background:#ffffff05}.mail-row-bf.unread{background:linear-gradient(90deg,#dc3c8612,transparent)}.mail-dot-bf{width:9px;height:9px;border-radius:50%;background:transparent}.mail-row-bf.unread .mail-dot-bf{background:#f05aa5;box-shadow:0 0 14px #f05aa5}.mail-row-bf b,.mail-row-bf small{display:block}.mail-row-bf small{margin-top:5px;color:#c7aebd}.mail-reward-mark-bf{color:#ff9acb;font-size:21px}.mail-empty-bf{padding:50px 20px;text-align:center;color:#c7aebd}.mail-detail-bf{padding:23px}.mail-detail-bf header{border-bottom:1px solid #ffffff18;padding-bottom:18px}.mail-detail-bf h3{margin:7px 0;font:700 clamp(34px,7vw,52px) Georgia,serif}.mail-detail-bf .meta{color:#c9aebe}.mail-body-bf{min-height:160px;padding:24px 0;white-space:pre-wrap;line-height:1.65}.mail-reward-bf{padding:16px;border:1px solid #ff9bc84a;border-radius:17px;background:#e2448710}.mail-actions-bf{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:18px}
+      .mail-toolbar-bf{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:17px 20px;border-bottom:1px solid #ffffff18}.mail-toolbar-bf h3{margin:0;font:700 30px Georgia,serif}.mail-list-bf{display:grid;min-height:320px}.mail-row-bf{width:100%;min-height:92px;display:grid;grid-template-columns:34px minmax(0,1fr) auto;align-items:center;gap:12px;padding:0 20px;border-bottom:1px solid #ffffff12;color:#fff;background:transparent}.mail-row-open-bf{width:100%;min-height:91px;display:grid;grid-template-columns:12px minmax(0,1fr) auto;align-items:center;gap:14px;padding:14px 0;border:0;color:inherit;background:transparent;text-align:left}.mail-row-bf:hover{background:#ffffff05}.mail-row-bf.unread{background:linear-gradient(90deg,#dc3c8612,transparent)}.mail-select-bf{width:20px;height:20px;accent-color:#ec5ba4}.mail-dot-bf{width:9px;height:9px;border-radius:50%;background:transparent}.mail-row-bf.unread .mail-dot-bf{background:#f05aa5;box-shadow:0 0 14px #f05aa5}.mail-row-bf b,.mail-row-bf small{display:block}.mail-row-bf small{margin-top:5px;color:#c7aebd}.mail-reward-mark-bf{color:#ff9acb;font-size:21px}.mail-empty-bf{padding:50px 20px;text-align:center;color:#c7aebd}.mail-list-actions-bf{position:sticky;bottom:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;padding:14px;border-top:1px solid #ffffff18;background:#130919f2}.mail-list-actions-bf .bf-button{min-height:46px;padding:0 10px}.mail-detail-bf{padding:3px}.mail-detail-bf header{border-bottom:1px solid #ffffff18;padding-bottom:18px}.mail-detail-bf h3{margin:7px 0;font:700 clamp(30px,7vw,46px) Georgia,serif}.mail-detail-bf .meta{color:#c9aebe}.mail-body-bf{min-height:140px;padding:24px 0;white-space:pre-wrap;line-height:1.65}.mail-reward-bf{padding:16px;border:1px solid #ff9bc84a;border-radius:17px;background:#e2448710}.mail-actions-bf{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:18px}
       .bf-modal{position:fixed;inset:0;z-index:100100;display:grid;place-items:center;padding:17px;background:#07030ce9;backdrop-filter:blur(9px)}.bf-modal.hidden{display:none!important}.bf-modal-card{position:relative;width:min(620px,100%);max-height:90dvh;overflow:auto;padding:24px;border:1px solid #ffffff28;border-radius:27px;background:linear-gradient(150deg,#32123bea,#100716);box-shadow:0 28px 90px #0009}.bf-modal-card h3{margin:0 44px 8px 0;font:700 34px Georgia,serif}.bf-x{position:absolute;right:15px;top:15px;width:42px;height:42px;border:1px solid #ffffff22;border-radius:13px;color:#fff;background:#ffffff08;font-size:20px}.bf-form{display:grid;gap:12px;margin-top:18px}.bf-form input{width:100%;min-height:55px;padding:0 15px;border:1px solid #ffffff28;border-radius:15px;color:#fff;background:#09040dc7;font-size:17px;outline:none}.bf-form-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.bf-status{min-height:20px;margin:0;color:#f2afd0}
       .settings-account-bf{margin-top:14px;padding:18px}.settings-account-bf h3{margin:0 0 5px}.settings-account-bf p{color:#cbb2c1}.settings-account-bf .bf-button{width:100%}
-      .profile-hero-bf{display:grid;grid-template-columns:128px minmax(0,1fr);gap:24px;padding:24px;border-left:5px solid #ee5da7}.profile-avatar-column-bf{display:grid;align-content:start;gap:10px}.profile-avatar-bf{width:128px;height:128px;overflow:hidden;border:2px solid #ffb3d5;border-radius:28px;background:#ffffff0b}.profile-avatar-bf img{width:100%;height:100%;object-fit:cover}.profile-title-stats-button-bf{width:100%;min-height:42px;padding:0 8px;border:1px solid #ff9dcc55;border-radius:12px;color:#fff;background:#ffffff08;font-size:12px;font-weight:1000;white-space:nowrap}.profile-name-row-bf,.profile-title-row-bf{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.profile-name-row-bf h3{margin:0;color:#ffd17b;font:700 clamp(36px,7vw,58px) Georgia,serif;overflow-wrap:anywhere}.profile-title-row-bf{margin-top:7px;color:#ff8fc6;font-size:22px;font-weight:900}.profile-mini-edit-bf{width:35px;height:35px;border:1px solid #ffffff20;border-radius:10px;color:#fff;background:#ffffff08}.profile-lines-bf{display:grid;gap:4px;margin-top:13px;color:#d5bdca}.profile-discord-bf{margin-top:10px;color:#9f8996;font-size:12px}.profile-stat-button-bf{grid-column:1/-1;margin-top:8px}.profile-stats-bf{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin:18px 0}.profile-stat-bf{min-height:125px;display:grid;place-items:center;padding:16px;text-align:center}.profile-stat-bf small{color:#d3a7bd;font-weight:900;letter-spacing:1.2px;text-transform:uppercase}.profile-stat-bf b{display:block;margin-top:7px;font:700 45px Georgia,serif}.title-stats-list-bf{display:grid;gap:9px;margin-top:16px}.title-stats-row-bf,.title-stats-total-bf{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:13px;border-radius:14px;background:#ffffff07}.title-stats-total-bf{margin-top:14px;border:1px solid #ff9dcc55;background:#e04b9012}.title-stats-empty-bf{padding:26px 12px;color:#cfb4c2;text-align:center}
+      .profile-hero-bf{display:grid;grid-template-columns:128px minmax(0,1fr);gap:24px;padding:24px;border-left:5px solid #ee5da7}.profile-avatar-column-bf{display:grid;align-content:start;gap:10px}.profile-avatar-bf{position:relative;width:128px;height:128px;overflow:visible;border-radius:28px;background:#ffffff0b}.profile-avatar-bf>.profile-avatar-image-bf{position:absolute;inset:16%;width:68%;height:68%;object-fit:cover;border-radius:22%}.profile-avatar-frame-bf{position:absolute!important;inset:-3%!important;width:106%!important;height:106%!important;object-fit:contain!important;z-index:2;pointer-events:none}.profile-title-stats-button-bf{min-height:42px;padding:0 12px;border:1px solid #ffffff20;border-radius:12px;color:#cbb4c1;background:#ffffff05;font-size:11px;font-weight:900;white-space:nowrap}.profile-name-row-bf,.profile-title-row-bf{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.profile-name-row-bf h3{margin:5px 0 0;color:#fff;font:700 clamp(36px,7vw,58px) Georgia,serif;overflow-wrap:anywhere}.profile-title-row-bf{color:#ff8fc6;font-size:22px;font-weight:900}.profile-lines-bf{display:grid;gap:4px;margin-top:13px;color:#d5bdca}.profile-discord-bf{margin-top:8px;color:#b29aa8;font-size:13px}.profile-actions-bf{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr auto;gap:9px;margin-top:8px}.profile-stat-button-bf{margin:0}.profile-stats-bf{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin:18px 0}.profile-stat-bf{min-height:125px;display:grid;place-items:center;padding:16px;text-align:center}.profile-stat-bf small{color:#d3a7bd;font-weight:900;letter-spacing:1.2px;text-transform:uppercase}.profile-stat-bf b{display:block;margin-top:7px;font:700 45px Georgia,serif}.title-stats-list-bf{display:grid;gap:9px;margin-top:16px}.title-stats-row-bf,.title-stats-total-bf{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:13px;border-radius:14px;background:#ffffff07}.title-stats-total-bf{margin-top:14px;border:1px solid #ff9dcc55;background:#e04b9012}.title-stats-empty-bf{padding:26px 12px;color:#cfb4c2;text-align:center}
       .title-toolbar-bf{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:18px 0}.title-toggle-bf{display:flex;align-items:center;gap:9px}.title-list-bf{display:grid;gap:9px;max-height:60dvh;overflow-y:auto;padding-right:4px}.title-row-bf{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;padding:14px;border:1px solid #ffffff1d;border-radius:15px;background:#ffffff06}.title-row-bf.locked{opacity:.48;filter:grayscale(1)}.title-row-bf strong,.title-row-bf small{display:block}.title-row-bf small{margin-top:4px;color:#c6abb9}.title-row-bf button{min-width:100px;min-height:42px;border:0;border-radius:12px;color:#fff;background:#cf367b;font-weight:900}.title-row-bf button:disabled{background:#ffffff12}.rarity-common{color:#f5ebf1}.rarity-uncommon{color:#86ed9d}.rarity-rare{color:#77c8ff}.rarity-epic{color:#d591ff}.rarity-legendary{color:#ffd36e}
       #arsenalV070:not(.hidden){position:fixed!important;inset:0!important;display:block!important;height:100dvh!important;max-height:none!important;overflow-y:auto!important;overflow-x:hidden!important;padding-bottom:160px!important;overscroll-behavior-y:contain!important;-webkit-overflow-scrolling:touch!important;touch-action:pan-y!important}
       #arsenalV070:not(.hidden)>*{touch-action:pan-y}#arsenalV070 button,#arsenalV070 input{touch-action:manipulation}
@@ -103,7 +104,7 @@
       .mobile-chapter-stars-v0932 small{display:none!important}.mobile-chapter-stars-v0932 span{font-size:34px!important;letter-spacing:7px!important}.mobile-chapter-stars-v0932{justify-content:center!important}
       #menu .mobile-stage-copy-v051{display:none!important}.world-badge-on-gate-bf{position:absolute!important;z-index:8!important;top:8px!important;left:50%!important;transform:translateX(-50%)!important;margin:0!important}
       #menu .mobile-character-display-v051 .mobile-stage-art{background-position:center!important;background-size:cover!important;background-repeat:no-repeat!important}
-      @media(max-width:820px){.bf-shell{padding:12px 12px 120px}.bf-head h2{font-size:48px}.bf-back{width:64px;height:64px}.mail-toolbar-bf{padding:14px;align-items:flex-start}.mail-toolbar-bf h3{font-size:27px}.mail-toolbar-actions-bf{max-width:56%}.mail-toolbar-actions-bf .bf-button{min-height:40px;padding:0 9px;font-size:11px}.mail-row-bf{padding:13px 14px}.profile-hero-bf{grid-template-columns:96px minmax(0,1fr);gap:15px;padding:18px}.profile-avatar-bf{width:96px;height:96px;border-radius:23px}.profile-title-stats-button-bf{min-height:38px;font-size:10px}.profile-stat-bf{min-height:105px}.profile-stat-bf b{font-size:37px}.bf-form-actions,.mail-actions-bf{grid-template-columns:1fr}#menu .mobile-floating-actions-v051.left{display:none!important}#menu .mobile-floating-actions-v051.right{display:grid!important;align-content:start!important;padding-top:0!important}.mobile-floating-actions-v051{align-content:start!important}.mobile-floating-actions-v051 button[data-bf-removed="true"]{display:none!important}.mobile-nav-v090 .cherry-nav-bf img{width:28px;height:28px;border-radius:8px;object-fit:cover}.mobile-nav-v090 .cherry-nav-bf span{overflow:hidden!important}}
+      @media(max-width:820px){.bf-shell{padding:12px 12px 120px}.bf-head h2{font-size:48px}.bf-back{width:64px;height:64px}.mail-toolbar-bf{padding:14px}.mail-toolbar-bf h3{font-size:27px}.mail-row-bf{grid-template-columns:28px minmax(0,1fr) auto;padding:0 12px}.mail-list-actions-bf{gap:6px;padding:9px}.mail-list-actions-bf .bf-button{min-height:42px;padding:0 5px;font-size:10px}.profile-hero-bf{grid-template-columns:96px minmax(0,1fr);gap:15px;padding:18px}.profile-avatar-bf{width:96px;height:96px;border-radius:23px}.profile-title-stats-button-bf{min-height:38px;font-size:10px}.profile-stat-bf{min-height:105px}.profile-stat-bf b{font-size:37px}.bf-form-actions,.mail-actions-bf{grid-template-columns:1fr}#menu .mobile-floating-actions-v051.left{display:none!important}#menu .mobile-floating-actions-v051.right{display:grid!important;align-content:start!important;padding-top:0!important}.mobile-floating-actions-v051{align-content:start!important}.mobile-floating-actions-v051 button[data-bf-removed="true"]{display:none!important}.mobile-nav-v090 .cherry-nav-bf img{width:28px;height:28px;border-radius:8px;object-fit:cover}.mobile-nav-v090 .cherry-nav-bf span{overflow:hidden!important}}
       @media(min-width:821px){.profile-stats-bf{grid-template-columns:repeat(4,minmax(0,1fr))}.profile-stat-bf{min-height:140px}.bf-shell{padding-bottom:70px}}
     `;
     document.head.appendChild(style);
@@ -209,19 +210,23 @@
     panel.innerHTML = `<div class="bf-shell"><header class="bf-head"><button type="button" class="bf-back" data-mail-home>←</button><div><h2>${t("mail")}</h2></div></header><div id="mailBugfixBody" class="bf-card"></div></div>`;
     id("app")?.appendChild(panel);
     panel.addEventListener("click", async event => {
-      if (event.target.closest("[data-mail-home]")) return state.mailView === "detail" ? showMailList() : openRoute("menu");
+      if (event.target.closest("[data-mail-home]")) return openRoute("menu");
       const row = event.target.closest("[data-mail-id]");
       if (row) return showMailDetail(row.dataset.mailId);
-      if (event.target.closest("[data-mail-detail-back]")) return showMailList();
-      if (event.target.closest("[data-mail-claim]")) return claimSelectedMail(event.target.closest("[data-mail-claim]"));
       if (event.target.closest("[data-mail-claim-all]")) return claimAllMail(event.target.closest("[data-mail-claim-all]"));
-      if (event.target.closest("[data-mail-delete]")) return deleteSelectedMail(event.target.closest("[data-mail-delete]"));
-      if (event.target.closest("[data-mail-delete-all]")) return deleteAllMail(event.target.closest("[data-mail-delete-all]"));
+      if (event.target.closest("[data-mail-select-all]")) return toggleAllMailSelection();
+      if (event.target.closest("[data-mail-delete-selected]")) return deleteSelectedMails(event.target.closest("[data-mail-delete-selected]"));
+    });
+    panel.addEventListener("change", event => {
+      const checkbox=event.target.closest?.("[data-mail-select]");
+      if(!checkbox)return;
+      checkbox.checked?state.selectedMailIds.add(checkbox.dataset.mailSelect):state.selectedMailIds.delete(checkbox.dataset.mailSelect);
+      showMailList({preserveSelection:true});
     });
     return panel;
   }
 
-  function showMailList() {
+  function showMailList(options={}) {
     state.mailView = "list";
     state.selectedMailId = "";
     const body = id("mailBugfixBody");
@@ -229,8 +234,26 @@
     const mails = allMails();
     const unread = mails.filter(mail => !mail.read).length;
     const claimable = mails.filter(mail => rewardParts(mail.attachments).length && !mail.claimed).length;
-    const deletable = mails.filter(mail => !rewardParts(mail.attachments).length || mail.claimed).length;
-    body.innerHTML = `<header class="mail-toolbar-bf"><div><h3>${t("inbox")}</h3><small>${unread} ${t("unread")}</small></div><div class="mail-toolbar-actions-bf"><button type="button" class="bf-button" data-mail-claim-all ${claimable ? "" : "disabled"}>${t("claimAll")}</button><button type="button" class="bf-button danger" data-mail-delete-all ${deletable ? "" : "disabled"}>${t("deleteAll")}</button></div></header><div class="mail-list-bf">${mails.length ? mails.map(mail => `<button type="button" class="mail-row-bf ${mail.read ? "" : "unread"}" data-mail-id="${esc(mail.id)}"><span class="mail-dot-bf"></span><span><b>${esc(mail.title)}</b><small>${esc(mail.sender)}${mail.date ? ` · ${esc(formatDate(mail.date))}` : ""}</small></span><span class="mail-reward-mark-bf">${rewardParts(mail.attachments).length ? (mail.claimed ? "✓" : "✦") : "›"}</span></button>`).join("") : `<div class="mail-empty-bf">${t("noMail")}</div>`}</div>`;
+    if(!options.preserveSelection)state.selectedMailIds.clear();
+    const liveIds=new Set(mails.map(mail=>mail.id));
+    for(const mailId of [...state.selectedMailIds])if(!liveIds.has(mailId))state.selectedMailIds.delete(mailId);
+    const selected=[...state.selectedMailIds].map(mailId=>mails.find(mail=>mail.id===mailId)).filter(Boolean);
+    const deletableSelected=selected.filter(mailCanDelete);
+    const allSelected=mails.length>0&&mails.every(mail=>state.selectedMailIds.has(mail.id));
+    body.innerHTML = `<header class="mail-toolbar-bf"><div><h3>${t("inbox")}</h3><small>${unread} ${t("unread")}</small></div></header><div class="mail-list-bf">${mails.length ? mails.map(mail => `<article class="mail-row-bf ${mail.read ? "" : "unread"}"><input class="mail-select-bf" type="checkbox" data-mail-select="${esc(mail.id)}" aria-label="Select ${esc(mail.title)}" ${state.selectedMailIds.has(mail.id)?"checked":""}><button type="button" class="mail-row-open-bf" data-mail-id="${esc(mail.id)}"><span class="mail-dot-bf"></span><span><b>${esc(mail.title)}</b><small>${esc(mail.sender)}${mail.date ? ` · ${esc(formatDate(mail.date))}` : ""}</small></span><span class="mail-reward-mark-bf">${rewardParts(mail.attachments).length ? (mail.claimed ? "✓" : "✦") : "›"}</span></button></article>`).join("") : `<div class="mail-empty-bf">${t("noMail")}</div>`}</div><footer class="mail-list-actions-bf"><button type="button" class="bf-button" data-mail-claim-all ${claimable ? "" : "disabled"}>${t("claimAll")}</button><button type="button" class="bf-button secondary" data-mail-select-all ${mails.length?"":"disabled"}>${allSelected?t("clearSelection"):t("selectAll")}</button><button type="button" class="bf-button danger" data-mail-delete-selected ${deletableSelected.length&&deletableSelected.length===selected.length?"":"disabled"}>${t("delete")} ${selected.length?`(${selected.length})`:""}</button></footer>`;
+  }
+
+  function ensureMailDetailModal(){
+    let modal=id("mailDetailModalV096");if(modal)return modal;
+    modal=document.createElement("section");modal.id="mailDetailModalV096";modal.className="bf-modal hidden";
+    modal.innerHTML='<div class="bf-modal-card"><button type="button" class="bf-x" data-mail-detail-close>×</button><div id="mailDetailModalBody"></div></div>';
+    document.body.appendChild(modal);
+    modal.addEventListener("click",event=>{
+      if(event.target===modal||event.target.closest("[data-mail-detail-close],[data-mail-detail-back]")){modal.classList.add("hidden");state.mailView="list";state.selectedMailId="";return;}
+      if(event.target.closest("[data-mail-claim]"))claimSelectedMail(event.target.closest("[data-mail-claim]"));
+      if(event.target.closest("[data-mail-delete]"))deleteSelectedMail(event.target.closest("[data-mail-delete]"));
+    });
+    return modal;
   }
 
   function formatDate(value) {
@@ -249,10 +272,14 @@
       mailboxState(mail.id).read = true;
       saveLocal();
     }
+    showMailList({preserveSelection:true});
+    state.mailView = "detail";
+    state.selectedMailId = mailId;
     const rewards = rewardParts(mail.attachments);
     const canDelete = !rewards.length || mail.claimed;
-    const body = id("mailBugfixBody");
+    const modal=ensureMailDetailModal(),body=id("mailDetailModalBody");
     body.innerHTML = `<article class="mail-detail-bf"><header><small>${esc(mail.sender)}${mail.date ? ` · ${esc(formatDate(mail.date))}` : ""}</small><h3>${esc(mail.title)}</h3></header><div class="mail-body-bf">${esc(mail.body)}</div>${rewards.length ? `<section class="mail-reward-bf"><b>${t("reward")}</b><p>${esc(rewards.join(" · "))}</p></section>` : ""}<div class="mail-actions-bf"><button type="button" class="bf-button secondary" data-mail-detail-back>${t("back")}</button>${rewards.length ? `<button type="button" class="bf-button" data-mail-claim ${mail.claimed ? "disabled" : ""}>${mail.claimed ? t("claimed") : t("claim")}</button>` : ""}<button type="button" class="bf-button danger" data-mail-delete ${canDelete ? "" : "disabled"} title="${canDelete ? "" : esc(t("deleteBlocked"))}">${t("delete")}</button></div></article>`;
+    modal.classList.remove("hidden");
   }
 
   async function claimOne(mail) {
@@ -295,7 +322,7 @@
       try { await claimOne(mail); claimed += 1; } catch (error) { console.warn("[CHERRIFT Mail] claim all item failed", error); }
     }
     toast(`${claimed} ${t("claimed")}`);
-    showMailList();
+    showMailList({preserveSelection:true});
   }
 
   function confirmAction(message) {
@@ -324,7 +351,23 @@
     markMailDeleted(mail);
     saveLocal();
     toast(t("deleted"));
-    showMailList();
+    id("mailDetailModalV096")?.classList.add("hidden");
+    showMailList({preserveSelection:true});
+  }
+
+  function toggleAllMailSelection(){
+    const mails=allMails(),allSelected=mails.length&&mails.every(mail=>state.selectedMailIds.has(mail.id));
+    state.selectedMailIds.clear();if(!allSelected)for(const mail of mails)state.selectedMailIds.add(mail.id);
+    showMailList({preserveSelection:true});
+  }
+
+  function deleteSelectedMails(button){
+    if(button?.disabled)return;
+    const selected=allMails().filter(mail=>state.selectedMailIds.has(mail.id));
+    if(!selected.length||selected.some(mail=>!mailCanDelete(mail))){toast(t("deleteBlocked"));return;}
+    if(!confirmAction(t("deleteAllConfirm")))return;
+    for(const mail of selected)markMailDeleted(mail);
+    state.selectedMailIds.clear();saveLocal();toast(`${selected.length} ${t("deleted")}`);showMailList({preserveSelection:true});
   }
 
   function deleteAllMail(button) {
@@ -446,6 +489,12 @@
     save.profile = save.profile && typeof save.profile === "object" ? save.profile : {};
     return save.profile.displayName || authAccount().displayName || authAccount().name || authAccount().username || "Cherry Player";
   }
+  function profileFrameAsset(){
+    const frameId=UI.save?.profile?.frameId||UI.save?.selectedFrame||"frame0lvl";
+    const sources=[window.CHERRIFT_BALANCE?.frames,window.CHERRIFT_DATA?.frames,window.CHERRIFT_PREBETA?.frames].filter(Array.isArray);
+    for(const source of sources){const frame=source.find(entry=>entry?.id===frameId)||source[0];if(frame?.asset||frame?.src)return frame.asset||frame.src;}
+    return "";
+  }
   function activeTitle() {
     return UI.save?.profile?.activeTitle || UI.save?.activeTitle || UI.save?.selectedTitle || (language() === "hu" ? "Nincs Title" : "No Title");
   }
@@ -551,6 +600,7 @@
     const account = authAccount();
     const skin = selectedSkin();
     const avatar = account.avatar || account.avatarUrl || account.avatar_url || skin.icon || skin.splash || "";
+    const frame=profileFrameAsset();
     const discordName = account.username || account.name || account.discordUsername || account.discord_id || account.discordId || "—";
     const level = lifetimeStat("account.level", "playerLevel", "level", "profile.level") || 1;
     const stats = [
@@ -558,7 +608,7 @@
       [t("stageClears"), stageClearCount()], [t("totalXp"), lifetimeStat("totalXp", "xp", "stats.totalXp")],
       [t("gear"), gearCount()], [t("gacha"), gachaCount()], [t("arsenalAvg"), arsenalAverage()], [t("power"), powerValue()]
     ];
-    panel.innerHTML = `<div class="bf-shell"><header class="bf-head"><button type="button" class="bf-back" data-profile-back>←</button><h2>${t("account")}</h2></header><section class="bf-card profile-hero-bf"><div class="profile-avatar-column-bf"><div class="profile-avatar-bf">${avatar ? `<img src="${esc(avatar)}" alt="">` : ""}</div><button type="button" class="profile-title-stats-button-bf" data-profile-title-stats>${esc(t("titleStats"))}</button></div><div><div class="profile-name-row-bf"><h3>${esc(displayName())}</h3></div><div class="profile-title-row-bf"><span>${esc(activeTitleName())}</span><button type="button" class="profile-mini-edit-bf" data-profile-title-edit aria-label="${esc(t("titles"))}">✎</button></div><div class="profile-lines-bf"><span>${t("level")}: ${level}</span><span>${t("cherrySkin")}: ${esc(skin.name || skin.id)}</span></div><div class="profile-discord-bf">${t("discord")}: ${esc(discordName)}</div></div><button type="button" class="bf-button profile-stat-button-bf" data-profile-stats>${t("statDetails")}</button></section><div class="profile-stats-bf">${stats.map(([label, value]) => `<article class="bf-card profile-stat-bf"><div><small>${esc(label)}</small><b>${esc(value)}</b></div></article>`).join("")}</div></div>`;
+    panel.innerHTML = `<div class="bf-shell"><header class="bf-head"><button type="button" class="bf-back" data-profile-back>←</button><h2>${t("profile")}</h2></header><section class="bf-card profile-hero-bf"><div class="profile-avatar-column-bf"><div class="profile-avatar-bf">${avatar ? `<img class="profile-avatar-image-bf" src="${esc(avatar)}" alt="">` : ""}${frame?`<img class="profile-avatar-frame-bf" src="${esc(frame)}" alt="">`:""}</div></div><div><div class="profile-title-row-bf"><span>${esc(activeTitleName())}</span></div><div class="profile-name-row-bf"><h3>${esc(displayName())}</h3></div><div class="profile-discord-bf">${t("discord")}: ${esc(discordName)}</div><div class="profile-lines-bf"><span>${t("level")}: ${level}</span><span>${t("cherrySkin")}: ${esc(skin.name || skin.id)}</span></div></div><div class="profile-actions-bf"><button type="button" class="bf-button profile-stat-button-bf" data-profile-stats>${t("statDetails")}</button><button type="button" class="bf-button secondary" data-profile-title-edit>${t("titles")}</button><button type="button" class="profile-title-stats-button-bf" data-profile-title-stats>${esc(t("titleStats"))}</button></div></section><div class="profile-stats-bf">${stats.map(([label, value]) => `<article class="bf-card profile-stat-bf"><div><small>${esc(label)}</small><b>${esc(value)}</b></div></article>`).join("")}</div></div>`;
   }
 
   function openProfile() {
@@ -655,12 +705,8 @@
         current.value += numeric;
         totals.set(key, current);
       }
-      const currentId=activeTitle();
-      const active=titles.find(entry=>entry.title.id===currentId||entry.title.name===currentId);
       const totalValues=[...totals.values()];
-      root.innerHTML = `<section class="title-stats-active-v096"><small>${esc(t("activeTitleStats"))}</small><h4>${esc(activeTitleName())}</h4><div class="title-stat-chips-v096">${active?.stats?.length?active.stats.map(stat=>`<span><b>${esc(stat.label)}</b><em>${esc(formatTitleStat(stat))}</em></span>`).join(""):`<span class="empty">${esc(t("titleStatsEmpty"))}</span>`}</div></section>
-        <section class="title-stats-total-bf"><small>${esc(t("totalTitleStats"))}</small><div class="title-stat-chips-v096">${totalValues.length?totalValues.map(stat=>`<span><b>${esc(stat.label)}</b><em>${esc(formatTitleStat(stat))}</em></span>`).join(""):`<span class="empty">—</span>`}</div></section>
-        <details class="title-stats-owned-v096"><summary>${esc(t("ownedTitleBonuses"))} <b>${titles.length}</b></summary><div class="title-stats-list-bf">${titles.map(entry => `<article class="title-stats-row-bf"><strong>${esc(entry.title.name)}</strong><span>${entry.stats.map(stat => `${esc(stat.label)} ${esc(formatTitleStat(stat))}`).join(" · ")}</span></article>`).join("")}</div></details>`;
+      root.innerHTML = `<section class="title-stats-total-bf"><small>${esc(t("totalTitleStats"))}</small><div class="title-stat-chips-v096">${totalValues.length?totalValues.map(stat=>`<span><b>${esc(stat.label)}</b><em>${esc(formatTitleStat(stat))}</em></span>`).join(""):`<span class="empty">—</span>`}</div></section><section class="title-stats-owned-v096"><h4>${esc(t("ownedTitleBonuses"))} · ${titles.length}</h4><div class="title-stats-list-bf">${titles.map(entry => `<article class="title-stats-row-bf"><strong>${esc(entry.title.name)}</strong><span>${entry.stats.map(stat => `${esc(stat.label)} ${esc(formatTitleStat(stat))}`).join(" · ")}</span></article>`).join("")}</div></section>`;
     }
     modal.classList.remove("hidden");
   }
