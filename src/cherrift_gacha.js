@@ -3,7 +3,7 @@
   if (window.__CHERRIFT_ECONOMY_CHEST_ONLY__) return;
   window.__CHERRIFT_ECONOMY_CHEST_ONLY__ = true;
 
-  const VERSION = "2.0.0-equipment-chest-rework";
+  const VERSION = "2.1.0-routed-equipment-chests";
   const TIERS = ["common", "rare", "epic"];
   const DEF = {
     common: { name: "Common Chest", names:{hu:"Common láda",en:"Common Chest"}, itemText:{hu:"Common tárgyak",en:"Common Items"}, pity: 10, rarity: "Common", asset: "assets/items/chests/common_chest.png" },
@@ -512,11 +512,28 @@
     qa('[data-tier="legendary"],[data-chest="legendary"],[data-v082-chest="legendary"],.legendary-chest').forEach(element => element.remove());
   }
 
+  function installRouting() {
+    if (!window.UI?.open || UI.__cherriftEquipmentChestRoute) return;
+    const previousOpen = UI.open.bind(UI);
+    state.originalOpen = previousOpen;
+    UI.open = function openEquipmentChests(route, ...args) {
+      if (route === "gachaV082") {
+        openPanel(args[0]?.tier || state.tier);
+        return;
+      }
+      const result = previousOpen(route, ...args);
+      id("gachaChestOnlyV12")?.classList.add("hidden");
+      document.body.classList.remove("gacha-open");
+      return result;
+    };
+    UI.__cherriftEquipmentChestRoute = true;
+  }
+
   function start() {
     if (!window.UI || !window.CherriftStorage || !window.CHERRIFT_DATA) return setTimeout(start, 120);
     ensureCss();
     patchStorage();
-    state.originalOpen = UI.open?.bind(UI) || null;
+    installRouting();
     if (UI.save) normalize(UI.save);
     ensurePanel();
     removeLegacyUi();

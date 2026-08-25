@@ -3,7 +3,7 @@
   if (window.__CHERRIFT_BUGFIX_V0942__) return;
   window.__CHERRIFT_BUGFIX_V0942__ = true;
 
-  const VERSION = "0.9.6-carousel-rework";
+  const VERSION = "0.9.7-carousel-route";
   const MOBILE_QUERY = "(max-width:820px)";
   const id = value => document.getElementById(value);
   const q = (selector, root = document) => root?.querySelector?.(selector) || null;
@@ -567,6 +567,31 @@
     }
   }
 
+  function installRouting() {
+    if (!window.UI?.open || UI.__cherriftCarouselWorldRoute) return;
+    const previousOpen = UI.open.bind(UI);
+    state.originalOpen = previousOpen;
+    UI.open = function openCarouselRoute(route, ...args) {
+      const result = previousOpen(route, ...args);
+      if (route === "worlds") openWorldSelector();
+      else {
+        id("worldSelectorV0942")?.classList.add("hidden");
+        id("chapterSelectorV0942")?.classList.add("hidden");
+      }
+      return result;
+    };
+    UI.openWorldSelect = function openCarouselWorldSelector() {
+      const result = previousOpen("worlds");
+      openWorldSelector();
+      return result;
+    };
+    UI.renderWorldPanel = function renderCarouselWorldPanel() {
+      if (!id("worldSelectorV0942")?.classList.contains("hidden")) renderWorldSelector();
+      if (!id("chapterSelectorV0942")?.classList.contains("hidden")) renderChapterSelector();
+    };
+    UI.__cherriftCarouselWorldRoute = true;
+  }
+
   function patchVisible() {
     updateViewportMetrics();
     document.body.classList.toggle("v090-mobile", isMobile());
@@ -612,9 +637,9 @@
     if (!window.UI || !window.CherriftStorage || !id("app")) return setTimeout(start, 120);
     ensureCss();
     patchDesktopZoom();
-    state.originalOpen = UI.open?.bind(UI);
     ensureWorldPanel();
     ensureChapterPanel();
+    installRouting();
     bindEvents();
     patchVisible();
     observeMobileNav();
