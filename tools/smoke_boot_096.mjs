@@ -1163,6 +1163,78 @@ try {
     10000
   );
 
+  if (requested === "desktop" || requested === "phone-portrait") {
+    window.UI.open("gachaV082");
+    await waitFor(
+      () => !document.getElementById("gachaChestOnlyV12")?.classList.contains("hidden"),
+      `${requested} equipment chest route`,
+      5000
+    );
+    assert.equal(
+      document.querySelectorAll("#gachaChestOnlyV12 [data-gco-open]").length,
+      2,
+      `${requested}: Gacha exposes exactly 1x and 10x chest actions`
+    );
+
+    window.UI.openWorldSelect();
+    await waitFor(
+      () => !document.getElementById("worldSelectorV0942")?.classList.contains("hidden"),
+      `${requested} world carousel route`,
+      5000
+    );
+    assert.equal(
+      document.getElementById("worldsV094")?.classList.contains("hidden"),
+      true,
+      `${requested}: legacy World grid stays hidden behind the carousel route`
+    );
+    assert.ok(
+      document.querySelector("#worldSelectorV0942 .selector-card-v0942"),
+      `${requested}: World carousel renders one focused world card`
+    );
+
+    window.UI.open("skins");
+    await waitFor(
+      () => !!document.querySelector("#skins .skin-showcase-v093 .skin-art-v093"),
+      `${requested} Cherry selector art`,
+      5000
+    );
+    if (requested === "phone-portrait") {
+      const skinSelector = document.querySelector("#skins .skin-selector-v093");
+      assert.equal(
+        window.getComputedStyle(skinSelector).display,
+        "grid",
+        "phone-portrait: Cherry selector keeps a sized grid instead of a collapsing flex stack"
+      );
+      const runtimeCss = await readFile(
+        path.join(root, "assets/cherrift_runtime.css"),
+        "utf8"
+      );
+      assert.match(
+        runtimeCss,
+        /#skins \.skin-showcase-v093\{[^}]*min-height:340px!important/,
+        "phone-portrait: Cherry splash card has an explicit visible height"
+      );
+    }
+
+    window.UI.open("playerUpgrade");
+    await waitFor(
+      () => document.querySelectorAll("#playerUpgrade .skill-branch-v096").length === 3,
+      `${requested} three-branch skill tree`,
+      5000
+    );
+    if (requested === "phone-portrait") {
+      const runtimeCss = await readFile(
+        path.join(root, "assets/cherrift_runtime.css"),
+        "utf8"
+      );
+      assert.doesNotMatch(
+        runtimeCss,
+        /#playerUpgrade \.skill-tree-track-v082\{[^}]*min-width:900px!important/,
+        "phone-portrait: Skill Tree canvas is not fixed at 900px"
+      );
+    }
+  }
+
   assert.equal(
     document.body.classList.contains("v062-startup-failed"),
     false,
