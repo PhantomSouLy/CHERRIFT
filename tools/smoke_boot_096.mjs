@@ -1218,9 +1218,15 @@ try {
 
     window.UI.open("playerUpgrade");
     await waitFor(
-      () => document.querySelectorAll("#playerUpgrade .skill-branch-v096").length === 3,
-      `${requested} three-branch skill tree`,
+      () => document.querySelectorAll("#skillBranchTabsV096 > button").length === 3 &&
+        document.querySelectorAll("#playerUpgrade .skill-list-v096 .skill-node-v082").length > 0,
+      `${requested} three-tab Player Upgrade list`,
       5000
+    );
+    assert.equal(
+      document.querySelector("#playerUpgrade .skill-core-v082"),
+      null,
+      `${requested}: removed Cherry core is not rendered`
     );
     if (requested === "phone-portrait") {
       const runtimeCss = await readFile(
