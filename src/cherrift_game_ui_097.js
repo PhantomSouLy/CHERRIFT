@@ -359,11 +359,607 @@
     uiState.lastSkinId = current;
   }
 
+
+
+  function installUiStyleRound2(){
+    if (document.getElementById("cherriftGameUi097Round2Css")) return;
+    const style = document.createElement("style");
+    style.id = "cherriftGameUi097Round2Css";
+    style.textContent = `
+      /* Round 2 — obtained system, start prompt, equipment, profile, title panels, skill tree polish. */
+      .reward-overlay-v083 #rewardContinueV083.reward-continue-v083{
+        padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;outline:none!important;
+        color:rgba(255,245,250,.68)!important;font:800 14px/1.2 system-ui,sans-serif!important;letter-spacing:.03em!important;text-transform:none!important
+      }
+      .reward-overlay-v083 #rewardContinueV083.reward-continue-v083:hover,
+      .reward-overlay-v083 #rewardContinueV083.reward-continue-v083:focus-visible{color:rgba(255,245,250,.86)!important;text-decoration:underline!important}
+
+      .cr-start-prompt-v0972{
+        white-space:nowrap!important;text-wrap:nowrap!important;
+        font-size:clamp(16px,4vw,22px)!important;letter-spacing:.03em!important;
+      }
+
+      .cr-equip-page-v0972 .cr-equip-card-v0972,
+      .cr-equip-page-v0972 .cr-equip-card-v0972 *{filter:none!important;opacity:1!important}
+      .cr-equip-page-v0972 .cr-equip-card-v0972{mix-blend-mode:normal!important}
+      .cr-equip-page-v0972 .cr-equip-card-v0972 img,
+      .cr-equip-page-v0972 .cr-equip-card-v0972 canvas,
+      .cr-equip-page-v0972 .cr-equip-card-v0972 svg{filter:none!important;opacity:1!important;saturate:1!important}
+      .cr-equip-page-v0972 .cr-equip-dim-v0972{display:none!important}
+
+      .cr-profile-header-v0972{display:grid!important;grid-template-columns:92px minmax(0,1fr)!important;gap:14px!important;align-items:start!important}
+      .cr-profile-avatar-wrap-v0972{display:grid!important;justify-items:center!important;gap:8px!important}
+      .cr-profile-avatar-wrap-v0972 .prebeta-avatar,
+      .cr-profile-avatar-wrap-v0972 .cr-profile-avatar-v0972{width:88px!important;height:88px!important;display:grid!important;place-items:center!important;overflow:hidden!important;border-radius:22px!important}
+      .cr-profile-avatar-wrap-v0972 img{width:100%!important;height:100%!important;object-fit:cover!important}
+      .cr-profile-main-v0972{min-width:0!important;display:grid!important;gap:5px!important}
+      .cr-profile-kicker-v0972{margin:0!important;color:var(--cr-muted,#d2afc1)!important;font:900 10px/1 system-ui!important;letter-spacing:.08em!important;text-transform:uppercase!important}
+      .cr-profile-active-title-v0972{margin:0!important;color:var(--cr-primary,#e45b9b)!important;font:800 22px/1.05 Georgia,"Times New Roman",serif!important}
+      .cr-profile-display-row-v0972{display:flex!important;align-items:center!important;gap:8px!important;min-width:0!important}
+      .cr-profile-display-row-v0972 h3{margin:0!important;min-width:0!important;overflow-wrap:anywhere!important;color:inherit!important;font:800 clamp(28px,6vw,44px)/1 Georgia,"Times New Roman",serif!important}
+      .cr-profile-edit-name-v0972,
+      .cr-title-button-v0972,
+      .cr-title-filter-v0972,
+      .cr-title-footer-v0972 button,
+      .cr-title-modal-v0972 button,
+      .cr-title-stats-v0972 button{
+        border:1px solid rgba(255,203,228,.25)!important;border-radius:12px!important;
+        background:rgba(255,255,255,.05)!important;color:var(--cr-text,#fff5fa)!important
+      }
+      .cr-profile-edit-name-v0972{width:34px!important;height:34px!important;min-width:34px!important;padding:0!important;font-size:16px!important}
+      .cr-profile-username-v0972{margin:0!important;color:var(--cr-muted,#d2afc1)!important;font:700 13px/1.45 system-ui!important}
+      .cr-title-button-v0972{min-width:76px!important;min-height:34px!important;padding:6px 10px!important;font:800 12px/1 system-ui!important}
+      .cr-profile-hide-v0972{display:none!important}
+
+      .cr-title-modal-v0972,
+      .cr-title-stats-v0972{
+        position:fixed!important;z-index:2147483645!important;inset:0!important;
+        display:grid!important;place-items:center!important;padding:14px!important;
+        background:rgba(8,4,14,.58)!important;backdrop-filter:blur(8px)!important
+      }
+      .cr-title-modal-v0972[hidden],
+      .cr-title-stats-v0972[hidden]{display:none!important}
+      .cr-title-shell-v0972{
+        width:min(560px,100%)!important;max-height:min(86dvh,760px)!important;display:grid!important;
+        grid-template-rows:auto auto minmax(0,1fr) auto!important;overflow:hidden!important;
+        border:1px solid rgba(255,203,228,.25)!important;border-radius:20px!important;background:rgba(24,10,22,.96)!important;
+        box-shadow:0 26px 72px rgba(0,0,0,.52)!important
+      }
+      .cr-title-head-v0972{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;padding:16px 16px 10px!important}
+      .cr-title-head-v0972 h3{margin:0!important;color:inherit!important;font:800 28px/1.05 Georgia,"Times New Roman",serif!important}
+      .cr-title-close-v0972{width:36px!important;height:36px!important;min-width:36px!important;padding:0!important}
+      .cr-title-controls-v0972{padding:0 16px 10px!important;display:flex!important;justify-content:space-between!important;align-items:center!important;gap:12px!important}
+      .cr-title-filter-v0972{display:inline-flex!important;align-items:center!important;gap:8px!important;padding:8px 10px!important;font:800 12px/1 system-ui!important}
+      .cr-title-filter-v0972 input{accent-color:#e45b9b!important}
+      .cr-title-list-v0972{overflow:auto!important;padding:0 16px 14px!important;display:grid!important;gap:9px!important;align-content:start!important}
+      .cr-title-row-v0972{padding:12px!important;border:1px solid rgba(255,203,228,.16)!important;border-radius:14px!important;background:rgba(255,255,255,.03)!important;color:inherit!important;text-align:left!important}
+      .cr-title-row-v0972.active{border-color:color-mix(in srgb,var(--cr-primary,#e45b9b) 68%,rgba(255,255,255,.28))!important;box-shadow:0 0 0 2px rgba(228,91,155,.14)!important}
+      .cr-title-row-v0972 small{display:block!important;margin-bottom:5px!important;color:var(--cr-muted,#d2afc1)!important;font:900 10px/1 system-ui!important;letter-spacing:.08em!important;text-transform:uppercase!important}
+      .cr-title-row-v0972 b{display:block!important;color:inherit!important;font-size:22px!important;line-height:1.08!important}
+      .cr-title-row-v0972 p{margin:4px 0 0!important;color:var(--cr-muted,#d2afc1)!important;font:700 12px/1.4 system-ui!important}
+      .cr-title-footer-v0972{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important;padding:12px 16px 16px!important;border-top:1px solid rgba(255,203,228,.12)!important;background:rgba(9,4,14,.62)!important}
+      .cr-title-footer-v0972 button{min-height:42px!important;padding:0 12px!important;font:800 13px/1 system-ui!important}
+
+      .cr-title-stats-body-v0972{overflow:auto!important;padding:0 16px 16px!important;display:grid!important;gap:10px!important}
+      .cr-title-stat-card-v0972{padding:12px!important;border:1px solid rgba(255,203,228,.16)!important;border-radius:14px!important;background:rgba(255,255,255,.03)!important}
+      .cr-title-stat-card-v0972 small{display:block!important;margin-bottom:5px!important;color:var(--cr-muted,#d2afc1)!important;font:900 10px/1 system-ui!important;letter-spacing:.08em!important;text-transform:uppercase!important}
+      .cr-title-stat-card-v0972 b{display:block!important;font-size:18px!important;line-height:1.1!important}
+      .cr-title-stat-card-v0972 ul{margin:6px 0 0!important;padding-left:18px!important;color:var(--cr-muted,#d2afc1)!important;font:700 12px/1.45 system-ui!important}
+      .cr-title-summary-v0972{padding:12px!important;border:1px solid rgba(255,203,228,.2)!important;border-radius:14px!important;background:rgba(255,255,255,.04)!important}
+      .cr-title-summary-v0972 h4{margin:0 0 8px!important;font-size:16px!important}
+      .cr-title-summary-v0972 p,.cr-title-summary-v0972 li{color:var(--cr-muted,#d2afc1)!important;font:700 12px/1.45 system-ui!important}
+
+      .cr-skill-inline-row-v0972{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important}
+      .cr-skill-inline-row-v0972 > *{min-height:0!important}
+      .cr-er-icononly-v0972{display:grid!important;place-items:center!important;min-width:62px!important;min-height:62px!important;padding:8px!important}
+      .cr-er-icononly-v0972 img{width:34px!important;height:34px!important;object-fit:contain!important}
+      .cr-er-icononly-v0972 .cr-er-text-v0972{display:none!important}
+      .cr-player-node-v0972{position:relative!important}
+      .cr-player-node-v0972 + .cr-player-node-v0972::before{content:"";position:absolute;left:38px;top:-15px;width:2px;height:16px;background:rgba(255,161,204,.36)!important}
+      .cr-player-node-v0972[data-v0972-locked="1"]{opacity:.72!important}
+      .cr-player-node-v0972[data-v0972-locked="1"] [data-v0972-upgrade-plus]{filter:grayscale(.15)!important}
+      .cr-player-node-v0972 .cr-lock-note-v0972{margin-top:6px!important;color:#efb0cf!important;font:800 10px/1.3 system-ui!important}
+
+      @media(max-width:820px){
+        .cr-profile-header-v0972{grid-template-columns:82px minmax(0,1fr)!important;gap:12px!important}
+        .cr-profile-avatar-wrap-v0972 .prebeta-avatar,
+        .cr-profile-avatar-wrap-v0972 .cr-profile-avatar-v0972{width:78px!important;height:78px!important}
+        .cr-profile-active-title-v0972{font-size:18px!important}
+        .cr-title-head-v0972 h3{font-size:24px!important}
+        .cr-title-row-v0972 b{font-size:19px!important}
+        .cr-skill-inline-row-v0972{grid-template-columns:1fr 1fr!important}
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  function persistSave(save){
+    try { if (window.CherriftStorage?.save) window.CherriftStorage.save(save); } catch (_) {}
+    if (window.UI) window.UI.save = save;
+    try { window.UI?.refreshMenu?.(); } catch (_) {}
+  }
+
+  function sectionByHeading(pattern){
+    const matcher = pattern instanceof RegExp ? pattern : new RegExp(String(pattern), 'i');
+    const heading = qa('h1,h2,h3,h4,strong,b').find(node => matcher.test(clean(node.textContent)));
+    if (!heading) return null;
+    return heading.closest('section,article,main,div') || heading.parentElement || null;
+  }
+
+  function isLeaf(node){ return !!node && !node.children?.length; }
+  function onlyText(node){ return clean(node?.textContent); }
+  function slug(value){ return clean(value).toLowerCase().replace(/[^a-z0-9áéíóöőúüű]+/gi,'-').replace(/^-+|-+$/g,'') || 'title'; }
+
+  function armRewardGate(reason){ uiState.rewardGateUntil = Date.now() + 7000; uiState.rewardGateReason = reason || ''; }
+  function rewardGateOpen(){ return Number(uiState.rewardGateUntil || 0) > Date.now(); }
+  function clearRewardGate(){ uiState.rewardGateUntil = 0; uiState.rewardGateReason = ''; }
+
+  function shouldArmRewardGate(target){
+    if (!target) return false;
+    const text = lower(`${target.textContent || ''} ${target.getAttribute?.('aria-label') || ''}`);
+    const id = lower(`${target.id || ''} ${target.className || ''}`);
+    const data = lower(JSON.stringify(target.dataset || {}));
+    if (/felszerel|equip|play|játék|start|resume|vissza|back|inventory|tárgylista|gear|bag|mailbox/.test(text + ' ' + id + ' ' + data)) return false;
+    return /claim|átvét|collect|redeem|kupon|coupon|vásárl|buy|purchase|shop|reward|jutalom|daily|weekly|heti|napi|login|event|mail|gacha|draw|spin|chest|láda/.test(text + ' ' + id + ' ' + data)
+      || target.matches?.('[data-v082-claim-weekly],[data-v080-open-chest],[data-claim],[data-redeem],[data-buy],[data-reward],[data-shop-buy]');
+  }
+
+  function suppressOverlay(overlay){
+    if (!overlay || overlay.dataset.v0972Suppressed === '1') return;
+    overlay.dataset.v0972Suppressed = '1';
+    overlay.remove();
+  }
+
+  function decorateRewardOverlayRound2(root=document){
+    qa('.reward-overlay-v083', root).forEach(overlay => {
+      const claim = q('#rewardContinueV083', overlay) || q('.reward-continue-v083', overlay) || qa('button', overlay).find(button => /claim|átvét|érintsd|kattints|continue/i.test(clean(button.textContent)));
+      if (claim) {
+        claim.textContent = isPhoneUi() ? 'Tap to claim' : 'Click to claim';
+        claim.setAttribute('aria-label', claim.textContent);
+        claim.classList.add('cr-plain-claim-v0972');
+      }
+      if (overlay.dataset.v0972Allowed === '1') return;
+      if (!rewardGateOpen()) { suppressOverlay(overlay); return; }
+      overlay.dataset.v0972Allowed = '1';
+      clearRewardGate();
+    });
+  }
+
+  function reconcileStartPrompt(){
+    const desired = isPhoneUi() ? 'Tap here to start' : 'Click here to start';
+    qa('body *').filter(isLeaf).forEach(node => {
+      const text = onlyText(node);
+      if (!text) return;
+      if (!/(kattints\s+a\s+kezdéshez|click\s+here\s+to\s+start|tap\s+here\s+to\s+start|click\s+to\s+start|tap\s+to\s+start)/i.test(text)) return;
+      node.textContent = desired;
+      node.classList.add('cr-start-prompt-v0972');
+      const parent = node.parentElement;
+      if (parent) {
+        qa(':scope > *', parent).forEach(sibling => {
+          if (sibling === node) return;
+          if (!isLeaf(sibling)) return;
+          if (/^[•·.◆◇◈◊⟡✦]+$/.test(clean(sibling.textContent))) sibling.remove();
+        });
+      }
+    });
+  }
+
+  function reconcileEquipmentPage(){
+    const root = sectionByHeading(/^(felszerelés|equipment)$/i);
+    if (!root) return;
+    root.classList.add('cr-equip-page-v0972');
+    qa('button,article,li,div', root).forEach(card => {
+      const text = lower(card.textContent);
+      if (!(q('img,canvas,svg', card) || /lv\.?\s*\d/.test(text))) return;
+      card.classList.add('cr-equip-card-v0972');
+      if (/overlay|shade|dimm|disabled|lock|grey|gray/.test(card.className)) card.classList.add('cr-equip-dim-v0972');
+      card.style.filter = 'none';
+      card.style.opacity = '1';
+    });
+    qa('img,canvas,svg', root).forEach(media => { media.style.filter = 'none'; media.style.opacity = '1'; });
+  }
+
+  function authAccount(){
+    return window.CHERRIFT_AUTH?.getState?.().account || window.UI?.save?.accountInfo || {};
+  }
+
+  function profileData(){
+    const save = window.UI?.save || {};
+    const profile = save.profile || {};
+    const account = authAccount();
+    const discord = clean(profile.discordUsername || profile.username || account.username || account.global_name || account.display_name || account.name || profile.discordName || '');
+    const displayName = clean(profile.displayName || profile.display_name || profile.nickname || save.displayName || discord || profile.name || 'Cherry Player');
+    const activeTitleName = clean(profile.activeTitleName || profile.title || profile.equippedTitleName || profile.currentTitle || '');
+    const activeTitleId = clean(profile.activeTitleId || profile.titleId || profile.equippedTitleId || '');
+    return {save, profile, account, discord, displayName, activeTitleName, activeTitleId};
+  }
+
+  function titleStatsFromObject(source){
+    const stats = [];
+    if (!source || typeof source !== 'object') return stats;
+    const maybe = source.stats || source.bonus || source.bonuses || source.effects || source.effect;
+    if (Array.isArray(maybe)) {
+      maybe.forEach(entry => { const text = clean(typeof entry === 'string' ? entry : `${entry?.name || entry?.stat || ''} ${entry?.value ?? ''}`); if (text) stats.push(text); });
+      return stats;
+    }
+    if (maybe && typeof maybe === 'object') {
+      Object.entries(maybe).forEach(([key, value]) => {
+        if (value == null || value === '' || Number(value) === 0) return;
+        const label = key.replace(/([A-Z])/g,' $1').replace(/[_-]+/g,' ').trim();
+        stats.push(`${label}: ${value}`);
+      });
+    }
+    return stats;
+  }
+
+  function collectTitles(profileRoot){
+    const {save, profile, activeTitleName, activeTitleId} = profileData();
+    const map = new Map();
+    const add = (entry, defaults={}) => {
+      if (!entry) return;
+      let item = null;
+      if (typeof entry === 'string') item = {id:slug(entry), name:clean(entry), owned:true};
+      else if (typeof entry === 'object') {
+        const name = clean(entry.name || entry.title || entry.label || entry.id || entry.key || '');
+        if (!name) return;
+        item = {
+          id: clean(entry.id || entry.key || slug(name)),
+          name,
+          rarity: clean(entry.rarity || entry.tier || defaults.rarity || ''),
+          owned: entry.owned != null ? !!entry.owned : defaults.owned != null ? defaults.owned : true,
+          stats: titleStatsFromObject(entry),
+          raw: entry
+        };
+      }
+      if (!item?.name) return;
+      const key = item.id || slug(item.name);
+      const prior = map.get(key) || {id:key, name:item.name, rarity:'', owned:false, stats:[]};
+      const merged = {
+        ...prior,
+        ...item,
+        rarity: item.rarity || prior.rarity,
+        owned: item.owned || prior.owned,
+        stats: [...new Set([...(prior.stats || []), ...(item.stats || [])])]
+      };
+      map.set(key, merged);
+    };
+
+    [save.titles, save.titleCollection, save.unlockedTitles, save.ownedTitles, profile.titles, profile.titleCollection, profile.unlockedTitles, profile.ownedTitles].forEach(source => {
+      if (Array.isArray(source)) source.forEach(entry => add(entry, {owned:true}));
+    });
+
+    const section = qa('h1,h2,h3,h4,strong,b').find(node => /title\s*gyűjtemény|title\s*collection/i.test(clean(node.textContent)))?.closest('section,article,div');
+    if (section) {
+      qa('button,article,div', section).forEach(row => {
+        const text = clean(row.textContent);
+        if (!text || /title\s*gyűjtemény|title\s*collection|ikonkeretek|owned|title stats|equip|bezár/i.test(text)) return;
+        const rarityMatch = text.match(/(Gyakori|Ritka|Epikus|Legendary|Legendás|Common|Rare|Epic|Uncommon)/i);
+        if (!rarityMatch) return;
+        const rarity = clean(rarityMatch[1]);
+        const name = clean(text.replace(rarityMatch[0], '').split(/\s{2,}/)[0]);
+        if (!name || name.length > 60) return;
+        add({id:slug(name), name, rarity, owned:true});
+      });
+    }
+
+    if (activeTitleName) add({id:activeTitleId || slug(activeTitleName), name:activeTitleName, owned:true});
+    const list = [...map.values()];
+    list.sort((a,b) => a.name.localeCompare(b.name, 'hu'));
+    return list;
+  }
+
+  function activeTitle(titles){
+    const {activeTitleName, activeTitleId} = profileData();
+    return titles.find(title => title.id === activeTitleId) || titles.find(title => lower(title.name) === lower(activeTitleName)) || titles[0] || {id:'', name:activeTitleName || '—', owned:true, stats:[]};
+  }
+
+  function setDisplayName(nextValue){
+    const {save} = profileData();
+    save.profile ||= {};
+    const value = clean(nextValue).slice(0, 28);
+    if (!value) return;
+    save.profile.displayName = value;
+    save.profile.display_name = value;
+    persistSave(save);
+    scheduleUiReconcile();
+  }
+
+  function setEquippedTitle(title){
+    if (!title) return;
+    const {save} = profileData();
+    save.profile ||= {};
+    save.profile.activeTitleId = title.id;
+    save.profile.titleId = title.id;
+    save.profile.activeTitleName = title.name;
+    save.profile.title = title.name;
+    persistSave(save);
+    scheduleUiReconcile();
+  }
+
+  function titlePanelState(){
+    uiState.titleState ||= {open:false, ownedOnly:false, selectedId:''};
+    return uiState.titleState;
+  }
+
+  function closeTitleModal(){ q('#crTitleModalV0972')?.setAttribute('hidden',''); }
+  function closeTitleStats(){ q('#crTitleStatsV0972')?.setAttribute('hidden',''); }
+
+  function renderTitleStats(profileRoot){
+    const titles = collectTitles(profileRoot);
+    let modal = q('#crTitleStatsV0972');
+    if (!modal) {
+      modal = document.createElement('section');
+      modal.id = 'crTitleStatsV0972';
+      modal.className = 'cr-title-stats-v0972';
+      document.body.appendChild(modal);
+    }
+    const total = new Map();
+    titles.filter(title => title.owned).forEach(title => (title.stats || []).forEach(stat => total.set(stat, (total.get(stat) || 0) + 1)));
+    modal.innerHTML = `<div class="cr-title-shell-v0972">
+      <div class="cr-title-head-v0972"><h3>${esc(copy('Title statok','Title stats'))}</h3><button type="button" class="cr-title-close-v0972" data-v0972-title-close>×</button></div>
+      <div class="cr-title-stats-body-v0972">
+        ${titles.map(title => `<article class="cr-title-stat-card-v0972"><small>${esc(title.owned ? copy('Megszerzett','Owned') : copy('Elérhető','Available'))}${title.rarity ? ` · ${esc(title.rarity)}` : ''}</small><b>${esc(title.name)}</b><ul>${(title.stats?.length ? title.stats : [copy('Nincs külön stat bónusz feltüntetve.','No dedicated stat bonus listed.')]).map(stat => `<li>${esc(stat)}</li>`).join('')}</ul></article>`).join('')}
+        <section class="cr-title-summary-v0972"><h4>${esc(copy('Összesített title bónuszok','Combined title bonuses'))}</h4>${total.size ? `<ul>${[...total.entries()].map(([stat,count]) => `<li>${esc(stat)}${count > 1 ? ` ×${count}` : ''}</li>`).join('')}</ul>` : `<p>${esc(copy('Még nincs összesíthető title stat.','There are no title stats to summarize yet.'))}</p>`}</section>
+      </div>
+      <div class="cr-title-footer-v0972" style="grid-template-columns:1fr!important"><button type="button" data-v0972-title-close>${esc(copy('Bezárás','Close'))}</button></div>
+    </div>`;
+    modal.removeAttribute('hidden');
+  }
+
+  function renderTitleModal(profileRoot){
+    const titles = collectTitles(profileRoot);
+    const state = titlePanelState();
+    if (!state.selectedId && titles[0]) state.selectedId = activeTitle(titles).id || titles[0].id;
+    const visibleTitles = state.ownedOnly ? titles.filter(title => title.owned) : titles;
+    let modal = q('#crTitleModalV0972');
+    if (!modal) {
+      modal = document.createElement('section');
+      modal.id = 'crTitleModalV0972';
+      modal.className = 'cr-title-modal-v0972';
+      document.body.appendChild(modal);
+    }
+    modal.innerHTML = `<div class="cr-title-shell-v0972">
+      <div class="cr-title-head-v0972"><h3>${esc(copy('Title','Title'))}</h3><button type="button" class="cr-title-close-v0972" data-v0972-title-close>×</button></div>
+      <div class="cr-title-controls-v0972"><label class="cr-title-filter-v0972"><input type="checkbox" data-v0972-title-owned ${state.ownedOnly ? 'checked' : ''}> ${esc(copy('Owned','Owned'))}</label><span style="color:var(--cr-muted,#d2afc1);font:800 11px/1 system-ui">${visibleTitles.length}/${titles.length}</span></div>
+      <div class="cr-title-list-v0972">${visibleTitles.map(title => `<button type="button" class="cr-title-row-v0972 ${title.id === state.selectedId ? 'active' : ''}" data-v0972-title-pick="${esc(title.id)}"><small>${esc(title.rarity || (title.owned ? copy('Megszerzett','Owned') : copy('Elérhető','Available')))}</small><b>${esc(title.name)}</b><p>${esc((title.stats && title.stats[0]) || (title.owned ? copy('Megszerzett title','Owned title') : copy('Még nincs megszerezve','Not owned yet')))}</p></button>`).join('')}</div>
+      <div class="cr-title-footer-v0972"><button type="button" data-v0972-title-stats>${esc(copy('Title statok','Title stats'))}</button><button type="button" data-v0972-title-equip>${esc(copy('Felszerel','Equip'))}</button></div>
+    </div>`;
+    modal.removeAttribute('hidden');
+  }
+
+  function reconcileProfilePage(){
+    const heading = qa('h1,h2,h3').find(node => /^(profil|profile)$/i.test(clean(node.textContent)));
+    if (!heading) return;
+    const root = heading.closest('section,article,main,div')?.parentElement || heading.closest('section,article,main,div');
+    if (!root) return;
+    const {discord, displayName} = profileData();
+    const titles = collectTitles(root);
+    const active = activeTitle(titles);
+    const statButton = qa('button', root).find(button => /stat\s*részletek|stat\s*details/i.test(clean(button.textContent)));
+    const card = statButton?.closest('section,article,div') || qa('section,article,div', root).find(node => q('.prebeta-avatar,img', node) && /stat\s*részletek|stat\s*details/i.test(clean(node.textContent)));
+    if (card && !card.dataset.v0972ProfileReady) {
+      const avatar = q('.prebeta-avatar', card) || q('img', card)?.closest('span,div') || q('img', card);
+      const actionButton = statButton?.cloneNode(true) || document.createElement('button');
+      if (!statButton) { actionButton.textContent = copy('Stat részletek','Stat details'); }
+      actionButton.className = statButton?.className || 'menu-btn primary';
+      actionButton.removeAttribute('id');
+      card.innerHTML = `
+        <div class="cr-profile-header-v0972">
+          <div class="cr-profile-avatar-wrap-v0972">
+            <div class="cr-profile-avatar-v0972"></div>
+            <button type="button" class="cr-title-button-v0972" data-v0972-open-title>${esc(copy('Title','Title'))}</button>
+          </div>
+          <div class="cr-profile-main-v0972">
+            <p class="cr-profile-kicker-v0972">${esc(copy('Aktív Title','Active Title'))}</p>
+            <p class="cr-profile-active-title-v0972">${esc(active.name || '—')}</p>
+            <div class="cr-profile-display-row-v0972"><h3>${esc(displayName)}</h3><button type="button" class="cr-profile-edit-name-v0972" data-v0972-edit-name aria-label="${esc(copy('Display name szerkesztése','Edit display name'))}">✎</button></div>
+            <p class="cr-profile-username-v0972">${esc(copy('Username','Username'))}: ${esc(discord || displayName)}</p>
+          </div>
+        </div>`;
+      q('.cr-profile-avatar-v0972', card)?.appendChild(avatar ? avatar.cloneNode(true) : document.createTextNode(''));
+      card.appendChild(actionButton);
+      card.dataset.v0972ProfileReady = '1';
+    } else if (card) {
+      const titleNode = q('.cr-profile-active-title-v0972', card);
+      const nameNode = q('.cr-profile-display-row-v0972 h3', card);
+      const userNode = q('.cr-profile-username-v0972', card);
+      if (titleNode) titleNode.textContent = active.name || '—';
+      if (nameNode) nameNode.textContent = displayName;
+      if (userNode) userNode.textContent = `${copy('Username','Username')}: ${discord || displayName}`;
+    }
+
+    const titleSectionHeading = qa('h1,h2,h3,h4,strong,b', root).find(node => /title\s*gyűjtemény|title\s*collection/i.test(clean(node.textContent)));
+    titleSectionHeading?.closest('section,article,div')?.classList.add('cr-profile-hide-v0972');
+
+    qa('p,b,strong,span,div', card || root).forEach(node => {
+      if (!isLeaf(node)) return;
+      const text = clean(node.textContent);
+      if (!text) return;
+      if (active.name && lower(text) === lower(active.name) && !node.classList.contains('cr-profile-active-title-v0972')) node.classList.add('cr-profile-hide-v0972');
+    });
+  }
+
+  function isGm(){
+    const save = window.UI?.save || {};
+    const profile = save.profile || {};
+    const account = save.account || {};
+    return !!(save.isGM || save.gm || save.gmMode || profile.isGM || profile.gm || account.isGM || account.gm || save.titles?.includes?.('GM') || save.role === 'GM');
+  }
+
+  function scoreProgress(text){
+    const match = clean(text).match(/szint\s*(\d+)\s*\/?\s*(\d+)/i);
+    if (!match) return null;
+    return {current:Number(match[1]), max:Number(match[2])};
+  }
+
+  function reconcileSkillTree(){
+    const root = sectionByHeading(/skill\s*tree/i);
+    if (!root) return;
+    const resonanceActive = qa('button,div,p,h1,h2,h3,b,strong', root).some(node => /^(Blaze|Tidecall|Stoneveil|Windborne|Celestial|Abyssal)(\s+Resonance\s+ág)?$/i.test(clean(node.textContent))) || /resonance\s*ág/i.test(clean(root.textContent));
+    const playerUpgradeActive = !resonanceActive && /player\s*upgrade/i.test(clean(root.textContent)) && qa('section,article,div', root).some(card => /szint\s*\d+\s*\/\s*\d+/i.test(clean(card.textContent)));
+
+    qa('button,div,article', root).forEach(node => {
+      const text = clean(node.textContent);
+      if (!text) return;
+      if (resonanceActive && /^(támadás|védelem|hasznosság|attack|defense|utility)$/i.test(text)) node.classList.add('cr-profile-hide-v0972');
+    });
+
+    if (!isGm()) {
+      qa('p,small,div,span', root).forEach(node => {
+        if (/ideiglenes\s*gm\s*tesztmód|temporary\s*gm/i.test(clean(node.textContent))) node.classList.add('cr-profile-hide-v0972');
+      });
+    }
+
+    const pointsCard = qa('div,article,section,button', root).find(node => /gm\s*tesztpont|elérhető\s*skill\s*point|available\s*skill\s*point/i.test(clean(node.textContent)));
+    const resetCard = qa('div,article,section,button', root).find(node => /ágak\s*visszaállítása|skill\s*tree\s*reset|reset/i.test(clean(node.textContent)) && node !== pointsCard);
+    if (pointsCard && resetCard && pointsCard.parentElement && resetCard.parentElement) {
+      let row = q('.cr-skill-inline-row-v0972', root);
+      if (!row) {
+        row = document.createElement('div');
+        row.className = 'cr-skill-inline-row-v0972';
+        pointsCard.parentElement.insertBefore(row, pointsCard);
+      }
+      if (pointsCard.parentElement !== row) row.appendChild(pointsCard);
+      if (resetCard.parentElement !== row) row.appendChild(resetCard);
+    }
+
+    qa('button,div', root).forEach(button => {
+      const text = clean(button.textContent);
+      const match = text.match(/^(Blaze|Tidecall|Stoneveil|Windborne|Celestial|Abyssal)\b/i);
+      if (!match) return;
+      const key = lower(match[1]);
+      const element = ELEMENTS[key];
+      if (!element) return;
+      button.classList.add('cr-er-icononly-v0972');
+      button.title = match[1];
+      if (!button.dataset.v0972IconOnly) {
+        button.dataset.v0972IconOnly = '1';
+        button.innerHTML = `<img src="${esc(element.icon)}" alt="${esc(match[1])}"><span class="cr-er-text-v0972">${esc(match[1])}</span>`;
+      }
+    });
+
+    qa('h1,h2,h3,b,strong,div,p', root).forEach(node => {
+      if (!isLeaf(node)) return;
+      const text = clean(node.textContent);
+      const match = text.match(/^(Blaze|Tidecall|Stoneveil|Windborne|Celestial|Abyssal)\s+Resonance\s+ág$/i);
+      if (match) node.textContent = match[1];
+    });
+
+    if (playerUpgradeActive) {
+      const cards = qa('section,article,div', root).filter(card => scoreProgress(card.textContent) && q('button', card));
+      const ordered = [...new Set(cards)].filter(card => q('button', card) && /szint\s*\d+\s*\/\s*\d+/i.test(clean(card.textContent)));
+      let firstOpenFound = false;
+      ordered.forEach((card, index) => {
+        card.classList.add('cr-player-node-v0972');
+        const progress = scoreProgress(card.textContent) || {current:0,max:1};
+        const plus = qa('button', card).reverse().find(button => /^[+＋]$/.test(clean(button.textContent)) || /add|plus/.test(button.className));
+        if (plus) plus.dataset.v0972UpgradePlus = '1';
+        const priorComplete = ordered.slice(0, index).every(prev => {
+          const p = scoreProgress(prev.textContent); return p ? p.current >= p.max : true;
+        });
+        const lockedBySequence = !priorComplete;
+        const maxed = progress.current >= progress.max;
+        const levelGate = /szükséges\s*szint/i.test(clean(card.textContent));
+        const shouldLock = lockedBySequence || maxed || levelGate;
+        if (plus) {
+          plus.disabled = shouldLock;
+          plus.setAttribute('aria-disabled', shouldLock ? 'true' : 'false');
+          if (!shouldLock && !firstOpenFound) firstOpenFound = true;
+        }
+        card.dataset.v0972Locked = lockedBySequence ? '1' : '0';
+        q('.cr-lock-note-v0972', card)?.remove();
+        if (lockedBySequence) {
+          const note = document.createElement('div');
+          note.className = 'cr-lock-note-v0972';
+          note.textContent = copy('Az előző node kimaxolása szükséges.','Finish the previous node first.');
+          card.appendChild(note);
+        }
+      });
+    }
+  }
+
+  function reconcileUiRound2(){
+    installUiStyleRound2();
+    decorateRewardOverlayRound2();
+    reconcileStartPrompt();
+    reconcileEquipmentPage();
+    reconcileProfilePage();
+    reconcileSkillTree();
+  }
+
+  function bindUiRound2(){
+    if (uiState.round2Bound) return;
+    uiState.round2Bound = true;
+    document.addEventListener('click', event => {
+      const target = event.target?.closest?.('button,a,label,input');
+      if (target && shouldArmRewardGate(target)) armRewardGate(clean(target.textContent) || target.id || 'reward');
+      if (target?.matches?.('[data-v0972-open-title]')) {
+        event.preventDefault();
+        renderTitleModal(sectionByHeading(/^(profil|profile)$/i));
+        return;
+      }
+      if (target?.matches?.('[data-v0972-title-close]')) {
+        event.preventDefault();
+        closeTitleModal();
+        closeTitleStats();
+        return;
+      }
+      if (target?.matches?.('[data-v0972-edit-name]')) {
+        event.preventDefault();
+        const current = profileData().displayName;
+        const next = prompt(copy('Add meg a display name-et','Set display name'), current);
+        if (next != null) setDisplayName(next);
+        return;
+      }
+      if (target?.matches?.('[data-v0972-title-pick]')) {
+        event.preventDefault();
+        titlePanelState().selectedId = target.dataset.v0972TitlePick;
+        renderTitleModal(sectionByHeading(/^(profil|profile)$/i));
+        return;
+      }
+      if (target?.matches?.('[data-v0972-title-stats]')) {
+        event.preventDefault();
+        renderTitleStats(sectionByHeading(/^(profil|profile)$/i));
+        return;
+      }
+      if (target?.matches?.('[data-v0972-title-equip]')) {
+        event.preventDefault();
+        const titles = collectTitles(sectionByHeading(/^(profil|profile)$/i));
+        const picked = titles.find(title => title.id === titlePanelState().selectedId) || titles[0];
+        if (picked) setEquippedTitle(picked);
+        closeTitleModal();
+        return;
+      }
+      if (target?.matches?.('[data-v0972-title-owned]')) {
+        titlePanelState().ownedOnly = !!target.checked;
+        renderTitleModal(sectionByHeading(/^(profil|profile)$/i));
+        return;
+      }
+    }, true);
+
+
+    document.addEventListener('change', event => {
+      const owned = event.target?.closest?.('[data-v0972-title-owned]') || (event.target?.matches?.('[data-v0972-title-owned]') ? event.target : null);
+      if (owned) {
+        titlePanelState().ownedOnly = !!owned.checked;
+        renderTitleModal(sectionByHeading(/^(profil|profile)$/i));
+      }
+    }, true);
+
+    if (typeof MutationObserver === 'function' && document.body) {
+      const observer = new MutationObserver(() => scheduleUiReconcile());
+      observer.observe(document.body, {subtree:true, childList:true, characterData:true});
+      uiState.round2Observer = observer;
+    }
+  }
+
+
   function reconcileUi(){
     installUiStyle();
     decorateRewardOverlay();
     fixLobbyFrame();
     reconcileSkinSelector();
+    reconcileUiRound2();
   }
 
   function scheduleUiReconcile(){
@@ -426,7 +1022,9 @@
 
   function startUi(){
     installUiStyle();
+    installUiStyleRound2();
     bindUi();
+    bindUiRound2();
     reconcileUi();
     requestAnimationFrame(reconcileUi);
   }
