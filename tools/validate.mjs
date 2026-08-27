@@ -188,8 +188,8 @@ else {
   }
 
   const firstPartyBuildQueries = [...html.matchAll(/(?:src|href)=["'][^"']+\?v=(098\d-[a-z0-9-]+)/gi)].map(match => match[1]);
-  if (new Set(firstPartyBuildQueries).size !== 1 || firstPartyBuildQueries[0] !== "0983-structure") {
-    errors.push(`index.html: first-party browser assets must share build query 0983-structure (found ${[...new Set(firstPartyBuildQueries)].join(", ")})`);
+  if (new Set(firstPartyBuildQueries).size !== 1 || firstPartyBuildQueries[0] !== "0984-ui-fix") {
+    errors.push(`index.html: first-party browser assets must share build query 0984-ui-fix (found ${[...new Set(firstPartyBuildQueries)].join(", ")})`);
   }
 }
 
