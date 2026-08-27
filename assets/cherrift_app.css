@@ -7894,6 +7894,18 @@ html[data-cherrift-theme]:not([data-cherrift-theme="default"]) :is(.material-gri
 html[data-cherrift-theme]:not([data-cherrift-theme="default"]) :is(.food-card-v080 p,.active-buffs-v080 p,.permanent-grid-v080 p,.permanent-grid-v080 small,.bag-section-v080 header p,.material-grid-v080 small,.buff-summary-v080 span) { color:var(--theme-muted) !important; }
 html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .buff-summary-v080 span { border:1px solid var(--theme-outline-soft); background:var(--theme-surface-2) !important; }
 
+/* ---------- Gacha chest carousel ---------- */
+html[data-cherrift-theme]:not([data-cherrift-theme="default"]) #gachaChestOnlyV12 { color:var(--theme-text) !important; background:var(--theme-page-bg) !important; background-attachment:scroll !important; }
+html[data-cherrift-theme]:not([data-cherrift-theme="default"]) #gachaChestOnlyV12 :is(.gco-head h2,.gco-card h3) { color:var(--theme-text) !important; text-shadow:none !important; }
+html[data-cherrift-theme]:not([data-cherrift-theme="default"]) #gachaChestOnlyV12 :is(.gco-chests b,.gco-card,.gco-modal-card) { color:var(--theme-text) !important; border-color:var(--theme-outline-soft) !important; background:var(--theme-surface-glass) !important; box-shadow:0 16px 34px var(--theme-shadow) !important; }
+html[data-cherrift-theme]:not([data-cherrift-theme="default"]) #gachaChestOnlyV12 :is(.gco-art,.gco-pity,.gco-summary-row) { color:var(--theme-text) !important; border-color:var(--theme-outline-soft) !important; background:var(--theme-surface-2) !important; }
+html[data-cherrift-theme]:not([data-cherrift-theme="default"]) #gachaChestOnlyV12 :is(.gco-copy,.gco-pity-meta) { color:var(--theme-muted) !important; }
+html[data-cherrift-theme]:not([data-cherrift-theme="default"]) #gachaChestOnlyV12 :is(.gco-back,.gco-arrow) { color:var(--theme-text) !important; border-color:var(--theme-outline-soft) !important; background:var(--theme-surface-2) !important; }
+html[data-cherrift-theme]:not([data-cherrift-theme="default"]) #gachaChestOnlyV12 .gco-actions button { color:#fff !important; background:var(--theme-button) !important; }
+html[data-cherrift-theme]:not([data-cherrift-theme="default"]) #gachaChestOnlyV12 .gco-card.common { border-top:7px solid #63dd8a !important; }
+html[data-cherrift-theme]:not([data-cherrift-theme="default"]) #gachaChestOnlyV12 .gco-card.rare { border-top:7px solid #58adff !important; }
+html[data-cherrift-theme]:not([data-cherrift-theme="default"]) #gachaChestOnlyV12 .gco-card.epic { border-top:7px solid #c060ff !important; }
+
 /* ---------- Gear, inventory and Arsenal ---------- */
 html[data-cherrift-theme]:not([data-cherrift-theme="default"]) #gear.gear-v0560-enabled { color:var(--theme-text) !important; }
 html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .gear-v0560 { color:var(--theme-text) !important; }
@@ -7917,7 +7929,7 @@ html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .gear-stage-v0560
 html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .gear-stage-rune-v0560 { border-color:color-mix(in srgb,var(--theme-outline) 38%,transparent) !important; box-shadow:inset 0 0 70px color-mix(in srgb,var(--theme-primary) 12%,transparent),0 0 60px color-mix(in srgb,var(--theme-primary) 10%,transparent) !important; }
 html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .gear-character-glow-v0560 { background:radial-gradient(circle,color-mix(in srgb,var(--theme-primary-soft) 38%,white),color-mix(in srgb,var(--theme-primary) 14%,transparent) 46%,transparent 70%) !important; }
 html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .gear-character-floor-v0560 { border-color:var(--theme-outline-soft) !important; background:radial-gradient(ellipse,color-mix(in srgb,var(--theme-primary) 26%,white),transparent 70%) !important; box-shadow:0 0 28px var(--theme-shadow) !important; }
-html[data-cherrift-theme]:not([data-cherrift-theme="default"]) :is(.gear-slot-v0560,.gear-item-v0560) { color:var(--theme-deep-text) !important; background:var(--theme-card-dark) !important; box-shadow:0 9px 20px var(--theme-shadow-strong),inset 0 0 0 1px rgba(255,255,255,.08),0 0 15px color-mix(in srgb,var(--rarity) 25%,transparent) !important; }
+html[data-cherrift-theme]:not([data-cherrift-theme="default"]) :is(.gear-slot-v0560,.gear-item-v0560) { color:var(--theme-deep-text) !important; border-color:color-mix(in srgb,var(--rarity) 82%,var(--theme-outline)) !important; background:var(--theme-card-dark) !important; box-shadow:0 9px 20px var(--theme-shadow-strong),inset 0 0 0 1px rgba(255,255,255,.08),0 0 18px color-mix(in srgb,var(--rarity) 34%,transparent) !important; }
 html[data-cherrift-theme]:not([data-cherrift-theme="default"]) :is(.gear-slot-v0560>b,.gear-slot-v0560>small,.gear-item-v0560>b,.gear-item-v0560>small) { color:#fff !important; background:rgba(0,0,0,.64) !important; text-shadow:none !important; }
 html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .gear-drop-message-v0560 { color:var(--theme-muted) !important; background:var(--theme-surface-glass) !important; }
 html[data-cherrift-theme]:not([data-cherrift-theme="default"]) :is(.gear-inventory-tools-v0560 button,.gear-inventory-tools-v0560 span,.gear-bulk-tools-v082 button,.gear-bulk-tools-v082 span) { color:var(--theme-text) !important; border-color:var(--theme-outline-soft) !important; background:var(--theme-surface) !important; }
@@ -8185,11 +8197,20 @@ html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .mobile-menu-v082
   background:color-mix(in srgb,var(--theme-surface) 97%,transparent) !important;
 }
 html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .mobile-menu-v082 h2 {
-  margin:0 0 14px !important;
+  margin:0 !important;
   color:var(--theme-text) !important;
   font-size:clamp(28px,8vw,38px) !important;
   letter-spacing:-.5px;
 }
+.mobile-more-head-v096 { display:flex; align-items:center; justify-content:flex-start; gap:12px; margin-bottom:14px; }
+.mobile-more-head-v096 h2 { flex:0 0 auto; }
+.mobile-more-support-v096 { display:flex; align-items:center; justify-content:flex-start; gap:6px; }
+.mobile-more-support-v096 button {
+  width:34px; height:34px; min-width:34px; min-height:34px; display:grid; place-items:center; padding:0;
+  border:1px solid var(--theme-outline-soft,rgba(255,255,255,.18)); border-radius:10px; color:var(--theme-primary-strong,#d35f91);
+  background:var(--theme-surface-2,rgba(255,255,255,.06)); box-shadow:none;
+}
+.mobile-more-support-v096 button svg { width:18px; height:18px; display:block; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
 html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .mobile-menu-grid-v082 {
   gap:8px !important;
 }
