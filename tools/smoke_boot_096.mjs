@@ -1205,14 +1205,21 @@ try {
         "grid",
         "phone-portrait: Cherry selector keeps a sized grid instead of a collapsing flex stack"
       );
-      const runtimeCss = await readFile(
-        path.join(root, "assets/cherrift_runtime.css"),
+      const sharedUiCss = await readFile(
+        path.join(root, "assets/cherrift_ui.css"),
         "utf8"
       );
+
       assert.match(
-        runtimeCss,
-        /#skins \.skin-showcase-v093\{[^}]*min-height:340px!important/,
-        "phone-portrait: Cherry splash card has an explicit visible height"
+        sharedUiCss,
+        /#skins \.skin-selector-v093\{[^}]*grid-template-rows:minmax\(220px,1fr\) 104px 76px!important/,
+        "phone-portrait: Cherry selector reserves a visible splash row"
+      );
+
+      assert.match(
+        sharedUiCss,
+        /#skins \.skin-showcase-v093\{[^}]*grid-row:1!important/,
+        "phone-portrait: Cherry splash card occupies the sized selector row"
       );
     }
 
