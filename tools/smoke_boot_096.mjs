@@ -1164,6 +1164,30 @@ try {
   );
 
   if (requested === "desktop" || requested === "phone-portrait") {
+    const canonicalNav = document.getElementById("globalMobileNavV052");
+    const expectedNavLabels = ["Cherry", "Gear", "Home", "Gacha", "More"];
+    const navLabels = () => Array.from(canonicalNav?.querySelectorAll(":scope > button > b") || [])
+      .map(label => label.textContent.trim());
+    const unstableNavLabels = [];
+    let navDomRewrites = 0;
+    const navStabilityObserver = new window.MutationObserver(records => {
+      navDomRewrites += records.filter(record => record.type === "childList" || record.type === "characterData").length;
+      const labels = navLabels();
+      if (labels.join("|") !== expectedNavLabels.join("|")) unstableNavLabels.push(labels);
+    });
+
+    assert.equal(
+      canonicalNav?.dataset.cherriftCanonicalNav,
+      "1",
+      `${requested}: canonical mobile navigation is present`
+    );
+    assert.deepEqual(
+      navLabels(),
+      expectedNavLabels,
+      `${requested}: canonical navigation starts with stable labels`
+    );
+    navStabilityObserver.observe(canonicalNav, { childList:true, characterData:true, subtree:true });
+
     window.UI.open("gachaV082");
     await waitFor(
       () => !document.getElementById("gachaChestOnlyV12")?.classList.contains("hidden"),
@@ -1246,6 +1270,20 @@ try {
         "phone-portrait: Skill Tree canvas is not fixed at 900px"
       );
     }
+
+    await Promise.resolve();
+    await Promise.resolve();
+    navStabilityObserver.disconnect();
+    assert.deepEqual(
+      unstableNavLabels,
+      [],
+      `${requested}: navigation labels never enter a legacy order during route changes`
+    );
+    assert.equal(
+      navDomRewrites,
+      0,
+      `${requested}: route changes do not rebuild canonical navigation DOM`
+    );
   }
 
   assert.equal(

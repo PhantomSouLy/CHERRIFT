@@ -165,9 +165,35 @@ else {
   if (appScriptIndex < 0 || authScriptIndex < 0 || authScriptIndex < appScriptIndex) {
     errors.push("index.html: standalone auth must load immediately after cherrift_app.js");
   }
+
+  const vendorIndex = html.indexOf('src="vendor/supabase-js-2.110.7.js');
+  const networkGuardIndex = html.indexOf('src="src/cherrift_network_guard.js');
+  const supabaseConfigIndex = html.indexOf('src="src/supabase_config.js');
+  if (vendorIndex < 0 || networkGuardIndex < vendorIndex || supabaseConfigIndex < networkGuardIndex) {
+    errors.push("index.html: Supabase vendor, network guard and public config must load in that order");
+  }
+
+  const canonicalNavs = [...html.matchAll(/data-cherrift-canonical-nav=["']1["']/g)];
+  if (canonicalNavs.length !== 1) errors.push(`index.html: expected one canonical mobile navigation, found ${canonicalNavs.length}`);
+  if (/class=["'][^"']*\bmobile-bottom-nav(?:\s|["'])/i.test(html)) {
+    errors.push("index.html: legacy mobile-bottom-nav must not coexist with the canonical navigation");
+  }
+  const canonicalNav = html.match(/<nav\b[^>]*data-cherrift-canonical-nav=["']1["'][\s\S]*?<\/nav>/i)?.[0] || "";
+  const navLabels = [...canonicalNav.matchAll(/<b>([^<]+)<\/b>/g)].map(match => match[1]);
+  if (navLabels.join("|") !== "Cherry|Gear|Home|Gacha|More") {
+    errors.push(`index.html: canonical mobile navigation labels/order changed (${navLabels.join("|") || "missing"})`);
+  }
+  for (const retired of ["style.css", "menu_v040.css", "assets/cherrift_security_ui.css", "src/cherrift_rewards.js", "src/cherrift_supabase_timeout_fix.js"]) {
+    if (html.includes(`\"${retired}`)) errors.push(`index.html: retired dependency is still loaded: ${retired}`);
+  }
+
+  const firstPartyBuildQueries = [...html.matchAll(/(?:src|href)=["'][^"']+\?v=(098\d-[a-z0-9-]+)/gi)].map(match => match[1]);
+  if (new Set(firstPartyBuildQueries).size !== 1 || firstPartyBuildQueries[0] !== "0983-structure") {
+    errors.push(`index.html: first-party browser assets must share build query 0983-structure (found ${[...new Set(firstPartyBuildQueries)].join(", ")})`);
+  }
 }
 
-for (const required of ["src/cherrift_app.js", "src/cherrift_auth.js", "assets/cherrift_app.css", "src/config.js"]) {
+for (const required of ["src/cherrift_app.js", "src/cherrift_auth.js", "assets/cherrift_shell.css", "assets/cherrift_app.css", "src/config.js"]) {
   if (!existsSync(join(root, required))) errors.push(`${required}: required runtime file is missing`);
 }
 
@@ -192,6 +218,37 @@ if (existsSync(runtimePath)) {
   }
   if (/await\s+window\.CHERRIFT_AUTH\.bootstrapSave/.test(runtime)) {
     errors.push("src/cherrift_app.js: Guest bootstrap must never await Supabase/Auth");
+  }
+  if (/(?:let\s+left\s*=\s*id\(["']mobileLeftActionsV0932|left\.innerHTML\s*=)/.test(runtime)) {
+    errors.push("src/cherrift_app.js: retired duplicate mobile side navigation must not be rebuilt");
+  }
+}
+
+const networkGuardPath = join(root, "src", "cherrift_network_guard.js");
+if (existsSync(networkGuardPath)) {
+  const networkGuard = readFileSync(networkGuardPath, "utf8");
+  for (const marker of ["__CHERRIFT_NETWORK_GUARD_INSTALLED__", "__CHERRIFT_SUPABASE_GUARD_INSTALLED__", "__CHERRIFT_SINGLETON_FACTORY__", "boundedAuthLock", "functionTimeoutMs"]) {
+    if (!networkGuard.includes(marker)) errors.push(`src/cherrift_network_guard.js: canonical network safety marker is missing: ${marker}`);
+  }
+}
+
+for (const activePath of [
+  "index.html",
+  "src/cherrift_app.js",
+  "src/cherrift_account_mail.js",
+  "src/cherrift_world_ui.js",
+  "assets/cherrift_shell.css",
+  "assets/cherrift_app.css"
+]) {
+  const active = readFileSync(join(root, activePath), "utf8");
+  for (const retiredMarker of [
+    "mobile-bottom-nav",
+    "mobileLeftActionsV0932",
+    "mobile-floating-actions-v051",
+    "mobile-game-header-v051",
+    "mobile-resources-v051"
+  ]) {
+    if (active.includes(retiredMarker)) errors.push(`${activePath}: retired mobile UI owner remains: ${retiredMarker}`);
   }
 }
 

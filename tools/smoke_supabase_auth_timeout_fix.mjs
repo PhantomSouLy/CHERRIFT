@@ -3,7 +3,7 @@ import fs from "node:fs";
 import vm from "node:vm";
 import { fileURLToPath } from "node:url";
 
-const patchUrl = new URL("../src/cherrift_supabase_timeout_fix.js", import.meta.url);
+const patchUrl = new URL("../src/cherrift_network_guard.js", import.meta.url);
 const patchSource = fs.readFileSync(fileURLToPath(patchUrl), "utf8");
 
 const never = () => new Promise(() => {});
@@ -84,7 +84,7 @@ function createSandbox(client, { hangingLock = false } = {}) {
   sandbox.globalThis = window;
   vm.createContext(sandbox);
   vm.runInContext(patchSource, sandbox, {
-    filename: "src/cherrift_supabase_timeout_fix.js"
+    filename: "src/cherrift_network_guard.js"
   });
 
   return {
