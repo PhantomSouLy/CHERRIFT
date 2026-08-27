@@ -438,13 +438,13 @@
 .reward-overlay-v083 .reward-item-v083 canvas,
 .reward-overlay-v083 .reward-item-art-v083 img,
 .reward-overlay-v083 [class*="reward-art"] img{
-  width:min(86px,18vw)!important;
-  height:min(86px,18vw)!important;
-  max-width:86px!important;
-  max-height:86px!important;
+  width:min(76px,16vw)!important;
+  height:min(76px,16vw)!important;
+  max-width:76px!important;
+  max-height:76px!important;
   object-fit:contain!important;
 }
-.reward-overlay-v083 .reward-art-v083>span{font-size:50px!important}
+.reward-overlay-v083 .reward-art-v083>span{font-size:44px!important}
 .reward-overlay-v083 .reward-copy-v083 h3{font-size:clamp(15px,3.8vw,20px)!important}
 .reward-overlay-v083 .reward-copy-v083 p{font-size:clamp(10px,2.7vw,13px)!important}
 .reward-overlay-v083 #rewardContinueV083.reward-continue-v083{
@@ -639,12 +639,12 @@
   .reward-overlay-v083 .reward-item-v083 canvas,
   .reward-overlay-v083 .reward-item-art-v083 img,
   .reward-overlay-v083 [class*="reward-art"] img{
-    width:68px!important;
-    height:68px!important;
-    max-width:68px!important;
-    max-height:68px!important;
+    width:60px!important;
+    height:60px!important;
+    max-width:60px!important;
+    max-height:60px!important;
   }
-  .reward-overlay-v083 .reward-art-v083>span{font-size:42px!important}
+  .reward-overlay-v083 .reward-art-v083>span{font-size:38px!important}
   .reward-overlay-v083 #rewardContinueV083.reward-continue-v083{
     margin-top:9px!important;
     padding:7px 10px!important;
