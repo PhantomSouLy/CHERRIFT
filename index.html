@@ -7,20 +7,18 @@
 
   <!-- One build id for every first-party browser asset. Bump this value as a
        unit on every deployed code/style change so a phone cannot mix builds. -->
-  <link rel="stylesheet" href="style.css?v=0982-cleanup" />
-  <link rel="stylesheet" href="menu_v040.css?v=0982-cleanup" />
-  <link rel="stylesheet" href="assets/cherrift_app.css?v=0982-cleanup" />
-  <link rel="stylesheet" href="assets/cherrift_prebeta.css?v=0982-cleanup" />
-  <link rel="stylesheet" href="assets/cherrift_prebeta_event.css?v=0982-cleanup" />
-  <link rel="stylesheet" href="assets/cherrift_security_ui.css?v=0982-cleanup" />
-  <link rel="preload" as="image" href="assets/loading_pc_1920x1080.png?v=0982-cleanup" media="(orientation:landscape)" />
-  <link rel="preload" as="image" href="assets/loading_mobile_1080x1920.png?v=0982-cleanup" media="(orientation:portrait)" />
-  <link rel="stylesheet" href="assets/cherrift_boot.css?v=0982-cleanup" />
-  <link id="cherriftSharedUiCss" rel="stylesheet" href="assets/cherrift_ui.css?v=0982-cleanup" />
-  <link id="cherriftElementalCss" rel="stylesheet" href="assets/cherrift_elemental.css?v=0982-cleanup" />
-  <link id="cherriftSkillBuilderCss" rel="stylesheet" href="assets/cherrift_skill_builder.css?v=0982-cleanup" />
-  <link id="cherriftRuntimeCss" rel="stylesheet" href="assets/cherrift_runtime.css?v=0982-cleanup" />
-  <script src="src/cherrift_boot.js?v=0982-cleanup" defer></script>
+  <link rel="stylesheet" href="assets/cherrift_shell.css?v=0983-structure" />
+  <link rel="stylesheet" href="assets/cherrift_app.css?v=0983-structure" />
+  <link rel="stylesheet" href="assets/cherrift_prebeta.css?v=0983-structure" />
+  <link rel="stylesheet" href="assets/cherrift_prebeta_event.css?v=0983-structure" />
+  <link rel="preload" as="image" href="assets/loading_pc_1920x1080.png?v=0983-structure" media="(orientation:landscape)" />
+  <link rel="preload" as="image" href="assets/loading_mobile_1080x1920.png?v=0983-structure" media="(orientation:portrait)" />
+  <link rel="stylesheet" href="assets/cherrift_boot.css?v=0983-structure" />
+  <link id="cherriftSharedUiCss" rel="stylesheet" href="assets/cherrift_ui.css?v=0983-structure" />
+  <link id="cherriftElementalCss" rel="stylesheet" href="assets/cherrift_elemental.css?v=0983-structure" />
+  <link id="cherriftSkillBuilderCss" rel="stylesheet" href="assets/cherrift_skill_builder.css?v=0983-structure" />
+  <link id="cherriftRuntimeCss" rel="stylesheet" href="assets/cherrift_runtime.css?v=0983-structure" />
+  <script src="src/cherrift_boot.js?v=0983-structure" defer></script>
 
 </head>
 <body class="v060-booting">
@@ -92,12 +90,6 @@
           </div>
         </section>
 
-        <nav class="mobile-bottom-nav" aria-label="Mobile bottom navigation">
-          <button data-open="chests"><span>📦</span><b>Chest</b></button>
-          <button data-open="gear"><span>🛡️</span><b>Gear</b></button>
-          <button data-open="skins"><span>🐰</span><b>Cherry</b></button>
-          <button data-open="settings"><span>🎯</span><b>More</b></button>
-        </nav>
       </div>
 
       <main class="menu-left glass-soft">
@@ -486,28 +478,52 @@
     <div id="toast"></div>
   </div>
 
+  <!-- Canonical mobile navigation. Runtime systems may update its active
+       state and selected-skin icon, but must never rebuild its DOM. -->
+  <nav id="globalMobileNavV052"
+       class="global-mobile-nav-v052 mobile-nav-v060 mobile-nav-v082 mobile-nav-v090"
+       data-v060-ready="true"
+       data-v082-ready="1"
+       data-cherrift-canonical-nav="1"
+       data-i18n-ignore="true"
+       aria-label="Mobile navigation">
+    <button type="button" class="cherry-nav-v0942" data-v060-open="skins" data-v060-panel="skins" data-v082-open="skins" data-v082-route="skins" data-open="skins">
+      <span class="mobile-skin-icon-v096">🐰</span><b>Cherry</b><em class="notice-dot-v082" data-v090-notice="skins"></em>
+    </button>
+    <button type="button" data-v060-open="gear" data-v060-panel="gear" data-v082-open="gear" data-v082-route="gear">
+      <span>⚔</span><b>Gear</b><em class="notice-dot-v082" data-v082-notice="gear"></em>
+    </button>
+    <button type="button" class="home" data-v060-open="menu" data-v060-panel="menu" data-v082-open="menu" data-v082-route="menu">
+      <span>⌂</span><b>Home</b>
+    </button>
+    <button type="button" data-v060-open="gachaV082" data-v060-panel="gachaV082" data-v082-open="gachaV082" data-v082-route="gachaV082">
+      <span>◇</span><b>Gacha</b><em class="notice-dot-v082" data-v082-notice="gacha"></em>
+    </button>
+    <button type="button" data-v082-toggle-mobile>
+      <span>☰</span><b>More</b>
+    </button>
+  </nav>
+
   <!-- Deterministic runtime order. Feature modules own their own screens. -->
-  <script src="src/cherrift_network_guard.js?v=0982-cleanup"></script>
   <script src="vendor/supabase-js-2.110.7.js?v=2.110.7"></script>
-  <script src="src/cherrift_supabase_timeout_fix.js?v=0982-cleanup"></script>
-  <script src="src/supabase_config.js?v=0982-cleanup"></script>
-  <script src="src/config.js?v=0982-cleanup"></script>
-  <script src="src/cherrift_balance.js?v=0982-cleanup"></script>
-  <script src="src/cherrift_app.js?v=0982-cleanup"></script>
-  <script src="src/cherrift_auth.js?v=0982-cleanup"></script>
-  <script src="src/cherrift_startup_trace.js?v=0982-cleanup"></script>
-  <script src="src/cherrift_gacha.js?v=0982-cleanup"></script>
-  <script src="src/cherrift_live_services.js?v=0982-cleanup"></script>
-  <script src="src/cherrift_account_mail.js?v=0982-cleanup"></script>
-  <script src="src/cherrift_world_ui.js?v=0982-cleanup"></script>
-  <script src="src/cherrift_runtime.js?v=0982-cleanup"></script>
-  <script src="src/cherrift_prebeta.js?v=0982-cleanup"></script>
-  <script src="src/cherrift_prebeta_event.js?v=0982-cleanup"></script>
-  <script src="src/cherrift_security_ui.js?v=0982-cleanup"></script>
-  <script src="src/cherrift_rewards.js?v=0982-cleanup"></script>
-  <script src="src/cherrift_skin_ui.js?v=0982-cleanup"></script>
-  <script src="src/cherrift_foliage.js?v=0982-cleanup"></script>
-  <script src="src/cherrift_elemental.js?v=0982-cleanup"></script>
-  <script src="src/cherrift_skill_builder.js?v=0982-cleanup"></script>
+  <script src="src/cherrift_network_guard.js?v=0983-structure"></script>
+  <script src="src/supabase_config.js?v=0983-structure"></script>
+  <script src="src/config.js?v=0983-structure"></script>
+  <script src="src/cherrift_balance.js?v=0983-structure"></script>
+  <script src="src/cherrift_app.js?v=0983-structure"></script>
+  <script src="src/cherrift_auth.js?v=0983-structure"></script>
+  <script src="src/cherrift_startup_trace.js?v=0983-structure"></script>
+  <script src="src/cherrift_gacha.js?v=0983-structure"></script>
+  <script src="src/cherrift_live_services.js?v=0983-structure"></script>
+  <script src="src/cherrift_account_mail.js?v=0983-structure"></script>
+  <script src="src/cherrift_world_ui.js?v=0983-structure"></script>
+  <script src="src/cherrift_runtime.js?v=0983-structure"></script>
+  <script src="src/cherrift_prebeta.js?v=0983-structure"></script>
+  <script src="src/cherrift_prebeta_event.js?v=0983-structure"></script>
+  <script src="src/cherrift_security_ui.js?v=0983-structure"></script>
+  <script src="src/cherrift_skin_ui.js?v=0983-structure"></script>
+  <script src="src/cherrift_foliage.js?v=0983-structure"></script>
+  <script src="src/cherrift_elemental.js?v=0983-structure"></script>
+  <script src="src/cherrift_skill_builder.js?v=0983-structure"></script>
 </body>
 </html>

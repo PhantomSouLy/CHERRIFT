@@ -1,134 +1,126 @@
-# CHERRIFT mély repo- és startup-audit
+# CHERRIFT mély cleanup-audit és folytatási pont
 
-Auditált kiinduló commit: `e0429612a3908ae08beef91e62355732dd7deb86`
+Kiinduló ág: `main`
 
-## Bizonyított gyökérokok
+Auditált kiinduló commit: `023e624` (`fixing v2`)
 
-1. A Guest indulás is egy Supabase-függő `await bootstrapSave()` mögött volt.
-   Emiatt a `getSession`, a böngésző Web Lockja vagy a `player-api` a teljes
-   login UI-t a splash mögött tarthatta.
-2. A CI fake Supabase/Storage kliense nem reprodukálta a production Auth lockot.
-   A `4b84e9c` commit a smoke mockját tette zölddé, nem a valódi critical pathot.
-3. A cleanup az összes régi CSS-t beolvasztotta az
-   `assets/cherrift_app.css` fájlba, de a nagy `src/cherrift_app.js` 30 törölt
-   `v*.css`/`mobile_v051.css` fájlt továbbra is dinamikusan kért. Ezek minden
-   induláskor fölösleges 404-eket és load-event késést okoztak.
-4. A `20260801_prebeta_v095.sql` „újrafuttatható” migráció minden meglévő save-et
-   owner entitlementtel ruházhatott fel. Most kizárólag aktív `gm_admins.owner`
-   sor kaphat ilyen entitlementet.
-5. A live Supabase-ben az Auth, Discord OAuth, `player-api` és `gm-api` működik,
-   de a repóban lévő `submit-report` Function jelenleg nincs deployolva (404).
+Aktuális cleanup build: `0983-structure`
 
-A cleanup előtti referenciapont a `84f2bf8` commit; a cleanup fő commitjai
-`66728d7`, `38e14e6` és `0bdb020`. A teljes visszaállítás nem indokolt: a régi
-verzióban nincs bizonyítottan jó jelenlegi Auth/SQL szerződés, és elvesztené a
-későbbi gameplay-, account-isolation- és mobiljavításokat.
+## Rövid eredmény
 
-## Minden fájlra kiterjedő leltár
+A legutóbbi cleanup fájlszinten összevonta a régi verziókat, de a belső
+felépítést nem tisztította meg: a `src/cherrift_app.js` egymás után tartalmazza
+a v0.4–v0.9.4 rétegeket, amelyek sok helyen ugyanazokat a `UI`, Storage és Game
+metódusokat csomagolják újra. A CSS ugyanezt a verzióláncot vitte tovább.
 
-Az eredeti commit **937 Git-tracked fájlját** (277+ MB) gépi leltár vizsgálta:
+Az alsó mobilmenü villogása ennek közvetlen következménye volt. Legalább öt
+generáció (v051, v052, v060, v082 és v090/v094) próbálta létrehozni vagy
+átírni ugyanazt a gombsort; további account/world observerek a feliratokat és
+route-okat figyelték, majd visszaírták.
 
-- minden fájl SHA-256 és méret;
-- 159 szöveges fájl UTF-8/NUL ellenőrzése;
-- minden JavaScript/MJS és TypeScript parseres szintaxisellenőrzése;
-- a Python, TOML és YAML fájlok natív/parseres ellenőrzése;
-- minden JSON parse-olása és minden CSS parseres ellenőrzése;
-- 776 kép és 2 hang fájlszignatúrája, ahol lehetséges képmérete;
-- index/GM/package/Supabase entrypoint- és literális hivatkozási gráf;
-- üres/placeholderek és byte-azonos duplikátumok.
+Ebben a körben az aktív mobil navigáció egyetlen statikus DOM-tulajdonost
+kapott. A runtime csak az aktív állapotot és a kiválasztott Cherry ikonját
+frissítheti, a gombokat és a feliratokat nem építheti újra.
 
-Eredmény a javítás után:
+## Elvégzett javítások
 
-- szintaxis- vagy fájlszignatúra-hiba: **0**;
-- aktív runtime-ból hiányzó literális fájl: **0**;
-- 1 byte-os placeholder: **26**;
-- byte-azonos duplikátumcsoport: **25**.
+1. **Egyetlen mobil főmenü**
+   - A kanonikus öt gomb az `index.html` része: Cherry, Gear, Home, Gacha,
+     More.
+   - Kikerült a régi négyelemes `mobile-bottom-nav`, a v051 generált nav, a
+     v0932 bal oldali Chest/Gear/Cherry másolat és minden hozzájuk tartozó
+     DOM-átíró ág.
+   - Kikerültek a régi v051 mobil profil-, currency-, karakterikon- és jobb
+     oldali placeholder gombok; ezek helyett a jelenlegi v0932 komponensek
+     maradtak.
+   - Az account és world modul már nem címke alapján keres, töröl vagy nevez
+     át navigációs gombokat, és nem figyeli observerrel a nav szövegét.
+   - A régi navhoz tartozó aktív CSS-szelektorok is kikerültek.
 
-Az audit eszköze: `tools/audit_repo.mjs`; kimenete az `audit-output/` mappába
-kerül, amelyet nem kell GitHubra feltölteni.
+2. **Egy hálózati/Auth védelmi réteg**
+   - A böngésző fetch timeout, a Supabase singleton, a bounded Web Lock, az
+     Auth timeoutok és az Edge Function timeout ugyanabban a
+     `src/cherrift_network_guard.js` modulban élnek.
+   - A külön `cherrift_supabase_timeout_fix.js` már nincs betöltve.
+   - A vendor Supabase könyvtár a guard előtt töltődik, így a factoryt egyszer,
+     determinisztikusan lehet védeni.
 
-## Biztonságosan törölhető most
+3. **Kevesebb aktív fájl és tisztább kategóriák**
+   - A gyökér `style.css` és `menu_v040.css` tartalma egy kategorizált
+     `assets/cherrift_shell.css` fájlba került.
+   - A security UI stílus a közös `assets/cherrift_ui.css` része lett.
+   - A külön reward UI patch kikerült a betöltésből; a kanonikus reward
+     megjelenítés a runtime és a közös UI CSS tulajdona.
+   - Első fél által szállított böngészős assetek egységes cache buildje:
+     `0983-structure`.
 
-### Betöltetlen régi patch-források
+4. **Indulási és mobil teljesítmény**
+   - Az opcionális skin artwork preload nem blokkolja a bootot; csak az aktív
+     idle grafika melegszik be háttérben.
+   - Két teljes-document nav observer és több kizárólag navot újracsomagoló
+     lifecycle wrapper kikerült.
+   - A teljes telefonos smoke teszt observer callbackjei 823-ról 574-re
+     csökkentek (kb. 30%).
 
-- `assets/cherrift_mobile_fix_096.css`
-- `src/cherrift_boot_input_fix.js`
-- `src/cherrift_fixpack_095.js`
-- `src/cherrift_fixpack_095_round5.js`
-- `src/cherrift_mobile_fix_096.js`
-- `src/cherrift_stability.js`
-- `tools/smoke.mjs` (a package az új `smoke_09551.mjs` futtatót használja)
+5. **Visszaesést tiltó ellenőrzések**
+   - Pontosan egy kanonikus nav és pontosan az öt rögzített felirat lehet.
+   - A route-váltási smoke teszt figyeli a nav child/text mutációit; elvárt
+     eredmény: nulla DOM-újraépítés.
+   - A régi nav tulajdonosok/szelektorok, a külön timeout patch és a külön
+     reward patch újbóli betöltése validációs hibát okoz.
+   - A hálózati modul kötelező singleton/Auth/Function safety markereit külön
+     ellenőrzés védi.
 
-Ezek egyikét sem tölti az `index.html`; törlésük a jelenlegi runtime-ot nem
-változtatja. Az aktív tartalom a konszolidált app/runtime modulokban van.
+## Teljes fájlaudit
 
-### Üres patch/telepítési dokumentumok
+A gépi audit minden Git által követett fájlt ellenőriz. A PNG/JPG tartalmakat
+a kérés szerint nem minősíti automatikusan törlendőnek; csak a fájlszignatúrát,
+méretet, literális hivatkozást és byte-azonosságot jelzi.
 
-- `APPLY_CACHE_BUST.bat`
-- `AUTH_BOOTSTRAP_V2_HU.md` (helyette Auth v3 dokumentum van)
-- `CHANGED_FILES_V095.txt`
-- `CHERRIFT_PC_FIX_TELEPITES_HU.md`
-- `CHERRIFT_PC_MENU_GACHA_PETALS_FIX_TELEPITES_HU.md`
-- `DIAG_NOTES_HU.txt`
-- `INDEX_CHANGE_REQUIRED.txt`
-- `OPTIONAL_index_cache_bust.txt`
-- `PREBETA_EVENT_GM_WORLD2_TELEPITES_HU.txt`
-- `PREBETA_V095_SETUP_HU.md` (a régi owner-leírás már veszélyesen pontatlan)
-- `README_FIX_V2_HU.txt`
-- `README_PATCH.txt`
-- `ROOTFIX_NOTES_HU.txt`
-- `TELEPITES_HU.txt`
-- `_TELEPITES_HU.txt`
-- `_TORLENDO_FAJLOK.txt`
+- Ellenőrzött fájlok: **888**
+- JavaScript/CSS/JSON/TOML/YAML/Python szintaxis- vagy szignatúrahiba: **0**
+- Aktív runtime-ból hiányzó literális fájl: **0**
+- 1 byte-os placeholder: **1**
+- Byte-azonos fájlcsoport: **18**
+- Statikusan nem bizonyíthatóan használt asset: **472**
 
-### 1 byte-os placeholderek
+Az utolsó szám nem törlési lista. A játék sok skin-, enemy-, map- és effect
+útvonalat futás közben rak össze, ezért a statikus referencia hiánya önmagában
+nem bizonyítja, hogy egy kép fölösleges.
 
-- `assets/audio/.gitkeep`
-- `assets/effects/.gitkeep`
-- `assets/effects/elemental/Readme.txt`
-- `assets/effects/elemental/abyssal/Readme.txt`
-- `assets/effects/elemental/blaze/Readme.txt`
-- `assets/effects/elemental/celestial/Readme.txt`
+## Biztonságosan törölhető fájlok
+
+Ezeket az aktuális `index.html` és manifest már nem tölti; tartalmuk beolvadt a
+kanonikus tulajdonosba vagy üres placeholder:
+
+- `style.css`
+- `menu_v040.css`
+- `assets/cherrift_security_ui.css`
+- `src/cherrift_rewards.js`
+- `src/cherrift_supabase_timeout_fix.js`
 - `assets/effects/elemental/common/Readme.txt`
-- `assets/effects/elemental/rings/Readme.txt`
-- `assets/effects/elemental/stoneveil/Readme.txt`
-- `assets/effects/elemental/tidecall/Readme.txt`
-- `assets/effects/elemental/windborne/Readme.txt`
-- `assets/enemies/.gitkeep`
-- `assets/map/.gitkeep`
-- `assets/pickups/.gitkeep`
-- `assets/player/.gitkeep`
-- `assets/ui/.gitkeep`
-- `assets/ui/elemental_resonance/common/Readme.txt`
-- `assets/ui/elemental_resonance/elements/Readme.txt`
-- `assets/ui/elemental_resonance/nodes/Readme.txt`
-- `assets/ui/skin_thumbs/Readme.txt`
-- `assets/ui/themes/Readme.txt`
-- `gm/Readme.txt`
-- `supabase/functions/Readme.txt`
-- `supabase/functions/gm-api/Readme.txt`
-- `supabase/functions/player-api/Readme.txt`
-- `supabase/migrations/Readme.txt`
 
-### Jelenlegi runtime-ban hivatkozás nélküli képek
+## Még megmaradt szerkezeti adósság – következő mély kör
 
-- `assets/ui/bug_report_panel.png`
-- `assets/ui/events/bug_report_panel.png`
-- a teljes `assets/effects/succubus_cherry/` mappa
+A mostani kör megszünteti a bizonyított mobil-nav és hálózati patch-ütközést,
+de a teljes régi runtime-lánc még nincs biztonságosan újraírva:
 
-Az aktív Succubus effektek a
-`assets/player/skins/succubus_cherry/effects/` útvonalról töltődnek.
+- A `src/cherrift_app.js` még 47 korábbi verziószekciót tartalmaz.
+- Több száz régi lifecycle/Storage/Game wrapper maradt benne; ezek között sok
+  valódi gameplay-, save-migrációs és UI-funkció van, ezért tömeges törlésük
+  adatvesztést vagy rejtett combat hibát okozhatna.
+- Az `assets/cherrift_app.css` még a régi cascade jelentős részét őrzi.
 
-## Második körben törölhető, előbb gameplay-próba kell
+A következő refaktor javasolt sorrendje:
 
-- `assets/player/skins/mage_cherry/compatibility_cherrift/`
-- `assets/player/skins/succubus_cherry/legacy_aliases/`
+1. Core/save/gameplay alap API-k kanonizálása.
+2. Lobby/progression UI kivonása egy kategóriamodulba.
+3. Gear/economy/gacha tulajdonosok összevonása.
+4. Theme/presentation és world/skin felületek szétválasztása.
+5. Minden kivont kategória után PC, mobil, returning session, Auth timeout és
+   cloud timeout regresszió futtatása; csak ezután törölhető az adott régi
+   szekció a monolitból.
 
-Aktív literális hivatkozásuk nincs, és byte-azonosak a kanonikus attack
-fájlokkal, de dokumentált külső/név-kompatibilitási aliasok. Előbb Mage és
-Succubus minden irányú idle/walk/melee/ranged/skill animációját ellenőrizd.
-
-Ne töröld pusztán azért a több száz assetet, mert a statikus audit nem talált
-teljes útvonal-literált: sok skin, ellenfél, map object és effekt futás közben összeállított
-útvonalon töltődik. Ugyanígy maradjanak az Archer külön jelentésű, de azonos
-placeholder frame-jei, az elemental ring aliasok és a két apró `deno.json`.
+Ez a fájl a pontos folytatási pont: a következő kör nem kezdheti újra a nav vagy
+a network javítását újabb hotfixszel, hanem a fenti kategóriákat kell egyenként
+kiváltania.
