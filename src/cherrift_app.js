@@ -16522,7 +16522,7 @@ const ITEM_ASSETS = Object.freeze({
 const COPY = {
   hu: {
     obtained: "OBTAINED",
-    continue: "KATTINTS AZ ÁTVÉTELHEZ",
+    continue: "Click to claim",
     commonChestKey: "Common ládakulcs",
     skillPoint: "Skill Point",
     moreRewards: "További jutalmak",
@@ -16530,7 +16530,7 @@ const COPY = {
   },
   en: {
     obtained: "OBTAINED",
-    continue: "CLICK TO CLAIM",
+    continue: "Click to claim",
     commonChestKey: "Common Chest Key",
     skillPoint: "Skill Point",
     moreRewards: "More rewards",
@@ -17021,15 +17021,17 @@ function rewardCard(item) {
   </article>`;
 }
 
+function rewardClaimCopy() {
+  return matchMedia("(pointer:coarse)").matches ? "Tap to claim" : "Click to claim";
+}
+
 function renderRewardBatch(batch) {
   const overlay = ensureRewardOverlay();
   const title = id("rewardTitleV083");
   const list = id("rewardItemsV083");
   const continueButton = id("rewardContinueV083");
   if (title) title.textContent = batch.title || t("obtained");
-  if (continueButton) continueButton.textContent = matchMedia("(pointer:coarse)").matches
-    ? (language() === "hu" ? "ÉRINTSD MEG AZ ÁTVÉTELHEZ" : "TAP TO CLAIM")
-    : t("continue");
+  if (continueButton) continueButton.textContent = rewardClaimCopy();
   if (list) list.innerHTML = batch.items.map(rewardCard).join("");
   overlay.classList.add("open");
   document.body.classList.add("reward-open-v083");
@@ -17084,6 +17086,16 @@ function resetRewardQueue(options = {}) {
   state.active = false;
   id("rewardOverlayV083")?.classList.remove("open");
   document.body.classList.remove("reward-open-v083");
+}
+
+function rebaseRewardSnapshot(save, options = {}) {
+  // Auth/account hydration replaces the entire save object. That is not an
+  // acquisition event, so the reward detector must start from the newly
+  // authoritative save instead of comparing it with the previous account.
+  state.snapshot = snapshot(save);
+  state.ready = true;
+  if (options.clearQueue === true) resetRewardQueue({ clearDeferred:true });
+  return true;
 }
 
 function patchRewardDetection() {
@@ -17174,7 +17186,7 @@ function bindGlobalEvents() {
     const title = id("rewardTitleV083");
     const button = id("rewardContinueV083");
     if (title && state.active) title.textContent = t("obtained");
-    if (button) button.textContent = t("continue");
+    if (button) button.textContent = rewardClaimCopy();
     wireCatalogAssets();
     scheduleDecorate();
     patchVersion();
@@ -17199,6 +17211,7 @@ window.CHERRIFT_REWARDS = {
   reset: resetRewardQueue,
   withSuppressed: withSuppressedRewards,
   flush: flushDeferredRewards,
+  rebase: rebaseRewardSnapshot,
   playSound: playRewardSound,
   collectRewards,
   snapshot

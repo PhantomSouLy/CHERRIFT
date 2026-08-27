@@ -453,6 +453,13 @@
     if (!save) return;
     if (window.UI) window.UI.save = save;
     if (window.UI?.game) window.UI.game.save = save;
+
+    // A cloud/account/guest switch is a new authoritative baseline, not a
+    // reward grant. Rebase before refreshMenu(), because normalization during
+    // that refresh may save immediately and would otherwise compare the new
+    // account against the previous startup/guest snapshot.
+    window.CHERRIFT_REWARDS?.rebase?.(save, { clearQueue:true });
+
     window.UI?.refreshMenu?.();
     window.dispatchEvent(new CustomEvent("cherrift:savechange", { detail:{ source } }));
   }
