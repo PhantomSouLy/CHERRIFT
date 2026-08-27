@@ -324,7 +324,7 @@
         return;
       }
 
-      // The factory is wrapped by cherrift_supabase_timeout_fix.js and returns
+      // The factory is wrapped by cherrift_network_guard.js and returns
       // the SAME project/auth-storage client already owned by CHERRIFT Auth.
       // This removes the second GoTrueClient that previously raced for the
       // same browser lock/storage key.

@@ -3,7 +3,7 @@
   if (window.__CHERRIFT_BUGFIX_V0942__) return;
   window.__CHERRIFT_BUGFIX_V0942__ = true;
 
-  const VERSION = "0.9.7-carousel-route";
+  const VERSION = "0.9.8.3-carousel-route";
   const MOBILE_QUERY = "(max-width:820px)";
   const id = value => document.getElementById(value);
   const q = (selector, root = document) => root?.querySelector?.(selector) || null;
@@ -16,9 +16,7 @@
   const state = {
     originalOpen: null,
     observer: null,
-    navObserver: null,
     timer: 0,
-    navCherryIntentUntil: 0,
     worldIndex: 0,
     chapterIndex: 0,
     selectedWorld: 1,
@@ -74,15 +72,7 @@
       }
 
       @media(max-width:820px){
-        /* Bottom navigation: Cherry really opens Cherry Selector. */
-        .mobile-nav-v090 .cherry-nav-v0942 span img{width:30px!important;height:30px!important;border-radius:8px!important;object-fit:cover!important}.mobile-nav-v090 .cherry-nav-v0942 b{font-size:8px!important}
-        .mobile-nav-v090>button.home:not(.active),.mobile-nav-v090>button:not(.active){color:#dcbfd1!important;border-color:transparent!important;background:transparent!important;box-shadow:none!important;transform:none!important}
-        .mobile-nav-v090>button.active{color:#fff!important;border:1px solid rgba(255,255,255,.72)!important;background:linear-gradient(180deg,#ed66a5,#b92f74)!important;box-shadow:0 5px 18px rgba(187,42,112,.32)!important}
-
         /* Main menu layout. */
-        #menu .mobile-floating-actions-v051.left,#menu .mobile-side-actions-v0932.left{display:none!important;visibility:hidden!important;pointer-events:none!important}
-        #menu .mobile-floating-actions-v051.left [data-bf-removed="true"],#menu .mobile-floating-actions-v051.left .removed-v0942{display:none!important}
-        #menu .mobile-floating-actions-v051.right{display:none!important;visibility:hidden!important;pointer-events:none!important}
         #menu .mobile-side-actions-v0932.right{top:38dvh!important;gap:7px!important}
         #menu .mobile-home-v031.mobile-archero-v051{height:var(--cherrift-viewport-height,100dvh)!important;min-height:0!important;display:grid!important;grid-template-rows:minmax(0,1fr) auto!important;padding-top:max(100px,calc(env(safe-area-inset-top) + 94px))!important;overflow:hidden!important}
         #menu .mobile-hero-area-v051{min-height:0!important;height:auto!important;overflow:hidden!important}
@@ -121,8 +111,6 @@
       @media(orientation:landscape) and (max-height:600px) and (pointer:coarse){
         html,body,#app{width:100%;height:var(--cherrift-viewport-height,100dvh);min-height:0;overscroll-behavior:none}body{overflow:hidden!important}
         body.v090-mobile #globalRailV060{display:none!important}
-        body.v090-mobile #globalMobileNavV052.mobile-nav-v090{position:fixed!important;left:max(6px,env(safe-area-inset-left))!important;right:auto!important;top:50%!important;bottom:auto!important;width:68px!important;z-index:20000!important;display:grid!important;grid-template-columns:1fr!important;gap:3px!important;padding:5px!important;transform:translateY(-50%)!important}
-        body.v090-mobile .mobile-nav-v090>button{min-height:48px!important}
         body.v090-mobile .mobile-menu-v082{inset:7px 7px 7px 82px!important;max-height:none!important}
         body.v090-mobile:not(.is-playing):not(.is-loading-stage) #app>.panel:not(.hidden),body.v090-mobile:not(.is-playing):not(.is-loading-stage) .v082-custom-panel:not(.hidden){position:fixed!important;inset:0!important;width:100%!important;height:var(--cherrift-viewport-height,100dvh)!important;padding:45px 8px 8px 82px!important;overflow:auto!important}
         .selector-shell-v0942{width:min(900px,100%);padding:max(6px,env(safe-area-inset-top)) 48px calc(58px + env(safe-area-inset-bottom))}
@@ -194,57 +182,10 @@
     }, 80);
   }
 
-  function patchMobileNav() {
-    if (!isMobile()) return;
-    const nav = q(".mobile-nav-v090");
-    if (!nav) return;
-    const buttons = qa(":scope > button", nav);
-    const button = buttons.find(item => item.classList.contains("cherry-nav-bf") || item.classList.contains("cherry-nav-v0942")) || buttons[0];
-    if (!button) return;
-    button.classList.add("cherry-nav-v0942");
-    button.classList.remove("home");
-    button.dataset.v082Open = "skins";
-    button.dataset.v082Route = "skins";
-    button.dataset.open = "skins";
-    button.dataset.i18nIgnore = "true";
-    button.removeAttribute("data-v052-open");
-    const skin = selectedSkin();
-    const image = skin.icon || skin.splash || "";
-    const holder = q(":scope > span", button);
-    const currentImage = q("img", holder)?.getAttribute("src") || "";
-    if (holder && currentImage !== image) holder.innerHTML = image ? `<img src="${esc(image)}" alt="">` : "🐰";
-    const label = q(":scope > b", button);
-    if (label && label.textContent.trim() !== "Cherry") label.textContent = "Cherry";
-  }
-
-  function observeMobileNav() {
-    if (state.navObserver) return;
-    if (!document.body) return;
-    state.navObserver = new MutationObserver(mutations => {
-      const changed = mutations.some(mutation => {
-        const target = mutation.target.nodeType === Node.TEXT_NODE ? mutation.target.parentElement : mutation.target;
-        if (target?.closest?.("#globalMobileNavV052")) return true;
-        return Array.from(mutation.addedNodes || []).some(node => node.nodeType === Node.ELEMENT_NODE && (node.matches?.("#globalMobileNavV052") || node.querySelector?.("#globalMobileNavV052")));
-      });
-      if (changed) patchMobileNav();
-    });
-    state.navObserver.observe(document.body, { childList:true, characterData:true, subtree:true });
-  }
-
   function normalizeLabel(button) { return button.textContent.replace(/\s+/g, " ").trim().toLowerCase(); }
   function patchHome() {
     const menu = id("menu");
     if (!isMobile() || !menu || menu.classList.contains("hidden")) return;
-    q(".mobile-floating-actions-v051.left", menu)?.setAttribute("aria-hidden", "true");
-    q(".mobile-side-actions-v0932.left", menu)?.setAttribute("aria-hidden", "true");
-    qa("button", menu).forEach(button => {
-      if (button.closest(".mobile-nav-v090")) return;
-      const label = normalizeLabel(button);
-      if (["chest", "gear", "cherry"].includes(label) || /^chest\b/.test(label) || /^gear\b/.test(label) || /^cherry\b/.test(label)) {
-        button.classList.add("removed-v0942");
-        button.remove();
-      }
-    });
     const display = q(".mobile-character-display-v051", menu);
     const stars = q(".mobile-chapter-stars-v0932", menu);
     if (display && stars && stars.parentElement !== display) display.appendChild(stars);
@@ -257,7 +198,6 @@
         button.style.order = String(index >= 0 ? index : order.length);
       });
     }
-    patchMobileNav();
   }
 
   function updateViewportMetrics() {
@@ -600,29 +540,10 @@
     patchDesktopZoom();
     patchGear();
     patchHome();
-    patchMobileNav();
-    observeMobileNav();
   }
 
   function bindEvents() {
-    document.addEventListener("pointerdown", event => {
-      const button = event.target.closest?.(".mobile-nav-v090 > button");
-      if (!button) return;
-      if (button.classList.contains("cherry-nav-v0942") || button.classList.contains("cherry-nav-bf") || button === q(".mobile-nav-v090 > button")) {
-        state.navCherryIntentUntil = Date.now() + 800;
-      }
-    }, true);
     document.addEventListener("click", event => {
-      const navButton = event.target.closest?.(".mobile-nav-v090 .cherry-nav-v0942,.mobile-nav-v090 .cherry-nav-bf");
-      if (navButton) {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        state.navCherryIntentUntil = Date.now() + 800;
-        if (window.CHERRIFT_STABILITY?.open) window.CHERRIFT_STABILITY.open("skins");
-        else UI.open?.("skins");
-        closeMoreDrawer();
-        return;
-      }
       if (event.target.closest?.(".mobile-menu-v082 button,.mobile-menu-grid-v082 button")) setTimeout(closeMoreDrawer, 0);
     }, true);
     window.addEventListener("resize", patchVisible);
@@ -642,7 +563,6 @@
     installRouting();
     bindEvents();
     patchVisible();
-    observeMobileNav();
     console.info(`[CHERRIFT] Bugfix ${VERSION} loaded.`);
   }
 

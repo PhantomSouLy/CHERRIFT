@@ -3,7 +3,7 @@
   if (window.__CHERRIFT_BUGFIX_V0941__) return;
   window.__CHERRIFT_BUGFIX_V0941__ = true;
 
-  const VERSION = "0.9.4.7-account-mail";
+  const VERSION = "0.9.8.3-account-mail";
   const id = value => document.getElementById(value);
   const q = (selector, root = document) => root?.querySelector?.(selector) || null;
   const qa = (selector, root = document) => Array.from(root?.querySelectorAll?.(selector) || []);
@@ -104,7 +104,7 @@
       .mobile-chapter-stars-v0932 small{display:none!important}.mobile-chapter-stars-v0932 span{font-size:34px!important;letter-spacing:7px!important}.mobile-chapter-stars-v0932{justify-content:center!important}
       #menu .mobile-stage-copy-v051{display:none!important}.world-badge-on-gate-bf{position:absolute!important;z-index:8!important;top:8px!important;left:50%!important;transform:translateX(-50%)!important;margin:0!important}
       #menu .mobile-character-display-v051 .mobile-stage-art{background-position:center!important;background-size:cover!important;background-repeat:no-repeat!important}
-      @media(max-width:820px){.bf-shell{padding:12px 12px 120px}.bf-head h2{font-size:48px}.bf-back{width:64px;height:64px}.mail-toolbar-bf{padding:14px}.mail-toolbar-bf h3{font-size:27px}.mail-row-bf{grid-template-columns:28px minmax(0,1fr) auto;padding:0 12px}.mail-list-actions-bf{gap:6px;padding:9px}.mail-list-actions-bf .bf-button{min-height:42px;padding:0 5px;font-size:10px}.profile-hero-bf{grid-template-columns:96px minmax(0,1fr);gap:15px;padding:18px}.profile-avatar-bf{width:96px;height:96px;border-radius:23px}.profile-title-stats-button-bf{min-height:38px;font-size:10px}.profile-stat-bf{min-height:105px}.profile-stat-bf b{font-size:37px}.bf-form-actions,.mail-actions-bf{grid-template-columns:1fr}#menu .mobile-floating-actions-v051.left{display:none!important}#menu .mobile-floating-actions-v051.right{display:grid!important;align-content:start!important;padding-top:0!important}.mobile-floating-actions-v051{align-content:start!important}.mobile-floating-actions-v051 button[data-bf-removed="true"]{display:none!important}.mobile-nav-v090 .cherry-nav-bf img{width:28px;height:28px;border-radius:8px;object-fit:cover}.mobile-nav-v090 .cherry-nav-bf span{overflow:hidden!important}}
+      @media(max-width:820px){.bf-shell{padding:12px 12px 120px}.bf-head h2{font-size:48px}.bf-back{width:64px;height:64px}.mail-toolbar-bf{padding:14px}.mail-toolbar-bf h3{font-size:27px}.mail-row-bf{grid-template-columns:28px minmax(0,1fr) auto;padding:0 12px}.mail-list-actions-bf{gap:6px;padding:9px}.mail-list-actions-bf .bf-button{min-height:42px;padding:0 5px;font-size:10px}.profile-hero-bf{grid-template-columns:96px minmax(0,1fr);gap:15px;padding:18px}.profile-avatar-bf{width:96px;height:96px;border-radius:23px}.profile-title-stats-button-bf{min-height:38px;font-size:10px}.profile-stat-bf{min-height:105px}.profile-stat-bf b{font-size:37px}.bf-form-actions,.mail-actions-bf{grid-template-columns:1fr}}
       @media(min-width:821px){.profile-stats-bf{grid-template-columns:repeat(4,minmax(0,1fr))}.profile-stat-bf{min-height:140px}.bf-shell{padding-bottom:70px}}
     `;
     document.head.appendChild(style);
@@ -845,52 +845,12 @@
     const gate = q(".mobile-character-display-v051,.mobile-character-stage-v051", menu);
     if (worldBadge && gate && !gate.contains(worldBadge)) { worldBadge.classList.add("world-badge-on-gate-bf"); gate.appendChild(worldBadge); }
     if (!isMobile()) return;
-    qa("button", menu).forEach(button => {
-      const label = button.textContent.trim().toLowerCase();
-      if ((label.includes("chest") || label === "gear" || label.endsWith("gear")) && !button.closest(".mobile-nav-v090")) { button.dataset.bfRemoved = "true"; button.style.display = "none"; }
-      if (label.includes("cherry") && !button.closest(".mobile-nav-v090")) { button.dataset.bfRemoved = "true"; button.style.display = "none"; }
-    });
     const actionOrder = ["daily", "weekly", "login"];
     const actions = qa("button", menu).filter(button => actionOrder.some(word => button.textContent.trim().toLowerCase().includes(word)));
     actions.forEach(button => {
       const label = button.textContent.trim().toLowerCase();
       button.style.order = actionOrder.findIndex(word => label.includes(word));
     });
-    const nav = q(".mobile-nav-v090");
-    if (nav) {
-      const buttons = qa(":scope > button", nav);
-      const play = buttons.find(button => button.textContent.trim().toLowerCase() === "play") || buttons[0];
-      if (play && !play.classList.contains("cherry-nav-bf")) {
-        play.className = `${play.className} cherry-nav-bf`.trim();
-        play.removeAttribute("data-v082-route");
-        play.removeAttribute("data-open");
-        play.onclick = event => { event.preventDefault(); event.stopPropagation(); UI.open?.("skins"); };
-      }
-      if (play) {
-        const skin = selectedSkin();
-        const source = skin.icon || skin.splash || "";
-        let holder = q(":scope > span", play);
-        if (!holder) {
-          holder = document.createElement("span");
-          play.prepend(holder);
-        }
-        let image = q(":scope > img", holder);
-        if (source && !image) {
-          holder.textContent = "";
-          image = document.createElement("img");
-          image.alt = "";
-          holder.appendChild(image);
-        }
-        if (image && image.getAttribute("src") !== source) image.setAttribute("src", source);
-        if (!source && !image && holder.textContent !== "🐰") holder.textContent = "🐰";
-        let label = q(":scope > b", play);
-        if (!label) {
-          label = document.createElement("b");
-          play.appendChild(label);
-        }
-        if (label.textContent !== "Cherry") label.textContent = "Cherry";
-      }
-    }
   }
 
   function removeLegacyKeyUi() {
@@ -951,11 +911,6 @@
         event.stopImmediatePropagation();
         openProfile();
         return;
-      }
-      if (target.classList?.contains("cherry-nav-bf")) {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        UI.open?.("skins");
       }
     }, true);
     window.CHERRIFT_LIVE_SERVICES?.onChange?.(event => {

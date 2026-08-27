@@ -10,7 +10,7 @@
     console.warn("[CHERRIFT] Clean Runtime was requested more than once; duplicate load ignored.");
     return;
   }
-  window.__CHERRIFT_CLEAN_RUNTIME__ = Object.freeze({version:"1.5.0", build:"0.9.5-prebeta.1"});
+  window.__CHERRIFT_CLEAN_RUNTIME__ = Object.freeze({version:"1.6.0", build:"0.9.8.3-structure"});
   window.CHERRIFT_RUNTIME_CSS_BUNDLED = true;
 
   /*
@@ -3039,7 +3039,7 @@ window.UI = {
   function initMobileTapFix() {
     if (window.__CHERRIFT_MOBILE_TAP_FIX_041C) return;
     window.__CHERRIFT_MOBILE_TAP_FIX_041C = true;
-    const selector = ["#mobilePlayBtn", ".mobile-bottom-nav button", "#menu .menu-btn:not(:disabled):not(.locked)", "#menu .top-icons button", "#menu .social-row button", "#menu .discord-login"].join(",");
+    const selector = ["#mobilePlayBtn", "#globalMobileNavV052 button", "#menu .menu-btn:not(:disabled):not(.locked)", "#menu .top-icons button", "#menu .social-row button", "#menu .discord-login"].join(",");
     document.addEventListener("pointerup", ev => {
       if (document.body.classList.contains("is-playing")) return;
       const menu = document.getElementById("menu");
@@ -4873,44 +4873,7 @@ console.info(`[CHERRIFT] ${VERSION} loaded. Mode: ${enabled ? "ON" : "OFF"}`);
     home.dataset.v051Ready = "1";
     home.classList.add("mobile-archero-v051");
     home.innerHTML = `
-      <header class="mobile-game-header-v051">
-        <div class="mobile-profile-v051">
-          <div class="mobile-avatar-v051" id="mobileAvatarV051">🐰</div>
-          <div class="mobile-profile-copy-v051">
-            <small>CHERRIFT PLAYER</small>
-            <b id="mobilePlayerLevelV051">Level 1</b>
-            <div class="mobile-profile-xp-v051"><i id="mobileProfileXpFillV051"></i></div>
-          </div>
-        </div>
-
-        <button class="mobile-header-settings-v051" data-open="settings" aria-label="Settings">⚙</button>
-      </header>
-
-      <section class="mobile-resources-v051" aria-label="Resources">
-        <button class="mobile-resource-v051 energy">
-          <span>⚡</span>
-          <div><small>ENERGY</small><b id="mobileEnergyValue">5</b></div>
-          <i>+</i>
-        </button>
-        <button class="mobile-resource-v051 coins">
-          <span>🪙</span>
-          <div><small>COINS</small><b id="mobileCoinsValue">0</b></div>
-          <i>+</i>
-        </button>
-        <button class="mobile-resource-v051 keys" data-open="chests">
-          <span>🗝️</span>
-          <div><small>KEYS</small><b id="mobileKeysValue">0</b></div>
-          <i>+</i>
-        </button>
-      </section>
-
       <main class="mobile-hero-area-v051">
-        <div class="mobile-floating-actions-v051 left">
-          <button data-open="chests"><span>🎁</span><b>Chest</b><em id="mobileChestBadgeV051">!</em></button>
-          <button data-open="gear"><span>⚔️</span><b>Gear</b></button>
-          <button data-open="skins"><span>🐰</span><b>Skins</b></button>
-        </div>
-
         <section class="mobile-character-stage-v051">
           <div class="mobile-world-label-v051">
             <small id="mobileWorldLabelV051">WORLD 1</small>
@@ -4920,7 +4883,6 @@ console.info(`[CHERRIFT] ${VERSION} loaded. Mode: ${enabled ? "ON" : "OFF"}`);
           <div class="mobile-character-display-v051">
             <div class="mobile-stage-art" id="mobileStageArt"></div>
             <div class="mobile-character-glow-v051"></div>
-            <div class="mobile-character-icon-v051" id="mobileCharacterIconV051">🐰</div>
             <div class="mobile-power-v051">
               <small>POWER</small>
               <b id="mobilePowerV051">0</b>
@@ -4932,12 +4894,6 @@ console.info(`[CHERRIFT] ${VERSION} loaded. Mode: ${enabled ? "ON" : "OFF"}`);
             <p id="mobileStageSub">Ready to clear</p>
           </div>
         </section>
-
-        <div class="mobile-floating-actions-v051 right">
-          <button class="locked-feature-v051"><span>📋</span><b>Quests</b><em>SOON</em></button>
-          <button class="locked-feature-v051"><span>🏆</span><b>Goals</b><em>SOON</em></button>
-          <button class="locked-feature-v051"><span>🛒</span><b>Shop</b><em>SOON</em></button>
-        </div>
       </main>
 
       <section class="mobile-stage-panel-v051">
@@ -4962,13 +4918,6 @@ console.info(`[CHERRIFT] ${VERSION} loaded. Mode: ${enabled ? "ON" : "OFF"}`);
         </button>
       </section>
 
-      <nav class="mobile-bottom-nav mobile-bottom-nav-v051" aria-label="Mobile navigation">
-        <button data-open="menu" class="active"><span>🏠</span><b>Home</b></button>
-        <button data-open="gear"><span>🛡️</span><b>Gear</b></button>
-        <button data-open="chests"><span>📦</span><b>Chest</b></button>
-        <button data-open="skins"><span>🐇</span><b>Cherry</b></button>
-        <button data-open="settings"><span>☰</span><b>More</b></button>
-      </nav>
     `;
 
     const stageSelect = id("mobileStageSelectV051");
@@ -5009,21 +4958,8 @@ console.info(`[CHERRIFT] ${VERSION} loaded. Mode: ${enabled ? "ON" : "OFF"}`);
     ensureMobileMenu();
 
     const stage = stageFor(save);
-    const skin = CHERRIFT_DATA.skins.find(entry => entry.id === save.selectedSkin) || CHERRIFT_DATA.skins[0];
-    const level = Math.max(1, Number(save.account?.level) || 1);
-    const xp = Math.max(0, Number(save.account?.xp) || 0);
-    const xpNext = Math.max(1, Number(save.account?.xpNext) || 1);
     const cleared = !!save.clearedStages?.[stage?.id];
 
-    if (id("mobilePlayerLevelV051")) id("mobilePlayerLevelV051").textContent = `Level ${level}`;
-    if (id("mobileProfileXpFillV051")) id("mobileProfileXpFillV051").style.width = `${Math.min(100, xp / xpNext * 100)}%`;
-    if (id("mobileAvatarV051")) id("mobileAvatarV051").textContent = skin?.emoji || "🐰";
-    if (id("mobileCharacterIconV051")) id("mobileCharacterIconV051").textContent = skin?.emoji || "🐰";
-
-    if (id("mobileEnergyValue")) id("mobileEnergyValue").textContent = save.energy ?? 5;
-    if (id("mobileCoinsValue")) id("mobileCoinsValue").textContent = Math.floor(save.coins || 0);
-    if (id("mobileKeysValue")) id("mobileKeysValue").textContent = Math.floor(save.keys || 0);
-    if (id("mobileChestBadgeV051")) id("mobileChestBadgeV051").classList.toggle("hidden", !(save.keys > 0));
     if (id("mobilePowerV051")) id("mobilePowerV051").textContent = totalPower(save);
 
     if (!stage) return;
@@ -5168,16 +5104,6 @@ function ensureDesktopButtons(){
  const b2=document.createElement("button");b2.id="desktopAchievementsV052";b2.className="menu-btn";b2.dataset.open="achievements";b2.innerHTML="<span>🏆</span><i>ACHIEVEMENTS</i><em>REWARDS</em><b>›</b>";
  nav.insertBefore(b1,settings);nav.insertBefore(b2,settings);
 }
-function fixedMobileNav(){
- let nav=id("globalMobileNavV052");
- if(!nav){nav=document.createElement("nav");nav.id="globalMobileNavV052";nav.className="global-mobile-nav-v052";nav.innerHTML=`
- <button data-v052-open="gear"><span>🛡️</span><b>Gear</b></button>
- <button data-v052-open="playerUpgrade"><span>🌟</span><b>Upgrade</b></button>
- <button data-v052-open="menu" class="home"><span>🏠</span><b>Home</b></button>
- <button data-v052-open="achievements"><span>🏆</span><b>Goals</b></button>
- <button data-v052-open="skins"><span>🐇</span><b>Cherry</b></button>`;document.body.appendChild(nav);qa("[data-v052-open]",nav).forEach(b=>b.onclick=()=>UI.open(b.dataset.v052Open));}
- return nav;
-}
 function renderUpgrade(){
  const s=normalize(UI.save),a=s.account,cost=levelCost(a.level);
  id("v052Level").textContent=a.level;id("v052XpFill").style.width=`${Math.min(100,a.xp/cost*100)}%`;
@@ -5201,18 +5127,18 @@ function applyTree(game){
  p.damage*=1+(t.power||0)*.03;p.maxHp+=(t.vitality||0)*8;p.hp+=(t.vitality||0)*8;
  p.speed*=1+(t.haste||0)*.015;p.fireInterval/=1+(t.haste||0)*.015;p.crit+=(t.fortune||0)*.01;
 }
-ensureCss();ensurePanels();ensureDesktopButtons();fixedMobileNav();id("v052LevelUp").onclick=levelUp;
+ensureCss();ensurePanels();ensureDesktopButtons();id("v052LevelUp").onclick=levelUp;
 const oldInit=UI.init.bind(UI);
-UI.init=function(s,g){normalize(s);const r=oldInit(s,g);ensurePanels();ensureDesktopButtons();fixedMobileNav();updateAchievements(s);return r;};
+UI.init=function(s,g){normalize(s);const r=oldInit(s,g);ensurePanels();ensureDesktopButtons();updateAchievements(s);return r;};
 const oldOpen=UI.open.bind(UI);
 UI.open=function(panel,...args){
  const custom=panel==="playerUpgrade"||panel==="achievements";
  if(custom){document.body.classList.remove("is-playing");["menu","skins","gear","chests","settings","worlds","playerUpgrade","achievements"].forEach(n=>id(n)?.classList.toggle("hidden",n!==panel));["hud","skill","stageHud"].forEach(n=>id(n)?.classList.add("hidden"));}
  else oldOpen(panel,...args);
- if(panel==="playerUpgrade")renderUpgrade();if(panel==="achievements")renderAchievements();fixedMobileNav().dataset.active=panel;
+ if(panel==="playerUpgrade")renderUpgrade();if(panel==="achievements")renderAchievements();
 };
 const oldRefresh=UI.refreshMenu.bind(UI);
-UI.refreshMenu=function(...args){const r=oldRefresh(...args);normalize(this.save);updateAchievements(this.save);const a=this.save.account,cost=levelCost(a.level);if(id("mobilePlayerLevelV051"))id("mobilePlayerLevelV051").textContent=`Level ${a.level}`;if(id("mobileProfileXpFillV051"))id("mobileProfileXpFillV051").style.width=`${Math.min(100,a.xp/cost*100)}%`;return r;};
+UI.refreshMenu=function(...args){const r=oldRefresh(...args);normalize(this.save);updateAchievements(this.save);return r;};
 const oldStart=CherriftGame.prototype.start;
 CherriftGame.prototype.start=async function(...args){const r=await oldStart.apply(this,args);applyTree(this);return r;};
 const oldStageClear=CherriftGame.prototype.stageClear;
@@ -5362,8 +5288,6 @@ console.info("[CHERRIFT v0.5.2] Manual progression, achievements and fixed mobil
       id("playerUpgrade")?.classList.add("hidden");
       id("achievements")?.classList.add("hidden");
     }
-    const nav = id("globalMobileNavV052");
-    if (nav) nav.dataset.active = panel;
     if (panel === "gear") renderMobileGear();
   };
 
@@ -5476,17 +5400,6 @@ console.info("[CHERRIFT v0.5.2] Manual progression, achievements and fixed mobil
   ensureMobileGear();
   const previousRenderGear = UI.renderGear.bind(UI);
   UI.renderGear = function renderGearV053(...args) { const result = previousRenderGear(...args); renderMobileGear(); return result; };
-  const previousShowGame = UI.showGame?.bind(UI);
-  if (previousShowGame) UI.showGame = function showGameV053(...args) { id("globalMobileNavV052")?.classList.add("force-hidden-v053"); return previousShowGame(...args); };
-  const previousQuit = UI.quit?.bind(UI);
-  if (previousQuit) UI.quit = function quitV053(...args) { id("globalMobileNavV052")?.classList.remove("force-hidden-v053"); return previousQuit(...args); };
-  const observer = new MutationObserver(() => {
-    const nav = id("globalMobileNavV052");
-    if (!nav) return;
-    const shouldHide = document.body.classList.contains("is-playing") || document.body.classList.contains("is-levelup") || document.body.classList.contains("is-loading-stage") || !id("levelModal")?.classList.contains("hidden") || !id("stageClearModal")?.classList.contains("hidden");
-    nav.classList.toggle("force-hidden-v053", shouldHide);
-  });
-  observer.observe(document.body, { attributes:true, attributeFilter:["class"] });
   window.addEventListener("resize", () => { if (isMobile() && !id("gear")?.classList.contains("hidden")) renderMobileGear(); });
   window.CHERRIFT_V053 = { version:VERSION, renderMobileGear };
   console.info("[CHERRIFT v0.5.3] Mobile navigation and Archero gear fixes loaded.");
@@ -5594,26 +5507,6 @@ if (!window.UI || !window.CHERRIFT_V055C || !window.CHERRIFT_V053) {
 
 function ensureCss() {
   document.documentElement.dataset.v0551Css = "bundled";
-}
-
-function hideMobileNavDuringGameStates() {
-  const nav = id("globalMobileNavV052");
-  if (!nav) return;
-
-  const modalOpen = [
-    "pauseModal", "levelModal", "stageClearModal", "stageLoading", "gameOver"
-  ].some(name => {
-    const el = id(name);
-    return el && !el.classList.contains("hidden");
-  });
-
-  const hide =
-    document.body.classList.contains("is-playing") ||
-    document.body.classList.contains("is-levelup") ||
-    document.body.classList.contains("is-loading-stage") ||
-    modalOpen;
-
-  nav.classList.toggle("v0551-nav-hidden", hide);
 }
 
 /* ---------- Single mobile Library ---------- */
@@ -5769,16 +5662,6 @@ function patchMobileLibraryNavigation() {
       <button data-v055-open="shopV055">🛒<b>Shop</b></button>
       <button data-v055-open="loginRewards">🎁<b>Login</b></button>`;
   }
-
-  const bottomNav = id("globalMobileNavV052");
-  if (bottomNav) {
-    const goals = q('[data-v052-open="achievements"]', bottomNav);
-    if (goals) {
-      goals.dataset.v0551Library = "profile";
-      delete goals.dataset.v052Open;
-      goals.innerHTML = "<span>📚</span><b>Library</b>";
-    }
-  }
 }
 
 /* ---------- Mobile Gear interaction hotfix ---------- */
@@ -5849,7 +5732,6 @@ UI.open = function openV0551(panel, ...args) {
   }
 
   if (panel === "gear") setTimeout(patchGearInteractions, 0);
-  setTimeout(hideMobileNavDuringGameStates, 0);
 };
 
 /* Hide old separate mobile panels from mobile navigation only. */
@@ -5858,47 +5740,6 @@ if (mobile()) {
     const panel = id(name);
     if (panel) panel.dataset.mobileLegacy = "true";
   });
-}
-
-/* Strong pause/game-state watcher */
-const observer = new MutationObserver(hideMobileNavDuringGameStates);
-observer.observe(document.body, {
-  attributes:true,
-  attributeFilter:["class"],
-  subtree:true,
-  childList:false
-});
-
-["pauseModal","levelModal","stageClearModal","stageLoading","gameOver"].forEach(name => {
-  const el = id(name);
-  if (el) observer.observe(el, {attributes:true, attributeFilter:["class"]});
-});
-
-const oldPause = UI.pause?.bind(UI);
-if (oldPause) {
-  UI.pause = function pauseV0551(...args) {
-    const result = oldPause(...args);
-    hideMobileNavDuringGameStates();
-    return result;
-  };
-}
-
-const oldResume = UI.resume?.bind(UI);
-if (oldResume) {
-  UI.resume = function resumeV0551(...args) {
-    const result = oldResume(...args);
-    hideMobileNavDuringGameStates();
-    return result;
-  };
-}
-
-const oldShowGame = UI.showGame?.bind(UI);
-if (oldShowGame) {
-  UI.showGame = function showGameV0551(...args) {
-    const result = oldShowGame(...args);
-    hideMobileNavDuringGameStates();
-    return result;
-  };
 }
 
 const oldRenderGear = UI.renderGear?.bind(UI);
@@ -5913,15 +5754,11 @@ if (oldRenderGear) {
 window.addEventListener("resize", () => {
   patchMobileLibraryNavigation();
   patchGearInteractions();
-  hideMobileNavDuringGameStates();
 });
-
-hideMobileNavDuringGameStates();
 
 window.CHERRIFT_V0551 = {
   version: VERSION,
-  renderLibrary,
-  hideMobileNavDuringGameStates
+  renderLibrary
 };
 
 console.info("[CHERRIFT] v0.5.5.1 mobile hotfix loaded.");
@@ -10621,22 +10458,6 @@ function ensureCompleteGearLayout() {
   return slots.length === 7;
 }
 
-function ensureMobileNavigation() {
-  const nav = id("globalMobileNavV052");
-  if (!nav || nav.dataset.v060Ready) return;
-  nav.dataset.v060Ready = "true";
-  nav.classList.add("mobile-nav-v060");
-  nav.innerHTML = `
-    <button type="button" data-v060-open="gear" data-v060-panel="gear"><span>⚔</span><b>Gear</b><em class="v060-dot" data-v060-badge="gear"></em></button>
-    <button type="button" data-v060-open="playerUpgrade" data-v060-panel="playerUpgrade"><span>✦</span><b>Skills</b></button>
-    <button type="button" data-v060-open="menu" data-v060-panel="menu" class="home"><span>⌂</span><b>Home</b></button>
-    <button type="button" data-v060-open="chests" data-v060-panel="chests"><span>◇</span><b>Gacha</b></button>
-    <button type="button" data-v060-open="libraryV0551" data-v060-panel="libraryV0551"><span>▣</span><b>Library</b></button>
-    <button type="button" data-v060-open="skins" data-v060-panel="skins"><span id="mobileSkinIconV060" class="mobile-skin-icon-v060"></span><b>Cherry</b><em class="v060-dot" data-v060-badge="skin"></em></button>`;
-
-  q(".mobile-more-v060")?.remove();
-}
-
 function ensureMobilePanelTabs() {
   const upgradeLayout = q("#playerUpgrade .v052-upgrade-layout");
   if (upgradeLayout && !id("upgradeTabsV061")) {
@@ -11138,7 +10959,6 @@ function patchUiLifecycle() {
       document.body.classList.remove("is-loading-stage");
       ["menu", "skins", "gear", "chests", "settings", "worlds", "playerUpgrade", "libraryV0551"].forEach(name => id(name)?.classList.add("hidden"));
       ["hud", "skill", "stageHud"].forEach(name => id(name)?.classList.remove("hidden"));
-      id("globalMobileNavV052")?.classList.add("force-hidden-v053", "v0551-nav-hidden");
       return result;
     };
   }
@@ -11182,48 +11002,13 @@ function observeDynamicPanels() {
   observer.observe(root, options);
 }
 
-function preloadImage(source) {
-  return new Promise(resolve => {
-    const image = new Image();
-    let settled = false;
-    const finish = ok => {
-      if (settled) return;
-      settled = true;
-      clearTimeout(timeout);
-      resolve({ source, ok });
-    };
-    const timeout = window.setTimeout(() => finish(false), 8000);
-    image.decoding = "async";
-    image.onload = async () => {
-      try { await image.decode?.(); } catch (_) {}
-      finish(true);
-    };
-    image.onerror = () => finish(false);
-    image.src = source;
-  });
-}
-
-async function preload(save, report = () => {}) {
+async function preload(_save, report = () => {}) {
   applyCanonicalSkinAssets();
-  const selected = currentSkin(save);
-  const selectedConfig = skinConfig(save);
-  const sources = new Set(["assets/ui/mainmenu.png?v=060"]);
-
-  if (selected?.icon) sources.add(selected.icon);
-  if (selected?.splash && save?.settings?.preloadArtwork !== false) sources.add(selected.splash);
-  if (selectedConfig?.states?.idle?.dirs?.down) sources.add(selectedConfig.states.idle.dirs.down);
-
-  const list = [...sources];
-  const failures = [];
-  let done = 0;
-  report(0, list.length, "Preparing artwork…");
-  await Promise.all(list.map(async source => {
-    const result = await preloadImage(source);
-    if (!result.ok) failures.push(source);
-    done++;
-    report(done, list.length, `Loading artwork ${done}/${list.length}`);
-  }));
-  return { total: list.length, failures };
+  // Decorative artwork must not own the boot lifecycle. The selected idle
+  // sheet is warmed after UI initialization by backgroundPreloadIdleSheets().
+  report(1, 1, "Preparing interface…");
+  await Promise.resolve();
+  return { total:0, failures:[], skipped:true, reason:"optional_artwork_background_warmup" };
 }
 
 function backgroundPreloadIdleSheets() {
@@ -11239,7 +11024,6 @@ function initAfterUI() {
   if (runtime.initialized) return;
   runtime.initialized = true;
   bindClickSounds();
-  ensureMobileNavigation();
   ensureMobilePanelTabs();
   bindNavigation();
   bindSettings();
@@ -11256,7 +11040,6 @@ function initAfterUI() {
   backgroundPreloadIdleSheets();
   updateActiveNavigation("menu");
   window.addEventListener("resize", () => {
-    ensureMobileNavigation();
     ensureMobilePanelTabs();
     ensureCompleteGearLayout();
     updateResourceDisplays();
@@ -12294,12 +12077,7 @@ function disableDecorativeControls() {
     discordLogin.setAttribute("aria-label", "Discord login is coming later");
   }
 
-  for (const button of qa("#menu .top-icons button:not([data-open]), #menu .social-row button:not([data-open]), .locked-feature-v051")) {
-    button.disabled = true;
-    button.setAttribute("aria-disabled", "true");
-  }
-
-  for (const button of qa(".mobile-resource-v051:not(.keys)")) {
+  for (const button of qa("#menu .top-icons button:not([data-open]), #menu .social-row button:not([data-open])")) {
     button.disabled = true;
     button.setAttribute("aria-disabled", "true");
   }
@@ -12819,13 +12597,6 @@ function updateLocalizedStaticUi() {
     if (detail) detail.textContent = c("bugReport");
   }
 
-  const mobileBuild = q(".mobile-profile-copy-v051 > small");
-  if (mobileBuild) mobileBuild.textContent = c("testBuild");
-  const mobileMail = q('.mobile-header-tool-v063[data-open="mailV063"]');
-  const mobileSupport = q('.mobile-header-tool-v063[data-open="supportV063"]');
-  if (mobileMail) mobileMail.setAttribute("aria-label", c("mail"));
-  if (mobileSupport) mobileSupport.setAttribute("aria-label", c("support"));
-
   const mailHeader = q("#mailV063 .panel-head-v063");
   if (mailHeader) {
     q("h2", mailHeader).textContent = c("mail");
@@ -12867,17 +12638,6 @@ function ensureMainMenuEnhancements() {
     if (!q("[data-v063-mail-count]", topMail)) topMail.insertAdjacentHTML("beforeend", '<em class="mail-badge-v063" data-v063-mail-count></em>');
   }
 
-  const mobileHeader = q(".mobile-game-header-v051");
-  const settings = q(".mobile-header-settings-v051", mobileHeader);
-  if (mobileHeader && settings && !q(".mobile-header-actions-v063", mobileHeader)) {
-    const actions = document.createElement("div");
-    actions.className = "mobile-header-actions-v063";
-    actions.innerHTML = `
-      <button type="button" class="mobile-header-tool-v063 mail-button-v063" data-open="mailV063" aria-label="${c("mail")}">✉<em class="mail-badge-v063" data-v063-mail-count></em></button>
-      <button type="button" class="mobile-header-tool-v063" data-open="supportV063" aria-label="${c("support")}">!</button>`;
-    mobileHeader.insertBefore(actions, settings);
-    actions.appendChild(settings);
-  }
   const mobilePower = q(".mobile-power-v051");
   if (mobilePower && !id("mobileHpV063")) {
     mobilePower.classList.add("mobile-stats-v063");
@@ -15359,7 +15119,6 @@ function ensureNavigation(){
   const mainNav=q("#menu .main-nav");
   const chestButton=q("[data-open='chests']",mainNav);
   if(chestButton){chestButton.classList.add("economy-menu-v080");const i=q("i",chestButton),em=q("em",chestButton);if(i)i.textContent=t("openHub");if(em)em.textContent=t("hubHint");}
-  const mobile=q("#menu .mobile-bottom-nav [data-open='chests']");if(mobile){const b=q("b",mobile);if(b)b.textContent=t("bag");}
   if(mainNav&&!q("[data-v080-open-bag]",mainNav)){
     const btn=document.createElement("button");btn.type="button";btn.className="menu-btn";btn.dataset.v080OpenBag="true";btn.innerHTML=`<span>🎒</span><i>${t("bag")}</i><em>FOOD & MATERIALS</em><b>›</b>`;chestButton?.insertAdjacentElement("afterend",btn);
   }
@@ -16014,16 +15773,6 @@ function updateRailProfile(){
 }
 
 function ensureMobileDrawer(){
-  const nav=id("globalMobileNavV052");
-  if(nav&&(!nav.dataset.v082Ready||!q("[data-v082-toggle-mobile]",nav))){
-    nav.dataset.v082Ready="1";nav.classList.add("mobile-nav-v082");
-    nav.innerHTML=`
-      <button type="button" data-v082-open="skins"><span class="mobile-skin-icon-v096"></span><b>Cherry</b><em class="notice-dot-v082" data-v090-notice="skins"></em></button>
-      <button type="button" data-v082-open="gear"><span>⚔</span><b>${escapeHtml(t("gear"))}</b><em class="notice-dot-v082" data-v082-notice="gear"></em></button>
-      <button type="button" data-v082-open="menu" class="home"><span>⌂</span><b>Home</b></button>
-      <button type="button" data-v082-open="gachaV082"><span>◇</span><b>${escapeHtml(t("gacha"))}</b><em class="notice-dot-v082" data-v082-notice="gacha"></em></button>
-      <button type="button" data-v082-toggle-mobile><span>☰</span><b>${escapeHtml(t("more"))}</b></button>`;
-  }
   if(!id("mobileMenuV082")){
     const drawer=document.createElement("section");
     drawer.id="mobileMenuV082";drawer.className="mobile-menu-v082 hidden";
@@ -19071,17 +18820,6 @@ function deviceClass(){
   if(UI.game&&mobile)requestAnimationFrame(()=>UI.game.resize?.());
 }
 
-function ensureMobileNav(){
-  const nav=id("globalMobileNavV052");if(!nav)return;
-  const playButtons=qa('[data-v082-open="worlds"]',nav);
-  playButtons.slice(1).forEach(button=>button.remove());
-  nav.classList.add("mobile-nav-v090");
-  const buttons=qa(":scope > button",nav);
-  if(buttons.length!==5&&window.CHERRIFT_V082?.refresh){window.CHERRIFT_V082.refresh();return;}
-  const labels=["Cherry","Gear","Home","Gacha","More"];
-  qa(":scope > button b",nav).forEach((label,index)=>{if(labels[index])label.textContent=labels[index];});
-}
-
 function selectedSkin(){
   return CHERRIFT_DATA.skins.find(skin=>skin.id===UI.save?.selectedSkin)||CHERRIFT_DATA.skins[0];
 }
@@ -19131,7 +18869,7 @@ function markSkinsSeen(){
 }
 
 function finalRefresh(){
-  patchVersion();deviceClass();ensureMobileNav();decorateSkinNavigation();ensureSkinNotice();window.CHERRIFT_V082?.bindMenuTools?.();stabilizeSkinSplash();
+  patchVersion();deviceClass();decorateSkinNavigation();ensureSkinNotice();window.CHERRIFT_V082?.bindMenuTools?.();stabilizeSkinSplash();
   window.CHERRIFT_V060?.ensureGearLayout?.();
 }
 
@@ -19168,23 +18906,6 @@ if(previousCarousel&&!UI.__v090Carousel){
 document.addEventListener("click",event=>{
   if(event.target.closest?.('[data-v082-open="skins"],[data-v060-open="skins"],[data-open="skins"],.cherry-nav-bf'))setTimeout(markSkinsSeen,0);
 },true);
-
-if(window.CHERRIFT_V060?.preload&&!window.CHERRIFT_V060.preload.__v090){
-  const previousPreload=window.CHERRIFT_V060.preload;
-  const preload=async function preloadV090(save,report){
-    const result=await previousPreload(save,report);
-    const config=CHERRIFT_CONFIG.player.skins?.[save?.selectedSkin];
-    const sources=[...new Set(Object.values(config?.states||{}).flatMap(state=>Object.values(state?.dirs||{})))];
-    const load=source=>new Promise(resolve=>{
-      const image=new Image();const timer=setTimeout(()=>resolve(false),5000);
-      image.onload=()=>{clearTimeout(timer);resolve(true);};image.onerror=()=>{clearTimeout(timer);resolve(false);};image.decoding="async";image.src=source;
-    });
-    const loaded=await Promise.all(sources.map(load));
-    return {total:(result.total||0)+sources.length,failures:[...(result.failures||[]),...sources.filter((_,index)=>!loaded[index])]};
-  };
-  preload.__v090=true;
-  window.CHERRIFT_V060.preload=preload;
-}
 
 if(window.CherriftGame){
   const proto=CherriftGame.prototype;
@@ -22967,8 +22688,6 @@ function ensureMobileHomePolish() {
     hud.className = "mobile-header-v0932";
     menu.appendChild(hud);
   }
-  let left = id("mobileLeftActionsV0932");
-  if (!left) { left=document.createElement("nav"); left.id="mobileLeftActionsV0932"; left.className="mobile-side-actions-v0932 left"; menu.appendChild(left); }
   let right = id("mobileRightActionsV0932");
   if (!right) { right=document.createElement("nav"); right.id="mobileRightActionsV0932"; right.className="mobile-side-actions-v0932 right"; menu.appendChild(right); }
   let stars = id("mobileChapterStarsV0932");
@@ -22991,9 +22710,7 @@ function ensureMobileHomePolish() {
     <nav><button type="button" data-v082-open="mailV063" aria-label="Mail">✉</button><button type="button" data-v0932-support="feedback" aria-label="Feedback">!</button><button type="button" data-v082-open="settings" aria-label="Settings">⚙</button></nav>
   </div>`;
   if (hud.innerHTML !== hudMarkup) hud.innerHTML = hudMarkup;
-  const leftMarkup = `<button type="button" data-v082-open="gachaV082"><i>🎁</i><b>${copy("Chest","Chest")}</b></button><button type="button" data-v082-open="gear"><i>⚔</i><b>${copy("Felszerelés","Gear")}</b></button><button type="button" data-v082-open="skins">${imageMarkup(skin?.icon,skin?.name||"Cherry")}<b>${copy("Kinézetek","Cherry")}</b></button>`;
   const rightMarkup = `<button type="button" data-v082-open="dailyQuests"><i>✓</i><b>${copy("Napi","Daily")}</b></button><button type="button" data-v082-open="weeklyV082"><i>♛</i><b>${copy("Heti","Weekly")}</b></button><button type="button" data-v082-open="loginRewards"><i>🎁</i><b>${copy("Belépés","Login")}</b></button>`;
-  if (left.innerHTML !== leftMarkup) left.innerHTML = leftMarkup;
   if (right.innerHTML !== rightMarkup) right.innerHTML = rightMarkup;
 
   const starTarget=q("#menu .mobile-character-display-v051") || q("#menu .mobile-stage-preview") || q("#menu .dashboard-run-v060");
@@ -23004,7 +22721,7 @@ function ensureMobileHomePolish() {
   if(stars && stars.innerHTML !== starMarkup) stars.innerHTML=starMarkup;
 
   // The map preview is for the chapter only; no skin badge belongs in its center.
-  qa("#mobileStageArt > *,#menu .mobile-stage-preview .skin-nav-icon-v090,#menu .mobile-stage-preview .dashboard-skin-v060,#mobileCharacterIconV051").forEach(node=>node.remove());
+  qa("#mobileStageArt > *,#menu .mobile-stage-preview .skin-nav-icon-v090,#menu .mobile-stage-preview .dashboard-skin-v060").forEach(node=>node.remove());
   const art=id("mobileStageArt"); if(art) art.textContent="";
 
   // Daily, Weekly, Login and Mail already have dedicated mobile controls.
@@ -26168,10 +25885,7 @@ function setMobileNavigationState(route = uiPolishState.route) {
   const drawerOpen = !!drawer && !drawer.classList.contains("hidden");
   const activeBucket = drawerOpen ? "more" : currentRouteBucket(uiPolishState.route);
 
-  const navs = [
-    document.getElementById("globalMobileNavV052"),
-    document.querySelector("#menu .mobile-bottom-nav-v051")
-  ].filter(Boolean);
+  const navs = [document.getElementById("globalMobileNavV052")].filter(Boolean);
 
   for (const nav of navs) {
     nav.querySelectorAll("button").forEach(button => {

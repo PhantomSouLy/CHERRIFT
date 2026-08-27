@@ -1,25 +1,24 @@
 {
-  "runtimeVersion": "0.9.8.2-clean-runtime",
+  "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "0982-cleanup",
+  "buildId": "0983-structure",
   "entrypoints": {
     "application": "src/cherrift_app.js",
     "runtime": "src/cherrift_runtime.js",
     "auth": "src/cherrift_auth.js",
-    "networkAndStartupGuard": "src/cherrift_network_guard.js",
+    "networkGuard": "src/cherrift_network_guard.js",
     "foliage": "src/cherrift_foliage.js",
-    "rewardsUi": "src/cherrift_rewards.js",
     "skinUi": "src/cherrift_skin_ui.js"
   },
   "stylesheets": {
+    "shell": "assets/cherrift_shell.css",
     "application": "assets/cherrift_app.css",
     "sharedUi": "assets/cherrift_ui.css",
     "boot": "assets/cherrift_boot.css",
     "runtime": "assets/cherrift_runtime.css",
     "prebeta": "assets/cherrift_prebeta.css",
     "elemental": "assets/cherrift_elemental.css",
-    "skillBuilder": "assets/cherrift_skill_builder.css",
-    "security": "assets/cherrift_security_ui.css"
+    "skillBuilder": "assets/cherrift_skill_builder.css"
   },
   "externalConfiguration": [
     "src/config.js",
@@ -36,7 +35,6 @@
     ],
     "authAndCloud": [
       "src/cherrift_auth.js",
-      "src/cherrift_supabase_timeout_fix.js",
       "src/cherrift_network_guard.js",
       "src/cherrift_live_services.js"
     ],
@@ -47,7 +45,8 @@
       "src/cherrift_gacha.js"
     ],
     "rewardPresentation": [
-      "src/cherrift_rewards.js"
+      "src/cherrift_app.js",
+      "assets/cherrift_ui.css"
     ],
     "cherrySelector": [
       "src/cherrift_skin_ui.js"
@@ -75,6 +74,7 @@
       "src/cherrift_foliage.js"
     ],
     "sharedPresentationOnly": [
+      "assets/cherrift_shell.css",
       "assets/cherrift_app.css",
       "assets/cherrift_ui.css"
     ]
@@ -83,6 +83,7 @@
     "singleBuildQuery": true,
     "menuDomRepatchingFromRuntime": false,
     "startupArtworkBlocksBoot": false,
-    "legacyRuntimeAliases": false
+    "canonicalMobileNavigation": true,
+    "legacyRuntimeAliasesRemainInsideBundle": true
   }
 }
