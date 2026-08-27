@@ -1,11 +1,26 @@
 {
-  "runtimeVersion": "1.7.0-auth-bootstrap-v2",
+  "runtimeVersion": "0.9.8.2-clean-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "javascript": "src/cherrift_app.js",
-  "runtime": "src/cherrift_runtime.js",
-  "auth": "src/cherrift_auth.js",
-  "stylesheet": "assets/cherrift_app.css",
-  "runtimeStylesheet": "assets/cherrift_runtime.css",
+  "buildId": "0982-cleanup",
+  "entrypoints": {
+    "application": "src/cherrift_app.js",
+    "runtime": "src/cherrift_runtime.js",
+    "auth": "src/cherrift_auth.js",
+    "networkAndStartupGuard": "src/cherrift_network_guard.js",
+    "foliage": "src/cherrift_foliage.js",
+    "rewardsUi": "src/cherrift_rewards.js",
+    "skinUi": "src/cherrift_skin_ui.js"
+  },
+  "stylesheets": {
+    "application": "assets/cherrift_app.css",
+    "sharedUi": "assets/cherrift_ui.css",
+    "boot": "assets/cherrift_boot.css",
+    "runtime": "assets/cherrift_runtime.css",
+    "prebeta": "assets/cherrift_prebeta.css",
+    "elemental": "assets/cherrift_elemental.css",
+    "skillBuilder": "assets/cherrift_skill_builder.css",
+    "security": "assets/cherrift_security_ui.css"
+  },
   "externalConfiguration": [
     "src/config.js",
     "src/cherrift_balance.js",
@@ -14,73 +29,60 @@
   "vendor": [
     "vendor/supabase-js-2.110.7.js"
   ],
-  "includedHotfixes": [
-    "Standalone deterministic Guest and Discord auth with hard session and cloud deadlines",
-    "One shared Supabase client for Auth, cloud save, Mail and reward services",
-    "Verified per-Discord-account local backup with safe cloud conflict recovery",
-    "Smoke coverage for stalled Auth sessions and stalled cloud bootstrap calls",
-    "Smoke cases run as an isolated two-worker matrix with per-case progress and a hard timeout",
-    "Mail and reward live services connect in the background and no longer block the Start screen",
-    "Supabase requests are bounded so a stalled cloud endpoint cannot freeze startup",
-    "Startup progress reports the subsystem it is waiting for instead of silently stalling",
-    "Clean Runtime registers before player save initialization and emits canonical runtime-ready events",
-    "Two-phase startup removes the Auth/Save/Pre-beta boot dependency cycle",
-    "Single clean runtime replaces the legacy stability, fixpack and mobile patch chain",
-    "Clean startup transition and mobile first-paint alignment",
-    "Canonical Cherry selector and Gacha rendering without frame-delayed repatching",
-    "Strict World 1-6 map rendering, collision and enemy pools",
-    "Object-specific elliptical map collision",
-    "Low-cost XP pickup rendering",
-    "World-positioned gear drop text",
-    "Reduced normal enemy gear drop rates",
-    "Six-branch Elemental Resonance progression with Beta and Live unlock thresholds",
-    "Skin affinities, elemental passives and Blaze, Tidecall, Stoneveil and Windborne in-run skills",
-    "Equipped-GM-only temporary Resonance access with non-persistent test points",
-    "Equipped-GM-only Test Map with a non-persistent in-run Skill Builder",
-    "Mobile GM Tool Pack with protected Mail, Redeem and Profile modules",
-    "Server-backed player Mail and Redeem bridge",
-    "Dynamic server reward catalog for currencies, keys, chests, materials and bag items",
-    "Custom hashed redeem codes with zero-as-unlimited limits",
-    "Common, Rare and Epic chest-only Gacha with guaranteed-skin pity",
-    "Per-account local backup with cloud retry",
-    "Pre-beta starter progression without test unlocks",
-    "50-point regenerating Energy with first-star commitment",
-    "Balanced Common/Uncommon/Rare/Epic/Legendary gear economy",
-    "Level-bound Arsenal progression capped at level 30",
-    "Stacking title stats, profile frames, Social and weekly Power ranking",
-    "World 5 and World 6 replaceable placeholder content"
-  ],
-  "updateFiles": [
-    "index.html",
-    "tools/smoke_09551.mjs",
-    "tools/smoke_boot_096.mjs",
-    ".github/workflows/ci.yml",
-    "src/cherrift_network_guard.js",
-    "src/cherrift_boot.js",
-    "src/cherrift_runtime.js",
-    "assets/cherrift_runtime.css",
-    "src/supabase_config.js",
-    "src/cherrift_auth.js",
-    "AUTH_BOOTSTRAP_V2_HU.md",
-    "src/cherrift_live_services.js",
-    "src/cherrift_gacha.js",
-    "src/cherrift_account_mail.js",
-    "src/cherrift_world_ui.js",
-    "src/cherrift_balance.js",
-    "src/cherrift_prebeta.js",
-    "assets/cherrift_prebeta.css",
-    "src/cherrift_elemental.js",
-    "assets/cherrift_elemental.css",
-    "src/cherrift_skill_builder.js",
-    "assets/cherrift_skill_builder.css",
-    "src/cherrift_manifest.json",
-    "gm/index.html",
-    "gm/gm.css",
-    "gm/gm.js",
-    "supabase/migrations/20260801_prebeta_v095.sql",
-    "supabase/functions/gm-api/index.ts",
-    "supabase/functions/player-api/index.ts",
-    "PREBETA_V095_SETUP_HU.md",
-    "PREBETA_V095_BALANCE_HU.md"
-  ]
+  "ownership": {
+    "boot": [
+      "src/cherrift_boot.js",
+      "assets/cherrift_boot.css"
+    ],
+    "authAndCloud": [
+      "src/cherrift_auth.js",
+      "src/cherrift_supabase_timeout_fix.js",
+      "src/cherrift_network_guard.js",
+      "src/cherrift_live_services.js"
+    ],
+    "accountMailProfileTitles": [
+      "src/cherrift_account_mail.js"
+    ],
+    "gachaAndShop": [
+      "src/cherrift_gacha.js"
+    ],
+    "rewardPresentation": [
+      "src/cherrift_rewards.js"
+    ],
+    "cherrySelector": [
+      "src/cherrift_skin_ui.js"
+    ],
+    "worldAndChapterSelector": [
+      "src/cherrift_world_ui.js"
+    ],
+    "prebetaProgressionAndLobby": [
+      "src/cherrift_prebeta.js",
+      "assets/cherrift_prebeta.css"
+    ],
+    "elementalResonance": [
+      "src/cherrift_elemental.js",
+      "assets/cherrift_elemental.css"
+    ],
+    "testSkillBuilder": [
+      "src/cherrift_skill_builder.js",
+      "assets/cherrift_skill_builder.css"
+    ],
+    "gameplayRuntime": [
+      "src/cherrift_runtime.js",
+      "assets/cherrift_runtime.css"
+    ],
+    "foliageReaction": [
+      "src/cherrift_foliage.js"
+    ],
+    "sharedPresentationOnly": [
+      "assets/cherrift_app.css",
+      "assets/cherrift_ui.css"
+    ]
+  },
+  "cleanup": {
+    "singleBuildQuery": true,
+    "menuDomRepatchingFromRuntime": false,
+    "startupArtworkBlocksBoot": false,
+    "legacyRuntimeAliases": false
+  }
 }

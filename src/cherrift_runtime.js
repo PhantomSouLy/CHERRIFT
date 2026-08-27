@@ -1,56 +1,40 @@
+/* CHERRIFT clean runtime
+ * Canonical owner: gameplay rendering/performance, global run lifecycle,
+ * achievements, and the tiny cross-screen shell helpers that are not owned by
+ * a feature module. Feature-screen DOM ownership lives in the feature modules; runtime does not repatch those screens.
+ */
 (() => {
   "use strict";
+
   if (window.__CHERRIFT_RUNTIME_CLEAN__) return;
   window.__CHERRIFT_RUNTIME_CLEAN__ = true;
 
-  const VERSION = "0.9.6-rework-performance-runtime";
+  const VERSION = "0.9.8.2-clean-runtime";
   const id = value => document.getElementById(value);
   const q = (selector, root = document) => root?.querySelector?.(selector) || null;
   const qa = (selector, root = document) => Array.from(root?.querySelectorAll?.(selector) || []);
   const clean = value => String(value ?? "").replace(/\s+/g, " ").trim();
-  const lower = value => clean(value).toLocaleLowerCase("hu");
   const num = value => Math.max(0, Math.floor(Number(value) || 0));
   const clamp = (value, min, max) => Math.max(min, Math.min(max, Number(value) || 0));
-  const esc = value => String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
+  const esc = value => String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+
   const state = {
     started:false,
-    queued:false,
-    applying:false,
-    observer:null,
     wrapped:false,
     clickBound:false,
-    tiltBound:false,
-    orientationTried:false,
-    info:null,
-    itemTip:null,
     achievementFilter:"all",
-    imageCache:new Map(),
     worldImages:new Map(),
     enemyImages:new Map(),
     patterns:new WeakMap(),
     fireflySprites:new WeakMap(),
-    pinches:new WeakMap(),
     inGameSettings:false,
     runActive:false
   };
-
-  const RARITY_COLORS = Object.freeze({common:"#f4e8ef",uncommon:"#83e39b",rare:"#69c9ff",epic:"#c276ff",legendary:"#f2c454",mythical:"#ff5f9e"});
-  const SKIN_FOLDER_ALIASES = Object.freeze({cherry_default:"base_cherry"});
-  const SKIN_ICON_OVERRIDES = Object.freeze({
-    cherry_default:"assets/player/skins/base_cherry/base_cherry_icon.png",
-    archer_cherry:"assets/player/skins/archer_cherry/archer_cherry_icon.jpg",
-    beastclaw_cherry:"assets/player/skins/beastclaw_cherry/beatclaw_cherry_icon.jpg",
-    cake_deliver_cherry:"assets/player/skins/cake_deliver_cherry/cake_delivery_cherry_icon.jpg",
-    fairy_cherry:"assets/player/skins/fairy_cherry/fairy_cherry_icon.jpg",
-    kimono_cherry:"assets/player/skins/kimono_cherry/kimono_cherry_icon.jpg",
-    ninja_cherry:"assets/player/skins/ninja_cherry/ninja_cherry_icon.jpg",
-    pajama_cherry:"assets/player/skins/pajama_cherry/pajama_cherry_icon.jpg",
-    school_uniform_cherry:"assets/player/skins/school_uniform_cherry/school_uniform_cherry_icon.jpg",
-    sport_cherry:"assets/player/skins/sport_cherry/sport_cherry_icon.jpg",
-    succubus_cherry:"assets/player/skins/succubus_cherry/succubus_cherry_icon.jpg",
-    warrior_cherry:"assets/player/skins/warrior_cherry/warrior_cherry_icon.jpg",
-    wuxia_sakura_cherry:"assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_icon.jpg"
-  });
 
   const ENEMY_SHEETS = Object.freeze({
     pink_slime:{src:"assets/enemies/world_1/slime_sprite_sheet.png",cols:4,rows:3,moveRow:1,fps:7,displayW:78,displayH:66},
@@ -78,10 +62,28 @@
   });
 
   const ENEMY_DEFS = Object.freeze({
-    pink_slime:{name:"Pink Slime",hp:34,speed:105,r:20,xp:4,damage:10},blue_slime:{name:"Blue Slime",hp:48,speed:122,r:22,xp:5,damage:10},tank_blue_slime:{name:"Tank Blue Slime",hp:135,speed:58,r:31,xp:9,damage:16},small_mushroom:{name:"Small Mushroom",hp:46,speed:80,r:21,xp:5,damage:9},angry_ent:{name:"Angry Ent",hp:126,speed:58,r:30,xp:10,damage:16},
-    angry_mushroom:{name:"Angry Mushroom",hp:62,speed:82,r:24,xp:7,damage:8,ranged:true,shootRange:520,shootCooldown:2.4,projectileSpeed:260,projectileDamage:10},dark_ent:{name:"Dark Ent",hp:150,speed:62,r:31,xp:11,damage:18},ghost_slime:{name:"Ghost Slime",hp:24,speed:165,r:20,xp:4,damage:9,alpha:.86},shadow_bat:{name:"Bat",hp:38,speed:112,r:20,xp:4,damage:10,flying:true},
-    big_green_slime:{name:"Big Green Slime",hp:112,speed:72,r:29,xp:9,damage:14},falcon:{name:"Falcon",hp:44,speed:150,r:20,xp:6,damage:11,flying:true},small_coyote:{name:"Small Coyote",hp:72,speed:128,r:23,xp:7,damage:13},red_rock_golem:{name:"Red Rock Golem",hp:190,speed:54,r:33,xp:13,damage:20},red_slime:{name:"Red Slime",hp:62,speed:116,r:22,xp:7,damage:12},spike_slime:{name:"Spike Slime",hp:82,speed:104,r:24,xp:8,damage:15},
-    sand_ancient_ruin_guardian:{name:"Sand Ancient Ruin Guardian",hp:215,speed:62,r:34,xp:15,damage:22},sand_scorpion:{name:"Sand Scorpion",hp:108,speed:112,r:26,xp:10,damage:17},sand_snake:{name:"Sand Snake",hp:76,speed:142,r:22,xp:8,damage:15},ancient_guardian:{name:"Ancient Guardian",hp:250,speed:58,r:36,xp:18,damage:24},ancient_sentinel:{name:"Ancient Sentinel",hp:180,speed:72,r:31,xp:14,damage:21},dark_bat:{name:"Dark Bat",hp:62,speed:148,r:21,xp:8,damage:14,flying:true},dark_ghostly_slime:{name:"Dark Ghostly Slime",hp:70,speed:142,r:22,xp:8,damage:14,alpha:.86}
+    pink_slime:{name:"Pink Slime",hp:34,speed:105,r:20,xp:4,damage:10},
+    blue_slime:{name:"Blue Slime",hp:48,speed:122,r:22,xp:5,damage:10},
+    tank_blue_slime:{name:"Tank Blue Slime",hp:135,speed:58,r:31,xp:9,damage:16},
+    small_mushroom:{name:"Small Mushroom",hp:46,speed:80,r:21,xp:5,damage:9},
+    angry_ent:{name:"Angry Ent",hp:126,speed:58,r:30,xp:10,damage:16},
+    angry_mushroom:{name:"Angry Mushroom",hp:62,speed:82,r:24,xp:7,damage:8,ranged:true,shootRange:520,shootCooldown:2.4,projectileSpeed:260,projectileDamage:10},
+    dark_ent:{name:"Dark Ent",hp:150,speed:62,r:31,xp:11,damage:18},
+    ghost_slime:{name:"Ghost Slime",hp:24,speed:165,r:20,xp:4,damage:9,alpha:.86},
+    shadow_bat:{name:"Bat",hp:38,speed:112,r:20,xp:4,damage:10,flying:true},
+    big_green_slime:{name:"Big Green Slime",hp:112,speed:72,r:29,xp:9,damage:14},
+    falcon:{name:"Falcon",hp:44,speed:150,r:20,xp:6,damage:11,flying:true},
+    small_coyote:{name:"Small Coyote",hp:72,speed:128,r:23,xp:7,damage:13},
+    red_rock_golem:{name:"Red Rock Golem",hp:190,speed:54,r:33,xp:13,damage:20},
+    red_slime:{name:"Red Slime",hp:62,speed:116,r:22,xp:7,damage:12},
+    spike_slime:{name:"Spike Slime",hp:82,speed:104,r:24,xp:8,damage:15},
+    sand_ancient_ruin_guardian:{name:"Sand Ancient Ruin Guardian",hp:215,speed:62,r:34,xp:15,damage:22},
+    sand_scorpion:{name:"Sand Scorpion",hp:108,speed:112,r:26,xp:10,damage:17},
+    sand_snake:{name:"Sand Snake",hp:76,speed:142,r:22,xp:8,damage:15},
+    ancient_guardian:{name:"Ancient Guardian",hp:250,speed:58,r:36,xp:18,damage:24},
+    ancient_sentinel:{name:"Ancient Sentinel",hp:180,speed:72,r:31,xp:14,damage:21},
+    dark_bat:{name:"Dark Bat",hp:62,speed:148,r:21,xp:8,damage:14,flying:true},
+    dark_ghostly_slime:{name:"Dark Ghostly Slime",hp:70,speed:142,r:22,xp:8,damage:14,alpha:.86}
   });
 
   const WORLD_POOLS = Object.freeze({
@@ -131,151 +133,509 @@
     {id:"veteran_bunny",tier:1,name:"Veteran Bunny",desc:"Reach Player Level 30.",test:s=>level(s)>=30,progress:s=>`${Math.min(30,level(s))}/30 level`,reward:{coins:4000,chests:{epic:2},bloomGems:50}}
   ]);
 
-  function language(){return window.CHERRIFT_LOCALIZATION?.language?.()==="en"||window.UI?.save?.settings?.language==="en"?"en":"hu"}
-  function copy(hu,en){return language()==="en"?en:hu}
-  function isPhone(){const touch=Number(navigator.maxTouchPoints)>0||matchMedia("(pointer:coarse)").matches;return touch&&Math.min(innerWidth||9999,innerHeight||9999,screen.width||9999,screen.height||9999)<=820}
-  function mobile(){return matchMedia("(max-width:820px)").matches}
-  function leafNodes(root=document){return qa("h1,h2,h3,h4,h5,p,small,span,b,strong,em,div,button",root).filter(node=>!node.children.length)}
-  function leaves(text,root=document){const wanted=lower(text);return leafNodes(root).filter(node=>lower(node.textContent)===wanted)}
-  function hideExact(text,root=document){leaves(text,root).forEach(node=>node.classList.add("cr-hide"))}
-  function replaceExact(from,to,root=document){leaves(from,root).forEach(node=>{if(clean(node.textContent)!==to)node.textContent=to})}
-  function sectionForHeading(text){const heading=qa("h1,h2,h3",document).find(node=>lower(node.textContent)===lower(text));return heading?.closest("section[id],.panel[id],.screen[id],section,.panel,.screen")||heading?.parentElement||null}
-  function visible(element){return !!element&&!element.classList.contains("hidden")&&element.getClientRects?.().length!==0}
-  function rarityKey(value){const text=lower(value);return ["mythical","legendary","epic","rare","uncommon","common"].find(key=>text.includes(key))||(text.includes("mitikus")?"mythical":text.includes("legendás")?"legendary":text.includes("epikus")?"epic":text.includes("ritka")?"rare":"common")}
+  function language(){
+    return window.CHERRIFT_LOCALIZATION?.language?.() === "en" || window.UI?.save?.settings?.language === "en" ? "en" : "hu";
+  }
+  function copy(hu,en){ return language() === "en" ? en : hu; }
+  function isPhone(){
+    const touch = Number(navigator.maxTouchPoints) > 0 || matchMedia("(pointer:coarse)").matches;
+    return touch && Math.min(innerWidth || 9999, innerHeight || 9999, screen.width || 9999, screen.height || 9999) <= 820;
+  }
+  function mobile(){ return matchMedia("(max-width:820px)").matches; }
 
-  function totalClears(save){const stats=Object.values(save?.stageStats||{}).reduce((sum,e)=>sum+num(e?.clears),0);return stats||Object.values(save?.clearedStages||{}).filter(Boolean).length}
-  function level(save){return Math.max(1,num(save?.account?.level||save?.level||1))}
-  function kills(save){return num(save?.stats?.kills||save?.kills)}
-  function lifetimeCoins(save){return Math.max(num(save?.economy?.lifetimeCoinsEarned),num(save?.stats?.coinsEarned),num(save?.coins))}
-  function chestOpens(save){return num(save?.economy?.totalChestOpens||save?.gacha?.totalOpens)}
-  function gearItems(save){return [...(save?.inventory||[]),...Object.values(save?.equipped||{}).filter(Boolean)]}
-  function gearCount(save){return gearItems(save).length}
-  function hasRarity(save,rarities){return gearItems(save).some(item=>rarities.includes(String(item?.rarity||"")))}
-  function totalStars(save){return Object.values(save?.stageStars||{}).reduce((sum,value)=>sum+clamp(num(value),0,3),0)}
-  function worldStageIds(world){return Array.from({length:5},(_,i)=>`world_${world}_${i+1}`)}
-  function worldClears(save,world){return worldStageIds(world).filter(stageId=>save?.clearedStages?.[stageId]||num(save?.stageStats?.[stageId]?.clears)>0||num(save?.stageStars?.[stageId])>0).length}
-  function worldStars(save,world){return worldStageIds(world).reduce((sum,stageId)=>sum+clamp(num(save?.stageStars?.[stageId]||save?.stageStats?.[stageId]?.stars),0,3),0)}
-  function power(save){return num(save?.power||window.CHERRIFT_PREBETA?.calculatePower?.(save))}
-  function minArsenal(save){const slots=Object.values(save?.arsenal?.slots||{});return slots.length?Math.min(...slots.map(slot=>Math.max(1,num(slot?.level)))):1}
+  function totalClears(save){
+    const stats = Object.values(save?.stageStats || {}).reduce((sum,entry) => sum + num(entry?.clears), 0);
+    return stats || Object.values(save?.clearedStages || {}).filter(Boolean).length;
+  }
+  function level(save){ return Math.max(1, num(save?.account?.level || save?.level || 1)); }
+  function kills(save){ return num(save?.stats?.kills || save?.kills); }
+  function lifetimeCoins(save){ return Math.max(num(save?.economy?.lifetimeCoinsEarned), num(save?.stats?.coinsEarned), num(save?.coins)); }
+  function chestOpens(save){ return num(save?.economy?.totalChestOpens || save?.gacha?.totalOpens); }
+  function gearItems(save){ return [...(save?.inventory || []), ...Object.values(save?.equipped || {}).filter(Boolean)]; }
+  function gearCount(save){ return gearItems(save).length; }
+  function hasRarity(save, rarities){ return gearItems(save).some(item => rarities.includes(String(item?.rarity || ""))); }
+  function totalStars(save){ return Object.values(save?.stageStars || {}).reduce((sum,value) => sum + clamp(num(value),0,3),0); }
+  function worldStageIds(world){ return Array.from({length:5},(_,index) => `world_${world}_${index + 1}`); }
+  function worldClears(save,world){ return worldStageIds(world).filter(stageId => save?.clearedStages?.[stageId] || num(save?.stageStats?.[stageId]?.clears) > 0 || num(save?.stageStars?.[stageId]) > 0).length; }
+  function worldStars(save,world){ return worldStageIds(world).reduce((sum,stageId) => sum + clamp(num(save?.stageStars?.[stageId] || save?.stageStats?.[stageId]?.stars),0,3),0); }
+  function power(save){ return num(save?.power || window.CHERRIFT_PREBETA?.calculatePower?.(save)); }
+  function minArsenal(save){
+    const slots = Object.values(save?.arsenal?.slots || {});
+    return slots.length ? Math.min(...slots.map(slot => Math.max(1, num(slot?.level)))) : 1;
+  }
 
-  function skinFolder(skin){return skin?.folder||window.CHERRIFT_CONFIG?.player?.skins?.[skin?.id]?.folder||SKIN_FOLDER_ALIASES[skin?.id]||skin?.id||"base_cherry"}
-  function skinIcon(skin){return SKIN_ICON_OVERRIDES[skin?.id]||skin?.icon||`assets/player/skins/${skinFolder(skin)}/${skinFolder(skin)}_icon.png`}
-  function imageWorks(source){if(!source)return Promise.resolve(false);if(state.imageCache.has(source))return state.imageCache.get(source);const promise=new Promise(resolve=>{const image=new Image();image.onload=()=>resolve(true);image.onerror=()=>resolve(false);image.src=source});state.imageCache.set(source,promise);return promise}
-  async function firstWorking(candidates){for(const source of [...new Set(candidates.filter(Boolean))])if(await imageWorks(source))return source;return candidates.filter(Boolean)[0]||""}
-  async function resolveSkinAssets(){const skins=window.CHERRIFT_DATA?.skins||[];await Promise.all(skins.map(async skin=>{const folder=skinFolder(skin),root=`assets/player/skins/${folder}`;const icon=await firstWorking([`${root}/${folder}_icon.png`,`${root}/${folder}_icon.jpg`,`${root}/${folder}_icon.jpeg`,skinIcon(skin),folder==="beastclaw_cherry"?`${root}/beatclaw_cherry_icon.jpg`:"",folder==="cake_deliver_cherry"?`${root}/cake_delivery_cherry_icon.jpg`:""]);const splash=await firstWorking([`${root}/${folder}_splashart.png`,`${root}/${folder}_splashart.jpg`,`${root}/${folder}_splashart.jpeg`,skin.splash]);try{if(icon)skin.icon=icon;if(splash)skin.splash=splash}catch(_){}}));return skins}
-  function selectedSkin(){const skins=window.CHERRIFT_DATA?.skins||[];const active=q("#skins .skin-icon-v093.active[data-v093-skin]");if(active?.dataset?.v093Skin)return skins.find(s=>s.id===active.dataset.v093Skin)||skins[0]||null;const index=Number(window.UI?.skinIndex);if(Number.isInteger(index)&&skins[index])return skins[index];const save=window.UI?.save||{};const ids=[save.selectedSkin,save.skin,save.skinId,save.player?.skinId,save.profile?.skinId].filter(Boolean).map(String);return skins.find(s=>ids.includes(String(s.id)))||skins[0]||null}
-  function patchSkinMetadata(){for(const skin of window.CHERRIFT_DATA?.skins||[]){const source=skinIcon(skin);if(source)try{skin.icon=source}catch(_){}}}
-  function patchSkinThumbs(){const skins=window.CHERRIFT_DATA?.skins||[];qa("#skins .skin-icon-v093[data-v093-skin]").forEach(card=>{const skin=skins.find(s=>s.id===card.dataset.v093Skin),image=q("img",card);if(!skin||!image)return;const folder=skinFolder(skin);const source=["warrior_cherry","wuxia_sakura_cherry"].includes(skin.id)?skin.icon:`assets/ui/skin_thumbs/${folder}.webp`;if(source&&image.getAttribute("src")!==source)image.src=source})}
-  function patchWorldSplashes(){for(const stage of window.CHERRIFT_V040?.stages||[]){const world=Number(stage?.world||String(stage?.id||"").match(/world_(\d+)/)?.[1]),chapter=Number(stage?.index||String(stage?.id||"").match(/_(\d+)$/)?.[1]);if(!(world>=1&&world<=6)||!(chapter>=1&&chapter<=5)||stage.training)continue;const variant=chapter<=2?1:chapter<=4?2:world===4?2:3;stage.splash=`assets/map/world${world}/world${world}_splashart_${variant}.png`;const pool=WORLD_POOLS[world]?.[chapter-1];if(pool?.length)stage.enemyPool=[...pool]}}
+  function configureWorldStages(){
+    for (const stage of window.CHERRIFT_V040?.stages || []) {
+      const world = Number(stage?.world || String(stage?.id || "").match(/world_(\d+)/)?.[1]);
+      const chapter = Number(stage?.index || String(stage?.id || "").match(/_(\d+)$/)?.[1]);
+      if (!(world >= 1 && world <= 6) || !(chapter >= 1 && chapter <= 5) || stage.training) continue;
+      const variant = chapter <= 2 ? 1 : chapter <= 4 ? 2 : world === 4 ? 2 : 3;
+      stage.splash = `assets/map/world${world}/world${world}_splashart_${variant}.png`;
+      const pool = WORLD_POOLS[world]?.[chapter - 1];
+      if (pool?.length) stage.enemyPool = [...pool];
+    }
+  }
 
-  function preload(source,map,key=source){if(!source||map.has(key))return map.get(key);const image=new Image();image.decoding="async";image.src=source;map.set(key,image);return image}
-  function seededRandom(seedText){let seed=2166136261;for(const char of String(seedText||"world")){seed^=char.charCodeAt(0);seed=Math.imul(seed,16777619)}return()=>{seed+=0x6D2B79F5;let t=seed;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
-  function stageWorld(game){const stage=game?.stage||game?.getSelectedStage?.()||window.CHERRIFT_V040?.stages?.find?.(entry=>entry.id===game?.save?.selectedStageId);return Math.floor(Number(stage?.world)||Number(String(stage?.id||"").match(/world[_-]?(\d+)/i)?.[1])||0)}
-  function objectCount(baseCount,world,key){if(Number(world)===2&&key==="firefly")return mobile()?4:5;const factor=Number(world)===2?(mobile()?.32:.42):(mobile()?.74:1);return Math.max(1,Math.round(baseCount*factor))}
-  function preloadWorld(world){const config=WORLD_MAPS[world];if(!config)return;preload(config.ground,state.worldImages,`ground:${world}`);for(const [key,spec] of Object.entries(config.objects))preload(spec.src,state.worldImages,`${world}:${key}`)}
-  function buildWorld(game,world){const config=WORLD_MAPS[world];if(!config)return;preloadWorld(world);const random=seededRandom(`${game.stage?.id||`world_${world}`}:clean`),worldSize=Math.max(2400,Number(window.CHERRIFT_CONFIG?.worldSize)||4200),half=worldSize/2-190,placed=[],objects=[];for(const [key,spec] of Object.entries(config.objects)){for(let index=0;index<objectCount(spec.count,world,key);index++){let x=0,y=0,attempts=0;do{x=(random()*2-1)*half;y=(random()*2-1)*half;attempts++}while(attempts<18&&(Math.hypot(x,y)<330||(spec.solid&&placed.some(item=>Math.hypot(x-item.x,y-item.y)<(spec.r||20)+item.r+54))));const object={__cherriftCleanWorld:true,v094Map:true,kind:`clean_world_${world}_${key}`,assetKey:`clean_w${world}_${key}`,fixWorld:world,fixKey:key,x,y,boxW:spec.w,boxH:spec.h,drawW:spec.w,drawH:spec.h,anchor:Number.isFinite(Number(spec.anchor))?Number(spec.anchor):.72,alpha:Number.isFinite(Number(spec.alpha))?Number(spec.alpha):1,glow:!!spec.glow,solid:!!spec.solid,r:spec.r||0,collisionRadius:spec.r||0};if(object.glow){object.baseX=x;object.baseY=y;object.phase=random()*Math.PI*2;object.driftX=8+random()*9;object.driftY=5+random()*7}if(object.solid)placed.push({x,y,r:spec.r||20});objects.push(object)}}game.obstacles=objects;game.__cherriftCleanSolidObjects=objects.filter(o=>o.solid);game.__cherriftCleanWorld=world;return objects}
-  function pattern(context,image){if(!image)return null;let value=state.patterns.get(image);if(!value){try{value=context.createPattern(image,"repeat");state.patterns.set(image,value)}catch(_){value=null}}return value}
-  function drawGround(game,context,zoom,previous){const world=stageWorld(game),config=WORLD_MAPS[world],image=state.worldImages.get(`ground:${world}`)||preload(config?.ground,state.worldImages,`ground:${world}`);if(!config||!image?.complete||!(image.naturalWidth||image.width))return previous?.call(game,context,zoom);const camera=game.camera||{x:0,y:0},safeZoom=Math.max(.1,Number(zoom)||1),viewW=Math.max(1,Number(game.w)||context.canvas?.width||1280)/safeZoom,viewH=Math.max(1,Number(game.h)||context.canvas?.height||720)/safeZoom,margin=mobile()?90:150,x=camera.x-viewW/2-margin,y=camera.y-viewH/2-margin,width=viewW+margin*2,height=viewH+margin*2;context.save();context.fillStyle=pattern(context,image)||"#3a2f34";context.fillRect(x,y,width,height);if(config.tint){context.fillStyle=config.tint;context.fillRect(x,y,width,height)}context.restore()}
-  function objectInView(game,object,margin=180){const camera=game.camera||{x:0,y:0},zoom=Math.max(.1,Number(game.zoom)||1),width=Math.max(1,Number(game.w)||innerWidth)/zoom,height=Math.max(1,Number(game.h)||innerHeight)/zoom;return Math.abs(Number(object.x)-Number(camera.x))<=width/2+margin&&Math.abs(Number(object.y)-Number(camera.y))<=height/2+margin}
-  function fireflyCanvas(image){let variants=state.fireflySprites.get(image);if(!variants){variants=new Map();state.fireflySprites.set(image,variants)}const key=mobile()?"mobile":"desktop";if(variants.has(key))return variants.get(key);const edge=mobile()?56:68,canvas=document.createElement("canvas");canvas.width=edge;canvas.height=edge;const ctx=canvas.getContext("2d"),center=edge/2,gradient=ctx.createRadialGradient(center,center,1,center,center,edge*.48);gradient.addColorStop(0,"rgba(255,250,167,.58)");gradient.addColorStop(.16,"rgba(237,255,111,.30)");gradient.addColorStop(.48,"rgba(201,239,72,.09)");gradient.addColorStop(1,"rgba(180,228,48,0)");ctx.fillStyle=gradient;ctx.fillRect(0,0,edge,edge);const icon=mobile()?15:17;ctx.drawImage(image,Math.round(center-icon/2),Math.round(center-icon/2),icon,icon);variants.set(key,canvas);return canvas}
-  function drawObject(game,context,object){if(!objectInView(game,object,object.glow?120:210))return;const spec=WORLD_MAPS[object.fixWorld]?.objects?.[object.fixKey],image=state.worldImages.get(`${object.fixWorld}:${object.fixKey}`)||preload(spec?.src,state.worldImages,`${object.fixWorld}:${object.fixKey}`);if(!image?.complete||!(image.naturalWidth||image.width))return;const width=Number(object.drawW)||64,height=Number(object.drawH)||64,anchor=Number.isFinite(Number(object.anchor))?Number(object.anchor):.72;let drawX=Number(object.x)||0,drawY=Number(object.y)||0,pulse=1;if(object.glow){const time=Number(game.t)||performance.now()/1000;drawX=Number(object.baseX||object.x)+Math.sin(time*.72+object.phase)*Number(object.driftX||12);drawY=Number(object.baseY||object.y)+Math.cos(time*.58+object.phase)*Number(object.driftY||8);pulse=.82+.18*Math.sin(time*1.7+object.phase);object.x=drawX;object.y=drawY}context.save();context.globalAlpha=clamp((Number(object.alpha)||1)*pulse,0,1);context.imageSmoothingEnabled=true;if(object.glow){const sprite=fireflyCanvas(image);context.drawImage(sprite,Math.round(drawX-sprite.width/2),Math.round(drawY-sprite.height/2));context.restore();return}context.drawImage(image,Math.round(drawX-width/2),Math.round(drawY-height*anchor),Math.round(width),Math.round(height));context.restore()}
-  function hitObstacle(game,previous){const player=game.player,world=stageWorld(game);if(!player||!WORLD_MAPS[world])return previous?.call(game)||false;for(const object of game.__cherriftCleanSolidObjects||(game.obstacles||[]).filter(o=>o?.solid)){if(!object?.__cherriftCleanWorld)continue;const radius=Math.max(1,Number(object.collisionRadius||object.r)),width=Math.max(1,Number(object.drawW||object.boxW)),height=Math.max(1,Number(object.drawH||object.boxH)),anchor=Number.isFinite(Number(object.anchor))?Number(object.anchor):.72,bottom=Number(object.y)+height*(1-anchor);let rx=Math.max(radius,width*.18),ry=Math.max(7,Math.min(radius,height*.10));if(/rock|stone|bones|log/.test(String(object.fixKey||"").toLowerCase())){rx=Math.max(radius,width*.30);ry=Math.max(8,height*.14)}const cx=Number(object.x),cy=bottom-ry*.8,dx=(Number(player.x)-cx)/(rx+(Number(player.r)||18)),dy=(Number(player.y)-cy)/(ry+(Number(player.r)||18));if(dx*dx+dy*dy<1)return true}return false}
-  function customizeEnemy(enemy){const type=enemy?.enemyType||enemy?.type,spec=ENEMY_DEFS[type];if(!spec)return;const old=enemy.spec||{},oldHp=Math.max(1,Number(old.hp)||34),oldSpeed=Math.max(1,Number(old.speed)||105),hpRatio=spec.hp/oldHp,speedRatio=spec.speed/oldSpeed;enemy.hp=Math.max(1,Number(enemy.hp)*hpRatio);enemy.maxHp=Math.max(enemy.hp,Number(enemy.maxHp)*hpRatio);enemy.speed=Math.max(1,Number(enemy.speed)*speedRatio);enemy.r=spec.r;enemy.xp=spec.xp;enemy.damage=spec.damage;enemy.alpha=spec.alpha||enemy.alpha||1;enemy.sheetId=type;enemy.spec={...spec,sheetId:type};if(spec.ranged&&!Number.isFinite(enemy.shootTimer))enemy.shootTimer=.5+Math.random()}
-  function drawEnemy(game,context,enemy){const type=enemy?.enemyType||enemy?.type,sheet=ENEMY_SHEETS[type],image=state.enemyImages.get(type)||preload(sheet?.src,state.enemyImages,type);if(!sheet)return false;if(!objectInView(game,enemy,140))return true;if(!image?.complete||!(image.naturalWidth||image.width))return false;const cols=sheet.cols||4,nw=image.naturalWidth||image.width,nh=image.naturalHeight||image.height,inferred=Math.round((nh*cols)/Math.max(1,nw)),rows=inferred>=2&&inferred<=6?inferred:(sheet.rows||3),frameW=Math.floor(nw/cols),frameH=Math.floor(nh/rows);if(!frameW||!frameH)return false;const attack=rows>=4&&(enemy.attacking||enemy.isAttacking||Number(enemy.attackTimer)>0||Number(enemy.shootFlash)>0||(Number.isFinite(enemy.shootTimer)&&enemy.shootTimer<=.18)),row=enemy.dead?rows-1:attack?2:(sheet.moveRow??1),frame=Math.floor(((game.t||0)+(enemy.phase||0))*(sheet.fps||7))%cols,bossScale=enemy.isBoss?1.42:1,pulse=1+Math.sin((game.t||0)*5.4+(enemy.phase||0))*.018,w=sheet.displayW*bossScale*pulse,h=sheet.displayH*bossScale*pulse;context.save();context.imageSmoothingEnabled=true;context.globalAlpha=enemy.hit>0?.68:(sheet.alpha||enemy.alpha||1);context.drawImage(image,frame*frameW,row*frameH,frameW,frameH,Math.round(enemy.x-w/2),Math.round(enemy.y-h/2+(sheet.yOffset||0)),Math.round(w),Math.round(h));context.restore();return true}
+  function preload(source,map,key=source){
+    if (!source || map.has(key)) return map.get(key);
+    const image = new Image();
+    image.decoding = "async";
+    image.src = source;
+    map.set(key,image);
+    return image;
+  }
 
-  function installGameRuntime(){const proto=window.CherriftGame?.prototype;if(!proto||proto.__cherriftCleanRuntime)return !!proto;proto.__cherriftCleanRuntime=true;patchWorldSplashes();for(const [key,sheet] of Object.entries(ENEMY_SHEETS))preload(sheet.src,state.enemyImages,key);const previousGenerateMap=proto.generateMap,previousStart=proto.start,previousDrawGround=proto.drawGround,previousDrawObstacle=proto.drawObstacle,previousHitObstacle=proto.hitObstacle,previousSpawnEnemy=proto.spawnEnemy,previousDrawEnemy=proto.drawEnemy,previousDrawPickup=proto.drawPickup,previousResize=proto.resize;
-    /* One authoritative frame loop: menus render once, paused screens render
-       on state change, hidden tabs do no work, combat respects the FPS limit. */
+  function seededRandom(seedText){
+    let seed = 2166136261;
+    for (const char of String(seedText || "world")) {
+      seed ^= char.charCodeAt(0);
+      seed = Math.imul(seed,16777619);
+    }
+    return () => {
+      seed += 0x6D2B79F5;
+      let value = seed;
+      value = Math.imul(value ^ value >>> 15, value | 1);
+      value ^= value + Math.imul(value ^ value >>> 7, value | 61);
+      return ((value ^ value >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  function stageWorld(game){
+    const stage = game?.stage || game?.getSelectedStage?.() || window.CHERRIFT_V040?.stages?.find?.(entry => entry.id === game?.save?.selectedStageId);
+    return Math.floor(Number(stage?.world) || Number(String(stage?.id || "").match(/world[_-]?(\d+)/i)?.[1]) || 0);
+  }
+
+  function objectCount(baseCount,world,key){
+    if (Number(world) === 2 && key === "firefly") return mobile() ? 4 : 5;
+    const factor = Number(world) === 2 ? (mobile() ? .32 : .42) : (mobile() ? .74 : 1);
+    return Math.max(1,Math.round(baseCount * factor));
+  }
+
+  function preloadWorld(world){
+    const config = WORLD_MAPS[world];
+    if (!config) return;
+    preload(config.ground,state.worldImages,`ground:${world}`);
+    for (const [key,spec] of Object.entries(config.objects)) preload(spec.src,state.worldImages,`${world}:${key}`);
+  }
+
+  function buildWorld(game,world){
+    const config = WORLD_MAPS[world];
+    if (!config) return game?.obstacles;
+    preloadWorld(world);
+    const random = seededRandom(`${game.stage?.id || `world_${world}`}:clean`);
+    const worldSize = Math.max(2400,Number(window.CHERRIFT_CONFIG?.worldSize) || 4200);
+    const half = worldSize / 2 - 190;
+    const placed = [];
+    const objects = [];
+    for (const [key,spec] of Object.entries(config.objects)) {
+      for (let index = 0; index < objectCount(spec.count,world,key); index += 1) {
+        let x = 0, y = 0, attempts = 0;
+        do {
+          x = (random() * 2 - 1) * half;
+          y = (random() * 2 - 1) * half;
+          attempts += 1;
+        } while (
+          attempts < 18 &&
+          (Math.hypot(x,y) < 330 || (spec.solid && placed.some(item => Math.hypot(x-item.x,y-item.y) < (spec.r || 20) + item.r + 54)))
+        );
+        const object = {
+          __cherriftCleanWorld:true,
+          cherriftMapObject:true,
+          kind:`clean_world_${world}_${key}`,
+          assetKey:`clean_w${world}_${key}`,
+          worldId:world,
+          objectKey:key,
+          x,y,
+          boxW:spec.w,boxH:spec.h,drawW:spec.w,drawH:spec.h,
+          anchor:Number.isFinite(Number(spec.anchor)) ? Number(spec.anchor) : .72,
+          alpha:Number.isFinite(Number(spec.alpha)) ? Number(spec.alpha) : 1,
+          glow:!!spec.glow,
+          solid:!!spec.solid,
+          r:spec.r || 0,
+          collisionRadius:spec.r || 0
+        };
+        if (object.glow) {
+          object.baseX=x; object.baseY=y; object.phase=random()*Math.PI*2;
+          object.driftX=8+random()*9; object.driftY=5+random()*7;
+        }
+        if (object.solid) placed.push({x,y,r:spec.r || 20});
+        objects.push(object);
+      }
+    }
+    game.obstacles = objects;
+    game.__cherriftCleanSolidObjects = objects.filter(object => object.solid);
+    game.__cherriftCleanWorld = world;
+    return objects;
+  }
+
+  function pattern(context,image){
+    if (!image) return null;
+    let value = state.patterns.get(image);
+    if (!value) {
+      try { value = context.createPattern(image,"repeat"); state.patterns.set(image,value); }
+      catch (_) { value = null; }
+    }
+    return value;
+  }
+
+  function drawGround(game,context,zoom,previous){
+    const world = stageWorld(game);
+    const config = WORLD_MAPS[world];
+    const image = state.worldImages.get(`ground:${world}`) || preload(config?.ground,state.worldImages,`ground:${world}`);
+    if (!config || !image?.complete || !(image.naturalWidth || image.width)) return previous?.call(game,context,zoom);
+    const camera = game.camera || {x:0,y:0};
+    const safeZoom = Math.max(.1,Number(zoom) || 1);
+    const viewW = Math.max(1,Number(game.w) || context.canvas?.width || 1280) / safeZoom;
+    const viewH = Math.max(1,Number(game.h) || context.canvas?.height || 720) / safeZoom;
+    const margin = mobile() ? 90 : 150;
+    const x = camera.x - viewW/2 - margin;
+    const y = camera.y - viewH/2 - margin;
+    context.save();
+    context.fillStyle = pattern(context,image) || "#3a2f34";
+    context.fillRect(x,y,viewW + margin*2,viewH + margin*2);
+    if (config.tint) { context.fillStyle=config.tint; context.fillRect(x,y,viewW + margin*2,viewH + margin*2); }
+    context.restore();
+  }
+
+  function objectInView(game,object,margin=180){
+    const camera = game.camera || {x:0,y:0};
+    const zoom = Math.max(.1,Number(game.zoom) || 1);
+    const width = Math.max(1,Number(game.w) || innerWidth) / zoom;
+    const height = Math.max(1,Number(game.h) || innerHeight) / zoom;
+    return Math.abs(Number(object.x)-Number(camera.x)) <= width/2 + margin && Math.abs(Number(object.y)-Number(camera.y)) <= height/2 + margin;
+  }
+
+  function fireflyCanvas(image){
+    let variants = state.fireflySprites.get(image);
+    if (!variants) { variants = new Map(); state.fireflySprites.set(image,variants); }
+    const key = mobile() ? "mobile" : "desktop";
+    if (variants.has(key)) return variants.get(key);
+    const edge = mobile() ? 56 : 68;
+    const canvas = document.createElement("canvas");
+    canvas.width=edge; canvas.height=edge;
+    const context = canvas.getContext("2d");
+    const center = edge/2;
+    const gradient = context.createRadialGradient(center,center,1,center,center,edge*.48);
+    gradient.addColorStop(0,"rgba(255,250,167,.58)");
+    gradient.addColorStop(.16,"rgba(237,255,111,.30)");
+    gradient.addColorStop(.48,"rgba(201,239,72,.09)");
+    gradient.addColorStop(1,"rgba(180,228,48,0)");
+    context.fillStyle=gradient; context.fillRect(0,0,edge,edge);
+    const icon=mobile()?15:17;
+    context.drawImage(image,Math.round(center-icon/2),Math.round(center-icon/2),icon,icon);
+    variants.set(key,canvas);
+    return canvas;
+  }
+
+  function drawObject(game,context,object){
+    if (!objectInView(game,object,object.glow?120:210)) return;
+    const spec = WORLD_MAPS[object.worldId]?.objects?.[object.objectKey];
+    const image = state.worldImages.get(`${object.worldId}:${object.objectKey}`) || preload(spec?.src,state.worldImages,`${object.worldId}:${object.objectKey}`);
+    if (!image?.complete || !(image.naturalWidth || image.width)) return;
+    const width=Number(object.drawW)||64, height=Number(object.drawH)||64;
+    const anchor=Number.isFinite(Number(object.anchor))?Number(object.anchor):.72;
+    let drawX=Number(object.x)||0, drawY=Number(object.y)||0, pulse=1;
+    if (object.glow) {
+      const time=Number(game.t)||performance.now()/1000;
+      drawX=Number(object.baseX||object.x)+Math.sin(time*.72+object.phase)*Number(object.driftX||12);
+      drawY=Number(object.baseY||object.y)+Math.cos(time*.58+object.phase)*Number(object.driftY||8);
+      pulse=.82+.18*Math.sin(time*1.7+object.phase);
+      object.x=drawX; object.y=drawY;
+    }
+    context.save();
+    context.globalAlpha=clamp((Number(object.alpha)||1)*pulse,0,1);
+    context.imageSmoothingEnabled=true;
+    if (object.glow) {
+      const sprite=fireflyCanvas(image);
+      context.drawImage(sprite,Math.round(drawX-sprite.width/2),Math.round(drawY-sprite.height/2));
+      context.restore();
+      return;
+    }
+    context.drawImage(image,Math.round(drawX-width/2),Math.round(drawY-height*anchor),Math.round(width),Math.round(height));
+    context.restore();
+  }
+
+  function hitObstacle(game,previous){
+    const player=game.player, world=stageWorld(game);
+    if (!player || !WORLD_MAPS[world]) return previous?.call(game) || false;
+    for (const object of game.__cherriftCleanSolidObjects || (game.obstacles || []).filter(entry => entry?.solid)) {
+      if (!object?.__cherriftCleanWorld) continue;
+      const radius=Math.max(1,Number(object.collisionRadius||object.r));
+      const width=Math.max(1,Number(object.drawW||object.boxW));
+      const height=Math.max(1,Number(object.drawH||object.boxH));
+      const anchor=Number.isFinite(Number(object.anchor))?Number(object.anchor):.72;
+      const bottom=Number(object.y)+height*(1-anchor);
+      let rx=Math.max(radius,width*.18), ry=Math.max(7,Math.min(radius,height*.10));
+      if (/rock|stone|bones|log/.test(String(object.objectKey||"").toLowerCase())) { rx=Math.max(radius,width*.30); ry=Math.max(8,height*.14); }
+      const cx=Number(object.x), cy=bottom-ry*.8;
+      const dx=(Number(player.x)-cx)/(rx+(Number(player.r)||18));
+      const dy=(Number(player.y)-cy)/(ry+(Number(player.r)||18));
+      if (dx*dx+dy*dy<1) return true;
+    }
+    return false;
+  }
+
+  function customizeEnemy(enemy){
+    const type=enemy?.enemyType||enemy?.type, spec=ENEMY_DEFS[type];
+    if (!spec) return;
+    const old=enemy.spec||{}, oldHp=Math.max(1,Number(old.hp)||34), oldSpeed=Math.max(1,Number(old.speed)||105);
+    const hpRatio=spec.hp/oldHp, speedRatio=spec.speed/oldSpeed;
+    enemy.hp=Math.max(1,Number(enemy.hp)*hpRatio);
+    enemy.maxHp=Math.max(enemy.hp,Number(enemy.maxHp)*hpRatio);
+    enemy.speed=Math.max(1,Number(enemy.speed)*speedRatio);
+    enemy.r=spec.r; enemy.xp=spec.xp; enemy.damage=spec.damage; enemy.alpha=spec.alpha||enemy.alpha||1;
+    enemy.sheetId=type; enemy.spec={...spec,sheetId:type};
+    if (spec.ranged&&!Number.isFinite(enemy.shootTimer)) enemy.shootTimer=.5+Math.random();
+  }
+
+  function drawEnemy(game,context,enemy){
+    const type=enemy?.enemyType||enemy?.type, sheet=ENEMY_SHEETS[type];
+    const image=state.enemyImages.get(type)||preload(sheet?.src,state.enemyImages,type);
+    if (!sheet) return false;
+    if (!objectInView(game,enemy,140)) return true;
+    if (!image?.complete || !(image.naturalWidth||image.width)) return false;
+    const cols=sheet.cols||4, nw=image.naturalWidth||image.width, nh=image.naturalHeight||image.height;
+    const inferred=Math.round((nh*cols)/Math.max(1,nw));
+    const rows=inferred>=2&&inferred<=6?inferred:(sheet.rows||3);
+    const frameW=Math.floor(nw/cols), frameH=Math.floor(nh/rows);
+    if (!frameW||!frameH) return false;
+    const attack=rows>=4&&(enemy.attacking||enemy.isAttacking||Number(enemy.attackTimer)>0||Number(enemy.shootFlash)>0||(Number.isFinite(enemy.shootTimer)&&enemy.shootTimer<=.18));
+    const row=enemy.dead?rows-1:attack?2:(sheet.moveRow??1);
+    const frame=Math.floor(((game.t||0)+(enemy.phase||0))*(sheet.fps||7))%cols;
+    const bossScale=enemy.isBoss?1.42:1, pulse=1+Math.sin((game.t||0)*5.4+(enemy.phase||0))*.018;
+    const width=sheet.displayW*bossScale*pulse, height=sheet.displayH*bossScale*pulse;
+    context.save();
+    context.imageSmoothingEnabled=true;
+    context.globalAlpha=enemy.hit>0?.68:(sheet.alpha||enemy.alpha||1);
+    context.drawImage(image,frame*frameW,row*frameH,frameW,frameH,Math.round(enemy.x-width/2),Math.round(enemy.y-height/2+(sheet.yOffset||0)),Math.round(width),Math.round(height));
+    context.restore();
+    return true;
+  }
+
+  function installGameRuntime(){
+    const proto=window.CherriftGame?.prototype;
+    if (!proto || proto.__cherriftCleanRuntime) return !!proto;
+    proto.__cherriftCleanRuntime=true;
+    configureWorldStages();
+    for (const [key,sheet] of Object.entries(ENEMY_SHEETS)) preload(sheet.src,state.enemyImages,key);
+    const previousGenerateMap=proto.generateMap;
+    const previousStart=proto.start;
+    const previousDrawGround=proto.drawGround;
+    const previousDrawObstacle=proto.drawObstacle;
+    const previousHitObstacle=proto.hitObstacle;
+    const previousSpawnEnemy=proto.spawnEnemy;
+    const previousDrawEnemy=proto.drawEnemy;
+    const previousDrawPickup=proto.drawPickup;
+    const previousResize=proto.resize;
+
     proto.loop=function cherriftFrameLoop(now){
       const active=this.mode==="playing";
       const requested=Math.max(30,Math.min(60,Number(this.save?.settings?.fpsLimit||window.CHERRIFT_CONFIG?.performance?.defaultFpsLimit||60)));
       const lowEnd=(Number(navigator.deviceMemory||0)>0&&Number(navigator.deviceMemory)<=4)||(Number(navigator.hardwareConcurrency||0)>0&&Number(navigator.hardwareConcurrency)<=4);
       const fps=matchMedia("(max-width:820px)").matches&&lowEnd?Math.min(45,requested):requested;
       const minFrameMs=1000/fps;
-      if(document.hidden){this.last=now;requestAnimationFrame(value=>this.loop(value));return;}
-      if(active&&now-this.last>=minFrameMs-.5){
-        const dt=Math.min(.05,(now-this.last)/1000||0);this.last=now;this.t+=dt;this.update(dt);this.render();this.__cherriftRenderedMode=this.mode;
-      }else if(!active&&(this.__cherriftRenderedMode!==this.mode||this.__cherriftNeedsRender)){
-        this.last=now;this.render();this.__cherriftRenderedMode=this.mode;this.__cherriftNeedsRender=false;
+      if (document.hidden) { this.last=now; requestAnimationFrame(value=>this.loop(value)); return; }
+      if (active && now-this.last>=minFrameMs-.5) {
+        const dt=Math.min(.05,(now-this.last)/1000||0);
+        this.last=now; this.t+=dt; this.update(dt); this.render(); this.__cherriftRenderedMode=this.mode;
+      } else if (!active && (this.__cherriftRenderedMode!==this.mode || this.__cherriftNeedsRender)) {
+        this.last=now; this.render(); this.__cherriftRenderedMode=this.mode; this.__cherriftNeedsRender=false;
       }
       requestAnimationFrame(value=>this.loop(value));
     };
-    if(typeof previousGenerateMap==="function")proto.generateMap=function(...args){const legacy=previousGenerateMap.apply(this,args),world=stageWorld(this);return WORLD_MAPS[world]?buildWorld(this,world):legacy};
-    if(typeof previousStart==="function")proto.start=async function(...args){const before=stageWorld(this);if(WORLD_MAPS[before])preloadWorld(before);const result=await previousStart.apply(this,args),world=stageWorld(this);if(WORLD_MAPS[world])buildWorld(this,world);if(this.player&&!this.player.__cleanBaseCombat){this.player.crit=Math.max(0,Number(this.player.crit||0)-.02);this.player.critDamage=Math.max(1,Number(this.player.critDamage||1.5)-.25);this.player.__cleanBaseCombat=true}return result};
-    if(typeof previousDrawGround==="function")proto.drawGround=function(context,zoom=1){return drawGround(this,context,zoom,previousDrawGround)};
-    if(typeof previousDrawObstacle==="function")proto.drawObstacle=function(context,object){const world=stageWorld(this);if(WORLD_MAPS[world]){if(!object?.__cherriftCleanWorld||Number(object.fixWorld)!==world)return;return drawObject(this,context,object)}return previousDrawObstacle.call(this,context,object)};
-    proto.hitObstacle=function(...args){return WORLD_MAPS[stageWorld(this)]?hitObstacle(this,previousHitObstacle):(typeof previousHitObstacle==="function"?previousHitObstacle.apply(this,args):false)};
-    if(typeof previousSpawnEnemy==="function")proto.spawnEnemy=function(...args){const before=this.enemies?.length||0,result=previousSpawnEnemy.apply(this,args);for(const enemy of(this.enemies||[]).slice(before))customizeEnemy(enemy);return result};
-    if(typeof previousDrawEnemy==="function")proto.drawEnemy=function(context,enemy){if(drawEnemy(this,context,enemy))return;return previousDrawEnemy.call(this,context,enemy)};
-    if(typeof previousDrawPickup==="function")proto.drawPickup=function(context,pickup){if(!objectInView(this,pickup,90))return;if(pickup?.type!=="xp")return previousDrawPickup.call(this,context,pickup);const large=Number(pickup.value)>=5,image=this.assets?.get?.(large?"xpBig":"xpSmall")||this.assets?.get?.(large?"xpLarge":"xpSmall");if(!image)return previousDrawPickup.call(this,context,pickup);const maximum=large?24:17,nw=Math.max(1,Number(image.naturalWidth||image.width)||maximum),nh=Math.max(1,Number(image.naturalHeight||image.height)||maximum),scale=maximum/Math.max(nw,nh),width=Math.max(8,Math.round(nw*scale)),height=Math.max(8,Math.round(nh*scale));context.save();context.imageSmoothingEnabled=true;if("imageSmoothingQuality" in context)context.imageSmoothingQuality="high";context.drawImage(image,Math.round(pickup.x-width/2),Math.round(pickup.y-height/2),width,height);context.restore()};
-    if(typeof previousResize==="function")proto.resize=function(...args){const lowEnd=(Number(navigator.deviceMemory||0)>0&&Number(navigator.deviceMemory)<=4)||(Number(navigator.hardwareConcurrency||0)>0&&Number(navigator.hardwareConcurrency)<=4),phone=matchMedia("(max-width:820px)").matches;this.dpr=Math.max(1,Math.min(window.devicePixelRatio||1,phone?(lowEnd?1:1.2):1.5));const result=previousResize.apply(this,args);this.__cherriftNeedsRender=true;if(this.ctx){this.ctx.imageSmoothingEnabled=true;if("imageSmoothingQuality" in this.ctx)this.ctx.imageSmoothingQuality=phone?"medium":"high"}return result};
-    if(window.UI?.updateHUD&&!window.UI.updateHUD.__cherriftThrottled){
-      const updateHud=window.UI.updateHUD.bind(window.UI);let lastHud=0;
-      const throttled=function(game){const now=performance.now();if(now-lastHud<100)return;lastHud=now;return updateHud(game)};
-      throttled.__cherriftThrottled=true;window.UI.updateHUD=throttled;
+
+    if (typeof previousGenerateMap==="function") proto.generateMap=function(...args){
+      const legacy=previousGenerateMap.apply(this,args), world=stageWorld(this);
+      return WORLD_MAPS[world]?buildWorld(this,world):legacy;
+    };
+    if (typeof previousStart==="function") proto.start=async function(...args){
+      const before=stageWorld(this);
+      if (WORLD_MAPS[before]) preloadWorld(before);
+      const result=await previousStart.apply(this,args), world=stageWorld(this);
+      if (WORLD_MAPS[world]) buildWorld(this,world);
+      if (this.player&&!this.player.__cleanBaseCombat) {
+        this.player.crit=Math.max(0,Number(this.player.crit||0)-.02);
+        this.player.critDamage=Math.max(1,Number(this.player.critDamage||1.5)-.25);
+        this.player.__cleanBaseCombat=true;
+      }
+      return result;
+    };
+    if (typeof previousDrawGround==="function") proto.drawGround=function(context,zoom=1){ return drawGround(this,context,zoom,previousDrawGround); };
+    if (typeof previousDrawObstacle==="function") proto.drawObstacle=function(context,object){
+      const world=stageWorld(this);
+      if (WORLD_MAPS[world]) {
+        if (!object?.__cherriftCleanWorld || Number(object.worldId)!==world) return;
+        return drawObject(this,context,object);
+      }
+      return previousDrawObstacle.call(this,context,object);
+    };
+    proto.hitObstacle=function(...args){
+      return WORLD_MAPS[stageWorld(this)] ? hitObstacle(this,previousHitObstacle) : (typeof previousHitObstacle==="function"?previousHitObstacle.apply(this,args):false);
+    };
+    if (typeof previousSpawnEnemy==="function") proto.spawnEnemy=function(...args){
+      const before=this.enemies?.length||0, result=previousSpawnEnemy.apply(this,args);
+      for (const enemy of (this.enemies||[]).slice(before)) customizeEnemy(enemy);
+      return result;
+    };
+    if (typeof previousDrawEnemy==="function") proto.drawEnemy=function(context,enemy){
+      if (drawEnemy(this,context,enemy)) return;
+      return previousDrawEnemy.call(this,context,enemy);
+    };
+    if (typeof previousDrawPickup==="function") proto.drawPickup=function(context,pickup){
+      if (!objectInView(this,pickup,90)) return;
+      if (pickup?.type!=="xp") return previousDrawPickup.call(this,context,pickup);
+      const large=Number(pickup.value)>=5;
+      const image=this.assets?.get?.(large?"xpBig":"xpSmall")||this.assets?.get?.(large?"xpLarge":"xpSmall");
+      if (!image) return previousDrawPickup.call(this,context,pickup);
+      const maximum=large?24:17, nw=Math.max(1,Number(image.naturalWidth||image.width)||maximum), nh=Math.max(1,Number(image.naturalHeight||image.height)||maximum);
+      const scale=maximum/Math.max(nw,nh), width=Math.max(8,Math.round(nw*scale)), height=Math.max(8,Math.round(nh*scale));
+      context.save(); context.imageSmoothingEnabled=true;
+      if ("imageSmoothingQuality" in context) context.imageSmoothingQuality="high";
+      context.drawImage(image,Math.round(pickup.x-width/2),Math.round(pickup.y-height/2),width,height);
+      context.restore();
+    };
+    if (typeof previousResize==="function") proto.resize=function(...args){
+      const lowEnd=(Number(navigator.deviceMemory||0)>0&&Number(navigator.deviceMemory)<=4)||(Number(navigator.hardwareConcurrency||0)>0&&Number(navigator.hardwareConcurrency)<=4);
+      const phone=matchMedia("(max-width:820px)").matches;
+      this.dpr=Math.max(1,Math.min(window.devicePixelRatio||1,phone?(lowEnd?1:1.2):1.5));
+      const result=previousResize.apply(this,args);
+      this.__cherriftNeedsRender=true;
+      if (this.ctx) {
+        this.ctx.imageSmoothingEnabled=true;
+        if ("imageSmoothingQuality" in this.ctx) this.ctx.imageSmoothingQuality=phone?"medium":"high";
+      }
+      return result;
+    };
+    if (window.UI?.updateHUD && !window.UI.updateHUD.__cherriftThrottled) {
+      const updateHud=window.UI.updateHUD.bind(window.UI); let lastHud=0;
+      const throttled=function(game){ const now=performance.now(); if(now-lastHud<100)return; lastHud=now; return updateHud(game); };
+      throttled.__cherriftThrottled=true;
+      window.UI.updateHUD=throttled;
     }
-    return true
+    return true;
   }
 
-  function achievementIcon(tier){return tier===1?"assets/ui/achivement_gold.png":tier===2?"assets/ui/achivement_silver.png":"assets/ui/achivement_bronze.png"}
-  function rewardText(reward={}){const parts=[];if(reward.coins)parts.push(`🪙 ${reward.coins}`);if(reward.chests?.common)parts.push(`${reward.chests.common} Common Chest`);if(reward.chests?.rare)parts.push(`${reward.chests.rare} Rare Chest`);if(reward.chests?.epic)parts.push(`${reward.chests.epic} Epic Chest`);if(reward.bloomGems)parts.push(`${reward.bloomGems} Bloom Gem`);if(reward.themes?.includes("cozy_cherry"))parts.push("Cozy Cherry Theme");return parts.join(" · ")||"Special reward"}
-  function findAchievementsPanel(){const direct=id("achievements");if(direct&&!direct.classList.contains("hidden"))return direct;return qa("#app > section,.panel,.screen").find(panel=>!panel.classList.contains("hidden")&&/^(Achievements|Eredmények)$/i.test(clean(q("h1,h2",panel)?.textContent)))||null}
-  function renderAchievements(panel=findAchievementsPanel()){if(!panel||!window.UI?.save)return;const save=window.UI.save;save.fixAchievementsClaimed=Array.isArray(save.fixAchievementsClaimed)?save.fixAchievementsClaimed:[];const claimed=new Set(save.fixAchievementsClaimed),filter=state.achievementFilter,list=ACHIEVEMENTS.filter(a=>filter==="all"||String(a.tier)===filter);panel.dataset.crAchievements="1";panel.innerHTML=`<div class="cr-ach-shell"><header class="cr-ach-head"><button class="cr-ach-back" type="button" data-cr-ach-back aria-label="Back">←</button><div><h1>${copy("Eredmények","Achievements")}</h1></div></header><nav class="cr-ach-filter">${[["all",copy("Mind","All")],["1","Tier 1 · Gold"],["2","Tier 2 · Silver"],["3","Tier 3 · Bronze"]].map(([key,label])=>`<button type="button" data-cr-ach-filter="${key}" class="${filter===key?"active":""}">${label}</button>`).join("")}</nav><div class="cr-ach-grid">${list.map(a=>{const unlocked=!!a.test(save),isClaimed=claimed.has(a.id),tierColor=a.tier===1?"#e8b84d":a.tier===2?"#9eb8cf":"#b97857";return `<article class="cr-ach-card ${unlocked?"":"locked"}" style="--tier-color:${tierColor}"><div class="cr-ach-tier"><img src="${achievementIcon(a.tier)}" alt=""></div><div class="cr-ach-copy"><h3>${esc(a.name)}</h3><p>${esc(a.desc)}</p><small>${esc(a.progress(save))}</small><small class="reward">${esc(rewardText(a.reward))}</small></div><button class="cr-ach-action" type="button" data-cr-ach-claim="${a.id}" ${!unlocked||isClaimed?"disabled":""}>${isClaimed?copy("ÁTVÉVE","CLAIMED"):unlocked?copy("ÁTVÉTEL","CLAIM"):copy("ZÁROLVA","LOCKED")}</button></article>`}).join("")}</div></div>`}
-  function grantAchievement(achievementId){const a=ACHIEVEMENTS.find(x=>x.id===achievementId),save=window.UI?.save;if(!a||!save||!a.test(save))return;save.fixAchievementsClaimed=Array.isArray(save.fixAchievementsClaimed)?save.fixAchievementsClaimed:[];if(save.fixAchievementsClaimed.includes(achievementId))return;const reward=a.reward||{};save.coins=num(save.coins)+num(reward.coins);save.chests={common:0,rare:0,epic:0,...(save.chests||{})};for(const tier of["common","rare","epic"])save.chests[tier]=num(save.chests[tier])+num(reward.chests?.[tier]);if(reward.bloomGems){save.bloomGems=num(save.bloomGems??save.blossomGems)+num(reward.bloomGems);save.blossomGems=save.bloomGems}for(const themeId of reward.themes||[])window.CHERRIFT_THEMES?.unlock?.(themeId,save,{silent:true});save.fixAchievementsClaimed.push(achievementId);try{window.CherriftStorage?.save?.(save)}catch(_){}window.UI?.refreshMenu?.();window.dispatchEvent(new CustomEvent("cherrift:savechange",{detail:{source:"achievement",id:achievementId}}));renderAchievements()}
+  function achievementIcon(tier){ return tier===1?"assets/ui/achivement_gold.png":tier===2?"assets/ui/achivement_silver.png":"assets/ui/achivement_bronze.png"; }
+  function rewardText(reward={}){
+    const parts=[];
+    if(reward.coins)parts.push(`🪙 ${reward.coins}`);
+    if(reward.chests?.common)parts.push(`${reward.chests.common} Common Chest`);
+    if(reward.chests?.rare)parts.push(`${reward.chests.rare} Rare Chest`);
+    if(reward.chests?.epic)parts.push(`${reward.chests.epic} Epic Chest`);
+    if(reward.bloomGems)parts.push(`${reward.bloomGems} Bloom Gem`);
+    if(reward.themes?.includes("cozy_cherry"))parts.push("Cozy Cherry Theme");
+    return parts.join(" · ")||"Special reward";
+  }
+  function findAchievementsPanel(){
+    const direct=id("achievements");
+    if(direct&&!direct.classList.contains("hidden"))return direct;
+    return qa("#app > section,.panel,.screen").find(panel=>!panel.classList.contains("hidden")&&/^(Achievements|Eredmények)$/i.test(clean(q("h1,h2",panel)?.textContent)))||null;
+  }
+  function renderAchievements(panel=findAchievementsPanel()){
+    if(!panel||!window.UI?.save)return;
+    const save=window.UI.save;
+    save.fixAchievementsClaimed=Array.isArray(save.fixAchievementsClaimed)?save.fixAchievementsClaimed:[];
+    const claimed=new Set(save.fixAchievementsClaimed), filter=state.achievementFilter;
+    const list=ACHIEVEMENTS.filter(item=>filter==="all"||String(item.tier)===filter);
+    panel.dataset.crAchievements="1";
+    panel.innerHTML=`<div class="cr-ach-shell"><header class="cr-ach-head"><button class="cr-ach-back" type="button" data-cr-ach-back aria-label="Back">←</button><div><h1>${copy("Eredmények","Achievements")}</h1></div></header><nav class="cr-ach-filter">${[["all",copy("Mind","All")],["1","Tier 1 · Gold"],["2","Tier 2 · Silver"],["3","Tier 3 · Bronze"]].map(([key,label])=>`<button type="button" data-cr-ach-filter="${key}" class="${filter===key?"active":""}">${label}</button>`).join("")}</nav><div class="cr-ach-grid">${list.map(item=>{const unlocked=!!item.test(save),isClaimed=claimed.has(item.id),tierColor=item.tier===1?"#e8b84d":item.tier===2?"#9eb8cf":"#b97857";return `<article class="cr-ach-card ${unlocked?"":"locked"}" style="--tier-color:${tierColor}"><div class="cr-ach-tier"><img src="${achievementIcon(item.tier)}" alt=""></div><div class="cr-ach-copy"><h3>${esc(item.name)}</h3><p>${esc(item.desc)}</p><small>${esc(item.progress(save))}</small><small class="reward">${esc(rewardText(item.reward))}</small></div><button class="cr-ach-action" type="button" data-cr-ach-claim="${item.id}" ${!unlocked||isClaimed?"disabled":""}>${isClaimed?copy("ÁTVÉVE","CLAIMED"):unlocked?copy("ÁTVÉTEL","CLAIM"):copy("ZÁROLVA","LOCKED")}</button></article>`}).join("")}</div></div>`;
+  }
+  function grantAchievement(achievementId){
+    const achievement=ACHIEVEMENTS.find(item=>item.id===achievementId), save=window.UI?.save;
+    if(!achievement||!save||!achievement.test(save))return;
+    save.fixAchievementsClaimed=Array.isArray(save.fixAchievementsClaimed)?save.fixAchievementsClaimed:[];
+    if(save.fixAchievementsClaimed.includes(achievementId))return;
+    const reward=achievement.reward||{};
+    save.coins=num(save.coins)+num(reward.coins);
+    save.chests={common:0,rare:0,epic:0,...(save.chests||{})};
+    for(const tier of["common","rare","epic"])save.chests[tier]=num(save.chests[tier])+num(reward.chests?.[tier]);
+    if(reward.bloomGems){save.bloomGems=num(save.bloomGems??save.blossomGems)+num(reward.bloomGems);save.blossomGems=save.bloomGems;}
+    for(const themeId of reward.themes||[])window.CHERRIFT_THEMES?.unlock?.(themeId,save,{silent:true});
+    save.fixAchievementsClaimed.push(achievementId);
+    try{window.CherriftStorage?.save?.(save);}catch(_){}
+    window.UI?.refreshMenu?.();
+    window.dispatchEvent(new CustomEvent("cherrift:savechange",{detail:{source:"achievement",id:achievementId}}));
+    renderAchievements();
+  }
 
-  function reconcileSkillPoints(){const save=window.UI?.save;if(!save?.account)return;save.account.skillTreeV082||={ranks:{}};const spent=Object.values(save.account.skillTreeV082.ranks||{}).reduce((sum,v)=>sum+num(v),0),available=Math.max(0,Math.max(1,num(save.account.level||1))-spent),current=num(save.account.skillPoints);if(current<available){save.account.skillPoints=available;try{window.CherriftStorage?.save?.(save)}catch(_){}}}
-  function patchAvatarFrames(){qa(".prebeta-avatar").forEach(avatar=>{const frame=q(".prebeta-avatar-frame",avatar),source=String(frame?.getAttribute("src")||"").toLowerCase();let size="72%";if(/frame_rank/.test(source))size="76%";else if(/frame_(?:beta|event|pre_reg)/.test(source))size="74%";else if(/frame(?:30|50|80|100|150|200|225|250)lvl/.test(source))size="70%";avatar.style.setProperty("--cr-avatar-size",size)})}
-  function patchLockedEnemies(){qa(".enemy-card-v084.locked").forEach(card=>{if(!q(".cr-locked-enemy-question",card)){const mark=document.createElement("span");mark.className="cr-locked-enemy-question";mark.textContent="?";card.prepend(mark)}})}
-  function patchShopCards(){qa(".bag-section-v080").forEach(section=>{if(!/Sakura Essence Skin Shop/i.test(q("header h2,h2",section)?.textContent||""))return;qa(".food-card-v080",section).forEach(card=>card.classList.add("cr-skin-shop-card"))})}
-  function patchProfileUsername(){for(const root of[id("profileBugfixV0941"),id("profileV082"),id("profile"),q(".profile-panel-bf")].filter(Boolean))leafNodes(root).forEach(node=>{if(node.children.length)return;const text=clean(node.textContent);if(/^Discord\s*:/i.test(text))node.textContent=text.replace(/^Discord\s*:/i,"Username:")})}
-  function ensureDesktopEnergy(){if(mobile()||!window.UI?.save)return;let button=id("crDesktopEnergy");if(!button){button=document.createElement("button");button.id="crDesktopEnergy";button.type="button";button.innerHTML='<span class="bolt">⚡</span><b></b>';button.title="Energy"}const target=q("#globalRailV060 .rail-bottom-v060")||id("resourceBarV082");if(target&&button.parentElement!==target)target.appendChild(button);window.CHERRIFT_PREBETA?.refreshEnergy?.(window.UI.save);const max=Math.max(1,Number(window.UI.save.energyState?.max)||50);q("b",button).textContent=`${Math.max(0,Number(window.UI.save.energy)||0)}/${max}`}
-  function lobbyRoute(){if(visible(id("socialV082")))return"socialV082";if(visible(id("rankingPrebeta")))return"rankingPrebeta";if(visible(id("buffsV082")))return"buffsV082";if(visible(id("menu")))return"menu";return""}
-  function ensureLobbySubnav(){if(mobile()){id("crLobbySubnav")?.remove();return}const route=lobbyRoute();let nav=id("crLobbySubnav");if(!route){nav?.remove();return}if(!nav){nav=document.createElement("nav");nav.id="crLobbySubnav";nav.innerHTML='<button type="button" data-cr-lobby="socialV082">Social</button><button type="button" data-cr-lobby="rankingPrebeta">Rank</button><button type="button" data-cr-lobby="buffsV082">Buff List</button>';const rail=id("globalRailV060");rail?.insertAdjacentElement("afterend",nav)}qa("[data-cr-lobby]",nav).forEach(button=>button.classList.toggle("active",button.dataset.crLobby===route))}
-  function patchDuplicateReveal(){qa(".gco-skin-reveal").forEach(card=>{if(!/Duplicate|Duplik/i.test(card.textContent||"")||card.dataset.crDupe)return;card.dataset.crDupe="1";const image=q(".gco-skin-art",card);if(!image)return;const wrap=document.createElement("div");wrap.className="gco-dupe-art-wrap-cr";image.before(wrap);wrap.appendChild(image);const cross=document.createElement("span");cross.className="gco-dupe-cross-cr";wrap.appendChild(cross)})}
+  function normalizePlayerProgression(){
+    const save=window.UI?.save;
+    if(!save?.account)return;
+    save.account.skillTreeV082||={ranks:{}};
+    const spent=Object.values(save.account.skillTreeV082.ranks||{}).reduce((sum,value)=>sum+num(value),0);
+    const available=Math.max(0,Math.max(1,num(save.account.level||1))-spent);
+    if(num(save.account.skillPoints)<available){
+      save.account.skillPoints=available;
+      try{window.CherriftStorage?.save?.(save);}catch(_){}
+    }
+  }
 
-  function selectedSkinElement(skin){const raw=skin?.element?.name||skin?.elementName||skin?.element||skin?.affinity||skin?.elementType||"Unknown";return typeof raw==="string"?raw:(raw?.name||"Unknown")}
-  function patchSkinDialog(){const dialog=q(".skin-skill-dialog-v093");if(!dialog)return;const head=q("h2,h3",dialog);if(head&&/képesség|ability|skill/i.test(head.textContent))head.textContent="Skills";const skin=selectedSkin();if(!q(".cr-passive",dialog)){const raw=skin?.passiveDescription||skin?.passiveText||skin?.passive?.description||skin?.passive,passive=typeof raw==="string"?raw:(raw?.text||raw?.description||"");if(passive){const block=document.createElement("div");block.className="cr-passive";block.innerHTML=`<small>Passive</small><p>${esc(passive)}</p>`;(head||dialog.firstElementChild)?.insertAdjacentElement?.("afterend",block)||dialog.prepend(block)}}qa("dt",dialog).forEach(dt=>{const text=lower(dt.textContent);if(/újratölt|cooldown/.test(text))dt.textContent="CD";else if(/hatótáv|range/.test(text))dt.textContent="Range";else if(/sebzés\s*\/\s*gyógyítás|damage\s*\/\s*heal/.test(text)){const context=lower(`${dt.parentElement?.textContent||""} ${q("p",dialog)?.textContent||""}`),heals=/heal|gyógy/.test(context),damages=/damage|dmg|sebz|támad/.test(context)||!heals;dt.textContent=heals&&!damages?"HEAL":damages&&!heals?"DMG":"DMG + HEAL"}else if(/^típus$|^type$/.test(text)){const context=lower(dialog.textContent);if(/heal|gyógy/.test(context)&&/damage|dmg|sebz/.test(context))dt.textContent="DMG + HEAL";else dt.parentElement?.classList.add("cr-hide")}})}
-  function patchSkin(){const root=id("skins");if(!root)return;replaceExact("Base Cherry","Cherry",root);hideExact("Álló támadás",root);hideExact("Standing attack",root);const skin=selectedSkin(),art=q(".skin-art-v093",root),rarity=rarityKey(skin?.rarity||q(".rarity-pill,.skin-rarity-v093",root)?.textContent||"common"),rarityClass=`cr-rarity-${rarity}`;if(art){[...art.classList].filter(c=>c.startsWith("cr-rarity-")).forEach(c=>art.classList.remove(c));art.classList.add(rarityClass);art.style.setProperty("--cr-rarity",RARITY_COLORS[rarity]);if(skin?.splash)art.style.backgroundImage=`linear-gradient(180deg,rgba(6,3,12,.01),rgba(6,3,12,.16)),url("${skin.splash}")`;qa(".fix-splash-img-v095",art).forEach(image=>image.remove())}const rarityNode=q(".rarity-pill,.skin-rarity-v093",root);if(rarityNode){rarityNode.classList.add(rarityClass);rarityNode.style.setProperty("--cr-rarity",RARITY_COLORS[rarity])}leafNodes(root).forEach(node=>{const text=lower(node.textContent);if((text==="passzív"||text==="passive")&&!node.closest(".skin-skill-dialog-v093")){const card=node.closest("article,div");if(card&&card.querySelectorAll("p,small,b,span").length<12)card.classList.add("cr-hide")}});if(!q(".cr-skin-tools",root)){const equip=q(".skin-equip-v093",root)||qa("button",root).find(b=>/felszerel|equip/i.test(clean(b.textContent)));if(equip){const tools=document.createElement("div");tools.className="cr-skin-tools";const info=document.createElement("button");info.type="button";info.className="cr-info-button";info.textContent="i";info.dataset.crSkinInfo="1";const element=document.createElement("button");element.type="button";element.className="cr-element-button";element.textContent="✦";element.dataset.crSkinElement="1";tools.append(info,element);(equip.parentElement||equip).insertAdjacentElement("afterend",tools)}}ensureSkinViewButton(root);patchSkinDialog()}
-  function ensureSkinViewButton(root){const showcase=q(".skin-showcase-v093",root);if(!showcase)return;let button=q(".cr-skin-view-button",showcase);if(!button){button=document.createElement("button");button.type="button";button.className="cr-skin-view-button";button.dataset.crSkinView="1";showcase.appendChild(button)}const gameVisible=visible(q(".skin-game-view-v093",showcase));button.textContent=gameVisible?"▣":"◉";button.title=gameVisible?copy("Splash art","Splash art"):copy("Játékban nézet","In-game view");button.setAttribute("aria-label",button.title);button.hidden=!q('[data-v093-skin-view="game"]',root)}
-  function bindSkinTilt(){if(state.tiltBound)return;state.tiltBound=true;document.addEventListener("pointermove",event=>{if(!isPhone()||event.pointerType==="mouse")return;const art=event.target?.closest?.("#skins .skin-art-v093");if(!art||!(event.buttons||event.pressure>0))return;const rect=art.getBoundingClientRect(),x=(event.clientX-rect.left)/rect.width-.5,y=(event.clientY-rect.top)/rect.height-.5;art.style.transform=`perspective(900px) rotateX(${(-y*8).toFixed(2)}deg) rotateY(${(x*9).toFixed(2)}deg) translate3d(${(x*6).toFixed(1)}px,${(y*6).toFixed(1)}px,0)`},{passive:true});const reset=event=>{const art=event.target?.closest?.("#skins .skin-art-v093");if(art)art.style.transform=""};document.addEventListener("pointerup",reset,{passive:true});document.addEventListener("pointercancel",reset,{passive:true})}
 
-  function patchEquipment(){const root=sectionForHeading("Felszerelés");if(!root)return;leafNodes(root).forEach(node=>{if(lower(node.textContent)==="erő"){const box=node.parentElement,value=box&&qa("b,strong,span,div",box).find(v=>!v.children.length&&/^\d+(?:[.,]\d+)?$/.test(clean(v.textContent)));value?.classList.add("cr-power-value")}});qa("button",root).forEach(button=>{if(/^erő(?:\s|$)/i.test(clean(button.textContent))&&!button.closest(".stat"))button.classList.add("cr-sort-button")})}
-  function patchArsenal(){const root=sectionForHeading("Arsenal");if(!root)return;hideExact("Erőforrások:",root);hideExact("Kattints egy materialra a forrásokhoz.",root)}
-  function patchGacha(){const root=id("gachaChestOnlyV12")||sectionForHeading("Gacha");if(!root)return;leafNodes(root).forEach(node=>{const text=clean(node.textContent),l=lower(text);if(/^(common|uncommon|rare|epic|legendary|mythical)(\s*\/\s*(common|rare|epic|legendary|mythical))?\s+tárgyak$/i.test(text)||/^nincs\s+.+\s+láda[.!]?$/i.test(text))node.classList.add("cr-hide");if(["common","uncommon","rare","epic","legendary","mythical","gyakori","ritka","epikus","legendás","mitikus"].includes(l)){const key=rarityKey(l);node.style.color=RARITY_COLORS[key]}});patchDuplicateReveal()}
-  function bindPinch(host,target){if(!host||!target||state.pinches.has(host))return;const pinch={scale:1,startDist:0,startScale:1};state.pinches.set(host,pinch);host.addEventListener("touchstart",event=>{if(event.touches.length===2){const[a,b]=event.touches;pinch.startDist=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY)||1;pinch.startScale=pinch.scale}},{passive:true});host.addEventListener("touchmove",event=>{if(event.touches.length!==2)return;event.preventDefault();const[a,b]=event.touches,d=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY)||pinch.startDist;pinch.scale=Math.max(.65,Math.min(1.75,pinch.startScale*d/pinch.startDist));target.style.transform=`scale(${pinch.scale.toFixed(3)})`},{passive:false})}
-  function patchSkillTree(){const root=id("playerUpgrade");if(!root)return;qa("button",root).forEach(button=>{if(/^[←→‹›❮❯]$/.test(clean(button.textContent))&&!button.closest(".panel-head,[class*=head]"))button.classList.add("cr-tree-arrow")});hideExact("A viselt GM title ideiglenesen feloldja és 20 tesztpontot ad.",root)}
-  function findBoxedHeader(root,title){const heading=qa("h1,h2,h3",root).find(h=>lower(h.textContent)===lower(title));if(!heading)return null;let node=heading.parentElement;for(let i=0;i<4&&node&&node!==root;i++,node=node.parentElement){if(qa("button",node).some(b=>/^[←‹]$/.test(clean(b.textContent)))||q(".economy-wallet-v080,.mobile-currencies-v0932,[class*=currency]",node))return node}return heading.parentElement}
-  function patchBagShop(){const invHeading=qa("h1,h2,h3",document).find(h=>lower(h.textContent)==="inventory");if(invHeading){const root=invHeading.closest("section[id],.panel[id],section,.panel")||invHeading.parentElement;findBoxedHeader(root,"BAG")?.classList.add("cr-top-box-remove");hideExact("CHERRIFT BAG",root)}const shopHeading=qa("h1,h2,h3",document).find(h=>lower(h.textContent)==="shop");if(shopHeading){const root=shopHeading.closest("section[id],.panel[id],section,.panel")||shopHeading.parentElement,box=findBoxedHeader(root,"Bolt");if(box&&box!==shopHeading.parentElement)box.classList.add("cr-top-box-remove")}}
-  function patchCollection(){const root=sectionForHeading("Gyűjtemény");if(!root)return;hideExact("Skinek, gearek, ellenfelek és Worldök gyűjteménye.",root);replaceExact("Játékosszint","Szint",root);replaceExact("Base Cherry","Cherry",root);hideExact("Győzd le a felfedezéshez",root);qa("article,div",root).forEach(card=>{const locked=leafNodes(card).filter(n=>lower(n.textContent)==="még nincs feloldva");if(locked.length>1)locked.slice(1).forEach(n=>n.classList.add("cr-hide"))});const labels=["felszerelés","ellenfelek","kinézetek","világok"],buttons=qa("button",root).filter(b=>labels.includes(lower(b.textContent)));if(buttons.length>=3){const nav=buttons[0].parentElement;nav?.classList.add("cr-collection-tabs");if(nav&&!q(".cr-all-tab",nav)){const all=document.createElement("button");all.type="button";all.className=`${buttons[0].className} cr-all-tab`;all.textContent="All";all.dataset.crCollectionAll="1";all.dataset.crRoute=root.id||"";nav.prepend(all)}}}
-  function statRows(){const grid=q("#statSummaryV082 .stat-final-grid-v082,.stat-final-grid-v082");if(!grid)return[];return qa("article",grid).map(article=>{const label=clean(q("small,span",article)?.textContent);let value=clean(q("b,strong",article)?.textContent),parsed=parseFloat(value.replace(",","."));if(Number.isFinite(parsed)&&/kritikus esély|critical chance/i.test(label))value=`${Math.max(0,Math.round((parsed-2)*10)/10)}%`;else if(Number.isFinite(parsed)&&/kritikus sebzés|critical damage/i.test(label))value=`${Math.max(100,Math.round((parsed-25)*10)/10)}%`;else if(Number.isFinite(parsed)&&/atk speed|támadási sebesség/i.test(label))value=`${Math.round(parsed*10)/10}%`;return{label,value}}).filter(x=>x.label&&x.value)}
-  function patchStats(){const root=id("statSummaryV082")||sectionForHeading("Stat részletek");if(!root)return;hideExact("Menüben számolt érték",root);hideExact("Menüben számolt értékek",root);if(!q(".cr-stat-list",root)){const rows=statRows();if(rows.length){const panel=document.createElement("section");panel.className="cr-stat-list";const elemental=rows.filter(x=>/blaze|aqua|abyss|verdant|radiant|void|element|tűz|víz|föld|fény|sötét/i.test(x.label)),general=rows.filter(x=>!elemental.includes(x));const group=(title,list)=>list.length?`<div class="cr-stat-group"><h3>${title}</h3>${list.map(x=>`<div class="cr-stat-row"><span>${/^(sebzés|atk)$/i.test(x.label)?"Base DMG":esc(x.label)}</span><i></i><b>${esc(x.value)}</b></div>`).join("")}</div>`:"";panel.innerHTML=group("General Stats",general)+group("Elemental Stats",elemental);q(".stat-final-grid-v082",root)?.insertAdjacentElement("beforebegin",panel)}}qa("section,article",root).forEach(node=>{if(node!==root&&/képességfa|skill tree/i.test(clean(q("h2,h3",node)?.textContent)))node.classList.add("cr-stat-compact")})}
-  function patchBuffs(){const root=id("buffsV082")||sectionForHeading("Buff lista");if(!root)return;const heading=qa("h1,h2,h3",root).find(h=>lower(h.textContent)==="buff lista");if(heading){let box=heading.parentElement;for(let i=0;i<4&&box&&box!==root;i++,box=box.parentElement){if(q(".economy-wallet-v080,.mobile-currencies-v0932,[class*=currency]",box)){box.classList.add("cr-simple-header");break}}}qa(".economy-wallet-v080,.mobile-currencies-v0932,[class*=currency]",root).forEach(wallet=>{if(!wallet.closest("#resourceBarV082,#globalRailV060"))wallet.classList.add("cr-dup-wallet")});replaceExact("Ebben a kategóriában még nincs tárgyad.","-",root);for(const def of[{name:"Veteran Focus",info:"Szint 25 szükséges.",match:/player\s*lv\.?\s*25|szint\s*25/i},{name:"Cherry Supporter",info:"Twitch Subscribe Tier. (Need Discord role to activate)",match:/discord\s*sub|serveroldali|role|twitch/i}]){const title=qa("h2,h3,h4,strong,b",root).find(n=>lower(n.textContent)===lower(def.name));if(!title)continue;const card=title.closest("article,[class*=card],li,div");if(!card)continue;card.classList.add("cr-buff-card");leafNodes(card).forEach(n=>{if(n!==title&&def.match.test(clean(n.textContent)))n.classList.add("cr-hide")});if(!q(".cr-buff-info",card)){const button=document.createElement("button");button.type="button";button.className="cr-info-button cr-buff-info";button.textContent="i";button.dataset.crInfo=def.info;card.appendChild(button)}}}
-  function isGuest(){return !window.CHERRIFT_LIVE_SERVICES?.session?.user?.id}
-  function patchMore(){const drawer=id("mobileMenuV082");if(!drawer)return;qa("button,a",drawer).forEach(button=>{const leaf=leafNodes(button).map(n=>lower(n.textContent)).find(t=>["mail","settings","beállítások","cherry","profil","profile","rank","ranking","event","social"].includes(t)),label=leaf||lower(button.textContent).replace(/^[^a-záéíóöőúüű]+/i,"");const remove=label==="cherry"||label.endsWith(" cherry");button.classList.toggle("cr-more-remove",remove);const discordOnly=["rank","ranking","mail","event","social"].some(x=>label===x||label.endsWith(` ${x}`));button.classList.toggle("cr-guest-locked",isGuest()&&discordOnly);if(discordOnly)button.dataset.crDiscordOnly="1"})}
-  function patchLobbyAvatar(){const host=q("#menu .mobile-profile-v0932,.mobile-profile-v0932");if(!host)return;let avatar=q(".prebeta-avatar",host);if(!avatar){avatar=host;host.classList.add("cr-avatar-host")}if(q(".prebeta-avatar-frame",avatar))return;const frames=window.CHERRIFT_BALANCE?.frames||[],frameId=window.UI?.save?.profile?.frameId||"frame0lvl",frame=frames.find(x=>x.id===frameId)||frames[0];if(frame?.asset){const img=document.createElement("img");img.className="prebeta-avatar-frame";img.src=frame.asset;img.alt="";avatar.appendChild(img)}}
-  function patchCoinText(){const roots=[id("menu"),sectionForHeading("Chapter"),sectionForHeading("Világ"),...qa('section[id*="world" i],section[id*="stage" i],section[id*="chapter" i],.world-select-v040,.chapter-select-v040')].filter(Boolean);roots.forEach(root=>leafNodes(root).forEach(node=>{const text=clean(node.textContent);if(!/(?:érme|coins?)/i.test(text))return;let next=text.replace(/([+]?\s*\d[\d .]*)\s*(?:érme|coins?)/gi,(_,n)=>`🪙 ${String(n).replace(/^\+\s*/,"").trim()}`);next=next.replace(/(?:érme|coin)\s*([+]?\s*\d[\d .]*)/gi,(_,n)=>`🪙 ${String(n).replace(/^\+\s*/,"").trim()}`);if(next!==text)node.textContent=next}))}
-  function patchBottomNavAndPlay(){const candidates=qa("nav,div",document).filter(node=>{const texts=qa("button",node).map(b=>lower(b.textContent));return["cherry","felszerelés","főmenü","gacha","továbbiak"].filter(x=>texts.some(t=>t.includes(x))).length>=4});candidates.forEach(nav=>{nav.classList.add("cr-icon-nav");qa("button",nav).forEach(button=>leafNodes(button).forEach(node=>{if(["cherry","felszerelés","főmenü","gacha","továbbiak","gear","home","more"].includes(lower(node.textContent)))node.classList.add("cr-nav-label")}))});const menu=id("menu");if(menu)qa("button",menu).forEach(button=>{const text=lower(button.textContent);if((text.includes("játék")||text.includes("play"))&&(text.includes("pálya indítása")||text.includes("launch")||q("small",button)))button.classList.add("cr-play-only")})}
-  function patchPhoneHeaders(){for(const title of["Buff lista","Inventory","Shop"]){const root=sectionForHeading(title);if(!root)continue;const heading=qa("h1,h2,h3",root).find(h=>lower(h.textContent)===lower(title));if(!heading)continue;let parent=heading.parentElement;for(let i=0;i<4&&parent&&parent!==root;i++,parent=parent.parentElement){if(q(".economy-wallet-v080,.mobile-currencies-v0932,[class*=currency]",parent)){parent.classList.add("cr-simple-header");break}}}}
-  function ensurePortraitGuard(){let guard=id("portraitOnlyCR");if(!guard){guard=document.createElement("section");guard.id="portraitOnlyCR";guard.setAttribute("role","alert");guard.innerHTML='<article><i aria-hidden="true">▯</i><h2>Fordítsd álló helyzetbe</h2><p>A CHERRIFT telefonon álló nézetre készült. A játék folytatásához fordítsd vissza a készüléket.</p></article>';document.body.appendChild(guard)}const blocked=isPhone()&&innerWidth>innerHeight;document.body.classList.toggle("cr-phone-landscape",blocked);guard.setAttribute("aria-hidden",blocked?"false":"true")}
 
-  function showInfo(button,text){state.info?.remove();const bubble=document.createElement("div");bubble.className="cr-info-bubble";bubble.textContent=text;document.body.appendChild(bubble);const r=button.getBoundingClientRect(),b=bubble.getBoundingClientRect(),left=Math.max(14,Math.min(innerWidth-b.width-14,r.right-b.width)),top=Math.max(14,r.top-b.height-10);bubble.style.left=`${left}px`;bubble.style.top=`${top}px`;state.info=bubble;setTimeout(()=>{if(state.info===bubble){bubble.remove();state.info=null}},3200)}
-  function gearItemForTarget(target){const save=window.UI?.save;if(!save)return null;const rawId=target.dataset.v0560ItemId||target.dataset.mobileItem||target.dataset.inventoryV0552||target.dataset.crItemKey,itemId=String(rawId||"").replace(/^gear:/,"");if(itemId){const found=(save.inventory||[]).find(item=>String(item?.id)===itemId);if(found)return found}const slot=target.dataset.v0560Slot;if(slot)return save.equipped?.[slot]||null;return null}
-  function statLabel(key){return String(key||"").replace(/([A-Z])/g," $1").replace(/^./,char=>char.toUpperCase())}
-  function itemDetails(target){const item=gearItemForTarget(target),dataset=target.dataset||{},rarity=dataset.crItemRarity||item?.rarity||"Common";let name=dataset.crItemName||item?.name||[item?.type||item?.slot].filter(Boolean).join(" ")||clean(target.getAttribute("aria-label"))||"Item";name=String(name).replace(new RegExp(`^${rarity}\\s+`,"i"),"").trim();let description=dataset.crItemDescription||dataset.crItemSubtitle||item?.description||item?.desc||"";const stats=item?.stats&&typeof item.stats==="object"?Object.entries(item.stats).filter(([,value])=>Number.isFinite(Number(value))&&Number(value)!==0):[];if(!description&&item?.slot)description=copy(`${item.slot} felszerelés.`,`Equipment for the ${item.slot} slot.`);return{name,rarity,description,stats,level:Number(item?.itemLevel||item?.level)||0}}
-  function hideItemTip(){state.itemTip?.remove();state.itemTip=null}
-  function showItemTip(target){const details=itemDetails(target);if(!details.name)return;hideItemTip();const color=RARITY_COLORS[rarityKey(details.rarity)]||RARITY_COLORS.common,tip=document.createElement("aside");tip.className="cr-item-tooltip";tip.style.setProperty("--item-rarity",color);tip.innerHTML=`<small>${esc(details.rarity)}${details.level?` · Lv. ${details.level}`:""}</small><h3>${esc(details.name)}</h3>${details.description?`<p>${esc(details.description)}</p>`:""}${details.stats.length?`<dl>${details.stats.map(([key,value])=>`<div><dt>${esc(statLabel(key))}</dt><dd>${Number(value)>0?"+":""}${esc(value)}</dd></div>`).join("")}</dl>`:""}`;const gearBody=id("gearModalBodyV0560"),gearOpen=gearBody&&!id("gearModalV0560")?.classList.contains("hidden")&&target.closest?.("[data-v0560-item-id],[data-v0560-slot]");if(gearOpen){tip.classList.add("embedded");const comparison=q(".gear-comparison-v0932",gearBody);comparison?.insertAdjacentElement("beforebegin",tip)||q(".gear-detail-head-v0560",gearBody)?.insertAdjacentElement("afterend",tip)||gearBody.appendChild(tip)}else document.body.appendChild(tip);if(!isPhone()&&!gearOpen){const rect=target.getBoundingClientRect(),box=tip.getBoundingClientRect();let left=rect.right+10;if(left+box.width>innerWidth-10)left=rect.left-box.width-10;left=Math.max(10,Math.min(innerWidth-box.width-10,left));let top=Math.max(10,Math.min(innerHeight-box.height-10,rect.top));tip.style.left=`${left}px`;tip.style.top=`${top}px`}state.itemTip=tip}
-  function itemTarget(node){return node?.closest?.("[data-v0560-item-id],[data-v0560-slot],[data-mobile-item],[data-inventory-v0552],[data-v084-bag-item],[data-cr-item-name]")||null}
-  function bindItemDetails(){if(state.itemDetailsBound)return;state.itemDetailsBound=true;document.addEventListener("pointerover",event=>{if(!matchMedia("(hover:hover)").matches)return;const target=itemTarget(event.target);if(target&&target!==itemTarget(event.relatedTarget))showItemTip(target)},{passive:true});document.addEventListener("pointerout",event=>{if(!matchMedia("(hover:hover)").matches)return;const target=itemTarget(event.target);if(target&&target!==itemTarget(event.relatedTarget))hideItemTip()},{passive:true});document.addEventListener("focusin",event=>{const target=itemTarget(event.target);if(target)showItemTip(target)});document.addEventListener("focusout",event=>{if(itemTarget(event.target))hideItemTip()});document.addEventListener("click",event=>{const target=itemTarget(event.target);if(isPhone()&&target){if(target.closest?.("[data-v0560-item-id],[data-v0560-slot]"))queueMicrotask(()=>showItemTip(target));else showItemTip(target);return}if(!target)hideItemTip()},true)}
-  function openMoreDirect(){const drawer=id("mobileMenuV082");if(!drawer)return false;drawer.classList.remove("hidden","force-closed-v0942");drawer.setAttribute("aria-hidden","false");document.body.classList.add("mobile-menu-open-v082","more-open","drawer-open");patchMore();return true}
+
+  function ensureDesktopEnergy(){
+    if(mobile()||!window.UI?.save)return;
+    let button=id("crDesktopEnergy");
+    if(!button){
+      button=document.createElement("button");
+      button.id="crDesktopEnergy";
+      button.type="button";
+      button.innerHTML='<span class="bolt">⚡</span><b></b>';
+      button.title="Energy";
+    }
+    const target=q("#globalRailV060 .rail-bottom-v060")||id("resourceBarV082");
+    if(target&&button.parentElement!==target)target.appendChild(button);
+    window.CHERRIFT_PREBETA?.refreshEnergy?.(window.UI.save);
+    const max=Math.max(1,Number(window.UI.save.energyState?.max)||50);
+    q("b",button).textContent=`${Math.max(0,Number(window.UI.save.energy)||0)}/${max}`;
+  }
+
+  function lobbyRoute(){
+    if(id("socialV082")&&!id("socialV082").classList.contains("hidden"))return"socialV082";
+    if(id("rankingPrebeta")&&!id("rankingPrebeta").classList.contains("hidden"))return"rankingPrebeta";
+    if(id("buffsV082")&&!id("buffsV082").classList.contains("hidden"))return"buffsV082";
+    if(id("menu")&&!id("menu").classList.contains("hidden"))return"menu";
+    return"";
+  }
+
+  function ensureLobbySubnav(){
+    if(mobile()){id("crLobbySubnav")?.remove();return;}
+    const route=lobbyRoute();
+    let nav=id("crLobbySubnav");
+    if(!route){nav?.remove();return;}
+    if(!nav){
+      nav=document.createElement("nav");
+      nav.id="crLobbySubnav";
+      nav.innerHTML='<button type="button" data-cr-lobby="socialV082">Social</button><button type="button" data-cr-lobby="rankingPrebeta">Rank</button><button type="button" data-cr-lobby="buffsV082">Buff List</button>';
+      id("globalRailV060")?.insertAdjacentElement("afterend",nav);
+    }
+    qa("[data-cr-lobby]",nav).forEach(button=>button.classList.toggle("active",button.dataset.crLobby===route));
+  }
+
+  function ensurePortraitGuard(){
+    let guard=id("portraitOnlyCR");
+    if(!guard){
+      guard=document.createElement("section");
+      guard.id="portraitOnlyCR";
+      guard.setAttribute("role","alert");
+      guard.innerHTML='<article><i aria-hidden="true">▯</i><h2>Fordítsd álló helyzetbe</h2><p>A CHERRIFT telefonon álló nézetre készült. A játék folytatásához fordítsd vissza a készüléket.</p></article>';
+      document.body.appendChild(guard);
+    }
+    const blocked=isPhone()&&innerWidth>innerHeight;
+    document.body.classList.toggle("cr-phone-landscape",blocked);
+    guard.setAttribute("aria-hidden",blocked?"false":"true");
+  }
+
   function openInGameSettings(){
     if(window.UI?.game?.mode!=="paused")return false;
     state.inGameSettings=true;
-    document.body.classList.add("settings-from-pause","ingame-settings-open","run-isolated-v096");
+    document.body.classList.add("settings-from-pause","ingame-settings-open","cr-run-active");
     id("pauseModal")?.classList.add("hidden");
     id("settings")?.classList.remove("hidden");
-    const first=q('#settings [data-v060-settings="general"]');first?.click?.();
+    q('#settings [data-v060-settings="general"]')?.click?.();
     return true;
   }
+
   function closeInGameSettings(options={}){
     if(!state.inGameSettings&&!document.body.classList.contains("ingame-settings-open"))return false;
     state.inGameSettings=false;
@@ -285,66 +645,186 @@
     else id("pauseModal")?.classList.remove("hidden");
     return true;
   }
+
   function releaseRunObjects(game=window.UI?.game){
     if(!game)return;
-    for(const key of["enemies","bullets","projectiles","enemyProjectiles","pickups","effects","damageTexts","obstacles","mapObjects","__v050Drops"]){if(Array.isArray(game[key]))game[key].length=0;}
+    for(const key of["enemies","bullets","projectiles","enemyProjectiles","pickups","effects","damageTexts","obstacles","mapObjects","__v050Drops"]){
+      if(Array.isArray(game[key]))game[key].length=0;
+    }
     if(game.keys?.clear)game.keys.clear();
-    game.touchTarget=null;game.pointerTarget=null;
+    game.touchTarget=null;
+    game.pointerTarget=null;
   }
-  function enterRun(){state.runActive=true;document.body.classList.add("run-isolated-v096");document.body.classList.remove("lobby-active-v096");window.dispatchEvent(new CustomEvent("cherrift:run-enter"));}
-  function leaveRun(){state.runActive=false;state.inGameSettings=false;document.body.classList.remove("run-isolated-v096","ingame-settings-open","settings-from-pause");document.body.classList.add("lobby-active-v096");releaseRunObjects();window.dispatchEvent(new CustomEvent("cherrift:run-exit"));}
+
+  function enterRun(){
+    state.runActive=true;
+    document.body.classList.add("cr-run-active");
+    document.body.classList.remove("cr-lobby-active");
+    window.dispatchEvent(new CustomEvent("cherrift:run-enter"));
+  }
+
+  function leaveRun(){
+    state.runActive=false;
+    state.inGameSettings=false;
+    document.body.classList.remove("cr-run-active","ingame-settings-open","settings-from-pause");
+    document.body.classList.add("cr-lobby-active");
+    releaseRunObjects();
+    window.dispatchEvent(new CustomEvent("cherrift:run-exit"));
+  }
+
   function bindRunLifecycle(){
     const proto=window.CherriftGame?.prototype;
-    if(proto&&!proto.__crRunIsolation){const startRun=proto.start;proto.start=async function startRunIsolated(...args){document.body.classList.add("run-loading-v096");const result=await startRun.apply(this,args);document.body.classList.remove("run-loading-v096");enterRun();return result;};proto.__crRunIsolation=true;}
-    if(window.UI?.quit&&!window.UI.quit.__crRunIsolation){const quit=window.UI.quit.bind(window.UI);const wrapped=function quitRunIsolated(...args){closeInGameSettings();const stage=window.UI?.game?.stage;window.UI?.showStageLoading?.({name:copy("Visszatérés a lobbyba","Returning to lobby"),title:stage?.title||"CHERRIFT"});document.body.classList.add("run-loading-v096");const result=quit(...args);leaveRun();id("stageLoading")?.classList.remove("hidden");setTimeout(()=>{window.UI?.hideStageLoading?.();document.body.classList.remove("run-loading-v096");window.CHERRIFT_REWARDS?.flush?.();},180);return result};wrapped.__crRunIsolation=true;window.UI.quit=wrapped;}
-  }
-  function bindClicks(){if(state.clickBound)return;state.clickBound=true;document.addEventListener("click",event=>{const target=event.target?.closest?.("button,a");if(!target)return;
-      if(target.id==="pauseSettings"){event.preventDefault();event.stopImmediatePropagation();openInGameSettings();return}
-      if(document.body.classList.contains("ingame-settings-open")&&(target.id==="settingsBackAction"||target.closest("#settings .back"))){event.preventDefault();event.stopImmediatePropagation();closeInGameSettings();return}
-      if(document.body.classList.contains("ingame-settings-open")&&target.id==="settingsResumeAction"){event.preventDefault();event.stopImmediatePropagation();closeInGameSettings({resume:true});return}
-      if(target.dataset.crInfo){event.preventDefault();event.stopImmediatePropagation();showInfo(target,target.dataset.crInfo);return}
-      if(target.dataset.crAchBack!==undefined){event.preventDefault();window.UI?.open?.("menu");return}
-      if(target.dataset.crAchFilter){event.preventDefault();state.achievementFilter=target.dataset.crAchFilter;renderAchievements();return}
-      if(target.dataset.crAchClaim){event.preventDefault();grantAchievement(target.dataset.crAchClaim);return}
-      if(target.dataset.crLobby){event.preventDefault();const route=target.dataset.crLobby;if(route==="socialV082"||route==="rankingPrebeta")window.CHERRIFT_PREBETA?.open?.(route)||window.UI?.open?.(route);else window.UI?.open?.(route);queuePatch();return}
-      if(target.id==="crDesktopEnergy"){event.preventDefault();window.CHERRIFT_PREBETA?.showEnergyModal?.();return}
-      if(target.matches("[data-r5-menu-tool],[data-cr-menu-tool]")){event.preventDefault();event.stopImmediatePropagation();const action=target.dataset.r5MenuTool||target.dataset.crMenuTool;if(action==="feedback"||action==="bug"){const systems=window.CHERRIFT_V063;if(systems?.runtime)systems.runtime.supportType=action;window.UI?.open?.("supportV063");queueMicrotask(()=>{q(`[data-v063-support-type="${action}"]`)?.click?.();systems?.renderSupport?.()})}else if(action==="web")window.open("https://www.happycherrychan.hu","_blank","noopener,noreferrer");else if(action==="twitch")window.open("https://www.twitch.tv/happycherrychan","_blank","noopener,noreferrer");return}
-      if(target.dataset.crSkinView){event.preventDefault();event.stopImmediatePropagation();const root=id("skins"),gameVisible=visible(q(".skin-game-view-v093",root)),toggle=q(`[data-v093-skin-view="${gameVisible?"splash":"game"}"]`,root);toggle?.click();queueMicrotask(()=>ensureSkinViewButton(root));return}
-      if(!isPhone())return;
-      if(target.dataset.crSkinElement){event.preventDefault();event.stopImmediatePropagation();showInfo(target,selectedSkinElement(selectedSkin()));return}
-      if(target.dataset.crSkinInfo){event.preventDefault();event.stopImmediatePropagation();const root=id("skins"),skill=q(".skin-skill-v093,.skin-ability-v093,[data-skin-skill]",root)||qa("button",root).find(b=>b!==target&&!/felszerel|equip|←|back/i.test(clean(b.textContent))&&/dash|skill|strike|bloom|heal|shot|slash|burst|ability/i.test(lower(b.textContent)));skill?.click();queueMicrotask(patchSkinDialog);return}
-      if(target.dataset.crCollectionAll){event.preventDefault();event.stopImmediatePropagation();const route=target.dataset.crRoute;window.UI?.open?.(route||"collectionV084");queueMicrotask(patchCollection);return}
-      if(target.dataset.crDiscordOnly==="1"&&isGuest()){event.preventDefault();event.stopImmediatePropagation();window.UI?.toast?.("Ehhez Discord bejelentkezés szükséges.");if(!window.UI?.toast)showInfo(target,"Ehhez Discord bejelentkezés szükséges.");return}
-      if(target.closest("#statSummaryV082")&&/^[←‹]$/.test(clean(target.textContent))){event.preventDefault();event.stopImmediatePropagation();const route=id("profileBugfixV0941")?"profileBugfixV0941":id("profileV082")?"profileV082":"profile";window.UI?.open?.(route);return}
-      const label=lower(target.textContent),aria=target.getAttribute("aria-label")?.toLowerCase();if((label.includes("továbbiak")||label.includes("more")||aria==="more")&&visible(id("gachaChestOnlyV12"))){event.preventDefault();event.stopImmediatePropagation();openMoreDirect();return}
-    },true)}
-
-  function applyDesktop(){patchWorldSplashes();patchSkinMetadata();patchSkinThumbs();patchSkin();patchAvatarFrames();patchLockedEnemies();patchShopCards();patchProfileUsername();reconcileSkillPoints();ensureDesktopEnergy();ensureLobbySubnav();if(findAchievementsPanel())renderAchievements()}
-  function applyPhone(){if(!isPhone())return;ensurePortraitGuard();patchSkin();patchEquipment();patchArsenal();patchGacha();patchSkillTree();patchBagShop();patchCollection();patchStats();patchBuffs();patchMore();patchLobbyAvatar();patchCoinText();patchBottomNavAndPlay();patchPhoneHeaders();const achievements=sectionForHeading("Eredmények");if(achievements)hideExact("Állandó mérföldkövek és jutalmak.",achievements)}
-  function applyUi(){
-    state.queued=false;
-    if(state.applying||!window.UI?.save||document.body?.classList.contains("is-playing"))return;
-
-    // The runtime observes third-party panel changes so it can decorate newly
-    // rendered UI. Its own decorators also add/remove DOM nodes, therefore the
-    // observer must be paused while a patch pass is running. Without this guard
-    // every pass schedules another pass in the same microtask checkpoint and
-    // the browser never reaches rendering, leaving the boot facade at 3%.
-    state.applying=true;
-    state.observer?.disconnect();
-    try{
-      applyDesktop();
-      applyPhone();
-    }finally{
-      state.applying=false;
-      if(state.observer&&document.body){
-        state.observer.observe(document.body,{subtree:true,childList:true});
-      }
+    if(proto&&!proto.__cherriftRunLifecycle){
+      const startRun=proto.start;
+      proto.start=async function startRunIsolated(...args){
+        document.body.classList.add("cr-run-loading");
+        try {
+          const result=await startRun.apply(this,args);
+          enterRun();
+          return result;
+        } finally {
+          document.body.classList.remove("cr-run-loading");
+        }
+      };
+      proto.__cherriftRunLifecycle=true;
+    }
+    if(window.UI?.quit&&!window.UI.quit.__cherriftRunLifecycle){
+      const quit=window.UI.quit.bind(window.UI);
+      const wrapped=function quitRunIsolated(...args){
+        closeInGameSettings();
+        const stage=window.UI?.game?.stage;
+        window.UI?.showStageLoading?.({name:copy("Visszatérés a lobbyba","Returning to lobby"),title:stage?.title||"CHERRIFT"});
+        document.body.classList.add("cr-run-loading");
+        const result=quit(...args);
+        leaveRun();
+        id("stageLoading")?.classList.remove("hidden");
+        setTimeout(()=>{
+          window.UI?.hideStageLoading?.();
+          document.body.classList.remove("cr-run-loading");
+          window.CHERRIFT_REWARDS?.flush?.();
+        },180);
+        return result;
+      };
+      wrapped.__cherriftRunLifecycle=true;
+      window.UI.quit=wrapped;
     }
   }
-  function queuePatch(){if(state.queued||document.body?.classList.contains("is-playing"))return;state.queued=true;requestAnimationFrame(applyUi)}
-  function wrapUi(){if(state.wrapped||!window.UI)return;state.wrapped=true;const open=window.UI.open?.bind(window.UI);if(open)window.UI.open=function(...args){if(args[0]==="settings"&&window.UI?.game?.mode==="paused"){openInGameSettings();return}const result=open(...args);applyUi();return result};const refresh=window.UI.refreshMenu?.bind(window.UI);if(refresh)window.UI.refreshMenu=function(...args){const result=refresh(...args);applyUi();return result}}
-  function start(attempt=0){if(state.started)return;if(!document.body||!window.UI||!window.CherriftGame||!window.CHERRIFT_DATA?.skins){if(attempt<180)return setTimeout(()=>start(attempt+1),50);console.error("[CHERRIFT Runtime] Core dependencies did not become ready.");return}state.started=true;patchSkinMetadata();patchWorldSplashes();installGameRuntime();wrapUi();bindRunLifecycle();bindClicks();bindSkinTilt();bindItemDetails();resolveSkinAssets().finally(queuePatch);state.observer=new MutationObserver(queuePatch);state.observer.observe(document.body,{subtree:true,childList:true});for(const event of["resize","orientationchange","cherrift:savechange","cherrift:economychange","cherrift:languagechange","cherrift:themechange","cherrift:prebeta-ready"])addEventListener(event,queuePatch,{passive:event==="resize"||event==="orientationchange"});const api=Object.freeze({version:VERSION,refresh:applyUi,open:(route,...args)=>window.UI?.open?.(route,...args),syncNav:applyUi,openInGameSettings,closeInGameSettings,normalizeMap:game=>{const world=stageWorld(game);return WORLD_MAPS[world]?buildWorld(game,world):game?.obstacles},worldMaps:WORLD_MAPS,worldPools:WORLD_POOLS,enemyDefs:ENEMY_DEFS,enemySheets:ENEMY_SHEETS,achievements:ACHIEVEMENTS,resolveSkinAssets,isPhone});window.CHERRIFT_RUNTIME=api;window.CHERRIFT_FIXPACK_095=api;window.CHERRIFT_FIXPACK_0952=api;window.CHERRIFT_FIXPACK_095_R5=api;window.CHERRIFT_FIXPACK_095_ROUND5=api;window.CHERRIFT_STABILITY=api;window.CHERRIFT_BUGFIX_V0943=api;window.CHERRIFT_MOBILE_FIX_096=api;window.__CHERRIFT_RUNTIME_READY__=true;window.__CHERRIFT_CLEAN_RUNTIME__=true;window.__CHERRIFT_FIXPACK_095_READY__=true;window.__CHERRIFT_FIXPACK_095_1__=true;window.__CHERRIFT_FIXPACK_095_2__=true;window.__CHERRIFT_FIXPACK_0952_READY__=true;window.__CHERRIFT_FIXPACK_095_ROUND5__=true;window.__CHERRIFT_FIXPACK_095_R5_READY__=true;window.__CHERRIFT_BUGFIX_V0943__=true;window.__CHERRIFT_MOBILE_FIX_096__=true;window.__CHERRIFT_MOBILE_POLISH_097__=true;applyUi();window.dispatchEvent(new CustomEvent("cherrift:runtime-ready",{detail:{version:VERSION}}));window.dispatchEvent(new CustomEvent("cherrift:runtime-clean-ready",{detail:{version:VERSION}}));console.info(`[CHERRIFT] ${VERSION} loaded.`)}
 
-  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>start(),{once:true});else start();
+  function refreshShell(){
+    if(!window.UI?.save)return;
+    configureWorldStages();
+    normalizePlayerProgression();
+    ensureDesktopEnergy();
+    ensureLobbySubnav();
+    ensurePortraitGuard();
+    const achievements=findAchievementsPanel();
+    if(achievements)renderAchievements(achievements);
+  }
+
+  function wrapUi(){
+    if(state.wrapped||!window.UI)return;
+    state.wrapped=true;
+    const open=window.UI.open?.bind(window.UI);
+    if(open)window.UI.open=function(...args){
+      if(args[0]==="settings"&&window.UI?.game?.mode==="paused")return openInGameSettings();
+      const result=open(...args);
+      requestAnimationFrame(refreshShell);
+      return result;
+    };
+    const refresh=window.UI.refreshMenu?.bind(window.UI);
+    if(refresh)window.UI.refreshMenu=function(...args){
+      const result=refresh(...args);
+      requestAnimationFrame(refreshShell);
+      return result;
+    };
+  }
+
+  function bindClicks(){
+    if(state.clickBound)return;
+    state.clickBound=true;
+    document.addEventListener("click",event=>{
+      const target=event.target?.closest?.("button,a");
+      if(!target)return;
+      if(target.id==="pauseSettings"){
+        event.preventDefault();event.stopImmediatePropagation();openInGameSettings();return;
+      }
+      if(document.body.classList.contains("ingame-settings-open")&&(target.id==="settingsBackAction"||target.closest("#settings .back"))){
+        event.preventDefault();event.stopImmediatePropagation();closeInGameSettings();return;
+      }
+      if(document.body.classList.contains("ingame-settings-open")&&target.id==="settingsResumeAction"){
+        event.preventDefault();event.stopImmediatePropagation();closeInGameSettings({resume:true});return;
+      }
+      if(target.dataset.crAchBack!==undefined){event.preventDefault();window.UI?.open?.("menu");return;}
+      if(target.dataset.crAchFilter){event.preventDefault();state.achievementFilter=target.dataset.crAchFilter;renderAchievements();return;}
+      if(target.dataset.crAchClaim){event.preventDefault();grantAchievement(target.dataset.crAchClaim);return;}
+      if(target.dataset.crLobby){
+        event.preventDefault();
+        const route=target.dataset.crLobby;
+        if(route==="socialV082"||route==="rankingPrebeta")window.CHERRIFT_PREBETA?.open?.(route)||window.UI?.open?.(route);
+        else window.UI?.open?.(route);
+        requestAnimationFrame(refreshShell);
+        return;
+      }
+      if(target.id==="crDesktopEnergy"){event.preventDefault();window.CHERRIFT_PREBETA?.showEnergyModal?.();return;}
+      if(target.matches("[data-r5-menu-tool],[data-cr-menu-tool]")){
+        event.preventDefault();event.stopImmediatePropagation();
+        const action=target.dataset.r5MenuTool||target.dataset.crMenuTool;
+        if(action==="feedback"||action==="bug"){
+          const systems=window.CHERRIFT_V063;
+          if(systems?.runtime)systems.runtime.supportType=action;
+          window.UI?.open?.("supportV063");
+          queueMicrotask(()=>{q(`[data-v063-support-type="${action}"]`)?.click?.();systems?.renderSupport?.();});
+        }else if(action==="web")window.open("https://www.happycherrychan.hu","_blank","noopener,noreferrer");
+        else if(action==="twitch")window.open("https://www.twitch.tv/happycherrychan","_blank","noopener,noreferrer");
+      }
+    },true);
+  }
+
+  function start(attempt=0){
+    if(state.started)return;
+    if(!document.body||!window.UI||!window.CherriftGame){
+      if(attempt<180)return setTimeout(()=>start(attempt+1),50);
+      console.error("[CHERRIFT Runtime] Core dependencies did not become ready.");
+      return;
+    }
+    state.started=true;
+    configureWorldStages();
+    installGameRuntime();
+    wrapUi();
+    bindRunLifecycle();
+    bindClicks();
+    for(const eventName of["resize","orientationchange","cherrift:savechange","cherrift:economychange","cherrift:languagechange","cherrift:themechange","cherrift:prebeta-ready"]){
+      addEventListener(eventName,()=>requestAnimationFrame(refreshShell),{passive:eventName==="resize"||eventName==="orientationchange"});
+    }
+
+    const api=Object.freeze({
+      version:VERSION,
+      refresh:refreshShell,
+      open:(route,...args)=>window.UI?.open?.(route,...args),
+      syncNav:refreshShell,
+      openInGameSettings,
+      closeInGameSettings,
+      normalizeMap:game=>{
+        const world=stageWorld(game);
+        return WORLD_MAPS[world]?buildWorld(game,world):game?.obstacles;
+      },
+      worldMaps:WORLD_MAPS,
+      worldPools:WORLD_POOLS,
+      enemyDefs:ENEMY_DEFS,
+      enemySheets:ENEMY_SHEETS,
+      achievements:ACHIEVEMENTS,
+      isPhone
+    });
+
+    window.CHERRIFT_RUNTIME=api;
+    window.__CHERRIFT_RUNTIME_READY__=true;
+    window.__CHERRIFT_CLEAN_RUNTIME__=true;
+    refreshShell();
+    window.dispatchEvent(new CustomEvent("cherrift:runtime-ready",{detail:{version:VERSION}}));
+    window.dispatchEvent(new CustomEvent("cherrift:runtime-clean-ready",{detail:{version:VERSION}}));
+    console.info(`[CHERRIFT] ${VERSION} loaded.`);
+  }
+
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>start(),{once:true});
+  else start();
 })();

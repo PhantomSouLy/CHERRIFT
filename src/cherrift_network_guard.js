@@ -1,16 +1,15 @@
+/* CHERRIFT network + startup guard
+ * Canonical owner: browser network timeouts and non-blocking optional artwork
+ * preload. This replaces the former network-guard + preload-rootfix layering.
+ */
 (() => {
   "use strict";
 
-  const NETWORK_TIMEOUT_MS = 12000;
-  const OPTIONAL_PRELOAD_TIMEOUT_MS = 10000;
+  if (window.__CHERRIFT_NETWORK_GUARD_INSTALLED__) return;
+  window.__CHERRIFT_NETWORK_GUARD_INSTALLED__ = true;
 
-  // Keep the compatibility global used by older CHERRIFT modules/tools.
-  window.__CHERRIFT_NETWORK_GUARD__ = Object.freeze({
-    version:"0.9.7.4-supabase-startup-recovery",
-    active:typeof window.fetch === "function" && typeof AbortController === "function",
-    timeoutMs:NETWORK_TIMEOUT_MS,
-    optionalPreloadTimeoutMs:OPTIONAL_PRELOAD_TIMEOUT_MS
-  });
+  const VERSION = "0.9.8.2-network-startup";
+  const NETWORK_TIMEOUT_MS = 12000;
 
   function isSupabaseRequest(input) {
     try {
@@ -27,19 +26,12 @@
     }
   }
 
-  function installNetworkGuard() {
-    if (window.__CHERRIFT_NETWORK_GUARD_V0974__) return;
-    window.__CHERRIFT_NETWORK_GUARD_V0974__ = true;
-
+  function installNetworkTimeout() {
     const originalFetch = typeof window.fetch === "function"
       ? window.fetch.bind(window)
       : null;
 
-    if (
-      !originalFetch ||
-      typeof AbortController !== "function" ||
-      originalFetch.__cherriftTimeoutGuardV0974
-    ) return;
+    if (!originalFetch || typeof AbortController !== "function" || originalFetch.__cherriftNetworkTimeout) return;
 
     const guardedFetch = function cherriftGuardedFetch(input, init = {}) {
       if (!isSupabaseRequest(input)) return originalFetch(input, init);
@@ -67,190 +59,90 @@
 
       return originalFetch(input, { ...init, signal:controller.signal })
         .catch(error => {
-          if (timedOut) {
-            const timeout = new Error(`CHERRIFT network request timed out after ${NETWORK_TIMEOUT_MS} ms`);
-            timeout.name = "TimeoutError";
-            timeout.cause = error;
-            throw timeout;
-          }
-          throw error;
+          if (!timedOut) throw error;
+          const timeout = new Error(`CHERRIFT network request timed out after ${NETWORK_TIMEOUT_MS} ms`);
+          timeout.name = "TimeoutError";
+          timeout.cause = error;
+          throw timeout;
         })
         .finally(() => {
           window.clearTimeout(timer);
-          if (upstreamSignal && abortListener) {
-            upstreamSignal.removeEventListener("abort", abortListener);
-          }
+          if (upstreamSignal && abortListener) upstreamSignal.removeEventListener("abort", abortListener);
         });
     };
 
-    guardedFetch.__cherriftTimeoutGuardV0974 = true;
+    guardedFetch.__cherriftNetworkTimeout = true;
     window.fetch = guardedFetch;
   }
 
-  function normalizePreloadResult(value) {
-    if (!value || typeof value !== "object") return { failures:[] };
-    if (Array.isArray(value.failures)) return value;
-    return { ...value, failures:[] };
-  }
-
-  function installOptionalPreloadRecovery() {
+  function installNonBlockingPreload(attempt = 0) {
     const runtime = window.CHERRIFT_V060;
     const originalPreload = runtime?.preload;
-    if (typeof originalPreload !== "function" || originalPreload.__cherriftStartupRecoveryV0974) {
-      return;
+
+    if (!runtime || typeof originalPreload !== "function") {
+      if (attempt < 80) window.setTimeout(() => installNonBlockingPreload(attempt + 1), 50);
+      else console.warn("[CHERRIFT Startup] Optional artwork preload hook was unavailable.");
+      return false;
     }
 
-    const wrappedPreload = async function cherriftRecoveredPreload(save, onProgress) {
-      let progressOpen = true;
-      let timer = 0;
+    if (originalPreload.__cherriftNonBlockingPreload) return true;
+
+    if (!window.__CHERRIFT_ORIGINAL_V060_PRELOAD__) {
+      window.__CHERRIFT_ORIGINAL_V060_PRELOAD__ = originalPreload.__original || originalPreload;
+    }
+
+    async function nonBlockingStartupPreload(_save, _onProgress) {
       const startedAt = performance.now();
-
       window.__CHERRIFT_PRELOAD_STATE__ = {
-        status:"running",
+        status:"skipped-startup",
         startedAt:Date.now(),
-        timeoutMs:OPTIONAL_PRELOAD_TIMEOUT_MS
+        reason:"optional-artwork-warmup-decoupled",
+        version:VERSION
       };
 
-      const safeProgress = (...args) => {
-        if (!progressOpen || typeof onProgress !== "function") return;
-        try { onProgress(...args); } catch (_) {}
-      };
+      // Preserve the historical async contract without allowing decorative
+      // artwork to own the application startup lifecycle.
+      await Promise.resolve();
 
-      const preloadTask = Promise.resolve()
-        .then(() => originalPreload.call(this, save, safeProgress))
-        .then(
-          value => ({ type:"done", value }),
-          error => ({ type:"error", error })
-        );
-
-      const timeoutTask = new Promise(resolve => {
-        timer = window.setTimeout(
-          () => resolve({ type:"timeout" }),
-          OPTIONAL_PRELOAD_TIMEOUT_MS
-        );
-      });
-
-      const outcome = await Promise.race([preloadTask, timeoutTask]);
-      progressOpen = false;
-      window.clearTimeout(timer);
-
-      if (outcome.type === "done") {
-        window.__CHERRIFT_PRELOAD_STATE__ = {
-          status:"done",
-          durationMs:Math.round(performance.now() - startedAt)
-        };
-        return normalizePreloadResult(outcome.value);
-      }
-
-      if (outcome.type === "error") {
-        console.warn(
-          "[CHERRIFT Startup] Optional artwork preload failed; continuing with lazy loading.",
-          outcome.error
-        );
-        window.__CHERRIFT_PRELOAD_STATE__ = {
-          status:"failed",
-          durationMs:Math.round(performance.now() - startedAt),
-          error:String(outcome.error?.message || outcome.error || "preload_failed")
-        };
-        return {
-          failures:["optional_preload_failed"],
-          recovered:true
-        };
-      }
-
-      // The V060 preload is only an artwork warm-up. The game has its own
-      // ImageAssets loader, so a slow/missing optional image must never keep
-      // the player behind the splash forever.
-      console.warn(
-        `[CHERRIFT Startup] Optional artwork preload exceeded ${OPTIONAL_PRELOAD_TIMEOUT_MS} ms; continuing startup.`
-      );
+      const durationMs = Math.round(performance.now() - startedAt);
       window.__CHERRIFT_PRELOAD_STATE__ = {
-        status:"timed-out",
-        durationMs:Math.round(performance.now() - startedAt),
-        timeoutMs:OPTIONAL_PRELOAD_TIMEOUT_MS
+        status:"skipped-startup",
+        durationMs,
+        reason:"optional-artwork-warmup-decoupled",
+        version:VERSION
       };
+
       return {
-        failures:["optional_preload_timeout"],
-        timedOut:true,
-        recovered:true
+        failures:[],
+        skipped:true,
+        recovered:true,
+        reason:"optional_artwork_warmup_decoupled"
       };
-    };
-
-    wrappedPreload.__cherriftStartupRecoveryV0974 = true;
-    wrappedPreload.__original = originalPreload;
-    runtime.preload = wrappedPreload;
-  }
-
-  function installDeferredAuthGate() {
-    const api = window.CHERRIFT_AUTH;
-    const originalGetState = api?.getState;
-    if (typeof originalGetState !== "function" || window.__CHERRIFT_AUTH_GATE_RECOVERY_V0973__) {
-      return;
     }
 
-    window.__CHERRIFT_AUTH_GATE_RECOVERY_V0973__ = true;
-    const rawGetState = originalGetState.bind(api);
-
-    function recoveredGetState() {
-      const current = rawGetState() || {};
-      const uiReady = Boolean(window.UI?.save && window.UI?.game);
-
-      // bootstrapSave intentionally switches a fresh browser to `gate` before
-      // UI.init() exists. The boot overlay must not expose clickable auth
-      // controls at that point: Guest/Discord would be acting on a UI/save that
-      // has not been created yet. Keep boot in its loading phase until the app
-      // has a real save/game, then expose the actual gate normally.
-      if (!uiReady && (current.mode === "gate" || current.mode === "guest")) {
-        return {
-          ...current,
-          mode:"checking",
-          gateVisible:false,
-          startupGateDeferred:true
-        };
-      }
-
-      return current;
-    }
-
-    recoveredGetState.__cherriftStartupRecoveryV0974 = true;
-
-    try {
-      api.getState = recoveredGetState;
-      if (api.getState === recoveredGetState) return;
-    } catch (_) {}
-
-    // Defensive fallback in case a future auth API object becomes frozen.
-    try {
-      window.CHERRIFT_AUTH = new Proxy(api, {
-        get(target, property, receiver) {
-          if (property === "getState") return recoveredGetState;
-          return Reflect.get(target, property, receiver);
-        }
-      });
-    } catch (error) {
-      console.warn("[CHERRIFT Startup] Could not defer the early auth gate.", error);
-    }
+    nonBlockingStartupPreload.__cherriftNonBlockingPreload = true;
+    nonBlockingStartupPreload.__original = originalPreload;
+    runtime.preload = nonBlockingStartupPreload;
+    return true;
   }
 
-  function installStartupRecovery() {
-    installOptionalPreloadRecovery();
-  }
+  installNetworkTimeout();
 
-  installNetworkGuard();
-
-  // This file is loaded before cherrift_app.js. Registering this handler now
-  // means it runs before cherrift_app.js's own DOMContentLoaded bootstrap,
-  // while CHERRIFT_V060 and CHERRIFT_AUTH have already been defined by then.
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", installStartupRecovery, {
+    document.addEventListener("DOMContentLoaded", () => installNonBlockingPreload(), {
       once:true,
       capture:true
     });
   } else {
-    installStartupRecovery();
+    installNonBlockingPreload();
   }
 
-  console.info(
-    `[CHERRIFT] Network/startup guard v0.9.7.4 active (${NETWORK_TIMEOUT_MS} ms network, ${OPTIONAL_PRELOAD_TIMEOUT_MS} ms optional preload).`
-  );
+  window.__CHERRIFT_NETWORK_GUARD__ = Object.freeze({
+    version:VERSION,
+    active:typeof window.fetch === "function",
+    timeoutMs:NETWORK_TIMEOUT_MS,
+    preload:"non-blocking"
+  });
+
+  console.info(`[CHERRIFT] Network/startup guard ${VERSION} active.`);
 })();

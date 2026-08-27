@@ -1,4 +1,4 @@
-/* CHERRIFT v0.9.6 start experience
+/* CHERRIFT canonical start experience.
    One full-screen surface owns loading, first-time auth and click-to-start. */
 :root { --boot-safe-bottom-v096:max(24px, env(safe-area-inset-bottom)); }
 
@@ -30,7 +30,7 @@ body.v060-booting #authGateV064 {
   overflow:hidden;
   isolation:isolate;
   background-color:#0b0610 !important;
-  background-image:url("loading_pc_1920x1080.png?v=096boot2") !important;
+  background-image:url("loading_pc_1920x1080.png?v=0982-cleanup") !important;
   background-position:center;
   background-size:cover;
   background-repeat:no-repeat;
@@ -244,7 +244,7 @@ body.v060-booting #authGateV064 {
 
 @media (orientation:portrait), (max-width:620px) {
   #bootV060.boot-v060 {
-    background-image:url("loading_mobile_1080x1920.png?v=096boot2") !important;
+    background-image:url("loading_mobile_1080x1920.png?v=0982-cleanup") !important;
     background-position:center;
   }
   .boot-shade-v096 {
