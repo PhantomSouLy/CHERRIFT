@@ -30,7 +30,7 @@ body.v060-booting #authGateV064 {
   overflow:hidden;
   isolation:isolate;
   background-color:#0b0610 !important;
-  background-image:url("loading_pc_1920x1080.png?v=0982-cleanup") !important;
+  background-image:url("loading_pc_1920x1080.png?v=0984-ui-fix") !important;
   background-position:center;
   background-size:cover;
   background-repeat:no-repeat;
@@ -244,8 +244,10 @@ body.v060-booting #authGateV064 {
 
 @media (orientation:portrait), (max-width:620px) {
   #bootV060.boot-v060 {
-    background-image:url("loading_mobile_1080x1920.png?v=0982-cleanup") !important;
-    background-position:center;
+    background-image:url("loading_mobile_1080x1920.png?v=0984-ui-fix") !important;
+    background-position:center center !important;
+    background-size:cover !important;
+    background-repeat:no-repeat !important;
   }
   .boot-shade-v096 {
     background:linear-gradient(180deg,rgba(8,4,15,.1),transparent 28%,transparent 50%,rgba(8,3,15,.56) 100%);
