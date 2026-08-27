@@ -26092,8 +26092,8 @@ function polishGearInventory() {
   }
 
   const tools = document.getElementById("gearBulkToolsV082");
-  const selectCommon = tools?.querySelector("[data-v082-select-common]");
-  const selectionMode = !!selectCommon && !selectCommon.classList.contains("hidden");
+  const selectionPicks = tools?.querySelector(".gear-selection-picks-v096");
+  const selectionMode = !!selectionPicks && !selectionPicks.classList.contains("hidden");
   const grid = document.getElementById("gearInventoryGridV0560");
   grid?.classList.toggle("theme-selection-mode-v5", selectionMode);
   gear.classList.toggle("theme-selection-mode-v5", selectionMode);

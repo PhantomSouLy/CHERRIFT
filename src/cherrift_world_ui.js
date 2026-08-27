@@ -88,9 +88,19 @@
         .mobile-menu-v082.force-closed-v0942{display:none!important;pointer-events:none!important;visibility:hidden!important}
 
         /* Equipment toolbar. */
-        #gear .gear-inventory-head-v0560{position:relative!important;padding-right:12px!important}
-        #gear .gear-equipment-tools-v0942{position:static!important;max-width:68%!important;margin-left:auto!important;z-index:7!important}
+        #gear .gear-inventory-head-v0560{position:relative!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:start!important;gap:8px!important;padding-right:12px!important}
+        #gear .gear-equipment-tools-v0942{position:static!important;display:grid!important;grid-template-columns:auto auto!important;align-items:start!important;justify-content:end!important;gap:7px!important;max-width:none!important;margin:0!important;z-index:7!important}
         #gear .gear-equipment-tools-v0942 button{min-width:74px!important;min-height:38px!important;padding:0 10px!important;font-size:11px!important}
+        #gear .gear-equipment-tools-v0942>#gearSortV0560,#gear .gear-equipment-tools-v0942>.gear-bulk-tools-v082>[data-v082-select-mode]{min-width:86px!important;min-height:42px!important;border-radius:12px!important}
+        #gear .gear-equipment-tools-v0942>.gear-bulk-tools-v082{display:grid!important;grid-template-columns:auto minmax(0,1fr)!important;grid-template-areas:"cancel picks" "cancel actions"!important;align-items:stretch!important;gap:7px!important;max-width:244px!important;margin:0!important}
+        #gear .gear-bulk-tools-v082>[data-v082-select-mode]{grid-area:cancel!important}
+        #gear .gear-selection-picks-v096{grid-area:picks!important;display:grid!important;grid-template-columns:1fr 1fr auto!important;align-items:center!important;gap:6px!important}
+        #gear .gear-selection-actions-v096{grid-area:actions!important;display:grid!important;grid-template-columns:1fr 1fr!important;gap:6px!important}
+        #gear .gear-selection-picks-v096.hidden,#gear .gear-selection-actions-v096.hidden{display:none!important}
+        #gear .gear-selection-picks-v096 button,#gear .gear-selection-actions-v096 button{min-width:0!important;min-height:38px!important;padding:0 9px!important}
+        #gear #gearSelectedCountV082{min-width:auto!important;min-height:0!important;padding:0 2px!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;color:var(--theme-muted,var(--gear-muted,#8b6a72))!important;font-size:11px!important;font-weight:900!important;white-space:nowrap!important}
+        #gear.theme-selection-mode-v5 #gearSortV0560{display:none!important}
+        #gear.theme-selection-mode-v5 .gear-equipment-tools-v0942{grid-template-columns:auto!important}
         #gear #gearCherryCanvasV0560,#gear #gearCherryStableV060{width:min(230px,52vw)!important;height:min(230px,52vw)!important;transform:translate(-50%,-46%) scale(1.38)!important}
 
         .selector-head-v0942 h2{font-size:clamp(32px,8vw,44px)}
