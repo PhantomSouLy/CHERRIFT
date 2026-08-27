@@ -5434,6 +5434,7 @@ function makeDaily(stats={}){return [...POOL].sort(()=>Math.random()-.5).slice(0
 function normalize(s){s.daily=s.daily||{};s.login=s.login||{};s.shop=s.shop||{};s.stats={kills:0,runs:0,clears:0,coinsEarned:0,chests:0,gearFound:0,bosses:0,...(s.stats||{})};if(s.daily.key!==dayKey())s.daily={key:dayKey(),quests:makeDaily(s.stats),claimedBonus:false,rerolls:1};if(!s.daily.quests?.length)s.daily.quests=makeDaily(s.stats);s.login.firstDay=s.login.firstDay||dayKey();s.login.claimed=s.login.claimed||{};if(s.shop.key!==dayKey())s.shop={key:dayKey(),claims:{}};s.shop.claims=s.shop.claims||{};return s}
 function progress(q,s){return Math.max(0,questStat(q.type,s.stats)-(q.start||0))}
 function reward(r){UI.save.coins+=(r.coins||0);UI.save.keys+=(r.keys||0);UI.save.bloomGems=(UI.save.bloomGems||UI.save.blossomGems||0)+(r.bloomGems||0);UI.save.blossomGems=UI.save.bloomGems;UI.save.chests=UI.save.chests||{common:0,rare:0,epic:0};for(const [key,value] of Object.entries(r.chests||{}))UI.save.chests[key]=(UI.save.chests[key]||0)+value;if(r.energy)UI.save.energy=Math.min(100,(UI.save.energy||0)+r.energy);if(r.drink){UI.save.energyState=UI.save.energyState||{};UI.save.energyState.drinks=UI.save.energyState.drinks||{};UI.save.energyState.drinks[r.drink]=(UI.save.energyState.drinks[r.drink]||0)+1}}
+function captureItemReward(source,callback){return window.CHERRIFT_OBTAINED?.capture?CHERRIFT_OBTAINED.capture(source,callback):callback()}
 function rewardLabel(r){return [r.coins?`${r.coins} Coin`:'',r.energy?`${r.energy} Energy`:'',r.chests?.common?`${r.chests.common} Common Chest`:'',r.chests?.rare?`${r.chests.rare} Rare Chest`:'',r.chests?.epic?`${r.chests.epic} Epic Chest`:''].filter(Boolean).join(' · ')}
 function save(){CherriftStorage.save(UI.save)}
 function ensure(){
@@ -5448,7 +5449,7 @@ function renderLogin(){const R=[{coins:300},{chests:{common:1}},{coins:400,drink
 function renderShop(){const s=normalize(UI.save),O=[{id:'freeCoins',name:'Daily Coins',icon:'🪙',cost:0,reward:{coins:100}},{id:'freeEnergy',name:'Daily Energy',icon:'⚡',cost:0,reward:{energy:5}},{id:'commonChest',name:'Common Chest',icon:'🟢',cost:450,currency:'coins',reward:{chests:{common:1}}},{id:'rareChest',name:'Rare Chest',icon:'🔵',cost:80,currency:'bloom',reward:{chests:{rare:1}}},{id:'epicChest',name:'Epic Chest',icon:'🟣',cost:240,currency:'bloom',reward:{chests:{epic:1}}}];id('shopListV055').innerHTML=O.map(o=>`<article class="glass v055-shop-card"><span>${o.icon}</span><h3>${o.name}</h3><p>${rewardLabel(o.reward)}</p><button data-shop="${o.id}" ${o.cost===0&&s.shop.claims[o.id]?'disabled':''}>${o.cost===0?(s.shop.claims[o.id]?'CLAIMED':'FREE'):`${o.cost} ${o.currency==='bloom'?'BLOOM GEM':'COIN'}`}</button></article>`).join('')}
 const custom=['dailyQuests','loginRewards','shopV055'],prevOpen=UI.open.bind(UI);UI.open=function(p,...a){if(custom.includes(p)){['menu','skins','gear','chests','settings','worlds','playerUpgrade','achievements',...custom].forEach(x=>id(x)?.classList.toggle('hidden',x!==p));document.body.classList.remove('is-playing');if(p==='dailyQuests')renderDaily();if(p==='loginRewards')renderLogin();if(p==='shopV055')renderShop();return}prevOpen(p,...a);custom.forEach(x=>id(x)?.classList.add('hidden'))};
 function buy(k){const s=normalize(UI.save),O={freeCoins:{cost:0,reward:{coins:100}},freeEnergy:{cost:0,reward:{energy:5}},commonChest:{cost:450,currency:'coins',reward:{chests:{common:1}}},rareChest:{cost:80,currency:'bloom',reward:{chests:{rare:1}}},epicChest:{cost:240,currency:'bloom',reward:{chests:{epic:1}}}},o=O[k];if(!o)return;if(!o.cost){if(s.shop.claims[k])return;s.shop.claims[k]=true}else if(o.currency==='bloom'){const gems=Number(s.bloomGems||s.blossomGems)||0;if(gems<o.cost)return UI.toast('Not enough Bloom Gem');s.bloomGems=gems-o.cost;s.blossomGems=s.bloomGems}else{if(s.coins<o.cost)return UI.toast('Not enough Coin');s.coins-=o.cost}reward(o.reward);save();renderShop();UI.refreshMenu();UI.toast('Purchase complete')}
-document.addEventListener('click',e=>{const o=e.target.closest('[data-v055-open]');if(o){UI.open(o.dataset.v055Open);return}const c=e.target.closest('[data-daily-claim]');if(c){const x=UI.save.daily.quests.find(v=>v.id===c.dataset.dailyClaim);if(x&&!x.claimed&&progress(x,UI.save)>=x.target){x.claimed=true;reward(x.reward);save();renderDaily();UI.refreshMenu()}return}if(e.target.id==='dailyBonusClaimV055'){const s=UI.save;if(s.daily.quests.every(x=>x.claimed)&&!s.daily.claimedBonus){s.daily.claimedBonus=true;reward({coins:500,chests:{common:1},energy:15});save();renderDaily();UI.refreshMenu()}return}if(e.target.id==='dailyClaimAllV055'){UI.save.daily.quests.forEach(x=>{if(!x.claimed&&progress(x,UI.save)>=x.target){x.claimed=true;reward(x.reward)}});save();renderDaily();UI.refreshMenu();return}if(e.target.id==='dailyRerollV055'){const s=UI.save;if(s.daily.rerolls>0){s.daily.rerolls--;s.daily.quests=makeDaily(s.stats);save();renderDaily()}return}const l=e.target.closest('[data-login-day]');if(l){const R=[{coins:300},{chests:{common:1}},{coins:400,drink:'small'},{bloomGems:10},{coins:600},{chests:{rare:1}},{coins:1000,bloomGems:20,drink:'standard'}],i=+l.dataset.loginDay;if(!UI.save.login.claimed[dayKey()]){reward(R[i]);UI.save.login.claimed[dayKey()]=true;UI.save.stats.loginDays=(UI.save.stats.loginDays||0)+1;save();renderLogin();UI.refreshMenu()}return}const sh=e.target.closest('[data-shop]');if(sh)buy(sh.dataset.shop)});
+document.addEventListener('click',e=>{const o=e.target.closest('[data-v055-open]');if(o){UI.open(o.dataset.v055Open);return}const c=e.target.closest('[data-daily-claim]');if(c){const x=UI.save.daily.quests.find(v=>v.id===c.dataset.dailyClaim);if(x&&!x.claimed&&progress(x,UI.save)>=x.target)captureItemReward('daily',()=>{x.claimed=true;reward(x.reward);save();renderDaily();UI.refreshMenu()});return}if(e.target.id==='dailyBonusClaimV055'){const s=UI.save;if(s.daily.quests.every(x=>x.claimed)&&!s.daily.claimedBonus)captureItemReward('daily',()=>{s.daily.claimedBonus=true;reward({coins:500,chests:{common:1},energy:15});save();renderDaily();UI.refreshMenu()});return}if(e.target.id==='dailyClaimAllV055'){captureItemReward('daily',()=>{UI.save.daily.quests.forEach(x=>{if(!x.claimed&&progress(x,UI.save)>=x.target){x.claimed=true;reward(x.reward)}});save();renderDaily();UI.refreshMenu()});return}if(e.target.id==='dailyRerollV055'){const s=UI.save;if(s.daily.rerolls>0){s.daily.rerolls--;s.daily.quests=makeDaily(s.stats);save();renderDaily()}return}const l=e.target.closest('[data-login-day]');if(l){const R=[{coins:300},{chests:{common:1}},{coins:400,drink:'small'},{bloomGems:10},{coins:600},{chests:{rare:1}},{coins:1000,bloomGems:20,drink:'standard'}],i=+l.dataset.loginDay;if(!UI.save.login.claimed[dayKey()])captureItemReward('login_reward',()=>{reward(R[i]);UI.save.login.claimed[dayKey()]=true;UI.save.stats.loginDays=(UI.save.stats.loginDays||0)+1;save();renderLogin();UI.refreshMenu()});return}const sh=e.target.closest('[data-shop]');if(sh)captureItemReward('shop',()=>buy(sh.dataset.shop))});
 const gp=CherriftGame.prototype,oldD=gp.damageEnemy;gp.damageEnemy=function(e,d){const a=e&&!e.dead;oldD.call(this,e,d);if(a&&e.dead){normalize(this.save).stats.kills++;if(e.isBoss)this.save.stats.bosses++}};const oldC=gp.stageClear;gp.stageClear=function(...a){normalize(this.save).stats.clears++;return oldC.apply(this,a)};const oldS=gp.start;gp.start=async function(...a){normalize(this.save).stats.runs++;return oldS.apply(this,a)};const oldChest=UI.openChest?.bind(UI);if(oldChest)UI.openChest=function(...a){const n=this.save.inventory.length,r=oldChest(...a);if(this.save.inventory.length>n){normalize(this.save).stats.chests++;this.save.stats.gearFound++}return r};
 ensure();const oldInit=UI.init.bind(UI);UI.init=function(s,g){normalize(s);const r=oldInit(s,g);ensure();return r};window.CHERRIFT_V055A={version:'0.5.5a',normalize};console.info('[CHERRIFT] v0.5.5a loaded');
 })();
@@ -13418,9 +13419,8 @@ function acceptAuthoritativeCloudSave(value) {
     if (window.UI?.game) window.UI.game.save = save;
     window.UI?.refreshMenu?.();
   };
-  if (window.CHERRIFT_REWARDS?.withSuppressed) window.CHERRIFT_REWARDS.withSuppressed(apply);
-  else apply();
-  window.CHERRIFT_REWARDS?.reset?.();
+  apply();
+  window.CHERRIFT_OBTAINED?.reset?.();
   window.dispatchEvent(new CustomEvent("cherrift:server-save-applied", { detail:{ source:"server" } }));
   return save;
 }
@@ -13861,7 +13861,7 @@ async function completeDiscordSession(session) {
     runtime.pendingSave = null;
     runtime.lastSavedJson = "";
     runtime.lastCloudSavedAt = "";
-    window.CHERRIFT_REWARDS?.reset?.();
+    window.CHERRIFT_OBTAINED?.reset?.();
   }
   runtime.session = session;
   runtime.activeUserId = session.user.id;
@@ -13893,9 +13893,8 @@ async function completeDiscordSession(session) {
     if (window.UI) window.UI.save = save;
     if (window.UI?.game) window.UI.game.save = save;
   };
-  if (window.CHERRIFT_REWARDS?.withSuppressed) window.CHERRIFT_REWARDS.withSuppressed(apply);
-  else apply();
-  window.CHERRIFT_REWARDS?.reset?.();
+  apply();
+  window.CHERRIFT_OBTAINED?.reset?.();
   closeGate("discord");
   syncAccountUi();
   window.UI?.refreshMenu?.();
@@ -14747,7 +14746,7 @@ const EFFECT_LABELS = {
 
 const COPY = {
   hu:{
-    economy:"Gacha & BAG", gacha:"Gacha", bag:"BAG", buffs:"Buffok", shop:"Shop",
+    economy:"Gacha & Inventory", gacha:"Gacha", bag:"Inventory", buffs:"Buffok", shop:"Shop",
     subtitle:"Ládák, alapanyagok, kajabuffok és account bónuszok.", common:"Common", rare:"Rare", epic:"Epic",
     open:"NYITÁS", noChest:"Nincs ilyen ládád.", pity:"Garancia", reward:"Jutalom", duplicate:"Duplicate skin",
     essence:"Sakura Essence", inventoryFull:"Az inventory megtelt; a gear Coinná alakult.", newSkin:"Új Cherry skin",
@@ -14763,10 +14762,10 @@ const COPY = {
     noItems:"Ebben a kategóriában még nincs tárgyad.", materials:"Materialok", food:"Food Buffok", chests:"Ládák",
     temporary:"Ideiglenes", completed:"Feloldva", locked:"Zárolva", accountBonus:"Összes Account Buff",
     chestQuality:"Chest content luck", title:"v0.8 Economy Update", testNote:"A droprate-ek tesztértékek, a World 4–5 és új skinek később kerülnek hozzá.",
-    openHub:"GACHA / BAG", hubHint:"Chestek, kaják és Blossom Gem"
+    openHub:"GACHA / INVENTORY", hubHint:"Chestek, kaják és Blossom Gem"
   },
   en:{
-    economy:"Gacha & BAG", gacha:"Gacha", bag:"BAG", buffs:"Buffs", shop:"Shop",
+    economy:"Gacha & Inventory", gacha:"Gacha", bag:"Inventory", buffs:"Buffs", shop:"Shop",
     subtitle:"Chests, materials, food buffs and account bonuses.", common:"Common", rare:"Rare", epic:"Epic",
     open:"OPEN", noChest:"You do not own this chest.", pity:"Guarantee", reward:"Reward", duplicate:"Duplicate skin",
     essence:"Sakura Essence", inventoryFull:"Inventory full; the gear was converted to Coins.", newSkin:"New Cherry skin",
@@ -14782,7 +14781,7 @@ const COPY = {
     noItems:"You do not own items in this category yet.", materials:"Materials", food:"Food Buffs", chests:"Chests",
     temporary:"Temporary", completed:"Unlocked", locked:"Locked", accountBonus:"Total Account Buff",
     chestQuality:"Chest content luck", title:"v0.8 Economy Update", testNote:"Drop rates are test values; Worlds 4–5 and new skins will be added later.",
-    openHub:"GACHA / BAG", hubHint:"Chests, food and Blossom Gems"
+    openHub:"GACHA / INVENTORY", hubHint:"Chests, food and Blossom Gems"
   }
 };
 
@@ -14970,22 +14969,31 @@ function priceText(price){ return price.gems ? `💎 ${price.gems}` : `🪙 ${pr
 function canAfford(save,price){ return price.gems ? save.blossomGems>=price.gems : save.coins>=price.coins; }
 function pay(save,price){ if(price.gems) save.blossomGems-=price.gems; else save.coins-=price.coins; }
 function buyShopItem(kind,key){
-  const save=normalize(UI.save);
-  let price;
-  if(kind==="chest") price={ common:{coins:450},rare:{gems:window.CHERRIFT_BALANCE?.gacha?.prices?.rare?.one||80},epic:{gems:window.CHERRIFT_BALANCE?.gacha?.prices?.epic?.one||240} }[key];
-  else if(kind==="skin"){
-    const skin=(CHERRIFT_DATA.skins||[]).find(entry=>entry.id===key);
-    if(!skin||save.unlockedSkins.includes(key)){UI.toast?.(t("owned"));return false;}
-    const essenceCost=window.CHERRIFT_BALANCE?.gacha?.essenceShop?.[skin.rarity]||300;
-    if(save.sakuraEssence<essenceCost){UI.toast?.(`Sakura Essence ${essenceCost}`);return false;}
-    save.sakuraEssence-=essenceCost;save.unlockedSkins.push(key);saveProgress(t("bought"));return true;
-  }
-  else price=FOOD_CATALOG[key]?.price;
-  if(!price || !canAfford(save,price)){ UI.toast?.(t("notEnough")); return false; }
-  pay(save,price);
-  if(kind==="chest") save.chests[key]++;
-  else addBagItem(save,key,1);
-  saveProgress(t("bought")); return true;
+  const execute=()=>{
+    const save=normalize(UI.save);
+    let price;
+    if(kind==="chest") price={ common:{coins:450},rare:{gems:window.CHERRIFT_BALANCE?.gacha?.prices?.rare?.one||80},epic:{gems:window.CHERRIFT_BALANCE?.gacha?.prices?.epic?.one||240} }[key];
+    else if(kind==="skin"){
+      const skin=(CHERRIFT_DATA.skins||[]).find(entry=>entry.id===key);
+      if(!skin||save.unlockedSkins.includes(key)){UI.toast?.(t("owned"));return false;}
+      const essenceCost=window.CHERRIFT_BALANCE?.gacha?.essenceShop?.[skin.rarity]||300;
+      if(save.sakuraEssence<essenceCost){UI.toast?.(`Sakura Essence ${essenceCost}`);return false;}
+      save.sakuraEssence-=essenceCost;
+      save.unlockedSkins.push(key);
+      saveProgress(t("bought"));
+      return true;
+    }
+    else price=FOOD_CATALOG[key]?.price;
+    if(!price || !canAfford(save,price)){ UI.toast?.(t("notEnough")); return false; }
+    pay(save,price);
+    if(kind==="chest") save.chests[key]++;
+    else addBagItem(save,key,1);
+    saveProgress(t("bought"));
+    return true;
+  };
+  return window.CHERRIFT_OBTAINED?.capture
+    ? CHERRIFT_OBTAINED.capture("shop", execute)
+    : execute();
 }
 function decrementRunBuffs(save){
   save.buffs.active=save.buffs.active.map(entry=>({...entry,runs:entry.runs-1})).filter(entry=>entry.runs>0);
@@ -15128,6 +15136,10 @@ function renderHub(){
   if(id("v080Coins"))id("v080Coins").textContent=Math.floor(save.coins||0);if(id("v080Gems"))id("v080Gems").textContent=save.blossomGems;if(id("v080Essence"))id("v080Essence").textContent=save.sakuraEssence;
   qa("[data-v080-tab]").forEach(btn=>btn.classList.toggle("active",btn.dataset.v080Tab===view.tab));
   const body=id("economyBodyV080");if(!body)return;
+  // Once the canonical Inventory renderer is available, use it synchronously.
+  // This prevents the retired BAG markup from being painted for one frame
+  // before the later UI-polish module reconciles the same screen.
+  if(view.tab==="bag" && window.CHERRIFT_V084?.renderBag){window.CHERRIFT_V084.renderBag();return;}
   body.innerHTML=view.tab==="gacha"?renderGacha(save):view.tab==="bag"?renderBag(save):view.tab==="buffs"?renderBuffs(save):renderShop(save);
 }
 function renderGacha(save){
@@ -15153,17 +15165,95 @@ function renderBuffs(save){
   const totals=aggregateBuffs(save);const permanent=[{id:"coinBloom",name:"Treasure Hunter I",effect:"+3% Coin",condition:"5 Achievements"},{id:"treasureTrail",name:"World Explorer",effect:"+2% Item Drop",condition:"10 Stage Clears"},{id:"veteranFocus",name:"Veteran Focus",effect:"+1% Crit",condition:"Player Lv.25"}];
   return `<section class="buff-summary-v080"><h2>${escapeHtml(t("accountBonus"))}</h2><div>${Object.entries(totals).filter(([,value])=>value>0).map(([key,value])=>`<span>${escapeHtml(EFFECT_LABELS[key]||key)} <b>+${Math.round(value*100)}%</b></span>`).join("")||"—"}</div></section><section class="bag-section-v080"><header><h2>${escapeHtml(t("temporary"))}</h2></header><div class="active-buffs-v080">${save.buffs.active.length?save.buffs.active.map(entry=>{const food=FOOD_CATALOG[entry.id];return `<article>${imageOrFallback(food.asset,food.icon,food.name)}<div><small>${escapeHtml(t("active"))}</small><h3>${escapeHtml(food.name)}</h3><p>+${Math.round((entry.value||food.value)*100)}% ${escapeHtml(EFFECT_LABELS[food.effect])} · ${entry.runs} ${escapeHtml(t("runs"))}</p></div></article>`;}).join(""):`<p class="empty-v080">${escapeHtml(t("noItems"))}</p>`}</div></section><section class="bag-section-v080"><header><h2>${escapeHtml(t("permanent"))}</h2></header><div class="permanent-grid-v080">${permanent.map(buff=>{const unlocked=!!save.buffs.permanent[buff.id];return `<article class="${unlocked?"unlocked":"locked"}"><span>${unlocked?"✓":"🔒"}</span><div><h3>${escapeHtml(buff.name)}</h3><p>${escapeHtml(buff.effect)}</p><small>${escapeHtml(buff.condition)} · ${escapeHtml(unlocked?t("completed"):t("locked"))}</small></div></article>`;}).join("")}<article class="supporter-v080 ${save.buffs.external.supporter?.verified?"unlocked":"locked"}"><span>💜</span><div><h3>${escapeHtml(t("supporter"))}</h3><p>+5% Coin · +3% XP · +3% Chest Drop</p><small>${escapeHtml(save.buffs.external.supporter?.verified?t("completed"):t("supporterPending"))}</small></div></article></div></section>`;
 }
+function shopPriceMarkup(price) {
+  const gems = Math.max(0, Number(price?.gems) || 0);
+  const coins = Math.max(0, Number(price?.coins) || 0);
+  const gem = gems > 0;
+  const amount = gem ? gems : coins;
+  const asset = gem ? "assets/items/blossom_gem.png" : "assets/items/coin.png";
+  const label = gem ? "Blossom Gem" : "Coin";
+  return `<span class="shop-price-v098"><img src="${asset}" alt="${label}"><b>${amount}</b></span>`;
+}
+function essencePriceMarkup(amount) {
+  return `<span class="shop-price-v098"><img src="assets/items/sakura_potion.png" alt="Sakura Essence"><b>${Math.max(0,Number(amount)||0)}</b></span>`;
+}
+function shopRarity(value) {
+  return String(value || "Common").toLowerCase().replaceAll("+","-plus").replace(/[^a-z0-9-]+/g,"-");
+}
+function shopItemArt(asset, fallback, label, skin=false) {
+  const source = typeof asset === "string" && !asset.includes("<") ? asset : "";
+  const html = typeof asset === "string" && asset.includes("<") ? asset : "";
+  if (html) return `<span class="shop-item-art-v098 ${skin?"skin":""}">${html}</span>`;
+  if (source) return `<span class="shop-item-art-v098 ${skin?"skin":""}"><img src="${escapeHtml(source)}" alt="${escapeHtml(label)}" loading="lazy" decoding="async"></span>`;
+  return `<span class="shop-item-art-v098 ${skin?"skin":""}"><i>${escapeHtml(fallback || "✦")}</i></span>`;
+}
+function shopItemCard({kind,key,name,asset,fallback,rarity="Common",priceMarkup,buyAttribute,buyValue,disabled=false,buyLabel,skin=false}) {
+  const rarityToken=shopRarity(rarity);
+  return `<article class="shop-item-v098 rarity-${rarityToken} ${skin?"shop-skin-v098":""}">
+    <button type="button" class="shop-item-info-hit-v098" data-v098-shop-info="${escapeHtml(kind)}" data-v098-shop-key="${escapeHtml(key)}" aria-label="${escapeHtml(name)} info">
+      ${shopItemArt(asset,fallback,name,skin)}<h3>${escapeHtml(name)}</h3>${priceMarkup}
+    </button>
+    <button type="button" class="shop-buy-v098" ${buyAttribute}="${escapeHtml(buyValue)}" ${disabled?"disabled":""}>${escapeHtml(buyLabel)}</button>
+  </article>`;
+}
+function shopInfoData(kind,key) {
+  const save=normalize(UI.save);
+  if(kind==="chest"){
+    const def=CHEST_DEFS[key];
+    const price={common:{coins:450},rare:{gems:window.CHERRIFT_BALANCE?.gacha?.prices?.rare?.one||80},epic:{gems:window.CHERRIFT_BALANCE?.gacha?.prices?.epic?.one||240}}[key];
+    if(!def||!price)return null;
+    return {name:def.name,rarity:key==="common"?"Common":key==="rare"?"Rare":"Epic",asset:def.asset,description:t(`${key}Desc`),price:shopPriceMarkup(price)};
+  }
+  if(kind==="skin"){
+    const skin=(CHERRIFT_DATA.skins||[]).find(entry=>entry.id===key);if(!skin)return null;
+    const cost=window.CHERRIFT_BALANCE?.gacha?.essenceShop?.[skin.rarity]||300;
+    return {name:skin.name,rarity:skin.rarity||"Common",asset:skin.icon||"",description:skin.description||`${skin.rarity||"Common"} Cherry Skin`,price:essencePriceMarkup(cost)};
+  }
+  if(kind==="food"){
+    const food=FOOD_CATALOG[key];if(!food)return null;
+    const percent=Math.round(Number(food.value||0)*100);
+    return {name:food.name,rarity:food.rarity||"Common",asset:food.asset||"",fallback:food.icon||"✦",description:`+${percent}% ${EFFECT_LABELS[food.effect]||food.effect} · ${food.runs||0} ${t("runs")}`,price:shopPriceMarkup(food.price)};
+  }
+  return null;
+}
+function ensureShopInfoModal(){
+  let overlay=id("shopInfoModalV098");if(overlay)return overlay;
+  overlay=document.createElement("section");overlay.id="shopInfoModalV098";overlay.className="shop-info-overlay-v098 hidden";
+  overlay.innerHTML='<article id="shopInfoCardV098" class="shop-info-card-v098"></article>';
+  document.body.appendChild(overlay);
+  overlay.addEventListener("click",event=>{if(event.target===overlay||event.target.closest("[data-v098-shop-info-close]"))overlay.classList.add("hidden");});
+  return overlay;
+}
+function openShopInfo(kind,key){
+  const data=shopInfoData(kind,key);if(!data)return;
+  const overlay=ensureShopInfoModal(),card=id("shopInfoCardV098");
+  card.className=`shop-info-card-v098 rarity-${shopRarity(data.rarity)}`;
+  card.innerHTML=`<button type="button" class="shop-info-close-v098" data-v098-shop-info-close>×</button>${shopItemArt(data.asset,data.fallback,data.name,kind==="skin")}<small>${escapeHtml(data.rarity)}</small><h2>${escapeHtml(data.name)}</h2><p>${escapeHtml(data.description)}</p>${data.price}`;
+  overlay.classList.remove("hidden");
+}
 function renderShop(save){
   const chestPrices={common:{coins:450},rare:{gems:window.CHERRIFT_BALANCE?.gacha?.prices?.rare?.one||80},epic:{gems:window.CHERRIFT_BALANCE?.gacha?.prices?.epic?.one||240}};
-  const skins=(CHERRIFT_DATA.skins||[]).filter(skin=>skin.id!=="cherry_default");const day=Math.floor(Date.now()/86400000);const offers=[0,1,2].map(offset=>skins[(day+offset*5)%skins.length]).filter(Boolean);
+  const skins=(CHERRIFT_DATA.skins||[]).filter(skin=>skin.id!=="cherry_default");
+  const day=Math.floor(Date.now()/86400000);
+  const offers=[0,1,2].map(offset=>skins[(day+offset*5)%Math.max(1,skins.length)]).filter(Boolean);
   const categories=[["chests",t("chests")],["essence","Essence Shop"],["food",t("food")]];
   const selected=categories.some(([key])=>key===view.shopCategory)?view.shopCategory:"chests";
-  return `<section class="shop-intro-v080"><h2>${escapeHtml(t("shop"))}</h2><p>${escapeHtml(t("shopIntro"))}</p></section>
-    <section class="shop-catalog-v097">
-    <nav class="shop-categories-v096" aria-label="Shop categories">${categories.map(([key,label])=>`<button type="button" data-v080-shop-category="${key}" class="${selected===key?"active":""}" aria-pressed="${selected===key}">${escapeHtml(label)}</button>`).join("")}</nav>
-    <div class="shop-category-panel-v096 ${selected==="chests"?"active":""}" data-v096-shop-panel="chests"><section class="shop-grid-v080">${Object.entries(chestPrices).map(([type,price])=>`<article class="shop-card-v080 rarity-${type}"><span><img src="${CHEST_DEFS[type].asset}" alt=""></span><h3>${escapeHtml(CHEST_DEFS[type].name)}</h3><b>${priceText(price)}</b><button type="button" data-v080-buy-chest="${type}" ${!canAfford(save,price)?"disabled":""}>${escapeHtml(t("buy"))}</button></article>`).join("")}</section></div>
-    <div class="shop-category-panel-v096 ${selected==="essence"?"active":""}" data-v096-shop-panel="essence"><section class="bag-section-v080 shop-square-section-v096"><div class="food-grid-v080">${offers.map(skin=>{const cost=window.CHERRIFT_BALANCE?.gacha?.essenceShop?.[skin.rarity]||300,owned=save.unlockedSkins.includes(skin.id);return `<article class="food-card-v080 rarity-${String(skin.rarity||"Common").toLowerCase()}">${imageOrFallback(skin.icon,"CHERRY",skin.name)}<h3>${escapeHtml(skin.name)}</h3><b><img src="assets/items/sakura_potion.png" alt=""> ${cost}</b><button type="button" data-v080-buy-skin="${escapeHtml(skin.id)}" ${owned||save.sakuraEssence<cost?"disabled":""}>${escapeHtml(owned?t("owned"):t("buy"))}</button></article>`;}).join("")}</div></section></div>
-    <div class="shop-category-panel-v096 ${selected==="food"?"active":""}" data-v096-shop-panel="food"><section class="bag-section-v080 shop-square-section-v096"><div class="food-grid-v080">${Object.entries(FOOD_CATALOG).map(([key,food])=>`<article class="food-card-v080 rarity-${food.rarity.toLowerCase()}">${imageOrFallback(food.asset,food.icon,food.name)}<h3>${escapeHtml(food.name)}</h3><b>${priceText(food.price)}</b><button type="button" data-v080-buy-food="${key}" ${!canAfford(save,food.price)?"disabled":""}>${escapeHtml(t("buy"))}</button></article>`).join("")}</div></section></div>
+  let cards="";
+  if(selected==="chests") cards=Object.entries(chestPrices).map(([type,price])=>shopItemCard({
+    kind:"chest",key:type,name:CHEST_DEFS[type].name,asset:CHEST_DEFS[type].asset,rarity:type==="common"?"Common":type==="rare"?"Rare":"Epic",
+    priceMarkup:shopPriceMarkup(price),buyAttribute:"data-v080-buy-chest",buyValue:type,disabled:!canAfford(save,price),buyLabel:t("buy")
+  })).join("");
+  else if(selected==="essence") cards=offers.map(skin=>{
+    const cost=window.CHERRIFT_BALANCE?.gacha?.essenceShop?.[skin.rarity]||300,owned=save.unlockedSkins.includes(skin.id);
+    return shopItemCard({kind:"skin",key:skin.id,name:skin.name,asset:skin.icon,fallback:"CHERRY",rarity:skin.rarity||"Common",priceMarkup:essencePriceMarkup(cost),buyAttribute:"data-v080-buy-skin",buyValue:skin.id,disabled:owned||save.sakuraEssence<cost,buyLabel:owned?t("owned"):t("buy"),skin:true});
+  }).join("");
+  else cards=Object.entries(FOOD_CATALOG).map(([key,food])=>shopItemCard({
+    kind:"food",key,name:food.name,asset:food.asset,fallback:food.icon,rarity:food.rarity||"Common",priceMarkup:shopPriceMarkup(food.price),buyAttribute:"data-v080-buy-food",buyValue:key,disabled:!canAfford(save,food.price),buyLabel:t("buy")
+  })).join("");
+  return `<section class="shop-intro-v080"><h2>${escapeHtml(t("shop"))}</h2></section>
+    <section class="shop-catalog-v098">
+      <nav class="shop-categories-v096" aria-label="Shop categories">${categories.map(([key,label])=>`<button type="button" data-v080-shop-category="${key}" class="${selected===key?"active":""}" aria-pressed="${selected===key}">${escapeHtml(label)}</button>`).join("")}</nav>
+      <div class="shop-category-panel-v096 active" data-v096-shop-panel="${selected}"><section class="shop-grid-v098">${cards||`<p class="empty-v080">${escapeHtml(t("noItems"))}</p>`}</section></div>
     </section>`;
 }
 function patchNavigation(){
@@ -15179,6 +15269,7 @@ function patchNavigation(){
     const back=event.target.closest?.("[data-v080-back]");if(back){event.preventDefault();UI.open("menu");return;}
     const tab=event.target.closest?.("[data-v080-tab]");if(tab){event.preventDefault();view.tab=tab.dataset.v080Tab;view.reward=null;renderHub();return;}
     const shopCategory=event.target.closest?.("[data-v080-shop-category]");if(shopCategory){event.preventDefault();view.shopCategory=shopCategory.dataset.v080ShopCategory;renderHub();return;}
+    const shopInfo=event.target.closest?.("[data-v098-shop-info]");if(shopInfo){event.preventDefault();openShopInfo(shopInfo.dataset.v098ShopInfo,shopInfo.dataset.v098ShopKey);return;}
     const open=event.target.closest?.("[data-v080-open-chest]");if(open){event.preventDefault();openChest(open.dataset.v080OpenChest);return;}
     const use=event.target.closest?.("[data-v080-use-food]");if(use){event.preventDefault();activateFood(use.dataset.v080UseFood);return;}
     const buyChest=event.target.closest?.("[data-v080-buy-chest]");if(buyChest){event.preventDefault();buyShopItem("chest",buyChest.dataset.v080BuyChest);return;}
@@ -15221,7 +15312,7 @@ function setServerEntitlements(entitlements={}){
 ensureCss();patchStorage();patchNavigation();patchGameplayBuffs();patchCoinSelling();patchUi();updateVersion();
 window.addEventListener("cherrift:languagechange",()=>{const panel=id("chests");if(panel){panel.dataset.v080Ready="";ensureHub();}ensureNavigation();renderHub();ensureCurrencyDisplays();updateVersion();});
 window.CHERRIFT_V080={version:VERSION,displayVersion:DISPLAY_VERSION,normalize,aggregateBuffs,openChest,activateFood,buyShopItem,grantStageChests,render:renderHub,setServerEntitlements,foodCatalog:FOOD_CATALOG,chestDefs:CHEST_DEFS};
-console.info("[CHERRIFT] v0.8.0 Gacha, Economy, BAG & Account Buffs loaded.");
+console.info("[CHERRIFT] v0.8.0 Gacha, Economy, Inventory & Account Buffs loaded.");
 })();
 /* ===== END src/cherrift_v080.js ===== */
 
@@ -15453,7 +15544,7 @@ const TITLES = [
 
 const COPY = {
   hu:{
-    play:"Játék",skins:"Cherry",gear:"Felszerelés",arsenal:"Arsenal",upgrade:"Player Upgrade",bag:"BAG",
+    play:"Játék",skins:"Cherry",gear:"Felszerelés",arsenal:"Arsenal",upgrade:"Player Upgrade",bag:"Inventory",
     gacha:"Gacha",shop:"Bolt",collection:"Gyűjtemény",achievements:"Eredmények",settings:"Beállítások",
     profile:"Profil",daily:"Napi jutalom",weekly:"Heti jutalom",login:"Belépési jutalom",mail:"Levelek",
     social:"Social",buffs:"Buff lista",feedback:"Visszajelzés",bug:"Hibajelentés",more:"Továbbiak",
@@ -15479,7 +15570,7 @@ const COPY = {
     profileFrame:"Profilkeret",frameSoon:"Az ikonkeretek későbbi contentként érkeznek."
   },
   en:{
-    play:"Play",skins:"Cherry",gear:"Gear",arsenal:"Arsenal",upgrade:"Player Upgrade",bag:"BAG",
+    play:"Play",skins:"Cherry",gear:"Gear",arsenal:"Arsenal",upgrade:"Player Upgrade",bag:"Inventory",
     gacha:"Gacha",shop:"Shop",collection:"Collection",achievements:"Achievements",settings:"Settings",
     profile:"Profile",daily:"Daily Reward",weekly:"Weekly Reward",login:"Login Reward",mail:"Mail",
     social:"Social",buffs:"Buff List",feedback:"Feedback",bug:"Bug Report",more:"More",
@@ -15741,7 +15832,7 @@ function rebuildRail(){
       ${railTextButton("playerUpgrade","Upgrade","upgrade")}
       ${railTextButton("worlds","PLAY","","rail-play-v095")}
       ${railTextButton("menu","LOBBY","","rail-lobby-v095")}
-      ${railTextButton("bagV082","Bag","bag")}
+      ${railTextButton("bagV082","Inventory","bag")}
       ${railTextButton("shopV082","Shop","shop")}
       ${railTextButton("gachaV082","Gacha","gacha")}
       ${railTextButton("achievements","Achievements","achievements")}
@@ -16068,8 +16159,8 @@ function claimWeekly(){
   const save=normalize(UI.save),weekly=normalizeWeekly(save),stats=save.stats||{};
   const ready=(stats.runs||0)-weekly.start.runs>=5&&(stats.clears||0)-weekly.start.clears>=3&&(stats.kills||0)-weekly.start.kills>=300;
   if(!ready||weekly.claimed)return;
-  weekly.claimed=true;save.coins+=3500;save.bloomGems=(save.bloomGems||save.blossomGems||0)+20;save.blossomGems=save.bloomGems;save.chests.rare+=1;save.energyState=save.energyState||{};save.energyState.drinks=save.energyState.drinks||{};save.energyState.drinks.standard=(save.energyState.drinks.standard||0)+1;
-  saveProgress(t("claimed"));
+  const grant=()=>{weekly.claimed=true;save.coins+=3500;save.bloomGems=(save.bloomGems||save.blossomGems||0)+20;save.blossomGems=save.bloomGems;save.chests.rare+=1;save.energyState=save.energyState||{};save.energyState.drinks=save.energyState.drinks||{};save.energyState.drinks.standard=(save.energyState.drinks.standard||0)+1;saveProgress(t("claimed"));};
+  if(window.CHERRIFT_OBTAINED?.capture)CHERRIFT_OBTAINED.capture("weekly",grant);else grant();
 }
 
 function unlockedTitles(save){return TITLES.filter(title=>title.test(save));}
@@ -16445,9 +16536,9 @@ console.info("[CHERRIFT] v0.8.2 Systems, navigation, Arsenal, Gear and Skill Tre
 (() => {
 "use strict";
 
-const VERSION = "0.8.3-item-art-reward-overlay";
+const VERSION = "0.9.8.6-item-art-obtained";
 const DISPLAY_VERSION = "v0.8.3";
-const RARITIES = new Set(["Common", "Uncommon", "Rare", "Epic", "Legendary"]);
+const RARITIES = new Set(["Common", "Uncommon", "Rare", "Epic", "Epic+", "Legendary", "Legendary+"]);
 const REWARD_SOUND_PATH = "assets/audio/rewardsfx.wav?v=096reward1";
 const REWARD_SOUND_VOLUME = .55;
 
@@ -16539,15 +16630,11 @@ const COPY = {
 };
 
 const state = {
-  ready: false,
-  snapshot: null,
   queue: [],
-  deferred: [],
   active: false,
   queueTimer: 0,
   observer: null,
   decorateQueued: false,
-  suppressDepth: 0,
   rewardSound: null
 };
 
@@ -16829,50 +16916,56 @@ function mapCounts(value) {
   return out;
 }
 
-function snapshot(save) {
+function rarityClass(value) {
+  return String(safeRarity(value) || "Common")
+    .toLowerCase()
+    .replaceAll("+", "-plus")
+    .replace(/[^a-z0-9-]+/g, "-");
+}
+
+function addGearToSnapshot(target, item) {
+  if (!item || typeof item !== "object") return;
+  const key = String(item.id || `${item.slot || "gear"}_${item.createdAt || target.size}`);
+  target.set(key, {
+    id:key,
+    slot:item.slot,
+    type:item.type,
+    rarity:item.rarity,
+    itemLevel:item.itemLevel,
+    stats:item.stats,
+    createdAt:item.createdAt
+  });
+}
+
+function itemSnapshot(save) {
   const source = save && typeof save === "object" ? save : {};
   const materials = source.bag?.materials || {};
-  const inventory = new Map();
-  for (const item of Array.isArray(source.inventory) ? source.inventory : []) {
-    if (!item) continue;
-    const key = String(item.id || `${item.slot || "gear"}_${item.createdAt || inventory.size}`);
-    inventory.set(key, {
-      id: key,
-      slot: item.slot,
-      type: item.type,
-      rarity: item.rarity,
-      itemLevel: item.itemLevel,
-      stats: item.stats,
-      createdAt: item.createdAt
-    });
-  }
+  const gear = new Map();
+  for (const item of Array.isArray(source.inventory) ? source.inventory : []) addGearToSnapshot(gear, item);
+  for (const item of Object.values(source.equipped || {})) addGearToSnapshot(gear, item);
   return {
-    coins: count(source.coins),
-    blossomGems: count(source.blossomGems),
-    sakuraEssence: count(source.sakuraEssence),
-    keys: count(source.keys),
-    skillPoints: count(source.account?.skillPoints),
-    chests: mapCounts(source.chests),
-    stones: mapCounts(materials.stones),
-    slotCores: mapCounts(materials.slotCores),
-    gearScrap: count(materials.gearScrap),
-    bagItems: mapCounts(source.bag?.items),
-    skins: new Set(Array.isArray(source.unlockedSkins) ? source.unlockedSkins.filter(Boolean) : []),
-    inventory
+    gear,
+    skins:new Set(Array.isArray(source.unlockedSkins) ? source.unlockedSkins.filter(Boolean) : []),
+    bagItems:mapCounts(source.bag?.items),
+    energyDrinks:mapCounts(source.energyState?.drinks),
+    stones:mapCounts(materials.stones),
+    slotCores:mapCounts(materials.slotCores),
+    gearScrap:count(materials.gearScrap)
   };
 }
 
-function rewardItem({ key, name, amount = 1, asset = "", glyph = "", html = "", rarity = "Common", kind = "item", subtitle = "" }) {
+function rewardItem({ key, name, amount = 1, asset = "", glyph = "", html = "", rarity = "Common", kind = "item", subtitle = "", description = "" }) {
   return {
-    key: key || `${kind}:${name}`,
-    name: String(name || "Reward"),
-    amount: Math.max(1, count(amount) || 1),
-    asset: normalizeAsset(asset),
-    glyph: String(glyph || ""),
-    html: String(html || ""),
-    rarity: safeRarity(rarity),
-    kind,
-    subtitle: String(subtitle || "")
+    key:key || `${kind}:${name}`,
+    name:String(name || "Reward"),
+    amount:Math.max(1, count(amount) || 1),
+    asset:normalizeAsset(asset),
+    glyph:String(glyph || ""),
+    html:String(html || ""),
+    rarity:safeRarity(rarity),
+    kind:String(kind || "item"),
+    subtitle:String(subtitle || ""),
+    description:String(description || subtitle || "")
   };
 }
 
@@ -16884,7 +16977,17 @@ function gearReward(item) {
   const rendered = window.UI?.gearEmoji?.(item);
   const html = typeof rendered === "string" && rendered.includes("<") ? rendered : "";
   const glyph = html ? "" : (typeof rendered === "string" ? rendered : "⚙");
-  return rewardItem({ key:`gear:${item?.id || label}`, name:label, html, glyph, rarity, kind:"gear", subtitle:`Lv.${count(item?.itemLevel) || 1}` });
+  const level = count(item?.itemLevel) || 1;
+  return rewardItem({
+    key:`gear:${item?.id || label}`,
+    name:label,
+    html,
+    glyph,
+    rarity,
+    kind:"gear",
+    subtitle:`Lv.${level}`,
+    description:`${rarity} · ${slot} · Lv.${level}`
+  });
 }
 
 function skinReward(skinId) {
@@ -16893,11 +16996,23 @@ function skinReward(skinId) {
   const asset = typeof icon === "string" && !icon.includes("<") && /^(?:assets\/|https?:\/\/|data:)/.test(icon) ? icon : "";
   const html = typeof icon === "string" && icon.includes("<") ? icon : "";
   const glyph = asset || html ? "" : (skin?.emoji || icon || "🐰");
-  return rewardItem({ key:`skin:${skinId}`, name:skin?.name || skinId, asset, html, glyph, rarity:safeRarity(skin?.rarity, "Rare"), kind:"skin", subtitle:"Cherry Skin" });
+  const rarity = safeRarity(skin?.rarity, "Rare");
+  return rewardItem({
+    key:`skin:${skinId}`,
+    name:skin?.name || skinId,
+    asset,
+    html,
+    glyph,
+    rarity,
+    kind:"skin",
+    subtitle:"Cherry Skin",
+    description:skin?.description || `${rarity} Cherry Skin`
+  });
 }
 
 function bagItemReward(itemId, amount) {
   const food = window.CHERRIFT_V080?.foodCatalog?.[itemId];
+  const effect = food ? `${Math.round(Number(food.value || 0) * 100)}% ${String(food.effect || "Buff").replaceAll("_", " ")}` : "";
   return rewardItem({
     key:`food:${itemId}`,
     name:food?.name || itemId.replaceAll("_", " "),
@@ -16906,7 +17021,8 @@ function bagItemReward(itemId, amount) {
     glyph:food?.icon || "✦",
     rarity:safeRarity(food?.rarity),
     kind:"buff",
-    subtitle:food ? `${food.runs || 0} ${language() === "hu" ? "kör" : "runs"}` : ""
+    subtitle:food ? `${food.runs || 0} ${language() === "hu" ? "kör" : "runs"}` : "",
+    description:food ? `${effect} · ${food.runs || 0} ${language() === "hu" ? "kör" : "runs"}` : ""
   });
 }
 
@@ -16918,63 +17034,99 @@ function mergeGenericRewards(items) {
       out.push(item);
       continue;
     }
-    const mergeKey = item.key;
-    if (!positions.has(mergeKey)) {
-      positions.set(mergeKey, out.length);
+    if (!positions.has(item.key)) {
+      positions.set(item.key, out.length);
       out.push(item);
-    } else {
-      out[positions.get(mergeKey)].amount += item.amount;
-    }
+    } else out[positions.get(item.key)].amount += item.amount;
   }
   return out;
 }
 
-function collectRewards(before, after) {
+function collectNewItems(before, after) {
   if (!before || !after) return [];
   const items = [];
 
-  for (const [key, item] of after.inventory.entries()) {
-    if (!before.inventory.has(key)) items.push(gearReward(item));
+  for (const [key, item] of after.gear.entries()) {
+    if (!before.gear.has(key)) items.push(gearReward(item));
   }
   for (const skinId of after.skins) {
     if (!before.skins.has(skinId)) items.push(skinReward(skinId));
   }
-
-  const chestRarity = { common:"Common", rare:"Rare", epic:"Epic", legendary:"Legendary" };
-  for (const type of ["legendary", "epic", "rare", "common"]) {
-    const delta = count(after.chests[type]) - count(before.chests[type]);
-    if (delta > 0) items.push(rewardItem({ key:`chest:${type}`, name:`${type[0].toUpperCase()}${type.slice(1)} Chest`, amount:delta, asset:ITEM_ASSETS.chests[type], rarity:chestRarity[type], kind:"chest" }));
-  }
-  const keyDelta = after.keys - before.keys;
-  if (keyDelta > 0) items.push(rewardItem({ key:"key:common", name:t("commonChestKey"), amount:keyDelta, asset:ITEM_ASSETS.chests.common, rarity:"Common", kind:"key" }));
-
   for (const [itemId, amount] of Object.entries(after.bagItems)) {
     const delta = amount - count(before.bagItems[itemId]);
     if (delta > 0) items.push(bagItemReward(itemId, delta));
   }
 
+  const drinkRarity = { small:"Common", standard:"Uncommon", large:"Rare" };
+  for (const drink of ["small", "standard", "large"]) {
+    const delta = count(after.energyDrinks[drink]) - count(before.energyDrinks[drink]);
+    if (delta > 0) items.push(rewardItem({
+      key:`energy-drink:${drink}`,
+      name:`${drink[0].toUpperCase()}${drink.slice(1)} Energy Drink`,
+      amount:delta,
+      asset:"assets/items/buffs/support_drink.png",
+      rarity:drinkRarity[drink],
+      kind:"item",
+      subtitle:language() === "hu" ? "Energiaital" : "Energy Drink",
+      description:language() === "hu" ? "Később felhasználható energia-visszatöltéshez." : "Can be used later to restore energy."
+    }));
+  }
+
   for (const [slot, asset] of Object.entries(ITEM_ASSETS.cores)) {
     const delta = count(after.slotCores[slot]) - count(before.slotCores[slot]);
-    if (delta > 0) items.push(rewardItem({ key:`core:${slot}`, name:`${slot} Core`, amount:delta, asset, rarity:"Rare", kind:"core" }));
+    if (delta > 0) items.push(rewardItem({
+      key:`core:${slot}`,
+      name:`${slot} Core`,
+      amount:delta,
+      asset,
+      rarity:"Rare",
+      kind:"core",
+      subtitle:"Arsenal material",
+      description:language() === "hu" ? "Arsenal csillagozási alapanyag." : "Arsenal star-up material."
+    }));
   }
+
   const stoneRarity = { copper:"Common", iron:"Uncommon", steel:"Rare", silver:"Epic", royal:"Legendary", magical:"Legendary" };
   for (const stone of ["magical", "royal", "silver", "steel", "iron", "copper"]) {
     const delta = count(after.stones[stone]) - count(before.stones[stone]);
-    if (delta > 0) items.push(rewardItem({ key:`stone:${stone}`, name:`${stone[0].toUpperCase()}${stone.slice(1)} Enhancement Stone`, amount:delta, asset:ITEM_ASSETS.stones[stone], rarity:stoneRarity[stone], kind:"stone" }));
+    if (delta > 0) items.push(rewardItem({
+      key:`stone:${stone}`,
+      name:`${stone[0].toUpperCase()}${stone.slice(1)} Enhancement Stone`,
+      amount:delta,
+      asset:ITEM_ASSETS.stones[stone],
+      rarity:stoneRarity[stone],
+      kind:"stone",
+      subtitle:"Enhancement material",
+      description:language() === "hu" ? "Arsenal fejlesztési alapanyag." : "Arsenal enhancement material."
+    }));
   }
-  const scrapDelta = after.gearScrap - before.gearScrap;
-  if (scrapDelta > 0) items.push(rewardItem({ key:"material:gearScrap", name:"Gear Scrap", amount:scrapDelta, asset:ITEM_ASSETS.currency.gearScrap, rarity:"Common", kind:"material" }));
 
-  const essenceDelta = after.sakuraEssence - before.sakuraEssence;
-  if (essenceDelta > 0) items.push(rewardItem({ key:"currency:sakuraEssence", name:"Sakura Essence", amount:essenceDelta, asset:ITEM_ASSETS.currency.sakuraEssence, rarity:"Epic", kind:"currency" }));
-  const gemDelta = after.blossomGems - before.blossomGems;
-  if (gemDelta > 0) items.push(rewardItem({ key:"currency:blossomGem", name:"Blossom Gem", amount:gemDelta, asset:ITEM_ASSETS.currency.blossomGems, rarity:"Rare", kind:"currency" }));
-  const coinDelta = after.coins - before.coins;
-  if (coinDelta > 0) items.push(rewardItem({ key:"currency:coin", name:"Coin", amount:coinDelta, asset:ITEM_ASSETS.currency.coins, rarity:"Common", kind:"currency" }));
-  const skillPointDelta = after.skillPoints - before.skillPoints;
-  if (skillPointDelta > 0) items.push(rewardItem({ key:"account:skillPoint", name:t("skillPoint"), amount:skillPointDelta, asset:ITEM_ASSETS.actions.upgrade, rarity:"Epic", kind:"account" }));
+  const scrapDelta = after.gearScrap - before.gearScrap;
+  if (scrapDelta > 0) items.push(rewardItem({
+    key:"material:gearScrap",
+    name:"Gear Scrap",
+    amount:scrapDelta,
+    asset:ITEM_ASSETS.currency.gearScrap,
+    rarity:"Common",
+    kind:"material",
+    subtitle:"Material",
+    description:language() === "hu" ? "Felszerelés-fejlesztési alapanyag." : "Equipment enhancement material."
+  }));
 
   return mergeGenericRewards(items);
+}
+
+const OBTAINED_KINDS = new Set(["gear", "skin", "buff", "food", "core", "stone", "material", "item"]);
+const BLOCKED_OBTAINED_SOURCES = new Set([
+  "equip", "unequip", "equipment_swap", "inventory_move", "inventory_sort", "stack_merge",
+  "save_load", "load", "save", "auth", "bootstrap", "server", "stage_reward", "stage_clear",
+  "run_reward", "gameplay_reward", "sell", "dismantle", "merge", "upgrade"
+]);
+
+function sourceCanShowObtained(source) {
+  const token = String(source || "explicit").trim().toLowerCase().replaceAll("-", "_");
+  if (BLOCKED_OBTAINED_SOURCES.has(token)) return false;
+  return !/(?:^|_)(?:stage|run|gameplay|equip|unequip|inventory|load|save|auth|bootstrap|sell|dismantle|merge|upgrade)(?:_|$)/.test(token);
 }
 
 function gameplayActive() {
@@ -16982,137 +17134,151 @@ function gameplayActive() {
   return mode === "playing" || mode === "paused" || document.body?.classList.contains("ingame-settings-open") === true;
 }
 
-function ensureRewardOverlay() {
-  let overlay = id("rewardOverlayV083");
-  if (overlay) return overlay;
-  overlay = document.createElement("section");
-  overlay.id = "rewardOverlayV083";
-  overlay.className = "reward-overlay-v083";
-  overlay.setAttribute("role", "dialog");
-  overlay.setAttribute("aria-modal", "true");
-  overlay.setAttribute("aria-labelledby", "rewardTitleV083");
-  overlay.innerHTML = `
-    <div class="reward-shell-v083">
-      <header class="reward-head-v083"><i></i><h2 id="rewardTitleV083">${escapeHtml(t("obtained"))}</h2><i></i></header>
-      <div id="rewardItemsV083" class="reward-items-v083"></div>
-      <button id="rewardContinueV083" type="button" class="reward-continue-v083">${escapeHtml(t("continue"))}</button>
-    </div>`;
-  document.body.appendChild(overlay);
-  id("rewardContinueV083")?.addEventListener("click", closeCurrentReward);
-  overlay.addEventListener("click", event => {
-    if (event.target === overlay) closeCurrentReward();
-  });
-  return overlay;
+function lookupGearForObtained(key) {
+  const itemId = String(key || "").startsWith("gear:") ? String(key).slice(5) : "";
+  if (!itemId) return null;
+  const all = [...(UI.save?.inventory || []), ...Object.values(UI.save?.equipped || {})].filter(Boolean);
+  return all.find(item => String(item.id) === itemId) || null;
 }
 
-function rewardArt(item) {
-  if (item.html) return `<div class="reward-art-v083 reward-art-html-v083">${item.html}</div>`;
-  if (item.asset) return `<div class="reward-art-v083">${imageMarkup(item.asset, item.name, "reward-image-v083")}</div>`;
-  return `<div class="reward-art-v083"><span>${escapeHtml(item.glyph || "✦")}</span></div>`;
-}
-
-function rewardCard(item) {
-  const rarity = safeRarity(item.rarity);
-  return `<article class="reward-item-v083 rarity-${rarity.toLowerCase()}" tabindex="0" data-cr-item-key="${escapeHtml(item.key)}" data-cr-item-name="${escapeHtml(item.name)}" data-cr-item-kind="${escapeHtml(item.kind)}" data-cr-item-rarity="${escapeHtml(rarity)}" data-cr-item-subtitle="${escapeHtml(item.subtitle)}">
-    <div class="reward-amount-v083">${item.amount > 1 ? `×${item.amount}` : ""}</div>
-    ${rewardArt(item)}
-    <div class="reward-copy-v083"><h3>${escapeHtml(item.name)}</h3>${item.subtitle ? `<p>${escapeHtml(item.subtitle)}</p>` : ""}</div>
-    <small>${escapeHtml(rarity)}</small>
-  </article>`;
+function normalizeObtainedItem(value) {
+  if (!value || typeof value !== "object") return null;
+  const item = rewardItem(value);
+  if (!OBTAINED_KINDS.has(item.kind)) return null;
+  if (item.kind === "food") item.kind = "buff";
+  if (item.kind === "gear" && !item.html && !item.asset) {
+    const gear = lookupGearForObtained(item.key);
+    const rendered = gear ? UI.gearEmoji?.(gear) : "";
+    if (typeof rendered === "string" && rendered.includes("<")) item.html = rendered;
+    else if (typeof rendered === "string" && rendered) item.glyph = rendered;
+  }
+  return item;
 }
 
 function rewardClaimCopy() {
-  return matchMedia("(pointer:coarse)").matches ? "Tap to claim" : "Click to claim";
+  return matchMedia("(hover:none), (pointer:coarse)").matches ? "Tap to claim" : "Click to claim";
 }
 
-function renderRewardBatch(batch) {
-  const overlay = ensureRewardOverlay();
-  const title = id("rewardTitleV083");
-  const list = id("rewardItemsV083");
-  const continueButton = id("rewardContinueV083");
+function obtainedArt(item) {
+  if (item.html) return `<div class="obtained-art-v098 obtained-art-html-v098">${item.html}</div>`;
+  if (item.asset) return `<div class="obtained-art-v098">${imageMarkup(item.asset, item.name, "obtained-image-v098")}</div>`;
+  return `<div class="obtained-art-v098"><span>${escapeHtml(item.glyph || "✦")}</span></div>`;
+}
+
+function obtainedCard(item) {
+  const rarity = safeRarity(item.rarity);
+  const info = item.description || item.subtitle || item.name;
+  return `<article class="obtained-item-v098 rarity-${rarityClass(rarity)}" tabindex="0" role="button" data-obtained-key="${escapeHtml(item.key)}" aria-label="${escapeHtml(`${item.name}, ${rarity}`)}">
+    ${item.amount > 1 ? `<em class="obtained-amount-v098">×${item.amount}</em>` : ""}
+    ${obtainedArt(item)}
+    <div class="obtained-copy-v098"><small>${escapeHtml(rarity)}</small><h3>${escapeHtml(item.name)}</h3>${item.subtitle ? `<p>${escapeHtml(item.subtitle)}</p>` : ""}</div>
+    <div class="obtained-info-v098" aria-hidden="true"><b>${escapeHtml(item.name)}</b><small>${escapeHtml(rarity)}</small><p>${escapeHtml(info)}</p></div>
+  </article>`;
+}
+
+function ensureObtainedOverlay() {
+  let overlay = id("obtainedOverlayV098");
+  if (overlay) return overlay;
+  overlay = document.createElement("section");
+  overlay.id = "obtainedOverlayV098";
+  overlay.className = "obtained-overlay-v098";
+  overlay.setAttribute("role", "dialog");
+  overlay.setAttribute("aria-modal", "true");
+  overlay.setAttribute("aria-labelledby", "obtainedTitleV098");
+  overlay.innerHTML = `<div class="obtained-shell-v098">
+    <header class="obtained-head-v098"><i aria-hidden="true"></i><h2 id="obtainedTitleV098">${escapeHtml(t("obtained"))}</h2><i aria-hidden="true"></i></header>
+    <div id="obtainedItemsV098" class="obtained-items-v098"></div>
+    <button id="obtainedClaimV098" type="button" class="obtained-claim-v098">${escapeHtml(rewardClaimCopy())}</button>
+  </div>`;
+  overlay.addEventListener("click", event => {
+    const card = event.target.closest?.(".obtained-item-v098");
+    if (card) {
+      event.preventDefault();
+      if (matchMedia("(hover:none), (pointer:coarse)").matches) {
+        for (const other of qa(".obtained-item-v098.info-open", overlay)) if (other !== card) other.classList.remove("info-open");
+        card.classList.toggle("info-open");
+      }
+      return;
+    }
+    closeCurrentObtained();
+  });
+  overlay.addEventListener("keydown", event => {
+    const card = event.target.closest?.(".obtained-item-v098");
+    if (!card || !["Enter", " "].includes(event.key)) return;
+    event.preventDefault();
+    card.classList.toggle("info-open");
+  });
+  document.body.appendChild(overlay);
+  return overlay;
+}
+
+function renderObtainedBatch(batch) {
+  const overlay = ensureObtainedOverlay();
+  const title = id("obtainedTitleV098");
+  const list = id("obtainedItemsV098");
+  const claim = id("obtainedClaimV098");
   if (title) title.textContent = batch.title || t("obtained");
-  if (continueButton) continueButton.textContent = rewardClaimCopy();
-  if (list) list.innerHTML = batch.items.map(rewardCard).join("");
+  if (claim) claim.textContent = rewardClaimCopy();
+  if (list) list.innerHTML = batch.items.map(obtainedCard).join("");
   overlay.classList.add("open");
-  document.body.classList.add("reward-open-v083");
+  document.body.classList.add("obtained-open-v098");
   state.active = true;
   playRewardSound();
-  window.setTimeout(() => continueButton?.focus({ preventScroll:true }), 80);
 }
 
-function showRewards(items, options = {}) {
-  const normalized = Array.isArray(items) ? items.filter(Boolean).map(item => rewardItem(item)) : [];
-  if (!normalized.length || state.suppressDepth > 0) return false;
-  if (gameplayActive()) {
-    state.deferred.push({ title:options.title || t("obtained"), items:normalized });
-    return true;
-  }
-  state.queue.push({ title:options.title || t("obtained"), items:normalized });
-  if (!state.active) renderRewardBatch(state.queue.shift());
+function showObtained(items, options = {}) {
+  if (!sourceCanShowObtained(options.source || "explicit") || gameplayActive()) return false;
+  const normalized = mergeGenericRewards((Array.isArray(items) ? items : []).map(normalizeObtainedItem).filter(Boolean));
+  if (!normalized.length) return false;
+  state.queue.push({ title:options.title || t("obtained"), items:normalized, source:String(options.source || "explicit") });
+  if (!state.active) renderObtainedBatch(state.queue.shift());
   return true;
 }
 
-function flushDeferredRewards() {
-  if (gameplayActive() || state.active || !state.deferred.length) return false;
-  state.queue.push(...state.deferred.splice(0));
-  if (!state.active && state.queue.length) renderRewardBatch(state.queue.shift());
-  return true;
-}
-
-function closeCurrentReward() {
+function closeCurrentObtained() {
   window.clearTimeout(state.queueTimer);
   state.queueTimer = 0;
-  const overlay = id("rewardOverlayV083");
-  overlay?.classList.remove("open");
-  document.body.classList.remove("reward-open-v083");
+  id("obtainedOverlayV098")?.classList.remove("open");
+  document.body.classList.remove("obtained-open-v098");
   state.active = false;
-  if (state.queue.length) {
-    const nextBatch = state.queue.shift();
-    state.queueTimer = window.setTimeout(() => {
-      state.queueTimer = 0;
-      if (!state.active) renderRewardBatch(nextBatch);
-      else state.queue.unshift(nextBatch);
-    }, 140);
-  } else {
-    requestAnimationFrame(flushDeferredRewards);
-  }
+  if (!state.queue.length) return;
+  const next = state.queue.shift();
+  state.queueTimer = window.setTimeout(() => {
+    state.queueTimer = 0;
+    if (!state.active) renderObtainedBatch(next);
+    else state.queue.unshift(next);
+  }, 120);
 }
 
-function resetRewardQueue(options = {}) {
+function resetObtained() {
   window.clearTimeout(state.queueTimer);
   state.queueTimer = 0;
   state.queue.length = 0;
-  if (options.clearDeferred === true) state.deferred.length = 0;
   state.active = false;
-  id("rewardOverlayV083")?.classList.remove("open");
-  document.body.classList.remove("reward-open-v083");
+  id("obtainedOverlayV098")?.classList.remove("open");
+  document.body.classList.remove("obtained-open-v098");
 }
 
-function rebaseRewardSnapshot(save, options = {}) {
-  // Auth/account hydration replaces the entire save object. That is not an
-  // acquisition event, so the reward detector must start from the newly
-  // authoritative save instead of comparing it with the previous account.
-  state.snapshot = snapshot(save);
-  state.ready = true;
-  if (options.clearQueue === true) resetRewardQueue({ clearDeferred:true });
-  return true;
+function finishCapturedAcquisition(source, before, options = {}) {
+  if (!sourceCanShowObtained(source) || gameplayActive()) return false;
+  const after = itemSnapshot(window.UI?.save);
+  const items = collectNewItems(before, after);
+  return items.length ? showObtained(items, { ...options, source }) : false;
 }
 
-function patchRewardDetection() {
-  if (!window.CherriftStorage || CherriftStorage.__v083RewardDetection) return;
-  const previousSave = CherriftStorage.save.bind(CherriftStorage);
-  CherriftStorage.save = function saveV083(save) {
-    const before = state.snapshot;
-    const result = previousSave(save);
-    const after = snapshot(save);
-    state.snapshot = after;
-    if (state.ready && state.suppressDepth === 0) {
-      const rewards = collectRewards(before, after);
-      if (rewards.length) showRewards(rewards);
-    }
-    return result;
-  };
-  CherriftStorage.__v083RewardDetection = true;
+function captureObtained(source, callback, options = {}) {
+  if (typeof callback !== "function") return undefined;
+  if (!sourceCanShowObtained(source) || !window.UI?.save) return callback();
+  const before = itemSnapshot(UI.save);
+  const result = callback();
+  if (result && typeof result.then === "function") {
+    return Promise.resolve(result).then(value => {
+      finishCapturedAcquisition(source, before, options);
+      return value;
+    });
+  }
+  finishCapturedAcquisition(source, before, options);
+  return result;
 }
 
 function patchUiLifecycle() {
@@ -17122,9 +17288,7 @@ function patchUiLifecycle() {
     UI.init = function initV083(save, game) {
       const result = previousInit(save, game);
       wireCatalogAssets();
-      state.snapshot = snapshot(save);
-      state.ready = true;
-      ensureRewardOverlay();
+      ensureObtainedOverlay();
       installDecoratorObserver();
       scheduleDecorate();
       patchVersion();
@@ -17145,25 +17309,10 @@ function patchUiLifecycle() {
     UI.open = function openV083(...args) {
       const result = previousOpen(...args);
       scheduleDecorate();
-      requestAnimationFrame(flushDeferredRewards);
-      return result;
-    };
-  }
-  const previousStageClear = UI.showStageClear?.bind(UI);
-  if (previousStageClear) {
-    UI.showStageClear = function showStageClearV083(...args) {
-      const result = previousStageClear(...args);
-      requestAnimationFrame(flushDeferredRewards);
       return result;
     };
   }
   UI.__v083ItemArt = true;
-}
-
-function withSuppressedRewards(callback) {
-  state.suppressDepth++;
-  try { return callback(); }
-  finally { state.suppressDepth = Math.max(0, state.suppressDepth - 1); }
 }
 
 function patchVersion() {
@@ -17178,53 +17327,47 @@ function patchVersion() {
 
 function bindGlobalEvents() {
   document.addEventListener("keydown", event => {
-    if (!state.active || event.key !== " ") return;
+    if (!state.active || ![" ", "Escape"].includes(event.key)) return;
     event.preventDefault();
-    closeCurrentReward();
+    closeCurrentObtained();
   });
   window.addEventListener("cherrift:languagechange", () => {
-    const title = id("rewardTitleV083");
-    const button = id("rewardContinueV083");
+    const title = id("obtainedTitleV098");
+    const button = id("obtainedClaimV098");
     if (title && state.active) title.textContent = t("obtained");
     if (button) button.textContent = rewardClaimCopy();
     wireCatalogAssets();
     scheduleDecorate();
     patchVersion();
   });
-  for (const eventName of ["cherrift:run-reward-ready", "cherrift:run-exit", "cherrift:reward-flush"]) {
-    window.addEventListener(eventName, () => requestAnimationFrame(flushDeferredRewards));
-  }
 }
 
 ensureCss();
 wireCatalogAssets();
-patchRewardDetection();
 patchUiLifecycle();
 bindGlobalEvents();
 patchVersion();
 preloadAssets();
 
 window.CHERRIFT_ITEM_ASSETS = ITEM_ASSETS;
-window.CHERRIFT_REWARDS = {
-  show: showRewards,
-  close: closeCurrentReward,
-  reset: resetRewardQueue,
-  withSuppressed: withSuppressedRewards,
-  flush: flushDeferredRewards,
-  rebase: rebaseRewardSnapshot,
-  playSound: playRewardSound,
-  collectRewards,
-  snapshot
-};
+window.CHERRIFT_OBTAINED = Object.freeze({
+  show:showObtained,
+  capture:captureObtained,
+  close:closeCurrentObtained,
+  reset:resetObtained,
+  playSound:playRewardSound,
+  collect:collectNewItems,
+  snapshot:itemSnapshot
+});
 window.CHERRIFT_V083 = {
   version: VERSION,
   displayVersion: DISPLAY_VERSION,
   assets: ITEM_ASSETS,
   decorate: decorateAll,
-  showRewards
+  showObtained
 };
 
-console.info("[CHERRIFT] v0.8.3 item artwork and reward overlay loaded.");
+console.info("[CHERRIFT] item artwork and Obtained acquisition UI loaded.");
 })();
 /* ===== END src/cherrift_v083.js ===== */
 
@@ -17451,6 +17594,8 @@ function bagItems() {
   for (const slot of ["Weapon","Helmet","Armor","Gloves","Boots","Ring","Necklace"]) push({id:`core:${slot}`,category:"cores",name:`${slot} Core`,count:safeCount(material.slotCores?.[slot]),asset:assets.cores?.[slot],rarity:"Rare",description:language()==="hu"?"Az adott Arsenal slot csillagozásához kell.":"Used to star up the matching Arsenal slot.",source:"Dismantle · Merge · Weekly Reward"});
   const catalog = window.CHERRIFT_V080?.foodCatalog || {};
   for (const [itemId, food] of Object.entries(catalog)) push({id:`buff:${itemId}`,itemId,category:"buffs",name:food.name,count:safeCount(save.bag?.items?.[itemId]),asset:food.asset,rarity:food.rarity||"Common",description:`+${Math.round(Number(food.value||0)*100)}% ${prettyKey(food.effect)} · ${food.runs||0} ${language()==="hu"?"kör":"runs"}`,source:"Shop · Rewards",action:"use"});
+  const drinkRarity={small:"Common",standard:"Uncommon",large:"Rare"};
+  for(const drink of ["small","standard","large"]) push({id:`energyDrink:${drink}`,category:"buffs",name:`${drink[0].toUpperCase()}${drink.slice(1)} Energy Drink`,count:safeCount(save.energyState?.drinks?.[drink]),asset:"assets/items/buffs/support_drink.png",rarity:drinkRarity[drink],description:language()==="hu"?"Energia-visszatöltéshez használható fogyóeszköz.":"A consumable used to restore energy.",source:"Login Reward · Weekly Reward"});
   for (const type of ["common","rare","epic","legendary"]) push({id:`chest:${type}`,chestType:type,category:"chests",name:`${type[0].toUpperCase()}${type.slice(1)} Chest`,count:safeCount(save.chests?.[type]),asset:assets.chests?.[type],rarity:type==="common"?"Common":type==="rare"?"Rare":type==="epic"?"Epic":"Legendary",description:language()==="hu"?"Nyisd ki a Gacha oldalon jutalmakért.":"Open it on the Gacha page for rewards.",source:"Stage Clear · Weekly Reward · Shop",action:"gacha"});
   return items.filter(item => item.count > 0);
 }
@@ -17473,11 +17618,11 @@ function renderBagInventory() {
   if (selected) state.bagSelected = selected.id;
   const categories = [["all",t("all")],["enhancement",t("enhancement")],["stones",t("stones")],["cores",t("cores")],["buffs",t("buffs")],["chests",t("chests")]];
   const cards = filtered.length ? filtered.map(item => `<button type="button" class="bag-item-v084 rarity-${String(item.rarity).toLowerCase()} ${item.id===selected?.id?"active":""}" data-v084-bag-item="${escapeHtml(item.id)}" data-cr-item-name="${escapeHtml(item.name)}" data-cr-item-rarity="${escapeHtml(item.rarity)}" data-cr-item-description="${escapeHtml(item.description)}" aria-label="${escapeHtml(`${item.name}, ${item.count}`)}">
-    <span class="bag-item-art-v084">${image(item.asset,item.name)}</span><em>×${item.count}</em>
+    <span class="bag-item-art-v084">${image(item.asset,item.name)}</span><b class="bag-item-name-v098">${escapeHtml(item.name)}</b><em>×${item.count}</em>
   </button>`).join("") : `<div class="bag-empty-v084"><p>${escapeHtml(t("noItems"))}</p><div class="bag-empty-slots-v092" aria-hidden="true">${Array.from({length:9},()=>'<span class="bag-empty-slot-v092"></span>').join("")}</div></div>`;
   const action = !selected ? "" : selected.action === "use" ? `<button type="button" class="primary" data-v084-bag-use="${escapeHtml(selected.itemId)}" ${selected.count<1?"disabled":""}>${escapeHtml(t("use"))}</button>` : selected.action === "gacha" ? `<button type="button" class="primary" data-v084-bag-gacha="${escapeHtml(selected.chestType)}">${escapeHtml(t("openGacha"))}</button>` : "";
   body.innerHTML = `<section class="bag-inventory-v084">
-    <header class="bag-inventory-head-v084"><div><small>CHERRIFT BAG</small><h2>${escapeHtml(t("inventory"))}</h2><p>${escapeHtml(t("inventoryHint"))}</p></div></header>
+    <header class="bag-inventory-head-v084"><div><small>CHERRIFT INVENTORY</small><h2>${escapeHtml(t("inventory"))}</h2><p>${escapeHtml(t("inventoryHint"))}</p></div></header>
     <nav class="bag-tabs-v084">${categories.map(([key,label])=>`<button type="button" data-v084-bag-category="${key}" class="${state.bagCategory===key?"active":""}">${escapeHtml(label)}</button>`).join("")}</nav>
     <div class="bag-layout-v084"><div class="bag-grid-v084">${cards}</div>${selected?`<aside class="bag-detail-v084 rarity-${String(selected.rarity).toLowerCase()}">
       <div class="bag-detail-art-v084">${image(selected.asset,selected.name)}</div><small>${escapeHtml(selected.rarity)}</small><h2>${escapeHtml(selected.name)}</h2><strong>${escapeHtml(t("owned"))}: ${selected.count}</strong><p>${escapeHtml(selected.description)}</p>
@@ -17486,28 +17631,8 @@ function renderBagInventory() {
   </section>`;
 }
 
-function replacePriceIcon(holder, currency, amount) {
-  if (!holder) return;
-  const asset = currency === "gem" ? assets.currency?.blossomGems : assets.currency?.coins;
-  holder.classList.add("shop-price-v084");
-  holder.innerHTML = `${image(asset,currency === "gem" ? "Blossom Gem" : "Coin","shop-price-icon-v084")}<span>${safeCount(amount)}</span>`;
-}
-
 function decorateShop() {
-  if (!q('[data-v080-tab="shop"].active')) return;
-  qa(".shop-card-v080").forEach(card => {
-    const type = q("[data-v080-buy-chest]", card)?.dataset.v080BuyChest;
-    if (type) card.classList.add(`rarity-${type === "common" ? "common" : type === "rare" ? "rare" : "epic"}`, "shop-rarity-card-v084");
-    const price = q(":scope > b", card);
-    const text = price?.textContent || "";
-    replacePriceIcon(price, /💎/.test(text) ? "gem" : "coin", text.match(/\d+/)?.[0] || 0);
-  });
-  qa(".food-grid-v080 .food-card-v080").forEach(card => {
-    card.classList.add("shop-rarity-card-v084");
-    const price = Array.from(card.children).find(child => child.tagName === "B" && /\d/.test(child.textContent || ""));
-    const text = price?.textContent || "";
-    if (/💎|🪙/.test(text)) replacePriceIcon(price, /💎/.test(text) ? "gem" : "coin", text.match(/\d+/)?.[0] || 0);
-  });
+  // Shop v0.9.8.6 renders canonical currency art and rarity styling directly.
 }
 
 function ensureCollectionModal() {
@@ -18742,7 +18867,7 @@ if(previousShowStageClear){
     let holder=id("runSummaryV089");
     if(!holder){holder=document.createElement("div");holder.id="runSummaryV089";id("v080StageRewards")?.insertAdjacentElement("afterend",holder)||document.querySelector("#stageClearModal .stage-clear-summary")?.insertAdjacentElement("afterend",holder);}
     if(holder)holder.innerHTML=summaryMarkup(game);
-    window.CHERRIFT_REWARDS?.playSound?.();
+    window.CHERRIFT_OBTAINED?.playSound?.();
     return result;
   };
 }
@@ -20143,8 +20268,10 @@ function rewardContext() {
     };
     const execute = () => callback(current);
     try {
-      if (current.showReward || !window.CHERRIFT_REWARDS?.withSuppressed) return execute();
-      return CHERRIFT_REWARDS.withSuppressed(execute);
+      if (current.showReward && window.CHERRIFT_OBTAINED?.capture) {
+        return CHERRIFT_OBTAINED.capture(current.source, execute);
+      }
+      return execute();
     } finally {
       current = previous;
     }
@@ -20882,16 +21009,8 @@ function claimWelcomeEvent() {
     save.eventsV093.welcomeClaimed = true;
     CherriftStorage.save(save);
   };
-  if (window.CHERRIFT_REWARD_CONTEXT) {
-    CHERRIFT_REWARD_CONTEXT.run({source:"event_reward", showReward:false}, grant);
-  } else if (window.CHERRIFT_REWARDS?.withSuppressed) {
-    CHERRIFT_REWARDS.withSuppressed(grant);
-  } else grant();
-  const assets = window.CHERRIFT_ITEM_ASSETS;
-  window.CHERRIFT_REWARDS?.show?.([
-    {key:"currency:coin",name:"Coin",amount:250,asset:assets?.currency?.coins,rarity:"Common",kind:"currency"},
-    {key:"chest:common",name:"Common Chest",amount:1,asset:assets?.chests?.common,rarity:"Common",kind:"chest"}
-  ]);
+  if (window.CHERRIFT_REWARD_CONTEXT) CHERRIFT_REWARD_CONTEXT.run({source:"event_reward", showReward:true}, grant);
+  else grant();
   UI.refreshMenu?.();
   UI.toast?.(t("event.claimedToast"));
   renderEvent();
@@ -21146,11 +21265,8 @@ function ensureCss() {
   document.documentElement.dataset.v0931Css = "bundled";
 }
 
-function suppressRewardSave(save) {
-  const execute = () => CherriftStorage.save(save);
-  return window.CHERRIFT_REWARDS?.withSuppressed
-    ? CHERRIFT_REWARDS.withSuppressed(execute)
-    : execute();
+function persistRewardState(save) {
+  return CherriftStorage.save(save);
 }
 
 /* -------------------------------------------------------------------------
@@ -21360,7 +21476,7 @@ function rewardOverlayItem(reward) {
 }
 
 function showNormalReward(reward) {
-  if (window.CHERRIFT_REWARDS?.show) CHERRIFT_REWARDS.show([rewardOverlayItem(reward)]);
+  if (window.CHERRIFT_OBTAINED?.show) CHERRIFT_OBTAINED.show([rewardOverlayItem(reward)], {source:"gacha"});
   else UI.toast?.(`${copy("Megszerezve", "Obtained")}: ${reward.label}`);
 }
 
@@ -21412,7 +21528,7 @@ function openChestHotfix(type) {
     at:Date.now()
   });
   save.gacha.history = save.gacha.history.slice(0, 50);
-  suppressRewardSave(save);
+  persistRewardState(save);
   UI.refreshMenu?.();
   window.CHERRIFT_V080?.render?.();
   if (reward.kind === "duplicateSkin") showDuplicateExchange(reward, type);
@@ -21488,7 +21604,7 @@ function patchGearGenerator() {
         balanceGearItem(item);
         window.CHERRIFT_V070?.syncItemToArsenal?.(item, this.save);
       }
-      suppressRewardSave(this.save);
+      persistRewardState(this.save);
       return result;
     };
     proto.__v0931GearDrops = true;
@@ -21559,7 +21675,7 @@ function upgradeArsenalHotfix(slot) {
   state.level = cost.target;
   state.stars = state.level <= 10 ? 1 : state.level <= 20 ? 2 : 3;
   api.syncAllItems?.(save);
-  suppressRewardSave(save);
+  persistRewardState(save);
   UI.refreshMenu?.();
   UI.renderGear?.();
   api.render?.();
@@ -21838,7 +21954,7 @@ function commitRunCheckpoint(game, star, silent = false) {
   game.save.stageStats ||= {};
   game.save.stageStats[stage.id] ||= {clears:0, bestTime:0, bestKills:0};
   game.save.stageStats[stage.id].stars = Math.max(count(game.save.stageStats[stage.id].stars), escrow.currentStar);
-  suppressRewardSave(game.save);
+  persistRewardState(game.save);
   updateHudStars(game);
   if (!silent && escrow.currentStar < 3) UI.toast?.(`${"★".repeat(escrow.currentStar)} · ${copy("Jutalmak biztosítva", "Rewards secured")}`);
 }
@@ -21849,7 +21965,7 @@ function rollbackUnsecured(game) {
   restoreRewardSnapshot(game.save, escrow.committed);
   game.runCoins = Number(escrow.committedRunCoins) || 0;
   escrow.rolledBack = true;
-  suppressRewardSave(game.save);
+  persistRewardState(game.save);
 }
 
 function decorateWorldStars() {
@@ -22405,33 +22521,6 @@ function patchWarriorVfx() {
 }
 
 /* -------------------------------------------------------------------------
- * Reward overlay: use the real Gear inventory art
- * ---------------------------------------------------------------------- */
-function findGearByRewardKey(key) {
-  const itemId = String(key || "").startsWith("gear:") ? String(key).slice(5) : "";
-  const all = [...(UI.save?.inventory || []), ...Object.values(UI.save?.equipped || {})].filter(Boolean);
-  return all.find(item => String(item.id) === itemId) || null;
-}
-function patchRewardGearArt() {
-  const rewards = window.CHERRIFT_REWARDS;
-  if (!rewards?.show || rewards.show.__v0932GearArt) return;
-  const previous = rewards.show.bind(rewards);
-  const show = function showRewardsV0932(items, options) {
-    const patched = (Array.isArray(items) ? items : []).map(entry => {
-      if (!entry || entry.kind !== "gear") return entry;
-      const item = findGearByRewardKey(entry.key);
-      if (!item) return entry;
-      const rendered = UI.gearEmoji?.(item);
-      if (typeof rendered === "string" && rendered.includes("<")) return {...entry, html:rendered, glyph:""};
-      return {...entry, glyph:typeof rendered === "string" ? rendered : (entry.glyph || "⚙")};
-    });
-    return previous(patched, options);
-  };
-  show.__v0932GearArt = true;
-  rewards.show = show;
-}
-
-/* -------------------------------------------------------------------------
  * Skin list scroll retention
  * ---------------------------------------------------------------------- */
 function rememberSkinScroll(list = q("#skins .skin-list-v093")) {
@@ -22622,7 +22711,7 @@ function decorateGearUi() {
 }
 
 /* -------------------------------------------------------------------------
- * BAG popover instead of a long detail panel below the grid
+ * Inventory popover instead of a long detail panel below the grid
  * ---------------------------------------------------------------------- */
 function bagItem(itemId) {
   const save = UI.save || {};
@@ -22641,6 +22730,10 @@ function bagItem(itemId) {
     const key=itemId.slice(5), food=window.CHERRIFT_V080?.foodCatalog?.[key];
     if (!food) return null;
     return {id:itemId,itemId:key,name:food.name,rarity:food.rarity||"Common",count:count(save.bag?.items?.[key]),asset:food.asset,desc:`+${Math.round(Number(food.value||0)*100)}% · ${food.runs||0} ${copy("kör","runs")}`,action:"use"};
+  }
+  if (itemId.startsWith("energyDrink:")) {
+    const type=itemId.slice(12),rarity={small:"Common",standard:"Uncommon",large:"Rare"}[type]||"Common";
+    return {id:itemId,name:`${type[0]?.toUpperCase()||""}${type.slice(1)} Energy Drink`,rarity,count:count(save.energyState?.drinks?.[type]),asset:"assets/items/buffs/support_drink.png",desc:copy("Energia-visszatöltéshez használható.","Used to restore energy.")};
   }
   if (itemId.startsWith("chest:")) {
     const type=itemId.slice(6); return {id:itemId,chestType:type,name:`${type[0].toUpperCase()}${type.slice(1)} Chest`,rarity:type==="common"?"Common":type==="rare"?"Rare":type==="epic"?"Epic":"Legendary",count:count(save.chests?.[type]),asset:assets.chests?.[type],desc:copy("Nyisd ki a Gachában.","Open it in Gacha."),action:"gacha"};
@@ -22861,7 +22954,6 @@ function patchVersion(){
 ensureCss();
 patchSuccubusClaw();
 patchWarriorVfx();
-patchRewardGearArt();
 patchSkinScroll();
 patchUiLifecycle();
 bindEvents();
@@ -23037,7 +23129,7 @@ function subnavItems(group) {
       ["statSummaryV082", copy("Statok", "Stats")]
     ],
     bag:[
-      ["bagV082", "BAG"],
+      ["bagV082", "Inventory"],
       ["buffsV082", copy("Buff lista", "Buff List")]
     ],
     shop:[
@@ -25990,35 +26082,6 @@ function detectEconomyRoute() {
   panel.dataset.themeEconomyRoute = route;
 }
 
-function findFoodIdForReward(card) {
-  const catalog = window.CHERRIFT_V080?.foodCatalog || {};
-  const name = card.querySelector(".reward-copy-v083 h3")?.textContent?.trim().toLowerCase() || "";
-  const imageSrc = card.querySelector(".reward-image-v083")?.getAttribute("src") || "";
-  return Object.entries(catalog).find(([, food]) => {
-    const foodName = String(food?.name || "").trim().toLowerCase();
-    const asset = String(food?.asset || "");
-    return (foodName && foodName === name) || (asset && imageSrc && (imageSrc === asset || imageSrc.endsWith(asset)));
-  })?.[0] || "";
-}
-
-function polishRewardOverlay() {
-  const overlay = document.getElementById("rewardOverlayV083");
-  if (!overlay) return;
-  overlay.classList.add("theme-reward-polished");
-  overlay.querySelectorAll(".reward-item-v083").forEach(card => {
-    const subtitle = card.querySelector(".reward-copy-v083 p");
-    if (!subtitle) return;
-    if (/maximum(?:\s+stack)?\s*99|maximum\s+99\s+db/i.test(subtitle.textContent || "")) {
-      const itemId = findFoodIdForReward(card);
-      if (!itemId) return;
-      const current = Math.max(0, Math.floor(Number(window.UI?.save?.bag?.items?.[itemId]) || 0));
-      subtitle.textContent = `${current} / 99`;
-      subtitle.classList.add("theme-stack-count");
-    }
-  });
-}
-
-
 function saveUiSettings() {
   try { window.CherriftStorage?.save?.(window.UI?.save); }
   catch (error) { console.warn("[CHERRIFT Theme System] UI setting save failed:", error); }
@@ -26315,7 +26378,7 @@ function addInteractionFeedback() {
     if (!start) return;
     const celebratoryAction = event.target.closest?.(
       ".menu-btn.primary,.bf-button:not(.secondary):not(.danger)," +
-      ".reward-continue-v083,[data-v083-continue],[data-v094-play]," +
+      ".obtained-claim-v098,[data-v094-play]," +
       "[data-v093-equip],[data-v080-open-chest],[data-v082-claim-weekly]"
     );
     if (!window.__CHERRIFT_FIXPACK_095_READY__ && celebratoryAction && Math.hypot(event.clientX - start.x, event.clientY - start.y) <= 12) {
@@ -26356,7 +26419,6 @@ function polishDynamicUi() {
   removeHeaderExplanations();
   ensurePerformanceSetting();
   detectEconomyRoute();
-  polishRewardOverlay();
   setMobileNavigationState(uiPolishState.route);
 }
 

@@ -408,7 +408,7 @@
     // of Gear or the main menu.
     modal.classList.remove("hidden");
     modal.innerHTML = `<div class="gco-modal-card"><h3>${esc(text("rewards"))}</h3>${summaryMarkup(rewards)}<button class="gco-close" type="button">${esc(text("close"))}</button></div>`;
-    window.CHERRIFT_REWARDS?.playSound?.();
+    window.CHERRIFT_OBTAINED?.playSound?.();
     q(".gco-close", modal).onclick = () => modal.classList.add("hidden");
   }
 
@@ -421,7 +421,7 @@
       if (!reward) return showGlobalSummary(normalRewards);
       modal.classList.remove("hidden");
       modal.innerHTML = `<div class="gco-modal-card gco-skin-reveal ${reward.duplicate ? "duplicate" : ""}"><small>${esc(reward.rarity)} Skin</small>${reward.asset ? `<img class="gco-skin-art" src="${esc(reward.asset)}" alt="" onerror="this.hidden=true">` : `<div class="gco-skin-fallback">${reward.icon || "🐰"}</div>`}<h3>${esc(reward.label)}</h3><p class="${reward.duplicate ? "gco-duplicate-conversion" : ""}">${esc(reward.duplicate ? `${text("duplicate")} +${number(reward.amount)} Sakura Essence` : text("unlocked"))}</p><button class="gco-next" type="button">${esc(queue.length || normalRewards.length ? text("continue") : text("close"))}</button></div>`;
-      window.CHERRIFT_REWARDS?.playSound?.();
+      window.CHERRIFT_OBTAINED?.playSound?.();
       q(".gco-next", modal).onclick = () => {
         if (queue.length) nextSkin();
         else if (normalRewards.length) showGlobalSummary(normalRewards);
@@ -465,7 +465,7 @@
     // The Gacha modal owns the entire chest-opening sequence. Clear any
     // delayed generic reward batch before starting so a previously queued
     // overlay cannot reopen above a skin reveal or the final Gacha summary.
-    window.CHERRIFT_REWARDS?.reset?.();
+    window.CHERRIFT_OBTAINED?.reset?.();
     state.busy = true;
     save.chests[state.tier] -= amount;
     const rewards = [];
@@ -482,10 +482,9 @@
       });
     }
     save.gacha.history = save.gacha.history.slice(0, 50);
-    // The Gacha owns its reveal sequence. Suppress the generic save-diff
-    // detector here so the same reward is not queued a second time.
-    if (window.CHERRIFT_REWARDS?.withSuppressed) CHERRIFT_REWARDS.withSuppressed(() => saveProgress(save));
-    else saveProgress(save);
+    // Gacha owns its reveal sequence, so persisting the roll never invokes
+    // the separate Obtained acquisition UI.
+    saveProgress(save);
     render();
     showOpening(state.tier, rewards);
   }

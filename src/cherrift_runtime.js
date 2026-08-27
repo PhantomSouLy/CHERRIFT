@@ -701,7 +701,6 @@
         setTimeout(()=>{
           window.UI?.hideStageLoading?.();
           document.body.classList.remove("cr-run-loading");
-          window.CHERRIFT_REWARDS?.flush?.();
         },180);
         return result;
       };

@@ -462,7 +462,7 @@
       if (section === panel) section.classList.remove("hidden");
       else if (!["hud","stageHud"].includes(section.id)) section.classList.add("hidden");
     });
-    document.body.classList.remove("is-playing", "reward-open-v083");
+    document.body.classList.remove("is-playing", "obtained-open-v098");
     closeMoreDrawer();
   }
   function openWorldSelector() {
