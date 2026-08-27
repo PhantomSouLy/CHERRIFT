@@ -376,7 +376,6 @@
   }
 
   function reconcile() {
-    state.queued = false;
     const root = document.getElementById("skins");
     if (!root) return;
 
@@ -398,7 +397,14 @@
   function schedule() {
     if (state.queued) return;
     state.queued = true;
-    requestAnimationFrame(reconcile);
+    // Skin selection rebuilds the legacy base markup synchronously. Reconcile
+    // in the same microtask checkpoint so the browser never paints that
+    // intermediate DOM as a visible frame before the canonical skin UI is
+    // restored. requestAnimationFrame here caused the one-frame old-UI flash.
+    queueMicrotask(() => {
+      state.queued = false;
+      reconcile();
+    });
   }
 
   function touchesSkin(record) {
