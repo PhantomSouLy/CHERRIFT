@@ -15251,11 +15251,15 @@ function renderShop(save){
     kind:"food",key,name:food.name,asset:food.asset,fallback:food.icon,rarity:food.rarity||"Common",priceMarkup:shopPriceMarkup(food.price),buyAttribute:"data-v080-buy-food",buyValue:key,disabled:!canAfford(save,food.price),buyLabel:t("buy")
   })).join("");
   return `<section class="shop-catalog-v098">
-      <div class="shop-sticky-v098">
+      <div class="shop-fixed-v0991">
         <section class="shop-intro-v080"><h2>${escapeHtml(t("shop"))}</h2></section>
         <nav class="shop-categories-v096" aria-label="Shop categories">${categories.map(([key,label])=>`<button type="button" data-v080-shop-category="${key}" class="${selected===key?"active":""}" aria-pressed="${selected===key}">${escapeHtml(label)}</button>`).join("")}</nav>
       </div>
-      <div class="shop-category-panel-v096 active" data-v096-shop-panel="${selected}"><section class="shop-grid-v098">${cards||`<p class="empty-v080">${escapeHtml(t("noItems"))}</p>`}</section></div>
+      <section class="shop-window-v0991" aria-label="Shop items">
+        <div class="shop-scroll-v0991">
+          <div class="shop-category-panel-v096 active" data-v096-shop-panel="${selected}"><section class="shop-grid-v098">${cards||`<p class="empty-v080">${escapeHtml(t("noItems"))}</p>`}</section></div>
+        </div>
+      </section>
     </section>`;
 }
 function patchNavigation(){
