@@ -204,22 +204,24 @@ body.v060-booting #authGateV064 {
 .boot-start-v096 {
   grid-area:1/1;
   display:flex;
-  min-width:min(390px,80vw);
+  min-width:0;
   align-items:center;
   justify-content:center;
-  gap:14px;
-  padding:14px 26px;
+  gap:0;
+  padding:9px 13px;
   border:0;
+  outline:0;
   color:#fff;
   cursor:pointer;
   background:transparent;
-  font:900 clamp(18px,2.3vw,29px)/1.2 system-ui,sans-serif;
-  letter-spacing:clamp(2px,.55vw,7px);
+  font:900 clamp(17px,1.9vw,24px)/1.2 system-ui,sans-serif;
+  letter-spacing:.08em;
+  white-space:nowrap;
   text-shadow:0 2px 3px #551337,0 0 9px #fff,0 0 22px #ff5aa6;
   animation:bootStartPulseV096 1.75s ease-in-out infinite;
 }
-
-.boot-start-v096 i { color:#ffd8eb; font-size:.62em; }
+.boot-start-v096:focus,.boot-start-v096:focus-visible { outline:0; box-shadow:none; }
+.boot-start-v096 i { display:none; }
 .boot-v060 [hidden] { display:none !important; }
 
 .boot-error-v062 {
@@ -264,12 +266,12 @@ body.v060-booting #authGateV064 {
 .boot-loading-companion-v099 .cherrift-loading-dots-v099>i:nth-child(2){animation-name:cherriftLoadingDotTwoV099,cherriftLoadingDotBobV099;animation-duration:1.5s,.9s;animation-timing-function:steps(1,end),ease-in-out;animation-iteration-count:infinite;animation-delay:0s,.10s}
 .boot-loading-companion-v099 .cherrift-loading-dots-v099>i:nth-child(3){animation-name:cherriftLoadingDotThreeV099,cherriftLoadingDotBobV099;animation-duration:1.5s,.9s;animation-timing-function:steps(1,end),ease-in-out;animation-iteration-count:infinite;animation-delay:0s,.16s}
 .boot-loading-companion-v099 .cherrift-loading-sprite-bob-v099 { display:block; width:clamp(78px,8vw,112px); aspect-ratio:1; animation:cherriftLoadingSpriteBobV099 1.25s ease-in-out infinite; }
-.boot-loading-companion-v099 .cherrift-loading-sprite-v099 { display:block; width:100%; height:100%; background-image:url("ui/loading_sprite_sheet.png?v=0987-visual-assets"); background-repeat:no-repeat; background-size:200% 100%; background-position:0 0; animation:cherriftLoadingSpriteFramesV099 .72s steps(1,end) infinite; }
+.boot-loading-companion-v099 .cherrift-loading-sprite-v099 { display:block; width:100%; height:100%; background-image:url("player/skins/base_cherry/base_cherry_walk_right.png?v=0987-running-cherry"); background-repeat:no-repeat; background-size:600% 100%; background-position:0 0; animation:cherriftLoadingSpriteFramesV099 .75s steps(1,end) infinite; }
 @keyframes cherriftLoadingLetterV099 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
 @keyframes cherriftLoadingDotBobV099 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-2px)} }
 @keyframes cherriftLoadingDotTwoV099 { 0%,32%{opacity:0} 33%,100%{opacity:1} }
 @keyframes cherriftLoadingDotThreeV099 { 0%,65%{opacity:0} 66%,100%{opacity:1} }
-@keyframes cherriftLoadingSpriteFramesV099 { 0%,49.99%{background-position:0 0} 50%,100%{background-position:100% 0} }
+@keyframes cherriftLoadingSpriteFramesV099 { 0%,16.66%{background-position:0 0} 16.67%,33.32%{background-position:20% 0} 33.33%,49.99%{background-position:40% 0} 50%,66.65%{background-position:60% 0} 66.66%,83.32%{background-position:80% 0} 83.33%,100%{background-position:100% 0} }
 @keyframes cherriftLoadingSpriteBobV099 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
 
 @keyframes bootPetalsV096 { to { transform:translate3d(64px,64px,0); } }
@@ -294,7 +296,7 @@ body.v060-booting #authGateV064 {
   .boot-auth-v096 p { font-size:12px; }
   .boot-auth-actions-v096 { grid-template-columns:1fr; }
   .boot-auth-actions-v096 button { min-height:49px; }
-  .boot-start-v096 { min-width:82vw; font-size:clamp(17px,5.5vw,24px); }
+  .boot-start-v096 { min-width:0; padding:8px 11px; font-size:clamp(16px,4.7vw,20px); }
   .boot-loading-companion-v099 { right:max(12px,env(safe-area-inset-right)); bottom:max(12px,calc(env(safe-area-inset-bottom) + 8px)); gap:7px; }
   .boot-loading-companion-v099 .cherrift-loading-label-v099 { padding-bottom:7px; font-size:15px; }
   .boot-loading-companion-v099 .cherrift-loading-sprite-bob-v099 { width:76px; }

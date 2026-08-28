@@ -503,10 +503,11 @@ body.obtained-open-v098{overflow:hidden}
 .mobile-profile-v0932 > .prebeta-avatar-frame{display:none!important}
 
 #skins .cr-skin-view-button{display:none!important}
-#skins .skin-view-tabs-v093{
+#skins .skin-view-tabs-v093,
+body.v0933-desktop #skins .skin-view-tabs-v093{
   position:absolute!important;
   z-index:15!important;
-  top:10px!important;
+  top:0!important;
   left:50%!important;
   right:auto!important;
   width:auto!important;
@@ -516,7 +517,7 @@ body.obtained-open-v098{overflow:hidden}
   justify-content:center!important;
   gap:3px!important;
   padding:3px!important;
-  transform:translateX(-50%)!important;
+  transform:translate(-50%,-50%)!important;
   border:1px solid rgba(255,255,255,.26)!important;
   border-radius:11px!important;
   background:rgba(24,10,22,.78)!important;
@@ -542,6 +543,14 @@ body.obtained-open-v098{overflow:hidden}
 }
 
 #skins #skinElementBadgeV095{display:none!important}
+#skins .skin-showcase-v093{overflow:visible!important}
+#skins :is(.skin-art-v093,.skin-game-view-v093){overflow:hidden!important;border-radius:inherit!important}
+#skins :is(.rarity-pill,.skin-rarity-v093)[class*="cr-rarity-"]{
+  color:var(--cr-rarity)!important;
+  border:1px solid color-mix(in srgb,var(--cr-rarity) 78%,transparent)!important;
+  background:color-mix(in srgb,var(--game-surface-2,#321c2e) 90%,var(--cr-rarity) 10%)!important;
+  box-shadow:0 0 12px color-mix(in srgb,var(--cr-rarity) 16%,transparent)!important;
+}
 #skins .cr-skin-action-row{
   display:flex!important;
   align-items:center!important;
@@ -562,15 +571,25 @@ body.obtained-open-v098{overflow:hidden}
   height:38px!important;
   min-width:38px!important;
   min-height:38px!important;
+  display:grid!important;
+  place-items:center!important;
   margin:0!important;
   padding:0!important;
+  border:1px solid var(--game-line,rgba(255,203,228,.24))!important;
   border-radius:11px!important;
+  color:var(--game-text,#fff5fa)!important;
+  background:color-mix(in srgb,var(--game-surface-2,#321c2e) 88%,var(--game-primary,#e45b9b) 12%)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 5px 12px rgba(0,0,0,.18)!important;
+  font:900 17px/1 system-ui,sans-serif!important;
+  text-align:center!important;
 }
 #skins .cr-element-button img{
   width:24px!important;
   height:24px!important;
   display:block!important;
+  margin:0!important;
   object-fit:contain!important;
+  object-position:center!important;
 }
 #skins .cr-skin-action-row .skin-equip-v093{
   margin:0!important;
