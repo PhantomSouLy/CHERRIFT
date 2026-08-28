@@ -5112,124 +5112,181 @@ body.v082-home .resource-bar-v082{top:67px}
 .v082-panel-head{flex:0 0 auto}
 .skill-toolbar-v082{
   flex:0 0 auto;
-  width:min(1440px,100%);
-  margin:0 auto 12px;
+  width:min(920px,100%);
+  margin:0 auto 9px;
   display:grid;
-  grid-template-columns:150px minmax(190px,1fr) auto auto;
+  grid-template-columns:repeat(2,minmax(0,1fr)) auto auto;
   gap:8px;
 }
-.skill-toolbar-v082 > div,
-.skill-toolbar-v082 > button{
-  min-height:52px;
+.skill-toolbar-v082>div,.skill-toolbar-v082>button{
+  min-height:50px;
   padding:8px 13px;
-  border:1px solid var(--v082-line);
-  border-radius:12px;
-  background:linear-gradient(145deg,rgba(29,17,36,.94),rgba(12,8,17,.92));
-  color:#f9e9f1;
+  border:1px solid var(--theme-outline-soft,var(--v082-line));
+  border-radius:14px;
+  background:color-mix(in srgb,var(--theme-surface,#1d1124) 94%,transparent);
+  color:var(--theme-text,#f9e9f1);
+  box-shadow:0 8px 24px rgba(0,0,0,.12);
 }
-.skill-toolbar-v082 > div small{display:block;color:#c79daf;font-size:8px;font-weight:1000;letter-spacing:1px}
-.skill-toolbar-v082 > div b{display:block;margin-top:2px;font-family:Georgia,"Times New Roman",serif;font-size:21px}
-.skill-toolbar-v082 > button{font-weight:900}
+.skill-toolbar-v082>div small{display:block;color:var(--theme-muted,#c79daf);font-size:8px;font-weight:1000;letter-spacing:1px;text-transform:uppercase}
+.skill-toolbar-v082>div b{display:block;margin-top:2px;font-family:Georgia,"Times New Roman",serif;font-size:22px}
+.skill-toolbar-v082>button{font-weight:900}
+.skill-branch-tabs-v096{
+  flex:0 0 auto;
+  width:min(920px,100%);
+  margin:0 auto 9px;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+  padding:0 2px;
+}
+.skill-branch-tabs-v096 button{
+  min-width:0;
+  min-height:54px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:8px 12px;
+  border:1px solid var(--theme-outline-soft,var(--v082-line));
+  border-radius:14px;
+  color:var(--theme-muted,#c9aabd);
+  background:color-mix(in srgb,var(--theme-surface-2,#211429) 94%,transparent);
+  font-weight:900;
+  box-shadow:0 8px 20px rgba(0,0,0,.1);
+}
+.skill-branch-tabs-v096 button span{font-size:20px;line-height:1;color:var(--skill-branch)}
+.skill-branch-tabs-v096 button b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.skill-branch-tabs-v096 button.active{
+  color:var(--theme-text,#fff);
+  border-color:color-mix(in srgb,var(--skill-branch) 78%,white 10%);
+  background:linear-gradient(135deg,color-mix(in srgb,var(--skill-branch) 18%,var(--theme-surface-2,#26162c)),var(--theme-surface-2,#211429));
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--skill-branch) 16%,transparent),0 10px 28px color-mix(in srgb,var(--skill-branch) 17%,transparent);
+}
+/* Attack / Defense / Utility belong only to Player Upgrade, never Resonance. */
+#playerUpgrade.resonance-mode-v095>.skill-branch-tabs-v096{display:none!important}
 .skill-tree-scroll-v082{
   flex:1 1 auto;
   min-height:0;
-  width:min(1440px,100%);
+  width:min(920px,100%);
   margin:0 auto;
-  overflow-x:auto;
-  overflow-y:hidden;
-  padding:8px 4px 17px;
-  cursor:grab;
-  touch-action:pan-x;
-  overscroll-behavior-x:contain;
+  overflow-x:hidden;
+  overflow-y:auto;
+  padding:2px 4px 110px;
+  cursor:auto;
+  touch-action:pan-y;
+  overscroll-behavior-y:contain;
+  -webkit-overflow-scrolling:touch;
   scrollbar-color:rgba(232,91,156,.45) transparent;
 }
-.skill-tree-scroll-v082.dragging{cursor:grabbing;user-select:none}
+.skill-tree-scroll-v082.dragging{cursor:auto;user-select:auto}
 .skill-tree-track-v082{
-  min-width:max-content;
-  height:100%;
-  display:flex;
-  align-items:stretch;
-  gap:10px;
+  width:min(760px,100%);
+  min-width:0;
+  height:auto;
+  display:block;
+  margin:0 auto;
+  padding:15px;
+  border:1px solid color-mix(in srgb,var(--skill-branch) 34%,transparent);
+  border-radius:22px;
+  background:radial-gradient(circle at 50% 0,color-mix(in srgb,var(--skill-branch) 13%,transparent),transparent 30%),color-mix(in srgb,var(--theme-surface,#160b1b) 97%,transparent);
+  box-shadow:0 22px 55px rgba(0,0,0,.24);
 }
-.skill-tier-v082{
-  width:350px;
-  min-height:100%;
+.skill-list-head-v096{
   display:grid;
-  grid-template-rows:auto 1fr;
-  padding:12px;
-  border:1px solid var(--v082-line);
-  border-radius:16px;
-  background:linear-gradient(155deg,rgba(35,18,42,.96),rgba(12,8,17,.94));
-  box-shadow:0 18px 38px rgba(0,0,0,.22);
-  scroll-snap-align:center;
-}
-.skill-tier-v082 > header{
-  display:flex;
+  grid-template-columns:66px minmax(0,1fr) auto;
   align-items:center;
-  justify-content:space-between;
-  min-height:37px;
-  margin-bottom:9px;
-  padding:0 8px;
-  border-bottom:1px solid rgba(255,255,255,.07);
+  gap:12px;
+  margin:0 auto 10px;
+  padding:0 7px 10px;
+  border-bottom:1px solid color-mix(in srgb,var(--skill-branch) 25%,transparent);
 }
-.skill-tier-v082 > header span{color:#ff91bd;font-family:Georgia,"Times New Roman",serif;font-size:17px;font-weight:800}
-.skill-tier-v082 > header b{color:#bda3b1;font-size:8px}
-.skill-tier-v082.locked{opacity:.55;filter:saturate(.45)}
-.skill-tier-nodes-v082{display:grid;grid-template-rows:repeat(3,minmax(0,1fr));gap:8px}
-.skill-node-v082{
+.skill-list-head-v096>span{
+  width:62px;height:62px;display:grid;place-items:center;border-radius:18px;
+  color:var(--skill-branch);background:color-mix(in srgb,var(--skill-branch) 12%,transparent);
+  font-size:31px;filter:drop-shadow(0 0 12px color-mix(in srgb,var(--skill-glow) 42%,transparent));
+}
+.skill-list-head-v096 small{display:block;color:var(--skill-branch);font-size:9px;font-weight:1000;letter-spacing:1.5px}
+.skill-list-head-v096 h2{margin:3px 0 0;color:var(--theme-text,#fff);font:800 clamp(25px,4vw,35px)/1 Georgia,"Times New Roman",serif}
+.skill-list-head-v096>b{min-width:82px;padding:9px 12px;border-radius:999px;color:var(--theme-text,#fff);background:color-mix(in srgb,var(--skill-branch) 12%,var(--theme-surface-2,#211429));font:900 19px/1 Georgia,"Times New Roman",serif;text-align:center;white-space:nowrap}
+.skill-list-v096{width:100%;display:block}
+.skill-node-v082.skill-node-chain-v100{
   position:relative;
-  min-height:110px;
+  min-height:128px;
   display:grid;
-  grid-template-columns:42px minmax(0,1fr) 37px;
+  grid-template-columns:118px minmax(0,1fr);
   align-items:center;
-  gap:9px;
-  padding:9px;
+  gap:15px;
+  padding:10px 14px;
   overflow:hidden;
-  border:1px solid rgba(255,211,232,.12);
-  border-radius:12px;
-  background:rgba(255,255,255,.035);
+  border:1px solid rgba(255,255,255,.075);
+  border-radius:18px;
+  background:rgba(255,255,255,.025);
+  transition:border-color .18s ease,background .18s ease,opacity .18s ease;
 }
-.skill-node-v082.maxed{border-color:rgba(107,231,153,.32);background:rgba(86,189,125,.07)}
-.skill-node-v082.locked{opacity:.55}
+.skill-node-v082.skill-node-chain-v100.invested{border-color:color-mix(in srgb,var(--skill-branch) 34%,transparent);background:color-mix(in srgb,var(--skill-branch) 5%,transparent)}
+.skill-node-v082.skill-node-chain-v100.maxed{border-color:color-mix(in srgb,#6fe19b 46%,transparent);background:rgba(78,178,116,.055)}
+.skill-node-v082.skill-node-chain-v100.locked{opacity:.46;filter:grayscale(.72)}
+.skill-node-action-v100{
+  position:relative!important;
+  width:108px!important;
+  height:108px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:#fff!important;
+  opacity:1!important;
+}
+.skill-node-action-v100:disabled{opacity:1!important}
+/* Theme System has legacy Skill Tree !important rules; keep the new node-frame button canonical. */
+html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .skill-node-v082.skill-node-chain-v100{background:color-mix(in srgb,var(--theme-surface,#160b1b) 94%,transparent)!important;box-shadow:none!important}
+html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .skill-node-v082.skill-node-chain-v100.invested{border-color:color-mix(in srgb,var(--skill-branch) 42%,var(--theme-outline-soft))!important}
+html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .skill-node-v082.skill-node-chain-v100.maxed{border-color:color-mix(in srgb,#6fe19b 55%,var(--theme-outline-soft))!important}
+html[data-cherrift-theme]:not([data-cherrift-theme="default"]) .skill-node-v082>.skill-node-action-v100{border:0!important;background:transparent!important;box-shadow:none!important}
+.skill-node-frame-v100{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 8px 13px rgba(0,0,0,.28));pointer-events:none}
 .skill-node-icon-v082{
-  width:42px;
-  height:42px;
-  display:grid;
-  place-items:center;
-  border-radius:12px;
-  background:rgba(232,91,156,.13);
-  color:#ffb3d1;
-  font-size:21px;
+  position:absolute!important;z-index:1;left:27px;top:27px;width:54px!important;height:54px!important;
+  display:grid!important;place-items:center!important;overflow:visible!important;border:0!important;border-radius:0!important;
+  background:transparent!important;color:#fff!important;font-size:28px!important;text-shadow:0 2px 6px #000;pointer-events:none;
 }
-.skill-node-v082 small{color:#ffc2da;font-size:9px;font-weight:900}
-.skill-node-v082 h3{margin:2px 0 3px;font-family:Georgia,"Times New Roman",serif;font-size:15px}
-.skill-node-v082 p{margin:0;color:#bfa5b2;font-size:9px;line-height:1.35}
-.skill-node-v082 em{display:block;margin-top:5px;color:#e4c6d4;font-size:8px;font-style:normal}
-.skill-node-v082 > button{
-  width:37px;
-  height:37px;
-  border:1px solid rgba(255,220,238,.35);
-  border-radius:10px;
-  background:linear-gradient(180deg,#ed6ca7,#b63c76);
-  color:#fff;
-  font-size:18px;
-  font-weight:1000;
-}
-.skill-node-v082 > button:disabled{opacity:.36}
-.skill-connector-v082{
-  align-self:center;
-  color:rgba(255,140,190,.36);
-  font-family:Georgia,"Times New Roman",serif;
-  font-size:38px;
-  font-style:normal;
-}
-.skill-tree-help-v082{
-  flex:0 0 auto;
-  width:min(1440px,100%);
-  margin:5px auto 0;
-  color:#b893a5;
-  font-size:10px;
-  text-align:center;
+.skill-node-icon-v082 .skill-icon-v083{width:52px!important;height:52px!important;max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 4px 7px rgba(0,0,0,.42))}
+.skill-node-plus-v100{position:absolute;z-index:3;right:5px;bottom:5px;min-width:30px;height:30px;display:grid;place-items:center;padding:0 5px;border-radius:10px;background:var(--skill-branch);color:#160d19;font:1000 15px/1 system-ui;box-shadow:0 4px 10px rgba(0,0,0,.3);pointer-events:none}
+.skill-node-v082.locked .skill-node-plus-v100{background:#5e5262;color:#b8abbc}
+.skill-node-v082.maxed .skill-node-plus-v100{background:#6fe19b;color:#102418;font-size:9px}
+.skill-node-copy-v100{min-width:0}
+.skill-node-copy-v100 h4{margin:0 0 5px;color:var(--skill-branch);font:800 clamp(19px,3.2vw,25px)/1.1 Georgia,"Times New Roman",serif}
+.skill-node-copy-v100 p{margin:0 0 7px;color:var(--theme-muted,#c6a9b8);font-size:12px;line-height:1.42}
+.skill-node-copy-v100 small{display:block;color:var(--theme-text,#f8eaf1);font-weight:900}
+.skill-node-copy-v100 em{display:block;margin-top:6px;color:color-mix(in srgb,var(--skill-branch) 75%,white);font-size:10px;font-style:normal;font-weight:800;line-height:1.25}
+.skill-chain-connector-v100{height:30px;display:grid;place-items:center;color:var(--skill-branch);font:900 21px/1 system-ui;font-style:normal;text-shadow:0 0 12px color-mix(in srgb,var(--skill-glow) 50%,transparent)}
+.skill-info-v096{display:none!important}
+.skill-tree-help-v082,.skill-scroll-controls-v084{display:none!important}
+
+@media(max-width:820px){
+  #playerUpgrade.player-upgrade-v082{padding-bottom:0!important}
+  .skill-toolbar-v082{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:0 5px;margin-bottom:7px}
+  .skill-toolbar-v082>div,.skill-toolbar-v082>button{min-height:45px;padding:7px 9px}
+  .skill-toolbar-v082>div b{font-size:20px}
+  .skill-toolbar-v082>button{font-size:10px}
+  .skill-branch-tabs-v096{gap:5px;padding:0 5px;margin-bottom:7px}
+  .skill-branch-tabs-v096 button{min-height:47px;gap:5px;padding:6px 7px;font-size:10px}
+  .skill-branch-tabs-v096 button span{font-size:17px}
+  .skill-tree-scroll-v082{padding:0 7px calc(106px + env(safe-area-inset-bottom))}
+  .skill-tree-track-v082{padding:11px 8px 17px;border-radius:20px}
+  .skill-list-head-v096{grid-template-columns:54px minmax(0,1fr) auto;gap:9px;padding:0 5px 9px}
+  .skill-list-head-v096>span{width:51px;height:51px;border-radius:15px;font-size:25px}
+  .skill-list-head-v096 h2{font-size:25px}
+  .skill-list-head-v096>b{min-width:69px;padding:8px 9px;font-size:16px}
+  .skill-node-v082.skill-node-chain-v100{min-height:111px;grid-template-columns:94px minmax(0,1fr);gap:8px;padding:8px 9px}
+  .skill-node-action-v100{width:88px!important;height:88px!important}
+  .skill-node-icon-v082{left:22px;top:22px;width:44px!important;height:44px!important;font-size:23px!important}
+  .skill-node-icon-v082 .skill-icon-v083{width:43px!important;height:43px!important}
+  .skill-node-plus-v100{right:3px;bottom:3px;min-width:27px;height:27px;border-radius:9px;font-size:14px}
+  .skill-node-copy-v100 h4{font-size:19px}
+  .skill-node-copy-v100 p{font-size:10.5px;line-height:1.35}
+  .skill-node-copy-v100 small{font-size:11px}
+  .skill-node-copy-v100 em{font-size:9px}
+  .skill-chain-connector-v100{height:25px;font-size:19px}
 }
 
 /* ---------- Custom panels ---------- */
@@ -5595,14 +5652,8 @@ body.v082-home .resource-bar-v082{top:67px}
 #arsenalV070 .arsenal-note-v070 .gear-scrap-primary-v084::after{content:"";width:1px;height:28px;margin-left:8px;background:rgba(255,205,230,.22)}
 #arsenalV070 .arsenal-wallet-v070 span{display:flex;align-items:center;gap:7px}.v084-wallet-icon{flex:0 0 auto}
 
-/* Skill Tree */
-.skill-toolbar-v084{grid-template-columns:150px 150px minmax(20px,1fr) auto auto!important}.skill-toolbar-v084>div{width:150px!important;min-width:150px!important}
-.skill-tree-help-v082{display:none!important}.skill-scroll-controls-v084{width:min(1440px,100%);display:flex;justify-content:space-between;margin:2px auto 0;pointer-events:none}
-.skill-scroll-controls-v084 button{width:50px;height:38px;pointer-events:auto;border:1px solid rgba(255,197,225,.22);border-radius:10px;background:rgba(255,255,255,.045);color:#ff9bc4;font-family:Georgia,serif;font-size:30px;line-height:1}
-.skill-tier-v082{width:350px!important}.skill-node-v082{min-height:126px!important;grid-template-columns:66px minmax(0,1fr) 42px!important;gap:13px!important;padding:13px!important}
-.skill-node-icon-v082{width:64px!important;height:64px!important;overflow:visible!important;background:transparent!important;border-radius:0!important}
-.skill-node-icon-v082 .skill-icon-v083{width:64px!important;height:64px!important;max-width:100%;max-height:100%;object-fit:contain}
-.skill-node-v082 small{font-size:12px!important}.skill-node-v082 h3{font-size:19px!important;margin:3px 0 5px!important}.skill-node-v082 p{font-size:11px!important;line-height:1.45!important}.skill-node-v082 em{font-size:10px!important;margin-top:7px!important}
+/* Skill Tree compatibility — the canonical vertical node chain is defined above. */
+.skill-tree-help-v082,.skill-scroll-controls-v084{display:none!important}
 
 /* Stat details */
 .stat-summary-v082{gap:18px!important}.stat-final-grid-v082{grid-template-columns:repeat(4,minmax(170px,1fr))!important;gap:11px!important}
@@ -5648,11 +5699,9 @@ body.v082-home .resource-bar-v082{top:67px}
 /* Friendly bug report + image attachments */
 .report-attachments-v084{margin-top:14px;padding:14px;border:1px solid rgba(255,203,229,.12);border-radius:13px;background:rgba(255,255,255,.025)}.report-attachments-v084 label{display:grid;gap:6px}.report-attachments-v084 label>span{color:#ff9fc5;font-size:10px;font-weight:1000;text-transform:uppercase}.report-attachments-v084 label>small{color:#b899a8;font-size:10px}.report-attachments-v084 input{padding:10px;border:1px dashed rgba(255,198,225,.28);border-radius:10px;background:rgba(255,255,255,.03)}#reportFilePreviewV084{display:grid;gap:6px;margin-top:9px}#reportFilePreviewV084>div{display:grid;grid-template-columns:1fr auto 28px;align-items:center;gap:8px;padding:8px 10px;border-radius:9px;background:rgba(255,255,255,.04)}#reportFilePreviewV084 small{color:#b995a6}#reportFilePreviewV084 button{width:28px;height:28px;border-radius:7px;background:rgba(255,83,139,.14);color:#ff8eb8}
 
-@media (max-width:1200px) and (min-width:821px){.bag-layout-v084{grid-template-columns:minmax(0,1fr) 285px}.skill-tier-v082{width:330px!important}.stat-final-grid-v082{grid-template-columns:repeat(4,minmax(140px,1fr))!important}}
+@media (max-width:1200px) and (min-width:821px){.bag-layout-v084{grid-template-columns:minmax(0,1fr) 285px}.stat-final-grid-v082{grid-template-columns:repeat(4,minmax(140px,1fr))!important}}
 @media (max-width:820px){
   .resource-bar-v082.resource-inline-v084{position:fixed!important;top:max(7px,env(safe-area-inset-top))!important;left:8px!important;right:8px!important;justify-content:center!important}
-  .skill-toolbar-v084{grid-template-columns:1fr 1fr!important}.skill-toolbar-v084>div{width:auto!important;min-width:0!important}.skill-scroll-controls-v084{padding:0 3px}.skill-scroll-controls-v084 button{width:43px;height:35px}
-  .skill-tier-v082{width:310px!important}.skill-node-v082{min-height:112px!important;grid-template-columns:52px minmax(0,1fr) 36px!important;gap:8px!important;padding:10px!important}.skill-node-icon-v082,.skill-node-icon-v082 .skill-icon-v083{width:50px!important;height:50px!important}.skill-node-v082 small{font-size:10px!important}.skill-node-v082 h3{font-size:16px!important}.skill-node-v082 p{font-size:9px!important}.skill-node-v082 em{font-size:8px!important}
   .stat-final-grid-v082{grid-template-columns:repeat(2,minmax(0,1fr))!important}.stat-final-grid-v082 article{min-height:86px!important}.stat-final-grid-v082 small{font-size:9px!important}.stat-final-grid-v082 b{font-size:25px!important}.stat-breakdown-v082{grid-template-columns:1fr!important}.stat-breakdown-v082>article{min-height:0!important}
   .bag-layout-v084{grid-template-columns:1fr;min-height:0}.bag-grid-v084{grid-template-columns:repeat(3,minmax(0,1fr));padding:8px}.bag-detail-v084{position:static}.bag-item-v084{min-height:118px}.bag-tabs-v084{top:max(60px,calc(env(safe-area-inset-top) + 52px))}.bag-tabs-v084 button{min-height:34px;padding:0 11px;font-size:10px}.shop-catalog-v098{height:calc(var(--cherrift-viewport-height,100dvh) - 300px);min-height:390px;max-height:720px;overflow:hidden}.shop-grid-v098{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:0}.shop-scroll-v0991{padding:8px}.shop-item-info-hit-v098{min-height:151px;grid-template-rows:76px minmax(28px,auto) auto;padding:8px 7px}.shop-item-art-v098{height:76px}.shop-item-art-v098 img{width:58px;height:58px}.shop-item-art-v098.skin img{width:54px;height:54px}.shop-buy-v098{min-height:40px;margin:0 7px 7px}.shop-fixed-v0991{gap:7px}.shop-fixed-v0991 .shop-intro-v080{padding:13px 15px}.shop-categories-v096{padding:6px;gap:5px}.shop-categories-v096 button{min-height:39px;font-size:10px}
   .collection-grid-v084{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.collection-card-v084{min-height:160px;grid-template-rows:88px auto auto;padding:9px}.collection-card-v084 span img{width:78px;height:78px}.enemy-card-v084 canvas{width:88px;height:88px}.skin-detail-grid-v084,.enemy-detail-grid-v084{grid-template-columns:1fr}.skin-detail-grid-v084 figure{min-height:300px}.skin-splash-v084,.skin-detail-grid-v084 canvas{min-height:280px}.enemy-detail-grid-v084 canvas{height:260px}.collection-modal-v084>article{padding:18px 12px}.collection-detail-v084 header h2{font-size:28px}
