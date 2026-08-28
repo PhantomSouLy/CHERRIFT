@@ -16577,7 +16577,7 @@ console.info("[CHERRIFT] v0.8.2 Systems, navigation, Arsenal, Gear and Skill Tre
 (() => {
 "use strict";
 
-const VERSION = "0.9.8.6-item-art-obtained";
+const VERSION = "0.9.9.3-universal-obtained";
 const DISPLAY_VERSION = "v0.8.3";
 const RARITIES = new Set(["Common", "Uncommon", "Rare", "Epic", "Epic+", "Legendary", "Legendary+"]);
 const REWARD_SOUND_PATH = "assets/audio/rewardsfx.wav?v=096reward1";
@@ -16653,16 +16653,16 @@ const ITEM_ASSETS = Object.freeze({
 
 const COPY = {
   hu: {
-    obtained: "OBTAINED",
-    continue: "Click to claim",
+    obtained: "Obtained",
+    continue: "Tovább",
     commonChestKey: "Common ládakulcs",
     skillPoint: "Skill Point",
     moreRewards: "További jutalmak",
     rewardCount: "jutalom"
   },
   en: {
-    obtained: "OBTAINED",
-    continue: "Click to claim",
+    obtained: "Obtained",
+    continue: "Continue",
     commonChestKey: "Common Chest Key",
     skillPoint: "Skill Point",
     moreRewards: "More rewards",
@@ -16676,7 +16676,12 @@ const state = {
   queueTimer: 0,
   observer: null,
   decorateQueued: false,
-  rewardSound: null
+  rewardSound: null,
+  obtainedBaseline: null,
+  captureDepth: 0,
+  storagePatched: false,
+  autoQueue: [],
+  autoTimer: 0
 };
 
 const id = name => document.getElementById(name);
@@ -16993,7 +16998,12 @@ function itemSnapshot(save) {
     energyDrinks:mapCounts(source.energyState?.drinks),
     stones:mapCounts(materials.stones),
     slotCores:mapCounts(materials.slotCores),
-    gearScrap:count(materials.gearScrap)
+    gearScrap:Math.max(count(materials.gearScrap), count(source.gearScrap), count(source.scrap)),
+    coins:count(source.coins),
+    bloomGems:count(source.blossomGems ?? source.bloomGems),
+    sakuraEssence:count(source.sakuraEssence),
+    energy:count(source.energy),
+    heartTokens:count(source.heartTokens)
   };
 }
 
@@ -17053,6 +17063,20 @@ function skinReward(skinId) {
   });
 }
 
+function currencyReward(key, name, amount, asset = "", glyph = "", rarity = "Common") {
+  return rewardItem({
+    key:`currency:${key}`,
+    name,
+    amount,
+    asset,
+    glyph,
+    rarity,
+    kind:"currency",
+    subtitle:language() === "hu" ? "Pénznem" : "Currency",
+    description:language() === "hu" ? `${name} jóváírva a fiókodon.` : `${name} added to your account.`
+  });
+}
+
 function bagItemReward(itemId, amount) {
   const food = window.CHERRIFT_V080?.foodCatalog?.[itemId];
   const effect = food ? `${Math.round(Number(food.value || 0) * 100)}% ${String(food.effect || "Buff").replaceAll("_", " ")}` : "";
@@ -17099,6 +17123,17 @@ function collectNewItems(before, after) {
     const delta = amount - count(before.bagItems[itemId]);
     if (delta > 0) items.push(bagItemReward(itemId, delta));
   }
+
+  const coinDelta = after.coins - before.coins;
+  if (coinDelta > 0) items.push(currencyReward("coins", "Coin", coinDelta, ITEM_ASSETS.currency.coins, "🪙", "Common"));
+  const gemDelta = after.bloomGems - before.bloomGems;
+  if (gemDelta > 0) items.push(currencyReward("bloomGems", "Bloom Gem", gemDelta, ITEM_ASSETS.currency.blossomGems, "◆", "Rare"));
+  const essenceDelta = after.sakuraEssence - before.sakuraEssence;
+  if (essenceDelta > 0) items.push(currencyReward("sakuraEssence", "Sakura Essence", essenceDelta, ITEM_ASSETS.currency.sakuraEssence, "🌸", "Epic"));
+  const energyDelta = after.energy - before.energy;
+  if (energyDelta > 0) items.push(currencyReward("energy", "Energy", energyDelta, "", "⚡", "Uncommon"));
+  const heartTokenDelta = after.heartTokens - before.heartTokens;
+  if (heartTokenDelta > 0) items.push(currencyReward("heartTokens", "Heart Token", heartTokenDelta, "", "♥", "Epic"));
 
   const chestRarity = { common:"Common", rare:"Rare", epic:"Epic" };
   for (const chest of ["common", "rare", "epic"]) {
@@ -17185,17 +17220,17 @@ function collectNewItems(before, after) {
   return mergeGenericRewards(items);
 }
 
-const OBTAINED_KINDS = new Set(["gear", "skin", "buff", "food", "core", "stone", "material", "item", "chest"]);
+const OBTAINED_KINDS = new Set(["gear", "skin", "buff", "food", "core", "stone", "material", "item", "chest", "currency"]);
 const BLOCKED_OBTAINED_SOURCES = new Set([
   "equip", "unequip", "equipment_swap", "inventory_move", "inventory_sort", "stack_merge",
   "save_load", "load", "save", "auth", "bootstrap", "server", "stage_reward", "stage_clear",
-  "run_reward", "gameplay_reward", "sell", "dismantle", "merge", "upgrade"
+  "run_reward", "gameplay_reward", "merge", "upgrade"
 ]);
 
 function sourceCanShowObtained(source) {
   const token = String(source || "explicit").trim().toLowerCase().replaceAll("-", "_");
   if (BLOCKED_OBTAINED_SOURCES.has(token)) return false;
-  return !/(?:^|_)(?:stage|run|gameplay|equip|unequip|inventory|load|save|auth|bootstrap|sell|dismantle|merge|upgrade)(?:_|$)/.test(token);
+  return !/(?:^|_)(?:stage|run|gameplay|equip|unequip|inventory|load|save|auth|bootstrap|merge|upgrade)(?:_|$)/.test(token);
 }
 
 function gameplayActive() {
@@ -17238,7 +17273,7 @@ function obtainedCard(item) {
   const rarity = safeRarity(item.rarity);
   const info = item.description || item.subtitle || item.name;
   return `<article class="obtained-item-v098 rarity-${rarityClass(rarity)}" tabindex="0" role="button" data-obtained-key="${escapeHtml(item.key)}" aria-label="${escapeHtml(`${item.name}, ${rarity}`)}">
-    ${item.amount > 1 ? `<em class="obtained-amount-v098">×${item.amount}</em>` : ""}
+    <em class="obtained-amount-v098">${item.amount}</em>
     ${obtainedArt(item)}
     <div class="obtained-copy-v098"><small>${escapeHtml(rarity)}</small><h3>${escapeHtml(item.name)}</h3>${item.subtitle ? `<p>${escapeHtml(item.subtitle)}</p>` : ""}</div>
     <div class="obtained-info-v098" aria-hidden="true"><b>${escapeHtml(item.name)}</b><small>${escapeHtml(rarity)}</small><p>${escapeHtml(info)}</p></div>
@@ -17319,18 +17354,85 @@ function closeCurrentObtained() {
   }, 120);
 }
 
+function syncObtainedBaseline(save = window.UI?.save) {
+  state.obtainedBaseline = save && typeof save === "object" ? itemSnapshot(save) : null;
+  return state.obtainedBaseline;
+}
+
+function transientRewardUiActive() {
+  if (document.body?.classList.contains("gacha-open")) return true;
+  const gachaModal = id("gcoModal");
+  if (gachaModal && !gachaModal.classList.contains("hidden")) return true;
+  for (const modalId of ["stageClearModal", "gameOver"]) {
+    const modal = id(modalId);
+    if (modal && !modal.classList.contains("hidden")) return true;
+  }
+  return false;
+}
+
+function autoAcquisitionSuppressed() {
+  return state.captureDepth > 0 || gameplayActive() || transientRewardUiActive();
+}
+
+function flushAutomaticAcquisition() {
+  window.clearTimeout(state.autoTimer);
+  state.autoTimer = 0;
+  if (!state.autoQueue.length) return false;
+  const items = mergeGenericRewards(state.autoQueue.splice(0));
+  if (autoAcquisitionSuppressed()) return false;
+  return showObtained(items, { source:"acquisition" });
+}
+
+function queueAutomaticAcquisition(items) {
+  if (!Array.isArray(items) || !items.length) return;
+  state.autoQueue.push(...items);
+  window.clearTimeout(state.autoTimer);
+  state.autoTimer = window.setTimeout(flushAutomaticAcquisition, 45);
+}
+
+function patchObtainedStorage() {
+  if (state.storagePatched || typeof window.CherriftStorage?.save !== "function") return;
+  const previousSave = CherriftStorage.save.bind(CherriftStorage);
+  CherriftStorage.save = function saveWithObtainedTracking(save, ...args) {
+    const before = state.obtainedBaseline;
+    const result = previousSave(save, ...args);
+    const after = itemSnapshot(save || window.UI?.save);
+    state.obtainedBaseline = after;
+    if (before && !autoAcquisitionSuppressed()) {
+      const items = collectNewItems(before, after);
+      if (items.length) queueAutomaticAcquisition(items);
+    }
+    return result;
+  };
+  state.storagePatched = true;
+  syncObtainedBaseline();
+}
+
+function scheduleObtainedStoragePatch() {
+  // Install after the parser finishes so this tracker sits above the later
+  // auth/cloud save bridge and every runtime storage normalizer.
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", patchObtainedStorage, { once:true });
+  } else patchObtainedStorage();
+}
+
 function resetObtained() {
   window.clearTimeout(state.queueTimer);
+  window.clearTimeout(state.autoTimer);
   state.queueTimer = 0;
+  state.autoTimer = 0;
   state.queue.length = 0;
+  state.autoQueue.length = 0;
   state.active = false;
   id("obtainedOverlayV098")?.classList.remove("open");
   document.body.classList.remove("obtained-open-v098");
+  syncObtainedBaseline();
 }
 
 function finishCapturedAcquisition(source, before, options = {}) {
-  if (!sourceCanShowObtained(source) || gameplayActive()) return false;
+  if (!sourceCanShowObtained(source) || gameplayActive()) { syncObtainedBaseline(); return false; }
   const after = itemSnapshot(window.UI?.save);
+  state.obtainedBaseline = after;
   const items = collectNewItems(before, after);
   return items.length ? showObtained(items, { ...options, source }) : false;
 }
@@ -17339,13 +17441,26 @@ function captureObtained(source, callback, options = {}) {
   if (typeof callback !== "function") return undefined;
   if (!sourceCanShowObtained(source) || !window.UI?.save) return callback();
   const before = itemSnapshot(UI.save);
-  const result = callback();
+  state.captureDepth++;
+  let result;
+  try { result = callback(); }
+  catch (error) {
+    state.captureDepth = Math.max(0, state.captureDepth - 1);
+    syncObtainedBaseline();
+    throw error;
+  }
   if (result && typeof result.then === "function") {
     return Promise.resolve(result).then(value => {
+      state.captureDepth = Math.max(0, state.captureDepth - 1);
       finishCapturedAcquisition(source, before, options);
       return value;
+    }, error => {
+      state.captureDepth = Math.max(0, state.captureDepth - 1);
+      syncObtainedBaseline();
+      throw error;
     });
   }
+  state.captureDepth = Math.max(0, state.captureDepth - 1);
   finishCapturedAcquisition(source, before, options);
   return result;
 }
@@ -17358,6 +17473,7 @@ function patchUiLifecycle() {
       const result = previousInit(save, game);
       wireCatalogAssets();
       ensureObtainedOverlay();
+      syncObtainedBaseline(save);
       installDecoratorObserver();
       scheduleDecorate();
       patchVersion();
@@ -17414,6 +17530,7 @@ function bindGlobalEvents() {
 ensureCss();
 wireCatalogAssets();
 patchUiLifecycle();
+scheduleObtainedStoragePatch();
 bindGlobalEvents();
 patchVersion();
 preloadAssets();
