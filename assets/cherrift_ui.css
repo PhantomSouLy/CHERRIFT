@@ -380,6 +380,8 @@
   }
   .selector-v0942 .selector-total-v0942 small{font-size:6px!important;white-space:nowrap!important}
   .selector-v0942 .selector-total-v0942 b{font-size:12px!important;white-space:nowrap!important}
+  #worldSelectorV0942 .selector-carousel-v0942{margin-bottom:12px!important}
+  #worldSelectorV0942 .selector-dots-v0942{padding:4px 7px 2px!important}
   #chapterSelectorV0942 .selector-carousel-v0942{flex:0 0 clamp(205px,31dvh,275px)!important;min-height:0!important;grid-template-columns:34px minmax(0,1fr) 34px!important;gap:5px!important}
   #chapterSelectorV0942 #chapterCardV0942{min-height:0!important;max-height:none!important;height:100%!important}
   #chapterSelectorV0942 .selector-card-v0942{min-height:0!important;border-radius:20px!important}
