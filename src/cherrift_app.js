@@ -15537,6 +15537,17 @@ const SKILL_TIERS = [
   ]}
 ];
 const SKILL_NODES = Object.fromEntries(SKILL_TIERS.flatMap(tier => tier.nodes.map(node => [node.id,{...node,unlock:tier.level}])));
+const SKILL_BRANCHES = Object.freeze([
+  Object.freeze({id:"attack",icon:"⚔",nameHu:"Támadás",nameEn:"Attack",color:"#ff6f9f",glow:"#ffb8d0",nodes:Object.freeze(["damage","attackSpeed","critChance","critDamage","skillDamage","bossDamage"])}),
+  Object.freeze({id:"defense",icon:"♥",nameHu:"Védelem",nameEn:"Defense",color:"#68c6e8",glow:"#c8f1ff",nodes:Object.freeze(["maxHp","movementSpeed","damageReduction","hpRegen","cooldownReduction","eliteDamage"])}),
+  Object.freeze({id:"utility",icon:"✦",nameHu:"Hasznosság",nameEn:"Utility",color:"#c58aff",glow:"#ead3ff",nodes:Object.freeze(["orbXp","luckChance","pickupRange","coinGain","itemDrop","chestDrop"])})
+]);
+const SKILL_NODE_FRAMES = Object.freeze({
+  locked:"assets/ui/elemental_resonance/nodes/node_locked.png",
+  available:"assets/ui/elemental_resonance/nodes/node_available.png",
+  invested:"assets/ui/elemental_resonance/nodes/node_invested.png",
+  maxed:"assets/ui/elemental_resonance/nodes/node_maxed.png"
+});
 
 const TITLES = [
   {id:"new_bloom",nameHu:"Új Virágzás",nameEn:"New Bloom",rarity:"Common",test:()=>true},
@@ -15554,10 +15565,10 @@ const COPY = {
     gacha:"Gacha",shop:"Bolt",collection:"Gyűjtemény",achievements:"Eredmények",settings:"Beállítások",
     profile:"Profil",daily:"Napi jutalom",weekly:"Heti jutalom",login:"Belépési jutalom",mail:"Levelek",
     social:"Social",buffs:"Buff lista",feedback:"Visszajelzés",bug:"Hibajelentés",more:"Továbbiak",
-    skillTree:"Skill Tree",skillIntro:"Szintkapus, account-szintű fejlesztések minden Cherry számára.",
+    skillTree:"Skill Tree",skillIntro:"Kategóriánként sorban fejleszthető, account-szintű node-ok minden Cherry számára.",
     skillPoints:"Elérhető Skill Point",reset:"Skill Tree reset",freeReset:"Első reset ingyenes",
     unlockLevel:"Feloldás szintje",rank:"Rang",current:"Jelenlegi",next:"Következő",max:"MAX",
-    levelNeeded:"Szükséges játékosszint",notEnoughPoints:"Nincs elég Skill Point.",nodeMax:"Ez a fejlesztés már maximális.",
+    levelNeeded:"Szükséges játékosszint",previousNode:"Előbb maxold ki az előző node-ot.",notEnoughPoints:"Nincs elég Skill Point.",nodeMax:"Ez a fejlesztés már maximális.",
     resetConfirm:"Biztosan visszaállítod a teljes Skill Tree-t?",resetDone:"A Skill Tree visszaállítva.",
     arsenalCompact:"A slotot fejleszted; minden azonos típusú gear ezt a szintet használja.",
     levelUp:"LEVEL UP",starUp:"STAR UP",requirements:"Követelmények",materialSources:"Beszerzési források",
@@ -15580,10 +15591,10 @@ const COPY = {
     gacha:"Gacha",shop:"Shop",collection:"Collection",achievements:"Achievements",settings:"Settings",
     profile:"Profile",daily:"Daily Reward",weekly:"Weekly Reward",login:"Login Reward",mail:"Mail",
     social:"Social",buffs:"Buff List",feedback:"Feedback",bug:"Bug Report",more:"More",
-    skillTree:"Skill Tree",skillIntro:"Level-gated account upgrades shared by every Cherry.",
+    skillTree:"Skill Tree",skillIntro:"Sequential account-wide nodes by category, shared by every Cherry.",
     skillPoints:"Available Skill Points",reset:"Reset Skill Tree",freeReset:"First reset is free",
     unlockLevel:"Unlock level",rank:"Rank",current:"Current",next:"Next",max:"MAX",
-    levelNeeded:"Required player level",notEnoughPoints:"Not enough Skill Points.",nodeMax:"This upgrade is already maxed.",
+    levelNeeded:"Required player level",previousNode:"Max the previous node first.",notEnoughPoints:"Not enough Skill Points.",nodeMax:"This upgrade is already maxed.",
     resetConfirm:"Reset the entire Skill Tree?",resetDone:"Skill Tree reset.",
     arsenalCompact:"Upgrade the slot; every matching gear item uses this level.",
     levelUp:"LEVEL UP",starUp:"STAR UP",requirements:"Requirements",materialSources:"Material sources",
@@ -15713,13 +15724,32 @@ function skillBonuses(save=UI.save){
 function spentSkillPoints(save=UI.save){
   return Object.values(normalize(save).account.skillTreeV082.ranks).reduce((sum,value)=>sum+Number(value||0),0);
 }
+function skillBranchDefinition(nodeId){
+  return SKILL_BRANCHES.find(branch=>branch.nodes.includes(nodeId))||null;
+}
+function previousSkillNodeId(nodeId){
+  const branch=skillBranchDefinition(nodeId);if(!branch)return "";
+  const index=branch.nodes.indexOf(nodeId);
+  return index>0?branch.nodes[index-1]:"";
+}
+function playerSkillNodeState(save,nodeId){
+  const node=SKILL_NODES[nodeId],ranks=save.account.skillTreeV082.ranks;
+  if(!node)return {name:"locked",rank:0,maxed:false,levelLocked:true,sequenceLocked:false,previousId:""};
+  const rank=Number(ranks[nodeId]||0),previousId=previousSkillNodeId(nodeId);
+  const levelLocked=save.account.level<node.unlock;
+  const sequenceLocked=!!previousId&&Number(ranks[previousId]||0)<SKILL_NODES[previousId].max;
+  const maxed=rank>=node.max;
+  const name=maxed?"maxed":(levelLocked||sequenceLocked)?"locked":rank>0?"invested":"available";
+  return {name,rank,maxed,levelLocked,sequenceLocked,previousId};
+}
 
 function upgradeSkill(nodeId){
   const save=normalize(UI.save),node=SKILL_NODES[nodeId];
   if(!node)return;
-  const rank=save.account.skillTreeV082.ranks[nodeId];
-  if(save.account.level<node.unlock){UI.toast?.(`${t("levelNeeded")}: ${node.unlock}`);return;}
-  if(rank>=node.max){UI.toast?.(t("nodeMax"));return;}
+  const state=playerSkillNodeState(save,nodeId);
+  if(state.levelLocked){UI.toast?.(`${t("levelNeeded")}: ${node.unlock}`);return;}
+  if(state.sequenceLocked){UI.toast?.(t("previousNode"));return;}
+  if(state.maxed){UI.toast?.(t("nodeMax"));return;}
   if(save.account.skillPoints<1){UI.toast?.(t("notEnoughPoints"));return;}
   save.account.skillPoints--;
   save.account.skillTreeV082.ranks[nodeId]++;
@@ -15981,26 +16011,30 @@ function renderSkillTree(){
   if(id("skillPointsV082"))id("skillPointsV082").textContent=save.account.skillPoints;
   const track=id("skillTreeTrackV082");if(!track)return;
   const infoPanel=id("skillInfoV096");if(infoPanel)infoPanel.hidden=true;
-  const branchDefinitions=[
-    {id:"attack",icon:"⚔",hu:"Támadás",en:"Attack",nodes:["damage","attackSpeed","critChance","critDamage","skillDamage","bossDamage"]},
-    {id:"defense",icon:"♥",hu:"Védelem",en:"Defense",nodes:["maxHp","movementSpeed","damageReduction","hpRegen","cooldownReduction","eliteDamage"]},
-    {id:"utility",icon:"✦",hu:"Hasznosság",en:"Utility",nodes:["orbXp","luckChance","pickupRange","coinGain","itemDrop","chestDrop"]}
-  ];
-  const selectedBranch=branchDefinitions.find(branch=>branch.id===runtime.skillBranch)||branchDefinitions[0];
+  const selectedBranch=SKILL_BRANCHES.find(branch=>branch.id===runtime.skillBranch)||SKILL_BRANCHES[0];
   runtime.skillBranch=selectedBranch.id;
   const tabs=id("skillBranchTabsV096");
-  if(tabs)tabs.innerHTML=branchDefinitions.map(branch=>`<button type="button" class="${branch.id===selectedBranch.id?"active":""}" data-v096-skill-branch="${branch.id}" aria-pressed="${branch.id===selectedBranch.id}"><span>${branch.icon}</span><b>${escapeHtml(language()==="hu"?branch.hu:branch.en)}</b></button>`).join("");
-  const nodeMarkup=node=>{
-    const rank=ranks[node.id]||0,locked=level<node.unlock,maxed=rank>=node.max;
+  if(tabs)tabs.innerHTML=SKILL_BRANCHES.map(branch=>`<button type="button" class="${branch.id===selectedBranch.id?"active":""}" data-v096-skill-branch="${branch.id}" aria-pressed="${branch.id===selectedBranch.id}" style="--skill-branch:${branch.color};--skill-glow:${branch.glow}"><span>${branch.icon}</span><b>${escapeHtml(language()==="hu"?branch.nameHu:branch.nameEn)}</b></button>`).join("");
+  const nodeMarkup=(node,index)=>{
+    const state=playerSkillNodeState(save,node.id),rank=state.rank;
     const current=node.unit==="%"?formatPercent(rank*node.value):Math.round(rank*node.value*100)/100;
     const next=node.unit==="%"?formatPercent(Math.min(node.max,rank+1)*node.value):Math.round(Math.min(node.max,rank+1)*node.value*100)/100;
-    return `<article class="skill-node-v082 ${maxed?"maxed":""}" role="group" data-v096-skill-card data-v096-name="${escapeHtml(nodeName(node))}" data-v096-desc="${escapeHtml(nodeDesc(node))}" data-v096-current="${escapeHtml(String(current))}" data-v096-next="${escapeHtml(String(next))}" data-v096-unlock="${node.unlock}" data-v096-rank="${rank}/${node.max}">
-      <span class="skill-node-icon-v082">${node.icon}</span><span class="skill-node-name-v096"><b>${escapeHtml(nodeName(node))}</b><small>${escapeHtml(nodeDesc(node))}</small>${locked?`<em>${language()==="hu"?"Szükséges szint":"Required level"}: ${node.unlock}</em>`:""}</span>
-      <b class="skill-rank-v096">${language()==="hu"?"Szint":"Level"} ${rank}/${node.max}</b>
-      <button type="button" data-v082-skill="${node.id}" aria-label="${escapeHtml(nodeName(node))}: ${maxed?t("max"):"+"}" ${locked||maxed||save.account.skillPoints<1?"disabled":""}>${maxed?"✓":"+"}</button>
+    const gateText=state.levelLocked?`${language()==="hu"?"Szükséges szint":"Required level"}: ${node.unlock}`:state.sequenceLocked?t("previousNode"):"";
+    const disabled=state.maxed||state.levelLocked||state.sequenceLocked||save.account.skillPoints<1;
+    return `${index?'<i class="skill-chain-connector-v100">↓</i>':""}<article class="skill-node-v082 skill-node-chain-v100 ${state.name}" role="group" data-v096-skill-card data-v096-name="${escapeHtml(nodeName(node))}" data-v096-desc="${escapeHtml(nodeDesc(node))}" data-v096-current="${escapeHtml(String(current))}" data-v096-next="${escapeHtml(String(next))}" data-v096-unlock="${node.unlock}" data-v096-rank="${rank}/${node.max}">
+      <button type="button" class="skill-node-action-v100" data-v082-skill="${node.id}" aria-label="${escapeHtml(nodeName(node))}: ${state.maxed?t("max"):"+"}" ${disabled?"disabled":""}>
+        <img class="skill-node-frame-v100" src="${SKILL_NODE_FRAMES[state.name]}" alt="">
+        <span class="skill-node-icon-v082">${node.icon}</span>
+        <span class="skill-node-plus-v100">${state.maxed?t("max"):"+"}</span>
+      </button>
+      <div class="skill-node-copy-v100"><h4>${escapeHtml(nodeName(node))}</h4><p>${escapeHtml(nodeDesc(node))}</p><small>${language()==="hu"?"Szint":"Level"} ${rank}/${node.max}</small>${gateText?`<em>${escapeHtml(gateText)}</em>`:""}</div>
     </article>`;
   };
-  track.innerHTML=`<header class="skill-list-head-v096"><span>${selectedBranch.icon}</span><div><small>PLAYER UPGRADE</small><h2>${escapeHtml(language()==="hu"?selectedBranch.hu:selectedBranch.en)}</h2></div><b>${selectedBranch.nodes.reduce((sum,nodeId)=>sum+Number(ranks[nodeId]||0),0)} / ${selectedBranch.nodes.reduce((sum,nodeId)=>sum+SKILL_NODES[nodeId].max,0)}</b></header><div class="skill-list-v096">${selectedBranch.nodes.map(nodeId=>nodeMarkup(SKILL_NODES[nodeId])).join("")}</div>`;
+  const spent=selectedBranch.nodes.reduce((sum,nodeId)=>sum+Number(ranks[nodeId]||0),0);
+  const total=selectedBranch.nodes.reduce((sum,nodeId)=>sum+SKILL_NODES[nodeId].max,0);
+  track.style.setProperty("--skill-branch",selectedBranch.color);
+  track.style.setProperty("--skill-glow",selectedBranch.glow);
+  track.innerHTML=`<header class="skill-list-head-v096"><span>${selectedBranch.icon}</span><div><small>PLAYER UPGRADE</small><h2>${escapeHtml(language()==="hu"?selectedBranch.nameHu:selectedBranch.nameEn)}</h2></div><b>${spent} / ${total}</b></header><div class="skill-list-v096">${selectedBranch.nodes.map((nodeId,index)=>nodeMarkup(SKILL_NODES[nodeId],index)).join("")}</div>`;
 }
 function bindTreeScroller(){
   const scroller=id("skillTreeScrollV082");if(!scroller||scroller.dataset.bound)return;
@@ -17567,21 +17601,11 @@ function decorateArsenal() {
   });
 }
 
-function ensureSkillArrows() {
-  const scroll = id("skillTreeScrollV082");
-  if (!scroll || id("skillScrollControlsV084")) return;
-  const controls = document.createElement("div");
-  controls.id = "skillScrollControlsV084";
-  controls.className = "skill-scroll-controls-v084";
-  controls.innerHTML = '<button type="button" data-v084-skill-scroll="-1" aria-label="Scroll left">‹</button><button type="button" data-v084-skill-scroll="1" aria-label="Scroll right">›</button>';
-  scroll.insertAdjacentElement("afterend", controls);
-}
-
 function decorateSkillTree() {
   const panel = id("playerUpgrade");
   if (!panel) return;
   q(".skill-tree-help-v082", panel)?.remove();
-  ensureSkillArrows();
+  id("skillScrollControlsV084")?.remove();
   q(".skill-toolbar-v082", panel)?.classList.add("skill-toolbar-v084");
 }
 
@@ -17889,7 +17913,6 @@ function bindEvents() {
     if(settings){event.preventDefault();UI.open("settings");requestAnimationFrame(()=>forcePanel("settings"));return;}
     const weeklyBack=event.target.closest?.('#weeklyV082 [data-v082-open="menu"],#weeklyV082 .back');
     if(weeklyBack){event.preventDefault();hideCustomPanelsExcept();UI.open("menu");requestAnimationFrame(()=>id("menu")?.classList.remove("hidden"));return;}
-    const scroll=event.target.closest?.("[data-v084-skill-scroll]");if(scroll){id("skillTreeScrollV082")?.scrollBy({left:Number(scroll.dataset.v084SkillScroll)*520,behavior:"smooth"});return;}
     const category=event.target.closest?.("[data-v084-bag-category]");if(category){state.bagCategory=category.dataset.v084BagCategory;renderBagInventory();return;}
     const item=event.target.closest?.("[data-v084-bag-item]");if(item){state.bagSelected=item.dataset.v084BagItem;renderBagInventory();return;}
     const use=event.target.closest?.("[data-v084-bag-use]");if(use){window.CHERRIFT_V080?.activateFood?.(use.dataset.v084BagUse);requestAnimationFrame(renderBagInventory);return;}
