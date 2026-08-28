@@ -682,13 +682,13 @@ body.obtained-open-v098 .obtained-claim-v098{
   display:block!important;
   width:100%!important;
   height:100%!important;
-  background-image:url("player/skins/base_cherry/base_cherry_loading.png")!important;
+  background-image:url("ui/loading_sprite_sheet.png")!important;
   background-repeat:no-repeat!important;
   background-size:400% 200%!important;
   background-position:0 0!important;
   mix-blend-mode:screen!important;
   filter:drop-shadow(0 5px 7px rgba(45,8,32,.35))!important;
-  animation:cherriftLoadingSpriteDedicatedV100 .9s steps(1,end) infinite!important;
+  animation:cherriftLoadingSpriteDedicatedV100 0.8s steps(1,end) infinite!important;
 }
 @keyframes cherriftLoadingSpriteDedicatedV100{
   0%,12.49%{background-position:0% 0%}
