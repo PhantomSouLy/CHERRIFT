@@ -582,7 +582,131 @@
 .obtained-claim-v098{position:relative;z-index:2;display:block;width:auto;min-width:0;min-height:0;margin:clamp(48px,8vh,78px) auto 0;padding:8px 13px;border:0!important;border-radius:0!important;color:color-mix(in srgb,var(--theme-text,#fff) 82%,transparent)!important;background:transparent!important;box-shadow:none!important;font:600 13px/1.2 system-ui,sans-serif;letter-spacing:.02em;text-transform:none;cursor:pointer}
 .obtained-claim-v098::before{content:"◇";margin-right:8px;color:var(--theme-primary,#e45b9b);font-size:11px}
 .obtained-claim-v098:hover,.obtained-claim-v098:focus-visible{outline:none;color:var(--theme-text,#fff)!important;text-shadow:0 0 14px color-mix(in srgb,var(--theme-primary,#e45b9b) 52%,transparent)}
-body.obtained-open-v098{overflow:hidden}
+/* Full-viewport acquisition lock: the reward surface itself never scrolls. */
+html:has(body.obtained-open-v098),body.obtained-open-v098{
+  width:100%!important;
+  height:100%!important;
+  overflow:hidden!important;
+  overscroll-behavior:none!important;
+}
+body.obtained-open-v098 .obtained-overlay-v098{
+  position:fixed!important;
+  inset:0!important;
+  width:100dvw!important;
+  height:100dvh!important;
+  min-width:100dvw!important;
+  min-height:100dvh!important;
+  max-width:none!important;
+  max-height:none!important;
+  padding:0!important;
+  overflow:hidden!important;
+  overscroll-behavior:none!important;
+  touch-action:none!important;
+}
+body.obtained-open-v098 .obtained-shell-v098{
+  width:min(980px,100dvw)!important;
+  height:100dvh!important;
+  min-height:0!important;
+  max-height:none!important;
+  display:grid!important;
+  grid-template-rows:auto minmax(0,1fr) auto!important;
+  align-items:center!important;
+  margin:0 auto!important;
+  padding:clamp(42px,8dvh,96px) clamp(10px,2.5vw,26px) clamp(34px,7dvh,82px)!important;
+  overflow:hidden!important;
+  overscroll-behavior:none!important;
+  touch-action:none!important;
+}
+body.obtained-open-v098 .obtained-head-v098{
+  align-self:end!important;
+  margin:0 auto clamp(18px,3.5dvh,40px)!important;
+}
+body.obtained-open-v098 .obtained-items-v098{
+  min-height:0!important;
+  max-height:100%!important;
+  align-self:stretch!important;
+  align-content:center!important;
+  align-items:center!important;
+  overflow:hidden!important;
+  touch-action:none!important;
+}
+body.obtained-open-v098 .obtained-claim-v098{
+  align-self:start!important;
+  margin:clamp(16px,3.5dvh,34px) auto 0!important;
+}
+@media(max-width:820px){
+  body.obtained-open-v098 .obtained-shell-v098{
+    width:100dvw!important;
+    height:100dvh!important;
+    max-height:none!important;
+    padding:clamp(34px,6dvh,66px) 8px clamp(26px,5dvh,56px)!important;
+  }
+  body.obtained-open-v098 .obtained-head-v098{margin-bottom:clamp(14px,2.8dvh,28px)!important}
+  body.obtained-open-v098 .obtained-items-v098{gap:7px!important}
+  body.obtained-open-v098 .obtained-claim-v098{margin-top:clamp(12px,2.5dvh,24px)!important}
+}
+@media(max-width:820px) and (max-height:680px){
+  body.obtained-open-v098 .obtained-shell-v098{padding:18px 7px 16px!important}
+  body.obtained-open-v098 .obtained-head-v098{margin-bottom:10px!important}
+  body.obtained-open-v098 .obtained-head-v098 h2{font-size:24px!important}
+  body.obtained-open-v098 .obtained-item-v098{
+    flex-basis:108px!important;
+    width:108px!important;
+    min-height:139px!important;
+    grid-template-rows:74px minmax(0,1fr)!important;
+    padding:6px 6px 8px!important;
+  }
+  body.obtained-open-v098 .obtained-art-v098{height:74px!important}
+  body.obtained-open-v098 .obtained-art-v098 img,
+  body.obtained-open-v098 .obtained-art-v098 canvas{width:58px!important;height:58px!important;max-width:58px!important;max-height:58px!important}
+  body.obtained-open-v098 .obtained-art-v098>span{font-size:38px!important}
+  body.obtained-open-v098 .obtained-amount-v098{top:65px!important;font-size:10px!important}
+  body.obtained-open-v098 .obtained-copy-v098 h3{font-size:9px!important}
+  body.obtained-open-v098 .obtained-copy-v098 p{font-size:7px!important}
+  body.obtained-open-v098 .obtained-claim-v098{margin-top:9px!important;padding:5px 7px!important;font-size:11px!important}
+}
+
+/* Loading companion: use the dedicated 4x2 / 8-frame loading spritesheet,
+   not a gameplay skin walk sheet. The supplied sheet has a black matte, so
+   screen blending makes that matte visually disappear over the loading art. */
+.cherrift-loading-sprite-v099{
+  position:relative!important;
+  width:72px!important;
+  height:72px!important;
+  overflow:hidden!important;
+}
+.cherrift-loading-sprite-v099::before{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  background-image:url("player/skins/base_cherry/base_cherry_loading.png")!important;
+  background-repeat:no-repeat!important;
+  background-size:400% 200%!important;
+  background-position:0 0!important;
+  mix-blend-mode:screen!important;
+  filter:drop-shadow(0 5px 7px rgba(45,8,32,.35))!important;
+  animation:cherriftLoadingSpriteDedicatedV100 .9s steps(1,end) infinite!important;
+}
+@keyframes cherriftLoadingSpriteDedicatedV100{
+  0%,12.49%{background-position:0% 0%}
+  12.5%,24.99%{background-position:33.333% 0%}
+  25%,37.49%{background-position:66.667% 0%}
+  37.5%,49.99%{background-position:100% 0%}
+  50%,62.49%{background-position:0% 100%}
+  62.5%,74.99%{background-position:33.333% 100%}
+  75%,87.49%{background-position:66.667% 100%}
+  87.5%,100%{background-position:100% 100%}
+}
+@media(max-width:820px){
+  .cherrift-loading-sprite-v099{width:68px!important;height:68px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .cherrift-loading-sprite-v099::before{animation:none!important;background-position:0 0!important}
+}
+
 @keyframes obtainedRewardInV099{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
 @keyframes obtainedRewardShineV099{from{transform:translateX(-130%)}to{transform:translateX(150%)}}
 @media(prefers-reduced-motion:reduce){.obtained-overlay-v098,.obtained-item-v098,.obtained-item-v098::before{animation:none!important;transition:none!important}}
