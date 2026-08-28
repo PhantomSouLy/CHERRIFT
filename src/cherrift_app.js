@@ -15250,9 +15250,11 @@ function renderShop(save){
   else cards=Object.entries(FOOD_CATALOG).map(([key,food])=>shopItemCard({
     kind:"food",key,name:food.name,asset:food.asset,fallback:food.icon,rarity:food.rarity||"Common",priceMarkup:shopPriceMarkup(food.price),buyAttribute:"data-v080-buy-food",buyValue:key,disabled:!canAfford(save,food.price),buyLabel:t("buy")
   })).join("");
-  return `<section class="shop-intro-v080"><h2>${escapeHtml(t("shop"))}</h2></section>
-    <section class="shop-catalog-v098">
-      <nav class="shop-categories-v096" aria-label="Shop categories">${categories.map(([key,label])=>`<button type="button" data-v080-shop-category="${key}" class="${selected===key?"active":""}" aria-pressed="${selected===key}">${escapeHtml(label)}</button>`).join("")}</nav>
+  return `<section class="shop-catalog-v098">
+      <div class="shop-sticky-v098">
+        <section class="shop-intro-v080"><h2>${escapeHtml(t("shop"))}</h2></section>
+        <nav class="shop-categories-v096" aria-label="Shop categories">${categories.map(([key,label])=>`<button type="button" data-v080-shop-category="${key}" class="${selected===key?"active":""}" aria-pressed="${selected===key}">${escapeHtml(label)}</button>`).join("")}</nav>
+      </div>
       <div class="shop-category-panel-v096 active" data-v096-shop-panel="${selected}"><section class="shop-grid-v098">${cards||`<p class="empty-v080">${escapeHtml(t("noItems"))}</p>`}</section></div>
     </section>`;
 }
@@ -16006,10 +16008,8 @@ function compactArsenal(){
   const save=normalize(UI.save),note=q(".arsenal-note-v070");
   if(note){
     const m=save.bag.materials;
-    note.innerHTML=`<strong>${escapeHtml(t("resource"))}:</strong>
-      ${["copper","iron","steel","silver","royal"].map(key=>`<button type="button" data-v082-material="${key}"><i class="stone-${key}-v070"></i>${key} <b>${m.stones[key]||0}</b></button>`).join("")}
-      <button type="button" data-v082-material="gearScrap">⚙ Gear Scrap <b>${m.gearScrap||0}</b></button>
-      <small>${escapeHtml(t("sourceHint"))}</small>`;
+    note.innerHTML=`${["copper","iron","steel","silver","royal"].map(key=>`<button type="button" data-v082-material="${key}"><i class="stone-${key}-v070"></i>${key} <b>${m.stones[key]||0}</b></button>`).join("")}
+      <button type="button" data-v082-material="gearScrap">⚙ Gear Scrap <b>${m.gearScrap||0}</b></button>`;
   }
   grid.innerHTML=SLOT_ORDER.map(slot=>{
     const state=save.arsenal.slots[slot],cap=window.CHERRIFT_BALANCE?.arsenal?.maxLevel||30;
@@ -16253,12 +16253,15 @@ function renderStatSummary(){
 function prepareCollection(){
   const panel=id("libraryV0551");if(!panel)return;
   const h=q(".panel-head h2",panel),p=q(".panel-head p",panel);
-  if(h)h.textContent=t("collection");if(p)p.textContent=t("collectionIntro");
+  if(h)h.textContent=t("collection");
+  if(p){p.textContent="";p.hidden=true;p.setAttribute("aria-hidden","true");}
   qa('[data-library-tab="profile"],[data-library-tab="stats"]',panel).forEach(button=>button.classList.add("hidden"));
-  window.CHERRIFT_V0551?.renderLibrary?.("skins");
+  window.CHERRIFT_V0551?.renderLibrary?.("profile");
 }
 function setEconomyRoute(route){
   runtime.economyRoute=route;
+  const economyPanel=id("chests");
+  if(economyPanel)economyPanel.dataset.themeEconomyRoute=route;
   const tab=route==="gacha"?"gacha":route==="bag"?"bag":route==="shop"?"shop":"buffs";
   q(`[data-v080-tab="${tab}"]`)?.click();
   requestAnimationFrame(()=>{
@@ -16306,7 +16309,7 @@ function patchNavigation(){
       setEconomyRoute(panel==="bagV082"?"bag":panel==="shopV082"?"shop":panel==="buffsV082"?"buffs":"gacha");
     }else if(panel==="collectionV082"){
       result=previousOpen("libraryV0551",...args);
-      requestAnimationFrame(prepareCollection);
+      prepareCollection();
     }else if(["profileV082","weeklyV082","socialV082","statSummaryV082"].includes(panel)){
       previousOpen("menu");showCustom(panel);result=undefined;
     }else{
@@ -16947,6 +16950,8 @@ function itemSnapshot(save) {
     gear,
     skins:new Set(Array.isArray(source.unlockedSkins) ? source.unlockedSkins.filter(Boolean) : []),
     bagItems:mapCounts(source.bag?.items),
+    chests:mapCounts(source.chests),
+    commonChestKeys:count(source.keys),
     energyDrinks:mapCounts(source.energyState?.drinks),
     stones:mapCounts(materials.stones),
     slotCores:mapCounts(materials.slotCores),
@@ -17057,6 +17062,32 @@ function collectNewItems(before, after) {
     if (delta > 0) items.push(bagItemReward(itemId, delta));
   }
 
+  const chestRarity = { common:"Common", rare:"Rare", epic:"Epic" };
+  for (const chest of ["common", "rare", "epic"]) {
+    const delta = count(after.chests[chest]) - count(before.chests[chest]);
+    if (delta > 0) items.push(rewardItem({
+      key:`chest:${chest}`,
+      name:`${chest[0].toUpperCase()}${chest.slice(1)} Chest`,
+      amount:delta,
+      asset:ITEM_ASSETS.chests[chest],
+      rarity:chestRarity[chest],
+      kind:"chest",
+      subtitle:language() === "hu" ? "Felszerelés láda" : "Equipment chest",
+      description:language() === "hu" ? "A Gacha ládák között nyitható ki." : "Can be opened from the Gacha chest screen."
+    }));
+  }
+  const commonKeyDelta = after.commonChestKeys - before.commonChestKeys;
+  if (commonKeyDelta > 0) items.push(rewardItem({
+    key:"chest:common",
+    name:"Common Chest",
+    amount:commonKeyDelta,
+    asset:ITEM_ASSETS.chests.common,
+    rarity:"Common",
+    kind:"chest",
+    subtitle:language() === "hu" ? "Felszerelés láda" : "Equipment chest",
+    description:language() === "hu" ? "A Gacha ládák között nyitható ki." : "Can be opened from the Gacha chest screen."
+  }));
+
   const drinkRarity = { small:"Common", standard:"Uncommon", large:"Rare" };
   for (const drink of ["small", "standard", "large"]) {
     const delta = count(after.energyDrinks[drink]) - count(before.energyDrinks[drink]);
@@ -17116,7 +17147,7 @@ function collectNewItems(before, after) {
   return mergeGenericRewards(items);
 }
 
-const OBTAINED_KINDS = new Set(["gear", "skin", "buff", "food", "core", "stone", "material", "item"]);
+const OBTAINED_KINDS = new Set(["gear", "skin", "buff", "food", "core", "stone", "material", "item", "chest"]);
 const BLOCKED_OBTAINED_SOURCES = new Set([
   "equip", "unequip", "equipment_swap", "inventory_move", "inventory_sort", "stack_merge",
   "save_load", "load", "save", "auth", "bootstrap", "server", "stage_reward", "stage_clear",

@@ -332,10 +332,7 @@
     }
 
     if (start) {
-      start.textContent = copy(
-        "KATTINTS A KEZDÉSHEZ",
-        "CLICK TO START"
-      );
+      start.textContent = phone ? "Tap here" : "Click here";
     }
   }
 
@@ -416,11 +413,13 @@
     syncCopy();
     setPhase("start");
 
-    requestAnimationFrame(() => {
-      byId("bootStartV096")?.focus({
-        preventScroll:true
+    if (!isPhoneBoot()) {
+      requestAnimationFrame(() => {
+        byId("bootStartV096")?.focus({
+          preventScroll:true
+        });
       });
-    });
+    }
   }
 
   function startLoadingLoop(message = "") {
