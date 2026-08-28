@@ -43,6 +43,26 @@
     wuxia_sakura_cherry:"celestial"
   });
 
+  // PC selector splash sources live independently from the compact skin icons.
+  // Keep this mapping in the canonical skin UI owner so the desktop showcase
+  // never falls back to a black panel when a skin data object only exposes its icon.
+  const SKIN_SPLASHES = Object.freeze({
+    cherry_default:"assets/player/skins/base_cherry/base_cherry_splashart.png",
+    archer_cherry:"assets/player/skins/archer_cherry/archer_cherry_splashart.png",
+    beastclaw_cherry:"assets/player/skins/beastclaw_cherry/beastclaw_cherry_splashart.png",
+    cake_deliver_cherry:"assets/player/skins/cake_deliver_cherry/cake_deliver_cherry_splashart.png",
+    fairy_cherry:"assets/player/skins/fairy_cherry/fairy_cherry_splashart.jpg",
+    kimono_cherry:"assets/player/skins/kimono_cherry/kimono_cherry_splashart.png",
+    mage_cherry:"assets/player/skins/mage_cherry/mage_cherry_splashart.png",
+    ninja_cherry:"assets/player/skins/ninja_cherry/ninja_cherry_splashart.png",
+    pajama_cherry:"assets/player/skins/pajama_cherry/pajama_cherry_splashart.png",
+    school_uniform_cherry:"assets/player/skins/school_uniform_cherry/school_uniform_cherry_splashart.png",
+    sport_cherry:"assets/player/skins/sport_cherry/sport_cherry_splashart.png",
+    succubus_cherry:"assets/player/skins/succubus_cherry/succubus_cherry_splashart.png",
+    warrior_cherry:"assets/player/skins/warrior_cherry/warrior_cherry_splashart.png",
+    wuxia_sakura_cherry:"assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_splashart.jpg"
+  });
+
   const ELEMENTS = Object.freeze({
     blaze:Object.freeze({name:"Blaze", icon:"assets/ui/elemental_resonance/elements/blaze.png"}),
     tidecall:Object.freeze({name:"Tidecall", icon:"assets/ui/elemental_resonance/elements/tidecall.png"}),
@@ -60,6 +80,8 @@
     lastSkinId:"",
     tiltBound:false
   };
+
+  const desktopMode = () => document.body?.classList?.contains("v0933-desktop") === true;
 
   function rarityKey(value) {
     const key = lower(value).replace(/[^a-z]/g, "");
@@ -347,6 +369,263 @@
     }
   }
 
+  function desktopSplashSource(root, skin, art) {
+    if (!desktopMode() || !skin) return "";
+    const legacyImage = q(".fix-splash-img-v095", art);
+    return clean(
+      skin?.splash ||
+      skin?.splashArt ||
+      skin?.splashart ||
+      legacyImage?.getAttribute?.("src") ||
+      SKIN_SPLASHES[skin.id] ||
+      ""
+    );
+  }
+
+  function restorePhoneDetails(root) {
+    const details = q(".skin-details-v093", root);
+    if (!details || details.dataset.crDesktopLayout !== "1") return;
+    const row = q(".cr-desktop-skin-name-row", details);
+    const heading = q("h3", row) || q("h3", details);
+    const title = q(".skin-title-v093", details);
+    if (row && heading) title?.insertAdjacentElement?.("afterend", heading);
+    row?.remove();
+    q(".cr-desktop-skin-info", details)?.remove();
+    const description = q(":scope > p", details);
+    description?.removeAttribute?.("aria-hidden");
+
+    for (const node of [
+      q(".skin-title-v093 small", details),
+      q(":scope > p", details),
+      q(".skin-stats-v093", details),
+      q(".skill-card-v093", details),
+      q(".cr-skin-tools", details)
+    ]) node?.style?.removeProperty?.("display");
+
+    for (const property of ["display","flex-direction","min-height","height","gap"]) {
+      details.style.removeProperty(property);
+    }
+    if (heading) {
+      for (const property of ["display","margin","font-size","line-height","min-width"]) heading.style.removeProperty(property);
+    }
+    const actionRow = q(".cr-skin-action-row", details);
+    if (actionRow) {
+      for (const property of ["margin-top","display","width"]) actionRow.style.removeProperty(property);
+    }
+    const equip = q(".skin-equip-v093", details);
+    if (equip) {
+      for (const property of ["width","min-height","margin","font-size"]) equip.style.removeProperty(property);
+    }
+    delete details.dataset.crDesktopLayout;
+  }
+
+  function ensureDesktopDetails(root, skin) {
+    if (!desktopMode()) {
+      restorePhoneDetails(root);
+      return;
+    }
+    const details = q(".skin-details-v093", root);
+    if (!details || !skin) return;
+    details.dataset.crDesktopLayout = "1";
+
+    details.style.display = "flex";
+    details.style.flexDirection = "column";
+    details.style.minHeight = "0";
+    details.style.height = "100%";
+    details.style.gap = "0";
+
+    const title = q(".skin-title-v093", details);
+    const movement = q(".skin-title-v093 small", details);
+    if (movement) movement.style.display = "none";
+
+    const description = q(":scope > p", details);
+    if (description) {
+      description.style.display = "none";
+      description.setAttribute("aria-hidden", "true");
+    }
+
+    const heading = q("h3", details);
+    let nameRow = q(".cr-desktop-skin-name-row", details);
+    if (!nameRow && heading) {
+      nameRow = document.createElement("div");
+      nameRow.className = "cr-desktop-skin-name-row";
+      (title || details.firstElementChild)?.insertAdjacentElement?.("afterend", nameRow) || details.prepend(nameRow);
+      nameRow.appendChild(heading);
+    }
+    if (nameRow && heading) {
+      nameRow.style.display = "flex";
+      nameRow.style.alignItems = "center";
+      nameRow.style.gap = "10px";
+      nameRow.style.margin = "10px 0 16px";
+      nameRow.style.minWidth = "0";
+
+      const element = skinElement(skin);
+      let icon = q(".cr-desktop-element-icon", nameRow);
+      if (!icon) {
+        icon = document.createElement("img");
+        icon.className = "cr-desktop-element-icon";
+        icon.alt = "";
+        nameRow.prepend(icon);
+      }
+      if (icon.getAttribute("src") !== element.icon) icon.src = element.icon;
+      icon.title = element.name;
+      icon.style.width = "36px";
+      icon.style.height = "36px";
+      icon.style.flex = "0 0 36px";
+      icon.style.objectFit = "contain";
+      icon.style.padding = "4px";
+      icon.style.border = "1px solid rgba(255,255,255,.14)";
+      icon.style.borderRadius = "10px";
+      icon.style.background = "rgba(255,255,255,.045)";
+      icon.style.boxShadow = "0 0 18px color-mix(in srgb,var(--cr-rarity,#f09ac3) 18%,transparent)";
+
+      heading.style.display = "block";
+      heading.style.margin = "0";
+      heading.style.fontSize = "clamp(27px,2.45vw,39px)";
+      heading.style.lineHeight = "1.02";
+      heading.style.minWidth = "0";
+    }
+
+    const stats = q(".skin-stats-v093", details);
+    const legacySkill = q(".skill-card-v093", details);
+    if (stats) stats.style.display = "none";
+    if (legacySkill) legacySkill.style.display = "none";
+
+    const passive = passiveText(skin, root);
+    const skill = skillInfo(skin, root);
+    const skillDescription = clean(skill.description) === clean(skin?.desc) ? "—" : skill.description;
+    const skillIcon = window.CHERRIFT_SKILL_ICONS?.forSkin?.(skin.id) || skin?.skillIcon || "";
+    const contentKey = [skin.id, language(), passive, skill.name, skillDescription, skillIcon].join("|");
+
+    let info = q(".cr-desktop-skin-info", details);
+    if (!info) {
+      info = document.createElement("section");
+      info.className = "cr-desktop-skin-info";
+      const actionRow = q(".cr-skin-action-row", details);
+      if (actionRow) actionRow.insertAdjacentElement("beforebegin", info);
+      else details.appendChild(info);
+    }
+    if (info.dataset.contentKey !== contentKey) {
+      info.dataset.contentKey = contentKey;
+      info.innerHTML = `
+        <article class="cr-desktop-passive-card">
+          <small>${esc(copy("Passzív", "Passive"))}</small>
+          <p>${esc(passive || "—")}</p>
+        </article>
+        <article class="cr-desktop-skill-card">
+          <small>Skill</small>
+          <div class="cr-desktop-skill-title">
+            ${skillIcon ? `<span><img src="${esc(skillIcon)}" alt="" draggable="false"></span>` : ""}
+            <b>${esc(skill.name || "Skill")}</b>
+          </div>
+          <p>${esc(skillDescription || "—")}</p>
+        </article>`;
+    }
+    info.style.display = "grid";
+    info.style.gap = "10px";
+    info.style.margin = "4px 0 14px";
+    info.querySelectorAll("article").forEach(card => {
+      card.style.padding = "12px 13px";
+      card.style.border = "1px solid rgba(255,255,255,.11)";
+      card.style.borderRadius = "12px";
+      card.style.background = "linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.018))";
+      card.style.boxShadow = "inset 0 1px rgba(255,255,255,.035)";
+    });
+    info.querySelectorAll("article>small").forEach(label => {
+      label.style.display = "block";
+      label.style.marginBottom = "6px";
+      label.style.color = "#e991bd";
+      label.style.fontSize = "8px";
+      label.style.fontWeight = "950";
+      label.style.letterSpacing = "1.35px";
+      label.style.textTransform = "uppercase";
+    });
+    info.querySelectorAll("article>p").forEach(text => {
+      text.style.margin = "0";
+      text.style.color = "rgba(255,235,245,.78)";
+      text.style.fontSize = "11px";
+      text.style.lineHeight = "1.45";
+    });
+    const skillTitle = q(".cr-desktop-skill-title", info);
+    if (skillTitle) {
+      skillTitle.style.display = "flex";
+      skillTitle.style.alignItems = "center";
+      skillTitle.style.gap = "9px";
+      skillTitle.style.marginBottom = "7px";
+    }
+    const skillIconHost = q(".cr-desktop-skill-title span", info);
+    if (skillIconHost) {
+      skillIconHost.style.width = "38px";
+      skillIconHost.style.height = "38px";
+      skillIconHost.style.flex = "0 0 38px";
+      skillIconHost.style.display = "grid";
+      skillIconHost.style.placeItems = "center";
+      skillIconHost.style.overflow = "hidden";
+      skillIconHost.style.borderRadius = "50%";
+      skillIconHost.style.background = "rgba(255,255,255,.06)";
+    }
+    const skillImage = q(".cr-desktop-skill-title img", info);
+    if (skillImage) {
+      skillImage.style.width = "100%";
+      skillImage.style.height = "100%";
+      skillImage.style.objectFit = "cover";
+      skillImage.style.borderRadius = "inherit";
+    }
+    const skillName = q(".cr-desktop-skill-title b", info);
+    if (skillName) {
+      skillName.style.fontSize = "14px";
+      skillName.style.lineHeight = "1.15";
+    }
+
+    const tools = q(".cr-skin-tools", details);
+    if (tools) tools.style.display = "none";
+    const actionRow = q(".cr-skin-action-row", details);
+    const equip = q(".skin-equip-v093", details);
+    if (actionRow) {
+      actionRow.style.marginTop = "auto";
+      actionRow.style.display = "block";
+      actionRow.style.width = "100%";
+    }
+    if (equip) {
+      equip.style.width = "100%";
+      equip.style.minHeight = "54px";
+      equip.style.margin = "0";
+      equip.style.fontSize = "15px";
+    }
+  }
+
+  function markDesktopSkinsSeen(root) {
+    if (!desktopMode() || !root || root.classList.contains("hidden")) return;
+    const save = window.UI?.save;
+    if (!save) return;
+
+    const unlocked = [...new Set((save.unlockedSkins || []).filter(Boolean).map(String))];
+    const same = (value) => Array.isArray(value) && value.length === unlocked.length && unlocked.every(id => value.includes(id));
+    save.noticesSeenV090 ||= {};
+    save.uiV093 ||= {};
+    let changed = false;
+    if (!same(save.noticesSeenV090.skins)) {
+      save.noticesSeenV090.skins = [...unlocked];
+      changed = true;
+    }
+    if (!same(save.uiV093.seenSkins)) {
+      save.uiV093.seenSkins = [...unlocked];
+      changed = true;
+    }
+
+    qa('[data-v090-notice="skins"],[data-v060-badge="skin"]').forEach(dot => {
+      dot.classList.remove("show", "active", "has-new", "is-new");
+      dot.removeAttribute("data-active");
+      dot.setAttribute("aria-hidden", "true");
+    });
+    qa("#skins .skin-new-v093").forEach(badge => badge.remove());
+
+    if (changed) {
+      try { window.CherriftStorage?.save?.(save); }
+      catch (error) { console.warn("[CHERRIFT skin UI] Failed to persist seen skins", error); }
+    }
+  }
+
   function applyRarityAndArt(root, skin) {
     if (!skin) return;
     const art = q(".skin-art-v093", root);
@@ -361,6 +640,16 @@
       art.style.setProperty("--cr-rarity", RARITY_COLORS[rarity]);
       if (skin?.splash) {
         art.style.backgroundImage = `linear-gradient(180deg,rgba(6,3,12,.01),rgba(6,3,12,.16)),url("${skin.splash}")`;
+      }
+      if (desktopMode()) {
+        const desktopSplash = desktopSplashSource(root, skin, art);
+        if (desktopSplash) {
+          art.dataset.crDesktopSplash = desktopSplash;
+          art.style.backgroundImage = `linear-gradient(180deg,rgba(6,3,12,.01),rgba(6,3,12,.16)),url("${desktopSplash}")`;
+          art.style.backgroundSize = "contain";
+          art.style.backgroundPosition = "center center";
+          art.style.backgroundRepeat = "no-repeat";
+        }
       }
       qa(".fix-splash-img-v095", art).forEach(image => image.remove());
     }
@@ -397,6 +686,8 @@
     hideDeprecatedStats(root);
     ensureActionRow(root, skin);
     patchDialog(skin);
+    ensureDesktopDetails(root, skin);
+    markDesktopSkinsSeen(root);
 
     q("#skinElementBadgeV095", root)?.setAttribute("aria-hidden", "true");
     q(".cr-skin-view-button", root)?.remove();
@@ -502,7 +793,7 @@
   }
 
   window.CHERRIFT_SKIN_UI = Object.freeze({
-    version:"0.9.8.2",
+    version:"0.9.9.0-pc-selector",
     refresh:schedule,
     selectedSkin,
     skinElement
