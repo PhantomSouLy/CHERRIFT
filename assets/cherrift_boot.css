@@ -30,7 +30,7 @@ body.v060-booting #authGateV064 {
   overflow:hidden;
   isolation:isolate;
   background-color:#0b0610 !important;
-  background-image:url("loading_pc_1920x1080.png?v=0984-ui-fix") !important;
+  background-image:url("loading_pc_1920x1080.png?v=0987-visual-assets") !important;
   background-position:center;
   background-size:cover;
   background-repeat:no-repeat;
@@ -77,14 +77,12 @@ body.v060-booting #authGateV064 {
 }
 
 .boot-logo-v060 {
-  margin:0;
-  color:#fff7fb;
-  font-family:Georgia,"Times New Roman",serif;
-  font-size:clamp(54px,7.2vw,116px);
-  font-weight:700;
-  line-height:.86;
-  letter-spacing:clamp(2px,.55vw,10px);
-  text-shadow:0 1px 0 #8d345f,0 0 9px #fff,0 0 28px #ff75b7,0 0 65px rgba(255,57,151,.66);
+  display:block;
+  width:min(520px,74vw);
+  height:clamp(120px,17vh,180px);
+  margin:0 auto;
+  object-fit:contain;
+  filter:drop-shadow(0 8px 20px rgba(38,6,29,.44)) drop-shadow(0 0 18px rgba(255,103,177,.28));
 }
 
 .boot-sub-v060 {
@@ -239,12 +237,47 @@ body.v060-booting #authGateV064 {
 .boot-error-v062 strong,.boot-error-v062 p { display:block; margin:0 0 8px; }
 .boot-retry-v062 { min-height:42px; padding:0 18px; border:1px solid rgba(255,235,246,.8); border-radius:10px; color:#fff; font-weight:900; background:linear-gradient(110deg,#d52f7d,#e784b4); }
 
+
+/* Canonical loading companion: animated label + two-frame Cherry sprite sheet. */
+.boot-loading-companion-v099 {
+  --loading-ink:#ef9dbd;
+  --loading-ink-soft:#ffd8e7;
+  position:absolute;
+  z-index:8;
+  right:clamp(18px,4.4vw,72px);
+  bottom:max(18px,calc(env(safe-area-inset-bottom) + 12px));
+  display:flex;
+  align-items:flex-end;
+  justify-content:flex-end;
+  gap:10px;
+  pointer-events:none;
+  user-select:none;
+  filter:drop-shadow(0 5px 14px rgba(59,16,39,.30));
+}
+.boot-v060:not([data-boot-phase="loading"]) .boot-loading-companion-v099 { display:none; }
+.boot-loading-companion-v099 .cherrift-loading-label-v099 { display:flex; align-items:flex-end; padding-bottom:10px; color:var(--loading-ink); font-size:clamp(16px,1.45vw,23px); font-weight:950; letter-spacing:.045em; text-shadow:0 1px 0 rgba(255,255,255,.62),0 0 10px rgba(255,209,229,.62); }
+.boot-loading-companion-v099 .cherrift-loading-word-v099,.boot-loading-companion-v099 .cherrift-loading-dots-v099 { display:inline-flex; align-items:flex-end; }
+.boot-loading-companion-v099 .cherrift-loading-word-v099>i,.boot-loading-companion-v099 .cherrift-loading-dots-v099>i { display:inline-block; font-style:normal; }
+.boot-loading-companion-v099 .cherrift-loading-word-v099>i { animation:cherriftLoadingLetterV099 1.05s ease-in-out infinite; animation-delay:calc(var(--i) * .075s); }
+.boot-loading-companion-v099 .cherrift-loading-dots-v099>i { width:.38em; text-align:center; animation:cherriftLoadingDotBobV099 .9s ease-in-out infinite; }
+.boot-loading-companion-v099 .cherrift-loading-dots-v099>i:nth-child(1){animation-delay:.04s}
+.boot-loading-companion-v099 .cherrift-loading-dots-v099>i:nth-child(2){animation-name:cherriftLoadingDotTwoV099,cherriftLoadingDotBobV099;animation-duration:1.5s,.9s;animation-timing-function:steps(1,end),ease-in-out;animation-iteration-count:infinite;animation-delay:0s,.10s}
+.boot-loading-companion-v099 .cherrift-loading-dots-v099>i:nth-child(3){animation-name:cherriftLoadingDotThreeV099,cherriftLoadingDotBobV099;animation-duration:1.5s,.9s;animation-timing-function:steps(1,end),ease-in-out;animation-iteration-count:infinite;animation-delay:0s,.16s}
+.boot-loading-companion-v099 .cherrift-loading-sprite-bob-v099 { display:block; width:clamp(78px,8vw,112px); aspect-ratio:1; animation:cherriftLoadingSpriteBobV099 1.25s ease-in-out infinite; }
+.boot-loading-companion-v099 .cherrift-loading-sprite-v099 { display:block; width:100%; height:100%; background-image:url("ui/loading_sprite_sheet.png?v=0987-visual-assets"); background-repeat:no-repeat; background-size:200% 100%; background-position:0 0; animation:cherriftLoadingSpriteFramesV099 .72s steps(1,end) infinite; }
+@keyframes cherriftLoadingLetterV099 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+@keyframes cherriftLoadingDotBobV099 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-2px)} }
+@keyframes cherriftLoadingDotTwoV099 { 0%,32%{opacity:0} 33%,100%{opacity:1} }
+@keyframes cherriftLoadingDotThreeV099 { 0%,65%{opacity:0} 66%,100%{opacity:1} }
+@keyframes cherriftLoadingSpriteFramesV099 { 0%,49.99%{background-position:0 0} 50%,100%{background-position:100% 0} }
+@keyframes cherriftLoadingSpriteBobV099 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+
 @keyframes bootPetalsV096 { to { transform:translate3d(64px,64px,0); } }
 @keyframes bootStartPulseV096 { 0%,100% { opacity:.72; transform:scale(.985); } 50% { opacity:1; transform:scale(1.025); } }
 
 @media (orientation:portrait), (max-width:620px) {
   #bootV060.boot-v060 {
-    background-image:url("loading_mobile_1080x1920.png?v=0984-ui-fix") !important;
+    background-image:url("loading_mobile_1080x1920.png?v=0987-visual-assets") !important;
     background-position:center center !important;
     background-size:cover !important;
     background-repeat:no-repeat !important;
@@ -253,7 +286,7 @@ body.v060-booting #authGateV064 {
     background:linear-gradient(180deg,rgba(8,4,15,.1),transparent 28%,transparent 50%,rgba(8,3,15,.56) 100%);
   }
   .boot-brand-v096 { top:max(24px,calc(env(safe-area-inset-top) + 17px)); width:92vw; }
-  .boot-logo-v060 { font-size:clamp(45px,14vw,75px); letter-spacing:clamp(1px,1vw,5px); }
+  .boot-logo-v060 { width:min(410px,86vw); height:clamp(105px,14vh,138px); }
   .boot-sub-v060 { margin-top:11px; font-size:9px; letter-spacing:3.5px; }
   .boot-stage-v096 { bottom:calc(var(--boot-safe-bottom-v096) + 12.5vh); width:min(430px,84vw); }
   .boot-auth-v096 { padding:19px 17px 17px; border-radius:20px; }
@@ -262,11 +295,14 @@ body.v060-booting #authGateV064 {
   .boot-auth-actions-v096 { grid-template-columns:1fr; }
   .boot-auth-actions-v096 button { min-height:49px; }
   .boot-start-v096 { min-width:82vw; font-size:clamp(17px,5.5vw,24px); }
+  .boot-loading-companion-v099 { right:max(12px,env(safe-area-inset-right)); bottom:max(12px,calc(env(safe-area-inset-bottom) + 8px)); gap:7px; }
+  .boot-loading-companion-v099 .cherrift-loading-label-v099 { padding-bottom:7px; font-size:15px; }
+  .boot-loading-companion-v099 .cherrift-loading-sprite-bob-v099 { width:76px; }
 }
 
 @media (orientation:landscape) and (max-height:520px) {
   .boot-brand-v096 { top:18px; }
-  .boot-logo-v060 { font-size:45px; }
+  .boot-logo-v060 { width:min(330px,52vw); height:72px; }
   .boot-sub-v060 { margin-top:7px; }
   .boot-stage-v096 { bottom:22px; width:min(500px,70vw); }
   .boot-auth-v096 { padding:14px 18px 12px; }
@@ -274,9 +310,12 @@ body.v060-booting #authGateV064 {
   .boot-auth-v096 p { margin-bottom:10px; }
   .boot-auth-actions-v096 button { min-height:42px; }
   .boot-auth-v096 small { margin-top:7px; }
+  .boot-loading-companion-v099 { right:12px; bottom:8px; gap:6px; }
+  .boot-loading-companion-v099 .cherrift-loading-label-v099 { padding-bottom:5px; font-size:13px; }
+  .boot-loading-companion-v099 .cherrift-loading-sprite-bob-v099 { width:60px; }
 }
 
 @media (prefers-reduced-motion:reduce) {
-  .boot-v060::before,.boot-start-v096 { animation:none !important; }
+  .boot-v060::before,.boot-start-v096,.boot-loading-companion-v099 .cherrift-loading-word-v099>i,.boot-loading-companion-v099 .cherrift-loading-dots-v099>i,.boot-loading-companion-v099 .cherrift-loading-sprite-bob-v099,.boot-loading-companion-v099 .cherrift-loading-sprite-v099 { animation:none !important; }
   .boot-v060,.boot-auth-actions-v096 button { transition:none !important; }
 }

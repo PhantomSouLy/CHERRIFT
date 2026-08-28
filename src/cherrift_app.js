@@ -1389,7 +1389,7 @@ window.UI = {
     el = document.createElement("section");
     el.id = "bootPreloaderV040";
     el.className = "boot-preloader-v040";
-    el.innerHTML = '<div class="boot-card-v040"><h1>CHERRIFT</h1><div class="boot-bar-v040"><i id="bootFillV040"></i></div><div id="bootTextV040" class="boot-text-v040">Preparing assets...</div></div>';
+    el.innerHTML = '<div class="boot-card-v040"><img class="loading-logo cherrift-logo-full-v099" src="assets/ui/cherrift_logo.png" alt="CHERRIFT"><div class="boot-bar-v040"><i id="bootFillV040"></i></div><div id="bootTextV040" class="boot-text-v040">Preparing assets...</div></div><div class="cherrift-loading-companion-v099 stage-loading-companion-v099" aria-hidden="true"><span class="cherrift-loading-label-v099"><span class="cherrift-loading-word-v099"><i style="--i:0">L</i><i style="--i:1">o</i><i style="--i:2">a</i><i style="--i:3">d</i><i style="--i:4">i</i><i style="--i:5">n</i><i style="--i:6">g</i></span><span class="cherrift-loading-dots-v099"><i>.</i><i>.</i><i>.</i></span></span><span class="cherrift-loading-sprite-bob-v099"><span class="cherrift-loading-sprite-v099"></span></span></div>';
     document.body.appendChild(el);
     return el;
   }
@@ -8147,7 +8147,7 @@ function ensureLayout() {
   shell.innerHTML = `
     <aside class="gear-rail-v0560">
       <button type="button" class="gear-brand-v0560" data-v0560-open="menu">
-        <span>CHERRIFT</span><small>GEAR & LOADOUT</small>
+        <img class="gear-brand-logo-v099 cherrift-logo-full-v099" src="assets/ui/cherrift_logo.png" alt="CHERRIFT"><small>GEAR & LOADOUT</small>
       </button>
 
       <nav class="gear-rail-nav-v0560" aria-label="Gear navigation">
@@ -10201,7 +10201,7 @@ function ensureGlobalRail() {
   rail.setAttribute("aria-label", "CHERRIFT navigation");
   rail.innerHTML = `
     <button type="button" class="rail-brand-v060" data-v060-open="menu">
-      <strong>CHERRIFT</strong><small>GEAR &amp; LOADOUT</small>
+      <img class="rail-brand-logo-v099 cherrift-logo-full-v099" src="assets/ui/cherrift_logo.png" alt="CHERRIFT"><small>GEAR &amp; LOADOUT</small>
     </button>
     <nav class="rail-nav-v060">
       <button type="button" data-v060-open="worlds" data-v060-panel="worlds"><i>▶</i><b>Play</b></button>
@@ -13644,13 +13644,13 @@ function ensureGate() {
     '<div class="auth-backdrop-v064" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>',
     '<main class="auth-card-v064">',
       '<header class="auth-top-v064">',
-        '<div><strong>CHERRIFT</strong><span id="authBuildV064"></span></div>',
+        '<div><img class="auth-brand-logo-v099 cherrift-logo-full-v099" src="assets/ui/cherrift_logo.png" alt="CHERRIFT"><span id="authBuildV064"></span></div>',
         '<nav class="auth-language-v064" aria-label="Language">',
           '<button type="button" data-auth-language="hu">HU</button>',
           '<button type="button" data-auth-language="en">EN</button>',
         '</nav>',
       '</header>',
-      '<div class="auth-emblem-v064" aria-hidden="true">✦</div>',
+      '<div class="auth-emblem-v064" aria-hidden="true"><img class="cherrift-logo-small-v099" src="assets/ui/cherrift_logo_small.png" alt=""></div>',
       '<p class="auth-kicker-v064" id="authKickerV064"></p>',
       '<h1 id="authTitleV064"></h1>',
       '<p class="auth-intro-v064" id="authIntroV064"></p>',
@@ -15825,7 +15825,7 @@ function rebuildRail(){
   const railMaterial=railSave.bag?.materials||{};
   rail.classList.add("rail-v082");
   rail.innerHTML=`
-    <button type="button" class="rail-brand-v060" data-v082-open="menu"><strong>CHERRIFT</strong><small>${escapeHtml(t("menuSubtitle"))}</small></button>
+    <button type="button" class="rail-brand-v060" data-v082-open="menu"><img class="rail-brand-logo-v099 cherrift-logo-full-v099" src="assets/ui/cherrift_logo.png" alt="CHERRIFT"><small>${escapeHtml(t("menuSubtitle"))}</small></button>
     <nav class="rail-nav-v060 rail-nav-v082 rail-text-nav-v095" data-i18n-ignore="true">
       ${railTextButton("skins","Cherry","skin")}
       ${railTextButton("gear","Gear","gear")}
@@ -15874,7 +15874,7 @@ function ensureMobileDrawer(){
 function renderMobileDrawer(){
   const drawer=id("mobileMenuV082");if(!drawer)return;
   drawer.innerHTML=`
-    <header class="mobile-more-head-v096"><h2>CHERRIFT</h2><nav class="mobile-more-support-v096" aria-label="CHERRIFT links">
+    <header class="mobile-more-head-v096"><img class="mobile-more-logo-v099 cherrift-logo-full-v099" src="assets/ui/cherrift_logo.png" alt="CHERRIFT"><nav class="mobile-more-support-v096" aria-label="CHERRIFT links">
       <button type="button" data-r5-menu-tool="twitch" title="Twitch" aria-label="Twitch"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 2h17v12l-5 5h-4l-3 3v-3H4V2zm2 2v13h5v2l2-2h4l2-2V4H6zm5 3h2v6h-2V7zm4 0h2v6h-2V7z"/></svg></button>
       <button type="button" data-r5-menu-tool="web" title="Website" aria-label="Website"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3.5 12h17M12 3c2.3 2.5 3.5 5.5 3.5 9S14.3 18.5 12 21M12 3C9.7 5.5 8.5 8.5 8.5 12S9.7 18.5 12 21"/></svg></button>
       <button type="button" data-r5-menu-tool="feedback" title="Feedback" aria-label="Feedback"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v12H9l-5 4V4z"/><path d="M8 9h8M8 12h5"/></svg></button>
@@ -20535,6 +20535,22 @@ const THUMB_FOLDERS = {
   school_uniform_cherry:"school_uniform_cherry",
   sport_cherry:"sport_cherry"
 };
+const SKILL_ICON_ASSETS = Object.freeze({
+  cherry_default:"assets/ui/skill_icons/cherry_default_skill_icon.png",
+  fairy_cherry:"assets/ui/skill_icons/fairy_cherry_skill_icon.png",
+  beastclaw_cherry:"assets/ui/skill_icons/beastclaw_cherry_skill_icon.png",
+  ninja_cherry:"assets/ui/skill_icons/ninja_cherry_skill_icon.png",
+  succubus_cherry:"assets/ui/skill_icons/succubus_cherry_skill_icon.png",
+  warrior_cherry:"assets/ui/skill_icons/warrior_cherry_skill_icon.png",
+  wuxia_sakura_cherry:"assets/ui/skill_icons/wuxia_sakura_cherry_skill_icon.png",
+  mage_cherry:"assets/ui/skill_icons/mage_cherry_skill_icon.png",
+  archer_cherry:"assets/ui/skill_icons/archer_cherry_skill_icon.png",
+  cake_deliver_cherry:"assets/ui/skill_icons/cake_delivery_cherry_skill_icon.png",
+  kimono_cherry:"assets/ui/skill_icons/kimono_cherry_skill_icon.png",
+  pajama_cherry:"assets/ui/skill_icons/pajama_cherry_skill_icon.png",
+  school_uniform_cherry:"assets/ui/skill_icons/school_uniform_cherry_skill_icon.png",
+  sport_cherry:"assets/ui/skill_icons/sport_cherry_skill_icon.png"
+});
 const THUMB_PLACEHOLDERS = Object.freeze({
   warrior_cherry:"assets/player/skins/warrior_cherry/warrior_cherry_icon.jpg",
   wuxia_sakura_cherry:"assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_icon.jpg"
@@ -20606,6 +20622,7 @@ function configureLocalizedData() {
     skin.passiveKey = `skins.${skin.id}.passive`;
     skin.skillNameKey = `skins.${skin.id}.skill`;
     skin.skillDescriptionKey = `skins.${skin.id}.skillDesc`;
+    skin.skillIcon = SKILL_ICON_ASSETS[skin.id] || skin.skillIcon || SKILL_ICON_ASSETS.cherry_default;
   }
 }
 
@@ -20617,6 +20634,27 @@ function selectedSkin() {
   const fallback = UI.save?.selectedSkin || CHERRIFT_DATA.skins[0]?.id;
   return skinById(state.selectedSkinId || fallback);
 }
+
+function skillIconForSkin(skinId) {
+  return SKILL_ICON_ASSETS[skinId] || SKILL_ICON_ASSETS.cherry_default;
+}
+
+function syncHudSkillIcon() {
+  const skinId = UI.save?.selectedSkin || "cherry_default";
+  const image = id("hudSkillIconV099");
+  if (!image) return;
+  const source = skillIconForSkin(skinId);
+  if (image.getAttribute("src") !== source) image.setAttribute("src", source);
+  image.setAttribute("alt", "");
+  image.closest("#skill")?.setAttribute("aria-label", `${skinName(skinById(skinId))} — ${t("skin.skill")}`);
+}
+
+window.CHERRIFT_SKILL_ICONS = Object.freeze({
+  assets: SKILL_ICON_ASSETS,
+  forSkin: skillIconForSkin,
+  syncHud: syncHudSkillIcon
+});
+window.addEventListener("cherrift:savechange", syncHudSkillIcon);
 
 function skinName(skin) {
   return t(skin.nameKey || `skins.${skin.id}.name`) || skin.name;
@@ -20715,7 +20753,7 @@ function renderSkinSelector() {
           <div><dt>${escapeHtml(t("skin.passive"))}</dt><dd>${escapeHtml(localizedSkinValue(skin, "passive", skin.passive || "—"))}</dd></div>
         </dl>
         <button type="button" class="skill-card-v093" data-v093-skill-info>
-          <span>✦</span><div><small>${escapeHtml(t("skin.skill"))}</small><b>${escapeHtml(localizedSkinValue(skin, "skill", skin.skill || "Skill"))}</b></div><i>ⓘ</i>
+          <span class="skin-skill-icon-v099"><img src="${escapeHtml(skin.skillIcon || skillIconForSkin(skin.id))}" alt="" draggable="false"></span><div><small>${escapeHtml(t("skin.skill"))}</small><b>${escapeHtml(localizedSkinValue(skin, "skill", skin.skill || "Skill"))}</b></div><i>ⓘ</i>
         </button>
         <button type="button" class="menu-btn primary skin-equip-v093" data-v093-equip ${unlocked && !equipped ? "" : "disabled"}>
           ${escapeHtml(equipped ? t("common.equipped") : unlocked ? t("common.equip") : t("common.locked"))}
@@ -20811,6 +20849,7 @@ function equipSelectedSkin() {
   UI.save.selectedSkin = skin.id;
   if (!UI.save.uiV093.seenSkins.includes(skin.id)) UI.save.uiV093.seenSkins.push(skin.id);
   CherriftStorage.save(UI.save);
+  syncHudSkillIcon();
   UI.refreshMenu?.();
   UI.toast?.(t("skin.equippedToast", {name:skinName(skin)}));
   renderSkinSelector();
@@ -21038,6 +21077,7 @@ function patchUi() {
     ensureSave(save);
     const result = previousInit(save, game);
     configureLocalizedData();
+    syncHudSkillIcon();
     ensureEventPanel();
     requestAnimationFrame(ensureEventPanel);
     window.setTimeout(ensureEventPanel, 120);
@@ -21187,6 +21227,7 @@ function watchEventNavigation() {
 ensureCss();
 ensureSave();
 configureLocalizedData();
+syncHudSkillIcon();
 ensureEventPanel();
 patchUi();
 bindEvents();
@@ -23288,7 +23329,7 @@ function renderDesktopWorldSelect(force = false) {
   const playable = runtime.worldMode === "chapters" && stage && stageUnlocked(stage);
 
   panel.innerHTML = `<section class="chapter-select-v0933 ${runtime.worldMode === "chapters" ? "show-chapters" : "show-worlds"}">
-    <header><small>CHERRIFT</small><h2>${runtime.worldMode === "worlds" ? copy("Világválasztás", "World Selection") : `${copy("Világ", "World")} ${runtime.world}`}</h2><p>${runtime.worldMode === "worlds" ? copy("Válassz világot.", "Choose a world.") : copy("Válassz pályát, majd indítsd el.", "Choose a stage, then start.")}</p></header>
+    <header><img class="chapter-brand-logo-v099 cherrift-logo-full-v099" src="assets/ui/cherrift_logo.png" alt="CHERRIFT"><h2>${runtime.worldMode === "worlds" ? copy("Világválasztás", "World Selection") : `${copy("Világ", "World")} ${runtime.world}`}</h2><p>${runtime.worldMode === "worlds" ? copy("Válassz világot.", "Choose a world.") : copy("Válassz pályát, majd indítsd el.", "Choose a stage, then start.")}</p></header>
     ${runtime.worldMode === "worlds"
       ? `<div class="world-card-grid-v0933">${renderWorldCards()}</div>`
       : `<div class="chapter-world-banner-v0933" style='background-image:${escapeHtml(worldArt(runtime.world))}'><button type="button" data-v0933-worlds-back aria-label="${copy("Világok", "Worlds")}" title="${copy("Világok", "Worlds")}">‹</button><div><small>WORLD ${runtime.world}</small><h3>${escapeHtml(worldName(runtime.world))}</h3></div></div><div class="chapter-card-grid-v0933">${chapterCards || `<p>${copy("Ebben a világban még nincs pálya.", "No stages are available in this world yet.")}</p>`}</div>${chapterDetail(stage)}`}
@@ -26280,7 +26321,7 @@ function ensureStartupOverlay() {
   overlay.id = "cherriftStartupV5";
   overlay.className = "cherrift-startup-v5";
   overlay.dataset.i18nIgnore = "true";
-  overlay.innerHTML = `<div class="startup-tools-v5"><button type="button" data-startup-tool="discord" aria-label="Discord"><span class="startup-discord-mark-v5">●●</span></button><button type="button" data-startup-tool="feedback" aria-label="Feedback">!</button><button type="button" data-startup-tool="settings" aria-label="Settings">⚙</button></div><main><div class="startup-mark-v5">✦</div><h1>CHERRIFT</h1><p class="startup-version-v5"></p><button type="button" class="startup-continue-v5" disabled></button><div class="startup-track-v5"><i></i></div><small class="startup-status-v5"></small></main>`;
+  overlay.innerHTML = `<div class="startup-tools-v5"><button type="button" data-startup-tool="discord" aria-label="Discord"><span class="startup-discord-mark-v5">●●</span></button><button type="button" data-startup-tool="feedback" aria-label="Feedback">!</button><button type="button" data-startup-tool="settings" aria-label="Settings">⚙</button></div><main><div class="startup-mark-v5"><img class="startup-small-logo-v099 cherrift-logo-small-v099" src="assets/ui/cherrift_logo_small.png" alt=""></div><img class="startup-logo-v099 cherrift-logo-full-v099" src="assets/ui/cherrift_logo.png" alt="CHERRIFT"><p class="startup-version-v5"></p><button type="button" class="startup-continue-v5" disabled></button><div class="startup-track-v5"><i></i></div><small class="startup-status-v5"></small></main>`;
   document.body.appendChild(overlay);
   const continueButton = overlay.querySelector(".startup-continue-v5");
   continueButton.addEventListener("click", event => {

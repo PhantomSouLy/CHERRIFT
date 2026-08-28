@@ -375,12 +375,24 @@
     }
   }
 
+  function applySkillIcon(root, skin) {
+    const host = q(".skill-card-v093 > .skin-skill-icon-v099,.skill-card-v093 > span", root);
+    if (!host || !skin) return;
+    const source = window.CHERRIFT_SKILL_ICONS?.forSkin?.(skin.id) || skin.skillIcon;
+    if (!source) return;
+    host.classList.add("skin-skill-icon-v099");
+    const image = q("img", host);
+    if (!image || image.getAttribute("src") !== source) host.innerHTML = `<img src="${esc(source)}" alt="" draggable="false">`;
+    window.CHERRIFT_SKILL_ICONS?.syncHud?.();
+  }
+
   function reconcile() {
     const root = document.getElementById("skins");
     if (!root) return;
 
     const skin = selectedSkin();
     applyRarityAndArt(root, skin);
+    applySkillIcon(root, skin);
     normalizeViewTabs(root);
     hideDeprecatedStats(root);
     ensureActionRow(root, skin);

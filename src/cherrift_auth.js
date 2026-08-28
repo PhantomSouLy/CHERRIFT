@@ -566,10 +566,10 @@
     gate.innerHTML = [
       '<div class="auth-backdrop-v064" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>',
       '<main class="auth-card-v064">',
-        '<header class="auth-top-v064"><div><strong>CHERRIFT</strong><span id="authBuildV064"></span></div>',
+        '<header class="auth-top-v064"><div><img class="auth-brand-logo-v099 cherrift-logo-full-v099" src="assets/ui/cherrift_logo.png" alt="CHERRIFT"><span id="authBuildV064"></span></div>',
           '<nav class="auth-language-v064" aria-label="Language"><button type="button" data-auth-language="hu">HU</button><button type="button" data-auth-language="en">EN</button></nav>',
         '</header>',
-        '<div class="auth-emblem-v064" aria-hidden="true">✦</div>',
+        '<div class="auth-emblem-v064" aria-hidden="true"><img class="cherrift-logo-small-v099" src="assets/ui/cherrift_logo_small.png" alt=""></div>',
         '<p class="auth-kicker-v064" id="authKickerV064"></p>',
         '<h1 id="authTitleV064"></h1>',
         '<p class="auth-intro-v064" id="authIntroV064"></p>',
