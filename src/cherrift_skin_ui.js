@@ -720,6 +720,11 @@
         // selector owns its own absolute/contain layout, so keep that legacy
         // mobile presentation class off the PC showcase.
         art.classList.remove("theme-full-splash-v5");
+        // The legacy theme polisher can re-add theme-full-splash-v5 on the
+        // next animation frame. Its position:relative !important used to
+        // collapse this background-only desktop art layer. Keep the desktop
+        // geometry authoritative even if that legacy class comes back.
+        art.style.setProperty("position", "absolute", "important");
         const desktopSplash = desktopSplashSource(root, skin, art);
         if (desktopSplash) {
           art.dataset.crDesktopSplash = desktopSplash;
@@ -874,7 +879,7 @@
   }
 
   window.CHERRIFT_SKIN_UI = Object.freeze({
-    version:"0.9.9.2-pc-splash-layout",
+    version:"0.9.9.3-pc-splash-stable",
     refresh:schedule,
     selectedSkin,
     skinElement,
