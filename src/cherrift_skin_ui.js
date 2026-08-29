@@ -715,6 +715,11 @@
         art.style.backgroundImage = `linear-gradient(180deg,rgba(6,3,12,.01),rgba(6,3,12,.16)),url("${splash}")`;
       }
       if (desktopMode()) {
+        // Legacy full-splash styling forces position:relative !important and
+        // collapses the desktop background-only art element. The desktop
+        // selector owns its own absolute/contain layout, so keep that legacy
+        // mobile presentation class off the PC showcase.
+        art.classList.remove("theme-full-splash-v5");
         const desktopSplash = desktopSplashSource(root, skin, art);
         if (desktopSplash) {
           art.dataset.crDesktopSplash = desktopSplash;
@@ -869,7 +874,7 @@
   }
 
   window.CHERRIFT_SKIN_UI = Object.freeze({
-    version:"0.9.9.1-canonical-skin-assets",
+    version:"0.9.9.2-pc-splash-layout",
     refresh:schedule,
     selectedSkin,
     skinElement,
