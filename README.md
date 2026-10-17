@@ -37,15 +37,24 @@ A pontos értékek: [PREBETA_V095_BALANCE_HU.md](PREBETA_V095_BALANCE_HU.md).
 
 ## Indítás
 
-Node.js 20+ ajánlott.
+Node.js 24+, az audithoz Python 3.11+ és PyYAML szükséges.
 
 ```bash
 npm ci
+python -m pip install -r tools/requirements-audit.txt
 npm test
 python3 -m http.server 8080
 ```
 
 Ezután nyisd meg: `http://localhost:8080`.
+
+Az online integritás buildben a vendégmód menüelőnézet. A játékhoz és minden
+jutalomhoz online Discord-fiók, valamint a frissített `player-api` szükséges.
+A fejlesztés közben használt Supabase-projekt jelenleg inaktív; a telepítési
+és ellenőrzési lépések a [javítási jegyzetben](JAVITASOK_ONLINE_PC_2026-10-17.md) vannak.
+
+Windows alatt az audit Python-parancsa a `CHERRIFT_PYTHON` környezeti változóval
+teljes interpreterútvonalra állítható. Ez nem változtatja meg a gép beállításait.
 
 Ne nyisd meg közvetlenül `file://` URL-lel, mert a böngésző biztonsági szabályai blokkolhatnak asseteket és a bejelentkezést.
 

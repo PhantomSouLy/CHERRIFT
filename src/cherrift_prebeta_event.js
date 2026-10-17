@@ -11,7 +11,7 @@
   const hu=()=>window.CHERRIFT_LOCALIZATION?.language?.()!=="en"&&window.UI?.save?.settings?.language!=="en";
   const copy=(a,b)=>hu()?a:b;
   const state={tab:"overview",wrapped:false};
-  const dayKey=(date=new Date())=>`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;
+  const dayKey=(date=new Date())=>date.toISOString().slice(0,10);
 
   const LOGIN_REWARDS=[
     {coins:300},

@@ -1,7 +1,7 @@
 {
   "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "0983-structure",
+  "buildId": "1000-online-integrity",
   "entrypoints": {
     "application": "src/cherrift_app.js",
     "runtime": "src/cherrift_runtime.js",

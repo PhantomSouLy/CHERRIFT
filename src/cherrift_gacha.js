@@ -389,9 +389,10 @@
   }
 
   function closePanel() {
-    if (window.CHERRIFT_STABILITY?.open) window.CHERRIFT_STABILITY.open("menu");
-    else if (state.originalOpen) state.originalOpen("menu");
-    else window.UI?.open?.("menu");
+    id("gachaChestOnlyV12")?.classList.add("hidden");
+    id("gcoModal")?.classList.add("hidden");
+    document.body.classList.remove("gacha-open");
+    window.UI?.open?.("menu");
   }
 
   function summaryMarkup(rewards) {
@@ -454,7 +455,7 @@
     }, openingDuration);
   }
 
-  function openMany(amount) {
+  async function openMany(amount) {
     if (state.busy || !window.UI?.save || ![1, 10].includes(amount)) return;
     const save = normalize(UI.save);
     const available = number(save.chests[state.tier]);
@@ -467,6 +468,14 @@
     // overlay cannot reopen above a skin reveal or the final Gacha summary.
     window.CHERRIFT_OBTAINED?.reset?.();
     state.busy = true;
+    if (window.CHERRIFT_ONLINE) {
+      const tier = state.tier;
+      const result = await window.CHERRIFT_ONLINE.perform("open_chest", {tier,count:amount});
+      if (!result) { state.busy=false; render(); return; }
+      render();
+      showOpening(tier,result.rewards || []);
+      return;
+    }
     save.chests[state.tier] -= amount;
     const rewards = [];
     for (let index = 0; index < amount; index += 1) rewards.push(roll(save, state.tier));

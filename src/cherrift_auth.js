@@ -28,13 +28,13 @@
     hu: {
       kicker:"FIÓK HOZZÁFÉRÉS",
       title:"Hogyan szeretnéd folytatni?",
-      intro:"Lépj be Discorddal a felhőmentéshez, vagy játssz vendégként helyi mentéssel.",
+      intro:"Lépj be Discorddal az online játékhoz, vagy nézz körül vendégként.",
       guest:"Vendégként folytatom",
-      guestMeta:"Helyi mentés csak ezen az eszközön",
+      guestMeta:"Menüelőnézet · a játékhoz online belépés kell",
       discord:"Belépés Discorddal",
       discordMeta:"Biztonságos felhőmentés minden eszközön",
-      warningTitle:"A vendégmentés elveszhet",
-      warning:"A Guest-haladás csak ebben a böngészőben tárolódik. Törölt böngészőadatokból és másik eszközről nem állítható vissza.",
+      warningTitle:"Online fejlődés",
+      warning:"Jutalmat és fejlődést a szerver ment. Vendégként a menüket nézheted meg.",
       privacy:"A CHERRIFT nem látja és nem tárolja a Discord-jelszavadat.",
       checking:"Discord-munkamenet ellenőrzése…",
       loadingCloud:"Felhőmentés betöltése…",
@@ -42,12 +42,12 @@
       signedOut:"Kijelentkeztél a Discord-fiókból.",
       loginFailed:"A Discord-belépés nem sikerült.",
       serviceUnavailable:"A Discord ellenőrzése nem válaszolt időben. Vendégként beléphetsz, vagy újrapróbálhatod a Discord-logint.",
-      cloudUnavailable:"A fiók elérhető, de a felhőmentés most nem válaszol. A játék a hitelesített helyi fiókmentést használja és később újrapróbálja.",
+      cloudUnavailable:"A felhőmentés most nem válaszol. A helyi másolat megmaradt; a játékhoz és új jutalmakhoz helyre kell állítani a kapcsolatot.",
       cloudSaveFailed:"A felhőmentés átmenetileg nem sikerült. A biztonsági mentés helyben megmaradt.",
       guestDisabled:"A vendégmód ebben a tesztidőszakban nem érhető el.",
       connected:"Discord-fiók csatlakoztatva",
       cloudActive:"Discord mód · Supabase felhőmentés",
-      offlineAccount:"Discord mód · ellenőrzött helyi biztonsági mentés",
+      offlineAccount:"Discord mód · kapcsolat helyreállítása szükséges",
       localOnly:"Vendégmód · csak helyi mentés",
       signOut:"Kijelentkezés",
       discordLogin:"Discord Login",
@@ -55,20 +55,20 @@
       account:"CHERRIFT-fiók",
       accountIntro:"Discord-azonosítás és a jelenlegi mentési mód.",
       accountReady:"A haladás ehhez a Discord-fiókhoz kötve, a Supabase-ben tárolódik.",
-      accountOffline:"A felhő átmenetileg nem érhető el. A fiókhoz kötött helyi biztonsági mentés aktív; újracsatlakozáskor a szerververzió biztonságosan elsőbbséget kaphat.",
-      guestAccount:"Jelenleg vendégként játszol. A mentés csak ezen az eszközön található.",
+      accountOffline:"A helyi másolat megmaradt. Az online játék a kapcsolat helyreállítása után folytatható; az ütköző másolatokat külön megőrizzük.",
+      guestAccount:"Vendégelőnézet. A játékhoz, jutalmakhoz és fejlődéshez online Discord-belépés szükséges.",
       testBuild:"PRE-BÉTA · v0.9.5"
     },
     en: {
       kicker:"ACCOUNT ACCESS",
       title:"How would you like to continue?",
-      intro:"Sign in with Discord for cloud saves, or play as a Guest with a local save.",
+      intro:"Sign in with Discord to play online, or preview the menus as a Guest.",
       guest:"Continue as Guest",
-      guestMeta:"Local save on this device only",
+      guestMeta:"Menu preview · gameplay requires an online account",
       discord:"Continue with Discord",
       discordMeta:"Secure cloud save across devices",
-      warningTitle:"Guest progress can be lost",
-      warning:"Guest progress is stored only in this browser. It cannot be restored after clearing browser data or moving to another device.",
+      warningTitle:"Online progression",
+      warning:"The server saves rewards and progression. Guest mode previews the menus.",
       privacy:"CHERRIFT never sees or stores your Discord password.",
       checking:"Checking Discord session…",
       loadingCloud:"Loading cloud save…",
@@ -76,12 +76,12 @@
       signedOut:"You signed out of Discord.",
       loginFailed:"Discord sign-in was not completed.",
       serviceUnavailable:"Discord did not answer in time. Continue as Guest or retry Discord sign-in.",
-      cloudUnavailable:"Your account is available, but cloud save is not responding. CHERRIFT is using the verified local account backup and will retry later.",
+      cloudUnavailable:"Cloud save is unavailable. Your local copy is preserved; reconnect to play and earn rewards.",
       cloudSaveFailed:"Cloud saving temporarily failed. The local account backup is still safe.",
       guestDisabled:"Guest mode is unavailable during this test period.",
       connected:"Discord account connected",
       cloudActive:"Discord mode · Supabase cloud save",
-      offlineAccount:"Discord mode · verified local account backup",
+      offlineAccount:"Discord mode · reconnect to continue",
       localOnly:"Guest mode · local save only",
       signOut:"Sign out",
       discordLogin:"Discord Login",
@@ -89,8 +89,8 @@
       account:"CHERRIFT Account",
       accountIntro:"Discord identity and the current save mode.",
       accountReady:"Progress is tied to this Discord account and stored in Supabase.",
-      accountOffline:"Cloud save is temporarily unavailable. The account-bound local backup is active; the server version can safely win after reconnecting.",
-      guestAccount:"You are currently playing as a guest. The save exists only on this device.",
+      accountOffline:"Your local copy is preserved. Reconnect to resume online gameplay; conflicting copies are preserved separately.",
+      guestAccount:"Guest preview. Gameplay, rewards and progression require an online Discord account.",
       testBuild:"PRE-BETA · v0.9.5"
     }
   };
@@ -110,12 +110,14 @@
     discovering:false,
     discoveryPromise:null,
     authAttempt:0,
+    accountGeneration:0,
     guestExplicit:false,
     subscription:null,
     loadGuestSave:null,
     storageInstalled:false,
     baseStorageSave:null,
     cloudReady:false,
+    onlinePolicy:false,
     offlineAccount:false,
     pendingSave:null,
     saveTimer:0,
@@ -346,6 +348,15 @@
     return userId ? `cherrift-discord-backup-v2:${String(userId)}` : "";
   }
 
+  function accountContext() {
+    return { userId:String(runtime.session?.user?.id || ""), generation:runtime.accountGeneration };
+  }
+
+  function isCurrentAccount(context) {
+    return !!context?.userId && context.userId === String(runtime.session?.user?.id || "") &&
+      context.generation === runtime.accountGeneration;
+  }
+
   function readBackup(userId = runtime.session?.user?.id) {
     if (!userId) return null;
     const keys = [
@@ -360,7 +371,10 @@
         if (String(record.saveData?.security?.accountOwnerId || "") !== String(userId)) continue;
         return {
           save:normalizeSave(record.saveData),
-          cloudUpdatedAt:String(record.cloudUpdatedAt || "")
+          cloudUpdatedAt:String(record.cloudUpdatedAt || ""),
+          // Old backups did not distinguish an acknowledged snapshot from
+          // offline progress. Preserve them conservatively during migration.
+          dirty:record.dirty !== false
         };
       } catch (error) {
         console.warn("[CHERRIFT Auth] Account backup could not be read.", error);
@@ -369,14 +383,15 @@
     return null;
   }
 
-  function writeBackup(save, userId = runtime.session?.user?.id) {
+  function writeBackup(save, userId = runtime.session?.user?.id, dirty = true, revision = runtime.lastCloudSavedAt) {
     const key = backupKey(userId);
-    if (!key || !isObject(save)) return false;
+    if (!key || !isObject(save) || String(save.security?.accountOwnerId || "") !== String(userId)) return false;
     try {
       window.localStorage.setItem(key, JSON.stringify({
         ownerUserId:String(userId),
         savedAt:new Date().toISOString(),
-        cloudUpdatedAt:String(runtime.lastCloudSavedAt || ""),
+        cloudUpdatedAt:String(revision || ""),
+        dirty,
         saveVersion:SAVE_VERSION,
         saveData:cloneJson(save)
       }));
@@ -385,6 +400,49 @@
       console.warn("[CHERRIFT Auth] Account backup could not be written.", error);
       return false;
     }
+  }
+
+  function preserveRecovery(save, userId, revision) {
+    if (!save || !userId) return false;
+    // A conflict must not destroy either branch. Keep the unsynced snapshot
+    // under a separate account-owned key before acknowledging the remote.
+    const key = `${backupKey(userId)}:recovery`;
+    try {
+      const records = JSON.parse(window.localStorage.getItem(key) || "[]");
+      const snapshots = Array.isArray(records) ? records : [];
+      const serialized = JSON.stringify(save);
+      if (!snapshots.some(record => JSON.stringify(record.saveData) === serialized)) {
+        snapshots.push({ ownerUserId:userId, savedAt:new Date().toISOString(), cloudUpdatedAt:revision, saveData:cloneJson(save) });
+      }
+      window.localStorage.setItem(key, JSON.stringify(snapshots));
+      return true;
+    } catch (error) {
+      console.error("[CHERRIFT Auth] Recovery could not be preserved.", error);
+      return false;
+    }
+  }
+
+  function hasRecovery(userId) {
+    try { return !!window.localStorage.getItem(`${backupKey(userId)}:recovery`); }
+    catch (_) { return false; }
+  }
+
+  function progressDiffers(left, right) {
+    return ["coins","bloomGems","sakuraEssence","chests","inventory","account","stageStars","unlockedStages","unlockedSkins"]
+      .some(key => JSON.stringify(left?.[key]) !== JSON.stringify(right?.[key]));
+  }
+
+  function downloadRecovery() {
+    const userId = runtime.session?.user?.id;
+    if (!userId) return;
+    const data = window.localStorage.getItem(`${backupKey(userId)}:recovery`);
+    if (!data) return;
+    const url = URL.createObjectURL(new Blob([data], { type:"application/json" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "cherrift-save-recovery.json";
+    link.click();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
   function starterDiscordSave(session = runtime.session) {
@@ -435,18 +493,24 @@
       CLOUD_TIMEOUT_MS,
       `player_api_${action}_timeout`
     );
-    if (result?.error) throw result.error;
+    if (result?.error) {
+      let code = result?.data?.error;
+      try { code ||= (await result.error.context?.clone?.().json())?.error; } catch (_) {}
+      if (code) throw new Error(String(code));
+      throw result.error;
+    }
     if (result?.data?.error) throw new Error(result.data.error);
     return result?.data || {};
   }
 
-  async function bootstrapCloud() {
+  async function bootstrapCloud(context = accountContext()) {
     const response = await callPlayerApi("bootstrap_save");
+    if (!isCurrentAccount(context)) throw new Error("stale_account_response");
     if (!isObject(response.save_data)) throw new Error("invalid_bootstrap_save");
-    runtime.lastCloudSavedAt = String(response.updated_at || "");
+    runtime.onlinePolicy = response.gameplay_policy === "online-v1";
     const save = normalizeSave(response.save_data);
     applyDiscordProfile(save);
-    return save;
+    return { save, updatedAt:String(response.updated_at || "") };
   }
 
   function applySaveToUi(save, source = "auth") {
@@ -462,16 +526,29 @@
     window.dispatchEvent(new CustomEvent("cherrift:savechange", { detail:{ source } }));
   }
 
+  function acceptServerSave(value, revision, context = accountContext()) {
+    if (!isCurrentAccount(context) || !isObject(value) ||
+      String(value.security?.accountOwnerId || "") !== context.userId || typeof revision !== "string" || !revision) return false;
+    const save = normalizeSave(value);
+    applyDiscordProfile(save);
+    runtime.lastCloudSavedAt = revision;
+    runtime.lastSavedJson = JSON.stringify(save);
+    writeBackup(runtime.pendingSave || save, context.userId, !!runtime.pendingSave);
+    applySaveToUi(save, "server-operation");
+    return true;
+  }
+
   function fallbackDiscordSave(session, error) {
     const backup = readBackup(session?.user?.id);
     runtime.lastCloudSavedAt = backup?.cloudUpdatedAt || "";
     const save = backup?.save || starterDiscordSave(session);
+    runtime.pendingSave = backup?.dirty ? cloneJson(save) : null;
     applyDiscordProfile(save, session);
     runtime.cloudReady = false;
     runtime.offlineAccount = true;
     runtime.errorKey = "cloudUnavailable";
     runtime.errorDetail = String(error?.message || error || "").slice(0, 180);
-    writeBackup(save, session?.user?.id);
+    writeBackup(save, session?.user?.id, backup?.dirty || false);
     return save;
   }
 
@@ -500,27 +577,78 @@
     return true;
   }
 
-  async function sendProgress(snapshot) {
+  async function sendProgress(snapshot, context = accountContext()) {
+    if (!isCurrentAccount(context)) return false;
+    const revision = runtime.lastCloudSavedAt;
     const response = await callPlayerApi("save_progress", {
       save_data:cloneJson(snapshot),
-      expected_updated_at:runtime.lastCloudSavedAt || null,
+      expected_updated_at:revision || null,
       save_version:SAVE_VERSION
     });
+    if (!isCurrentAccount(context)) return false;
     if (response.conflict && isObject(response.save_data)) {
+      const local = runtime.pendingSave || snapshot;
+      if (!preserveRecovery(local, context.userId, revision)) throw new Error("recovery_storage_unavailable");
       runtime.lastCloudSavedAt = String(response.updated_at || "");
       const remote = normalizeSave(response.save_data);
       applyDiscordProfile(remote);
       runtime.pendingSave = null;
       runtime.lastSavedJson = JSON.stringify(remote);
-      writeBackup(remote);
+      writeBackup(remote, context.userId, false);
       applySaveToUi(remote, "cloud-conflict");
+      window.UI?.toast?.(language() === "hu" ? "Mentési ütközés: a helyi haladást külön megőriztük. Letölthető a Fiók beállításainál." : "Save conflict: local progress was preserved. Download it in Account settings.");
       return false;
     }
     if (!response.ok) throw new Error("cloud_save_rejected");
     runtime.lastCloudSavedAt = String(response.updated_at || runtime.lastCloudSavedAt);
-    runtime.lastSavedJson = JSON.stringify(snapshot);
-    writeBackup(snapshot);
+    const acknowledged = isObject(response.save_data) ? normalizeSave(response.save_data) : snapshot;
+    if (runtime.onlinePolicy && progressDiffers(snapshot, acknowledged) &&
+      !preserveRecovery(snapshot, context.userId, revision)) throw new Error("recovery_storage_unavailable");
+    runtime.lastSavedJson = JSON.stringify(acknowledged);
+    // A newer local save may have appeared while this request was in flight.
+    // Its base revision advances with this acknowledgement; keep it dirty.
+    writeBackup(runtime.pendingSave || acknowledged, context.userId, !!runtime.pendingSave);
+    if (!runtime.pendingSave && isObject(response.save_data)) applySaveToUi(acknowledged, "cloud-acknowledged");
     return true;
+  }
+
+  async function gameAction(operation, params = {}) {
+    const context = accountContext();
+    if (!isCurrentAccount(context) || runtime.mode !== "discord" || !runtime.cloudReady) throw new Error("online_account_required");
+    if (!runtime.onlinePolicy) throw new Error("server_update_required");
+    await flushCloudSave();
+    if (!isCurrentAccount(context) || !runtime.cloudReady) throw new Error("online_account_required");
+    const operationId = crypto.randomUUID();
+    const task = runtime.savePromise.catch(() => {}).then(async () => {
+      if (!isCurrentAccount(context)) throw new Error("stale_account_response");
+      let response;
+      for (let attempt=0; attempt<2; attempt++) {
+        try {
+          response = await callPlayerApi("game_action", { operation, params, operation_id:operationId, expected_updated_at:runtime.lastCloudSavedAt });
+        } catch (error) {
+          if (!isCurrentAccount(context)) throw new Error("stale_account_response");
+          const networkFailure = /timeout|fetch|network/i.test(String(error?.name || "") + " " + String(error?.message || ""));
+          if (networkFailure && attempt === 0) continue; // Same operation ID: a lost acknowledgement cannot double-spend.
+          if (networkFailure) { runtime.cloudReady=false; runtime.offlineAccount=true; syncAccountUi(); }
+          throw error;
+        }
+        if (!isCurrentAccount(context)) throw new Error("stale_account_response");
+        if (!response.conflict) break;
+        runtime.lastCloudSavedAt = String(response.updated_at || "");
+        if (isObject(response.save_data)) applySaveToUi(normalizeSave(response.save_data), "action-conflict");
+      }
+      if (!response?.ok || !isObject(response.save_data)) throw new Error("game_action_rejected");
+      const save = normalizeSave(response.save_data);
+      applyDiscordProfile(save);
+      runtime.lastCloudSavedAt = String(response.updated_at || "");
+      runtime.lastSavedJson = JSON.stringify(save);
+      runtime.pendingSave = null;
+      writeBackup(save, context.userId, false);
+      applySaveToUi(save, "game-action");
+      return response;
+    });
+    runtime.savePromise = task.catch(() => {});
+    return task;
   }
 
   async function flushCloudSave() {
@@ -528,21 +656,25 @@
     runtime.saveTimer = 0;
     if (!runtime.cloudReady || runtime.mode !== "discord" || !runtime.session?.user) return false;
     const snapshot = runtime.pendingSave;
+    const context = accountContext();
     runtime.pendingSave = null;
     if (!snapshot) return true;
     if (JSON.stringify(snapshot) === runtime.lastSavedJson) return true;
 
     runtime.savePromise = runtime.savePromise.catch(() => {}).then(async () => {
+      if (!isCurrentAccount(context)) return false;
       try {
-        const saved = await sendProgress(snapshot);
+        const saved = await sendProgress(snapshot, context);
+        if (!isCurrentAccount(context)) return false;
         runtime.cloudErrorShown = false;
         return saved;
       } catch (error) {
+        if (!isCurrentAccount(context)) return false;
         console.error("[CHERRIFT Auth] Cloud save failed:", error);
         runtime.pendingSave ||= snapshot;
         runtime.cloudReady = false;
         runtime.offlineAccount = true;
-        writeBackup(snapshot);
+        writeBackup(runtime.pendingSave, context.userId);
         if (!runtime.cloudErrorShown) {
           runtime.cloudErrorShown = true;
           window.UI?.toast?.(text("cloudSaveFailed"));
@@ -717,15 +849,22 @@
           `<div class="auth-account-avatar-v064">${avatar}</div>`,
           `<div class="auth-account-copy-v064"><small>${escapeHtml(account ? text(runtime.cloudReady ? "cloudActive" : "offlineAccount") : text("localOnly"))}</small><h4>${escapeHtml(account?.name || (language() === "hu" ? "Vendég" : "Guest"))}</h4><p>${escapeHtml(accountDescription)}</p></div>`,
           `<button type="button" data-auth-action="${account ? "signout" : "open"}">${escapeHtml(account ? text("signOut") : text("discordLogin"))}</button>`,
-        '</article>'
+        '</article>',
+        account && hasRecovery(account.id)
+          ? `<p>${language() === "hu" ? "Megőrzött helyi mentés található egy korábbi ütközésből." : "Local progress from a previous save conflict is preserved."}</p><button type="button" data-auth-action="recovery">${language() === "hu" ? "Mentési másolat letöltése" : "Download recovery copy"}</button>`
+          : ""
       ].join("");
     }
   }
 
   function switchUiToGuestSave() {
+    runtime.accountGeneration += 1;
+    runtime.reconnecting = false;
+    runtime.savePromise = Promise.resolve();
     runtime.mode = "guest";
     const save = currentGuestSave();
     runtime.cloudReady = false;
+    runtime.onlinePolicy = false;
     runtime.offlineAccount = false;
     runtime.pendingSave = null;
     runtime.lastSavedJson = "";
@@ -738,7 +877,9 @@
 
   async function resolveDiscordSave(session) {
     const nextUserId = String(session?.user?.id || "");
-    if (runtime.activeUserId && runtime.activeUserId !== nextUserId) {
+    if (runtime.activeUserId !== nextUserId) {
+      runtime.accountGeneration += 1;
+      runtime.savePromise = Promise.resolve();
       window.clearTimeout(runtime.saveTimer);
       runtime.saveTimer = 0;
       runtime.pendingSave = null;
@@ -746,19 +887,36 @@
       runtime.lastCloudSavedAt = "";
       runtime.cloudReady = false;
       runtime.offlineAccount = false;
+      runtime.reconnecting = false;
       window.CHERRIFT_OBTAINED?.reset?.();
     }
     runtime.session = session;
     runtime.activeUserId = nextUserId;
+    const context = accountContext();
+    const backup = readBackup(nextUserId);
     try {
-      const save = await bootstrapCloud();
+      const { save:remote, updatedAt } = await bootstrapCloud(context);
+      if (!isCurrentAccount(context)) return null;
+      let save = remote;
+      runtime.lastCloudSavedAt = updatedAt;
       runtime.cloudReady = true;
       runtime.offlineAccount = false;
-      runtime.lastSavedJson = JSON.stringify(save);
+      runtime.lastSavedJson = JSON.stringify(remote);
       runtime.pendingSave = null;
-      writeBackup(save, session.user.id);
+      if (backup?.dirty && JSON.stringify(backup.save) !== JSON.stringify(remote)) {
+        if (backup.cloudUpdatedAt && backup.cloudUpdatedAt === updatedAt) {
+          save = backup.save;
+          applyDiscordProfile(save, session);
+          runtime.pendingSave = cloneJson(save);
+          runtime.saveTimer = window.setTimeout(() => flushCloudSave(), SAVE_DEBOUNCE_MS);
+        } else if (!preserveRecovery(backup.save, nextUserId, backup.cloudUpdatedAt)) {
+          throw new Error("recovery_storage_unavailable");
+        }
+      }
+      writeBackup(save, nextUserId, !!runtime.pendingSave);
       return save;
     } catch (error) {
+      if (!isCurrentAccount(context)) return null;
       console.warn("[CHERRIFT Auth] Cloud bootstrap failed; using account-bound fallback.", error);
       return fallbackDiscordSave(session, error);
     }
@@ -777,14 +935,7 @@
     document.body.classList.remove("auth-gated-v064");
     renderGate();
     const save = await resolveDiscordSave(session);
-    if (attempt !== runtime.authAttempt || runtime.guestExplicit) {
-      runtime.session = null;
-      runtime.activeUserId = "";
-      runtime.cloudReady = false;
-      runtime.offlineAccount = false;
-      runtime.pendingSave = null;
-      return false;
-    }
+    if (!save || attempt !== runtime.authAttempt || runtime.guestExplicit || runtime.activeUserId !== String(session.user.id)) return false;
     applySaveToUi(save, "discord-session");
     closeGate("discord");
     syncAccountUi();
@@ -896,16 +1047,22 @@
       runtime.cloudReady
     ) return false;
     runtime.reconnecting = true;
+    const context = accountContext();
     try {
       if (runtime.pendingSave && runtime.lastCloudSavedAt) {
         runtime.cloudReady = true;
-        const saved = await sendProgress(runtime.pendingSave);
-        if (saved) runtime.pendingSave = null;
+        await flushCloudSave();
+        if (!isCurrentAccount(context)) return false;
+        if (!runtime.cloudReady) return false;
       } else {
-        const remote = await bootstrapCloud();
+        const local = runtime.pendingSave;
+        const { save:remote, updatedAt } = await bootstrapCloud(context);
+        if (!isCurrentAccount(context)) return false;
+        if (local && !preserveRecovery(local, context.userId, runtime.lastCloudSavedAt)) throw new Error("recovery_storage_unavailable");
+        runtime.lastCloudSavedAt = updatedAt;
         runtime.lastSavedJson = JSON.stringify(remote);
         runtime.pendingSave = null;
-        writeBackup(remote);
+        writeBackup(remote, context.userId, false);
         applySaveToUi(remote, "cloud-reconnect");
       }
       runtime.cloudReady = true;
@@ -913,12 +1070,13 @@
       syncAccountUi();
       return true;
     } catch (error) {
+      if (!isCurrentAccount(context)) return false;
       runtime.cloudReady = false;
       runtime.offlineAccount = true;
       console.warn("[CHERRIFT Auth] Cloud reconnect failed.", error);
       return false;
     } finally {
-      runtime.reconnecting = false;
+      if (isCurrentAccount(context)) runtime.reconnecting = false;
     }
   }
 
@@ -1113,6 +1271,7 @@
     else if (action === "discord") signInWithDiscord();
     else if (action === "signout") signOut();
     else if (action === "open") openGate();
+    else if (action === "recovery") downloadRecovery();
   });
 
   window.addEventListener("pagehide", () => { flushCloudSave(); });
@@ -1128,6 +1287,9 @@
     get clientReady() { return !!runtime.client; },
     get redirectUrl() { return authRedirectUrl(); },
     getClient:() => runtime.client,
+    captureAccount:accountContext,
+    isCurrentAccount,
+    acceptServerSave,
     getState() {
       const account = accountFromSession();
       return {
@@ -1136,6 +1298,7 @@
         busy:runtime.busy,
         signedIn:!!account,
         cloudReady:runtime.cloudReady,
+        onlinePolicy:runtime.onlinePolicy,
         memoryOnly:false,
         offlineAccount:runtime.offlineAccount,
         savePending:!!runtime.pendingSave,
@@ -1150,6 +1313,7 @@
     signInWithDiscord,
     signOut,
     flushCloudSave,
+    gameAction,
     reconnectCloud,
     applySessionForTesting:completeDiscordSession
   };

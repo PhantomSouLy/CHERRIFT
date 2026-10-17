@@ -599,17 +599,8 @@
   }
 
   function ensureLobbySubnav(){
-    if(mobile()){id("crLobbySubnav")?.remove();return;}
-    const route=lobbyRoute();
-    let nav=id("crLobbySubnav");
-    if(!route){nav?.remove();return;}
-    if(!nav){
-      nav=document.createElement("nav");
-      nav.id="crLobbySubnav";
-      nav.innerHTML='<button type="button" data-cr-lobby="socialV082">Social</button><button type="button" data-cr-lobby="rankingPrebeta">Rank</button><button type="button" data-cr-lobby="buffsV082">Buff List</button>';
-      id("globalRailV060")?.insertAdjacentElement("afterend",nav);
-    }
-    qa("[data-cr-lobby]",nav).forEach(button=>button.classList.toggle("active",button.dataset.crLobby===route));
+    // desktopSubnavV0933 already owns contextual navigation on every screen.
+    id("crLobbySubnav")?.remove();
   }
 
   function ensurePortraitGuard(){

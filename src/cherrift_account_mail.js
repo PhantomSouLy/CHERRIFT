@@ -507,6 +507,9 @@
 
   async function claimOne(mail) {
     if (!mail || mail.claimed || !rewardParts(mail.attachments).length) return;
+    if (window.CHERRIFT_ONLINE && (!window.CHERRIFT_ONLINE.online() || mail.type !== "live")) {
+      throw new Error(UI.save?.settings?.language === "en" ? "Only online server mail can grant rewards." : "Jutalmat csak online, szerverről érkező levélből vehetsz át.");
+    }
     if (mail.type === "live") {
       await window.CHERRIFT_LIVE_SERVICES?.claimMail?.(mail.id);
       return;

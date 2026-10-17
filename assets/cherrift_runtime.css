@@ -185,3 +185,66 @@ body.ingame-settings-open #settings .settings-quick-v060{flex:0 0 auto!important
   .cr-ach-tier{width:52px;height:52px}.cr-ach-tier img{width:48px;height:48px}
   .cr-ach-action{min-width:70px;padding:0 8px;font-size:10px}
 }
+
+/* Desktop shell: give navigation its own row instead of squeezing nine
+   routes, four balances, Energy and account controls into one narrow line. */
+@media(min-width:821px){
+  body.v0933-desktop{--v0933-top:108px;--v0933-sub:40px}
+  body.v0933-desktop #globalRailV060.topnav-v0933{
+    grid-template-columns:140px minmax(0,1fr)!important;
+    grid-template-rows:54px 54px!important;
+    gap:0 16px!important;
+    padding:0 24px!important;
+    box-sizing:border-box!important
+  }
+  body.v0933-desktop #globalRailV060 .rail-brand-v060{grid-column:1!important;grid-row:1!important;padding:0!important}
+  body.v0933-desktop #globalRailV060 .rail-bottom-v060{
+    grid-column:2!important;grid-row:1!important;justify-content:flex-start!important;gap:10px!important
+  }
+  body.v0933-desktop #globalRailV060 .rail-profile-v060{width:180px!important;max-width:180px!important}
+  body.v0933-desktop #globalRailV060 .rail-profile-v060 b{font-size:13px!important}
+  body.v0933-desktop #globalRailV060 .rail-nav-v060.rail-nav-v082{
+    grid-column:1/-1!important;grid-row:2!important;width:100%!important;justify-content:flex-start!important;align-items:center!important;
+    gap:6px!important;overflow-x:auto!important;scrollbar-width:thin!important
+  }
+  body.v0933-desktop #globalRailV060 .rail-nav-v060 button{
+    flex:1 0 auto!important;min-width:74px!important;height:40px!important;min-height:40px!important;
+    padding:0 14px!important;border-radius:9px!important;background:transparent!important;
+    clip-path:none!important;box-shadow:none!important
+  }
+  body.v0933-desktop #globalRailV060 .rail-nav-v060 button b{font:700 13px/1.2 system-ui,sans-serif!important}
+  body.v0933-desktop #globalRailV060 .rail-nav-v060 button::after,
+  body.v0933-desktop #globalRailV060 .rail-nav-v060 .rail-text-sep-v095{display:none!important}
+  body.v0933-desktop #globalRailV060 .rail-nav-v060 button.active{
+    background:var(--theme-selection,#a83870)!important;color:#fff!important;
+    box-shadow:inset 0 -2px #ffb5da!important
+  }
+  body.v0933-desktop #globalRailV060 .rail-nav-v060 button:hover{background:rgba(255,175,215,.13)!important}
+  body.v0933-desktop :is(#globalRailV060,#desktopSubnavV0933) button:focus-visible{
+    outline:2px solid #ffd1e9!important;outline-offset:2px!important
+  }
+  body.v0933-desktop #desktopCurrencyV0943{gap:8px!important}
+  body.v0933-desktop #desktopCurrencyV0943>span{min-height:34px!important;padding:0 10px!important}
+  body.v0933-desktop #desktopCurrencyV0943 b{font-size:13px!important}
+  body.v0933-desktop #desktopSubnavV0933{padding:0 24px!important;top:var(--v0933-top)!important}
+  body.v0933-desktop #desktopSubnavV0933 button{min-height:38px;font-size:12px!important}
+  body.v060-booting #desktopSubnavV0933,
+  body.cr-run-active #desktopSubnavV0933{display:none!important}
+  body.v0933-desktop #menuDashboardV060{left:24px!important;bottom:32px!important;width:min(680px,calc(100vw - 420px))!important}
+  body.v0933-desktop #menu .menu-right{scrollbar-width:thin;scrollbar-color:#b35b8a transparent}
+  body.v0933-desktop #menu .dashboard-shortcuts-v060 button{min-height:44px!important}
+  body.v0933-desktop #menu .dashboard-shortcuts-v060 button b{font-size:13px!important}
+  body.v0933-desktop #menu .dashboard-shortcuts-v060 button small{font-size:11px!important}
+}
+@media(min-width:821px) and (max-height:700px){
+  body.v0933-desktop{--v0933-top:96px;--v0933-sub:36px}
+  body.v0933-desktop #globalRailV060.topnav-v0933{grid-template-rows:48px 48px!important;padding:0 16px!important}
+  body.v0933-desktop #menuDashboardV060{bottom:24px!important;width:calc(100vw - 410px)!important}
+  body.v0933-desktop #menuDashboardV060 .dashboard-shortcuts-v060{
+    width:min(500px,calc(100vw - 48px))!important;max-width:none!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    max-height:calc(100dvh - 350px)!important;overflow-y:auto!important;
+    scrollbar-width:thin;scrollbar-color:#b35b8a transparent
+  }
+  body.v0933-desktop #skins .skin-selector-v093{min-height:0!important}
+}

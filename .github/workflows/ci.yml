@@ -26,10 +26,20 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Set up audit Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install audit parser
+        run: python -m pip install -r tools/requirements-audit.txt
+
       - name: Validate every tracked file
         run: |
           npm run validate
           npm run audit
+          npm run test:integrity
+          npm run test:online-api
           npm run smoke:supabase-lock
 
   smoke:

@@ -187,9 +187,10 @@ else {
     if (html.includes(`\"${retired}`)) errors.push(`index.html: retired dependency is still loaded: ${retired}`);
   }
 
-  const firstPartyBuildQueries = [...html.matchAll(/(?:src|href)=["'][^"']+\?v=(098\d-[a-z0-9-]+)/gi)].map(match => match[1]);
-  if (new Set(firstPartyBuildQueries).size !== 1 || firstPartyBuildQueries[0] !== "0987-visual-assets") {
-    errors.push(`index.html: first-party browser assets must share build query 0987-visual-assets (found ${[...new Set(firstPartyBuildQueries)].join(", ")})`);
+  const buildId = JSON.parse(readFileSync(join(root,"src/cherrift_manifest.json"),"utf8")).buildId;
+  const firstPartyBuildQueries = [...html.matchAll(/(?:src|href)=["'](?:src|assets)\/[^"']+\?v=([^"']+)/gi)].map(match => match[1]);
+  if (!firstPartyBuildQueries.length || new Set(firstPartyBuildQueries).size !== 1 || firstPartyBuildQueries[0] !== buildId) {
+    errors.push(`index.html: first-party browser assets must share build query ${buildId} (found ${[...new Set(firstPartyBuildQueries)].join(", ")})`);
   }
 }
 

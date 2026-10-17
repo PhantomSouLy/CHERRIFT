@@ -56,6 +56,8 @@
 
   async function invoke(action, payload = {}) {
     if (!state.client) throw new Error("client_unavailable");
+    const context = window.CHERRIFT_AUTH?.captureAccount?.();
+    if (context && String(state.session?.user?.id || "") !== context.userId) throw new Error("stale_account_response");
 
     const { data, error } = await state.client.functions.invoke(
       "player-api",
@@ -63,6 +65,7 @@
         body: { action, ...payload }
       }
     );
+    if (context && !window.CHERRIFT_AUTH.isCurrentAccount(context)) throw new Error("stale_account_response");
 
     if (error) {
       let detail = data?.error || error.message || "edge_function_error";
@@ -79,11 +82,17 @@
     }
 
     if (data?.error) throw new Error(data.error);
+    const update = data?.save_data ? data : data?.result;
+    if (update?.save_data && update?.updated_at) {
+      window.CHERRIFT_AUTH?.acceptServerSave?.(update.save_data, update.updated_at, context);
+    }
     return data || {};
   }
 
   function applyServerSave(nextSave) {
     if (!isObject(nextSave) || !window.UI?.save) return;
+    const context = window.CHERRIFT_AUTH?.captureAccount?.();
+    if (!context?.userId || String(nextSave.security?.accountOwnerId || "") !== context.userId) return;
 
     const current = UI.save;
     for (const key of Object.keys(current)) delete current[key];

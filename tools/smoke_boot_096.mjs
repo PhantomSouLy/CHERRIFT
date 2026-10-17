@@ -324,6 +324,7 @@ function createFakeSupabase(window) {
         const save = fallbackStarterSave(window, session?.user?.id || "");
         return {
           data: {
+            gameplay_policy:"online-v1",
             save_data: save,
             created: false,
             updated_at: updatedAt
@@ -1151,6 +1152,7 @@ try {
   );
 
   log("releasing lobby");
+  assert.equal(window.__CHERRIFT_ONLINE_INSTALLED__,true,`${requested}: online authority hooks install before gameplay can start`);
   click(
     window,
     document.getElementById("bootStartV096"),
@@ -1164,6 +1166,10 @@ try {
   );
 
   if (requested === "desktop" || requested === "phone-portrait") {
+    const coinsBeforePreview=window.UI.save.coins;
+    assert.equal(await window.UI.game.start(),false,`${requested}: Guest preview cannot start reward-bearing gameplay`);
+    assert.notEqual(window.UI.game.mode,"playing",`${requested}: online-only gameplay gate remains active`);
+    assert.equal(window.UI.save.coins,coinsBeforePreview,`${requested}: preview gate never changes progression`);
     const canonicalNav = document.getElementById("globalMobileNavV052");
     const expectedNavLabels = ["Cherry", "Gear", "Home", "Gacha", "More"];
     const navLabels = () => Array.from(canonicalNav?.querySelectorAll(":scope > button > b") || [])

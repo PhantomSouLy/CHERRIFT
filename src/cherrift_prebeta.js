@@ -14,7 +14,7 @@
   const state = { entitlements:{}, socialTab:"friends", socialRows:[], ranking:[], frameSelection:null, patched:false, ready:false };
   const GM_TITLE_IDS = new Set(["gm","senior_gm","head_gm"]);
 
-  function dayKey(date = new Date()) { return `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`; }
+  function dayKey(date = new Date()) { return date.toISOString().slice(0,10); }
   function stages() { return window.CHERRIFT_V040?.stages || []; }
   function stageWorld(stage) { return n(stage?.world) || n(String(stage?.id || "").match(/world_(\d+)/)?.[1]) || 1; }
   function stageIndex(stage) { return n(stage?.index) || n(String(stage?.id || "").match(/_(\d+)$/)?.[1]) || 1; }
@@ -194,6 +194,7 @@
   }
 
   function refreshEnergy(save = window.UI?.save, now = Date.now()) {
+    if (window.CHERRIFT_AUTH?.getState?.().onlinePolicy) return save;
     if (!save?.energyState) return save;
     const energy = B?.energy || {naturalPerHour:5};
     const max = n(save.energyState.max); const current = n(save.energy);

@@ -1,4 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { applyGameAction, prepareSave, serverPower } from "../_shared/gameplay.mjs";
 
 type JsonObject = Record<string, unknown>;
 
@@ -6,6 +7,9 @@ const ALLOWED_ORIGINS = new Set([
   "https://phantomsouly.github.io",
   "http://localhost:8000",
   "http://127.0.0.1:8000",
+  "http://localhost:8080",
+  "http://127.0.0.1:8080",
+  "http://127.0.0.1:8081",
 ]);
 
 function firstJsonSecret(name: string): string {
@@ -210,7 +214,7 @@ function starterSave(user: any): JsonObject {
 
 function bindAuthoritativeIdentity(value: unknown, user: any): JsonObject {
   if (!isObject(value)) return starterSave(user);
-  const next = structuredClone(value) as JsonObject;
+  const next = prepareSave(value) as JsonObject;
   const previousProfile = isObject(next.profile) ? next.profile : {};
   next.profile = {
     ...previousProfile,
@@ -220,7 +224,7 @@ function bindAuthoritativeIdentity(value: unknown, user: any): JsonObject {
     createdAt:Number(previousProfile.createdAt || Date.now()),
   };
   next.elementalResonance = sanitizeElementalResonance(next.elementalResonance);
-  next.security = { accountOwnerId:String(user.id), schema:2, initializedBy:"player-api" };
+  next.security = { ...(isObject(next.security)?next.security:{}), accountOwnerId:String(user.id), schema:2, initializedBy:"player-api" };
   return next;
 }
 
@@ -230,34 +234,53 @@ function sanitizeProgressSave(value: unknown, current: JsonObject, user: any): J
   if (new TextEncoder().encode(serialized).byteLength > MAX_SAVE_BYTES) throw new Error("save_too_large");
   const claimedOwner = safeText(isObject(value.security) ? value.security.accountOwnerId : "", 80);
   if (claimedOwner !== String(user.id)) throw new Error("account_owner_mismatch");
-  const next = structuredClone(value) as JsonObject;
+  // Snapshot uploads are presentation-only. Progression, random outcomes,
+  // rewards, entitlements and every cost are owned by game_action / GM RPCs.
+  const next = structuredClone(current) as JsonObject;
   const currentProfile = isObject(current.profile) ? current.profile : {};
-  const requestedProfile = isObject(next.profile) ? next.profile : {};
+  const requestedProfile = isObject(value.profile) ? value.profile : {};
   next.profile = {
     ...requestedProfile,
     ...discordProfile(user),
-    activeTitle:safeText(requestedProfile.activeTitle, 80),
-    frameId:safeText(requestedProfile.frameId, 50) || safeText(currentProfile.frameId, 50) || "frame0lvl",
+    activeTitle:Array.isArray(current.ownedTitles) && current.ownedTitles.includes(requestedProfile.activeTitle)
+      ? safeText(requestedProfile.activeTitle, 80) : safeText(currentProfile.activeTitle, 80),
+    frameId:safeText(currentProfile.frameId, 50) || "frame0lvl",
     createdAt:Number(currentProfile.createdAt || requestedProfile.createdAt || Date.now()),
   };
   const currentTitles = Array.isArray(current.ownedTitles) ? current.ownedTitles.filter((id) => typeof id === "string") : [];
-  const requestedTitles = Array.isArray(next.ownedTitles) ? next.ownedTitles.filter((id) => typeof id === "string" && !GM_TITLE_IDS.has(id)).slice(0, 500) : [];
+  const requestedTitles = currentTitles;
   next.ownedTitles = [...new Set([...requestedTitles, ...currentTitles.filter((id) => GM_TITLE_IDS.has(id))])];
   const currentPrebeta = isObject(current.prebeta) ? current.prebeta : {};
-  const requestedPrebeta = isObject(next.prebeta) ? next.prebeta : {};
-  next.prebeta = { ...requestedPrebeta };
-  if (currentPrebeta.serverEdit !== undefined) next.prebeta.serverEdit = currentPrebeta.serverEdit;
-  if (currentPrebeta.gmAccessBackup !== undefined) next.prebeta.gmAccessBackup = currentPrebeta.gmAccessBackup;
+  next.prebeta = { ...currentPrebeta };
   next.elementalResonance = sanitizeElementalResonance(next.elementalResonance);
-  next.security = { accountOwnerId:String(user.id), schema:2, initializedBy:"player-api" };
-  next.unlockedSkins = Array.isArray(next.unlockedSkins)
+  next.security = { ...(isObject(current.security)?current.security:{}), accountOwnerId:String(user.id), schema:2, initializedBy:"player-api" };
+  const unlockedSkins = Array.isArray(next.unlockedSkins)
     ? [...new Set(next.unlockedSkins.filter((id) => typeof id === "string" && id.length <= 80))].slice(0, 500)
     : ["cherry_default"];
-  if (!next.unlockedSkins.includes("cherry_default")) next.unlockedSkins.unshift("cherry_default");
-  next.unlockedStages = Array.isArray(next.unlockedStages)
+  if (!unlockedSkins.includes("cherry_default")) unlockedSkins.unshift("cherry_default");
+  next.unlockedSkins=unlockedSkins;
+  const unlockedStages = Array.isArray(next.unlockedStages)
     ? [...new Set(next.unlockedStages.filter((id) => typeof id === "string" && /^world_[0-9]+_[0-9]+$/.test(id)))].slice(0, 500)
     : ["world_1_1"];
-  if (!next.unlockedStages.includes("world_1_1")) next.unlockedStages.unshift("world_1_1");
+  if (!unlockedStages.includes("world_1_1")) unlockedStages.unshift("world_1_1");
+  next.unlockedStages=unlockedStages;
+  const settings = isObject(value.settings) ? value.settings : {};
+  next.settings = { ...(isObject(current.settings) ? current.settings : {}),
+    language:settings.language === "en" ? "en" : "hu",
+    volume:Math.min(100, boundedInteger(settings.volume ?? 60, 100)),
+    fpsLimit:settings.fpsLimit === 30 ? 30 : 60,
+    touchMode:settings.touchMode !== false,
+  };
+  for (const key of ["mobilePerformanceMode","soundEnabled","musicEnabled","showDamageNumbers","showFps"]) {
+    if (typeof settings[key] === "boolean") (next.settings as JsonObject)[key]=settings[key];
+  }
+  if (settings.uiTheme === "default" || (Array.isArray(current.unlockedThemes) && current.unlockedThemes.includes(settings.uiTheme))) {
+    (next.settings as JsonObject).uiTheme=settings.uiTheme;
+    next.selectedTheme=settings.uiTheme;
+  }
+  if ((next.unlockedSkins as string[]).includes(String(value.selectedSkin))) next.selectedSkin = value.selectedSkin;
+  if ((next.unlockedStages as string[]).includes(String(value.selectedStageId))) next.selectedStageId = value.selectedStageId;
+  next.power = serverPower(next);
   return next;
 }
 
@@ -315,6 +338,14 @@ async function frameAllowed(userId: string, frameId: string): Promise<boolean> {
   return !!entitlements[entitlementByFrame[frameId]];
 }
 
+async function bindServerRights(save: JsonObject, userId: string): Promise<JsonObject> {
+  const { data, error } = await adminClient.from("account_entitlements").select("entitlements").eq("user_id", userId).maybeSingle();
+  if (error) throw error;
+  const prebeta = isObject(save.prebeta) ? save.prebeta : {};
+  save.prebeta = { ...prebeta, entitlements:isObject(data?.entitlements) ? data.entitlements : {} };
+  return save;
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders(req) });
   if (req.method !== "POST") return json(req, { error: "method_not_allowed" }, 405);
@@ -335,7 +366,7 @@ Deno.serve(async (req: Request) => {
       let row = existing;
       let created = false;
       if (!row) {
-        const initial = starterSave(user);
+        const initial = await bindServerRights(prepareSave(starterSave(user)), user.id);
         const { data: inserted, error: insertError } = await adminClient.from("game_saves").insert({
           user_id:user.id, save_data:initial, save_version:"0.9.5-prebeta.2", updated_at:now,
         }).select("save_data,save_version,created_at,updated_at").single();
@@ -355,7 +386,7 @@ Deno.serve(async (req: Request) => {
         // rebound to the authenticated Discord UUID. This upgrades legacy
         // saves without importing any browser-local state or resetting their
         // legitimate progression.
-        const rebound = bindAuthoritativeIdentity(row.save_data, user);
+        const rebound = await bindServerRights(bindAuthoritativeIdentity(row.save_data, user), user.id);
         const { data: reboundRow, error: reboundError } = await adminClient.from("game_saves").update({
           save_data:rebound,
           save_version:safeText(row.save_version, 40) || "0.9.5-prebeta.2",
@@ -375,9 +406,9 @@ Deno.serve(async (req: Request) => {
         discord_name:safeText(metadata.user_name || metadata.preferred_username, 80) || null,
         avatar_url:safeText(metadata.avatar_url || metadata.picture, 500) || null,
         level:Number((row?.save_data as any)?.account?.level || 1),
-        power:Number((row?.save_data as any)?.power || 0), last_active_at:now, updated_at:now,
+        power:serverPower(row?.save_data || {}), last_active_at:now, updated_at:now,
       }, { onConflict:"user_id" });
-      return json(req, { ok:true, requestId, created, save_data:row?.save_data, save_version:row?.save_version, updated_at:row?.updated_at });
+      return json(req, { ok:true, requestId, created, gameplay_policy:"online-v1", save_data:row?.save_data, save_version:row?.save_version, updated_at:row?.updated_at });
     }
 
     if (action === "save_progress") {
@@ -386,10 +417,14 @@ Deno.serve(async (req: Request) => {
       if (selectError) throw selectError;
       if (!existing) throw new Error("save_not_initialized");
       const expected = typeof body.expected_updated_at === "string" ? body.expected_updated_at : "";
-      if (expected && expected !== existing.updated_at) {
+      if (!expected || expected !== existing.updated_at) {
         return json(req, { ok:false, conflict:true, requestId, save_data:existing.save_data, save_version:existing.save_version, updated_at:existing.updated_at });
       }
-      const next = sanitizeProgressSave(body.save_data, existing.save_data as JsonObject, user);
+      const next = await bindServerRights(sanitizeProgressSave(body.save_data, existing.save_data as JsonObject, user), user.id);
+      const requestedProfile = isObject(body.save_data) && isObject(body.save_data.profile) ? body.save_data.profile : {};
+      if (typeof requestedProfile.frameId === "string" && await frameAllowed(user.id, requestedProfile.frameId)) {
+        (next.profile as JsonObject).frameId=requestedProfile.frameId;
+      }
       const version = safeText(body.save_version, 40) || "0.9.5-prebeta.2";
       let update = adminClient.from("game_saves").update({ save_data:next, save_version:version })
         .eq("user_id", user.id).eq("updated_at", existing.updated_at)
@@ -402,6 +437,34 @@ Deno.serve(async (req: Request) => {
         return json(req, { ok:false, conflict:true, requestId, ...latest.data });
       }
       return json(req, { ok:true, requestId, save_data:saved.save_data, save_version:saved.save_version, updated_at:saved.updated_at });
+    }
+
+    if (action === "game_action") {
+      const operation = safeText(body.operation, 40);
+      const operationId = safeText(body.operation_id, 80);
+      if (!isUuid(operationId)) throw new Error("invalid_operation_id");
+      const { data: existing, error } = await adminClient.from("game_saves")
+        .select("save_data,save_version,updated_at").eq("user_id",user.id).single();
+      if (error) throw error;
+      const current = await bindServerRights(bindAuthoritativeIdentity(existing.save_data,user), user.id);
+      const online = (current.security as any)?.online || {};
+      const receipt = (online.receipts || []).find((entry:any)=>entry.id===operationId);
+      if (receipt) return json(req,{ok:true,requestId,save_data:current,updated_at:existing.updated_at,rewards:receipt.rewards||[],replayed:true});
+      if (body.expected_updated_at !== existing.updated_at) return json(req,{ok:false,conflict:true,requestId,...existing});
+      const result = applyGameAction(current,operation,isObject(body.params)?body.params:{});
+      const security = result.save.security as any;
+      security.accountOwnerId = String(user.id);
+      security.online.receipts = [...(security.online.receipts||[]),{id:operationId,operation,rewards:result.rewards}].slice(-64);
+      const {data:saved,error:writeError}=await adminClient.from("game_saves")
+        .update({save_data:result.save}).eq("user_id",user.id).eq("updated_at",existing.updated_at)
+        .select("save_data,updated_at").maybeSingle();
+      if(writeError)throw writeError;
+      if(!saved){const latest=await adminClient.from("game_saves").select("save_data,updated_at").eq("user_id",user.id).single();if(latest.error)throw latest.error;return json(req,{ok:false,conflict:true,requestId,...latest.data});}
+      const {error:profileSyncError}=await adminClient.from("player_profiles").update({
+        level:Number(result.save.account.level),power:serverPower(result.save),last_active_at:new Date().toISOString(),
+      }).eq("user_id",user.id);
+      if(profileSyncError)console.warn("[CHERRIFT] Profile sync will retry on bootstrap",profileSyncError.code);
+      return json(req,{ok:true,requestId,...saved,rewards:result.rewards});
     }
 
     if (action === "bootstrap_profile") {
@@ -439,7 +502,7 @@ Deno.serve(async (req: Request) => {
       const query = safeText(body.query,80);
       if (query.length < 2) throw new Error("search_too_short");
       let builder = adminClient.from("player_profiles").select("user_id,public_code,display_name,discord_name,avatar_url,frame_id,level,power").neq("user_id",user.id).limit(20);
-      if(isUuid(query))builder=builder.eq("user_id",query);
+      if(isUuid(String(query)))builder=builder.eq("user_id",query);
       else if(/^CH-[A-Z0-9]+$/i.test(query))builder=builder.ilike("public_code",`${query}%`);
       else {const term=query.replace(/[%_,()]/g,"");builder=builder.or(`display_name.ilike.%${term}%,discord_name.ilike.%${term}%`);}
       const { data, error } = await builder;
@@ -530,8 +593,11 @@ Deno.serve(async (req: Request) => {
     }
 
     if (action === "ranking_submit") {
-      const power=Math.min(100000000,Math.max(0,Math.floor(Number(body.power)||0)));
-      const level=Math.min(1000,Math.max(1,Math.floor(Number(body.level)||1)));
+      const {data:rankingSave,error:rankingSaveError}=await adminClient.from("game_saves").select("save_data,updated_at").eq("user_id",user.id).single();
+      if(rankingSaveError)throw rankingSaveError;
+      const canonical=rankingSave.save_data as any;
+      const power=serverPower(canonical);
+      const level=Math.min(1000,Math.max(1,Math.floor(Number(canonical.account?.level)||1)));
       const weekStart=mondayUtc();
       const { error } = await adminClient.from("weekly_power_ranking").upsert({week_start:weekStart,user_id:user.id,power,level,submitted_at:new Date().toISOString()},{onConflict:"week_start,user_id"});
       if (error) throw error;
@@ -542,10 +608,19 @@ Deno.serve(async (req: Request) => {
       ]);
       if(rankError)throw rankError;if(activeError)throw activeError;if(currentError)throw currentError;
       const rank=Number(higher||0)+1;
-      const previousBest=Number(currentProfile?.best_weekly_rank||0);
-      const bestWeeklyRank=previousBest>0?Math.min(previousBest,rank):rank;
+      const previousBest=Number(canonical.security?.online?.competitiveRank||0);
+      const bestWeeklyRank=Number(activePlayers||0)>=100?(previousBest>0?Math.min(previousBest,rank):rank):previousBest;
+      canonical.security ||= {};canonical.security.online ||= {};
+      canonical.security.online.competitiveRank=bestWeeklyRank;
+      canonical.economy ||= {};canonical.economy.bestWeeklyRank=bestWeeklyRank;canonical.economy.activePlayers=Number(activePlayers||0);
+      const {data:rankSave,error:rankSaveError}=await adminClient.from("game_saves").update({save_data:canonical})
+        .eq("user_id",user.id).eq("updated_at",rankingSave.updated_at).select("updated_at").maybeSingle();
+      if(rankSaveError)throw rankSaveError;
+      // A concurrent gameplay operation wins. Retry qualification later instead
+      // of overwriting that progress with the older ranking snapshot.
+      if(!rankSave)return json(req,{ok:true,requestId,rank,active_players:Number(activePlayers||0),best_weekly_rank:previousBest,retry:true});
       await adminClient.from("player_profiles").update({power,level,best_weekly_rank:bestWeeklyRank,last_active_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq("user_id",user.id);
-      return json(req,{ok:true,requestId,week_start:weekStart,rank,best_weekly_rank:bestWeeklyRank,active_players:Number(activePlayers||0)});
+      return json(req,{ok:true,requestId,week_start:weekStart,rank,best_weekly_rank:bestWeeklyRank,active_players:Number(activePlayers||0),save_data:canonical,updated_at:rankSave.updated_at});
     }
 
     if (action === "ranking_list") {

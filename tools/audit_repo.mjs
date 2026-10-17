@@ -17,6 +17,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const outputDirectory = join(root, "audit-output");
 const jsonOutput = join(outputDirectory, "repo-file-audit.json");
 const markdownOutput = join(outputDirectory, "repo-file-audit.md");
+const pythonExecutable = process.env.CHERRIFT_PYTHON || "python3";
 
 const textExtensions = new Set([
   "", ".bat", ".css", ".example", ".gitignore", ".html", ".js",
@@ -298,32 +299,32 @@ for (const path of paths) {
 
     if (extension === ".py") {
       checks.push("python-ast-parse");
-      const result = spawnSync("python3", [
+      const result = spawnSync(pythonExecutable, [
         "-c",
         "import ast,sys; ast.parse(open(sys.argv[1],encoding='utf-8').read(), filename=sys.argv[1])",
         join(root, path)
       ], { encoding:"utf8" });
-      if (result.status !== 0) issues.push(`python-syntax:${String(result.stderr || result.stdout).trim()}`);
+      if (result.status !== 0) issues.push(`python-syntax:${String(result.error?.message || result.stderr || result.stdout).trim()}`);
     }
 
     if (extension === ".toml") {
       checks.push("toml-parse");
-      const result = spawnSync("python3", [
+      const result = spawnSync(pythonExecutable, [
         "-c",
         "import sys,tomllib; tomllib.load(open(sys.argv[1],'rb'))",
         join(root, path)
       ], { encoding:"utf8" });
-      if (result.status !== 0) issues.push(`toml-syntax:${String(result.stderr || result.stdout).trim()}`);
+      if (result.status !== 0) issues.push(`toml-syntax:${String(result.error?.message || result.stderr || result.stdout).trim()}`);
     }
 
     if ([".yml", ".yaml"].includes(extension)) {
       checks.push("yaml-parse");
-      const result = spawnSync("python3", [
+      const result = spawnSync(pythonExecutable, [
         "-c",
         "import sys,yaml; yaml.safe_load(open(sys.argv[1],encoding='utf-8'))",
         join(root, path)
       ], { encoding:"utf8" });
-      if (result.status !== 0) issues.push(`yaml-syntax:${String(result.stderr || result.stdout).trim()}`);
+      if (result.status !== 0) issues.push(`yaml-syntax:${String(result.error?.message || result.stderr || result.stdout).trim()}`);
     }
 
     if (extension === ".css" && cssTree) {

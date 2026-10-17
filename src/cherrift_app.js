@@ -5413,11 +5413,7 @@ console.info("[CHERRIFT v0.5.2] Manual progression, achievements and fixed mobil
 const id=n=>document.getElementById(n), q=(s,r=document)=>r.querySelector(s), qa=(s,r=document)=>[...r.querySelectorAll(s)];
 if(!window.UI||!window.CherriftStorage||!window.CHERRIFT_V053)return console.error('[v0.5.5a] v0.5.3 required');
 document.documentElement.dataset.v055Css='bundled';
-const dayKey=(date=new Date())=>[
- date.getFullYear(),
- String(date.getMonth()+1).padStart(2,'0'),
- String(date.getDate()).padStart(2,'0')
-].join('-');
+const dayKey=(date=new Date())=>date.toISOString().slice(0,10);
 const dayNumber=key=>{const [year,month,day]=String(key).split('-').map(Number);return Date.UTC(year,month-1,day)/86400000};
 const POOL=[
  {type:'kills',title:'Slime Cleanup',target:150,icon:'⚔️',reward:{coins:180}},
@@ -15618,7 +15614,7 @@ const id = name => document.getElementById(name);
 const q = (selector,root=document) => root?.querySelector?.(selector)||null;
 const qa = (selector,root=document) => Array.from(root?.querySelectorAll?.(selector)||[]);
 const clamp = (value,min,max) => Math.max(min,Math.min(max,value));
-const dayKey = (date=new Date()) => [date.getFullYear(),String(date.getMonth()+1).padStart(2,"0"),String(date.getDate()).padStart(2,"0")].join("-");
+const dayKey = (date=new Date()) => date.toISOString().slice(0,10);
 const escapeHtml = value => String(value??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;");
 
 if(!window.UI||!window.CherriftStorage||!window.CHERRIFT_V070||!window.CHERRIFT_V080){
@@ -15652,6 +15648,7 @@ function averageArsenalLevel(save){
 }
 function emptySkillRanks(){return Object.fromEntries(Object.keys(SKILL_NODES).map(key=>[key,0]));}
 function normalizeWeekly(save){
+  if(window.CHERRIFT_AUTH?.getState?.().onlinePolicy&&save.weekly)return save.weekly;
   const now=new Date(),first=new Date(now.getFullYear(),0,1);
   const week=Math.ceil((((now-first)/86400000)+first.getDay()+1)/7);
   const key=`${now.getFullYear()}-W${String(week).padStart(2,"0")}`;

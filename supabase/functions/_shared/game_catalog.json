@@ -1,0 +1,3075 @@
+{
+  "balance": {
+    "version": "0.9.5-prebeta.1",
+    "saveSchema": "prebeta-1",
+    "releaseChannel": "prebeta",
+    "slotOrder": [
+      "Weapon",
+      "Helmet",
+      "Armor",
+      "Gloves",
+      "Boots",
+      "Ring",
+      "Necklace"
+    ],
+    "currencies": {
+      "coins": {
+        "name": "Coin",
+        "starter": 500
+      },
+      "bloomGems": {
+        "name": "Bloom Gem",
+        "starter": 0
+      },
+      "sakuraEssence": {
+        "name": "Sakura Essence",
+        "starter": 0
+      },
+      "scrap": {
+        "name": "Scrap",
+        "starter": 0
+      },
+      "heartTokens": {
+        "name": "Heart Token",
+        "starter": 0,
+        "enabled": false
+      }
+    },
+    "energy": {
+      "starterMax": 50,
+      "naturalPerHour": 5,
+      "stageCost": 5,
+      "trainingCost": 0,
+      "manualOvercap": 100,
+      "drinks": {
+        "small": 10,
+        "standard": 25,
+        "large": 50
+      },
+      "refills": {
+        "coins": {
+          "cost": 800,
+          "amount": 10,
+          "dailyLimit": 2
+        },
+        "bloomGems": {
+          "cost": 40,
+          "amount": 25,
+          "dailyLimit": 3
+        },
+        "ad": {
+          "amount": 10,
+          "dailyLimit": 3,
+          "enabled": false
+        }
+      }
+    },
+    "worlds": {
+      "1": {
+        "unlockLevel": 1,
+        "completionLevel": 5,
+        "recommendedPower": [
+          100,
+          850
+        ],
+        "hp": 1,
+        "damage": 1,
+        "speed": 1
+      },
+      "2": {
+        "unlockLevel": 5,
+        "completionLevel": 10,
+        "recommendedPower": [
+          800,
+          1400
+        ],
+        "hp": 1.55,
+        "damage": 1.35,
+        "speed": 1.04
+      },
+      "3": {
+        "unlockLevel": 10,
+        "completionLevel": 15,
+        "recommendedPower": [
+          1350,
+          2100
+        ],
+        "hp": 2.25,
+        "damage": 1.8,
+        "speed": 1.08
+      },
+      "4": {
+        "unlockLevel": 15,
+        "completionLevel": 20,
+        "recommendedPower": [
+          2000,
+          2900
+        ],
+        "hp": 3.2,
+        "damage": 2.4,
+        "speed": 1.12
+      },
+      "5": {
+        "unlockLevel": 20,
+        "completionLevel": 30,
+        "recommendedPower": [
+          2800,
+          4200
+        ],
+        "hp": 4.6,
+        "damage": 3.2,
+        "speed": 1.16
+      },
+      "6": {
+        "unlockLevel": 30,
+        "completionLevel": 35,
+        "recommendedPower": [
+          4100,
+          5600
+        ],
+        "hp": 6.2,
+        "damage": 4.2,
+        "speed": 1.2
+      }
+    },
+    "stageRewards": {
+      "1": {
+        "repeat": [
+          90,
+          100,
+          110,
+          125,
+          150
+        ],
+        "first": [
+          250,
+          320,
+          390,
+          470,
+          600
+        ]
+      },
+      "2": {
+        "repeat": [
+          140,
+          155,
+          170,
+          190,
+          230
+        ],
+        "first": [
+          400,
+          500,
+          610,
+          740,
+          900
+        ]
+      },
+      "3": {
+        "repeat": [
+          200,
+          220,
+          245,
+          270,
+          330
+        ],
+        "first": [
+          650,
+          770,
+          900,
+          1040,
+          1200
+        ]
+      },
+      "4": {
+        "repeat": [
+          280,
+          310,
+          345,
+          385,
+          470
+        ],
+        "first": [
+          900,
+          1080,
+          1280,
+          1480,
+          1700
+        ]
+      },
+      "5": {
+        "repeat": [
+          400,
+          450,
+          500,
+          560,
+          680
+        ],
+        "first": [
+          1300,
+          1550,
+          1820,
+          2100,
+          2400
+        ]
+      },
+      "6": {
+        "repeat": [
+          560,
+          630,
+          700,
+          780,
+          950
+        ],
+        "first": [
+          1900,
+          2250,
+          2620,
+          3000,
+          3400
+        ]
+      }
+    },
+    "gear": {
+      "rarities": {
+        "Common": {
+          "multiplier": 1,
+          "color": "#f5ebf1"
+        },
+        "Uncommon": {
+          "multiplier": 1.18,
+          "color": "#86ed9d"
+        },
+        "Rare": {
+          "multiplier": 1.35,
+          "color": "#77c8ff"
+        },
+        "Epic": {
+          "multiplier": 1.8,
+          "color": "#d591ff"
+        },
+        "Legendary": {
+          "multiplier": 2.4,
+          "color": "#ffd36e"
+        }
+      },
+      "rollQuality": [
+        0.9,
+        1.1
+      ],
+      "slotStats": {
+        "Weapon": [
+          "damage"
+        ],
+        "Helmet": [
+          "maxHp",
+          "armor"
+        ],
+        "Armor": [
+          "maxHp",
+          "armor"
+        ],
+        "Gloves": [
+          "attackSpeed",
+          "crit"
+        ],
+        "Boots": [
+          "moveSpeed",
+          "maxHp"
+        ],
+        "Ring": [
+          "crit",
+          "critDamage",
+          "damage"
+        ],
+        "Necklace": [
+          "skillDamage",
+          "cooldownReduction",
+          "regen"
+        ]
+      },
+      "dismantle": {
+        "Common": {
+          "scrap": 3,
+          "copper": 0,
+          "silver": 0
+        },
+        "Uncommon": {
+          "scrap": 5,
+          "copper": 0,
+          "silver": 0
+        },
+        "Rare": {
+          "scrap": 8,
+          "copper": 1,
+          "silver": 0
+        },
+        "Epic": {
+          "scrap": 20,
+          "copper": 2,
+          "silver": 0,
+          "silverChance": 0.08
+        },
+        "Legendary": {
+          "scrap": 55,
+          "copper": 0,
+          "silver": 3
+        }
+      }
+    },
+    "arsenal": {
+      "maxLevel": 30,
+      "levelMultiplier": 0.025,
+      "stars": {
+        "1": 10,
+        "2": 20,
+        "3": 30
+      }
+    },
+    "gacha": {
+      "pity": {
+        "common": 10,
+        "rare": 15,
+        "epic": 25
+      },
+      "duplicateEssence": {
+        "Common": 5,
+        "Uncommon": 8,
+        "Rare": 15,
+        "Epic": 45,
+        "Legendary": 120
+      },
+      "prices": {
+        "rare": {
+          "one": 80,
+          "ten": 760
+        },
+        "epic": {
+          "one": 240,
+          "ten": 2280
+        }
+      },
+      "essenceShop": {
+        "Common": 100,
+        "Uncommon": 175,
+        "Rare": 300,
+        "Epic": 900,
+        "Legendary": 2400
+      }
+    },
+    "titles": [
+      {
+        "id": "gm",
+        "name": "Game Master",
+        "nameHu": "Game Master",
+        "nameEn": "Game Master",
+        "rarity": "Rare",
+        "gmOnly": true,
+        "requirement": {
+          "type": "gmOnly"
+        }
+      },
+      {
+        "id": "senior_gm",
+        "name": "Senior Game Master",
+        "nameHu": "Senior Game Master",
+        "nameEn": "Senior Game Master",
+        "rarity": "Epic",
+        "gmOnly": true,
+        "requirement": {
+          "type": "gmOnly"
+        }
+      },
+      {
+        "id": "head_gm",
+        "name": "Head Game Master",
+        "nameHu": "Head Game Master",
+        "nameEn": "Head Game Master",
+        "rarity": "Legendary",
+        "gmOnly": true,
+        "requirement": {
+          "type": "gmOnly"
+        }
+      },
+      {
+        "id": "rookie_bunny",
+        "name": "Rookie Bunny",
+        "rarity": "Rare",
+        "requirement": {
+          "type": "level",
+          "value": 5
+        }
+      },
+      {
+        "id": "meadow_explorer",
+        "name": "Meadow Explorer",
+        "rarity": "Rare",
+        "stats": {
+          "maxHp": 50
+        },
+        "requirement": {
+          "type": "worldStars",
+          "world": 1
+        }
+      },
+      {
+        "id": "night_hunter",
+        "name": "Night Hunter",
+        "rarity": "Rare",
+        "stats": {
+          "damage": 10
+        },
+        "requirement": {
+          "type": "worldStars",
+          "world": 2
+        }
+      },
+      {
+        "id": "safari_bunny",
+        "name": "Safari Bunny",
+        "rarity": "Rare",
+        "stats": {
+          "maxHp": 10
+        },
+        "requirement": {
+          "type": "worldStars",
+          "world": 3
+        }
+      },
+      {
+        "id": "hard_rock",
+        "name": "Hard Rock",
+        "rarity": "Rare",
+        "stats": {
+          "damage": 5
+        },
+        "requirement": {
+          "type": "worldStars",
+          "world": 4
+        }
+      },
+      {
+        "id": "desert_explorer",
+        "name": "Desert Explorer",
+        "rarity": "Rare",
+        "stats": {
+          "maxHp": 10
+        },
+        "requirement": {
+          "type": "worldStars",
+          "world": 5
+        }
+      },
+      {
+        "id": "ruins_walker",
+        "name": "Ruins Walker",
+        "rarity": "Rare",
+        "stats": {
+          "damage": 5
+        },
+        "requirement": {
+          "type": "worldStars",
+          "world": 6
+        }
+      },
+      {
+        "id": "jungler_bunny",
+        "name": "Jungler Bunny",
+        "rarity": "Rare",
+        "stats": {
+          "maxHp": 10
+        },
+        "hidden": true,
+        "requirement": {
+          "type": "worldStars",
+          "world": 7
+        }
+      },
+      {
+        "id": "banker",
+        "name": "Banker",
+        "rarity": "Rare",
+        "stats": {
+          "coinGain": 0.01
+        },
+        "requirement": {
+          "type": "lifetimeCoins",
+          "value": 10000
+        }
+      },
+      {
+        "id": "got_rich",
+        "name": "Got Rich",
+        "rarity": "Epic",
+        "stats": {
+          "coinGain": 0.01
+        },
+        "requirement": {
+          "type": "lifetimeCoins",
+          "value": 100000
+        }
+      },
+      {
+        "id": "golden_bunny",
+        "name": "Golden Bunny",
+        "rarity": "Legendary",
+        "stats": {
+          "coinGain": 0.05
+        },
+        "requirement": {
+          "type": "lifetimeCoins",
+          "value": 1000000
+        }
+      },
+      {
+        "id": "scrap_hunter",
+        "name": "Scrap Hunter",
+        "rarity": "Rare",
+        "requirement": {
+          "type": "allArsenal",
+          "value": 5
+        }
+      },
+      {
+        "id": "dismantler",
+        "name": "Dismantler",
+        "rarity": "Rare",
+        "requirement": {
+          "type": "allArsenal",
+          "value": 15
+        }
+      },
+      {
+        "id": "crazy_set",
+        "name": "Crazy Set",
+        "rarity": "Rare",
+        "hiddenUntilLevel": 25,
+        "requirement": {
+          "type": "allArsenal",
+          "value": 25
+        }
+      },
+      {
+        "id": "got_some_armors",
+        "name": "Got Some Armors",
+        "rarity": "Epic",
+        "postBeta": true,
+        "requirement": {
+          "type": "allArsenal",
+          "value": 40
+        }
+      },
+      {
+        "id": "iron_bunny",
+        "name": "Iron Bunny",
+        "rarity": "Epic",
+        "postBeta": true,
+        "requirement": {
+          "type": "allArsenal",
+          "value": 55
+        }
+      },
+      {
+        "id": "master_dismantler",
+        "name": "Master Dismantler",
+        "rarity": "Epic",
+        "postBeta": true,
+        "requirement": {
+          "type": "allArsenal",
+          "value": 75
+        }
+      },
+      {
+        "id": "arsenal_hunter",
+        "name": "Arsenal Hunter",
+        "rarity": "Epic",
+        "postBeta": true,
+        "requirement": {
+          "type": "allArsenal",
+          "value": 90
+        }
+      },
+      {
+        "id": "one_hundred_army",
+        "name": "One Hundred Army",
+        "rarity": "Legendary",
+        "stats": {
+          "allStats": 5
+        },
+        "postBeta": true,
+        "requirement": {
+          "type": "allArsenal",
+          "value": 100
+        }
+      },
+      {
+        "id": "rare_bunny",
+        "name": "Rare Bunny",
+        "rarity": "Rare",
+        "requirement": {
+          "type": "fullGearRarity",
+          "value": "Rare"
+        }
+      },
+      {
+        "id": "epic_bunny",
+        "name": "Epic Bunny",
+        "rarity": "Epic",
+        "stats": {
+          "maxHp": 50
+        },
+        "requirement": {
+          "type": "fullGearRarity",
+          "value": "Epic"
+        }
+      },
+      {
+        "id": "legendary_bunny",
+        "name": "Legendary Bunny",
+        "rarity": "Legendary",
+        "stats": {
+          "damage": 20
+        },
+        "requirement": {
+          "type": "fullGearRarity",
+          "value": "Legendary"
+        }
+      },
+      {
+        "id": "cute_bunny",
+        "name": "Cute Bunny",
+        "rarity": "Rare",
+        "requirement": {
+          "type": "skinRarity",
+          "rarity": "Common",
+          "value": 5
+        }
+      },
+      {
+        "id": "pro_bunny",
+        "name": "Pro Bunny",
+        "rarity": "Rare",
+        "requirement": {
+          "type": "skinRarity",
+          "rarity": "Rare",
+          "value": 5
+        }
+      },
+      {
+        "id": "cutest_bunny",
+        "name": "Cutest Bunny",
+        "rarity": "Epic",
+        "requirement": {
+          "type": "skinRarity",
+          "rarity": "Epic",
+          "value": 5
+        }
+      },
+      {
+        "id": "adorable_bunny",
+        "name": "Adorable Bunny",
+        "rarity": "Legendary",
+        "requirement": {
+          "type": "skinRarity",
+          "rarity": "Legendary",
+          "value": 5
+        }
+      },
+      {
+        "id": "collector",
+        "name": "Collector",
+        "rarity": "Rare",
+        "requirement": {
+          "type": "skins",
+          "value": 10
+        }
+      },
+      {
+        "id": "bunny_collector",
+        "name": "Bunny Collector",
+        "rarity": "Rare",
+        "requirement": {
+          "type": "skins",
+          "value": 20
+        }
+      },
+      {
+        "id": "shape_of_bunny",
+        "name": "Shape of Bunny",
+        "rarity": "Epic",
+        "stats": {
+          "chestLuck": 0.02
+        },
+        "requirement": {
+          "type": "skins",
+          "value": 30
+        }
+      },
+      {
+        "id": "monster_slayer",
+        "name": "Monster Slayer",
+        "rarity": "Rare",
+        "requirement": {
+          "type": "kills",
+          "value": 1000
+        }
+      },
+      {
+        "id": "sharpbun",
+        "name": "SharpBun",
+        "rarity": "Rare",
+        "requirement": {
+          "type": "kills",
+          "value": 3500
+        }
+      },
+      {
+        "id": "fighter",
+        "name": "Fighter",
+        "rarity": "Rare",
+        "requirement": {
+          "type": "kills",
+          "value": 5000
+        }
+      },
+      {
+        "id": "monster_hunter",
+        "name": "Monster Hunter",
+        "rarity": "Rare",
+        "requirement": {
+          "type": "kills",
+          "value": 7500
+        }
+      },
+      {
+        "id": "killer_bunny",
+        "name": "Killer Bunny",
+        "rarity": "Epic",
+        "stats": {
+          "maxHp": 50
+        },
+        "requirement": {
+          "type": "kills",
+          "value": 10000
+        }
+      },
+      {
+        "id": "hitbun",
+        "name": "HitBun",
+        "rarity": "Epic",
+        "requirement": {
+          "type": "kills",
+          "value": 15000
+        }
+      },
+      {
+        "id": "killer_master",
+        "name": "Killer Master",
+        "rarity": "Epic",
+        "requirement": {
+          "type": "kills",
+          "value": 30000
+        }
+      },
+      {
+        "id": "legendary_slayer",
+        "name": "Legendary Slayer",
+        "rarity": "Legendary",
+        "stats": {
+          "allStats": 5
+        },
+        "requirement": {
+          "type": "kills",
+          "value": 50000
+        }
+      },
+      {
+        "id": "cherry_fan",
+        "name": "Cherry Fan",
+        "rarity": "Legendary",
+        "reward": {
+          "bloomGems": 200
+        },
+        "requirement": {
+          "type": "loginDays",
+          "value": 365
+        }
+      },
+      {
+        "id": "best_bunny",
+        "name": "Best Bunny",
+        "rarity": "Rare",
+        "gatedByActivePlayers": 100,
+        "requirement": {
+          "type": "bestWeeklyRank",
+          "value": 50
+        }
+      },
+      {
+        "id": "master_bunny",
+        "name": "Master Bunny",
+        "rarity": "Epic",
+        "gatedByActivePlayers": 100,
+        "requirement": {
+          "type": "bestWeeklyRank",
+          "value": 3
+        }
+      },
+      {
+        "id": "grandmaster_bunny",
+        "name": "GrandMaster Bunny",
+        "rarity": "Legendary",
+        "gatedByActivePlayers": 100,
+        "requirement": {
+          "type": "bestWeeklyRank",
+          "value": 2
+        }
+      },
+      {
+        "id": "top_bunny",
+        "name": "#1 TOP Bunny",
+        "rarity": "Mythical",
+        "gatedByActivePlayers": 100,
+        "requirement": {
+          "type": "bestWeeklyRank",
+          "value": 1
+        }
+      }
+    ],
+    "frames": [
+      {
+        "id": "frame0lvl",
+        "name": "Bloom Frame",
+        "asset": "assets/player/frames/frame0lvl.png",
+        "requirement": {
+          "type": "default"
+        }
+      },
+      {
+        "id": "frame5lvl",
+        "name": "Rookie Frame",
+        "asset": "assets/player/frames/frame5lvl.png",
+        "requirement": {
+          "type": "level",
+          "value": 5
+        }
+      },
+      {
+        "id": "frame30lvl",
+        "name": "Level 30 Frame",
+        "asset": "assets/player/frames/frame30lvl.png",
+        "requirement": {
+          "type": "level",
+          "value": 30
+        }
+      },
+      {
+        "id": "frame50lvl",
+        "name": "Level 50 Frame",
+        "asset": "assets/player/frames/frame50lvl.png",
+        "requirement": {
+          "type": "level",
+          "value": 50
+        }
+      },
+      {
+        "id": "frame80lvl",
+        "name": "Level 80 Frame",
+        "asset": "assets/player/frames/frame80lvl.png",
+        "requirement": {
+          "type": "level",
+          "value": 80
+        }
+      },
+      {
+        "id": "frame100lvl",
+        "name": "Level 100 Frame",
+        "asset": "assets/player/frames/frame100lvl.png",
+        "requirement": {
+          "type": "level",
+          "value": 100
+        }
+      },
+      {
+        "id": "frame150lvl",
+        "name": "Level 150 Frame",
+        "asset": "assets/player/frames/frame150lvl.png",
+        "requirement": {
+          "type": "level",
+          "value": 150
+        }
+      },
+      {
+        "id": "frame200lvl",
+        "name": "Level 200 Frame",
+        "asset": "assets/player/frames/frame200lvl.png",
+        "requirement": {
+          "type": "level",
+          "value": 200
+        }
+      },
+      {
+        "id": "frame225lvl",
+        "name": "Level 225 Frame",
+        "asset": "assets/player/frames/frame225lvl.png",
+        "requirement": {
+          "type": "level",
+          "value": 225
+        }
+      },
+      {
+        "id": "frame250lvl",
+        "name": "Level 250 Frame",
+        "asset": "assets/player/frames/frame250lvl.png",
+        "requirement": {
+          "type": "level",
+          "value": 250
+        }
+      },
+      {
+        "id": "frame_beta",
+        "name": "Beta Tester Frame",
+        "asset": "assets/player/frames/frame_beta.png",
+        "requirement": {
+          "type": "entitlement",
+          "value": "beta"
+        }
+      },
+      {
+        "id": "frame_pre_reg",
+        "name": "Pre-registration Frame",
+        "asset": "assets/player/frames/frame_pre_reg.png",
+        "requirement": {
+          "type": "entitlement",
+          "value": "preRegistration"
+        }
+      },
+      {
+        "id": "frame_event_1",
+        "name": "Event Frame I",
+        "asset": "assets/player/frames/frame_event_1.png",
+        "requirement": {
+          "type": "entitlement",
+          "value": "event1"
+        }
+      },
+      {
+        "id": "frame_event_2",
+        "name": "Event Frame II",
+        "asset": "assets/player/frames/frame_event_2.png",
+        "requirement": {
+          "type": "entitlement",
+          "value": "event2"
+        }
+      },
+      {
+        "id": "frame_event_3",
+        "name": "Event Frame III",
+        "asset": "assets/player/frames/frame_event_3.png",
+        "requirement": {
+          "type": "entitlement",
+          "value": "event3"
+        }
+      },
+      {
+        "id": "frame_rank50",
+        "name": "Top 50 Frame",
+        "asset": "assets/player/frames/frame_rank50.png",
+        "requirement": {
+          "type": "bestWeeklyRank",
+          "value": 50
+        }
+      },
+      {
+        "id": "frame_rank3",
+        "name": "Top 3 Frame",
+        "asset": "assets/player/frames/frame_rank3.png",
+        "requirement": {
+          "type": "bestWeeklyRank",
+          "value": 3
+        }
+      },
+      {
+        "id": "frame_rank2",
+        "name": "Top 2 Frame",
+        "asset": "assets/player/frames/frame_rank2.png",
+        "requirement": {
+          "type": "bestWeeklyRank",
+          "value": 2
+        }
+      },
+      {
+        "id": "frame_rank1",
+        "name": "Top 1 Frame",
+        "asset": "assets/player/frames/frame_rank1.png",
+        "requirement": {
+          "type": "bestWeeklyRank",
+          "value": 1
+        }
+      }
+    ],
+    "social": {
+      "baseFriendSlots": 30,
+      "level20Bonus": 5,
+      "outgoingPerSlot": 1,
+      "incomingPerSlot": 1
+    },
+    "daily": {
+      "questCount": 5,
+      "questCoinMin": 150,
+      "questCoinMax": 300,
+      "completionCoins": 500,
+      "completionCommonChests": 1,
+      "completionEnergy": 15
+    },
+    "weekly": {
+      "coins": 3500,
+      "bloomGems": 20,
+      "rareChests": 1,
+      "energyDrink": "standard"
+    }
+  },
+  "skills": {
+    "nodes": {
+      "damage": {
+        "id": "damage",
+        "icon": "⚔",
+        "nameHu": "Sebzés",
+        "nameEn": "Damage",
+        "max": 5,
+        "value": 0.03,
+        "unit": "%",
+        "descHu": "+3% sebzés rangonként.",
+        "descEn": "+3% damage per rank.",
+        "unlock": 0
+      },
+      "maxHp": {
+        "id": "maxHp",
+        "icon": "♥",
+        "nameHu": "Max HP",
+        "nameEn": "Max HP",
+        "max": 5,
+        "value": 0.05,
+        "unit": "%",
+        "descHu": "+5% maximális HP rangonként.",
+        "descEn": "+5% maximum HP per rank.",
+        "unlock": 0
+      },
+      "orbXp": {
+        "id": "orbXp",
+        "icon": "✦",
+        "nameHu": "Orb XP",
+        "nameEn": "Orb XP Gain",
+        "max": 5,
+        "value": 0.04,
+        "unit": "%",
+        "descHu": "+4% XP az orbokból rangonként.",
+        "descEn": "+4% orb XP per rank.",
+        "unlock": 0
+      },
+      "movementSpeed": {
+        "id": "movementSpeed",
+        "icon": "➤",
+        "nameHu": "Mozgási sebesség",
+        "nameEn": "Movement Speed",
+        "max": 4,
+        "value": 0.02,
+        "unit": "%",
+        "descHu": "+2% mozgási sebesség rangonként.",
+        "descEn": "+2% movement speed per rank.",
+        "unlock": 5
+      },
+      "critChance": {
+        "id": "critChance",
+        "icon": "◎",
+        "nameHu": "Kritikus esély",
+        "nameEn": "Critical Chance",
+        "max": 5,
+        "value": 0.015,
+        "unit": "%",
+        "descHu": "+1,5% kritikus esély rangonként.",
+        "descEn": "+1.5% critical chance per rank.",
+        "unlock": 5
+      },
+      "luckChance": {
+        "id": "luckChance",
+        "icon": "♧",
+        "nameHu": "Szerencse",
+        "nameEn": "Luck Chance",
+        "max": 3,
+        "value": 0.02,
+        "unit": "%",
+        "descHu": "+2% általános drop-szerencse rangonként.",
+        "descEn": "+2% general drop luck per rank.",
+        "unlock": 5
+      },
+      "attackSpeed": {
+        "id": "attackSpeed",
+        "icon": "⚡",
+        "nameHu": "Támadási sebesség",
+        "nameEn": "Attack Speed",
+        "max": 4,
+        "value": 0.025,
+        "unit": "%",
+        "descHu": "+2,5% támadási sebesség rangonként.",
+        "descEn": "+2.5% attack speed per rank.",
+        "unlock": 10
+      },
+      "critDamage": {
+        "id": "critDamage",
+        "icon": "✹",
+        "nameHu": "Kritikus sebzés",
+        "nameEn": "Critical Damage",
+        "max": 5,
+        "value": 0.08,
+        "unit": "%",
+        "descHu": "+8% kritikus sebzés rangonként.",
+        "descEn": "+8% critical damage per rank.",
+        "unlock": 10
+      },
+      "damageReduction": {
+        "id": "damageReduction",
+        "icon": "⬡",
+        "nameHu": "Sebzéscsökkentés",
+        "nameEn": "Damage Reduction",
+        "max": 4,
+        "value": 0.02,
+        "unit": "%",
+        "descHu": "+2% bejövő sebzéscsökkentés rangonként.",
+        "descEn": "+2% incoming damage reduction per rank.",
+        "unlock": 10
+      },
+      "pickupRange": {
+        "id": "pickupRange",
+        "icon": "⌁",
+        "nameHu": "Felvételi távolság",
+        "nameEn": "Pickup Range",
+        "max": 5,
+        "value": 8,
+        "unit": "flat",
+        "descHu": "+8 felvételi távolság rangonként.",
+        "descEn": "+8 pickup range per rank.",
+        "unlock": 15
+      },
+      "hpRegen": {
+        "id": "hpRegen",
+        "icon": "✚",
+        "nameHu": "HP regeneráció",
+        "nameEn": "HP Regeneration",
+        "max": 5,
+        "value": 0.35,
+        "unit": "flat",
+        "descHu": "+0,35 HP/mp regeneráció rangonként.",
+        "descEn": "+0.35 HP/sec regeneration per rank.",
+        "unlock": 15
+      },
+      "cooldownReduction": {
+        "id": "cooldownReduction",
+        "icon": "◷",
+        "nameHu": "Skill cooldown",
+        "nameEn": "Skill Cooldown Reduction",
+        "max": 2,
+        "value": 0.04,
+        "unit": "%",
+        "descHu": "-4% skill cooldown rangonként.",
+        "descEn": "-4% skill cooldown per rank.",
+        "unlock": 15
+      },
+      "skillDamage": {
+        "id": "skillDamage",
+        "icon": "✧",
+        "nameHu": "Skill sebzés",
+        "nameEn": "Skill Damage",
+        "max": 3,
+        "value": 0.05,
+        "unit": "%",
+        "descHu": "+5% skill sebzés rangonként.",
+        "descEn": "+5% skill damage per rank.",
+        "unlock": 20
+      },
+      "bossDamage": {
+        "id": "bossDamage",
+        "icon": "♛",
+        "nameHu": "Boss sebzés",
+        "nameEn": "Boss Damage",
+        "max": 3,
+        "value": 0.04,
+        "unit": "%",
+        "descHu": "+4% boss sebzés rangonként.",
+        "descEn": "+4% boss damage per rank.",
+        "unlock": 20
+      },
+      "eliteDamage": {
+        "id": "eliteDamage",
+        "icon": "◆",
+        "nameHu": "Elite sebzés",
+        "nameEn": "Elite Damage",
+        "max": 3,
+        "value": 0.04,
+        "unit": "%",
+        "descHu": "+4% elite sebzés rangonként.",
+        "descEn": "+4% elite damage per rank.",
+        "unlock": 20
+      },
+      "coinGain": {
+        "id": "coinGain",
+        "icon": "●",
+        "nameHu": "Coin bevétel",
+        "nameEn": "Coin Gain",
+        "max": 3,
+        "value": 0.02,
+        "unit": "%",
+        "descHu": "+2% Coin bevétel rangonként.",
+        "descEn": "+2% Coin gain per rank.",
+        "unlock": 25
+      },
+      "itemDrop": {
+        "id": "itemDrop",
+        "icon": "▣",
+        "nameHu": "Item drop",
+        "nameEn": "Item Drop",
+        "max": 2,
+        "value": 0.015,
+        "unit": "%",
+        "descHu": "+1,5% extra item drop rangonként.",
+        "descEn": "+1.5% extra item drop per rank.",
+        "unlock": 25
+      },
+      "chestDrop": {
+        "id": "chestDrop",
+        "icon": "◇",
+        "nameHu": "Chest drop",
+        "nameEn": "Chest Drop",
+        "max": 2,
+        "value": 0.015,
+        "unit": "%",
+        "descHu": "+1,5% extra ládaesély rangonként.",
+        "descEn": "+1.5% extra chest chance per rank.",
+        "unlock": 25
+      }
+    },
+    "branches": [
+      {
+        "id": "attack",
+        "icon": "⚔",
+        "nameHu": "Támadás",
+        "nameEn": "Attack",
+        "color": "#ff6f9f",
+        "glow": "#ffb8d0",
+        "nodes": [
+          "damage",
+          "attackSpeed",
+          "critChance",
+          "critDamage",
+          "skillDamage",
+          "bossDamage"
+        ]
+      },
+      {
+        "id": "defense",
+        "icon": "♥",
+        "nameHu": "Védelem",
+        "nameEn": "Defense",
+        "color": "#68c6e8",
+        "glow": "#c8f1ff",
+        "nodes": [
+          "maxHp",
+          "movementSpeed",
+          "damageReduction",
+          "hpRegen",
+          "cooldownReduction",
+          "eliteDamage"
+        ]
+      },
+      {
+        "id": "utility",
+        "icon": "✦",
+        "nameHu": "Hasznosság",
+        "nameEn": "Utility",
+        "color": "#c58aff",
+        "glow": "#ead3ff",
+        "nodes": [
+          "orbXp",
+          "luckChance",
+          "pickupRange",
+          "coinGain",
+          "itemDrop",
+          "chestDrop"
+        ]
+      }
+    ]
+  },
+  "food": {
+    "coin_cookie": {
+      "name": "Coin Cookie",
+      "rarity": "Common",
+      "effect": "coin",
+      "value": 0.05,
+      "runs": 2,
+      "icon": "🍪",
+      "asset": "assets/items/buffs/coin_cookie.png",
+      "price": {
+        "coins": 220
+      }
+    },
+    "lucky_sakura_tea": {
+      "name": "Lucky Sakura Tea",
+      "rarity": "Common",
+      "effect": "chestDrop",
+      "value": 0.05,
+      "runs": 2,
+      "icon": "🍵",
+      "asset": "assets/items/buffs/lucky_sakura_tea.png",
+      "price": {
+        "coins": 260
+      }
+    },
+    "treasure_bento": {
+      "name": "Treasure Bento",
+      "rarity": "Rare",
+      "effect": "itemDrop",
+      "value": 0.1,
+      "runs": 3,
+      "icon": "🍱",
+      "asset": "assets/items/buffs/fancy_bento.png",
+      "price": {
+        "gems": 35
+      }
+    },
+    "warrior_steak": {
+      "name": "Warrior Steak",
+      "rarity": "Rare",
+      "effect": "damage",
+      "value": 0.08,
+      "runs": 3,
+      "icon": "🥩",
+      "asset": "assets/items/buffs/support_drink.png",
+      "price": {
+        "coins": 520
+      }
+    },
+    "spicy_noodles": {
+      "name": "Spicy Noodles",
+      "rarity": "Rare",
+      "effect": "attackSpeed",
+      "value": 0.08,
+      "runs": 3,
+      "icon": "🍜",
+      "asset": "assets/items/buffs/spicy_noodle.png",
+      "price": {
+        "coins": 540
+      }
+    },
+    "cherry_cake": {
+      "name": "Cherry Cake",
+      "rarity": "Epic",
+      "effect": "crit",
+      "value": 0.06,
+      "runs": 4,
+      "icon": "🍰",
+      "asset": "assets/items/buffs/cherry_cake.png",
+      "price": {
+        "gems": 70
+      }
+    },
+    "carrot_soup": {
+      "name": "Bunny Carrot Soup",
+      "rarity": "Common",
+      "effect": "moveSpeed",
+      "value": 0.05,
+      "runs": 2,
+      "icon": "🥕",
+      "asset": "assets/items/buffs/bunny_carrot_soup.png",
+      "price": {
+        "coins": 260
+      }
+    },
+    "healing_mochi": {
+      "name": "Healing Mochi",
+      "rarity": "Rare",
+      "effect": "maxHp",
+      "value": 0.1,
+      "runs": 3,
+      "icon": "🍡",
+      "asset": "assets/items/buffs/healing_mochi.png",
+      "price": {
+        "coins": 500
+      }
+    },
+    "magic_macaron": {
+      "name": "Magic Macaron",
+      "rarity": "Epic",
+      "effect": "cooldown",
+      "value": 0.1,
+      "runs": 4,
+      "icon": "🧁",
+      "asset": "assets/items/buffs/magic_macaron.png",
+      "price": {
+        "gems": 80
+      }
+    },
+    "golden_dumpling": {
+      "name": "Golden Dumpling",
+      "rarity": "Legendary",
+      "effect": "bundle",
+      "value": 0.12,
+      "runs": 5,
+      "icon": "🥟",
+      "asset": "assets/items/buffs/golden_dumplin.png",
+      "price": {
+        "gems": 150
+      }
+    }
+  },
+  "achievements": [
+    {
+      "id": "first_bloom",
+      "tier": 3,
+      "name": "Első Virágzás",
+      "desc": "Teljesítsd az első pályádat.",
+      "reward": {
+        "coins": 150,
+        "chests": {
+          "common": 1
+        }
+      }
+    },
+    {
+      "id": "growing_bunny",
+      "tier": 3,
+      "name": "Fejlődő Nyuszi",
+      "desc": "Érd el az 5. játékosszintet.",
+      "reward": {
+        "coins": 250,
+        "chests": {
+          "common": 1
+        }
+      }
+    },
+    {
+      "id": "petal_hunter",
+      "tier": 3,
+      "name": "Petal Hunter",
+      "desc": "Defeat 100 enemies.",
+      "reward": {
+        "coins": 220,
+        "chests": {
+          "common": 1
+        }
+      }
+    },
+    {
+      "id": "pocket_bloom",
+      "tier": 3,
+      "name": "Pocket Bloom",
+      "desc": "Earn 1,000 Coin in total.",
+      "reward": {
+        "coins": 250
+      }
+    },
+    {
+      "id": "chest_peek",
+      "tier": 3,
+      "name": "Chest Peek",
+      "desc": "Open 5 chests.",
+      "reward": {
+        "coins": 180,
+        "chests": {
+          "common": 1
+        }
+      }
+    },
+    {
+      "id": "gear_up",
+      "tier": 3,
+      "name": "Gear Up",
+      "desc": "Own 5 equipment items.",
+      "reward": {
+        "coins": 240,
+        "chests": {
+          "common": 1
+        }
+      }
+    },
+    {
+      "id": "star_seed",
+      "tier": 3,
+      "name": "Star Seed",
+      "desc": "Earn 5 stage stars.",
+      "reward": {
+        "coins": 300
+      }
+    },
+    {
+      "id": "meadow_path",
+      "tier": 3,
+      "name": "Meadow Path",
+      "desc": "Clear all five Meadow chapters.",
+      "reward": {
+        "coins": 350,
+        "chests": {
+          "common": 2
+        }
+      }
+    },
+    {
+      "id": "pathfinder",
+      "tier": 2,
+      "name": "Pathfinder",
+      "desc": "Complete 10 stage clears.",
+      "reward": {
+        "coins": 650,
+        "chests": {
+          "rare": 1
+        }
+      }
+    },
+    {
+      "id": "bloom_veteran",
+      "tier": 2,
+      "name": "Bloom Veteran",
+      "desc": "Reach Player Level 10.",
+      "reward": {
+        "coins": 700,
+        "chests": {
+          "common": 2
+        },
+        "bloomGems": 5
+      }
+    },
+    {
+      "id": "rift_hunter",
+      "tier": 2,
+      "name": "Rift Hunter",
+      "desc": "Defeat 1,000 enemies.",
+      "reward": {
+        "coins": 800,
+        "chests": {
+          "rare": 1
+        }
+      }
+    },
+    {
+      "id": "rare_find",
+      "tier": 2,
+      "name": "Rare Find",
+      "desc": "Own a Rare or better equipment item.",
+      "reward": {
+        "coins": 600,
+        "chests": {
+          "common": 2
+        },
+        "bloomGems": 5
+      }
+    },
+    {
+      "id": "star_gazer",
+      "tier": 2,
+      "name": "Star Gazer",
+      "desc": "Earn 15 stage stars.",
+      "reward": {
+        "coins": 750,
+        "chests": {
+          "rare": 1
+        }
+      }
+    },
+    {
+      "id": "chest_hunter",
+      "tier": 2,
+      "name": "Chest Hunter",
+      "desc": "Open 25 chests.",
+      "reward": {
+        "coins": 650,
+        "chests": {
+          "rare": 1
+        },
+        "bloomGems": 5
+      }
+    },
+    {
+      "id": "collector",
+      "tier": 2,
+      "name": "Collector",
+      "desc": "Own 20 equipment items.",
+      "reward": {
+        "coins": 850,
+        "chests": {
+          "rare": 1
+        }
+      }
+    },
+    {
+      "id": "night_survivor",
+      "tier": 2,
+      "name": "Night Survivor",
+      "desc": "Clear all five Meadow Night chapters.",
+      "reward": {
+        "coins": 900,
+        "chests": {
+          "rare": 1
+        },
+        "bloomGems": 8
+      }
+    },
+    {
+      "id": "powerful_bloom",
+      "tier": 2,
+      "name": "Powerful Bloom",
+      "desc": "Reach 1,000 total Power.",
+      "reward": {
+        "coins": 900,
+        "chests": {
+          "rare": 1
+        }
+      }
+    },
+    {
+      "id": "golden_miracle",
+      "tier": 1,
+      "name": "Golden Miracle",
+      "desc": "Own a Legendary equipment item.",
+      "reward": {
+        "coins": 1800,
+        "chests": {
+          "epic": 1
+        },
+        "bloomGems": 25
+      }
+    },
+    {
+      "id": "star_collector",
+      "tier": 1,
+      "name": "Star Collector",
+      "desc": "Earn 30 stage stars.",
+      "reward": {
+        "coins": 1700,
+        "chests": {
+          "rare": 2
+        },
+        "bloomGems": 20
+      }
+    },
+    {
+      "id": "savannah_hero",
+      "tier": 1,
+      "name": "Savannah Hero",
+      "desc": "Clear all five Savanna chapters.",
+      "reward": {
+        "coins": 1900,
+        "chests": {
+          "epic": 1
+        },
+        "bloomGems": 25
+      }
+    },
+    {
+      "id": "arsenal_in_bloom",
+      "tier": 1,
+      "name": "Arsenal in Bloom",
+      "desc": "Raise every Arsenal slot to Level 5.",
+      "reward": {
+        "coins": 2200,
+        "chests": {
+          "rare": 2
+        },
+        "bloomGems": 25
+      }
+    },
+    {
+      "id": "chest_master",
+      "tier": 1,
+      "name": "Chest Master",
+      "desc": "Open 100 chests.",
+      "reward": {
+        "coins": 2500,
+        "chests": {
+          "epic": 1
+        },
+        "bloomGems": 30
+      }
+    },
+    {
+      "id": "cherry_garden",
+      "tier": 1,
+      "name": "Cherry Garden",
+      "desc": "Own 10 Cherry skins.",
+      "reward": {
+        "coins": 2000,
+        "chests": {
+          "epic": 1
+        },
+        "bloomGems": 35
+      }
+    },
+    {
+      "id": "power_overflow",
+      "tier": 1,
+      "name": "Power Overflow",
+      "desc": "Reach 2,500 total Power.",
+      "reward": {
+        "coins": 2800,
+        "chests": {
+          "epic": 1
+        },
+        "bloomGems": 40
+      }
+    },
+    {
+      "id": "perfect_meadow",
+      "tier": 1,
+      "name": "My First Cozy World",
+      "desc": "Earn all 15 stars in World 1.",
+      "reward": {
+        "coins": 100,
+        "chests": {
+          "rare": 1
+        },
+        "bloomGems": 10,
+        "themes": [
+          "cozy_cherry"
+        ]
+      }
+    },
+    {
+      "id": "veteran_bunny",
+      "tier": 1,
+      "name": "Veteran Bunny",
+      "desc": "Reach Player Level 30.",
+      "reward": {
+        "coins": 4000,
+        "chests": {
+          "epic": 2
+        },
+        "bloomGems": 50
+      }
+    }
+  ],
+  "gearBase": {
+    "damage": 4,
+    "crit": 2.5,
+    "critDamage": 7,
+    "attackSpeed": 4.5,
+    "maxHp": 18,
+    "armor": 3.5,
+    "regen": 0.35,
+    "moveSpeed": 7,
+    "pickup": 14
+  },
+  "stages": [
+    {
+      "id": "world_1_1",
+      "world": 1,
+      "index": 1,
+      "name": "World 1-1",
+      "title": "Blooming Meadow",
+      "theme": "forest_day",
+      "goalKills": 120,
+      "maxEnemies": 34,
+      "raidEvery": 30,
+      "raidCount": 14,
+      "enemyPool": [
+        "pink_slime"
+      ],
+      "repeatReward": {
+        "coins": 90
+      },
+      "firstClearReward": {
+        "coins": 250,
+        "chests": {
+          "common": 1
+        }
+      },
+      "desc": "Az első pálya: több mob, raid hullámok, stabil progression.",
+      "splash": "assets/map/world1/world1_splashart_1.png",
+      "accountXp": 184
+    },
+    {
+      "id": "world_1_2",
+      "world": 1,
+      "index": 2,
+      "name": "World 1-2",
+      "title": "Petal Trail",
+      "theme": "forest_day",
+      "goalKills": 135,
+      "maxEnemies": 38,
+      "raidEvery": 34,
+      "raidCount": 16,
+      "enemyPool": [
+        "pink_slime",
+        "blue_slime"
+      ],
+      "repeatReward": {
+        "coins": 100
+      },
+      "firstClearReward": {
+        "coins": 320
+      },
+      "desc": "Gyorsabb spawn, több slime típus.",
+      "splash": "assets/map/world1/world1_splashart_1.png",
+      "accountXp": 227
+    },
+    {
+      "id": "world_1_3",
+      "world": 1,
+      "index": 3,
+      "name": "World 1-3",
+      "title": "Clover Crossing",
+      "theme": "forest_day",
+      "goalKills": 155,
+      "maxEnemies": 42,
+      "raidEvery": 38,
+      "raidCount": 18,
+      "enemyPool": [
+        "pink_slime",
+        "blue_slime",
+        "small_mushroom"
+      ],
+      "repeatReward": {
+        "coins": 110
+      },
+      "firstClearReward": {
+        "coins": 390
+      },
+      "desc": "Vegyes slime raid hullámok.",
+      "splash": "assets/map/world1/world1_splashart_2.png",
+      "accountXp": 269
+    },
+    {
+      "id": "world_1_4",
+      "world": 1,
+      "index": 4,
+      "name": "World 1-4",
+      "title": "Rooted Hollow",
+      "theme": "forest_day",
+      "goalKills": 175,
+      "maxEnemies": 48,
+      "raidEvery": 42,
+      "raidCount": 22,
+      "enemyPool": [
+        "blue_slime",
+        "small_mushroom",
+        "angry_ent"
+      ],
+      "repeatReward": {
+        "coins": 125
+      },
+      "firstClearReward": {
+        "coins": 470,
+        "chests": {
+          "common": 1
+        }
+      },
+      "desc": "Tankosabb slimeok, nagyobb raid nyomás.",
+      "splash": "assets/map/world1/world1_splashart_2.png",
+      "accountXp": 326
+    },
+    {
+      "id": "world_1_5",
+      "world": 1,
+      "index": 5,
+      "name": "World 1-5",
+      "title": "Slime Nest",
+      "theme": "forest_day",
+      "goalKills": 210,
+      "maxEnemies": 56,
+      "raidEvery": 46,
+      "raidCount": 25,
+      "enemyPool": [
+        "blue_slime",
+        "tank_blue_slime",
+        "small_mushroom",
+        "angry_ent"
+      ],
+      "boss": "slime_king",
+      "repeatReward": {
+        "coins": 150
+      },
+      "firstClearReward": {
+        "coins": 600,
+        "chests": {
+          "common": 1
+        }
+      },
+      "desc": "World 1 záró pálya mini boss-szal.",
+      "splash": "assets/map/world1/world1_splashart_3.png",
+      "accountXp": 411
+    },
+    {
+      "id": "world_2_1",
+      "world": 2,
+      "index": 1,
+      "name": "World 2-1",
+      "title": "Night Bloom",
+      "theme": "forest_night",
+      "goalKills": 145,
+      "maxEnemies": 40,
+      "raidEvery": 36,
+      "raidCount": 18,
+      "enemyPool": [
+        "ghost_slime",
+        "shadow_bat"
+      ],
+      "repeatReward": {
+        "coins": 140
+      },
+      "firstClearReward": {
+        "coins": 400
+      },
+      "desc": "Első éjszakai pálya rovar/pók enemy poollal.",
+      "splash": "assets/map/world2/world2_splashart_1.png",
+      "accountXp": 750
+    },
+    {
+      "id": "world_2_2",
+      "world": 2,
+      "index": 2,
+      "name": "World 2-2",
+      "title": "Moonlit Grove",
+      "theme": "forest_night",
+      "goalKills": 165,
+      "maxEnemies": 45,
+      "raidEvery": 40,
+      "raidCount": 21,
+      "enemyPool": [
+        "ghost_slime",
+        "shadow_bat",
+        "angry_mushroom"
+      ],
+      "repeatReward": {
+        "coins": 155
+      },
+      "firstClearReward": {
+        "coins": 500
+      },
+      "desc": "Éjszakai raid hullámok gyorsabb ellenfelekkel.",
+      "splash": "assets/map/world2/world2_splashart_1.png",
+      "accountXp": 924
+    },
+    {
+      "id": "world_2_3",
+      "world": 2,
+      "index": 3,
+      "name": "World 2-3",
+      "title": "Shadow Thicket",
+      "theme": "forest_night",
+      "goalKills": 185,
+      "maxEnemies": 50,
+      "raidEvery": 44,
+      "raidCount": 24,
+      "enemyPool": [
+        "shadow_bat",
+        "angry_mushroom",
+        "tank_blue_slime"
+      ],
+      "repeatReward": {
+        "coins": 170
+      },
+      "firstClearReward": {
+        "coins": 610
+      },
+      "desc": "Sűrűbb spawn, agresszívebb rovarok.",
+      "splash": "assets/map/world2/world2_splashart_2.png",
+      "accountXp": 1097
+    },
+    {
+      "id": "world_2_4",
+      "world": 2,
+      "index": 4,
+      "name": "World 2-4",
+      "title": "Echo Burrow",
+      "theme": "forest_night",
+      "goalKills": 205,
+      "maxEnemies": 56,
+      "raidEvery": 48,
+      "raidCount": 27,
+      "enemyPool": [
+        "ghost_slime",
+        "shadow_bat",
+        "dark_ent",
+        "tank_blue_slime"
+      ],
+      "repeatReward": {
+        "coins": 190
+      },
+      "firstClearReward": {
+        "coins": 740,
+        "chests": {
+          "common": 1
+        }
+      },
+      "desc": "Erős éjszakai raid pálya.",
+      "splash": "assets/map/world2/world2_splashart_2.png",
+      "accountXp": 1328
+    },
+    {
+      "id": "world_2_5",
+      "world": 2,
+      "index": 5,
+      "name": "World 2-5",
+      "title": "Midnight Den",
+      "theme": "forest_night",
+      "goalKills": 240,
+      "maxEnemies": 64,
+      "raidEvery": 52,
+      "raidCount": 30,
+      "enemyPool": [
+        "shadow_bat",
+        "angry_mushroom",
+        "dark_ent",
+        "tank_blue_slime"
+      ],
+      "boss": "night_queen",
+      "repeatReward": {
+        "coins": 230
+      },
+      "firstClearReward": {
+        "coins": 900,
+        "chests": {
+          "common": 1
+        }
+      },
+      "desc": "World 2 záró pálya mini boss-szal.",
+      "splash": "assets/map/world2/world2_splashart_3.png",
+      "accountXp": 1674
+    },
+    {
+      "id": "world_3_1",
+      "world": 3,
+      "index": 1,
+      "name": "World 3-1",
+      "title": "Golden Grasslands",
+      "theme": "savanna",
+      "goalKills": 180,
+      "maxEnemies": 48,
+      "raidEvery": 40,
+      "raidCount": 20,
+      "enemyPool": [
+        "small_mushroom",
+        "small_coyote"
+      ],
+      "repeatReward": {
+        "coins": 200
+      },
+      "firstClearReward": {
+        "coins": 650
+      },
+      "accountXp": 1572,
+      "desc": "World 1 and World 2 enemies meet on the open savanna.",
+      "splash": "assets/map/world3/world3_splashart_1.png"
+    },
+    {
+      "id": "world_3_2",
+      "world": 3,
+      "index": 2,
+      "name": "World 3-2",
+      "title": "Acacia Trail",
+      "theme": "savanna",
+      "goalKills": 200,
+      "maxEnemies": 52,
+      "raidEvery": 43,
+      "raidCount": 22,
+      "enemyPool": [
+        "small_coyote",
+        "falcon"
+      ],
+      "repeatReward": {
+        "coins": 220
+      },
+      "firstClearReward": {
+        "coins": 770
+      },
+      "accountXp": 1935,
+      "desc": "Mixed slime and insect waves among giant savanna trees.",
+      "splash": "assets/map/world3/world3_splashart_1.png"
+    },
+    {
+      "id": "world_3_3",
+      "world": 3,
+      "index": 3,
+      "name": "World 3-3",
+      "title": "Dry Riverbed",
+      "theme": "savanna",
+      "goalKills": 220,
+      "maxEnemies": 56,
+      "raidEvery": 46,
+      "raidCount": 24,
+      "enemyPool": [
+        "small_coyote",
+        "falcon",
+        "big_green_slime"
+      ],
+      "repeatReward": {
+        "coins": 245
+      },
+      "firstClearReward": {
+        "coins": 900,
+        "chests": {
+          "common": 1
+        }
+      },
+      "accountXp": 2297,
+      "desc": "Faster mixed raids through the dry riverbed.",
+      "splash": "assets/map/world3/world3_splashart_2.png"
+    },
+    {
+      "id": "world_3_4",
+      "world": 3,
+      "index": 4,
+      "name": "World 3-4",
+      "title": "Predator's Reach",
+      "theme": "savanna",
+      "goalKills": 245,
+      "maxEnemies": 60,
+      "raidEvery": 49,
+      "raidCount": 27,
+      "enemyPool": [
+        "big_green_slime",
+        "falcon",
+        "small_coyote"
+      ],
+      "repeatReward": {
+        "coins": 270
+      },
+      "firstClearReward": {
+        "coins": 1040
+      },
+      "accountXp": 2781,
+      "desc": "Tanky slimes and fast night creatures share the savanna.",
+      "splash": "assets/map/world3/world3_splashart_2.png"
+    },
+    {
+      "id": "world_3_5",
+      "world": 3,
+      "index": 5,
+      "name": "World 3-5",
+      "title": "Savanna Heart",
+      "theme": "savanna",
+      "goalKills": 275,
+      "maxEnemies": 66,
+      "raidEvery": 52,
+      "raidCount": 30,
+      "enemyPool": [
+        "big_green_slime",
+        "falcon",
+        "small_coyote",
+        "angry_ent"
+      ],
+      "boss": "cinder_guardian",
+      "repeatReward": {
+        "coins": 330
+      },
+      "firstClearReward": {
+        "coins": 1200,
+        "chests": {
+          "common": 1
+        }
+      },
+      "accountXp": 3506,
+      "desc": "The complete World 1 and World 2 enemy mix.",
+      "splash": "assets/map/world3/world3_splashart_3.png"
+    },
+    {
+      "id": "world_4_1",
+      "world": 4,
+      "index": 1,
+      "name": "World 4-1",
+      "title": "Crimson Dust",
+      "theme": "red_desert",
+      "goalKills": 210,
+      "maxEnemies": 52,
+      "raidEvery": 42,
+      "raidCount": 22,
+      "enemyPool": [
+        "red_slime",
+        "small_coyote"
+      ],
+      "repeatReward": {
+        "coins": 280
+      },
+      "firstClearReward": {
+        "coins": 900
+      },
+      "desc": "The first red desert route.",
+      "splash": "assets/map/world4/world4_splashart_1.png",
+      "accountXp": 2590
+    },
+    {
+      "id": "world_4_2",
+      "world": 4,
+      "index": 2,
+      "name": "World 4-2",
+      "title": "Cactus Expanse",
+      "theme": "red_desert",
+      "goalKills": 235,
+      "maxEnemies": 56,
+      "raidEvery": 45,
+      "raidCount": 24,
+      "enemyPool": [
+        "red_slime",
+        "spike_slime",
+        "falcon"
+      ],
+      "repeatReward": {
+        "coins": 310
+      },
+      "firstClearReward": {
+        "coins": 1080
+      },
+      "desc": "Dense cactus fields and tougher mixed waves.",
+      "splash": "assets/map/world4/world4_splashart_1.png",
+      "accountXp": 3188
+    },
+    {
+      "id": "world_4_3",
+      "world": 4,
+      "index": 3,
+      "name": "World 4-3",
+      "title": "Colossus Stones",
+      "theme": "red_desert",
+      "goalKills": 260,
+      "maxEnemies": 60,
+      "raidEvery": 48,
+      "raidCount": 27,
+      "enemyPool": [
+        "red_slime",
+        "spike_slime",
+        "small_coyote"
+      ],
+      "repeatReward": {
+        "coins": 345
+      },
+      "firstClearReward": {
+        "coins": 1280,
+        "chests": {
+          "common": 1
+        }
+      },
+      "desc": "The first colossal desert rock appears here.",
+      "splash": "assets/map/world4/world4_splashart_2.png",
+      "accountXp": 3786
+    },
+    {
+      "id": "world_4_4",
+      "world": 4,
+      "index": 4,
+      "name": "World 4-4",
+      "title": "Burning Ridge",
+      "theme": "red_desert",
+      "goalKills": 285,
+      "maxEnemies": 64,
+      "raidEvery": 51,
+      "raidCount": 30,
+      "enemyPool": [
+        "spike_slime",
+        "red_rock_golem",
+        "small_coyote"
+      ],
+      "repeatReward": {
+        "coins": 385
+      },
+      "firstClearReward": {
+        "coins": 1480
+      },
+      "desc": "Two rare colossal rocks shape the battlefield.",
+      "splash": "assets/map/world4/world4_splashart_2.png",
+      "accountXp": 4583
+    },
+    {
+      "id": "world_4_5",
+      "world": 4,
+      "index": 5,
+      "name": "World 4-5",
+      "title": "Red Titan Basin",
+      "theme": "red_desert",
+      "goalKills": 320,
+      "maxEnemies": 70,
+      "raidEvery": 54,
+      "raidCount": 34,
+      "enemyPool": [
+        "red_slime",
+        "spike_slime",
+        "red_rock_golem",
+        "falcon"
+      ],
+      "repeatReward": {
+        "coins": 470
+      },
+      "firstClearReward": {
+        "coins": 1700,
+        "chests": {
+          "common": 1
+        }
+      },
+      "desc": "Three fixed colossal rocks mark the final red desert arena.",
+      "splash": "assets/map/world4/world4_splashart_2.png",
+      "accountXp": 5778
+    },
+    {
+      "id": "world_5_1",
+      "world": 5,
+      "index": 1,
+      "name": "World 5-1",
+      "title": "Dune Gate",
+      "theme": "red_desert",
+      "goalKills": 260,
+      "maxEnemies": 52,
+      "raidEvery": 47,
+      "raidCount": 23,
+      "enemyPool": [
+        "spike_slime",
+        "sand_snake"
+      ],
+      "repeatReward": {
+        "coins": 400
+      },
+      "firstClearReward": {
+        "coins": 1300
+      },
+      "accountXp": 8871,
+      "splash": "assets/map/world5/world5_splashart_1.png",
+      "placeholder": true,
+      "desc": "Pre-beta placeholder chapter; artwork can be replaced without changing progression."
+    },
+    {
+      "id": "world_5_2",
+      "world": 5,
+      "index": 2,
+      "name": "World 5-2",
+      "title": "Glass Sands",
+      "theme": "red_desert",
+      "goalKills": 285,
+      "maxEnemies": 56,
+      "raidEvery": 50,
+      "raidCount": 26,
+      "enemyPool": [
+        "sand_snake",
+        "sand_scorpion"
+      ],
+      "repeatReward": {
+        "coins": 450
+      },
+      "firstClearReward": {
+        "coins": 1550
+      },
+      "accountXp": 10919,
+      "splash": "assets/map/world5/world5_splashart_1.png",
+      "placeholder": true,
+      "desc": "Pre-beta placeholder chapter; artwork can be replaced without changing progression."
+    },
+    {
+      "id": "world_5_3",
+      "world": 5,
+      "index": 3,
+      "name": "World 5-3",
+      "title": "Sunken Temple",
+      "theme": "red_desert",
+      "goalKills": 310,
+      "maxEnemies": 60,
+      "raidEvery": 53,
+      "raidCount": 29,
+      "enemyPool": [
+        "spike_slime",
+        "sand_snake",
+        "sand_scorpion"
+      ],
+      "repeatReward": {
+        "coins": 500
+      },
+      "firstClearReward": {
+        "coins": 1820
+      },
+      "accountXp": 12966,
+      "splash": "assets/map/world5/world5_splashart_2.png",
+      "placeholder": true,
+      "desc": "Pre-beta placeholder chapter; artwork can be replaced without changing progression."
+    },
+    {
+      "id": "world_5_4",
+      "world": 5,
+      "index": 4,
+      "name": "World 5-4",
+      "title": "Heat Mirage",
+      "theme": "red_desert",
+      "goalKills": 340,
+      "maxEnemies": 64,
+      "raidEvery": 56,
+      "raidCount": 32,
+      "enemyPool": [
+        "sand_snake",
+        "sand_scorpion",
+        "sand_ancient_ruin_guardian"
+      ],
+      "repeatReward": {
+        "coins": 560
+      },
+      "firstClearReward": {
+        "coins": 2100
+      },
+      "accountXp": 15696,
+      "splash": "assets/map/world5/world5_splashart_2.png",
+      "placeholder": true,
+      "desc": "Pre-beta placeholder chapter; artwork can be replaced without changing progression."
+    },
+    {
+      "id": "world_5_5",
+      "world": 5,
+      "index": 5,
+      "name": "World 5-5",
+      "title": "Desert Crown",
+      "theme": "red_desert",
+      "goalKills": 370,
+      "maxEnemies": 68,
+      "raidEvery": 59,
+      "raidCount": 35,
+      "enemyPool": [
+        "spike_slime",
+        "sand_scorpion",
+        "sand_ancient_ruin_guardian"
+      ],
+      "repeatReward": {
+        "coins": 680
+      },
+      "firstClearReward": {
+        "coins": 2400
+      },
+      "accountXp": 19790,
+      "splash": "assets/map/world5/world5_splashart_3.png",
+      "placeholder": true,
+      "desc": "Pre-beta placeholder chapter; artwork can be replaced without changing progression."
+    },
+    {
+      "id": "world_6_1",
+      "world": 6,
+      "index": 1,
+      "name": "World 6-1",
+      "title": "Broken Causeway",
+      "theme": "savanna",
+      "goalKills": 300,
+      "maxEnemies": 52,
+      "raidEvery": 47,
+      "raidCount": 23,
+      "enemyPool": [
+        "dark_ghostly_slime",
+        "dark_bat"
+      ],
+      "repeatReward": {
+        "coins": 560
+      },
+      "firstClearReward": {
+        "coins": 1900
+      },
+      "accountXp": 6554,
+      "splash": "assets/map/world6/world6_splashart_1.png",
+      "placeholder": true,
+      "desc": "Pre-beta placeholder chapter; artwork can be replaced without changing progression."
+    },
+    {
+      "id": "world_6_2",
+      "world": 6,
+      "index": 2,
+      "name": "World 6-2",
+      "title": "Echo Hall",
+      "theme": "savanna",
+      "goalKills": 330,
+      "maxEnemies": 56,
+      "raidEvery": 50,
+      "raidCount": 26,
+      "enemyPool": [
+        "dark_ghostly_slime",
+        "dark_bat",
+        "ancient_sentinel"
+      ],
+      "repeatReward": {
+        "coins": 630
+      },
+      "firstClearReward": {
+        "coins": 2250
+      },
+      "accountXp": 8067,
+      "splash": "assets/map/world6/world6_splashart_1.png",
+      "placeholder": true,
+      "desc": "Pre-beta placeholder chapter; artwork can be replaced without changing progression."
+    },
+    {
+      "id": "world_6_3",
+      "world": 6,
+      "index": 3,
+      "name": "World 6-3",
+      "title": "Ancient Garden",
+      "theme": "savanna",
+      "goalKills": 360,
+      "maxEnemies": 60,
+      "raidEvery": 53,
+      "raidCount": 29,
+      "enemyPool": [
+        "dark_bat",
+        "ancient_sentinel",
+        "ancient_guardian"
+      ],
+      "repeatReward": {
+        "coins": 700
+      },
+      "firstClearReward": {
+        "coins": 2620
+      },
+      "accountXp": 9579,
+      "splash": "assets/map/world6/world6_splashart_2.png",
+      "placeholder": true,
+      "desc": "Pre-beta placeholder chapter; artwork can be replaced without changing progression."
+    },
+    {
+      "id": "world_6_4",
+      "world": 6,
+      "index": 4,
+      "name": "World 6-4",
+      "title": "Moon Ruins",
+      "theme": "savanna",
+      "goalKills": 390,
+      "maxEnemies": 64,
+      "raidEvery": 56,
+      "raidCount": 32,
+      "enemyPool": [
+        "dark_ghostly_slime",
+        "ancient_sentinel",
+        "ancient_guardian"
+      ],
+      "repeatReward": {
+        "coins": 780
+      },
+      "firstClearReward": {
+        "coins": 3000
+      },
+      "accountXp": 11596,
+      "splash": "assets/map/world6/world6_splashart_2.png",
+      "placeholder": true,
+      "desc": "Pre-beta placeholder chapter; artwork can be replaced without changing progression."
+    },
+    {
+      "id": "world_6_5",
+      "world": 6,
+      "index": 5,
+      "name": "World 6-5",
+      "title": "Last Reliquary",
+      "theme": "savanna",
+      "goalKills": 430,
+      "maxEnemies": 68,
+      "raidEvery": 59,
+      "raidCount": 35,
+      "enemyPool": [
+        "dark_ghostly_slime",
+        "dark_bat",
+        "ancient_sentinel",
+        "ancient_guardian"
+      ],
+      "repeatReward": {
+        "coins": 950
+      },
+      "firstClearReward": {
+        "coins": 3400
+      },
+      "accountXp": 14621,
+      "splash": "assets/map/world6/world6_splashart_3.png",
+      "placeholder": true,
+      "desc": "Pre-beta placeholder chapter; artwork can be replaced without changing progression."
+    }
+  ],
+  "skins": [
+    {
+      "id": "cherry_default",
+      "name": "Base Cherry",
+      "rarity": "Common",
+      "emoji": "🐰",
+      "weapon": "Pink Bloom Orb",
+      "skill": "Bloom Dash",
+      "desc": "Az alap Cherry skin. Ranged Bloom Orb támadás és gyors Bloom Dash skill.",
+      "stats": {
+        "damage": 0,
+        "speed": 0
+      },
+      "gradient": [
+        "#ff73b9",
+        "#281226"
+      ],
+      "splash": "assets/player/skins/base_cherry/base_cherry_splashart.png",
+      "icon": "assets/player/skins/base_cherry/base_cherry_icon.png",
+      "archetype": "offensive",
+      "passive": "+2% ATK Bonus",
+      "nameKey": "skins.cherry_default.name",
+      "descriptionKey": "skins.cherry_default.desc",
+      "passiveKey": "skins.cherry_default.passive",
+      "skillNameKey": "skins.cherry_default.skill",
+      "skillDescriptionKey": "skins.cherry_default.skillDesc",
+      "skillIcon": "assets/ui/skill_icons/cherry_default_skill_icon.png",
+      "elementalAffinity": "cute"
+    },
+    {
+      "id": "fairy_cherry",
+      "name": "Fairy Cherry",
+      "rarity": "Rare",
+      "emoji": "🧚‍♀️",
+      "weapon": "Fairy Bloom Orb",
+      "skill": "Magic Burst",
+      "desc": "Tündér Cherry skin.",
+      "stats": {
+        "damage": 2,
+        "speed": 8
+      },
+      "gradient": [
+        "#b6ffd8",
+        "#ff9ed0"
+      ],
+      "splash": "assets/player/skins/fairy_cherry/fairy_cherry_splashart.jpg",
+      "icon": "assets/player/skins/fairy_cherry/fairy_cherry_icon.jpg",
+      "nameKey": "skins.fairy_cherry.name",
+      "descriptionKey": "skins.fairy_cherry.desc",
+      "passiveKey": "skins.fairy_cherry.passive",
+      "skillNameKey": "skins.fairy_cherry.skill",
+      "skillDescriptionKey": "skins.fairy_cherry.skillDesc",
+      "skillIcon": "assets/ui/skill_icons/fairy_cherry_skill_icon.png",
+      "elementalAffinity": "windborne"
+    },
+    {
+      "id": "beastclaw_cherry",
+      "name": "Beastclaw Cherry",
+      "rarity": "Rare",
+      "emoji": "🐺",
+      "weapon": "Beast Claws",
+      "skill": "Savage Rend",
+      "desc": "Közelharci karmolás és Savage Rend skill.",
+      "stats": {
+        "damage": 4,
+        "speed": 3
+      },
+      "gradient": [
+        "#f7e6d7",
+        "#4b271f"
+      ],
+      "splash": "assets/player/skins/beastclaw_cherry/beastclaw_cherry_splashart.png",
+      "icon": "assets/player/skins/beastclaw_cherry/beatclaw_cherry_icon.jpg",
+      "nameKey": "skins.beastclaw_cherry.name",
+      "descriptionKey": "skins.beastclaw_cherry.desc",
+      "passiveKey": "skins.beastclaw_cherry.passive",
+      "skillNameKey": "skins.beastclaw_cherry.skill",
+      "skillDescriptionKey": "skins.beastclaw_cherry.skillDesc",
+      "skillIcon": "assets/ui/skill_icons/beastclaw_cherry_skill_icon.png",
+      "elementalAffinity": "stoneveil"
+    },
+    {
+      "id": "ninja_cherry",
+      "name": "Ninja Cherry",
+      "rarity": "Epic",
+      "emoji": "🥷",
+      "weapon": "Twin Shuriken",
+      "skill": "Shuriken Shots",
+      "passive": "5% Poison Damage",
+      "desc": "Két shurikent dobó ranged skin. A skill 360°-ban shurikeneket lő ki és ideiglenesen megnöveli a movement speedet.",
+      "stats": {
+        "damage": 3,
+        "speed": 8
+      },
+      "gradient": [
+        "#9a62ff",
+        "#25143d"
+      ],
+      "splash": "assets/player/skins/ninja_cherry/ninja_cherry_splashart.png",
+      "icon": "assets/player/skins/ninja_cherry/ninja_cherry_icon.jpg",
+      "nameKey": "skins.ninja_cherry.name",
+      "descriptionKey": "skins.ninja_cherry.desc",
+      "passiveKey": "skins.ninja_cherry.passive",
+      "skillNameKey": "skins.ninja_cherry.skill",
+      "skillDescriptionKey": "skins.ninja_cherry.skillDesc",
+      "skillIcon": "assets/ui/skill_icons/ninja_cherry_skill_icon.png",
+      "elementalAffinity": "windborne"
+    },
+    {
+      "id": "succubus_cherry",
+      "name": "Succubus Cherry",
+      "rarity": "Legendary",
+      "emoji": "😈",
+      "weapon": "Crimson Claws",
+      "skill": "Soul Drain",
+      "passive": "5% HP Drain",
+      "desc": "Vörös karmolásokkal támad. A Soul Drain célkövető lelkekkel sebez, gyógyít, teljes HP-n pedig shieldet készít.",
+      "stats": {
+        "damage": 5,
+        "speed": 2
+      },
+      "gradient": [
+        "#ff9a3f",
+        "#4b1028"
+      ],
+      "splash": "assets/player/skins/succubus_cherry/succubus_cherry_splashart.png",
+      "icon": "assets/player/skins/succubus_cherry/succubus_cherry_icon.jpg",
+      "nameKey": "skins.succubus_cherry.name",
+      "descriptionKey": "skins.succubus_cherry.desc",
+      "passiveKey": "skins.succubus_cherry.passive",
+      "skillNameKey": "skins.succubus_cherry.skill",
+      "skillDescriptionKey": "skins.succubus_cherry.skillDesc",
+      "skillIcon": "assets/ui/skill_icons/succubus_cherry_skill_icon.png",
+      "elementalAffinity": "abyssal"
+    },
+    {
+      "id": "warrior_cherry",
+      "splash": "assets/player/skins/warrior_cherry/warrior_cherry_splashart.png",
+      "icon": "assets/player/skins/warrior_cherry/warrior_cherry_icon.jpg",
+      "name": "Warrior Cherry",
+      "rarity": "Rare",
+      "emoji": "⚔️",
+      "weapon": "Warrior Sword",
+      "skill": "Whirlwind",
+      "passive": "+5% HP Bonus",
+      "desc": "Közelharci kardforgató Cherry. A Whirlwind körbeforduló területi kardcsapásokkal sebzi a körülötte lévő ellenfeleket.",
+      "stats": {
+        "damage": 4,
+        "speed": 0
+      },
+      "gradient": [
+        "#5fb8ff",
+        "#173b70"
+      ],
+      "nameKey": "skins.warrior_cherry.name",
+      "descriptionKey": "skins.warrior_cherry.desc",
+      "passiveKey": "skins.warrior_cherry.passive",
+      "skillNameKey": "skins.warrior_cherry.skill",
+      "skillDescriptionKey": "skins.warrior_cherry.skillDesc",
+      "skillIcon": "assets/ui/skill_icons/warrior_cherry_skill_icon.png",
+      "elementalAffinity": "stoneveil"
+    },
+    {
+      "id": "wuxia_sakura_cherry",
+      "name": "Wuxia Sakura Cherry",
+      "rarity": "Legendary",
+      "emoji": "🌸",
+      "weapon": "Twin Sakura Jian",
+      "skill": "Blossom Spin",
+      "passive": "Every 10 kills: -30% remaining Skill CD",
+      "uniquePassive": "+5% Movement Speed · +5% Attack Speed · Sakura petal trail",
+      "desc": "Legendary dual-sword melee skin. Every 10 defeated enemies reduces the remaining Blossom Spin cooldown by 30%. Wuxia Sakura Cherry moves 5% faster, attacks 5% faster, and leaves small fading sakura petals while walking. Blossom Spin cuts a medium area and grants a 2% movement-speed burst that fades to zero over one second.",
+      "stats": {
+        "damage": 0,
+        "speed": 0
+      },
+      "gradient": [
+        "#ffb2d3",
+        "#5b1839"
+      ],
+      "splash": "assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_splashart.jpg",
+      "icon": "assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_icon.jpg",
+      "nameKey": "skins.wuxia_sakura_cherry.name",
+      "descriptionKey": "skins.wuxia_sakura_cherry.desc",
+      "passiveKey": "skins.wuxia_sakura_cherry.passive",
+      "skillNameKey": "skins.wuxia_sakura_cherry.skill",
+      "skillDescriptionKey": "skins.wuxia_sakura_cherry.skillDesc",
+      "skillIcon": "assets/ui/skill_icons/wuxia_sakura_cherry_skill_icon.png",
+      "elementalAffinity": "celestial"
+    },
+    {
+      "id": "mage_cherry",
+      "name": "Mage Cherry",
+      "rarity": "Rare",
+      "emoji": "🔮",
+      "weapon": "Bloom Staff",
+      "skill": "Magical Shot",
+      "passive": "+5% HP recovery",
+      "desc": "A staff-wielding ranged Cherry. Magical Shot releases five homing magic orbs; all five focus the same target when only one enemy is present.",
+      "stats": {
+        "damage": 2,
+        "speed": 0
+      },
+      "gradient": [
+        "#ff9fd6",
+        "#4c245f"
+      ],
+      "icon": "assets/ui/skin_thumbs/mage_cherry.webp",
+      "splash": "assets/player/skins/mage_cherry/mage_cherry_splashart.png?v=090-hf1",
+      "nameKey": "skins.mage_cherry.name",
+      "descriptionKey": "skins.mage_cherry.desc",
+      "passiveKey": "skins.mage_cherry.passive",
+      "skillNameKey": "skins.mage_cherry.skill",
+      "skillDescriptionKey": "skins.mage_cherry.skillDesc",
+      "skillIcon": "assets/ui/skill_icons/mage_cherry_skill_icon.png",
+      "elementalAffinity": "blaze"
+    },
+    {
+      "id": "archer_cherry",
+      "name": "Archer Cherry",
+      "rarity": "Rare",
+      "emoji": "🏹",
+      "weapon": "Bloom Bow",
+      "skill": "Four Arrow Shot",
+      "passive": "+10% critical chance",
+      "desc": "A mobile ranged Cherry. Her skill fires four arrows in a wide cone while her raised bow stays clear during movement.",
+      "stats": {
+        "damage": 2,
+        "speed": 4
+      },
+      "gradient": [
+        "#ffb4ce",
+        "#5d392a"
+      ],
+      "icon": "assets/player/skins/archer_cherry/archer_cherry_icon.jpg",
+      "splash": "assets/player/skins/archer_cherry/archer_cherry_splashart.png",
+      "nameKey": "skins.archer_cherry.name",
+      "descriptionKey": "skins.archer_cherry.desc",
+      "passiveKey": "skins.archer_cherry.passive",
+      "skillNameKey": "skins.archer_cherry.skill",
+      "skillDescriptionKey": "skins.archer_cherry.skillDesc",
+      "skillIcon": "assets/ui/skill_icons/archer_cherry_skill_icon.png",
+      "elementalAffinity": "windborne"
+    },
+    {
+      "id": "cake_deliver_cherry",
+      "name": "Cake Deliver Cherry",
+      "rarity": "Common",
+      "archetype": "hybrid",
+      "emoji": "🐰",
+      "weapon": "Pink Bloom Orb",
+      "skill": "Pink Burst",
+      "passive": "+1% ATK · +1% HP",
+      "passiveHu": "+1% ATK · +1% HP",
+      "passiveEn": "+1% ATK · +1% HP",
+      "skillHu": "Pink Burst · sebzés, hátralökés, +5% mozgás 1 mp-ig",
+      "skillEn": "Pink Burst · damage, knockback, +5% movement for 1s",
+      "desc": "Pink Burst · damage, knockback, +5% movement for 1s",
+      "stats": {
+        "damage": 0,
+        "speed": 0
+      },
+      "gradient": [
+        "#ffd0df",
+        "#8d335e"
+      ],
+      "splash": "assets/player/skins/cake_deliver_cherry/cake_deliver_cherry_splashart.png",
+      "icon": "assets/player/skins/cake_deliver_cherry/cake_delivery_cherry_icon.jpg",
+      "nameKey": "skins.cake_deliver_cherry.name",
+      "descriptionKey": "skins.cake_deliver_cherry.desc",
+      "passiveKey": "skins.cake_deliver_cherry.passive",
+      "skillNameKey": "skins.cake_deliver_cherry.skill",
+      "skillDescriptionKey": "skins.cake_deliver_cherry.skillDesc",
+      "skillIcon": "assets/ui/skill_icons/cake_delivery_cherry_skill_icon.png",
+      "elementalAffinity": "blaze"
+    },
+    {
+      "id": "kimono_cherry",
+      "name": "Kimono Cherry",
+      "rarity": "Common",
+      "archetype": "support",
+      "emoji": "🐰",
+      "weapon": "Pink Bloom Orb",
+      "skill": "Healing",
+      "passive": "+1% Movement Speed · +1% HP Recovery",
+      "passiveHu": "+1% mozgási sebesség · +1% HP regeneráció",
+      "passiveEn": "+1% Movement Speed · +1% HP Recovery",
+      "skillHu": "Healing · 40% HP és +5% mozgás 2 mp-ig",
+      "skillEn": "Healing · restore 40% HP and +5% movement for 2s",
+      "desc": "Healing · restore 40% HP and +5% movement for 2s",
+      "stats": {
+        "damage": 0,
+        "speed": 0
+      },
+      "gradient": [
+        "#ffe3ec",
+        "#a44275"
+      ],
+      "splash": "assets/player/skins/kimono_cherry/kimono_cherry_splashart.png",
+      "icon": "assets/player/skins/kimono_cherry/kimono_cherry_icon.jpg",
+      "nameKey": "skins.kimono_cherry.name",
+      "descriptionKey": "skins.kimono_cherry.desc",
+      "passiveKey": "skins.kimono_cherry.passive",
+      "skillNameKey": "skins.kimono_cherry.skill",
+      "skillDescriptionKey": "skins.kimono_cherry.skillDesc",
+      "skillIcon": "assets/ui/skill_icons/kimono_cherry_skill_icon.png",
+      "elementalAffinity": "tidecall"
+    },
+    {
+      "id": "pajama_cherry",
+      "name": "Pajama Cherry",
+      "rarity": "Common",
+      "archetype": "defensive",
+      "emoji": "🐰",
+      "weapon": "Pink Bloom Orb",
+      "skill": "Shield",
+      "passive": "+2% HP Bonus",
+      "passiveHu": "+2% HP bónusz",
+      "passiveEn": "+2% HP Bonus",
+      "skillHu": "Shield · 2 mp védelem és 10% HP gyógyítás",
+      "skillEn": "Shield · block damage for 2s and restore 10% HP",
+      "desc": "Shield · block damage for 2s and restore 10% HP",
+      "stats": {
+        "damage": 0,
+        "speed": 0
+      },
+      "gradient": [
+        "#ffc9e4",
+        "#603153"
+      ],
+      "splash": "assets/player/skins/pajama_cherry/pajama_cherry_splashart.png",
+      "icon": "assets/player/skins/pajama_cherry/pajama_cherry_icon.jpg",
+      "nameKey": "skins.pajama_cherry.name",
+      "descriptionKey": "skins.pajama_cherry.desc",
+      "passiveKey": "skins.pajama_cherry.passive",
+      "skillNameKey": "skins.pajama_cherry.skill",
+      "skillDescriptionKey": "skins.pajama_cherry.skillDesc",
+      "skillIcon": "assets/ui/skill_icons/pajama_cherry_skill_icon.png",
+      "elementalAffinity": "tidecall"
+    },
+    {
+      "id": "school_uniform_cherry",
+      "name": "School Uniform Cherry",
+      "rarity": "Common",
+      "archetype": "hybrid",
+      "emoji": "🐰",
+      "weapon": "Pink Bloom Orb",
+      "skill": "Pink Burst",
+      "passive": "+1% ATK · +1% HP",
+      "passiveHu": "+1% ATK · +1% HP",
+      "passiveEn": "+1% ATK · +1% HP",
+      "skillHu": "Pink Burst · sebzés, hátralökés, +5% mozgás 1 mp-ig",
+      "skillEn": "Pink Burst · damage, knockback, +5% movement for 1s",
+      "desc": "Pink Burst · damage, knockback, +5% movement for 1s",
+      "stats": {
+        "damage": 0,
+        "speed": 0
+      },
+      "gradient": [
+        "#ffbad4",
+        "#76304d"
+      ],
+      "splash": "assets/player/skins/school_uniform_cherry/school_uniform_cherry_splashart.png",
+      "icon": "assets/player/skins/school_uniform_cherry/school_uniform_cherry_icon.jpg",
+      "nameKey": "skins.school_uniform_cherry.name",
+      "descriptionKey": "skins.school_uniform_cherry.desc",
+      "passiveKey": "skins.school_uniform_cherry.passive",
+      "skillNameKey": "skins.school_uniform_cherry.skill",
+      "skillDescriptionKey": "skins.school_uniform_cherry.skillDesc",
+      "skillIcon": "assets/ui/skill_icons/school_uniform_cherry_skill_icon.png",
+      "elementalAffinity": "blaze"
+    },
+    {
+      "id": "sport_cherry",
+      "name": "Sport Cherry",
+      "rarity": "Common",
+      "archetype": "defensive",
+      "emoji": "🐰",
+      "weapon": "Pink Bloom Orb",
+      "skill": "Shield",
+      "passive": "+2% HP Bonus",
+      "passiveHu": "+2% HP bónusz",
+      "passiveEn": "+2% HP Bonus",
+      "skillHu": "Shield · 2 mp védelem és 10% HP gyógyítás",
+      "skillEn": "Shield · block damage for 2s and restore 10% HP",
+      "desc": "Shield · block damage for 2s and restore 10% HP",
+      "stats": {
+        "damage": 0,
+        "speed": 0
+      },
+      "gradient": [
+        "#ff9fc8",
+        "#633354"
+      ],
+      "splash": "assets/player/skins/sport_cherry/sport_cherry_splashart.png",
+      "icon": "assets/player/skins/sport_cherry/sport_cherry_icon.jpg",
+      "nameKey": "skins.sport_cherry.name",
+      "descriptionKey": "skins.sport_cherry.desc",
+      "passiveKey": "skins.sport_cherry.passive",
+      "skillNameKey": "skins.sport_cherry.skill",
+      "skillDescriptionKey": "skins.sport_cherry.skillDesc",
+      "skillIcon": "assets/ui/skill_icons/sport_cherry_skill_icon.png",
+      "elementalAffinity": "stoneveil"
+    }
+  ],
+  "gearTypes": {
+    "Crimson": {
+      "label": "Crimson",
+      "role": "Offensive",
+      "emoji": "🔴",
+      "stats": [
+        "damage",
+        "crit",
+        "critDamage",
+        "attackSpeed"
+      ]
+    },
+    "Azure": {
+      "label": "Azure",
+      "role": "Defensive",
+      "emoji": "🔵",
+      "stats": [
+        "maxHp",
+        "armor",
+        "regen"
+      ]
+    },
+    "Verdant": {
+      "label": "Verdant",
+      "role": "Hybrid",
+      "emoji": "🟢",
+      "stats": [
+        "damage",
+        "maxHp",
+        "moveSpeed",
+        "pickup"
+      ]
+    },
+    "Golden": {
+      "label": "Golden",
+      "role": "Luck / Economy",
+      "emoji": "🟡",
+      "stats": [
+        "crit",
+        "pickup",
+        "moveSpeed",
+        "attackSpeed"
+      ]
+    },
+    "Violet": {
+      "label": "Violet",
+      "role": "Skill / Critical",
+      "emoji": "🟣",
+      "stats": [
+        "damage",
+        "crit",
+        "critDamage",
+        "attackSpeed"
+      ]
+    }
+  },
+  "rarities": {
+    "Common": {
+      "mult": 1,
+      "stats": 1,
+      "sell": 4,
+      "color": "#f0f0f0",
+      "weight": 60
+    },
+    "Uncommon": {
+      "mult": 1.35,
+      "stats": 2,
+      "sell": 8,
+      "color": "#79ee96",
+      "weight": 25
+    },
+    "Rare": {
+      "mult": 1.8,
+      "stats": 3,
+      "sell": 16,
+      "color": "#68c8ff",
+      "weight": 10
+    },
+    "Epic": {
+      "mult": 2.4,
+      "stats": 3,
+      "sell": 35,
+      "color": "#c882ff",
+      "weight": 4
+    },
+    "Legendary": {
+      "mult": 3.15,
+      "stats": 4,
+      "sell": 80,
+      "color": "#ffbc54",
+      "weight": 1
+    }
+  }
+}

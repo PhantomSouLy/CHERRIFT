@@ -317,8 +317,8 @@
       intro.textContent = phone
         ? ""
         : copy(
-            "Jelentkezz be Discorddal a felhőmentéshez, vagy folytasd vendégként ezen az eszközön.",
-            "Sign in with Discord for cloud saves, or continue as a Guest on this device."
+            "Jelentkezz be Discorddal a játékhoz és a fejlődéshez, vagy nézz körül vendégként.",
+            "Sign in with Discord to play and progress, or preview the menus as a Guest."
           );
     }
 
@@ -393,12 +393,12 @@
     if (status) {
       status.textContent = isPhoneBoot()
         ? copy(
-            "Vendég módban a mentéseid elvesznek!\nBizonyos funkciók nem elérhetőek ebben a módban.",
-            "Guest-mode saves can be lost!\nSome features are unavailable in this mode."
+            "Vendégként a menüket nézheted meg. A játékhoz és a fejlődéshez online belépés kell.",
+            "Guest mode previews the menus. Gameplay and progression require an online account."
           )
         : copy(
-            "A vendégmentés csak ebben a böngészőben marad meg.",
-            "Guest progress is stored only in this browser."
+            "Vendégként a menüket nézheted meg. A játékhoz és a fejlődéshez online belépés kell.",
+            "Guest mode previews the menus. Gameplay and progression require an online account."
           );
     }
 
