@@ -4,6 +4,7 @@
   "buildId": "1000-online-integrity",
   "entrypoints": {
     "application": "src/cherrift_app.js",
+    "gunner": "src/cherrift_gunner.js",
     "runtime": "src/cherrift_runtime.js",
     "auth": "src/cherrift_auth.js",
     "networkGuard": "src/cherrift_network_guard.js",

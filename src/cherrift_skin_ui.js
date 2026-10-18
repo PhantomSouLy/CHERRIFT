@@ -28,6 +28,7 @@
 
   const SKIN_ELEMENTS = Object.freeze({
     cherry_default:"cute",
+    gunner_cherry:"cute",
     archer_cherry:"windborne",
     beastclaw_cherry:"stoneveil",
     cake_deliver_cherry:"blaze",
@@ -46,6 +47,10 @@
   // Canonical UI art for every shipped Cherry skin except Mage Cherry.
   // Mage intentionally keeps its existing data untouched.
   const SKIN_ASSETS = Object.freeze({
+    gunner_cherry:Object.freeze({
+      icon:"assets/player/skins/gunner_cherry/gunner_cherry_icon.png",
+      splash:"assets/player/skins/gunner_cherry/splashart.png"
+    }),
     cherry_default:Object.freeze({
       icon:"assets/player/skins/base_cherry/base_cherry_icon.png",
       splash:"assets/player/skins/base_cherry/base_cherry_splashart.png"

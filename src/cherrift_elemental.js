@@ -29,6 +29,7 @@
 
   const SKIN_ELEMENTS = Object.freeze({
     cherry_default:"cute",
+    gunner_cherry:"cute",
     archer_cherry:"windborne",
     beastclaw_cherry:"stoneveil",
     cake_deliver_cherry:"blaze",

@@ -1,0 +1,93 @@
+{
+  "id": "gunner_cherry",
+  "frame": {
+    "width": 192,
+    "height": 192
+  },
+  "pivot": {
+    "x": 96,
+    "ground_y": 184
+  },
+  "states": {
+    "idle": {
+      "source": "idle.png",
+      "frames": 4,
+      "sourceRows": [
+        "down",
+        "up",
+        "right",
+        "left"
+      ],
+      "dirs": {
+        "down": "strips/gunner_cherry_idle_down.png",
+        "up": "strips/gunner_cherry_idle_up.png",
+        "right": "strips/gunner_cherry_idle_right.png",
+        "left": "strips/gunner_cherry_idle_left.png"
+      }
+    },
+    "walk": {
+      "source": "walk.png",
+      "frames": 6,
+      "sourceRows": [
+        "down",
+        "up",
+        "left",
+        "right"
+      ],
+      "dirs": {
+        "down": "strips/gunner_cherry_walk_down.png",
+        "up": "strips/gunner_cherry_walk_up.png",
+        "left": "strips/gunner_cherry_walk_left.png",
+        "right": "strips/gunner_cherry_walk_right.png"
+      }
+    },
+    "attack": {
+      "source": "attack_idle.png",
+      "frames": 6,
+      "sourceRows": [
+        "down",
+        "up",
+        "right",
+        "left"
+      ],
+      "dirs": {
+        "down": "strips/gunner_cherry_attack_down.png",
+        "up": "strips/gunner_cherry_attack_up.png",
+        "right": "strips/gunner_cherry_attack_right.png",
+        "left": "strips/gunner_cherry_attack_left.png"
+      }
+    },
+    "attackMove": {
+      "source": "attack_walk.png",
+      "frames": 6,
+      "sourceRows": [
+        "down",
+        "up",
+        "left",
+        "right"
+      ],
+      "dirs": {
+        "down": "strips/gunner_cherry_attackMove_down.png",
+        "up": "strips/gunner_cherry_attackMove_up.png",
+        "left": "strips/gunner_cherry_attackMove_left.png",
+        "right": "strips/gunner_cherry_attackMove_right.png"
+      }
+    },
+    "skill": {
+      "source": "skill.png",
+      "frames": 8,
+      "sourceRows": [
+        "down",
+        "up",
+        "left",
+        "right"
+      ],
+      "dirs": {
+        "down": "strips/gunner_cherry_skill_down.png",
+        "up": "strips/gunner_cherry_skill_up.png",
+        "left": "strips/gunner_cherry_skill_left.png",
+        "right": "strips/gunner_cherry_skill_right.png"
+      }
+    }
+  }
+}
