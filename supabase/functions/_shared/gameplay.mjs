@@ -568,7 +568,8 @@ export function applyGameAction(current, operation, params = {}, options = {}) {
   if (operation === "refresh_state") {
     // Server time alone owns daily rollover, Energy regeneration and login days.
   } else if (operation === "start_run") {
-    const stage = catalog.stages.find((x) => x.id === params.stage_id);
+    const training = params.stage_id === "training_test";
+    const stage = training ? {id:"training_test",training:true} : catalog.stages.find((x) => x.id === params.stage_id);
     if (!stage) fail("invalid_stage");
     if (
       online.run &&
@@ -576,8 +577,13 @@ export function applyGameAction(current, operation, params = {}, options = {}) {
       !online.run.ended
     )
       fail("run_already_active");
-    if (!stageAllowed(s, stage)) fail("stage_locked");
-    if (s.energy < 5) fail("not_enough_energy");
+    if (training) {
+      const title = s.profile.activeTitle;
+      if (!["gm","senior_gm","head_gm"].includes(title) || !s.ownedTitles.includes(title)) fail("stage_locked");
+    } else {
+      if (!stageAllowed(s, stage)) fail("stage_locked");
+      if (s.energy < 5) fail("not_enough_energy");
+    }
     online.run = {
       id: id(),
       stageId: stage.id,
@@ -585,7 +591,12 @@ export function applyGameAction(current, operation, params = {}, options = {}) {
       star: 0,
       kills: 0,
       ended: false,
+      ...(training ? {training:true} : {}),
     };
+    s.selectedStageId = stage.id;
+    // Training has a server-authorized ticket, but never spends Energy,
+    // consumes run buffs, counts a run, or grants progression.
+    if (training) return {save:s,rewards};
     s.stats.runs++;
     for (const buff of s.buffs.active)
       buff.runs = Math.max(0, n(buff.runs) - 1);
@@ -596,6 +607,11 @@ export function applyGameAction(current, operation, params = {}, options = {}) {
   } else if (operation === "checkpoint_run" || operation === "end_run") {
     const run = online.run;
     if (!run || run.id !== params.run_id || run.ended) fail("invalid_run");
+    if (run.training) {
+      if (operation !== "end_run" || n(params.star) || n(params.kills)) fail("invalid_run_progress");
+      run.ended = true;
+      return {save:s,rewards};
+    }
     const stage = catalog.stages.find((x) => x.id === run.stageId),
       elapsed = (now - run.startedAt) / 1000,
       kills = n(params.kills),

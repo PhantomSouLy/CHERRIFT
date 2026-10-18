@@ -47,6 +47,7 @@
       guestDisabled:"A vendégmód ebben a tesztidőszakban nem érhető el.",
       connected:"Discord-fiók csatlakoztatva",
       cloudActive:"Discord mód · Supabase felhőmentés",
+      serverUpdateRequired:"Discorddal bejelentkezve · játékszerver-frissítés szükséges",
       offlineAccount:"Discord mód · kapcsolat helyreállítása szükséges",
       localOnly:"Vendégmód · csak helyi mentés",
       signOut:"Kijelentkezés",
@@ -81,6 +82,7 @@
       guestDisabled:"Guest mode is unavailable during this test period.",
       connected:"Discord account connected",
       cloudActive:"Discord mode · Supabase cloud save",
+      serverUpdateRequired:"Signed in with Discord · game server update required",
       offlineAccount:"Discord mode · reconnect to continue",
       localOnly:"Guest mode · local save only",
       signOut:"Sign out",
@@ -824,7 +826,7 @@
       if (name) name.textContent = account?.name || (language() === "hu" ? "Vendég" : "Guest");
       if (description) {
         description.textContent = account
-          ? text(runtime.cloudReady ? "cloudActive" : "offlineAccount")
+          ? text(runtime.cloudReady ? runtime.onlinePolicy ? "cloudActive" : "serverUpdateRequired" : "offlineAccount")
           : text("localOnly");
       }
       if (button) {
@@ -837,7 +839,7 @@
     const page = q('[data-v060-settings-page="account"]');
     if (page) {
       const accountDescription = account
-        ? text(runtime.cloudReady ? "accountReady" : "accountOffline")
+        ? text(runtime.cloudReady ? runtime.onlinePolicy ? "accountReady" : "serverUpdateRequired" : "accountOffline")
         : text("guestAccount");
       const avatar = account?.avatar
         ? `<img src="${escapeHtml(account.avatar)}" alt="" referrerpolicy="no-referrer" draggable="false">`
@@ -847,7 +849,7 @@
         `<header><small>${escapeHtml(text("accountKicker"))}</small><h3>${escapeHtml(text("account"))}</h3><p>${escapeHtml(text("accountIntro"))}</p></header>`,
         `<article class="auth-account-v064 ${account ? "connected" : "guest"}">`,
           `<div class="auth-account-avatar-v064">${avatar}</div>`,
-          `<div class="auth-account-copy-v064"><small>${escapeHtml(account ? text(runtime.cloudReady ? "cloudActive" : "offlineAccount") : text("localOnly"))}</small><h4>${escapeHtml(account?.name || (language() === "hu" ? "Vendég" : "Guest"))}</h4><p>${escapeHtml(accountDescription)}</p></div>`,
+          `<div class="auth-account-copy-v064"><small>${escapeHtml(account ? text(runtime.cloudReady ? runtime.onlinePolicy ? "cloudActive" : "serverUpdateRequired" : "offlineAccount") : text("localOnly"))}</small><h4>${escapeHtml(account?.name || (language() === "hu" ? "Vendég" : "Guest"))}</h4><p>${escapeHtml(accountDescription)}</p></div>`,
           `<button type="button" data-auth-action="${account ? "signout" : "open"}">${escapeHtml(account ? text("signOut") : text("discordLogin"))}</button>`,
         '</article>',
         account && hasRecovery(account.id)
@@ -1044,12 +1046,12 @@
       runtime.reconnecting ||
       runtime.mode !== "discord" ||
       !runtime.session?.user ||
-      runtime.cloudReady
+      (runtime.cloudReady && runtime.onlinePolicy)
     ) return false;
     runtime.reconnecting = true;
     const context = accountContext();
     try {
-      if (runtime.pendingSave && runtime.lastCloudSavedAt) {
+      if (runtime.pendingSave && runtime.lastCloudSavedAt && runtime.onlinePolicy) {
         runtime.cloudReady = true;
         await flushCloudSave();
         if (!isCurrentAccount(context)) return false;

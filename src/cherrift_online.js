@@ -9,6 +9,7 @@
     ending: false,
     installed: false,
     context: null,
+    readiness: null,
   };
   const copy = (hu, en) =>
     window.UI?.save?.settings?.language === "en" ? en : hu;
@@ -17,12 +18,32 @@
   const online = () =>
     auth().mode === "discord" && auth().cloudReady && auth().onlinePolicy;
   function unavailable() {
+    const current = auth();
+    if (current.mode === "discord") {
+      toast(current.cloudReady && !current.onlinePolicy
+        ? copy("Discorddal be vagy jelentkezve, de a játékszerver frissítése szükséges.", "You are signed in with Discord, but the game server needs an update.")
+        : copy("Discorddal be vagy jelentkezve, de a felhőmentés kapcsolata nem elérhető. Próbáld újra.", "You are signed in with Discord, but cloud save is unavailable. Please retry."));
+      return;
+    }
     toast(
       copy(
         "A fejlődéshez online Discord-fiók kell. Lépj be, vagy állítsd helyre a kapcsolatot.",
         "Progression requires an online Discord account. Sign in or reconnect.",
       ),
     );
+  }
+  async function ensureOnline() {
+    if (online()) return true;
+    if (auth().mode === "discord") {
+      if (!state.readiness) {
+        state.readiness = Promise.resolve().then(() => window.CHERRIFT_AUTH.reconnectCloud?.())
+          .catch(() => false).finally(() => { state.readiness = null; });
+      }
+      await state.readiness;
+      if (online()) return true;
+    }
+    unavailable();
+    return false;
   }
   function refresh() {
     window.UI?.refreshMenu?.();
@@ -40,10 +61,9 @@
     window.dispatchEvent(new CustomEvent("cherrift:eventchange"));
   }
   async function perform(operation, params = {}) {
-    if (!online()) {
-      unavailable();
-      return null;
-    }
+    const requestedBy = window.CHERRIFT_AUTH.captureAccount();
+    if (!await ensureOnline()) return null;
+    if (!window.CHERRIFT_AUTH.isCurrentAccount(requestedBy)) return null;
     if (state.busy) return null;
     state.busy = true;
     const context = window.CHERRIFT_AUTH.captureAccount();
@@ -224,7 +244,8 @@
     storage.save = (value) => {
       if (state.runId) return true; // Combat's speculative loot never becomes a save upload.
       if (auth().mode === "discord" && !online()) {
-        unavailable();
+        // Menu autosaves must not repeat a sign-in toast on every refresh.
+        // Explicit purchases and run starts report the current connection state.
         return false;
       }
       return save(value);
@@ -241,10 +262,9 @@
     const proto = window.CherriftGame.prototype,
       start = proto.start;
     proto.start = async function (...args) {
-      if (!online()) {
-        unavailable();
-        return false;
-      }
+      const requestedBy = window.CHERRIFT_AUTH.captureAccount();
+      if (!await ensureOnline()) return false;
+      if (!window.CHERRIFT_AUTH.isCurrentAccount(requestedBy)) return false;
       if (state.runId || state.busy) return false;
       const activeRun = UI.save.security?.online?.run;
       if (activeRun && !activeRun.ended) {
@@ -322,8 +342,8 @@
     if (window.CHERRIFT_AUTH.isCurrentAccount(context))
       await perform("end_run", {
         run_id: runId,
-        star,
-        kills: Math.min(game?.kills || 0, game?.stage?.goalKills || 0),
+        star: game?.stage?.training ? 0 : star,
+        kills: game?.stage?.training ? 0 : Math.min(game?.kills || 0, game?.stage?.goalKills || 0),
       });
     if (state.runId === runId && state.context === context) {
       state.runId = "";

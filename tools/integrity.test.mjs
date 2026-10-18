@@ -84,6 +84,32 @@ test("Gunner is a purchasable Rare skin in the authoritative catalogue", () => {
   assert.ok(bought.sakuraEssence < save.sakuraEssence);
   assert.throws(() => act(bought, "buy_skin", {skin_id:"gunner_cherry"}));
 });
+
+test("training requires an owned active GM title and cannot grant rewards or spend run resources", () => {
+  assert.throws(() => act(starter(),"start_run",{stage_id:"training_test"}));
+  const forged=starter();
+  forged.profile.activeTitle="gm";
+  assert.throws(() => act(forged,"start_run",{stage_id:"training_test"}));
+  const gm=starter();
+  gm.ownedTitles=["gm"];
+  gm.profile.activeTitle="gm";
+  gm.energy=0;
+  const before=structuredClone(gm);
+  const started=act(gm,"start_run",{stage_id:"training_test"}).save;
+  assert.equal(started.security.online.run.training,true);
+  assert.equal(started.selectedStageId,"training_test");
+  assert.equal(started.energy,0);
+  assert.equal(started.stats.runs,before.stats.runs);
+  assert.deepEqual(started.buffs,before.buffs);
+  const progress={run_id:"server-id",star:3,kills:1000};
+  assert.throws(() => act(started,"checkpoint_run",progress,NOW+60000));
+  assert.throws(() => act(started,"end_run",progress,NOW+60000));
+  const result=act(started,"end_run",{run_id:"server-id",star:0,kills:0},NOW+60000);
+  assert.deepEqual(result.rewards,[]);
+  assert.equal(result.save.security.online.run.ended,true);
+  for(const key of ["coins","bloomGems","inventory","account","stageStars","stats"])
+    assert.deepEqual(result.save[key],before[key],key);
+});
 test("run tickets enforce locks, one active run, elapsed time, caps and no replay", () => {
   let s = starter();
   assert.throws(() => act(s, "start_run", { stage_id: "world_6_5" }));
@@ -392,6 +418,75 @@ function authHarness() {
     vm.runInContext(functionSource(authSource, name), context);
   return { context, runtime, data, applied, requests };
 }
+test("a signed-in legacy-server session can reconnect after deployment without uploading legacy progress", async () => {
+  const {context:c,runtime:r,requests}=authHarness();
+  r.cloudReady=true;
+  r.onlinePolicy=false;
+  r.pendingSave={coins:999999,security:{accountOwnerId:"a"}};
+  c.callPlayerApi=async (action) => {
+    requests.push(action);
+    assert.equal(action,"bootstrap_save");
+    return {gameplay_policy:"online-v1",save_data:{coins:500,security:{accountOwnerId:"a"}},updated_at:"r2"};
+  };
+  assert.equal(await c.reconnectCloud(),true);
+  assert.equal(r.onlinePolicy,true);
+  assert.equal(r.cloudReady,true);
+  assert.equal(r.pendingSave,null);
+  assert.deepEqual(requests,["bootstrap_save"]);
+});
+
+function onlineHarness() {
+  let current={mode:"discord",cloudReady:true,onlinePolicy:false}, account="a";
+  const messages=[], requests=[], listeners=new Map();
+  class Game {
+    async start(){ this.started=true; return true; }
+    update(){} stageClear(){} gameOver(){}
+    getSelectedStage(){return {id:"world_1_1"};}
+  }
+  const UI={save:{settings:{language:"en"},security:{}},toast:message=>messages.push(message),quit(){}};
+  const window={UI,CherriftGame:Game,CherriftStorage:{save:()=>true},
+    addEventListener:(name,handler)=>listeners.set(name,handler),dispatchEvent(){},
+    CHERRIFT_AUTH:{getState:()=>current,captureAccount:()=>account,isCurrentAccount:context=>context===account,
+      reconnectCloud:async()=>false,
+      gameAction:async (operation,params)=>{requests.push({operation,params});return {save_data:{security:{online:{run:{id:"ticket"}}}}};}
+    }
+  };
+  vm.runInNewContext(readFileSync("src/cherrift_online.js","utf8"),{
+    window,UI,document:{getElementById:()=>null},CustomEvent:class {},console,setTimeout
+  });
+  listeners.get("cherrift:runtime-clean-ready")();
+  return {window,current,messages,requests,Game,switchAccount:()=>{account="b";}};
+}
+
+test("legacy-server purchases explain the server mismatch and background saves never repeat the toast",async()=>{
+  const {window,messages,requests}=onlineHarness();
+  for(let i=0;i<10;i++) assert.equal(window.CherriftStorage.save({}),false);
+  assert.equal(messages.length,0);
+  assert.equal(await window.CHERRIFT_ONLINE.perform("buy_chest",{tier:"common"}),null);
+  assert.match(messages[0],/signed in with Discord.*server needs an update/);
+  assert.equal(requests.length,0);
+});
+
+test("purchases and run starts resume after the deployed server becomes ready",async()=>{
+  const {window,current,requests,Game}=onlineHarness();
+  let reconnects=0;
+  window.CHERRIFT_AUTH.reconnectCloud=async()=>{reconnects++;current.onlinePolicy=true;return true;};
+  assert.ok(await window.CHERRIFT_ONLINE.perform("buy_chest",{tier:"common"}));
+  assert.equal(requests[0].operation,"buy_chest");
+  const game=new Game();
+  assert.equal(await game.start(),true);
+  assert.equal(game.started,true);
+  assert.equal(requests[1].operation,"start_run");
+  assert.equal(reconnects,1);
+});
+
+test("reconnecting a purchase cannot apply it to a newly switched account",async()=>{
+  const {window,current,requests,switchAccount}=onlineHarness();
+  window.CHERRIFT_AUTH.reconnectCloud=async()=>{switchAccount();current.onlinePolicy=true;return true;};
+  assert.equal(await window.CHERRIFT_ONLINE.perform("buy_chest",{tier:"common"}),null);
+  assert.equal(requests.length,0);
+});
+
 test("dirty backup at the same revision survives successful reload", async () => {
   const { context: c, runtime: r, data } = authHarness();
   c.writeBackup(
