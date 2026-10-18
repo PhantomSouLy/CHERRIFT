@@ -1,0 +1,186 @@
+/* Canonical presentation layer. Fixed geometry is established before JS boot. */
+:root{--cr-ink:#fff2f8;--cr-muted:#bcaabd;--cr-accent:#f394be;--cr-line:rgba(243,148,190,.2);--cr-surface:rgba(20,12,29,.87);--cr-ease:cubic-bezier(.2,.75,.2,1)}
+#bootV060.boot-v060{contain:layout paint}
+body.v060-booting #bootPreloaderV040{visibility:hidden!important;opacity:0!important;pointer-events:none!important}
+#bootV060 .boot-stage-v096{left:50%!important;right:auto!important;transform:translateX(-50%)!important;width:min(520px,84vw)!important;bottom:clamp(68px,12vh,130px)!important}
+#bootV060 .boot-loading-companion-v099{position:absolute!important;left:50%!important;right:auto!important;bottom:calc(clamp(68px,12vh,130px) + 68px)!important;transform:translateX(-50%)!important;display:flex;align-items:center!important;justify-content:center!important;width:240px!important;min-height:90px!important;gap:12px!important}
+#bootV060:not([data-boot-phase="loading"]) .boot-loading-companion-v099{display:none!important}
+.cherrift-loading-sprite-v099{display:block!important;position:relative!important;width:84px!important;height:84px!important;overflow:hidden!important;background-image:url("player/skins/base_cherry/base_cherry_walk_right.png")!important;background-size:600% 100%!important;background-repeat:no-repeat!important;animation:cherriftLoadingSpriteFramesV099 .75s steps(1,end) infinite!important}
+.cherrift-loading-sprite-v099::before,.cherrift-loading-sprite-v099::after{content:none!important;display:none!important}
+#bootV060 .cherrift-loading-sprite-bob-v099{width:84px!important;height:84px!important;animation:none!important}
+#bootV060 .cherrift-loading-label-v099{font-size:18px!important;padding:0!important;letter-spacing:.1em;color:#ffe2f0!important}
+#bootV060 .cherrift-loading-word-v099>i{animation:none!important}
+#bootV060 .boot-track-v060{height:6px;border-color:var(--cr-line);box-shadow:0 0 30px #f062a633;background:#100a1b99}
+#bootV060 .boot-status-v060{font-size:11px;min-height:32px;align-items:start;font-variant-numeric:tabular-nums}
+#bootV060 .boot-auth-v096{background:linear-gradient(145deg,#25172fea,#160f24ed);border-color:#f3b3d04d;border-radius:20px;box-shadow:0 30px 100px #0a0510a6}
+#bootV060 .boot-start-v096{animation:crStartGlow 2s ease-in-out infinite!important;transform:none!important}
+@keyframes crStartGlow{0%,100%{opacity:.7}50%{opacity:1}}
+body.cr-ui-ready{color:var(--cr-ink)}
+body.cr-ui-ready button{touch-action:manipulation;transition:background .18s,border-color .18s,box-shadow .18s,filter .18s,transform .18s var(--cr-ease)}
+body.cr-ui-ready button:focus-visible{outline:2px solid #ffe0ef!important;outline-offset:4px}
+body.cr-ui-ready button:active:not(:disabled){transform:scale(.975)}
+body.cr-ui-ready button:disabled{cursor:not-allowed}
+body.cr-ui-ready #app>.panel{background:radial-gradient(ellipse at 85% 0,#68345228,transparent 55%),linear-gradient(145deg,#100b1b,#1e1124)!important}
+body.cr-ui-ready.gacha-open #menu{display:none!important;pointer-events:none!important}
+body.cr-ui-ready #app>.panel .panel-head{padding-bottom:14px;border-bottom:1px solid var(--cr-line)}
+body.cr-ui-ready #app>.panel .panel-head h2{font-family:Georgia,serif;letter-spacing:-.035em;text-shadow:none!important}
+body.cr-ui-ready :is(.glass,.prebeta-card,.inventory-panel,.details-panel,.paperdoll,.side-card){border-color:var(--cr-line)!important;background:linear-gradient(145deg,#211529ec,#110c1be8)!important;box-shadow:0 14px 36px #0003,inset 0 1px #ffffff06!important;border-radius:18px}
+body.cr-ui-ready :is(.back,.gco-back){border-radius:12px!important;border:1px solid var(--cr-line)!important;background:#ffffff06!important}
+body.cr-ui-ready :is(.prebeta-avatar,.prebeta-avatar-frame,.avatar-badge,.profile-avatar-v082){flex-shrink:0;isolation:isolate;animation:none!important;transition:none!important}
+body.cr-ui-ready .prebeta-avatar>img:first-child{position:absolute!important;inset:12%!important;width:76%!important;height:76%!important;max-width:none!important;max-height:none!important;margin:0!important;border-radius:50%!important;object-fit:cover!important;transform:none!important;box-sizing:border-box!important}
+body.cr-ui-ready .prebeta-avatar>img.prebeta-avatar-frame{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;margin:0!important;transform:none!important;object-fit:contain!important}
+body.cr-ui-ready .prebeta-avatar>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+body.cr-ui-ready .prebeta-avatar>img.prebeta-avatar-frame{object-fit:contain}
+body.cr-ui-ready .cr-eyebrow{font:800 10px/1.5 system-ui,sans-serif;letter-spacing:.24em;color:var(--cr-accent)}
+body.cr-ui-ready .cr-lobby-intro h1{font:500 clamp(38px,3.6vw,64px)/1.06 Georgia,serif;letter-spacing:-.045em;margin:16px 0;color:#fff2f8;text-shadow:0 5px 35px #140b1e}
+body.cr-ui-ready .cr-lobby-intro p{max-width:340px;color:#d6c1d3;font-size:13px;line-height:1.8;margin:0}
+@media(min-width:821px){
+ body.cr-ui-ready #gear #gearV0560{display:block!important;width:100%!important;height:100%!important;padding:0!important;overflow:hidden!important}
+ body.cr-ui-ready #gear #gearV0560 .gear-main-v0560{position:relative!important;inset:auto!important;transform:none!important;left:0!important;top:0!important;width:100%!important;max-width:none!important;margin:0!important;height:100%!important;padding:168px 32px 28px!important;display:grid!important;grid-template-columns:minmax(340px,.85fr) minmax(0,1.15fr);grid-template-rows:auto minmax(0,1fr);gap:18px!important;overflow:hidden!important}
+ body.cr-ui-ready #gear .gear-header-v0560{grid-column:1/-1;grid-row:1;position:relative!important;inset:auto!important;display:flex!important;align-items:center!important;gap:20px;min-height:46px!important;margin:0!important}
+ body.cr-ui-ready #gear .gear-header-v0560 h1{font:500 36px Georgia,serif!important;margin:0!important}
+ body.cr-ui-ready #gear .gear-loadout-v0560{grid-column:1;grid-row:2;position:relative!important;inset:auto!important;display:flex!important;flex-direction:column;min-height:0!important;height:100%!important;padding:18px!important;overflow:hidden!important;border:1px solid var(--cr-line)!important;border-radius:18px!important;background:#1b1124c7!important}
+ body.cr-ui-ready #gear .gear-loadout-title-v0560{position:relative!important;inset:auto!important;flex:none;margin:0!important;padding:0 0 12px!important}
+ body.cr-ui-ready #gear #gearStageV0560{position:relative!important;inset:auto!important;flex:1;min-height:300px!important;max-height:none!important;width:100%!important;height:auto!important;margin:0!important;transform:none!important}
+ body.cr-ui-ready #gear #gearStageV0560 .gear-slot-v0560{position:absolute!important;width:66px!important;height:66px!important;min-height:0!important;transform:translate(-50%,-50%)!important;border:1px solid #e2bdcd30!important;border-radius:14px!important;background:linear-gradient(135deg,#332239,#1c1427)!important;box-shadow:0 8px 22px #0003!important}
+ body.cr-ui-ready #gear #gearStageV0560 .slot-helmet{left:50%!important;top:13%!important}
+ body.cr-ui-ready #gear #gearStageV0560 .slot-armor{left:16%!important;top:34%!important}
+ body.cr-ui-ready #gear #gearStageV0560 .slot-necklace{left:84%!important;top:34%!important}
+ body.cr-ui-ready #gear #gearStageV0560 .slot-weapon{left:16%!important;top:55%!important}
+ body.cr-ui-ready #gear #gearStageV0560 .slot-gloves{left:84%!important;top:55%!important}
+ body.cr-ui-ready #gear #gearStageV0560 .slot-ring{left:16%!important;top:76%!important}
+ body.cr-ui-ready #gear #gearStageV0560 .slot-boots{left:84%!important;top:76%!important}
+ body.cr-ui-ready #gear :is(#gearCherryCanvasV0560,#gearCherryStableV060){position:absolute!important;left:50%!important;top:46%!important;width:190px!important;height:190px!important;transform:translate(-50%,-50%)!important;margin:0!important}
+ body.cr-ui-ready #gear .gear-character-glow-v0560{left:50%!important;top:46%!important;width:200px!important;height:200px!important;transform:translate(-50%,-50%)!important}
+ body.cr-ui-ready #gear #loadoutStatsV063{left:50%!important;top:auto!important;bottom:0!important;width:94%!important;max-width:none!important;height:52px!important;transform:translateX(-50%)!important}
+ body.cr-ui-ready #gear #gearInventoryZoneV0560{grid-column:2;grid-row:2;position:relative!important;inset:auto!important;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;margin:0!important;display:flex!important;flex-direction:column!important;overflow:auto!important;padding:20px!important;border:1px solid var(--cr-line)!important;border-radius:18px!important;background:#1b1124c7!important}
+ body.cr-ui-ready #gear #gearInventoryZoneV0560 h2{font:500 25px Georgia,serif!important}
+ body.cr-ui-ready #gear #gearSortV0560{background:#ffffff08!important;color:#f8e7f1!important;border:1px solid var(--cr-line)!important;padding:8px 12px!important;border-radius:9px!important}
+ body.cr-ui-ready #gachaChestOnlyV12{padding:170px 32px 28px!important;height:100dvh!important;min-height:0!important;overflow:auto!important}
+ body.cr-ui-ready #gachaChestOnlyV12 .gco-shell{width:min(1120px,100%)!important;height:100%!important;min-height:0!important;padding:0!important;display:grid!important;grid-template-rows:auto auto minmax(0,1fr) auto;gap:16px}
+ body.cr-ui-ready #gachaChestOnlyV12 .gco-head{margin:0!important;min-height:48px}
+ body.cr-ui-ready #gachaChestOnlyV12 .gco-head h2{font-size:42px!important}
+ body.cr-ui-ready #gachaChestOnlyV12 .gco-back{width:48px!important;height:48px!important;min-height:48px!important}
+ body.cr-ui-ready #gachaChestOnlyV12 .gco-chests{margin:0!important;justify-content:flex-end!important}
+ body.cr-ui-ready #gachaChestOnlyV12 .gco-chests b{min-height:36px!important;padding:4px 12px!important;font-size:12px}
+ body.cr-ui-ready #gachaChestOnlyV12 .gco-chests img{width:27px!important;height:27px!important}
+ body.cr-ui-ready #gachaChestOnlyV12 .gco-carousel{height:100%!important;min-height:370px!important}
+ body.cr-ui-ready #gachaChestOnlyV12 #gcoCard{height:100%!important}
+ body.cr-ui-ready #gachaChestOnlyV12 .gco-card{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto auto auto auto 1fr auto;column-gap:32px;row-gap:10px;min-height:370px!important;height:100%!important;padding:32px!important;overflow:hidden!important}
+ body.cr-ui-ready #gachaChestOnlyV12 .gco-art{grid-column:1;grid-row:1/7;height:100%!important;min-height:250px!important;margin:0!important;background:radial-gradient(ellipse,color-mix(in srgb,var(--chest-glow) 8%,transparent),transparent 65%);border-radius:18px}
+ body.cr-ui-ready #gachaChestOnlyV12 .gco-art img{max-width:240px!important;width:85%!important;max-height:280px!important}
+ body.cr-ui-ready #gachaChestOnlyV12 :is(.gco-rarity,.gco-card h3,.gco-copy,.gco-empty-note,.gco-pity,.gco-actions){grid-column:2}
+ body.cr-ui-ready #gachaChestOnlyV12 .gco-rarity{grid-row:1;margin:0!important;text-align:left;font-size:10px;letter-spacing:.25em}
+ body.cr-ui-ready #gachaChestOnlyV12 .gco-card h3{grid-row:2;margin:0!important;font-size:42px!important;line-height:1.1}
+ body.cr-ui-ready #gachaChestOnlyV12 .gco-copy{grid-row:3;margin:0!important;font-size:14px}
+ body.cr-ui-ready #gachaChestOnlyV12 .gco-empty-note{grid-row:4;margin:0!important}
+ body.cr-ui-ready #gachaChestOnlyV12 .gco-pity{grid-row:5;align-self:end;margin:0!important;padding:16px!important}
+ body.cr-ui-ready #gachaChestOnlyV12 .gco-pity header{font-size:13px!important}
+ body.cr-ui-ready #gachaChestOnlyV12 .gco-actions{grid-row:6;margin:0!important}
+ body.cr-ui-ready #gachaChestOnlyV12 .gco-actions button{min-height:52px!important;font-size:15px!important}
+ body.cr-ui-ready #gachaChestOnlyV12 .gco-dots{margin:0!important;min-height:14px}
+ body.cr-ui-ready #menu #menuDashboardV060 .dashboard-shortcuts-v060{width:100%!important}
+ body.cr-ui-ready #globalRailV060{background:linear-gradient(180deg,#130c1bf8,#130b1af2)!important;border-bottom:1px solid var(--cr-line)!important;box-shadow:0 6px 30px #0003!important;backdrop-filter:blur(18px)}
+ body.cr-ui-ready #globalRailV060 .rail-nav-v060{gap:5px!important}
+ body.cr-ui-ready #globalRailV060 .rail-nav-v060>button{border-radius:9px!important;font-size:12px!important;letter-spacing:.02em}
+ body.cr-ui-ready #globalRailV060 .rail-nav-v060>button.active{background:linear-gradient(135deg,#ad3e73,#d96b9c)!important;box-shadow:inset 0 1px #ffffff24,0 5px 20px #b530702b!important}
+ body.cr-ui-ready #desktopSubnavV0933{background:#130c1bd9!important;border-bottom:1px solid #ffffff09!important;backdrop-filter:blur(14px)}
+ body.cr-ui-ready #desktopSubnavV0933 button{font-size:11px!important;color:#d9c1d5!important;letter-spacing:.025em}
+ body.cr-ui-ready #desktopSubnavV0933 button.active{border-bottom-color:#ef91bd!important;background:#ffffff05!important}
+ body.cr-ui-ready #menu{background-position:center!important;background-size:cover!important}
+ body.cr-ui-ready #menu::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,#10091acd,transparent 57%,#10091a45);z-index:0}
+ body.cr-ui-ready #menu>.menu-hero-space{display:none!important}
+ body.cr-ui-ready #menuDashboardV060{position:absolute!important;left:clamp(28px,4vw,76px)!important;right:auto!important;top:clamp(166px,20vh,210px)!important;bottom:32px!important;width:min(510px,43vw)!important;max-width:none!important;height:auto!important;display:flex!important;flex-direction:column!important;gap:12px!important;z-index:2!important;pointer-events:none!important}
+ body.cr-ui-ready #menuDashboardV060>*{position:relative!important;inset:auto!important;width:100%!important;max-width:none!important;transform:none!important;pointer-events:auto}
+ body.cr-ui-ready #menuDashboardV060>.cr-lobby-intro{order:0;flex:1 1 auto}
+ body.cr-ui-ready #menuDashboardV060>.dashboard-shortcuts-v060{order:1;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important;height:auto!important;flex:none}
+ body.cr-ui-ready #menuDashboardV060>.dashboard-shortcuts-v060 button{min-height:44px!important;height:44px!important;padding:8px 10px!important;gap:7px!important;font-size:11px!important;border:1px solid var(--cr-line)!important;border-radius:10px!important;background:#1a1124bd!important;box-shadow:none!important;backdrop-filter:blur(12px)}
+ body.cr-ui-ready #menuDashboardV060>.dashboard-shortcuts-v060 button img{width:22px!important;height:22px!important;object-fit:contain}
+ body.cr-ui-ready #menuDashboardV060>#mainStatsV063{order:2;flex:none;display:grid!important;grid-template-columns:repeat(3,1fr)!important;min-height:60px!important;height:60px!important;border:1px solid var(--cr-line)!important;background:#180e20d9!important;border-radius:12px!important;box-shadow:none!important}
+ body.cr-ui-ready #mainStatsV063 b{font:500 25px Georgia,serif!important;color:#fff3f9!important;text-shadow:none!important}
+ body.cr-ui-ready #menuDashboardV060>.dashboard-run-v060{order:3;flex:none;min-height:94px!important;padding:15px!important;display:flex!important;align-items:center!important;gap:12px!important;background:linear-gradient(130deg,#2c1936ed,#150e21ed)!important;border:1px solid #f3a2c444!important;border-radius:16px!important;box-shadow:0 15px 45px #0005!important}
+ body.cr-ui-ready #dashboardSkinNameV060{font:500 clamp(22px,2.1vw,32px)/1.1 Georgia,serif!important;margin:6px 0!important}
+ body.cr-ui-ready #dashboardPlayV060{margin-left:auto!important;min-width:120px!important;min-height:56px!important;border-radius:11px!important;background:linear-gradient(135deg,#ac3c71,#df79a7)!important;border:1px solid #ffd4e86b!important;box-shadow:0 7px 28px #db4d882e!important}
+ body.cr-ui-ready #menu>.menu-right{position:absolute!important;right:clamp(22px,3vw,56px)!important;top:clamp(170px,20vh,210px)!important;width:285px!important;display:grid!important;gap:12px!important;z-index:2!important}
+ body.cr-ui-ready #menu .menu-right .side-card{min-height:112px!important;padding:18px 58px 16px 18px!important;border-radius:15px!important;border-left-width:2px!important;background:#160f21cf!important;backdrop-filter:blur(16px)}
+ body.cr-ui-ready #menu .side-card h3{font-size:12px!important;letter-spacing:.07em!important;line-height:1.5!important}
+ body.cr-ui-ready #menu .side-card header{align-items:start!important;gap:8px!important}
+ body.cr-ui-ready #menu .side-card header>span{font-size:8px!important;padding:3px 6px;border-radius:4px;background:#ffffff09}
+ body.cr-ui-ready #menu .side-card p{font-size:11px!important;line-height:1.7!important;color:#c0acc0!important;margin:9px 0 0!important}
+ body.cr-ui-ready #menu .side-art{width:32px!important;height:36px!important;right:14px!important;bottom:18px!important;font-size:24px!important;background:transparent!important}
+ body.cr-ui-ready #menu .side-art img{width:30px!important;height:30px!important;object-fit:contain}
+ body.cr-ui-ready #menu .menu-footer{left:auto!important;right:30px!important;bottom:14px!important;transform:none!important;font-size:9px!important;letter-spacing:.04em!important;z-index:2}
+}
+@media(min-width:821px) and (max-height:700px){
+ body.cr-ui-ready #menuDashboardV060{top:154px!important;bottom:18px!important;width:min(470px,48vw)!important;gap:8px!important}
+ body.cr-ui-ready .cr-lobby-intro h1{font-size:34px;margin:4px 0 8px}
+ body.cr-ui-ready .cr-lobby-intro p{font-size:11px;line-height:1.5}
+ body.cr-ui-ready #menuDashboardV060>.dashboard-shortcuts-v060 button{height:34px!important;min-height:34px!important}
+ body.cr-ui-ready #menuDashboardV060>#mainStatsV063{height:44px!important;min-height:44px!important}
+ body.cr-ui-ready #menuDashboardV060>.dashboard-run-v060{min-height:72px!important;padding:9px 12px!important}
+ body.cr-ui-ready #menu>.menu-right{top:154px!important;width:245px!important;gap:8px!important}
+ body.cr-ui-ready #menu .menu-right .side-card{min-height:86px!important;padding:10px 45px 10px 13px!important}
+}
+@media(max-width:820px){
+ body.cr-ui-ready .cr-lobby-intro{display:none!important}
+ body.cr-ui-ready #menuDashboardV060>.dashboard-shortcuts-v060{display:none!important}
+ body.cr-ui-ready #globalMobileNavV052,body.cr-ui-ready #mobileNavV082{background:#160e22f2!important;border-top:1px solid var(--cr-line)!important;backdrop-filter:blur(14px)}
+ body.cr-ui-ready #globalMobileNavV052 button.home:not(.active){background:transparent!important;box-shadow:none!important;border-color:transparent!important}
+ body.cr-ui-ready.gacha-open #crDesktopEnergy{display:none!important}
+ body.cr-ui-ready .mobile-stage-card{border-radius:20px!important;border:1px solid var(--cr-line)!important;box-shadow:0 15px 45px #0004!important}
+ body.cr-ui-ready #app>.panel{border-radius:0!important}
+}
+/* Chest summoning: waiting, charge, release, then real server-owned rewards. */
+body.cr-ui-ready #gachaChestOnlyV12{background:radial-gradient(ellipse at 50% 40%,#6b31572b,transparent 55%),linear-gradient(145deg,#100b1b,#211327)!important}
+body.cr-ui-ready #gachaChestOnlyV12 .gco-shell{max-width:1120px!important}
+body.cr-ui-ready #gachaChestOnlyV12 .gco-head h2{font-family:Georgia,serif;font-weight:500;letter-spacing:-.04em}
+body.cr-ui-ready #gachaChestOnlyV12 .gco-card{--chest-glow:#8de2c0;border:1px solid #ffffff18!important;border-radius:24px!important;background:radial-gradient(ellipse at 50% 25%,color-mix(in srgb,var(--chest-glow) 10%,transparent),transparent 60%),linear-gradient(150deg,#26182d,#130e1e)!important;box-shadow:0 20px 70px #0005!important}
+body.cr-ui-ready #gachaChestOnlyV12 .gco-card.rare{--chest-glow:#86bfff}
+body.cr-ui-ready #gachaChestOnlyV12 .gco-card.epic{--chest-glow:#d2a0ff}
+body.cr-ui-ready #gachaChestOnlyV12 .gco-art{position:relative;isolation:isolate}
+body.cr-ui-ready #gachaChestOnlyV12 .gco-art::before{content:"";position:absolute;width:180px;height:50px;bottom:12%;left:50%;transform:translateX(-50%);border:1px solid color-mix(in srgb,var(--chest-glow) 35%,transparent);border-radius:50%;background:radial-gradient(ellipse,color-mix(in srgb,var(--chest-glow) 16%,transparent),transparent 65%);box-shadow:0 0 50px color-mix(in srgb,var(--chest-glow) 13%,transparent);z-index:-1}
+body.cr-ui-ready #gachaChestOnlyV12 .gco-art img{animation:crChestIdle 4s ease-in-out infinite;filter:drop-shadow(0 16px 22px #0008)}
+body.cr-ui-ready #gachaChestOnlyV12 .gco-card h3{font-weight:500;letter-spacing:-.035em}
+body.cr-ui-ready #gachaChestOnlyV12 .gco-pity{border:1px solid #ffffff0d;background:#ffffff03!important}
+body.cr-ui-ready #gachaChestOnlyV12 .gco-actions button{border-radius:11px!important;background:linear-gradient(135deg,#aa3b70,#d774a2)!important;box-shadow:inset 0 1px #ffffff26,0 6px 25px #0003!important}
+body.cr-ui-ready #gachaChestOnlyV12 .gco-modal{background:#0d0816ed!important;backdrop-filter:blur(20px)}
+body.cr-ui-ready #gachaChestOnlyV12 .gco-opening{--summon:#9ff4ce;position:relative;isolation:isolate;overflow:hidden;min-height:480px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse,#293c352e,transparent 65%)!important;border:1px solid #ffffff12!important;border-radius:26px!important;width:min(700px,95vw)!important}
+body.cr-ui-ready #gachaChestOnlyV12 .gco-opening.rare{--summon:#9bcfff}
+body.cr-ui-ready #gachaChestOnlyV12 .gco-opening.epic{--summon:#d6a7ff}
+body.cr-ui-ready #gachaChestOnlyV12 .gco-opening img{z-index:2;object-fit:contain;width:250px;height:230px;filter:drop-shadow(0 0 35px color-mix(in srgb,var(--summon) 45%,transparent));animation:crChestCharge 2.6s ease-in-out both!important}
+body.cr-ui-ready #gachaChestOnlyV12 .gco-opening[data-opening-phase="request"] img{animation:crChestIdle 1.5s ease-in-out infinite!important}
+body.cr-ui-ready #gachaChestOnlyV12 .gco-opening h3{font:500 30px Georgia,serif;position:relative;z-index:3}
+body.cr-ui-ready #gachaChestOnlyV12 .cr-summon-ring{position:absolute;top:46%;left:50%;width:320px;height:320px;margin:-160px;border-radius:50%;border:1px solid color-mix(in srgb,var(--summon) 55%,transparent);box-shadow:0 0 55px color-mix(in srgb,var(--summon) 10%,transparent),inset 0 0 45px color-mix(in srgb,var(--summon) 8%,transparent);animation:crSummonRing 2.6s var(--cr-ease) both}
+body.cr-ui-ready #gachaChestOnlyV12 .cr-summon-ring.second{width:260px;height:260px;margin:-130px;border-style:dashed;animation:crOrbit 12s linear infinite}
+body.cr-ui-ready #gachaChestOnlyV12 .cr-summon-sparks{position:absolute;inset:0;pointer-events:none}
+body.cr-ui-ready #gachaChestOnlyV12 .cr-summon-sparks i{position:absolute;left:50%;top:43%;width:4px;height:4px;background:var(--summon);border-radius:50%;box-shadow:0 0 15px var(--summon);transform:rotate(calc(var(--spark)*30deg)) translateX(140px);animation:crSpark 2.6s ease-out both;animation-delay:calc(var(--spark)*.025s)}
+body.cr-ui-ready #gachaChestOnlyV12 .gco-opening::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse,var(--summon),transparent 65%);opacity:0;pointer-events:none;animation:crSummonFlash 2.6s ease both}
+body.cr-ui-ready #gachaChestOnlyV12 .gco-opening[data-opening-phase="request"]::after{animation:none}
+body.cr-ui-ready #gachaChestOnlyV12 .gco-opening[data-opening-phase="request"] .cr-summon-sparks i{animation:crSparkWait 1.8s ease-in-out infinite;animation-delay:calc(var(--spark)*.1s)}
+body.cr-ui-ready #gachaChestOnlyV12 .gco-summary-row{animation:crRewardArrive .4s var(--cr-ease) both;animation-delay:calc(var(--reward-index,0)*55ms);border-color:#ffffff20!important;background:#ffffff04!important}
+@keyframes crChestIdle{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-9px) rotate(2deg)}}
+@keyframes crChestCharge{0%{transform:scale(.85);opacity:0}18%{transform:scale(1);opacity:1}45%{transform:translateX(-3px) rotate(-3deg)}50%{transform:translateX(3px) rotate(3deg)}55%{transform:translateX(-4px) rotate(-4deg)}60%{transform:translateX(4px) rotate(4deg)}70%{transform:scale(.92)}83%{transform:scale(1.15);opacity:1}100%{transform:scale(1.3);opacity:0}}
+@keyframes crSummonRing{0%{transform:scale(.65);opacity:0}20%{opacity:.75}75%{transform:scale(1.05);opacity:1}100%{transform:scale(1.5);opacity:0}}
+@keyframes crOrbit{to{transform:rotate(360deg)}}
+@keyframes crSpark{0%,25%{opacity:0}50%{opacity:1}100%{transform:rotate(calc(var(--spark)*30deg)) translateX(280px);opacity:0}}
+@keyframes crSparkWait{0%,100%{opacity:.1}50%{opacity:.9}}
+@keyframes crSummonFlash{0%,70%{opacity:0}83%{opacity:.75}100%{opacity:0}}
+@keyframes crRewardArrive{from{opacity:0;transform:translateY(18px) scale(.96)}to{opacity:1;transform:none}}
+@media(max-width:820px){body.cr-ui-ready #gachaChestOnlyV12 .gco-opening{min-height:380px;max-height:80dvh}body.cr-ui-ready #gachaChestOnlyV12 .cr-summon-ring{width:250px;height:250px;margin:-125px}body.cr-ui-ready #gachaChestOnlyV12 .gco-opening img{width:190px;height:190px}}
+/* Desktop shop: use the available space for the offers instead of a tiny strip. */
+@media(min-width:821px){
+body.cr-ui-ready #chests .shop-intro-v080{display:none!important}
+body.cr-ui-ready #chests .economy-head-v080{padding:18px 24px!important}
+body.cr-ui-ready #chests .economy-head-v080 h1{font:500 38px Georgia,serif!important}
+body.cr-ui-ready #chests .shop-catalog-v098{max-width:1180px;margin:0 auto;height:calc(100dvh - 300px);min-height:300px}
+body.cr-ui-ready #chests .shop-window-v0991{background:transparent;border:0;box-shadow:none}
+body.cr-ui-ready #chests .shop-scroll-v0991{padding:18px 4px}
+body.cr-ui-ready #chests .shop-grid-v098{grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:20px}
+body.cr-ui-ready #chests .shop-item-v098{border-radius:20px;min-height:310px}
+body.cr-ui-ready #chests .shop-item-info-hit-v098{min-height:245px;grid-template-rows:150px auto auto}
+body.cr-ui-ready #chests .shop-item-art-v098{height:150px}
+body.cr-ui-ready #chests .shop-item-art-v098 img{width:108px;height:108px;filter:drop-shadow(0 12px 20px #0006)}
+body.cr-ui-ready #chests .shop-item-art-v098.skin img{object-fit:contain}
+body.cr-ui-ready #chests .shop-buy-v098{margin:8px 18px 18px;min-height:46px}
+}
+@media(prefers-reduced-motion:reduce){body.cr-ui-ready *,body.cr-ui-ready *::before,body.cr-ui-ready *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}.cherrift-loading-sprite-v099{animation:none!important;background-position:0 0!important}}

@@ -808,6 +808,12 @@
 
   function setAvatar(holder, account) {
     if (!holder) return;
+    const current = holder.querySelector("img");
+    if (account?.avatar && current?.getAttribute("src") === account.avatar) {
+      if (current.alt !== account.name) current.alt = account.name;
+      return;
+    }
+    if (!account?.avatar && holder.textContent === "🐰" && !current) return;
     holder.replaceChildren();
     if (!account?.avatar) {
       holder.textContent = "🐰";

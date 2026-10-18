@@ -240,7 +240,7 @@
     style.id = "cherriftChestOnlyCss";
     style.textContent = `
       #economyV11Floating,#economyV11DesktopBtn,.economy-nav-v11{display:none!important;pointer-events:none!important}
-      body.gacha-open :is(.resource-bar-v082,#resourceBarV082,#globalRailV060,#desktopCurrencyV0943,.mobile-header-v0932,.mobile-currencies-v0932,.economy-wallet-v080){display:none!important;visibility:hidden!important;pointer-events:none!important}
+      body.gacha-open :is(.resource-bar-v082,#resourceBarV082,.mobile-header-v0932,.mobile-currencies-v0932,.economy-wallet-v080){display:none!important;visibility:hidden!important;pointer-events:none!important}
       #gachaChestOnlyV12{overflow:hidden!important;overscroll-behavior:none;touch-action:pan-y;min-height:var(--cherrift-viewport-height,100dvh);color:#fff}
       .gco-shell{width:min(920px,100%);min-height:var(--cherrift-viewport-height,100dvh);margin:0 auto;padding:18px 18px 64px}
       .gco-head{display:flex;align-items:center;gap:16px;margin-bottom:14px}.gco-head h2{margin:0;font:700 clamp(42px,8vw,64px)/1 Georgia,serif}.gco-back{width:72px;height:72px;border:1px solid #ffffff25;border-radius:22px;color:#fff;background:#ffffff08;font-size:28px}
@@ -376,6 +376,7 @@
     const panel = ensurePanel();
     if (!panel) return;
     document.body.classList.add("gacha-open");
+    window.CHERRIFT_V082?.setActiveRoute?.("gachaV082");
     if (window.UI?.save) {
       const before = JSON.stringify({ keys: UI.save.keys, wallet: UI.save.resourceWallet?.keys, migrated: UI.save.economy?.chestOnlyMigrationV1 });
       normalize(UI.save);
@@ -389,6 +390,7 @@
   }
 
   function closePanel() {
+    if (state.busy) { toast(text("opening")); return; }
     id("gachaChestOnlyV12")?.classList.add("hidden");
     id("gcoModal")?.classList.add("hidden");
     document.body.classList.remove("gacha-open");
@@ -433,6 +435,10 @@
     else showGlobalSummary(normalRewards);
   }
 
+  function openingMarkup(tier, waiting = false) {
+    return `<div class="gco-modal-card gco-opening ${tier}" data-opening-phase="${waiting ? "request" : "release"}" role="status" aria-live="polite"><span class="cr-summon-ring" aria-hidden="true"></span><span class="cr-summon-ring second" aria-hidden="true"></span><span class="cr-summon-sparks" aria-hidden="true">${Array.from({length:12},(_,i)=>`<i style="--spark:${i}"></i>`).join("")}</span><img src="${esc(DEF[tier].asset)}" alt="${esc(chestName(tier))}" onerror="this.hidden=true"><span class="gco-opening-fallback" aria-hidden="true">CHEST</span><h3>${esc(text("opening"))}</h3></div>`;
+  }
+
   function showOpening(tier, rewards) {
     const modal = id("gcoModal");
     if (!modal) {
@@ -443,10 +449,10 @@
     }
     clearTimeout(state.openingTimer);
     modal.classList.remove("hidden");
-    modal.innerHTML = `<div class="gco-modal-card gco-opening ${tier}" role="status" aria-live="polite"><img src="${esc(DEF[tier].asset)}" alt="${esc(chestName(tier))}" onerror="this.hidden=true"><span class="gco-opening-fallback" aria-hidden="true">CHEST</span><h3>${esc(text("opening"))}</h3></div>`;
+    modal.innerHTML = openingMarkup(tier);
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
     const testDuration = Number(window.__CHERRIFT_GACHA_OPENING_MS__);
-    const openingDuration = Number.isFinite(testDuration) && testDuration >= 100 ? testDuration : reducedMotion ? 700 : 2300;
+    const openingDuration = Number.isFinite(testDuration) && testDuration >= 100 ? testDuration : reducedMotion ? 450 : 2600;
     state.openingTimer = setTimeout(() => {
       state.openingTimer = 0;
       state.busy = false;
@@ -468,10 +474,13 @@
     // overlay cannot reopen above a skin reveal or the final Gacha summary.
     window.CHERRIFT_OBTAINED?.reset?.();
     state.busy = true;
+    render();
     if (window.CHERRIFT_ONLINE) {
       const tier = state.tier;
+      const modal = id("gcoModal");
+      if (modal) { modal.innerHTML = openingMarkup(tier, true); modal.classList.remove("hidden"); }
       const result = await window.CHERRIFT_ONLINE.perform("open_chest", {tier,count:amount});
-      if (!result) { state.busy=false; render(); return; }
+      if (!result) { state.busy=false; modal?.classList.add("hidden"); render(); return; }
       render();
       showOpening(tier,result.rewards || []);
       return;

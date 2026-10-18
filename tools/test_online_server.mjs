@@ -181,8 +181,9 @@ const source = stripTypeScriptTypes(
 ).replace(/^import .*;\s*$/gm, "");
 vm.runInContext(source, context);
 const authScript = `(() => {
+ if(location.search.includes('slowBoot=1')) window.CHERRIFT_TIMEOUTS={...window.CHERRIFT_TIMEOUTS,cloudBootstrapMs:30000};
  const user=${JSON.stringify(user)}, session={access_token:'local-fixture-token',user};
- const client={auth:{getSession:async()=>({data:{session},error:null}),onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}}),signOut:async()=>({error:null})},functions:{invoke:async(_name,options)=>{try{const response=await fetch('/__test-api',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer local-fixture-token'},body:JSON.stringify(options.body)});const data=await response.json();return response.ok?{data,error:null}:{data,error:{message:data.error||'fixture_error'}};}catch(error){return {data:null,error};}}}};
+ const client={auth:{getSession:async()=>({data:{session},error:null}),onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}}),signOut:async()=>({error:null})},functions:{invoke:async(_name,options)=>{try{if(location.search.includes('slowBoot=1')&&options.body.action==='bootstrap_save')await new Promise(resolve=>setTimeout(resolve,20000));const response=await fetch('/__test-api',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer local-fixture-token'},body:JSON.stringify(options.body)});const data=await response.json();return response.ok?{data,error:null}:{data,error:{message:data.error||'fixture_error'}};}catch(error){return {data:null,error};}}}};
  window.supabase={createClient:()=>client};
 })();`;
 const types = {

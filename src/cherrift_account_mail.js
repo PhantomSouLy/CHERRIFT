@@ -834,6 +834,12 @@
       [t("arsenalAvg"), arsenalAverage()],
       [t("power"), powerValue()]
     ];
+    const signature = JSON.stringify([language(),avatar,frame,discordName,level,stats,activeTitleName(),displayName(),skin.name,skin.id]);
+    if (panel.dataset.renderSignature === signature && panel.firstElementChild) return;
+    panel.dataset.renderSignature = signature;
+    const previousAvatar = q(".profile-avatar-bf", panel);
+    const avatarSignature = JSON.stringify([avatar,frame]);
+    const keepAvatar = previousAvatar?.dataset.artSignature === avatarSignature;
     panel.innerHTML = `
       <div class="bf-shell">
         <header class="bf-head"><button type="button" class="bf-back" data-profile-back>←</button><h2>${t("profile")}</h2></header>
@@ -852,6 +858,11 @@
         </section>
         <div class="profile-stats-bf">${stats.map(([label, value]) => `<article class="bf-card profile-stat-bf"><div><small>${esc(label)}</small><b>${esc(value)}</b></div></article>`).join("")}</div>
       </div>`;
+    const nextAvatar = q(".profile-avatar-bf", panel);
+    if (keepAvatar && nextAvatar) nextAvatar.replaceWith(previousAvatar);
+    else if (nextAvatar) nextAvatar.dataset.artSignature = avatarSignature;
+    // Install the final portrait/frame immediately, before the first paint.
+    window.CHERRIFT_PREBETA?.refreshProfile?.();
   }
 
   function openProfile() {

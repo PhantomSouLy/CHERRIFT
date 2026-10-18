@@ -1167,6 +1167,21 @@ try {
   gunnerProbe.hitObstacle = () => false;
   gunnerProbe.movePlayer({x:1,y:0},.1);
   assert.equal(gunnerProbe.player.x,20,`${requested}: actual movement stack preserves full firing speed`);
+  assert.ok(document.querySelector('link[href*="cherrift_presentation.css"]'),`${requested}: presentation CSS is in the initial document`);
+  assert.ok(window.CHERRIFT_PRESENTATION,`${requested}: presentation lifecycle is initialized`);
+  const profileImages=Array.from(document.querySelectorAll("#railProfileIconV060 img,#railProfileIconV082 img"));
+  const patchCopy=document.querySelector("#menu .patch-card > p");
+  const patchTextNode=patchCopy?.firstChild;
+  const patchText=patchCopy?.textContent;
+  for(let refresh=0;refresh<3;refresh++) window.UI.refreshMenu();
+  await Promise.resolve();
+  await new Promise(resolve=>setTimeout(resolve,80));
+  const currentProfileImages=Array.from(document.querySelectorAll("#railProfileIconV060 img,#railProfileIconV082 img"));
+  assert.equal(currentProfileImages.length,profileImages.length,`${requested}: profile layers stay stable`);
+  profileImages.forEach((image,index)=>assert.equal(currentProfileImages[index],image,`${requested}: refresh preserves avatar/frame image identity`));
+  assert.ok(patchTextNode,`${requested}: update card has a description`);
+  assert.equal(patchCopy.textContent,patchText,`${requested}: update card copy does not alternate between legacy versions`);
+  assert.equal(patchCopy.firstChild,patchTextNode,`${requested}: menu refresh does not rewrite the update card description`);
 
   assert.deepEqual(
     missingLocalRequests,
@@ -1217,6 +1232,49 @@ try {
   );
 
   if (requested === "desktop" || requested === "phone-portrait") {
+    if (requested === "desktop") {
+      const settleMenu=()=>new Promise(resolve=>setTimeout(resolve,180));
+      const assertStable=async(selector,refresh,label)=>{
+        await settleMenu();
+        const before=Array.from(document.querySelectorAll(selector));
+        assert.ok(before.length,`${label}: visible elements exist`);
+        for(let index=0;index<3;index++)refresh();
+        await settleMenu();
+        const after=Array.from(document.querySelectorAll(selector));
+        assert.equal(after.length,before.length,`${label}: layer count stays stable`);
+        before.forEach((node,index)=>assert.equal(after[index],node,`${label}: unchanged state preserves DOM identity`));
+      };
+      window.UI.open("arsenalV070");
+      await assertStable("#arsenalGridV070 .arsenal-card-v070,#arsenalGridV070 img",()=>{
+        window.CHERRIFT_V070.render();window.UI.refreshMenu();
+      },"Arsenal");
+      const weaponState=window.UI.save.arsenal.slots.Weapon;
+      const previousLevel=weaponState.level;
+      weaponState.level=previousLevel+1;
+      window.CHERRIFT_V070.render();
+      assert.match(document.querySelector('[data-v070-slot-card="Weapon"] h2').textContent,new RegExp(`Lv\\.${previousLevel+1}\\b`),"Arsenal still reflects a changed level");
+      weaponState.level=previousLevel;window.CHERRIFT_V070.render();
+      window.UI.open("gear");window.UI.renderGear();
+      await assertStable("#gear [data-v0560-slot],#gear .gear-arsenal-level-v0932",()=>{
+        window.UI.renderGear();window.UI.refreshMenu();
+      },"Gear slots and level badges");
+      window.UI.open("playerUpgrade");
+      await assertStable("#skillTreeTrackV082 .skill-node-action-v100,#skillTreeTrackV082 img",()=>{
+        window.CHERRIFT_V082.renderSkillTree();window.UI.refreshMenu();
+      },"Upgrade icons");
+      const firstBranch=document.querySelector("[data-v096-skill-branch]")?.dataset.v096SkillBranch;
+      for(const branch of document.querySelectorAll("[data-v096-skill-branch]")){
+        const branchId=branch.dataset.v096SkillBranch;
+        document.querySelector(`[data-v096-skill-branch="${branchId}"]`).click();
+        await assertStable("#skillTreeTrackV082 .skill-node-action-v100,#skillTreeTrackV082 img",()=>window.CHERRIFT_V082.renderSkillTree(),`Upgrade branch ${branchId}`);
+      }
+      document.querySelector(`[data-v096-skill-branch="${firstBranch}"]`)?.click();
+      window.CHERRIFT_ACCOUNT_MAIL.openProfile();
+      await assertStable("#profileBugfixV0941 .profile-avatar-bf img",()=>{
+        window.CHERRIFT_ACCOUNT_MAIL.renderProfile();window.UI.refreshMenu();
+      },"Profile portrait and frame");
+      window.UI.open("menu");
+    }
     const coinsBeforePreview=window.UI.save.coins;
     assert.equal(await window.UI.game.start(),false,`${requested}: Guest preview cannot start reward-bearing gameplay`);
     assert.notEqual(window.UI.game.mode,"playing",`${requested}: online-only gameplay gate remains active`);

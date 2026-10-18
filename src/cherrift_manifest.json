@@ -1,9 +1,10 @@
 {
   "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "1000-online-integrity",
+  "buildId": "1001-ui-polish",
   "entrypoints": {
     "application": "src/cherrift_app.js",
+    "presentation": "src/cherrift_presentation.js",
     "gunner": "src/cherrift_gunner.js",
     "runtime": "src/cherrift_runtime.js",
     "auth": "src/cherrift_auth.js",
@@ -13,6 +14,7 @@
   },
   "stylesheets": {
     "shell": "assets/cherrift_shell.css",
+    "presentation": "assets/cherrift_presentation.css",
     "application": "assets/cherrift_app.css",
     "sharedUi": "assets/cherrift_ui.css",
     "boot": "assets/cherrift_boot.css",

@@ -8501,6 +8501,9 @@ function renderSlots() {
   qa("[data-v0560-slot]").forEach(button => {
     const slot = button.dataset.v0560Slot;
     const item = save.equipped?.[slot];
+    const signature = JSON.stringify([item || null, save.arsenal?.slots?.[slot] || null]);
+    if (button.dataset.slotRender === signature) return;
+    button.dataset.slotRender = signature;
 
     button.className =
       `gear-slot-v0560 slot-${slot.toLowerCase()} ` +
@@ -10452,6 +10455,18 @@ function ensureCompleteGearLayout() {
     if (label) label.style.setProperty("display", "none", "important");
     if (state) state.style.setProperty("display", "none", "important");
   }
+  if (!mobile && document.body.classList.contains("cr-ui-ready")) {
+    stage.style.setProperty("display", "block", "important");
+    stage.style.setProperty("min-height", "300px", "important");
+    const positions = {Helmet:[50,13],Armor:[16,34],Necklace:[84,34],Weapon:[16,55],Gloves:[84,55],Ring:[16,76],Boots:[84,76]};
+    for (const button of slots) {
+      const position = positions[button.dataset.v0560Slot];
+      if (!position) continue;
+      for (const [property,value] of Object.entries({position:"absolute",left:`${position[0]}%`,top:`${position[1]}%`,right:"auto",bottom:"auto",width:"66px",height:"66px",transform:"translate(-50%,-50%)","grid-area":"auto"})) {
+        button.style.setProperty(property,value,"important");
+      }
+    }
+  }
   return slots.length === 7;
 }
 
@@ -10870,7 +10885,13 @@ function updateResourceDisplays() {
   const iconTargets = ["railSkinIconV060", "railProfileIconV060", "dashboardSkinIconV060", "mobileSkinIconV060"];
   for (const targetId of iconTargets) {
     const target = id(targetId);
-    if (target) target.innerHTML = imageMarkup(skin?.icon, skin?.name || "Cherry");
+    if (target && !target.dataset.prebeta) {
+      const signature = `${skin?.icon || ""}|${skin?.name || "Cherry"}`;
+      if (target.dataset.iconSignature !== signature) {
+        target.dataset.iconSignature = signature;
+        target.innerHTML = imageMarkup(skin?.icon, skin?.name || "Cherry");
+      }
+    }
   }
   if (id("dashboardSkinNameV060")) id("dashboardSkinNameV060").textContent = skin?.name || "Cherry";
   if (id("upgradeSkinNameV060")) id("upgradeSkinNameV060").textContent = skin?.name || "Cherry";
@@ -12090,9 +12111,7 @@ function updateVersionLabels() {
   const patchCard = q("#menu .patch-card");
   if (patchCard) {
     const version = q("header span", patchCard);
-    const description = q("p", patchCard);
     if (version) version.innerHTML = `${window.CHERRIFT_BUILD?.displayVersion || "v0.9.0"} <i class="v060-dot" data-v060-badge="patch"></i>`;
-    if (description) description.textContent = "HU/EN localization, stable navigation, fair camera, save and input fixes.";
   }
   const bootSubtitle = q(".boot-sub-v060");
   if (bootSubtitle) bootSubtitle.textContent = window.CHERRIFT_BUILD?.label || "TESZTVERZIÓ · v0.9.0";
@@ -12668,11 +12687,7 @@ function updateVersionLabels() {
   const patchCard = q("#menu .patch-card");
   if (patchCard) {
     const version = q("header span", patchCard);
-    const description = q("p", patchCard);
     if (version) version.textContent = window.CHERRIFT_BUILD?.displayVersion || "v0.9.0";
-    if (description) description.textContent = language() === "hu"
-      ? "Mail, visszajelzés, új felszerelésikonok és javított melee effektek."
-      : "Mail, feedback, new equipment icons and corrected melee effects.";
   }
 }
 
@@ -14546,6 +14561,8 @@ function slotStatsPreview(save, slot) {
   return `<div class="arsenal-stat-preview-v070">${entries.map(([key, value]) => `<span>${escapeHtml(STAT_LABELS[key] || key)} <b>+${round1(value)}</b></span>`).join("")}</div>`;
 }
 function renderArsenal() {
+  // The compact renderer owns this panel once the current systems are loaded.
+  if (window.CHERRIFT_V082?.compactArsenal) return window.CHERRIFT_V082.compactArsenal();
   const panel = id("arsenalV070");
   const grid = id("arsenalGridV070");
   if (!panel || !grid || !UI.save) return;
@@ -15892,7 +15909,7 @@ function updateRailProfile(){
   if(!UI.save)return;
   const save=normalize(UI.save),skin=CHERRIFT_DATA.skins.find(entry=>entry.id===save.selectedSkin);
   const icon=id("railProfileIconV082");
-  if(icon)icon.innerHTML=skin?.icon?`<img src="${escapeHtml(skin.icon)}" alt="">`:`<span>${skin?.emoji||"🐰"}</span>`;
+  if(icon&&!icon.dataset.prebeta){const key=skin?.icon||skin?.emoji||"🐰";if(icon.dataset.iconSignature!==key){icon.dataset.iconSignature=key;icon.innerHTML=skin?.icon?`<img src="${escapeHtml(skin.icon)}" alt="">`:`<span>${skin?.emoji||"🐰"}</span>`;}}
   if(id("railProfileNameV082"))id("railProfileNameV082").textContent=save.profile?.name||"Cherry Player";
   const title=TITLES.find(entry=>entry.id===save.profile.activeTitle)||TITLES[0];
   if(id("railProfileTitleV082"))id("railProfileTitleV082").textContent=titleName(title);
@@ -16012,6 +16029,9 @@ function renderSkillTree(){
   const infoPanel=id("skillInfoV096");if(infoPanel)infoPanel.hidden=true;
   const selectedBranch=SKILL_BRANCHES.find(branch=>branch.id===runtime.skillBranch)||SKILL_BRANCHES[0];
   runtime.skillBranch=selectedBranch.id;
+  const signature=JSON.stringify([language(),ranks,level,save.account.skillPoints,selectedBranch.id]);
+  if(track.dataset.renderSignature===signature && track.firstElementChild)return;
+  track.dataset.renderSignature=signature;
   const tabs=id("skillBranchTabsV096");
   if(tabs)tabs.innerHTML=SKILL_BRANCHES.map(branch=>`<button type="button" class="${branch.id===selectedBranch.id?"active":""}" data-v096-skill-branch="${branch.id}" aria-pressed="${branch.id===selectedBranch.id}" style="--skill-branch:${branch.color};--skill-glow:${branch.glow}"><span>${branch.icon}</span><b>${escapeHtml(language()==="hu"?branch.nameHu:branch.nameEn)}</b></button>`).join("");
   const nodeMarkup=(node,index)=>{
@@ -16043,6 +16063,9 @@ function bindTreeScroller(){
 function compactArsenal(){
   const grid=id("arsenalGridV070");if(!grid||!UI.save)return;
   const save=normalize(UI.save),note=q(".arsenal-note-v070");
+  const signature=JSON.stringify([language(),save.arsenal,save.bag.materials,save.coins,window.CHERRIFT_BALANCE?.arsenal]);
+  if(grid.dataset.renderSignature===signature && grid.firstElementChild)return;
+  grid.dataset.renderSignature=signature;
   if(note){
     const m=save.bag.materials;
     note.innerHTML=`${["copper","iron","steel","silver","royal"].map(key=>`<button type="button" data-v082-material="${key}"><i class="stone-${key}-v070"></i>${key} <b>${m.stones[key]||0}</b></button>`).join("")}
@@ -16205,6 +16228,9 @@ function renderProfile(){
   ensureCustomPanels();
   const panel=id("profileV082"),body=q(".v082-panel-body",panel);if(!body||!UI.save)return;
   const save=normalize(UI.save),skin=CHERRIFT_DATA.skins.find(entry=>entry.id===save.selectedSkin),titles=unlockedTitles(save);
+  const signature=JSON.stringify([language(),save.profile,save.account,save.stats,save.achievements,save.inventory,save.equipped,save.economy,save.arsenal,save.selectedSkin,titles.map(title=>title.id)]);
+  if(body.dataset.renderSignature===signature && body.firstElementChild)return;
+  body.dataset.renderSignature=signature;
   const active=titles.find(title=>title.id===save.profile.activeTitle)||titles[0];
   const gearOwned=(save.inventory?.length||0)+Object.values(save.equipped||{}).filter(Boolean).length;
   body.innerHTML=`${panelHeader(t("profile"),t("profileIntro"))}
@@ -16565,7 +16591,7 @@ updateVersion();
 window.CHERRIFT_V082={
   version:VERSION,displayVersion:DISPLAY_VERSION,normalize,skillBonuses,renderSkillTree,
   compactArsenal,renderProfile,renderWeekly,renderStatSummary,refresh:refreshAll,
-  bindMenuTools,openMenuTool
+  bindMenuTools,openMenuTool,setActiveRoute:updateActiveRoute
 };
 console.info("[CHERRIFT] v0.8.2 Systems, navigation, Arsenal, Gear and Skill Tree rework loaded.");
 })();
@@ -19121,11 +19147,8 @@ function patchVersion(){
   qa(".dashboard-kicker-v060,.version-badge-v063,[data-v063-version],.arsenal-head-v070 > div > small,.economy-head-v080 > div > small,.v082-panel-head > div > small,#mailV063 .panel-head-v063 small,#supportV063 .panel-head-v063 small").forEach(element=>element.remove());
   const patch=q("#menu .patch-card");
   if(patch){
-    const badge=q("header span",patch),copy=q(":scope > p",patch);
+    const badge=q("header span",patch);
     if(badge&&badge.textContent!==currentDisplayVersion)badge.textContent=currentDisplayVersion;
-    if(copy)copy.textContent=language()==="hu"
-      ?"Új Common Cherry skinek és szerepkörök, PNG harci effektek, javított sprite-időzítés és sötétedő map-határ."
-      :"New Common Cherry skins and roles, PNG combat effects, corrected sprite timing and a darkened map boundary.";
   }
 }
 
@@ -20293,13 +20316,7 @@ function patchVersion() {
   const patch = q("#menu .patch-card");
   if (patch) {
     const badge = q("header span", patch);
-    const copy = q(":scope > p", patch);
     if (badge) badge.textContent = build.displayVersion;
-    if (copy) {
-      copy.textContent = language() === "hu"
-        ? "Új Common Cherry skinek és szerepkörök, PNG harci effektek, javított sprite-időzítés és sötétedő map-határ."
-        : "New Common Cherry skins and roles, PNG combat effects, corrected sprite timing and a darkened map boundary.";
-    }
   }
 }
 
@@ -20653,11 +20670,7 @@ function patchVersion() {
   const patch = q("#menu .patch-card");
   if (patch) {
     const badge = q("header span", patch);
-    const copy = q(":scope > p", patch);
     if (badge) badge.textContent = build.displayVersion;
-    if (copy) copy.textContent = language() === "hu"
-      ? "Stability & Combat Fix, új Cherry- és World-választó, központi lokalizáció és első működő Event."
-      : "Stability & Combat Fix, new Cherry and World selectors, central localization and the first working Event.";
   }
 }
 
@@ -22495,13 +22508,7 @@ function bindRunExitSafety() {
 }
 
 function patchVersion() {
-  const patch = q("#menu .patch-card");
-  if (patch) {
-    const copyNode = q(":scope > p", patch);
-    if (copyNode) copyNode.textContent = language() === "en"
-      ? "Gameplay balance, Succubus polish, Gacha duplicate exchange, chapter stars and mobile camera hotfix."
-      : "Gameplay balance, Succubus javítás, Gacha duplicate exchange, chapter-csillagok és mobilkamera hotfix.";
-  }
+  // Patch copy is maintained by the final menu decorator.
 }
 
 ensureCss();
@@ -23055,7 +23062,9 @@ function ensureMobileHomePolish() {
   // Duplicating them in More made the drawer grow from 11 to 15 entries.
 
   const patch=q("#menu .patch-card > p");
-  if(patch) patch.textContent=copy("UI-rendrakás, combat effektek és kényelmesebb mobilnézet.","UI polish, combat effects and a cleaner mobile layout.");
+  // One description owner: older version decorators must not change card height.
+  const patchText=copy("UI-rendrakás, combat effektek és kényelmesebb mobilnézet.","UI polish, combat effects and a cleaner mobile layout.");
+  if(patch && patch.textContent!==patchText) patch.textContent=patchText;
   qa("#menuDashboardV060 .dashboard-shortcuts-v060 button small").forEach(node=>node.textContent="");
 }
 function shortenEconomyText() {
@@ -23301,7 +23310,11 @@ function detectRoute() {
     "loginRewards", "statSummaryV082", "settings", "eventV093"
   ];
   const visible=candidates.find(panelVisible);
-  if(visible)return visible==="gachaChestOnlyV12"?"gachaV082":visible;
+  if(visible){
+    if(visible==="gachaChestOnlyV12")return "gachaV082";
+    if(visible==="chests" && id("chests")?.dataset.themeEconomyRoute==="shop")return "shopV082";
+    return visible;
+  }
   const active = q("#globalRailV060 [data-v082-route].active");
   return active?.dataset.v082Route || runtime.route || "menu";
 }
