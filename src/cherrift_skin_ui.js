@@ -49,7 +49,7 @@
   const SKIN_ASSETS = Object.freeze({
     gunner_cherry:Object.freeze({
       icon:"assets/player/skins/gunner_cherry/gunner_cherry_icon.png",
-      splash:"assets/player/skins/gunner_cherry/splashart.png"
+      splash:"assets/player/skins/gunner_cherry/gunner_cherry_splashart.png"
     }),
     cherry_default:Object.freeze({
       icon:"assets/player/skins/base_cherry/base_cherry_icon.png",

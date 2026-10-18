@@ -40,6 +40,7 @@ jobs:
           npm run audit
           npm run test:integrity
           npm run test:online-api
+          npm run test:gunner
           npm run smoke:supabase-lock
 
   smoke:

@@ -11,8 +11,9 @@
     "smoke": "node tools/smoke_09551.mjs",
     "test:integrity": "node --no-warnings --test tools/integrity.test.mjs",
     "test:online-api": "node --no-warnings --test tools/online_api.test.mjs",
+    "test:gunner": "node --test tools/gunner.test.mjs",
     "catalog:build": "node tools/build_game_catalog.mjs",
-    "test": "npm run validate && npm run audit && npm run test:integrity && npm run test:online-api && npm run smoke:supabase-lock && npm run smoke"
+    "test": "npm run validate && npm run audit && npm run test:integrity && npm run test:online-api && npm run test:gunner && npm run smoke:supabase-lock && npm run smoke"
   },
   "devDependencies": {
     "css-tree": "^3.1.0",

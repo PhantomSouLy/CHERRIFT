@@ -73,6 +73,17 @@ test("skin purchase checks the server catalogue, price and duplicate ownership",
   assert.ok(next.sakuraEssence < 10000);
   assert.throws(() => act(next, "buy_skin", { skin_id: skin.id }));
 });
+
+test("Gunner is a purchasable Rare skin in the authoritative catalogue", () => {
+  const skin = catalog.skins.find(skin => skin.id === "gunner_cherry");
+  assert.equal(skin?.rarity, "Rare");
+  const save = starter();
+  save.sakuraEssence = 10000;
+  const bought = act(save, "buy_skin", {skin_id:"gunner_cherry"}).save;
+  assert.ok(bought.unlockedSkins.includes("gunner_cherry"));
+  assert.ok(bought.sakuraEssence < save.sakuraEssence);
+  assert.throws(() => act(bought, "buy_skin", {skin_id:"gunner_cherry"}));
+});
 test("run tickets enforce locks, one active run, elapsed time, caps and no replay", () => {
   let s = starter();
   assert.throws(() => act(s, "start_run", { stage_id: "world_6_5" }));

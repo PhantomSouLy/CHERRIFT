@@ -5,7 +5,7 @@ the idle/standing attack atlases swap left/right relative to the other sheets.
 """
 import json
 from pathlib import Path
-from PIL import Image
+from PIL import Image, ImageOps
 
 ROOT = Path(__file__).resolve().parents[1] / "assets/player/skins/gunner_cherry"
 SPECS = {
@@ -44,9 +44,17 @@ def main():
     for state, frame, name in [("idle", 0, "gunner_cherry_icon.png"),
                                ("skill", 3, "gunner_cherry_skill_icon.png")]:
         strip = Image.open(output / f"gunner_cherry_{state}_down.png")
-        strip.crop((192 * frame, 0, 192 * (frame + 1), 192)).save(ROOT / name)
+        strip.crop((192 * frame, 0, 192 * (frame + 1), 192)).resize(
+            (512, 512), Image.Resampling.LANCZOS).save(ROOT / name)
     (ROOT / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
-    print("Exported 20 RGBA strips, 2 artwork thumbnails and manifest.")
+    # UI art follows the repository's canonical names and canvas dimensions.
+    splash = Image.open(ROOT / "splashart.png").convert("RGB")
+    # Fit without stretching/cropping the supplied illustration.
+    canvas = Image.new("RGB", (1152, 1536), splash.getpixel((0, 0)))
+    fitted = ImageOps.contain(splash, canvas.size, Image.Resampling.LANCZOS)
+    canvas.paste(fitted, ((canvas.width-fitted.width)//2, (canvas.height-fitted.height)//2))
+    canvas.save(ROOT / "gunner_cherry_splashart.png", optimize=True)
+    print("Exported 20 RGBA strips, 2 artwork thumbnails, UI splash and manifest.")
 
 
 if __name__ == "__main__":

@@ -21,6 +21,11 @@ exports `strips/` using their existing alpha channels. Every exported cell is
 | attack_walk.png | 6 | down, up, left, right |
 | skill.png | 8 | down, up, left, right |
 
-The idle and middle skill frames supply temporary skin/skill thumbnails. The
-supplied splashart is used in the selector. No generated replacement artwork is
+The idle and middle skill frames supply 512-pixel temporary skin/skill thumbnails.
+The supplied splashart is fitted without cropping onto a 1152 × 1536 UI canvas
+as `gunner_cherry_splashart.png`. No generated replacement artwork is
 used. Runtime integration lives in `src/cherrift_gunner.js`.
+
+The authoritative online skin entry is included in
+`supabase/functions/_shared/game_catalog.json`. Re-deploy `player-api` with this
+catalogue alongside the frontend release so online purchases can grant Gunner.

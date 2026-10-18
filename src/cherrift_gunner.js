@@ -30,7 +30,7 @@
     desc:"A mobile ranged Cherry with twin pistols and softly glowing pink bullets.",
     skillDesc:"Spins once and fires 48 bullets around her over 0.8 seconds. Each bullet deals 35% ATK damage.",
     stats:{damage:2,speed:4}, gradient:["#ff9bc9","#352038"], element:"cute",
-    icon:`${ROOT}gunner_cherry_icon.png`, splash:`${ROOT}splashart.png`,
+    icon:`${ROOT}gunner_cherry_icon.png`, splash:`${ROOT}gunner_cherry_splashart.png`,
     skillIcon:`${ROOT}gunner_cherry_skill_icon.png`
   });
   const proto = CherriftGame.prototype;
@@ -87,7 +87,7 @@
   const update = proto.update;
   proto.update = function updateGunner(dt) {
     const p = this.player;
-    if (p?.skin === ID && p.gunnerSpin && this.mode === "playing" && p.hp > 0) {
+    if (p?.skin === ID && p.gunnerSpin && this.mode === "playing" && p.hp > 0 && !(this.__hitStopV085 > 0)) {
       const cast = p.gunnerSpin;
       cast.elapsed = Math.min(SPIN_DURATION, cast.elapsed + Math.max(0,dt));
       while (cast.emitted < SPIN_PAIRS && cast.elapsed >= SPIN_START + cast.emitted*(SPIN_END-SPIN_START)/(SPIN_PAIRS-1)) {

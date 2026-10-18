@@ -2977,6 +2977,36 @@
       "skillDescriptionKey": "skins.sport_cherry.skillDesc",
       "skillIcon": "assets/ui/skill_icons/sport_cherry_skill_icon.png",
       "elementalAffinity": "stoneveil"
+    },
+    {
+      "id": "gunner_cherry",
+      "name": "Gunner Cherry",
+      "rarity": "Rare",
+      "emoji": "🔫",
+      "archetype": "offensive",
+      "weapon": "Twin Cherry Pistols",
+      "skill": "Bullet Ballet",
+      "passive": "Fire while moving at full speed",
+      "desc": "A mobile ranged Cherry with twin pistols and softly glowing pink bullets.",
+      "skillDesc": "Spins once and fires 48 bullets around her over 0.8 seconds. Each bullet deals 35% ATK damage.",
+      "stats": {
+        "damage": 2,
+        "speed": 4
+      },
+      "gradient": [
+        "#ff9bc9",
+        "#352038"
+      ],
+      "element": "cute",
+      "icon": "assets/player/skins/gunner_cherry/gunner_cherry_icon.png",
+      "splash": "assets/player/skins/gunner_cherry/gunner_cherry_splashart.png",
+      "skillIcon": "assets/player/skins/gunner_cherry/gunner_cherry_skill_icon.png",
+      "elementalAffinity": "cute",
+      "nameKey": "skins.gunner_cherry.name",
+      "descriptionKey": "skins.gunner_cherry.desc",
+      "passiveKey": "skins.gunner_cherry.passive",
+      "skillNameKey": "skins.gunner_cherry.skill",
+      "skillDescriptionKey": "skins.gunner_cherry.skillDesc"
     }
   ],
   "gearTypes": {

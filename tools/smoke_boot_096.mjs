@@ -1139,6 +1139,26 @@ try {
     `${requested}: Clean Runtime active`
   );
 
+  const gunner = window.CHERRIFT_CONFIG.player.skins.gunner_cherry;
+  assert.equal(gunner?.attackType, "ranged", `${requested}: Gunner registers before game startup`);
+  assert.equal(gunner?.attackMovementMode, "mobile", `${requested}: Gunner can fire while moving`);
+  assert.equal(window.CHERRIFT_DATA.skins.filter(skin => skin.id === "gunner_cherry").length, 1);
+  assert.equal(window.CHERRIFT_SKILL_ICONS.forSkin("gunner_cherry"),
+    "assets/player/skins/gunner_cherry/gunner_cherry_skill_icon.png");
+  await window.UI.game.assetReady;
+  for (const [animation, definition] of Object.entries(gunner.states)) {
+    for (const direction of Object.keys(definition.dirs)) {
+      assert.ok(window.UI.game.assets.get(`player_gunner_cherry_${animation}_${direction}`),
+        `${requested}: Gunner ${animation}/${direction} is loaded`);
+    }
+  }
+  const gunnerProbe = Object.create(window.CherriftGame.prototype);
+  gunnerProbe.player = {skin:"gunner_cherry",x:0,y:0,speed:200,attackCastTimer:.2};
+  gunnerProbe.activeSkinConfig = () => gunner;
+  gunnerProbe.hitObstacle = () => false;
+  gunnerProbe.movePlayer({x:1,y:0},.1);
+  assert.equal(gunnerProbe.player.x,20,`${requested}: actual movement stack preserves full firing speed`);
+
   assert.deepEqual(
     missingLocalRequests,
     [],
