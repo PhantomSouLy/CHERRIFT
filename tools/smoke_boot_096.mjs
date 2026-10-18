@@ -17,6 +17,7 @@ const cases = {
   "phone-portrait": [390, 844],
   "phone-landscape": [844, 390],
   "returning-session": [1280, 760],
+  "gm-returning-session": [1280, 760],
   "auth-timeout": [1280, 760],
   "cloud-timeout": [390, 844]
 };
@@ -28,7 +29,8 @@ if (!cases[requested]) {
 const [width, height] = cases[requested];
 const authTimeoutCase = requested === "auth-timeout";
 const cloudTimeoutCase = requested === "cloud-timeout";
-const returning = requested === "returning-session" || cloudTimeoutCase;
+const gmReturning = requested === "gm-returning-session";
+const returning = requested === "returning-session" || gmReturning || cloudTimeoutCase;
 const runtimeErrors = [];
 const missingLocalRequests = [];
 let activeWindow = null;
@@ -267,6 +269,13 @@ function fallbackStarterSave(window, userId = "") {
   const result = cloneJson(save);
   result.profile ||= {};
   result.profile.name ||= "Returning Cherry";
+  if (gmReturning) {
+    result.profile.activeTitle = "gm";
+    result.ownedTitles = ["gm"];
+    result.unlockedSkins = (window.CHERRIFT_DATA?.skins || [])
+      .map(skin => skin.id).filter(id => id !== "gunner_cherry");
+    result.prebeta = {...result.prebeta, gmAccessActive:false};
+  }
   result.security = {
     ...(result.security || {}),
     accountOwnerId: String(userId || "")
@@ -1172,6 +1181,28 @@ try {
   );
 
   log("releasing lobby");
+  if (gmReturning) {
+    assert.equal(window.CHERRIFT_AUTH.getState().onlinePolicy,true);
+    assert.equal(window.CHERRIFT_PREBETA.hasActiveGmAccess(window.UI.save),true);
+    assert.ok(window.UI.save.unlockedSkins.includes("gunner_cherry"),"GM preview includes Gunner");
+    const raw=fallbackStarterSave(window,window.CHERRIFT_AUTH.getState().account.id);
+    const context=window.CHERRIFT_AUTH.captureAccount();
+    for(let i=0;i<3;i++) {
+      assert.equal(window.CHERRIFT_AUTH.acceptServerSave(cloneJson(raw),`gm-revision-${i}`,context),true);
+      window.UI.refreshMenu();
+      window.CherriftStorage.save(window.UI.save);
+      await new Promise(resolve=>setTimeout(resolve,100));
+      assert.equal(document.body.classList.contains("obtained-open-v098"),false,
+        "GM hydration and repeated autosaves never announce the preview skin as loot");
+    }
+    const gunner=window.CHERRIFT_DATA.skins.find(skin=>skin.id==="gunner_cherry");
+    assert.equal(window.CHERRIFT_OBTAINED.show([{kind:"skin",key:"skin:gunner_cherry",skinId:gunner.id,label:gunner.name,amount:1,rarity:gunner.rarity}],{source:"gacha"}),true);
+    assert.equal(document.body.classList.contains("obtained-open-v098"),true,"explicit acquisitions still open");
+    click(window,document.getElementById("obtainedClaimV098"),"claim explicit reward");
+    window.CherriftStorage.save(window.UI.save);
+    await new Promise(resolve=>setTimeout(resolve,150));
+    assert.equal(document.body.classList.contains("obtained-open-v098"),false,"Claim stays closed");
+  }
   assert.equal(window.__CHERRIFT_ONLINE_INSTALLED__,true,`${requested}: online authority hooks install before gameplay can start`);
   click(
     window,

@@ -524,8 +524,15 @@
     // from the previous account before refreshing the newly authoritative save.
     window.CHERRIFT_OBTAINED?.reset?.();
 
-    window.UI?.refreshMenu?.();
-    window.dispatchEvent(new CustomEvent("cherrift:savechange", { detail:{ source } }));
+    try {
+      window.UI?.refreshMenu?.();
+      window.dispatchEvent(new CustomEvent("cherrift:savechange", { detail:{ source } }));
+    } finally {
+      // Refresh listeners normalize GM preview access and may save again.
+      // Establish the baseline after those mutations and cancel any queued
+      // automatic reveal produced by hydration, including legacy sessions.
+      window.CHERRIFT_OBTAINED?.reset?.();
+    }
   }
 
   function acceptServerSave(value, revision, context = accountContext()) {

@@ -17370,7 +17370,12 @@ function transientRewardUiActive() {
 }
 
 function autoAcquisitionSuppressed() {
-  return state.captureDepth > 0 || gameplayActive() || transientRewardUiActive();
+  // Online snapshots are hydration/preferences, not acquisition receipts.
+  // In particular GM normalization adds preview skins which the authoritative
+  // save correctly omits. Diffing that cycle would announce the same skin on
+  // every acknowledgement. Explicit gacha/claim presentations stay enabled.
+  return window.CHERRIFT_AUTH?.getState?.().onlinePolicy === true ||
+    state.captureDepth > 0 || gameplayActive() || transientRewardUiActive();
 }
 
 function flushAutomaticAcquisition() {
@@ -17397,7 +17402,7 @@ function patchObtainedStorage() {
     const result = previousSave(save, ...args);
     const after = itemSnapshot(save || window.UI?.save);
     state.obtainedBaseline = after;
-    if (before && !autoAcquisitionSuppressed()) {
+    if (result !== false && before && !autoAcquisitionSuppressed()) {
       const items = collectNewItems(before, after);
       if (items.length) queueAutomaticAcquisition(items);
     }

@@ -12,6 +12,7 @@ const allCases = [
   "phone-portrait",
   "phone-landscape",
   "returning-session",
+  "gm-returning-session",
   "auth-timeout",
   "cloud-timeout"
 ];
