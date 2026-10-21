@@ -1,7 +1,7 @@
 {
   "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "1001-ui-polish",
+  "buildId": "1007-world-gallery",
   "entrypoints": {
     "application": "src/cherrift_app.js",
     "presentation": "src/cherrift_presentation.js",
@@ -10,7 +10,13 @@
     "auth": "src/cherrift_auth.js",
     "networkGuard": "src/cherrift_network_guard.js",
     "foliage": "src/cherrift_foliage.js",
-    "skinUi": "src/cherrift_skin_ui.js"
+    "skinUi": "src/cherrift_skin_ui.js",
+    "desktopMenu": "src/cherrift_desktop_menu.js",
+    "desktopSkins": "src/cherrift_desktop_skins.js",
+    "desktopGear": "src/cherrift_desktop_gear.js",
+    "desktopGacha": "src/cherrift_desktop_gacha.js",
+    "desktopUpgrade": "src/cherrift_desktop_upgrade.js",
+    "desktopWorld": "src/cherrift_desktop_world.js"
   },
   "stylesheets": {
     "shell": "assets/cherrift_shell.css",
@@ -21,7 +27,13 @@
     "runtime": "assets/cherrift_runtime.css",
     "prebeta": "assets/cherrift_prebeta.css",
     "elemental": "assets/cherrift_elemental.css",
-    "skillBuilder": "assets/cherrift_skill_builder.css"
+    "skillBuilder": "assets/cherrift_skill_builder.css",
+    "desktopMenu": "assets/cherrift_desktop_menu.css",
+    "desktopSkins": "assets/cherrift_desktop_skins.css",
+    "desktopGear": "assets/cherrift_desktop_gear.css",
+    "desktopGacha": "assets/cherrift_desktop_gacha.css",
+    "desktopUpgrade": "assets/cherrift_desktop_upgrade.css",
+    "desktopWorld": "assets/cherrift_desktop_world.css"
   },
   "externalConfiguration": [
     "src/config.js",
@@ -80,6 +92,30 @@
       "assets/cherrift_shell.css",
       "assets/cherrift_app.css",
       "assets/cherrift_ui.css"
+    ],
+    "desktopPresentationOnly": [
+      "src/cherrift_desktop_menu.js",
+      "assets/cherrift_desktop_menu.css"
+    ],
+    "desktopSkinPresentationOnly": [
+      "src/cherrift_desktop_skins.js",
+      "assets/cherrift_desktop_skins.css"
+    ],
+    "desktopGearPresentationOnly": [
+      "src/cherrift_desktop_gear.js",
+      "assets/cherrift_desktop_gear.css"
+    ],
+    "desktopGachaPresentationOnly": [
+      "src/cherrift_desktop_gacha.js",
+      "assets/cherrift_desktop_gacha.css"
+    ],
+    "desktopUpgradePresentationOnly": [
+      "src/cherrift_desktop_upgrade.js",
+      "assets/cherrift_desktop_upgrade.css"
+    ],
+    "desktopWorldPresentationOnly": [
+      "src/cherrift_desktop_world.js",
+      "assets/cherrift_desktop_world.css"
     ]
   },
   "cleanup": {
