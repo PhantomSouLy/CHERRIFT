@@ -1,0 +1,19 @@
+CHERRIFT – PC Gear / Inventory (Celestial Atelier)
+
+TELEPÍTÉS
+1. Töltsd le és csomagold ki ezt a ZIP-et.
+2. A kicsomagolt assets/, src/, tools/, docs/, .github/ mappákat, valamint az index.html és package.json fájlt másold a CHERRIFT projekt gyökerébe.
+3. Engedélyezd a meglévő fájlok felülírását. A mappákat egyesítsd; ne töröld a többi fájlt.
+4. GitHubra feltöltéskor őrizd meg az itt látható mappaszerkezetet. A teljes ZIP-et nem kell a repóba feltölteni.
+5. Frissítés után töltsd újra a játékot (PC-n Ctrl+F5).
+
+A csomag a korábbi kristályos PC főmenüre és a Sakura Panorama skinválasztóra épül; azokat nem kell újra feltölteni.
+Kizárólag PC-s Gear UI változás. Új adatbázis-beállítás vagy Supabase-módosítás nem kell.
+Új skinpózok nem készültek. A meglévő skin splash artok jelennek meg.
+A tárgyműveletek ugyanazokat az eredeti online metódusokat használják, és továbbra is bejelentkezést kérhetnek.
+A screenshotokon helyi tesztinventory látható. A ZIP nem tartalmaz játékosmentést és nem ad ingyen tárgyakat.
+
+Részletes fájllista és tesztek: docs/PC_GEAR_INVENTORY_REWORK.md
+Képek: docs/pc-gear/
+Fejlesztői ág: feat/pc-celestial-inventory
+GitHub írás 403 miatt nem készült távoli PR. Nincs automatikus élesítés vagy merge.

@@ -1,0 +1,109 @@
+/* Celestial Atelier: every rule is route-scoped and PC-only. */
+@media(min-width:821px){
+ body.crystal-desktop.celestial-gear #app>#gear.panel{position:fixed!important;inset:0!important;width:100%!important;height:100dvh!important;max-width:none!important;max-height:none!important;min-height:0!important;padding:0!important;margin:0!important;overflow:hidden!important;background:#170c26 url('ui/backgrounds/crystal-realm-pc.webp') center/cover no-repeat!important;isolation:isolate;--cg-size:clamp(52px,7.8vh,116px)}
+ body.celestial-gear #gear:before{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(90deg,#170a25cc,transparent 38%,transparent 62%,#150a23cc),linear-gradient(0deg,#1a0c2be6,transparent 37%,#120b2444)}
+ body.celestial-gear :is(.topnav-v0933,.desktop-subnav-v0933,#desktopResourceBarV0933,#desktopResourceBarV094,.global-rail-v060){display:none!important}
+ body.crystal-desktop.celestial-gear #app>#gear :is(.panel-head,.gear-rail-v0560,.gear-header-v0560,.gear-loadout-title-v0560,#gearCherryCanvasV0560,#gearCherryStableV060,.gear-stage-rune-v0560,.gear-character-glow-v0560,.gear-character-floor-v0560,#loadoutStatsV063,#gearTabsV061,.gear-drop-message-v0560){display:none!important}
+ body.crystal-desktop.celestial-gear #app>#gear :is(.gear-v0560,.gear-main-v0560){display:contents!important;position:static!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important}
+ body.crystal-desktop.celestial-gear #app>#gear .gear-loadout-v0560{position:absolute!important;inset:15% auto 9% 34%!important;width:38%!important;justify-self:stretch!important;align-self:stretch!important;max-width:none!important;height:auto!important;min-height:0!important;padding:0!important;grid-area:auto!important;margin:0!important;overflow:visible!important;background:none!important;border:0!important;box-shadow:none!important}
+ body.crystal-desktop.celestial-gear #app>#gear #gearStageV0560.gear-stage-v0560{position:absolute!important;inset:0!important;display:block!important;width:100%!important;height:100%!important;min-height:0!important;overflow:visible!important;background:none!important;border:0!important;padding:0!important;isolation:isolate}
+ body.crystal-desktop.celestial-gear #app>#gear .cg-hero{position:absolute;inset:-7% -12% -6%;width:124%;height:113%;object-fit:cover;object-position:center;pointer-events:none!important;z-index:0;mask-image:radial-gradient(ellipse 50% 58%,#000 42%,#000b 70%,transparent 100%);filter:drop-shadow(0 0 24px #ef8cda44)}
+ body.crystal-desktop.celestial-gear #app>#gear .cg-hero.cg-cutout{object-fit:contain;inset:-7% -8% -3%;width:116%;height:110%;mask-image:linear-gradient(0deg,transparent,#000 7%,#000 94%,transparent)}
+ body.crystal-desktop.celestial-gear #app>#gear #gearStageV0560 [data-v0560-slot]{position:absolute!important;inset:auto!important;width:var(--cg-size)!important;height:var(--cg-size)!important;min-width:0!important;min-height:0!important;aspect-ratio:1!important;display:grid!important;place-items:center!important;padding:6px!important;border:1px solid var(--rarity,#e2a8d5)!important;border-radius:3px!important;background:linear-gradient(145deg,#6a356a99,#190f2ce8)!important;box-shadow:0 0 20px #b759c52b,inset 0 0 14px #f5b2df18!important;transform:none!important;z-index:3!important;overflow:visible!important;transition:transform 160ms,filter 160ms,box-shadow 160ms!important}
+ body.crystal-desktop.celestial-gear #app>#gear #gearStageV0560 [data-v0560-slot]::after{content:''!important;position:absolute!important;inset:-7px!important;border:0!important;border-radius:0!important;background:url('ui/skins/panorama-card-pc.webp') center/100% 100% no-repeat!important;opacity:.42!important;pointer-events:none!important;z-index:-1!important}
+ body.crystal-desktop.celestial-gear #app>#gear #gearStageV0560 :is([data-v0560-slot="Helmet"],[data-v0560-slot="Armor"],[data-v0560-slot="Weapon"],[data-v0560-slot="Ring"]){left:0!important;right:auto!important}
+ body.crystal-desktop.celestial-gear #app>#gear #gearStageV0560 :is([data-v0560-slot="Necklace"],[data-v0560-slot="Gloves"],[data-v0560-slot="Boots"]){right:0!important;left:auto!important}
+ body.crystal-desktop.celestial-gear #app>#gear #gearStageV0560 [data-v0560-slot="Helmet"]{top:4%!important}
+ body.crystal-desktop.celestial-gear #app>#gear #gearStageV0560 :is([data-v0560-slot="Armor"],[data-v0560-slot="Necklace"]){top:29%!important}
+ body.crystal-desktop.celestial-gear #app>#gear #gearStageV0560 :is([data-v0560-slot="Weapon"],[data-v0560-slot="Gloves"]){top:55%!important}
+ body.crystal-desktop.celestial-gear #app>#gear #gearStageV0560 :is([data-v0560-slot="Ring"],[data-v0560-slot="Boots"]){top:81%!important}
+ body.crystal-desktop.celestial-gear #app>#gear #gearStageV0560 [data-v0560-slot]:hover{transform:translateY(-3px) scale(1.04)!important;filter:brightness(1.22)!important}
+ body.crystal-desktop.celestial-gear #app>#gear #gearStageV0560 [data-v0560-slot].drag-compatible-v0560{box-shadow:0 0 25px #8fffe5!important;border-color:#a0ffe4!important}
+ body.crystal-desktop.celestial-gear #app>#gear #gearStageV0560 [data-v0560-slot].drop-over-v0560{transform:scale(1.12)!important;filter:brightness(1.5)!important}
+ body.crystal-desktop.celestial-gear #app>#gear .cg-chrome{position:absolute;inset:0 0 auto;height:13%;z-index:5;pointer-events:none!important}
+ body.crystal-desktop.celestial-gear #app>#gear .cg-chrome button{pointer-events:auto!important}
+ body.crystal-desktop.celestial-gear #app>#gear .cg-logo{position:absolute;left:2.5%;top:1vh;width:20%;height:8vh;object-fit:contain;object-position:left;pointer-events:none!important}
+ body.crystal-desktop.celestial-gear #app>#gear .cg-title{position:absolute;left:26%;top:2.6vh}
+ body.crystal-desktop.celestial-gear #app>#gear .cg-title small{font:clamp(8px,.65vw,14px)/1.4 Georgia,serif;letter-spacing:.24em;color:#d6abd2}
+ body.crystal-desktop.celestial-gear #app>#gear .cg-title h1{margin:.3vh 0;font:500 clamp(25px,3.5vh,52px)/1 Georgia,serif;letter-spacing:.14em;color:#ffedf9}
+ body.crystal-desktop.celestial-gear #app>#gear .cg-back{position:absolute;left:2.7%;top:10vh;background:transparent!important;border:0!important;color:#f8c9ee!important;padding:0!important;font:clamp(10px,.8vw,17px)/1.5 Georgia,serif!important;letter-spacing:.15em}
+ body.crystal-desktop.celestial-gear #app>#gear .crystal-topbar{top:2vh!important;right:2.5%!important}
+ body.crystal-desktop.celestial-gear #app>#gear .cg-caption{position:absolute;left:38%;right:31%;bottom:2.6%;text-align:center;pointer-events:none!important;z-index:4;text-shadow:0 2px 12px #1a092a}
+ body.crystal-desktop.celestial-gear #app>#gear .cg-caption small{font:clamp(8px,.7vw,15px)/1.5 system-ui;letter-spacing:.22em;color:#e7b2d9}
+ body.crystal-desktop.celestial-gear #app>#gear .cg-caption h2{margin:.5vh 0;font:italic 500 clamp(20px,3vh,44px)/1.2 Georgia,serif;color:#ffecf8}
+ body.crystal-desktop.celestial-gear #app>#gear .cg-caption p{margin:0;font:clamp(9px,.7vw,15px)/1.4 Georgia,serif;letter-spacing:.17em;color:#c6b5da}
+ body.crystal-desktop.celestial-gear #app>#gear #gearInventoryZoneV0560{position:absolute!important;inset:16% auto 5% 2.3%!important;width:30%!important;max-width:none!important;box-sizing:border-box!important;grid-area:auto!important;height:auto!important;min-height:0!important;max-height:none!important;margin:0!important;padding:5vh 2.4vw 3vh!important;display:flex!important;flex-direction:column!important;gap:1.5vh!important;overflow:visible!important;border:0!important;border-radius:0!important;background:#160e26e0!important;box-shadow:0 12px 50px #130b2a88!important;z-index:3}
+ body.crystal-desktop.celestial-gear #app>#gear #gearInventoryZoneV0560::before,body.crystal-desktop.celestial-gear #app>#gear .cg-overview::before,body.crystal-desktop.celestial-gear #app>#gearModalV0560 .gear-modal-card-v0560::before{content:'';position:absolute;inset:-1.5vh -1vw;pointer-events:none!important;z-index:5;background:url('ui/gear/celestial-frame-pc.webp') center/100% 100% no-repeat}
+ body.crystal-desktop.celestial-gear #app>#gear .gear-inventory-head-v0560{display:flex!important;flex-wrap:wrap!important;gap:1vh!important;flex:0 0 auto!important;margin:0!important;padding:0 0 1vh!important;border-bottom:1px solid #d69bd458!important;background:none!important}
+ body.crystal-desktop.celestial-gear #app>#gear .gear-inventory-head-v0560>div:first-child{flex:1;min-width:45%}
+ body.crystal-desktop.celestial-gear #app>#gear .gear-inventory-head-v0560 h2{font:500 clamp(17px,2.4vh,34px)/1.2 Georgia,serif!important;color:#ffedf9!important;margin:.5vh 0!important}
+ body.crystal-desktop.celestial-gear #app>#gear .gear-inventory-head-v0560 small{font-size:clamp(8px,.6vw,13px)!important;letter-spacing:.2em!important;color:#d5a7d6!important}
+ body.crystal-desktop.celestial-gear #app>#gear .gear-inventory-tools-v0560{display:flex!important;align-items:center!important;gap:8px!important;flex-wrap:wrap!important}
+ body.crystal-desktop.celestial-gear #app>#gear .gear-bulk-tools-v082{width:100%!important;display:flex!important;flex-wrap:wrap!important;gap:5px!important;justify-content:flex-start!important}
+ body.crystal-desktop.celestial-gear #app>#gear :is(.gear-selection-picks-v096,.gear-selection-actions-v096){flex-wrap:wrap!important;gap:4px!important}
+ body.crystal-desktop.celestial-gear #app>#gear :is(.gear-bulk-tools-v082,.gear-inventory-tools-v0560) button{min-height:25px!important;padding:5px 9px!important;font-size:clamp(9px,.66vw,14px)!important;border:1px solid #c28fb75c!important;background:#35203f!important;border-radius:2px!important}
+ body.crystal-desktop.celestial-gear #app>#gear #gearFiltersV0560{display:flex!important;flex-wrap:wrap!important;gap:4px!important;overflow:visible!important;margin:0!important;padding:0!important;flex:0 0 auto!important}
+ body.crystal-desktop.celestial-gear #app>#gear #gearFiltersV0560 button{flex:1 0 20%!important;min-width:0!important;min-height:28px!important;padding:5px 3px!important;border-radius:1px!important;border:1px solid #c191bd44!important;background:#281a38!important;color:#d9c3df!important;font:clamp(9px,.67vw,14px)/1.2 system-ui!important}
+ body.crystal-desktop.celestial-gear #app>#gear #gearFiltersV0560 button.active{background:#8b427777!important;color:#ffeaf9!important;border-color:#ffb6e5!important;box-shadow:inset 0 -2px #ef8fce!important}
+ body.crystal-desktop.celestial-gear #app>#gear #gearInventoryGridV0560{flex:1 1 0!important;min-height:0!important;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-auto-rows:max-content!important;align-content:start!important;gap:.8vw!important;padding:1vh .2vw 1vh!important;overflow:auto!important;scrollbar-width:thin;scrollbar-color:#bc78ad #24172e}
+ body.crystal-desktop.celestial-gear #app>#gear .gear-item-v0560{position:relative!important;width:100%!important;height:auto!important;min-width:0!important;min-height:0!important;aspect-ratio:.84!important;border-radius:3px!important;border:1px solid var(--rarity,#d69bd4)!important;background:linear-gradient(145deg,#58315d99,#1b132eeb)!important;box-shadow:inset 0 0 16px #e6b3e11a!important;padding:5px!important;transition:transform 160ms,filter 160ms!important}
+ body.crystal-desktop.celestial-gear #app>#gear .gear-item-v0560:hover{transform:translateY(-3px)!important;filter:brightness(1.18)!important}
+ body.crystal-desktop.celestial-gear #app>#gear .gear-item-v0560:focus-visible,body.crystal-desktop.celestial-gear #app>#gear button:focus-visible{outline:2px solid #abf4ff!important;outline-offset:3px!important}
+ body.crystal-desktop.celestial-gear #app>#gear .gear-item-icon-v0560{font-size:clamp(22px,3vw,58px)!important}
+ body.crystal-desktop.celestial-gear #app>#gear .gear-item-icon-v0560 img{width:75%!important;height:75%!important;object-fit:contain!important}
+ body.crystal-desktop.celestial-gear #app>#gear .cg-overview{position:absolute;right:2.4%;top:16%;bottom:5%;width:23%;box-sizing:border-box;padding:5vh 2.3vw 3vh;background:#180f29e6;z-index:3;color:#ecd8ee}
+ body.crystal-desktop.celestial-gear #app>#gear .cg-overview>small{font:clamp(8px,.65vw,14px)/1.4 system-ui;letter-spacing:.2em;color:#cda5d1}
+ body.crystal-desktop.celestial-gear #app>#gear .cg-overview h2{font:500 clamp(21px,3vh,44px)/1.2 Georgia,serif;margin:1vh 0 2vh;color:#ffedf9}
+ body.crystal-desktop.celestial-gear #app>#gear .cg-stats{display:grid;grid-template-columns:repeat(3,1fr);padding:1.5vh 0;border-block:1px solid #bf86b751;gap:.7vw;text-align:center}
+ body.crystal-desktop.celestial-gear #app>#gear .cg-stats small{display:block;font:clamp(8px,.6vw,13px)/1.7 system-ui;color:#bca2c7;letter-spacing:.1em}
+ body.crystal-desktop.celestial-gear #app>#gear .cg-stats b{font:500 clamp(19px,2.7vh,39px)/1.2 Georgia,serif;color:#f8c7e8}
+ body.crystal-desktop.celestial-gear #app>#gear .cg-equipped{display:grid;gap:.8vh;margin-top:2vh}
+ body.crystal-desktop.celestial-gear #app>#gear .cg-equipped button{display:flex;align-items:center;gap:.7vw;width:100%;padding:.7vh .6vw;min-height:0;background:#291b3b7a;border:1px solid #c898cb33;border-radius:2px;color:#f0d9eb;text-align:left;font:clamp(10px,.8vw,18px)/1.2 Georgia,serif;transition:transform 160ms}
+ body.crystal-desktop.celestial-gear #app>#gear .cg-equipped button:hover{transform:translateX(-3px);border-color:#ecacda}
+ body.crystal-desktop.celestial-gear #app>#gear .cg-equipped button>span:first-child{width:3.2vh;height:3.2vh;display:grid;place-items:center;font-size:2.5vh}
+ body.crystal-desktop.celestial-gear #app>#gear .cg-equipped img{width:100%;height:100%;object-fit:contain}
+ body.crystal-desktop.celestial-gear #app>#gear .cg-equipped button small{margin-left:auto;color:#bba3c2;font:clamp(8px,.6vw,13px)/1.2 system-ui}
+ body.crystal-desktop.celestial-gear #app>#gear .cg-hint{margin:2vh 0 0;font:clamp(10px,.77vw,16px)/1.6 system-ui;color:#baa4c5}
+ body.crystal-desktop.celestial-gear #app>#gearModalV0560:not(.hidden){position:fixed!important;inset:16% 2.4% 5% auto!important;width:23%!important;height:auto!important;padding:0!important;background:none!important;display:block!important;z-index:90!important;pointer-events:none!important;animation:cg-reveal 220ms ease-out}
+ body.crystal-desktop.celestial-gear #app>#gearModalV0560 .gear-modal-backdrop-v0560{display:none!important}
+ body.crystal-desktop.celestial-gear #app>#gearModalV0560 .gear-modal-card-v0560{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;min-height:0!important;padding:5vh 2.3vw 3vh!important;border:0!important;border-radius:0!important;background:#1a102a!important;box-shadow:0 12px 40px #13082188!important;overflow:visible!important;pointer-events:auto!important}
+ body.celestial-gear #gearModalBodyV0560{height:100%;overflow:auto;scrollbar-width:thin;padding-right:.4vw}
+ body.crystal-desktop.celestial-gear #app>#gearModalV0560 .gear-modal-close-v0560{z-index:8!important;top:1.5vh!important;right:1vw!important;color:#f7ccec!important;background:#46223e!important;border:1px solid #c997b7!important}
+ body.crystal-desktop.celestial-gear #app>#gearModalV0560 .gear-detail-head-v0560{display:flex!important;flex-wrap:wrap!important;gap:1vh!important;padding-right:20px!important}
+ body.crystal-desktop.celestial-gear #app>#gearModalV0560 .gear-detail-head-v0560 h3{font:500 clamp(17px,2.6vh,35px)/1.2 Georgia,serif!important;color:#ffdef5!important;overflow-wrap:anywhere}
+ body.crystal-desktop.celestial-gear #app>#gearModalV0560 .gear-detail-icon-v0560{width:7vh!important;height:7vh!important;border-radius:3px!important;background:#4f2a54!important}
+ body.crystal-desktop.celestial-gear #app>#gearModalV0560 .gear-stat-row-v0560{padding:1vh .6vw!important;border-bottom:1px solid #d39bd32b!important;font-size:clamp(11px,.85vw,18px)!important}
+ body.crystal-desktop.celestial-gear #app>#gearModalV0560 .gear-detail-actions-v0560{display:flex!important;flex-wrap:wrap!important;gap:.6vw!important;margin-top:2vh!important}
+ body.crystal-desktop.celestial-gear #app>#gearModalV0560 .gear-detail-actions-v0560 button{flex:1 1 40%!important;min-height:35px!important;border:1px solid #c597bd!important;border-radius:2px!important;background:#3c244c!important;color:#f4d7ed!important}
+ body.crystal-desktop.celestial-gear #app>#gearModalV0560 .gear-detail-actions-v0560 [data-v0560-action="equip"],body.crystal-desktop.celestial-gear #app>#gearModalV0560 .gear-detail-actions-v0560 [data-v0560-action="unequip"]{flex:1 0 100%!important;min-height:8vh!important;font:500 clamp(18px,2.5vh,36px)/1 Georgia,serif!important;color:#471638!important;border:0!important;background:url('ui/skins/panorama-action-pc.webp') center/100% 100% no-repeat!important;filter:drop-shadow(0 0 10px #ee81c63a)}
+ body.crystal-desktop.celestial-gear #app>#gearModalV0560 .gear-compare-v0560{background:#301c3f!important;border-color:#8b5d85!important}
+ body.crystal-desktop.celestial-gear #app>#gearModalV0560 .good{color:#95f0e4!important}
+ body.crystal-desktop.celestial-gear #app>#gearModalV0560 .bad{color:#ff9eb9!important}
+ @keyframes cg-reveal{from{opacity:0;transform:translate3d(15px,0,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+ @media(max-height:720px){body.crystal-desktop.celestial-gear #app>#gear #gearFiltersV0560 button{min-height:23px!important;padding:3px!important}body.crystal-desktop.celestial-gear #app>#gear .cg-equipped{gap:3px;margin-top:1vh}body.crystal-desktop.celestial-gear #app>#gear .cg-hint{margin-top:1vh;font-size:10px}body.crystal-desktop.celestial-gear #app>#gear .gear-inventory-head-v0560 h2{font-size:16px!important}}
+ @media(prefers-reduced-motion:reduce){body.crystal-desktop.celestial-gear #app>#gear *,body.celestial-gear #gearModalV0560{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+ body.crystal-desktop.celestial-gear #app>#gear #gearInventoryZoneV0560::before,body.crystal-desktop.celestial-gear #app>#gear .cg-overview::before,body.crystal-desktop.celestial-gear #app>#gearModalV0560 .gear-modal-card-v0560::before{z-index:0}
+ body.crystal-desktop.celestial-gear #app>#gear #gearInventoryZoneV0560>*,body.crystal-desktop.celestial-gear #app>#gear .cg-overview>*,body.celestial-gear #gearModalBodyV0560{position:relative;z-index:1}
+ body.crystal-desktop.celestial-gear #app>#gear #gearInventoryGridV0560{order:4!important}
+ body.crystal-desktop.celestial-gear #app>#gear .cg-search{width:100%;box-sizing:border-box;min-height:30px;flex:0 0 auto;padding:7px 10px;border:1px solid #b98fc164;border-radius:2px;background:#22152ddb;color:#ffe8f6;font:clamp(10px,.8vw,17px)/1.4 system-ui;outline-offset:2px}
+ body.crystal-desktop.celestial-gear #app>#gear .gear-item-v0560:is(.cg-filtered,.rarity-hidden-v0931){display:none!important}
+ body.crystal-desktop.celestial-gear #app>#gear .cg-empty-icon{position:absolute;width:70%;height:70%;object-fit:contain;opacity:.65;pointer-events:none!important;filter:drop-shadow(0 0 8px #cb93eb70)}
+ body.crystal-desktop.celestial-gear #app>#gear [data-v0560-slot]:has(.cg-empty-icon) :is(.gear-slot-icon-v0560,.gear-slot-icon-v0932){visibility:hidden!important}
+ body.crystal-desktop.celestial-gear #app>#gear .cg-caption{bottom:1.8%}
+ body.crystal-desktop.celestial-gear #app>#gear [data-cg-change]{pointer-events:auto!important;margin:1vh auto 0;padding:.8vh 1.8vw;min-height:28px;border:1px solid #e8b4dc77;border-radius:1px;background:#2d183dc4;color:#fbd6ee;font:clamp(9px,.7vw,15px)/1.2 Georgia,serif;letter-spacing:.1em}
+
+ body.crystal-desktop.celestial-gear #app>#gear #gearInventoryGridV0560{grid-template-areas:none!important;grid-auto-flow:row!important;grid-auto-columns:minmax(0,1fr)!important;grid-template-rows:none!important}
+ body.crystal-desktop.celestial-gear #app>#gear .gear-item-v0560{display:block!important;box-sizing:border-box!important;overflow:hidden!important;align-self:start!important;justify-self:stretch!important;grid-area:auto!important}
+ body.crystal-desktop.celestial-gear #app>#gear .gear-item-v0560>*{pointer-events:none!important}
+ body.crystal-desktop.celestial-gear #app>#gear .gear-item-v0560>.gear-item-icon-v0560{position:absolute!important;inset:8% 8% 21%!important;width:84%!important;height:71%!important;display:grid!important;place-items:center!important}
+ body.crystal-desktop.celestial-gear #app>#gear .gear-item-v0560>b{position:absolute!important;left:5px!important;top:auto!important;bottom:5px!important;font-size:clamp(8px,.65vw,13px)!important}
+ body.crystal-desktop.celestial-gear #app>#gear .gear-item-v0560>small{position:absolute!important;right:5px!important;left:auto!important;top:auto!important;bottom:5px!important;font-size:clamp(8px,.65vw,13px)!important}
+ body.crystal-desktop.celestial-gear #app>#gear .gear-item-v0560>em{position:absolute!important;inset:3px 3px auto!important;text-align:center!important;font-size:clamp(7px,.55vw,12px)!important}
+ body.crystal-desktop.celestial-gear #app>#gear .gear-item-v0560>.gear-upgrade-arrow-v0932{position:absolute!important;right:3px!important;top:3px!important;left:auto!important;font-size:12px!important;width:17px!important;height:17px!important}
+ body.crystal-desktop.celestial-gear #app>#gear #gearStageV0560 [data-v0560-slot]{overflow:visible!important}
+
+ body.celestial-gear #toast{pointer-events:none!important}
+ body.crystal-desktop.celestial-gear #app>#gear #gearInventoryZoneV0560 .gear-inventory-head-v0560>div:first-child{padding-left:1.6vw!important}
+ body.crystal-desktop.celestial-gear #app>#gear .cg-overview>small,body.crystal-desktop.celestial-gear #app>#gear .cg-overview>h2{margin-left:1.5vw}
+
+}
