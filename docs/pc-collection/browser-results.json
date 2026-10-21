@@ -1,0 +1,32 @@
+{
+  "passed": true,
+  "pageErrors": [],
+  "missingResources": [],
+  "desktopViewports": [
+    [
+      1920,
+      1080
+    ],
+    [
+      1366,
+      768
+    ],
+    [
+      1280,
+      720
+    ],
+    [
+      2560,
+      1440
+    ],
+    [
+      1024,
+      768
+    ]
+  ],
+  "mobile": [
+    390,
+    844
+  ],
+  "saveUnchanged": true
+}

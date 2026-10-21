@@ -1,7 +1,7 @@
 {
   "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "1010-crystal-mail",
+  "buildId": "1011-rift-collection",
   "entrypoints": {
     "application": "src/cherrift_app.js",
     "presentation": "src/cherrift_presentation.js",
@@ -19,7 +19,8 @@
     "desktopWorld": "src/cherrift_desktop_world.js",
     "desktopSettings": "src/cherrift_desktop_settings.js",
     "desktopProfile": "src/cherrift_desktop_profile.js",
-    "desktopMail": "src/cherrift_desktop_mail.js"
+    "desktopMail": "src/cherrift_desktop_mail.js",
+    "desktopCollection": "src/cherrift_desktop_collection.js"
   },
   "stylesheets": {
     "shell": "assets/cherrift_shell.css",
@@ -39,7 +40,8 @@
     "desktopWorld": "assets/cherrift_desktop_world.css",
     "desktopSettings": "assets/cherrift_desktop_settings.css",
     "desktopProfile": "assets/cherrift_desktop_profile.css",
-    "desktopMail": "assets/cherrift_desktop_mail.css"
+    "desktopMail": "assets/cherrift_desktop_mail.css",
+    "desktopCollection": "assets/cherrift_desktop_collection.css"
   },
   "externalConfiguration": [
     "src/config.js",
@@ -134,6 +136,10 @@
     "desktopMailPresentationOnly": [
       "src/cherrift_desktop_mail.js",
       "assets/cherrift_desktop_mail.css"
+    ],
+    "desktopCollectionPresentationOnly": [
+      "src/cherrift_desktop_collection.js",
+      "assets/cherrift_desktop_collection.css"
     ]
   },
   "cleanup": {
