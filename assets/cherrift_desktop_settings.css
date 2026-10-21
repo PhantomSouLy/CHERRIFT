@@ -1,0 +1,86 @@
+/* Desktop Settings only; all original controls, IDs and handlers are retained. */
+@media(min-width:821px){
+ body.crystal-desktop.crystal-settings #app>#settings.panel{position:fixed!important;inset:0!important;width:100%!important;height:100dvh!important;max-width:none!important;max-height:none!important;min-height:0!important;padding:0!important;margin:0!important;overflow:hidden!important;background:#180e25!important;isolation:isolate;color:#ffeef8}
+ body.crystal-settings :is(.topnav-v0933,.desktop-subnav-v0933,#desktopResourceBarV0933,#desktopResourceBarV094,.global-rail-v060){display:none!important}
+ body.crystal-settings #settings>:is(.panel-head,.settings-quick-v060){display:none!important}
+ body.crystal-settings #settings::before{display:none!important}
+ body.crystal-settings #settings .cs-scenery{position:absolute;inset:0;z-index:-3;background:#21132d url('ui/backgrounds/crystal-realm-pc.webp') 35% center/cover no-repeat;pointer-events:none!important}
+ body.crystal-settings #settings .cs-scenery::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#1b0d2222,#1b0b2b77 35%,#180c23c4),linear-gradient(0deg,#1b0b26b8,transparent 30%,#1b0b2644);pointer-events:none!important}
+ body.crystal-settings #settings .cs-ornament{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:2;pointer-events:none!important;filter:drop-shadow(0 0 16px #ea93cf30)}
+ body.crystal-settings #settings .cs-chrome{position:absolute;inset:0 0 auto;height:14%;z-index:8;pointer-events:none!important;background:linear-gradient(180deg,#1b0c27b8,transparent)}
+ body.crystal-settings #settings .cs-chrome button{pointer-events:auto!important}
+ body.crystal-settings #settings .cs-logo{position:absolute;left:2.8%;top:1vh;width:20%;height:9vh;object-fit:contain;object-position:left;filter:drop-shadow(0 0 16px #e69bd94d)}
+ body.crystal-settings #settings .cs-heading{position:absolute;left:41%;top:2.8vh;text-shadow:0 2px 20px #150a25}
+ body.crystal-settings #settings .cs-heading small{font:clamp(8px,.65vw,14px)/1.4 Georgia,serif;letter-spacing:.28em;color:#ebbeda}
+ body.crystal-settings #settings .cs-heading h1{font:500 clamp(27px,4.2vh,60px)/1.1 Georgia,serif;letter-spacing:.12em;margin:.4vh 0;color:#fff0fa}
+ body.crystal-settings #settings .cs-back{position:absolute;left:3.5%;top:12vh;min-height:25px!important;padding:0!important;border:0!important;background:none!important;box-shadow:none!important;color:#f8d5ec!important;font:clamp(10px,.8vw,18px)/1.5 Georgia,serif!important;letter-spacing:.12em}
+ body.crystal-settings #settings .crystal-topbar{top:1.5vh!important;right:2.3%!important}
+ body.crystal-settings #settings #settingsShellV060{display:contents!important}
+ body.crystal-settings #settings .settings-tabs-v060{position:absolute!important;left:20%!important;top:22%!important;bottom:18%!important;width:19%!important;display:flex!important;flex-direction:column!important;justify-content:center!important;gap:1.3vh!important;margin:0!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important;overflow:visible!important;z-index:4}
+ body.crystal-desktop.crystal-settings #app>#settings .settings-tabs-v060 button{position:relative!important;flex:1!important;max-height:8.3vh!important;min-height:34px!important;width:100%!important;margin:0!important;padding:0 2vw!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:1.1vw!important;border:0!important;border-radius:0!important;background:url('ui/settings/crystal-tab-pc.webp') center/100% 190% no-repeat!important;box-shadow:none!important;color:#f9e1f0!important;transform:perspective(800px) rotateY(-7deg)!important;transition:transform 160ms,filter 160ms!important;overflow:visible!important;isolation:isolate}
+ body.crystal-settings #settings .settings-tabs-v060 button>b{display:none!important}
+ body.crystal-settings #settings .settings-tabs-v060 button>i{display:block!important;font:normal clamp(17px,1.6vw,35px)/1 Georgia,serif!important;color:#efb2dd!important;text-shadow:0 0 10px #ea8bc6;pointer-events:none!important}
+ body.crystal-settings #settings .cs-tab-label{font:500 clamp(12px,1.1vw,24px)/1.2 Georgia,serif;letter-spacing:.04em;color:inherit;pointer-events:none!important;text-shadow:0 2px 8px #210b2c}
+ body.crystal-desktop.crystal-settings #app>#settings .settings-tabs-v060 button.active{background-image:url('ui/skins/panorama-action-pc.webp')!important;background-size:100% 100%!important;transform:perspective(800px) rotateY(0deg) translateX(8px) scale(1.035)!important;color:#4d193e!important;filter:drop-shadow(0 0 15px #ed95cf5c)}
+ body.crystal-settings #settings .settings-tabs-v060 button.active>i{color:#70204e!important;text-shadow:none!important}
+ body.crystal-settings #settings .settings-tabs-v060 button.active .cs-tab-label{text-shadow:none}
+ body.crystal-desktop.crystal-settings #app>#settings .settings-tabs-v060 button:hover{transform:perspective(800px) rotateY(0deg) translateX(9px) scale(1.035)!important;filter:brightness(1.12) drop-shadow(0 0 12px #eaa0d34d)!important}
+ body.crystal-settings #settings .settings-content-v060{position:absolute!important;left:41%!important;right:5%!important;top:21%!important;bottom:17%!important;min-height:0!important;width:auto!important;max-width:none!important;margin:0!important;padding:0!important;overflow:hidden!important;border:0!important;border-radius:0!important;background:#1e102bd9!important;box-shadow:none!important;z-index:1}
+ body.crystal-settings #settings .settings-page-v060{display:none!important;position:absolute!important;inset:0!important;min-height:0!important;margin:0!important;padding:0 6vw 2.5vh 1.4vw!important;overflow-y:auto!important;overflow-x:hidden!important;scrollbar-width:thin;scrollbar-color:#b77ca9 #261431;background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;color:#f4ddec!important}
+ body.crystal-settings #settings .settings-page-v060.active{display:block!important}
+ body.crystal-settings #settings .settings-page-v060>header{position:sticky;top:0;padding:1.5vh 0 2vh;margin:0 0 1vh;background:#21132ff2;border-bottom:1px solid #d69ac253;z-index:3}
+ body.crystal-settings #settings .settings-page-v060>header>small{color:#e2a6cd;font:clamp(9px,.8vw,18px)/1.5 Georgia,serif;letter-spacing:.2em}
+ body.crystal-settings #settings .settings-page-v060>header h3{margin:.3vh 0 .7vh;color:#ffeaf7;font:500 clamp(27px,3.8vh,54px)/1.1 Georgia,serif}
+ body.crystal-settings #settings .settings-page-v060>header p{margin:0;color:#ccb5d0;font:clamp(10px,.8vw,18px)/1.4 system-ui}
+ body.crystal-settings #settings .setting-line-v060{position:relative;display:grid!important;grid-template-columns:minmax(0,1.2fr) minmax(130px,1fr) auto!important;align-items:center!important;column-gap:1.3vw!important;row-gap:.5vh!important;margin:0!important;padding:2.5vh .2vw!important;min-height:9vh!important;border:0!important;border-bottom:1px solid #c493b83d!important;border-radius:0!important;background:none!important;box-shadow:none!important;box-sizing:border-box!important;color:#f6e0f1!important}
+ body.crystal-settings #settings .setting-line-v060>span{min-width:0}
+ body.crystal-settings #settings .setting-line-v060>span>b{display:block;font:500 clamp(14px,1.12vw,25px)/1.3 Georgia,serif;color:#f7dfee}
+ body.crystal-settings #settings .setting-line-v060>span>small{display:block;margin-top:.6vh;font:clamp(9px,.73vw,16px)/1.4 system-ui;color:#c7aac7}
+ body.crystal-settings #settings .setting-line-v060:has(input[type=checkbox]),body.crystal-settings #settings .setting-line-v060:has(select),body.crystal-settings #settings .setting-line-v060:has(button){grid-template-columns:minmax(0,1fr) auto!important}
+ body.crystal-settings #settings .setting-line-v060.disabled{opacity:.48!important}
+ body.crystal-settings #settings .setting-line-v060:has(.cs-soon){padding-bottom:3.5vh!important}
+ body.crystal-settings #settings .cs-soon{position:absolute;left:.2vw;bottom:.8vh;font:clamp(8px,.65vw,14px)/1.3 system-ui;color:#e2adc9;letter-spacing:.1em}
+ body.crystal-settings #settings .cs-range-value{min-width:3.8em;text-align:right;font:500 clamp(15px,1.3vw,28px)/1.3 Georgia,serif;color:#ffe0f2}
+ body.crystal-settings #settings input[type=range]{appearance:none!important;min-width:0!important;width:100%!important;height:6px!important;min-height:0!important;padding:0!important;margin:0!important;border:1px solid #d9a9cc9c!important;border-radius:4px!important;background:linear-gradient(90deg,#f1a3d3,#955caa)!important;box-shadow:0 0 9px #e89ccd3b!important;accent-color:#eea3d2}
+ body.crystal-settings #settings input[type=range]::-webkit-slider-thumb{appearance:none;width:17px;height:26px;border:2px solid #ffe6f6;background:linear-gradient(115deg,#ffcbed,#c657a6,#ffe3fa);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);filter:drop-shadow(0 0 5px #f4b1de);cursor:ew-resize}
+ body.crystal-settings #settings input[type=range]::-moz-range-thumb{width:15px;height:24px;border:2px solid #ffe6f6;background:#e992c9;border-radius:0;transform:rotate(45deg);cursor:ew-resize}
+ body.crystal-settings #settings input[type=checkbox]{appearance:none!important;position:relative!important;width:70px!important;height:30px!important;min-width:70px!important;margin:0!important;border:1px solid #c99ac8!important;border-radius:20px!important;background:#23162e!important;box-shadow:inset 0 0 9px #10061c!important;cursor:pointer!important}
+ body.crystal-settings #settings input[type=checkbox]::after{content:'';position:absolute;left:5px;top:4px;width:20px;height:20px;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);background:linear-gradient(120deg,#e4c5e5,#91769e);transition:transform 140ms}
+ body.crystal-settings #settings input[type=checkbox]:checked{background:#8b3a73!important;border-color:#f6b8df!important;box-shadow:0 0 12px #ee95cb3d!important}
+ body.crystal-settings #settings input[type=checkbox]:checked::after{transform:translateX(38px);background:linear-gradient(120deg,#fff0fb,#ef9acb,#ffe5f5)}
+ body.crystal-settings #settings select{width:auto!important;min-width:150px!important;max-width:21vw!important;padding:1vh 1vw!important;min-height:38px!important;border:1px solid #c99bc775!important;border-radius:3px!important;background:#2e193b!important;color:#ffe5f5!important;font:clamp(11px,.85vw,19px)/1.3 system-ui!important}
+ body.crystal-settings #settings .cs-current-zoom{position:absolute;right:2.5vw;max-width:18vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;pointer-events:none!important;color:#ffe5f5;font:clamp(11px,.85vw,19px)/1.3 system-ui}
+ body.crystal-settings #settings .cs-current-zoom[hidden]{display:none!important}
+ body.crystal-settings #settings select option{background:#281630;color:#ffedf8}
+ body.crystal-settings #settings :is(.setting-info-v060,.auth-account-v064,.settings-account-bf,.auth-card-v064,.theme-settings-card-v1){background:#2b173acc!important;border:1px solid #c18cb64d!important;border-radius:4px!important;color:#edd4e8!important;box-shadow:none!important}
+ body.crystal-settings #settings .setting-info-v060{margin:2vh 0;padding:1.3vh 1vw;font-size:clamp(10px,.8vw,17px)}
+ body.crystal-settings #settings :is(.setting-info-v060 p,.auth-account-copy-v064 p,.settings-account-bf p){color:#d5b8d2!important;font-size:clamp(10px,.8vw,17px)!important}
+ body.crystal-settings #settings :is(.setting-action-v060,[data-auth-action],.bf-button,[data-theme-select]){min-height:36px!important;padding:1vh 1vw!important;border:1px solid #cf94bd8c!important;border-radius:3px!important;background:#402140!important;color:#f6d5ec!important;font:clamp(11px,.8vw,18px)/1.4 system-ui!important;box-shadow:none!important}
+ body.crystal-settings #settings .setting-action-v060{margin-top:1vh}
+ body.crystal-settings #settings .auth-account-v064{display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:1.3vw!important;padding:2vh 1.5vw!important}
+ body.crystal-settings #settings .auth-account-copy-v064{flex:1;min-width:170px}
+ body.crystal-settings #settings .auth-account-avatar-v064{width:60px;height:60px}
+ body.crystal-settings #settings .auth-account-copy-v064 h4{font:500 clamp(18px,1.5vw,32px)/1.3 Georgia,serif!important;color:#ffe3f1}
+ body.crystal-settings #settings .theme-options-v1{display:grid!important;grid-template-columns:1fr!important;gap:1.5vh!important}
+ body.crystal-settings #settings .theme-option-v1{min-height:0!important;border-radius:3px!important}
+ body.crystal-settings #settings .theme-settings-head-v1{flex-wrap:wrap;gap:1vh}
+ body.crystal-settings #settings .cs-footer{position:absolute;left:41%;right:5%;bottom:5.5%;height:7.5%;display:flex;align-items:center;justify-content:flex-end;gap:1.2vw;z-index:5}
+ body.crystal-settings #settings .cs-footer>p{margin:0 auto 0 0;display:grid;grid-template-columns:auto 1fr;column-gap:.7vw;color:#f5d1e9}
+ body.crystal-settings #settings .cs-footer>p>span{grid-row:1/3;color:#ef9dcd;font-size:clamp(20px,2vw,44px);align-self:center}
+ body.crystal-settings #settings .cs-footer p b{font:500 clamp(10px,.85vw,19px)/1.3 Georgia,serif;letter-spacing:.06em}
+ body.crystal-settings #settings .cs-footer p small{margin-top:.4vh;font:clamp(9px,.7vw,15px)/1.3 system-ui;color:#cdb0cb}
+ body.crystal-desktop.crystal-settings #app>#settings .cs-done{min-width:10vw!important;min-height:42px!important;height:7.5vh!important;margin:0!important;padding:0 2vw!important;border:0!important;border-radius:0!important;background:url('ui/skins/panorama-action-pc.webp') center/100% 100% no-repeat!important;color:#521c41!important;font:500 clamp(16px,1.8vw,39px)/1.2 Georgia,serif!important;box-shadow:none!important;transition:transform 150ms,filter 150ms!important}
+ body.crystal-settings #settings .cs-done[hidden]{display:none!important}
+ body.crystal-desktop.crystal-settings #app>#settings .cs-done:hover{transform:translateY(-3px)!important;filter:brightness(1.12) drop-shadow(0 0 13px #e8a1d244)!important}
+ body.crystal-settings #settings :is(button,input,select):focus-visible{outline:2px solid #b9f4ff!important;outline-offset:4px!important}
+ body.crystal-settings #settings .cs-petals{position:absolute;inset:0;overflow:hidden;z-index:-1;pointer-events:none!important}
+ body.crystal-settings #settings .cs-petals i{position:absolute;left:calc(var(--i)*13%);top:-4%;width:8px;height:15px;border-radius:80% 0 80% 0;background:#e9a1cb;opacity:.4;animation:cs-petal calc(22s + var(--i)*2s) linear infinite;animation-delay:calc(var(--i)*-4s)}
+ @keyframes cs-petal{to{transform:translate3d(60px,110vh,0) rotate(220deg)}}
+ body.crystal-settings.v060-high-contrast #settings .settings-content-v060{background:#160b21!important}
+ body.crystal-settings.v060-high-contrast #settings :is(.setting-line-v060>span>small,.settings-page-v060>header p,.cs-footer p small){color:#f3d9ee!important}
+ body.crystal-settings.v060-high-contrast #settings .setting-line-v060{border-bottom-color:#e7c2de99!important}
+ @media(max-height:800px){body.crystal-settings #settings .settings-page-v060>header h3{font-size:27px}body.crystal-settings #settings .setting-line-v060{padding-block:1.8vh!important;min-height:9vh!important}body.crystal-settings #settings .setting-line-v060>span>b{font-size:15px}body.crystal-settings #settings .setting-line-v060>span>small{font-size:10px}body.crystal-settings #settings input[type=checkbox]{transform:scale(.85);transform-origin:right center}body.crystal-settings #settings .cs-tab-label{font-size:clamp(11px,1vw,18px)}}
+ @media(max-height:620px){body.crystal-settings #settings .settings-page-v060>header{padding-block:1vh}body.crystal-settings #settings .settings-page-v060>header h3{font-size:23px}body.crystal-settings #settings .settings-tabs-v060{top:20%!important;bottom:17%!important;gap:.6vh!important}body.crystal-settings #settings .settings-page-v060>header p{font-size:10px}body.crystal-settings #settings .cs-footer{bottom:4%;height:9%}body.crystal-settings #settings .cs-footer p small{max-width:20em;font-size:8px}body.crystal-settings #settings select{min-width:120px!important;font-size:10px!important}body.crystal-settings #settings .cs-footer p b{font-size:9px}}
+ @media(prefers-reduced-motion:reduce){body.crystal-settings #settings *,body.crystal-settings #settings *::before,body.crystal-settings #settings *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+ body.crystal-settings.v060-reduced-motion #settings *,body.crystal-settings.v060-reduced-motion #settings *::before,body.crystal-settings.v060-reduced-motion #settings *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
