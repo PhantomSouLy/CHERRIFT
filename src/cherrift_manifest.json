@@ -1,7 +1,7 @@
 {
   "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "1004-celestial-gear",
+  "buildId": "1005-blossom-gacha",
   "entrypoints": {
     "application": "src/cherrift_app.js",
     "presentation": "src/cherrift_presentation.js",
@@ -13,7 +13,8 @@
     "skinUi": "src/cherrift_skin_ui.js",
     "desktopMenu": "src/cherrift_desktop_menu.js",
     "desktopSkins": "src/cherrift_desktop_skins.js",
-    "desktopGear": "src/cherrift_desktop_gear.js"
+    "desktopGear": "src/cherrift_desktop_gear.js",
+    "desktopGacha": "src/cherrift_desktop_gacha.js"
   },
   "stylesheets": {
     "shell": "assets/cherrift_shell.css",
@@ -27,7 +28,8 @@
     "skillBuilder": "assets/cherrift_skill_builder.css",
     "desktopMenu": "assets/cherrift_desktop_menu.css",
     "desktopSkins": "assets/cherrift_desktop_skins.css",
-    "desktopGear": "assets/cherrift_desktop_gear.css"
+    "desktopGear": "assets/cherrift_desktop_gear.css",
+    "desktopGacha": "assets/cherrift_desktop_gacha.css"
   },
   "externalConfiguration": [
     "src/config.js",
@@ -98,6 +100,10 @@
     "desktopGearPresentationOnly": [
       "src/cherrift_desktop_gear.js",
       "assets/cherrift_desktop_gear.css"
+    ],
+    "desktopGachaPresentationOnly": [
+      "src/cherrift_desktop_gacha.js",
+      "assets/cherrift_desktop_gacha.css"
     ]
   },
   "cleanup": {
