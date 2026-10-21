@@ -1,7 +1,7 @@
 {
   "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "1011-rift-collection",
+  "buildId": "1012-blossom-shop",
   "entrypoints": {
     "application": "src/cherrift_app.js",
     "presentation": "src/cherrift_presentation.js",
@@ -20,7 +20,8 @@
     "desktopSettings": "src/cherrift_desktop_settings.js",
     "desktopProfile": "src/cherrift_desktop_profile.js",
     "desktopMail": "src/cherrift_desktop_mail.js",
-    "desktopCollection": "src/cherrift_desktop_collection.js"
+    "desktopCollection": "src/cherrift_desktop_collection.js",
+    "desktopShop": "src/cherrift_desktop_shop.js"
   },
   "stylesheets": {
     "shell": "assets/cherrift_shell.css",
@@ -41,7 +42,8 @@
     "desktopSettings": "assets/cherrift_desktop_settings.css",
     "desktopProfile": "assets/cherrift_desktop_profile.css",
     "desktopMail": "assets/cherrift_desktop_mail.css",
-    "desktopCollection": "assets/cherrift_desktop_collection.css"
+    "desktopCollection": "assets/cherrift_desktop_collection.css",
+    "desktopShop": "assets/cherrift_desktop_shop.css"
   },
   "externalConfiguration": [
     "src/config.js",
@@ -140,6 +142,10 @@
     "desktopCollectionPresentationOnly": [
       "src/cherrift_desktop_collection.js",
       "assets/cherrift_desktop_collection.css"
+    ],
+    "desktopShopPresentationOnly": [
+      "src/cherrift_desktop_shop.js",
+      "assets/cherrift_desktop_shop.css"
     ]
   },
   "cleanup": {
