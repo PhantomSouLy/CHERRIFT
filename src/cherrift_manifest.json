@@ -1,7 +1,7 @@
 {
   "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "1002-pc-crystal",
+  "buildId": "1003-sakura-skins",
   "entrypoints": {
     "application": "src/cherrift_app.js",
     "presentation": "src/cherrift_presentation.js",
@@ -11,7 +11,8 @@
     "networkGuard": "src/cherrift_network_guard.js",
     "foliage": "src/cherrift_foliage.js",
     "skinUi": "src/cherrift_skin_ui.js",
-    "desktopMenu": "src/cherrift_desktop_menu.js"
+    "desktopMenu": "src/cherrift_desktop_menu.js",
+    "desktopSkins": "src/cherrift_desktop_skins.js"
   },
   "stylesheets": {
     "shell": "assets/cherrift_shell.css",
@@ -23,7 +24,8 @@
     "prebeta": "assets/cherrift_prebeta.css",
     "elemental": "assets/cherrift_elemental.css",
     "skillBuilder": "assets/cherrift_skill_builder.css",
-    "desktopMenu": "assets/cherrift_desktop_menu.css"
+    "desktopMenu": "assets/cherrift_desktop_menu.css",
+    "desktopSkins": "assets/cherrift_desktop_skins.css"
   },
   "externalConfiguration": [
     "src/config.js",
@@ -86,6 +88,10 @@
     "desktopPresentationOnly": [
       "src/cherrift_desktop_menu.js",
       "assets/cherrift_desktop_menu.css"
+    ],
+    "desktopSkinPresentationOnly": [
+      "src/cherrift_desktop_skins.js",
+      "assets/cherrift_desktop_skins.css"
     ]
   },
   "cleanup": {
