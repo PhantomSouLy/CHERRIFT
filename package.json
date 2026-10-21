@@ -13,14 +13,15 @@
     "test:online-api": "node --no-warnings --test tools/online_api.test.mjs",
     "test:gunner": "node --test tools/gunner.test.mjs",
     "catalog:build": "node tools/build_game_catalog.mjs",
-    "test": "npm run validate && npm run test:desktop-menu && npm run test:desktop-skins && npm run test:desktop-gear && npm run test:desktop-gacha && npm run test:desktop-upgrade && npm run test:desktop-world && npm run test:desktop-settings && npm run audit && npm run test:integrity && npm run test:online-api && npm run test:gunner && npm run smoke:supabase-lock && npm run smoke",
+    "test": "npm run validate && npm run test:desktop-menu && npm run test:desktop-skins && npm run test:desktop-gear && npm run test:desktop-gacha && npm run test:desktop-upgrade && npm run test:desktop-world && npm run test:desktop-settings && npm run test:desktop-profile && npm run audit && npm run test:integrity && npm run test:online-api && npm run test:gunner && npm run smoke:supabase-lock && npm run smoke",
     "test:desktop-menu": "node --test tools/desktop_menu.test.mjs",
     "test:desktop-skins": "node --test tools/desktop_skins.test.mjs",
     "test:desktop-gear": "node --test tools/desktop_gear.test.mjs",
     "test:desktop-gacha": "node --test tools/desktop_gacha.test.mjs",
     "test:desktop-upgrade": "node --test tools/desktop_upgrade.test.mjs",
     "test:desktop-world": "node --test tools/desktop_world.test.mjs",
-    "test:desktop-settings": "node --test tools/desktop_settings.test.mjs"
+    "test:desktop-settings": "node --test tools/desktop_settings.test.mjs",
+    "test:desktop-profile": "node --test tools/desktop_profile.test.mjs"
   },
   "devDependencies": {
     "css-tree": "^3.1.0",

@@ -1,7 +1,7 @@
 {
   "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "1008-crystal-settings",
+  "buildId": "1009-crystal-profile",
   "entrypoints": {
     "application": "src/cherrift_app.js",
     "presentation": "src/cherrift_presentation.js",
@@ -17,7 +17,8 @@
     "desktopGacha": "src/cherrift_desktop_gacha.js",
     "desktopUpgrade": "src/cherrift_desktop_upgrade.js",
     "desktopWorld": "src/cherrift_desktop_world.js",
-    "desktopSettings": "src/cherrift_desktop_settings.js"
+    "desktopSettings": "src/cherrift_desktop_settings.js",
+    "desktopProfile": "src/cherrift_desktop_profile.js"
   },
   "stylesheets": {
     "shell": "assets/cherrift_shell.css",
@@ -35,7 +36,8 @@
     "desktopGacha": "assets/cherrift_desktop_gacha.css",
     "desktopUpgrade": "assets/cherrift_desktop_upgrade.css",
     "desktopWorld": "assets/cherrift_desktop_world.css",
-    "desktopSettings": "assets/cherrift_desktop_settings.css"
+    "desktopSettings": "assets/cherrift_desktop_settings.css",
+    "desktopProfile": "assets/cherrift_desktop_profile.css"
   },
   "externalConfiguration": [
     "src/config.js",
@@ -122,6 +124,10 @@
     "desktopSettingsPresentationOnly": [
       "src/cherrift_desktop_settings.js",
       "assets/cherrift_desktop_settings.css"
+    ],
+    "desktopProfilePresentationOnly": [
+      "src/cherrift_desktop_profile.js",
+      "assets/cherrift_desktop_profile.css"
     ]
   },
   "cleanup": {
