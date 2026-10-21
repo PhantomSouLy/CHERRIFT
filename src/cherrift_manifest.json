@@ -1,7 +1,7 @@
 {
   "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "1003-sakura-skins",
+  "buildId": "1004-celestial-gear",
   "entrypoints": {
     "application": "src/cherrift_app.js",
     "presentation": "src/cherrift_presentation.js",
@@ -12,7 +12,8 @@
     "foliage": "src/cherrift_foliage.js",
     "skinUi": "src/cherrift_skin_ui.js",
     "desktopMenu": "src/cherrift_desktop_menu.js",
-    "desktopSkins": "src/cherrift_desktop_skins.js"
+    "desktopSkins": "src/cherrift_desktop_skins.js",
+    "desktopGear": "src/cherrift_desktop_gear.js"
   },
   "stylesheets": {
     "shell": "assets/cherrift_shell.css",
@@ -25,7 +26,8 @@
     "elemental": "assets/cherrift_elemental.css",
     "skillBuilder": "assets/cherrift_skill_builder.css",
     "desktopMenu": "assets/cherrift_desktop_menu.css",
-    "desktopSkins": "assets/cherrift_desktop_skins.css"
+    "desktopSkins": "assets/cherrift_desktop_skins.css",
+    "desktopGear": "assets/cherrift_desktop_gear.css"
   },
   "externalConfiguration": [
     "src/config.js",
@@ -92,6 +94,10 @@
     "desktopSkinPresentationOnly": [
       "src/cherrift_desktop_skins.js",
       "assets/cherrift_desktop_skins.css"
+    ],
+    "desktopGearPresentationOnly": [
+      "src/cherrift_desktop_gear.js",
+      "assets/cherrift_desktop_gear.css"
     ]
   },
   "cleanup": {
