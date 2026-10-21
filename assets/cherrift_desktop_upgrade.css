@@ -1,0 +1,85 @@
+/* Only the PC Upgrade route. Native controls and mobile markup remain intact. */
+@media(min-width:821px){
+ body.crystal-desktop.celestial-upgrade #app>#playerUpgrade.panel{position:fixed!important;inset:0!important;width:100%!important;height:100dvh!important;min-height:0!important;max-width:none!important;max-height:none!important;padding:0!important;margin:0!important;overflow:hidden!important;background:#170c26 url('ui/backgrounds/crystal-realm-pc.webp') center/cover no-repeat!important;isolation:isolate}
+ body.celestial-upgrade #playerUpgrade::before{content:''!important;position:absolute;inset:0;pointer-events:none;z-index:0;background:linear-gradient(90deg,#130b2499,#170c2644 60%,#13091ec9),linear-gradient(0deg,#160c28e0,transparent 35%);opacity:1!important}
+ body.celestial-upgrade :is(.topnav-v0933,.desktop-subnav-v0933,#desktopResourceBarV0933,#desktopResourceBarV094,.global-rail-v060){display:none!important}
+ body.crystal-desktop.celestial-upgrade #app>#playerUpgrade>:is(.panel-head,.skill-toolbar-v082,#skillBranchTabsV096,#skillTreeScrollV082,#skillInfoV096,#elementalUpgradeTabsV095){display:none!important}
+ body.celestial-upgrade #playerUpgrade .cc-chrome{position:absolute;inset:0 0 auto;height:12%;z-index:6;pointer-events:none!important}
+ body.celestial-upgrade #playerUpgrade .cc-chrome::before{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,#1b0c2dd9,transparent);pointer-events:none!important}
+ body.celestial-upgrade #playerUpgrade .cc-chrome button{pointer-events:auto!important}
+ body.celestial-upgrade #playerUpgrade .cc-logo{position:absolute;left:2.7%;top:1vh;width:23%;height:9vh;object-fit:contain;object-position:left;pointer-events:none!important;filter:drop-shadow(0 0 14px #dc85cd44)}
+ body.celestial-upgrade #playerUpgrade .cc-heading{position:absolute;left:29%;top:2.5vh;color:#fff0fa;text-shadow:0 2px 12px #170b29}
+ body.celestial-upgrade #playerUpgrade .cc-heading small{font:clamp(8px,.65vw,14px)/1.4 Georgia,serif;letter-spacing:.23em;color:#dbb7df}
+ body.celestial-upgrade #playerUpgrade .cc-heading h1{font:500 clamp(26px,3.7vh,54px)/1.1 Georgia,serif;letter-spacing:.12em;margin:.5vh 0}
+ body.celestial-upgrade #playerUpgrade .cc-back{position:absolute;left:3%;top:10.8vh;padding:0!important;border:0!important;background:none!important;color:#f2c5e5!important;font:clamp(10px,.8vw,18px)/1.5 Georgia,serif!important;letter-spacing:.13em;min-height:24px!important}
+ body.celestial-upgrade #playerUpgrade .crystal-topbar{top:2vh!important;right:2.5%!important}
+ body.celestial-upgrade #playerUpgrade .cc-map{position:absolute;left:5%;top:11%;width:65%;height:77%;display:grid;place-items:center;z-index:1;pointer-events:none!important}
+ body.celestial-upgrade #playerUpgrade .cc-dial{position:relative;width:min(61vw,77vh);aspect-ratio:1;border-radius:50%;background:radial-gradient(ellipse,#342341e8,#1b142ade 62%,#1c10278c 72%,transparent 73%);box-shadow:0 0 60px #22113244;isolation:isolate;pointer-events:none!important}
+ body.celestial-upgrade #playerUpgrade .cc-ring{position:absolute;inset:-3%;width:106%;height:106%;object-fit:contain;filter:drop-shadow(0 0 18px #dc9bcd38);pointer-events:none!important;z-index:2}
+ body.celestial-upgrade #playerUpgrade .cc-dial::before,body.celestial-upgrade #playerUpgrade .cc-dial::after{content:'';position:absolute;inset:14%;border-radius:50%;border:1px solid #b58cbd25;pointer-events:none!important;z-index:0}
+ body.celestial-upgrade #playerUpgrade .cc-dial::after{inset:24%;border-style:dashed;animation:cc-orbit 100s linear infinite}
+ body.celestial-upgrade #playerUpgrade .cc-lines{position:absolute;inset:0;width:100%;height:100%;overflow:visible;z-index:1;pointer-events:none!important}
+ body.celestial-upgrade #playerUpgrade .cc-link{stroke:var(--cc-color);stroke-width:2;opacity:.9;filter:drop-shadow(0 0 5px var(--cc-color));pointer-events:none!important}
+ body.celestial-upgrade #playerUpgrade .cc-link.locked{opacity:.55;stroke-width:3;stroke-dasharray:5 7;filter:none}
+ body.celestial-upgrade #playerUpgrade .cc-origin{stroke-width:2;opacity:.4;stroke-dasharray:4 8}
+ body.celestial-upgrade #playerUpgrade .cc-nodes{position:absolute;inset:0;z-index:4;pointer-events:none!important}
+ body.crystal-desktop.celestial-upgrade #app>#playerUpgrade .cc-node{position:absolute!important;left:var(--cc-x)!important;top:var(--cc-y)!important;width:clamp(40px,5.8vh,84px)!important;height:clamp(40px,5.8vh,84px)!important;min-width:0!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;border-radius:50%!important;background:#21162bd9!important;transform:translate(-50%,-50%)!important;overflow:visible!important;box-shadow:0 0 15px color-mix(in srgb,var(--cc-color) 28%,transparent)!important;pointer-events:auto!important;color:#ffe8fa!important;transition:transform 160ms,filter 160ms,opacity 200ms!important}
+ body.celestial-upgrade #playerUpgrade .cc-node>*{pointer-events:none!important}
+ body.celestial-upgrade #playerUpgrade .cc-node-frame{position:absolute;inset:-22%;width:144%;height:144%;object-fit:contain;opacity:.95;z-index:0}
+ body.celestial-upgrade #playerUpgrade .cc-node-icon{position:absolute;inset:16%;width:68%;height:68%;object-fit:contain;z-index:1;filter:drop-shadow(0 0 5px var(--cc-color))}
+ body.celestial-upgrade #playerUpgrade .cc-node small{position:absolute;left:0;right:0;top:108%;color:#e8cce7;font:clamp(8px,.65vw,14px)/1.2 Georgia,serif;text-shadow:0 1px 5px #10091a;z-index:5}
+ body.celestial-upgrade #playerUpgrade .cc-node.locked .cc-node-icon{filter:grayscale(1) brightness(.6);opacity:.7}
+ body.celestial-upgrade #playerUpgrade .cc-lock{position:absolute;right:-6px;bottom:-2px;width:17px;height:19px;display:grid;place-items:center;border:1px solid #b8a2bf55;background:#25192e;border-radius:3px;z-index:4}
+ body.celestial-upgrade #playerUpgrade .cc-lock svg{width:12px;height:14px;fill:#d5c6da;stroke:#d5c6da;stroke-width:1.5}
+ body.celestial-upgrade #playerUpgrade .cc-node-label{position:absolute;bottom:125%;left:50%;width:max-content;max-width:15vw;transform:translateX(-50%);padding:5px 10px;border:1px solid #d5a6cf77;background:#1d122ff2;color:#ffe4f6;font:clamp(10px,.8vw,17px)/1.3 system-ui;opacity:0;visibility:hidden;z-index:10}
+ body.crystal-desktop.celestial-upgrade #app>#playerUpgrade .cc-node:hover,body.crystal-desktop.celestial-upgrade #app>#playerUpgrade .cc-node:focus-visible{transform:translate(-50%,-50%) scale(1.13)!important;filter:brightness(1.25)!important;z-index:5}
+ body.celestial-upgrade #playerUpgrade .cc-node:is(:hover,:focus-visible) .cc-node-label{visibility:visible;opacity:1}
+ body.crystal-desktop.celestial-upgrade #app>#playerUpgrade .cc-node[aria-pressed="true"]{outline:2px solid #ffd2f0!important;outline-offset:7px!important;box-shadow:0 0 25px color-mix(in srgb,var(--cc-color) 60%,transparent)!important}
+ body.crystal-desktop.celestial-upgrade #app>#playerUpgrade .cc-node.cc-muted{opacity:.14!important;pointer-events:none!important;filter:grayscale(.7)!important}
+ body.crystal-desktop.celestial-upgrade #app>#playerUpgrade .cc-core{position:absolute!important;left:50%!important;top:50%!important;width:12%!important;aspect-ratio:1!important;height:auto!important;min-height:0!important;padding:0!important;border:1px solid #f4b4df99!important;border-radius:50%!important;background:#382239!important;transform:translate(-50%,-50%)!important;z-index:5!important;overflow:visible!important;pointer-events:auto!important;box-shadow:0 0 30px #e285d358!important}
+ body.celestial-upgrade #playerUpgrade .cc-core img{width:100%;height:100%;aspect-ratio:1;object-fit:cover;object-position:50% 30%;border-radius:50%;pointer-events:none!important}
+ body.celestial-upgrade #playerUpgrade .cc-core>span{position:absolute;left:-80%;right:-80%;top:210%;color:#f3d6ec;font:italic clamp(11px,1.4vh,20px)/1.3 Georgia,serif;text-shadow:0 2px 8px #150b26;pointer-events:none!important}
+ body.celestial-upgrade #playerUpgrade .cc-detail{position:absolute;right:3.4%;top:13%;bottom:12%;width:28%;padding:4vh 2.4vw 2.4vh;box-sizing:border-box;background:#1e122ce8;color:#eed9ed;z-index:3;display:flex;flex-direction:column;gap:.65vh;overflow:visible}
+ body.celestial-upgrade #playerUpgrade .cc-detail::before{content:'';position:absolute;inset:-2vh -1.3vw;background:url('ui/gear/celestial-frame-pc.webp') center/100% 100% no-repeat;pointer-events:none!important;z-index:-1}
+ body.celestial-upgrade #playerUpgrade .cc-account{display:grid;grid-template-columns:1fr 1fr;gap:1vw;padding:0 0 1.2vh;border-bottom:1px solid #cba1d444}
+ body.celestial-upgrade #playerUpgrade .cc-account>div{text-align:center}
+ body.celestial-upgrade #playerUpgrade .cc-account small{display:block;font:clamp(8px,.65vw,14px)/1.5 system-ui;letter-spacing:.15em;color:#c9a6d0}
+ body.celestial-upgrade #playerUpgrade .cc-account b{display:block;font:500 clamp(20px,2.8vh,40px)/1.2 Georgia,serif;color:#ffdbef}
+ body.celestial-upgrade #playerUpgrade .cc-selected-icon{flex-shrink:0;width:7vh;height:7vh;align-self:center;display:grid;place-items:center;background:url('ui/elemental_resonance/nodes/node_available.png') center/100% 100% no-repeat;filter:drop-shadow(0 0 14px #e39dda55)}
+ body.celestial-upgrade #playerUpgrade .cc-selected-icon img{width:62%;height:62%;object-fit:contain}
+ body.celestial-upgrade #playerUpgrade .cc-category{margin:0;text-align:center;font:clamp(9px,.7vw,15px)/1.3 Georgia,serif;color:#d49ed3;letter-spacing:.15em}
+ body.celestial-upgrade #playerUpgrade .cc-detail h2{margin:0;text-align:center;font:500 clamp(20px,3.2vh,46px)/1.15 Georgia,serif;color:#ffe5f6;overflow-wrap:anywhere}
+ body.celestial-upgrade #playerUpgrade .cc-ranks{display:flex;gap:.7vw;justify-content:center;margin:.2vh 0 .6vh}
+ body.celestial-upgrade #playerUpgrade .cc-ranks i{display:block;width:8px;height:8px;transform:rotate(45deg);border:1px solid #c19ac359;background:#37253c}
+ body.celestial-upgrade #playerUpgrade .cc-ranks i.filled{background:#f5a6d7;border-color:#ffe2f4;box-shadow:0 0 8px #f294d285}
+ body.celestial-upgrade #playerUpgrade .cc-description{margin:0;text-align:center;font:clamp(11px,1.5vh,21px)/1.5 system-ui;color:#ddc7e0;min-height:3vh}
+ body.celestial-upgrade #playerUpgrade .cc-values{display:grid;grid-template-columns:1fr 1fr;gap:1vw;border-block:1px solid #c191c146;padding:1vh 0}
+ body.celestial-upgrade #playerUpgrade .cc-values>div{text-align:center}
+ body.celestial-upgrade #playerUpgrade .cc-values small{display:block;font:clamp(8px,.65vw,14px)/1.4 system-ui;letter-spacing:.12em;color:#bfa4c9}
+ body.celestial-upgrade #playerUpgrade .cc-values b{font:500 clamp(23px,3vh,43px)/1.3 Georgia,serif;color:#f8d2ee}
+ body.celestial-upgrade #playerUpgrade .cc-values>div:last-child b{color:#a8ecf2}
+ body.celestial-upgrade #playerUpgrade .cc-requirements{padding:0;background:none;border:0}
+ body.celestial-upgrade #playerUpgrade .cc-requirements h3{margin:.4vh 0 .8vh;font:clamp(10px,.8vw,18px)/1.4 Georgia,serif;letter-spacing:.12em;color:#eccde8}
+ body.celestial-upgrade #playerUpgrade .cc-requirements p{margin:.4vh 0;font:clamp(10px,1.35vh,19px)/1.5 system-ui;color:#cbb8d4}
+ body.crystal-desktop.celestial-upgrade #app>#playerUpgrade .cc-upgrade{width:100%!important;height:8vh!important;min-height:42px!important;margin:0!important;padding:0 2vw!important;border:0!important;border-radius:0!important;background:url('ui/skins/panorama-action-pc.webp') center/100% 100% no-repeat!important;color:#4b183e!important;font:500 clamp(18px,2.5vh,36px)/1.2 Georgia,serif!important;transition:transform 160ms,filter 160ms!important;flex-shrink:0!important}
+ body.crystal-desktop.celestial-upgrade #app>#playerUpgrade .cc-upgrade:disabled{opacity:.42!important;filter:saturate(.35)!important;cursor:not-allowed!important}
+ body.crystal-desktop.celestial-upgrade #app>#playerUpgrade .cc-upgrade:not(:disabled):hover{transform:translateY(-3px) scale(1.025)!important;filter:brightness(1.13) drop-shadow(0 0 15px #ef9cd363)!important}
+ body.crystal-desktop.celestial-upgrade #app>#playerUpgrade .cc-upgrade:not(:disabled):active{transform:scale(.98)!important}
+ body.celestial-upgrade #playerUpgrade .cc-status{margin:0;text-align:center;font:clamp(10px,1.2vh,17px)/1.4 system-ui;color:#c3a5c9;min-height:2.8vh}
+ body.celestial-upgrade #playerUpgrade .cc-tools{margin-top:auto;display:grid;grid-template-columns:1fr 1fr;gap:.6vh .7vw}
+ body.crystal-desktop.celestial-upgrade #app>#playerUpgrade .cc-tools button{flex:1!important;min-width:0!important;min-height:29px!important;padding:.8vh .4vw!important;border:1px solid #cb9ac565!important;border-radius:2px!important;background:#382044!important;color:#e4c3e1!important;font:clamp(8px,.65vw,14px)/1.3 system-ui!important}
+ body.celestial-upgrade #playerUpgrade .cc-branches{position:absolute;left:8%;right:5%;bottom:2.5%;height:6.5%;display:flex;gap:1vw;z-index:4}
+ body.crystal-desktop.celestial-upgrade #app>#playerUpgrade .cc-branches button{position:relative!important;flex:1!important;min-width:0!important;min-height:30px!important;display:flex!important;gap:1vw!important;align-items:center!important;justify-content:center!important;padding:1vh 1vw!important;border:1px solid #c99dc16e!important;border-radius:0!important;background:linear-gradient(110deg,#21142ee8,#301c3bd8)!important;color:#ead0e9!important;transform:skewX(-8deg)!important;transition:transform 160ms,filter 160ms!important;font:500 clamp(12px,1.6vh,23px)/1.2 Georgia,serif!important}
+ body.celestial-upgrade #playerUpgrade .cc-branches button>*{transform:skewX(8deg);pointer-events:none!important}
+ body.celestial-upgrade #playerUpgrade .cc-branches button>span{font-size:clamp(18px,2.8vh,40px);color:var(--cc-color)}
+ body.crystal-desktop.celestial-upgrade #app>#playerUpgrade .cc-branches button[aria-pressed="true"]{border-color:var(--cc-color)!important;box-shadow:inset 0 -2px var(--cc-color),0 0 15px color-mix(in srgb,var(--cc-color) 23%,transparent)!important;color:#fff0fb!important}
+ body.crystal-desktop.celestial-upgrade #app>#playerUpgrade .cc-branches button:hover{transform:skewX(-8deg) translateY(-3px)!important;filter:brightness(1.15)!important}
+ body.crystal-desktop.celestial-upgrade #app>#playerUpgrade button:focus-visible{outline:2px solid #b1f2ff!important;outline-offset:4px!important}
+ body.celestial-upgrade #toast{pointer-events:none!important}
+ @keyframes cc-orbit{to{transform:rotate(360deg)}}
+ @media(max-height:800px){body.celestial-upgrade #playerUpgrade .cc-detail{padding:4vh 2.4vw 1.5vh;gap:.8vh}body.celestial-upgrade #playerUpgrade .cc-selected-icon{width:6vh;height:6vh}body.celestial-upgrade #playerUpgrade .cc-detail h2{font-size:clamp(18px,2.8vh,27px)}body.celestial-upgrade #playerUpgrade .cc-description{font-size:11px;min-height:2.5vh}body.celestial-upgrade #playerUpgrade .cc-requirements p{font-size:10px;line-height:1.35}}
+ @media(max-height:620px){body.celestial-upgrade #playerUpgrade .cc-detail{overflow-y:auto;overflow-x:visible;scrollbar-width:thin;gap:5px;top:13%;bottom:12%;padding-top:2.5vh}body.celestial-upgrade #playerUpgrade .cc-selected-icon{display:none}body.celestial-upgrade #playerUpgrade .cc-account b{font-size:19px}body.celestial-upgrade #playerUpgrade .cc-node small{top:115%}body.celestial-upgrade #playerUpgrade .cc-requirements p{font-size:9px}}
+ @media(prefers-reduced-motion:reduce){body.celestial-upgrade #playerUpgrade *,body.celestial-upgrade #playerUpgrade *::before,body.celestial-upgrade #playerUpgrade *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+ body.crystal-desktop.celestial-upgrade #app>#playerUpgrade [data-cc-resonance]{grid-column:1/-1!important}
+
+}
