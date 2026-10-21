@@ -1,0 +1,18 @@
+CHERRIFT – PC KRISTÁLYPOSTA / MAIL FRISSÍTÉS
+Build: 1010-crystal-mail
+
+Előfeltétel: a PC Profil/Fiók rework (1009-crystal-profile) már legyen telepítve.
+
+1. Készíts biztonsági másolatot a projekt jelenlegi fájljairól.
+2. A ZIP tartalmát közvetlenül a CHERRIFT projekt gyökerébe bontsd ki.
+   Az index.html ugyanoda kerüljön, ahol a jelenlegi index.html található.
+3. Írd felül az egyező fájlokat.
+4. Indítsd újra a helyi kiszolgálót, majd teljes oldalfrissítéssel töltsd be a játékot.
+5. A PC főmenü Mail gombjával nyisd meg a postaládát.
+
+A ZIP csak a frissítés fájljait tartalmazza; önmagában nem futtatható játék.
+A mobilos felület natív elemei és a meglévő online levelezés maradnak használatban.
+A képernyőképeken szereplő felületpróba-levelek nem részei a játék tartalmának.
+
+Részletek: docs/PC_MAIL_REWORK.md
+Ellenőrzés: TEST_RESULTS_MAIL.txt
