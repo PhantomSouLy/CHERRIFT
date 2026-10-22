@@ -433,7 +433,7 @@
 
   function start(){if(!window.UI?.save||!window.CherriftStorage)return setTimeout(start,100);patchUi();installPlaceholderStages();normalizeSave(UI.save);bindCapture();addNavigation();updateEnergyUi();decorateProfile();setInterval(()=>{if(UI.save){refreshEnergy(UI.save);updateEnergyUi();}},60000);window.CHERRIFT_LIVE_SERVICES?.onChange?.(event=>{if(event.type==="session"||event.type==="ready")bootstrapOnline();});state.ready=true;window.__CHERRIFT_PREBETA_READY__=true;window.dispatchEvent(new CustomEvent("cherrift:prebeta-ready"));bootstrapOnline();console.info(`[CHERRIFT] ${VERSION} progression, balance, energy, titles, frames, social and ranking loaded.`);}
 
-  window.CHERRIFT_PREBETA = Object.freeze({version:VERSION,refreshProfile:decorateProfile,normalizeSave,refreshEnergy,isWorldUnlocked,isStageUnlocked,hasEntitlement,hasActiveGmAccess,syncGmAccess,commitStageEnergy,evaluateTitles,titleStats,calculatePower,ownedFrames,dismantleReward,showEnergyModal,open:openPrebetaPanel});
+  window.CHERRIFT_PREBETA = Object.freeze({version:VERSION,socialSnapshot:()=>({tab:state.socialTab,players:state.socialRows.map(p=>({id:String(p.user_id||p.id||''),display_name:p.display_name||p.discord_name||'Cherry Player',public_code:p.public_code||'',level:Number(p.level)||1,power:Number(p.power)||0,best_weekly_rank:p.best_weekly_rank}))}),refreshProfile:decorateProfile,normalizeSave,refreshEnergy,isWorldUnlocked,isStageUnlocked,hasEntitlement,hasActiveGmAccess,syncGmAccess,commitStageEnergy,evaluateTitles,titleStats,calculatePower,ownedFrames,dismantleReward,showEnergyModal,open:openPrebetaPanel});
   patchStorage(); patchGame();
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
 })();
