@@ -1,7 +1,7 @@
 {
   "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "1014-sakura-achievements",
+  "buildId": "1013-blossom-missions",
   "entrypoints": {
     "application": "src/cherrift_app.js",
     "presentation": "src/cherrift_presentation.js",
@@ -22,8 +22,7 @@
     "desktopMail": "src/cherrift_desktop_mail.js",
     "desktopCollection": "src/cherrift_desktop_collection.js",
     "desktopShop": "src/cherrift_desktop_shop.js",
-    "desktopMissions": "src/cherrift_desktop_missions.js",
-    "desktopAchievements": "src/cherrift_desktop_achievements.js"
+    "desktopMissions": "src/cherrift_desktop_missions.js"
   },
   "stylesheets": {
     "shell": "assets/cherrift_shell.css",
@@ -46,8 +45,7 @@
     "desktopMail": "assets/cherrift_desktop_mail.css",
     "desktopCollection": "assets/cherrift_desktop_collection.css",
     "desktopShop": "assets/cherrift_desktop_shop.css",
-    "desktopMissions": "assets/cherrift_desktop_missions.css",
-    "desktopAchievements": "assets/cherrift_desktop_achievements.css"
+    "desktopMissions": "assets/cherrift_desktop_missions.css"
   },
   "externalConfiguration": [
     "src/config.js",
@@ -154,10 +152,6 @@
     "desktopMissionsPresentationOnly": [
       "src/cherrift_desktop_missions.js",
       "assets/cherrift_desktop_missions.css"
-    ],
-    "desktopAchievementsPresentation": [
-      "src/cherrift_desktop_achievements.js",
-      "assets/cherrift_desktop_achievements.css"
     ]
   },
   "cleanup": {
