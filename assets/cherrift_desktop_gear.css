@@ -1,6 +1,10 @@
 /* Celestial Atelier: every rule is route-scoped and PC-only. */
 @media(min-width:821px){
- body.crystal-desktop.celestial-gear #app>#gear.panel{position:fixed!important;inset:0!important;width:100%!important;height:100dvh!important;max-width:none!important;max-height:none!important;min-height:0!important;padding:0!important;margin:0!important;overflow:hidden!important;background:#170c26 url('ui/backgrounds/crystal-realm-pc.webp') center/cover no-repeat!important;isolation:isolate;--cg-size:clamp(52px,7.8vh,116px)}
+ /* The native renderer can finish in a later frame. Paint the PC shell now,
+    and reveal children atomically when the decorator adds its chrome. */
+ body.crystal-desktop:not(.is-playing) #app>#gear.panel:not(:has(.cg-chrome))>*{visibility:hidden!important}
+
+ body.crystal-desktop:not(.is-playing) #app>#gear.panel{position:fixed!important;inset:0!important;width:100%!important;height:100dvh!important;max-width:none!important;max-height:none!important;min-height:0!important;padding:0!important;margin:0!important;overflow:hidden!important;background:#170c26 url('ui/backgrounds/crystal-realm-pc.webp') center/cover no-repeat!important;isolation:isolate;--cg-size:clamp(52px,7.8vh,116px)}
  body.celestial-gear #gear:before{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(90deg,#170a25cc,transparent 38%,transparent 62%,#150a23cc),linear-gradient(0deg,#1a0c2be6,transparent 37%,#120b2444)}
  body.celestial-gear :is(.topnav-v0933,.desktop-subnav-v0933,#desktopResourceBarV0933,#desktopResourceBarV094,.global-rail-v060){display:none!important}
  body.crystal-desktop.celestial-gear #app>#gear :is(.panel-head,.gear-rail-v0560,.gear-header-v0560,.gear-loadout-title-v0560,#gearCherryCanvasV0560,#gearCherryStableV060,.gear-stage-rune-v0560,.gear-character-glow-v0560,.gear-character-floor-v0560,#loadoutStatsV063,#gearTabsV061,.gear-drop-message-v0560){display:none!important}

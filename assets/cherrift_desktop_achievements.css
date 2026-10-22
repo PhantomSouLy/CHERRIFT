@@ -1,7 +1,11 @@
 /* PC Sakura Trophy Gallery. No global/mobile styles. */
 @media(min-width:821px){
+ /* Keep the PC backdrop visible while the native achievement renderer and
+    desktop decoration finish. The readiness gate follows DOM replacement. */
+ body.crystal-desktop:not(.is-playing) #app>#achievements.panel:not(:has(.tg-chrome))>*{visibility:hidden!important}
+
  body.sakura-achievements {--tg-left:238px;--tg-gap:22px;--tg-top:162px;--tg-bottom:110px;--tg-line:#d3a0be7d}
- html body.crystal-desktop.sakura-achievements:not(.is-playing):not(.crystal-lobby) #app>#achievements.panel {position:fixed!important;inset:0!important;width:100%!important;height:100dvh!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;overflow:hidden!important;border:0!important;background:linear-gradient(90deg,#160e2655,#170f2922),url('ui/achievements/sakura-gallery-pc.webp') center/cover!important;color:#ffe7f7!important;isolation:isolate}
+ html body.crystal-desktop:not(.is-playing) #app>#achievements.panel {position:fixed!important;inset:0!important;width:100%!important;height:100dvh!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;overflow:hidden!important;border:0!important;background:linear-gradient(90deg,#160e2655,#170f2922),url('ui/achievements/sakura-gallery-pc.webp') center/cover #170f29!important;color:#ffe7f7!important;isolation:isolate}
  body.sakura-achievements :is(.topnav-v0933,.desktop-subnav-v0933,#desktopResourceBarV0933,#desktopResourceBarV094,.global-rail-v060){display:none!important}
  body.sakura-achievements #achievements .cr-ach-shell {position:static!important;display:contents!important;width:auto!important;margin:0!important;padding:0!important}
  body.sakura-achievements #achievements .cr-ach-head {display:none!important}
