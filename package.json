@@ -13,7 +13,7 @@
     "test:online-api": "node --no-warnings --test tools/online_api.test.mjs",
     "test:gunner": "node --test tools/gunner.test.mjs",
     "catalog:build": "node tools/build_game_catalog.mjs",
-    "test": "npm run validate && npm run test:desktop-menu && npm run test:desktop-skins && npm run test:desktop-gear && npm run test:desktop-gacha && npm run test:desktop-upgrade && npm run test:desktop-world && npm run test:desktop-settings && npm run test:desktop-profile && npm run test:desktop-mail && npm run test:desktop-collection && npm run test:desktop-shop && npm run test:desktop-missions && npm run test:desktop-achievements && npm run audit && npm run test:integrity && npm run test:online-api && npm run test:gunner && npm run smoke:supabase-lock && npm run smoke",
+    "test": "npm run validate && npm run test:desktop-loading && npm run test:desktop-menu && npm run test:desktop-skins && npm run test:desktop-gear && npm run test:desktop-gacha && npm run test:desktop-upgrade && npm run test:desktop-world && npm run test:desktop-settings && npm run test:desktop-profile && npm run test:desktop-mail && npm run test:desktop-collection && npm run test:desktop-shop && npm run test:desktop-missions && npm run test:desktop-achievements && npm run audit && npm run test:integrity && npm run test:online-api && npm run test:gunner && npm run smoke:supabase-lock && npm run smoke",
     "test:desktop-menu": "node --test tools/desktop_menu.test.mjs",
     "test:desktop-skins": "node --test tools/desktop_skins.test.mjs",
     "test:desktop-gear": "node --test tools/desktop_gear.test.mjs",
@@ -26,7 +26,8 @@
     "test:desktop-collection": "node --test tools/desktop_collection.test.mjs",
     "test:desktop-shop": "node --test tools/desktop_shop.test.mjs",
     "test:desktop-missions": "node --test tools/desktop_missions.test.mjs",
-    "test:desktop-achievements": "node --test tools/desktop_achievements.test.mjs"
+    "test:desktop-achievements": "node --test tools/desktop_achievements.test.mjs",
+    "test:desktop-loading": "node --test tools/desktop_loading.test.mjs"
   },
   "devDependencies": {
     "css-tree": "^3.1.0",
