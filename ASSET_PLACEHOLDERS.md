@@ -4,9 +4,9 @@ Ezek szándékos, létező fájlra mutató helyettesítések. Nem üres vagy hib
 
 | Hiányzó végleges asset | Jelenlegi helyettesítés | Csere helye |
 |---|---|---|
-| `assets/ui/skin_thumbs/warrior_cherry.webp` | `assets/player/skins/warrior_cherry/warrior_cherry_icon.png` | `THUMB_PLACEHOLDERS` a `src/cherrift_app.js` fájlban |
-| `assets/ui/skin_thumbs/wuxia_sakura_cherry.webp` | `assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_icon.png` | `THUMB_PLACEHOLDERS` a `src/cherrift_app.js` fájlban |
-| `assets/map/world4/world4_splashart_3.png` (World 4, Chapter 5) | `assets/map/world4/world4_splashart_2.png` | `chapterArt()` a `src/cherrift_world_ui.js` és `src/cherrift_stability.js` fájlokban |
+| `assets/ui/skin_thumbs/warrior_cherry.webp` | `assets/player/skins/warrior_cherry/warrior_cherry_icon.jpg` | `THUMB_PLACEHOLDERS` a `src/cherrift_app.js` fájlban |
+| `assets/ui/skin_thumbs/wuxia_sakura_cherry.webp` | `assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_icon.jpg` | `THUMB_PLACEHOLDERS` a `src/cherrift_app.js` fájlban |
+| `assets/map/world4/world4_splashart_3.png` (World 4, Chapter 5) | `assets/map/world4/world4_splashart_2.png` | `chapterArt()` a `src/cherrift_world_ui.js` fájlban |
 | World 5 végleges chapter képei | meglévő World 4 képek | `installPlaceholderStages()` a `src/cherrift_prebeta.js` fájlban |
 | World 6 végleges chapter képei | meglévő World 3 képek | `installPlaceholderStages()` a `src/cherrift_prebeta.js` fájlban |
 

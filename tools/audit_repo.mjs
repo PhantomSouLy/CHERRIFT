@@ -174,8 +174,11 @@ function resolveReference(sourcePath, rawReference) {
   return candidate.startsWith("../") ? null : candidate;
 }
 
-const paths = trackedFiles();
-const pathSet = new Set(paths);
+const allPaths = trackedFiles();
+const sourceOnly = process.argv.includes('--source-only');
+const paths = sourceOnly ? allPaths.filter(path => isText(path) &&
+  (!path.startsWith('assets/') || /^assets\/[^/]+\.css$/.test(path))) : allPaths;
+const pathSet = new Set(allPaths);
 const buffers = new Map();
 const texts = new Map();
 
@@ -240,7 +243,7 @@ for (const [source, text] of texts) {
         raw:match[1],
         target,
         exists:pathSet.has(target),
-        runtimeSource:entrypoints.has(source)
+        runtimeSource:entrypoints.has(source) && /^(?:index\.html$|src\/|gm\/|assets\/)/.test(source)
       });
     }
   }
@@ -393,9 +396,10 @@ const unprovenUnusedAssets = files
 const report = {
   generatedAt:new Date().toISOString(),
   commit:execFileSync("git", ["rev-parse", "HEAD"], { cwd:root, encoding:"utf8" }).trim(),
-  scope:"Every Git-tracked file at the audited commit",
+  scope:sourceOnly ? "Source, tooling and documentation; asset media excluded" : "Every Git-tracked file at the audited commit",
   summary:{
     trackedFiles:files.length,
+    skippedFiles:allPaths.length-paths.length,
     bytes:files.reduce((sum, file) => sum + file.bytes, 0),
     textFiles:files.filter(file => file.kind === "text").length,
     imageFiles:files.filter(file => file.kind === "image").length,
@@ -410,7 +414,7 @@ const report = {
   },
   notes:[
     "A zero reference count is evidence for review, not automatic proof that a file is unused; runtime paths can be assembled dynamically.",
-    "Binary files were checked by file signature; PNG/JPEG/GIF/WebP dimensions were decoded where supported.",
+    sourceOnly ? "Asset media and asset metadata were deliberately excluded; only runtime CSS was inspected." : "Binary files were checked by file signature; PNG/JPEG/GIF/WebP dimensions were decoded where supported.",
     "JavaScript/MJS, JSON and CSS files received syntax/parse checks. Other text files were checked for UTF-8 replacement and NUL bytes."
   ],
   oneBytePlaceholders,

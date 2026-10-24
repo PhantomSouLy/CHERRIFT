@@ -29,10 +29,10 @@ A cím/keret zárolása és felszerelése továbbra is a natív modulok feladata
 
 ## Ellenőrzés
 
-A teszteredmények és böngészős ellenőrzések a mellékelt `TEST_RESULTS.txt` fájlban találhatók. A képernyőképek valós, futó vendégmódból készültek. Élő Discord-bejelentkezést, valódi névmódosítást, kódbeváltást vagy szerveroldali felszerelést nem végeztünk; ezek meglévő kezelőit használja a felület.
+A rework a repository része. Az aktuális indítási és ellenőrzési lépések a [README-ben](../README.md), a tisztítás és a teszteredmények a [cleanup-jelentésben](../REPO_CLEANUP_AUDIT_HU.md) találhatók.
 
 ## Telepítés és GitHub
 
-A `CHERRIFT-PC-Profile.zip` fájlban a módosított fájlok a projekt gyökeréhez viszonyított útvonalon vannak. A ZIP nem tartalmaz teljes repository-másolatot. A jelenlegi főágra bontsd ki, az azonos fájlokat felülírva. A telepítési leírás `TELEPITES.txt` néven a ZIP gyökerében található.
+A rework a repository része. Az aktuális indítási és ellenőrzési lépések a [README-ben](../README.md), a tisztítás és a teszteredmények a [cleanup-jelentésben](../REPO_CLEANUP_AUDIT_HU.md) találhatók.
 
 Helyi ág: `feat/pc-crystal-profile`. A GitHub-integráció az ág létrehozását 403 `Resource not accessible by integration` hibával elutasította, így távoli ág és Pull Request nem készült. Nincs automatikus élesítés vagy merge.

@@ -28,12 +28,12 @@ Valódi böngészős próba vendégindítással öt PC-s méretben: 1024×768, 1
 
 A játékosadatok ellenőrzése az automatikusan változó mentési időbélyeg és energiaóra kivételével történt; a valódi tulajdonjog, pénznemek, tárgyak és haladás változatlanok maradtak. A célzott modulpróbák a teljes mentés változatlanságát is ellenőrzik kontrollált környezetben.
 
-A gallery-* képek valódi vendégállapotot mutatnak: 1/15 skin. A catalogue-fixture-* bemutatóképek kizárólag az adott helyi böngészőmemóriában jelölnek hét meglévő skint elérhetőnek, hogy több karaktergrafika legyen látható. A fixture nem kerül a játékkódba és nem mentődik. Élő felhasználói fiókot vagy felhőadatot nem módosítottunk. Az összes ellenőrzési eredmény a TEST_RESULTS_COLLECTION.txt fájlban található.
+A rework a repository része. Az aktuális indítási és ellenőrzési lépések a [README-ben](../README.md), a tisztítás és a teszteredmények a [cleanup-jelentésben](../REPO_CLEANUP_AUDIT_HU.md) találhatók.
 
 ## Fájlok és telepítés
 
 Új modul: src/cherrift_desktop_collection.js; stílus: assets/cherrift_desktop_collection.css; háttér: assets/ui/collection/rift-gallery-pc.webp; tesztek: tools/desktop_collection.test.mjs. Az index.html, a manifest, a package.json és a CI betölti és ellenőrzi az új modult. A kristálycsarnok beépített imagegen eszközzel készült; a teljes leírás a docs/pc-collection/IMAGE_PROMPT.txt fájlban található. A karakterképek a meglévő játékból származnak.
 
-A CHERRIFT-PC-Collection.zip frissítőcsomag a már telepített Mail reworkre. Kibontás a projekt gyökerébe, az egyező fájlok felülírásával. A ZIP nem teljes játékmásolat. Részletek: TELEPITES-COLLECTION.txt.
+A rework a repository része. Az aktuális indítási és ellenőrzési lépések a [README-ben](../README.md), a tisztítás és a teszteredmények a [cleanup-jelentésben](../REPO_CLEANUP_AUDIT_HU.md) találhatók.
 
 A munka külön helyi munkapéldányban készült. GitHub-feltöltés, PR, merge és élesítés nem történt.

@@ -538,7 +538,18 @@
     const claimed=new Set(save.fixAchievementsClaimed), filter=state.achievementFilter;
     const list=ACHIEVEMENTS.filter(item=>filter==="all"||String(item.tier)===filter);
     panel.dataset.crAchievements="1";
-    panel.innerHTML=`<div class="cr-ach-shell"><header class="cr-ach-head"><button class="cr-ach-back" type="button" data-cr-ach-back aria-label="Back">←</button><div><h1>${copy("Eredmények","Achievements")}</h1></div></header><nav class="cr-ach-filter">${[["all",copy("Mind","All")],["1","Tier 1 · Gold"],["2","Tier 2 · Silver"],["3","Tier 3 · Bronze"]].map(([key,label])=>`<button type="button" data-cr-ach-filter="${key}" class="${filter===key?"active":""}">${label}</button>`).join("")}</nav><div class="cr-ach-grid">${list.map(item=>{const unlocked=!!item.test(save),isClaimed=claimed.has(item.id),tierColor=item.tier===1?"#e8b84d":item.tier===2?"#9eb8cf":"#b97857";return `<article class="cr-ach-card ${unlocked?"":"locked"}" style="--tier-color:${tierColor}"><div class="cr-ach-tier"><img src="${achievementIcon(item.tier)}" alt=""></div><div class="cr-ach-copy"><h3>${esc(item.name)}</h3><p>${esc(item.desc)}</p><small>${esc(item.progress(save))}</small><small class="reward">${esc(rewardText(item.reward))}</small></div><button class="cr-ach-action" type="button" data-cr-ach-claim="${item.id}" ${!unlocked||isClaimed?"disabled":""}>${isClaimed?copy("ÁTVÉVE","CLAIMED"):unlocked?copy("ÁTVÉTEL","CLAIM"):copy("ZÁROLVA","LOCKED")}</button></article>`}).join("")}</div></div>`;
+    const markup=`<header class="cr-ach-head"><button class="cr-ach-back" type="button" data-cr-ach-back aria-label="Back">←</button><div><h1>${copy("Eredmények","Achievements")}</h1></div></header><nav class="cr-ach-filter">${[["all",copy("Mind","All")],["1","Tier 1 · Gold"],["2","Tier 2 · Silver"],["3","Tier 3 · Bronze"]].map(([key,label])=>`<button type="button" data-cr-ach-filter="${key}" class="${filter===key?"active":""}">${label}</button>`).join("")}</nav><div class="cr-ach-grid">${list.map(item=>{const unlocked=!!item.test(save),isClaimed=claimed.has(item.id),tierColor=item.tier===1?"#e8b84d":item.tier===2?"#9eb8cf":"#b97857";return `<article class="cr-ach-card ${unlocked?"":"locked"}" style="--tier-color:${tierColor}"><div class="cr-ach-tier"><img src="${achievementIcon(item.tier)}" alt=""></div><div class="cr-ach-copy"><h3>${esc(item.name)}</h3><p>${esc(item.desc)}</p><small>${esc(item.progress(save))}</small><small class="reward">${esc(rewardText(item.reward))}</small></div><button class="cr-ach-action" type="button" data-cr-ach-claim="${item.id}" ${!unlocked||isClaimed?"disabled":""}>${isClaimed?copy("ÁTVÉVE","CLAIMED"):unlocked?copy("ÁTVÉTEL","CLAIM"):copy("ZÁROLVA","LOCKED")}</button></article>`}).join("")}</div>`;
+    let shell=q('.cr-ach-shell',panel);
+    if(!shell){shell=document.createElement('div');shell.className='cr-ach-shell';panel.replaceChildren(shell);}
+    // Preserve the PC chrome, scroll position and focused controls on unchanged
+    // refreshes. Rendering must finish before the next browser paint.
+    if(shell.__achievementMarkup!==markup){
+      const scroll=q('.cr-ach-grid',shell)?.scrollTop||0;
+      shell.innerHTML=markup;
+      shell.__achievementMarkup=markup;
+      q('.cr-ach-grid',shell).scrollTop=scroll;
+    }
+    window.CHERRIFT_DESKTOP_ACHIEVEMENTS?.sync?.();
   }
   function grantAchievement(achievementId){
     const achievement=ACHIEVEMENTS.find(item=>item.id===achievementId), save=window.UI?.save;
@@ -613,7 +624,7 @@
       document.body.appendChild(guard);
     }
     const blocked=isPhone()&&innerWidth>innerHeight;
-    document.body.classList.toggle("cr-phone-landscape",blocked);
+    if(document.body.classList.contains("cr-phone-landscape")!==blocked)document.body.classList.toggle("cr-phone-landscape",blocked);
     guard.setAttribute("aria-hidden",blocked?"false":"true");
   }
 
@@ -714,19 +725,27 @@
   function wrapUi(){
     if(state.wrapped||!window.UI)return;
     state.wrapped=true;
+    window.UI.renderAchievements=renderAchievements;
     const open=window.UI.open?.bind(window.UI);
     if(open)window.UI.open=function(...args){
       if(args[0]==="settings"&&window.UI?.game?.mode==="paused")return openInGameSettings();
       const result=open(...args);
-      requestAnimationFrame(refreshShell);
+      if(args[0]==="achievements")renderAchievements();
+      scheduleShell();
       return result;
     };
     const refresh=window.UI.refreshMenu?.bind(window.UI);
     if(refresh)window.UI.refreshMenu=function(...args){
       const result=refresh(...args);
-      requestAnimationFrame(refreshShell);
+      scheduleShell();
       return result;
     };
+  }
+
+  let shellFrame=0;
+  function scheduleShell(){
+    if(shellFrame)return;
+    shellFrame=requestAnimationFrame(()=>{shellFrame=0;refreshShell();});
   }
 
   function bindClicks(){
@@ -784,7 +803,7 @@
     bindRunLifecycle();
     bindClicks();
     for(const eventName of["resize","orientationchange","cherrift:savechange","cherrift:economychange","cherrift:languagechange","cherrift:themechange","cherrift:prebeta-ready"]){
-      addEventListener(eventName,()=>requestAnimationFrame(refreshShell),{passive:eventName==="resize"||eventName==="orientationchange"});
+      addEventListener(eventName,scheduleShell,{passive:eventName==="resize"||eventName==="orientationchange"});
     }
 
     const api=Object.freeze({

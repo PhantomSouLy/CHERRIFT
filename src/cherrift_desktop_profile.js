@@ -97,7 +97,7 @@
     const root = q('#profileBugfixV0941');
     if (!desktop() || !visible(root)) { if (state.active) restore(); return; }
     if (!q('.profile-hero-bf', root)) return;
-    state.active = true; document.body.classList.add('crystal-profile'); chrome(root); details(root); modalState(root);
+    state.active = true; if(!document.body.classList.contains('crystal-profile'))document.body.classList.add('crystal-profile'); chrome(root); details(root); modalState(root);
   }
   function schedule() { if (state.queued) return; state.queued = true; queueMicrotask(() => { state.queued = false; sync(); }); }
   function back() {

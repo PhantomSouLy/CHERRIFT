@@ -22,4 +22,4 @@ A korábbi reworkök desktopfelismerését használja (821 CSS-pixeltől; rövid
 
 Új modul: src/cherrift_desktop_achievements.js. Új stílus: assets/cherrift_desktop_achievements.css. Új háttér és három átlátszó WebP-érem: assets/ui/achievements/. Az index, manifest, package.json és CI betölti/ellenőrzi az új modult. Generálási leírás: docs/pc-achievements/IMAGE_PROMPT.txt.
 
-A ZIP a már telepített Missions 1013 verzióra másolandó, a projekt gyökerébe. Részletek: TELEPITES-ACHIEVEMENTS.txt. Tesztek és korlátok: TEST_RESULTS_ACHIEVEMENTS.txt. Élő Discord-fiókon nem történt jutalomátvétel. A változtatás helyben készült; GitHub-push és élesítés nem történt. Új szervertelepítés vagy adatbázismigráció nem szükséges.
+A rework a repository része. Az aktuális indítási és ellenőrzési lépések a [README-ben](../README.md), a tisztítás és a teszteredmények a [cleanup-jelentésben](../REPO_CLEANUP_AUDIT_HU.md) találhatók.

@@ -1,126 +1,200 @@
-# CHERRIFT mély cleanup-audit és folytatási pont
+# CHERRIFT – PC cleanup, 2026-10-23
 
-Kiinduló ág: `main`
+Kiinduló main commit: `ce761da3170f2dd97fb597c365bc126bd999dd86`.
+Új cache build: `1019-pc-cleanup`. A játék verziója változatlan:
+`0.9.5-prebeta.1`.
 
-Auditált kiinduló commit: `023e624` (`fixing v2`)
+A módosítások a helyi forrásban elkészültek. A GitHub-bővítmény az ág létrehozását
+403 `Resource not accessible by integration` hibával elutasította; távoli ág,
+PR és élesítés nem készült. A frissítőcsomag módosított fájlokat, alkalmazható
+Git-patch-et és külön törlési listát tartalmaz.
 
-Aktuális cleanup build: `0983-structure`
+## Elvégzett tisztítás és hibajavítás
 
-## Rövid eredmény
+### Gear
 
-A legutóbbi cleanup fájlszinten összevonta a régi verziókat, de a belső
-felépítést nem tisztította meg: a `src/cherrift_app.js` egymás után tartalmazza
-a v0.4–v0.9.4 rétegeket, amelyek sok helyen ugyanazokat a `UI`, Storage és Game
-metódusokat csomagolják újra. A CSS ugyanezt a verzióláncot vitte tovább.
+- Kikerült az eredeti papírbábu/inventory/details HTML és kirajzolás.
+- Kikerült a v040b külön pointer-drag rendszere; az aktuális v0560 drag/drop és
+  tárgyrészletező maradt az egyetlen natív Gear-tulajdonos.
+- Kikerült a v050 leváltott inventory filter/sort/detail UI-ja, a v053 mobil Gear
+  és a teljes, szintén leváltott v0552 Gear-generáció.
+- A v0560 renderer már nem futtatja előbb a régi rendererláncot.
+- A `showGearDetails`/`showEmptySlot` API a jelenlegi modalhoz kapcsolódik.
+- A régi layout-író PC-n korán visszatér. A későbbi refresh/observer nem írhatja
+  vissza a régi gridet vagy a régi abszolút slotkoordinátákat.
+- A PC Gear observer csak a Gear-panelt és saját modalját figyeli.
+- Az üres inline stílusok ismételt törlése megszűnt.
 
-Az alsó mobilmenü villogása ennek közvetlen következménye volt. Legalább öt
-generáció (v051, v052, v060, v082 és v090/v094) próbálta létrehozni vagy
-átírni ugyanazt a gombsort; további account/world observerek a feliratokat és
-route-okat figyelték, majd visszaírták.
+### Achievements
 
-Ebben a körben az aktív mobil navigáció egyetlen statikus DOM-tulajdonost
-kapott. A runtime csak az aktív állapotot és a kiválasztott Cherry ikonját
-frissítheti, a gombokat és a feliratokat nem építheti újra.
+- Kikerült a v052/v053 régi eredménylista és annak helyi reward-claim kezelője.
+- Az egyetlen aktív lista a clean runtime katalógusából épül.
+- A PC-felület a natív kirajzolással egy időben készül el; nem egy későbbi
+  képkockában cserélődik rá a régi listára.
+- A PC-fejléc és a státuszszűrő natív újrarajzoláskor is megmarad.
+- Változatlan tartalomnál a kártyák, fókusz, szűrés és görgetés sem épül újra.
+- A kategóriafrissítés ugyanazt az online, szerver által ellenőrzött claim
+  útvonalat használja. A régi mentésmezőket megőriztem a kompatibilitáshoz.
 
-## Elvégzett javítások
+### Más leváltott menük
 
-1. **Egyetlen mobil főmenü**
-   - A kanonikus öt gomb az `index.html` része: Cherry, Gear, Home, Gacha,
-     More.
-   - Kikerült a régi négyelemes `mobile-bottom-nav`, a v051 generált nav, a
-     v0932 bal oldali Chest/Gear/Cherry másolat és minden hozzájuk tartozó
-     DOM-átíró ág.
-   - Kikerültek a régi v051 mobil profil-, currency-, karakterikon- és jobb
-     oldali placeholder gombok; ezek helyett a jelenlegi v0932 komponensek
-     maradtak.
-   - Az account és world modul már nem címke alapján keres, töröl vagy nevez
-     át navigációs gombokat, és nem figyeli observerrel a nav szövegét.
-   - A régi navhoz tartozó aktív CSS-szelektorok is kikerültek.
+- Kikerültek a külön v055 Profile, Statistics, Collection és Bestiary panelek,
+  létrehozóik és régi navigációs gombjaik. A profilalapértékek és az ellenfelek
+  felfedezésének könyvelése megmaradt.
+- Kikerült a külön v055 Shop és helyi vásárlási kezelője. A meglévő gombok az
+  aktuális Shop-útvonalra mutatnak.
+- Kikerült a v0933 PC World/Chapter renderer és a v094 párhuzamos World-grid,
+  azok kattintáskezelőivel és késleltetett kirajzolásaival együtt.
+- Az aktív World/Chapter-választó a `cherrift_world_ui.js` maradt.
+- A world/stage adatok, Training-adatok, mapgenerálás és combat nem kerültek
+  törlésre a korábbi világmodulból.
 
-2. **Egy hálózati/Auth védelmi réteg**
-   - A böngésző fetch timeout, a Supabase singleton, a bounded Web Lock, az
-     Auth timeoutok és az Edge Function timeout ugyanabban a
-     `src/cherrift_network_guard.js` modulban élnek.
-   - A külön `cherrift_supabase_timeout_fix.js` már nincs betöltve.
-   - A vendor Supabase könyvtár a guard előtt töltődik, így a factoryt egyszer,
-     determinisztikusan lehet védeni.
+### Optimalizálás és ellenőrzések
 
-3. **Kevesebb aktív fájl és tisztább kategóriák**
-   - A gyökér `style.css` és `menu_v040.css` tartalma egy kategorizált
-     `assets/cherrift_shell.css` fájlba került.
-   - A security UI stílus a közös `assets/cherrift_ui.css` része lett.
-   - A külön reward UI patch kikerült a betöltésből; a kanonikus reward
-     megjelenítés a runtime és a közös UI CSS tulajdona.
-   - Első fél által szállított böngészős assetek egységes cache buildje:
-     `0983-structure`.
+- 452 leváltott CSS-szelektor kikerült a közös shell/app stílusból. Vegyes
+  szabálynál csak a megszűnt szelektor törlődött, a használt szabály megmaradt.
+- A két CSS-fájl összesen **45 557 byte-tal** kisebb lett.
+- A központi JS körülbelül **68,5 KB-tal** kisebb lett. Ez nyers forrásméret,
+  nem FPS- vagy tömörített hálózati mérés.
+- A PC-s menük változatlan állapotú frissítései nem írják újra fölöslegesen a
+  body aktív osztályait. A régi desktop navigáció és az eszközosztályozás is
+  csak változáskor ír; a mobil game-resize nem indul újra minden DOM-változásra.
+- A runtime az egy képkockába eső shell-frissítéseket összevonja.
+- `test:desktop` gyűjtőparancs készült; a CI ezt is futtatja. Korábban a
+  workflow-ból a PC-s rework-tesztek kimaradtak.
+- `audit -- --source-only` célzott audit készült, így nem kell a teljes
+  kép-/hangállományt hash-elni egy forrástisztításhoz.
+- Minden first-party betöltési query és a manifest egységes buildazonosítót kapott.
 
-4. **Indulási és mobil teljesítmény**
-   - Az opcionális skin artwork preload nem blokkolja a bootot; csak az aktív
-     idle grafika melegszik be háttérben.
-   - Két teljes-document nav observer és több kizárólag navot újracsomagoló
-     lifecycle wrapper kikerült.
-   - A teljes telefonos smoke teszt observer callbackjei 823-ról 574-re
-     csökkentek (kb. 30%).
+## Tételesen törölt fájlok
 
-5. **Visszaesést tiltó ellenőrzések**
-   - Pontosan egy kanonikus nav és pontosan az öt rögzített felirat lehet.
-   - A route-váltási smoke teszt figyeli a nav child/text mutációit; elvárt
-     eredmény: nulla DOM-újraépítés.
-   - A régi nav tulajdonosok/szelektorok, a külön timeout patch és a külön
-     reward patch újbóli betöltése validációs hibát okoz.
-   - A hálózati modul kötelező singleton/Auth/Function safety markereit külön
-     ellenőrzés védi.
+Ezek nem aktív játékfájlok; a megszűnt részcsomagok telepítési jegyzetei,
+korábbi tesztpillanatképei, üres leírói vagy elavult tartalomlistái.
+A verziótörténetből visszaállíthatók.
 
-## Teljes fájlaudit
+1. `TELEPITES.txt`
+2. `TELEPITES-MAIL.txt`
+3. `TEST_RESULTS_MAIL.txt`
+4. `UPDATE_VERSION_BEFORE_RELEASE.txt`
+5. `NEXT_CONTENT_HOOKS.md`
+6. `docs/Readme.md`
+7. `docs/pc-mainmenu/Readme.md`
+8. `docs/pc-skins/readme.md`
+9. `docs/pc-profile/TEST_RESULTS.txt`
+10. `docs/pc-mail/browser-results.json`
+11. `docs/pc-collection/browser-results.json`
 
-A gépi audit minden Git által követett fájlt ellenőriz. A PNG/JPG tartalmakat
-a kérés szerint nem minősíti automatikusan törlendőnek; csak a fájlszignatúrát,
-méretet, literális hivatkozást és byte-azonosságot jelzi.
+A hasznos kiadási/indítási tudnivalók a README-be kerültek. A PC rework-leírások
+hiányzó ZIP-telepítési jegyzetekre mutató hivatkozásait javítottam.
 
-- Ellenőrzött fájlok: **888**
-- JavaScript/CSS/JSON/TOML/YAML/Python szintaxis- vagy szignatúrahiba: **0**
-- Aktív runtime-ból hiányzó literális fájl: **0**
-- 1 byte-os placeholder: **1**
-- Byte-azonos fájlcsoport: **18**
-- Statikusan nem bizonyíthatóan használt asset: **472**
+## Megtartott fájlok és közös natív elemek
 
-Az utolsó szám nem törlési lista. A játék sok skin-, enemy-, map- és effect
-útvonalat futás közben rak össze, ezért a statikus referencia hiánya önmagában
-nem bizonyítja, hogy egy kép fölösleges.
+| Terület | Aktív PC-modul / közös alap |
+|---|---|
+| Loading, login-kezdőképernyő | `cherrift_desktop_loading.js`, boot és auth |
+| Főmenü | `cherrift_desktop_menu.js` |
+| Cherry / skinek | `cherrift_desktop_skins.js`, skin UI |
+| Gear | `cherrift_desktop_gear.js`, v0560 inventory és modal |
+| Gacha | `cherrift_desktop_gacha.js`, gacha/online modul |
+| Upgrade | `cherrift_desktop_upgrade.js`, közös skill tree |
+| World / Chapter | `cherrift_desktop_world.js`, world UI |
+| Settings | `cherrift_desktop_settings.js`, közös beállításmezők |
+| Profile / Mail | desktop profile/mail és account-mail |
+| Collection | desktop collection és natív library katalógus |
+| Shop | desktop shop és közös online gazdaság |
+| Missions / Weekly | desktop missions és közös küldetésadatok |
+| Achievements | desktop achievements és clean runtime katalógus |
+| Social / Login Rewards | desktop social/login és közös online állapot |
 
-## Biztonságosan törölhető fájlok
+A régi nevű natív `libraryV0551`, `gearV0560`, `dailyQuests`, `loginRewards`,
+`chests` stb. több helyen az új PC-megjelenítés adat- és eseményforrása.
+Ezek nem bizonyítottan felesleges menük. Az új UI gombjai és a mobil közös
+működés ezekre épülnek, ezért nem töröltem őket.
 
-Ezeket az aktuális `index.html` és manifest már nem tölti; tartalmuk beolvadt a
-kanonikus tulajdonosba vagy üres placeholder:
+A megmaradt régi főmenürészek egy része a mobil felületet, pénztárcaadatokat,
+profilképet és hírek forrását adja az új PC-főmenühöz. Eltávolításuk külön
+adatforrás-kiváltást igényel; tömeges törlésük hibát okozna.
 
-- `style.css`
-- `menu_v040.css`
-- `assets/cherrift_security_ui.css`
-- `src/cherrift_rewards.js`
-- `src/cherrift_supabase_timeout_fix.js`
-- `assets/effects/elemental/common/Readme.txt`
+Megtartottam a Supabase-migrációkat, auth/GM-telepítési leírásokat, roadmapet,
+balansz- és korábbi fejlesztési követelményeket, teszteszközöket, grafikai
+promptokat és a rework referencia-képeit. Nem a fájlkiterjesztés vagy régi
+verziószám alapján döntöttem a törlésről.
 
-## Még megmaradt szerkezeti adósság – következő mély kör
+Az assets mappából **kép, hang, sprite, skin, manifest és egyéb tartalmi asset
+nem lett törölve vagy lecserélve**. Csak a működési takarításhoz szükséges két
+közös CSS módosult. Külön grafikai/asset-audit nem történt.
 
-A mostani kör megszünteti a bizonyított mobil-nav és hálózati patch-ütközést,
-de a teljes régi runtime-lánc még nincs biztonságosan újraírva:
+## Tesztek
 
-- A `src/cherrift_app.js` még 47 korábbi verziószekciót tartalmaz.
-- Több száz régi lifecycle/Storage/Game wrapper maradt benne; ezek között sok
-  valódi gameplay-, save-migrációs és UI-funkció van, ezért tömeges törlésük
-  adatvesztést vagy rejtett combat hibát okozhatna.
-- Az `assets/cherrift_app.css` még a régi cascade jelentős részét őrzi.
+- Forrás-, CSS-, JSON- és hivatkozásvalidáció: sikeres.
+- Célzott forrásaudit: 162 szöveges fájl; 0 szintaxis-/parse hiba;
+  0 hiányzó aktív runtime-hivatkozás. 927 grafikai/hang/tartalmi fájl kihagyva.
+  A 6 fennmaradó nem futási literális találat tervezett assetútvonal vagy a
+  validátor tiltólistája. A két azonos Deno-config szükséges, nem törlendő.
+- PC-s felülettesztek: **140 sikeres**.
+- Mentési/gazdasági integritás: **34 sikeres**.
+- Valódi Edge Function forrást futtató helyi API-fixture: **1 sikeres**.
+- Gunner / harci regresszió: **5 sikeres**.
+- Supabase Auth/Web Lock/timeout regresszió: sikeres.
+- Indítási próbák: desktop 1440×900; 1920×1080; 1128×584;
+  visszatérő Discord; GM Discord; Auth-timeout.
+- Kiegészítő közös kód-regresszió: telefon álló/fekvő és cloud-timeout.
+- A PC-próba külön ellenőrzi a megszűnt DOM hiányát, a Gear régi layout-írójának
+  hatástalanságát, és az Achievements változatlan frissítésének stabilitását.
+- A 1440×900 eset végigjárja a további PC-útvonalakat is. A MutationObserver
+  watchdog megmaradt: 5000 callback a bootban, illetve egy-egy vizsgált
+  útvonalon; az összesített callbacks-szám külön naplózott.
 
-A következő refaktor javasolt sorrendje:
+A smoke-próbák a teljes alkalmazást futtatják JSDOM-ban, valódi observerekkel,
+helyi Auth/API-fixture-rel. A külön képernyőtesztek keresést, kategóriaváltást,
+fókuszt, Escape-kezelést, online batch-claimet, hibás válaszokat és
+accountváltást is vizsgálnak.
 
-1. Core/save/gameplay alap API-k kanonizálása.
-2. Lobby/progression UI kivonása egy kategóriamodulba.
-3. Gear/economy/gacha tulajdonosok összevonása.
-4. Theme/presentation és world/skin felületek szétválasztása.
-5. Minden kivont kategória után PC, mobil, returning session, Auth timeout és
-   cloud timeout regresszió futtatása; csak ezután törölhető az adott régi
-   szekció a monolitból.
+## Élő Supabase – talált külön hiányosság
 
-Ez a fájl a pontos folytatási pont: a következő kör nem kezdheti újra a nav vagy
-a network javítását újabb hotfixszel, hanem a fenti kategóriákat kell egyenként
-kiváltania.
+A projekt `ACTIVE_HEALTHY`. A publikus ellenőrzés eredménye:
+
+- Auth settings: HTTP 200; Discord OAuth indítás: HTTP 302.
+- Mind a 15 vizsgált védett tábla elutasítja a közvetlen vendéghozzáférést.
+- `player-api` és `gm-api`: elérhető, CORS működik.
+- `player-api` a publishable kulcsot nem fogadja el játékos-sessionként: HTTP 401.
+- **A `submit-report` nincs telepítve, HTTP 404.** Emiatt a Feedback/Bug Report
+  beküldés élőben nem működik. A forrás létezik a repóban, de a funkció
+  telepítése és a két Discord-webhook titkos beállítása még szükséges.
+  Tesztüzenetet nem küldtem Discordra.
+
+A `verify:supabase-public` a működő core ellenőrzése után e hiányzó deployment
+miatt hibával lép ki. Ezt nem jelöltem sikeres teljes online tesztnek.
+
+Az advisorok további karbantartási jelzései: 7 idegen kulcshoz hiányzó index;
+3 régi `player_saves` RLS-policy soronkénti Auth-kiértékelése; egy mutable
+function search_path; az `rls_auto_enable` függvény hívhatósági jelzései;
+kikapcsolt leaked-password protection. A 15 policy nélküli RLS-táblán a két
+kliensszerep közvetlen SELECT-joga is tiltott, ezért nem adtam hozzájuk
+indokolatlanul publikus policykat.
+
+Kapcsolódó Supabase-leírások:
+
+- [Hiányzó FK-index](https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys)
+- [RLS Auth initplan](https://supabase.com/docs/guides/database/database-linter?lint=0003_auth_rls_initplan)
+- [Function search_path](https://supabase.com/docs/guides/database/database-linter?lint=0011_function_search_path_mutable)
+- [Security definer hozzáférés](https://supabase.com/docs/guides/database/database-linter?lint=0028_anon_security_definer_function_executable)
+- [Jelszóvédelem](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection)
+
+Adatbázisadatot, sémát, indexet, Auth-beállítást vagy Edge Function deploymentet
+nem változtattam meg ebben a menütisztításban.
+
+## Ellenőrzési határok és folytatás
+
+A közös runtime-ban további történeti rétegek maradtak, amelyek valódi
+játéklogikát vagy mentés-kompatibilitást adnak. Ezek nem kerültek vakon törlésre.
+A megmaradt aktív forrás-/CSS-belépési pontok mind betöltöttek az audit szerint.
+
+Élő Discord-fiókon jutalomátvétel, teljes végigjátszás és GPU/FPS-benchmark
+nem történt. Valódi Chromium képernyőkép-ellenőrzés sem készült: ebben a
+környezetben a böngésző letöltése meghiúsult. A villanást okozó régi írót és
+rendererláncot megszüntettem, a működési ellenőrzések ezt védik; telepítés után
+PC-n érdemes a Gear/Achievements megnyitását vizuálisan is kipróbálni.
+
+Következő külön feladatok: a hiányzó `submit-report` telepítése és webhookjai;
+majd a kért, külön assets-rendezés. A mobil rework továbbra is külön feladat.

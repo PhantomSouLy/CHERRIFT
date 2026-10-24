@@ -24,11 +24,11 @@ A módosítás kizárólag 821 px-től, megfelelő PC-s képernyőn aktív. Alac
 
 Kilenc célzott Mail-teszt ellenőrzi az állapot változatlanságát, a natív eseménykezelőket, a szűrőket, a jutalomgombokat, a fókuszt, a rejtett jutalomablakot, az újrarenderelést és a mobilra visszaváltást. Valódi böngészős próba vendégindítással, öt PC-s felbontáson: 1024×768, 1280×720, 1366×768, 1920×1080, 2560×1440; továbbá 390×844 mobil és főmenübe visszatérés. A Mail böngészős próbája futási hiba nélkül sikeres.
 
-A docs/pc-mail képernyőképei helyi tesztleveleket mutatnak. Ezeket csak a böngészős teszt szúrja be, a szállított játékkódba nem kerülnek. Élő Discord-bejelentkezést és tényleges szerveres jutalomátvételt nem végeztünk. A teljes ellenőrzési eredmény a csomag TEST_RESULTS_MAIL.txt fájljában található.
+A rework a repository része. Az aktuális indítási és ellenőrzési lépések a [README-ben](../README.md), a tisztítás és a teszteredmények a [cleanup-jelentésben](../REPO_CLEANUP_AUDIT_HU.md) találhatók.
 
 ## Telepítés
 
-A CHERRIFT-PC-Mail.zip egy frissítőcsomag a már telepített Profil/Fiók reworkhöz. A projekt gyökerébe kell kibontani, az egyező fájlokat felülírva. Nem teljes játékmásolat. A telepítési útmutató TELEPITES-MAIL.txt néven található a ZIP gyökerében.
+A rework a repository része. Az aktuális indítási és ellenőrzési lépések a [README-ben](../README.md), a tisztítás és a teszteredmények a [cleanup-jelentésben](../REPO_CLEANUP_AUDIT_HU.md) találhatók.
 
 Módosított fájlok: index.html, package.json, src/cherrift_manifest.json, .github/workflows/ci.yml. Új fájlok: src/cherrift_desktop_mail.js, assets/cherrift_desktop_mail.css, assets/ui/mail/crystal-correspondence-pc.webp, tools/desktop_mail.test.mjs és a Mail dokumentáció.
 

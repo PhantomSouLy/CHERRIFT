@@ -242,7 +242,7 @@
   }
 
   function hideGameMenus() {
-    for (const panelId of ["menu", "worlds", "worldsV094", "worldSelectorV0942", "chapterSelectorV0942", "skins", "gear", "chests", "settings", "playerUpgrade", "pauseModal", "levelModal", "gameOver", "stageClearModal"]) {
+    for (const panelId of ["menu", "worlds", "worldSelectorV0942", "chapterSelectorV0942", "skins", "gear", "chests", "settings", "playerUpgrade", "pauseModal", "levelModal", "gameOver", "stageClearModal"]) {
       id(panelId)?.classList.add("hidden");
     }
     id("mobileMenuV082")?.classList.add("hidden");

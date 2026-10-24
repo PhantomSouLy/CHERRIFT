@@ -91,7 +91,7 @@
     if (active && calendarDay && calendarDay !== dayKey()) { calendarDay = dayKey(); window.UI?.open?.('loginRewards'); schedule(); return; }
     if (active && firstDay !== currentFirst) { firstDay = currentFirst; window.UI?.open?.('loginRewards'); schedule(); return; }
     firstDay = currentFirst; calendarDay = dayKey(); active = true;
-    document.body.classList.add('crystal-login'); window.CHERRIFT_DESKTOP_MENU?.sync?.();
+    if(!document.body.classList.contains('crystal-login'))document.body.classList.add('crystal-login'); window.CHERRIFT_DESKTOP_MENU?.sync?.();
     for (const node of modified.keys()) if (!node.isConnected) modified.delete(node);
     if (moved && !moved.parent.isConnected) returnButton();
     chrome(root);

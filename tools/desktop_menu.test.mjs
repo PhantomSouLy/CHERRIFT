@@ -66,3 +66,12 @@ test('unavailable event stays disabled; translated captions update from existing
     assert.match(f.root().querySelector('[data-crystal-copy=play]').textContent,/another tomorrow/);
   }finally{f.close();}
 });
+test('unchanged desktop sync does not rewrite body classes or wake global observers',()=>{
+  const f=fixture();try{
+    const observer=new f.w.MutationObserver(()=>{});
+    observer.observe(f.w.document.body,{attributes:true,attributeFilter:['class']});
+    for(let i=0;i<4;i++)f.w.CHERRIFT_DESKTOP_MENU.sync();
+    assert.equal(observer.takeRecords().length,0);
+    observer.disconnect();
+  }finally{f.close();}
+});

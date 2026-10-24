@@ -28,11 +28,11 @@ Kizárólag PC-n, 821 CSS-pixeltől és megfelelő magasságú érintős kijelz�
 
 Tizenkét célzott regressziós teszt: mobil, natív napi csomópontok és tényleges jutalomadatok, egyszeri átvétel, eredeti Claim All/újrasorsolás, heti útvonal és közös jutalom, online heti claimed állapot, pontos visszaállítás, újrarenderelés/nyelvváltás, billentyűzet/fókusz, rejtett és nyitott dialógusok, valamint heti natív bezárás átméretezés után.
 
-Valódi Chromium vendégpróba: mindkét nézet 1920×1080, 2560×1440, 1366×768, 1280×720, 1024×768 és 844×700 méretben. Továbbá görgetés, fülek és billentyűzet, vendégjutalom blokkolása, változatlan pénznemek/tárgyak/tulajdonjog, 390×844 mobilra visszaváltás és lobbyba visszatérés. Külön 844×390 érintős kijelzőn is ellenőrzött a PC-modul inaktivitása és a hozzáadott elemek hiánya. Élő Discord-fiókos szerveres jutalomátvételt nem végeztünk. Részletes eredmények: TEST_RESULTS_MISSIONS.txt.
+A rework a repository része. Az aktuális indítási és ellenőrzési lépések a [README-ben](../README.md), a tisztítás és a teszteredmények a [cleanup-jelentésben](../REPO_CLEANUP_AUDIT_HU.md) találhatók.
 
 ## Telepítés
 
-A CHERRIFT-PC-Missions.zip csak új és módosult fájlokat tartalmaz a már telepített Shop-reworkre. Kibontás a projekt gyökerébe, mappák egyesítésével és egyező fájlok felülírásával. Nem teljes játékmásolat. Útmutató: TELEPITES-MISSIONS.txt.
+A rework a repository része. Az aktuális indítási és ellenőrzési lépések a [README-ben](../README.md), a tisztítás és a teszteredmények a [cleanup-jelentésben](../REPO_CLEANUP_AUDIT_HU.md) találhatók.
 
 Új modul: src/cherrift_desktop_missions.js. Új stílus: assets/cherrift_desktop_missions.css. Új háttér: assets/ui/missions/blossom-expedition-pc.webp. Az index, a manifest, a package.json és a CI tartalmazza a megfelelő betöltést és célzott tesztet.
 

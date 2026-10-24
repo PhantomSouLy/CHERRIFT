@@ -113,7 +113,7 @@
   function sync(){
     const root=$('skins');const active=desktop() && visible(root) && !document.body.classList.contains('is-playing');
     if(!active){if(state.visible || document.body.classList.contains('sakura-skins'))restore();return;}
-    document.body.classList.add('sakura-skins');
+    if(!document.body.classList.contains('sakura-skins'))document.body.classList.add('sakura-skins');
     const skin=window.CHERRIFT_SKIN_UI?.selectedSkin?.();if(!skin)return;
     const currentView=q('[data-v093-skin-view].active',root)?.dataset.v093SkinView || 'splash';
     const changed=state.selected!==skin.id || state.view!==currentView;

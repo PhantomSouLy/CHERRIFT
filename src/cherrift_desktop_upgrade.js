@@ -91,7 +91,7 @@
     if(state.reading)return;const root=q('#playerUpgrade');if(!desktop()||!visible(root)||root.classList.contains('resonance-mode-v095')||document.body.classList.contains('is-playing')){if(state.active)restore();return;}
     const signature=JSON.stringify([copy('hu','en'),window.UI?.save?.account,qa('[data-v096-skill-card]',root).map(n=>[Object.assign({},n.dataset),q('[data-v082-skill]',n)?.disabled])]);
     if(state.signature!==signature){if(!snapshot(root))return;state.signature=signature;}
-    state.active=true;document.body.classList.add('celestial-upgrade');chrome(root);graph(root);tabs(root);detail(root);
+    state.active=true;if(!document.body.classList.contains('celestial-upgrade'))document.body.classList.add('celestial-upgrade');chrome(root);graph(root);tabs(root);detail(root);
   }
   function schedule(){if(state.reading||state.queued)return;state.queued=true;queueMicrotask(()=>{state.queued=false;sync();});}
   async function upgrade(){

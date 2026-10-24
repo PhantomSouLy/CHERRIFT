@@ -120,7 +120,7 @@
       state.active = true;
       state.changing = true; q(`[data-v060-settings="${state.lastTab}"]`, root)?.click(); state.changing = false;
     }
-    document.body.classList.add('crystal-settings'); chrome(root); decorate(root);
+    if(!document.body.classList.contains('crystal-settings'))document.body.classList.add('crystal-settings'); chrome(root); decorate(root);
   }
   function schedule() { if (state.queued || state.changing) return; state.queued = true; queueMicrotask(() => { state.queued = false; sync(); }); }
   function back(resume = false) {

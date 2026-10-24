@@ -26,6 +26,6 @@ Nincs új, kitalált számláló vagy mesterséges várakozás. A boot százalé
 
 ## Telepítés és ellenőrzés
 
-Új CSS, JS és hat célzott teszt; a manifest, index, package.json és CI betölti/ellenőrzi a modult. Az index minden első félhez tartozó build-queryje egyezik a manifest 1016-moonlit-loading értékével. A ZIP csak az új és módosult fájlokat tartalmazza, a már telepített Achievements/Index fix verzióra másolandó. Részletek: TELEPITES-PC-LOADING.txt és TEST_RESULTS-PC-LOADING.txt.
+A rework a repository része. Az aktuális indítási és ellenőrzési lépések a [README-ben](../README.md), a tisztítás és a teszteredmények a [cleanup-jelentésben](../REPO_CLEANUP_AUDIT_HU.md) találhatók.
 
 GitHub-push, PR vagy élesítés nem történt. Új adatbázismigráció vagy szervertelepítés nincs. A képek és a forráskód a meglévő felhasználói projekthez tartoznak; a csomag nem teljes játékmásolat.

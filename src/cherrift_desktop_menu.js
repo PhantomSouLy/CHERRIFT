@@ -109,7 +109,7 @@
   }
   function queue() { if (!frame && desktop()) frame=requestAnimationFrame(()=>{frame=0;sync();}); }
   function sync() {
-    const active=desktop();document.body.classList.toggle('crystal-desktop',active);
+    const active=desktop();if(document.body.classList.contains('crystal-desktop')!==active)document.body.classList.toggle('crystal-desktop',active);
     if (!active) {
       document.body.classList.remove('crystal-lobby');
       clearTimeout(pending);pending=0;lastFocus=null;
@@ -121,7 +121,7 @@
     const visiblePanel=Array.from($('app')?.children || []).some(node=>node.classList.contains('panel') && !node.classList.contains('hidden') && getComputedStyle(node).display!=='none');
     const menuVisible=!visiblePanel && !$('menu')?.classList.contains('hidden') && getComputedStyle($('menu')).display!=='none';
     root.hidden=!menuVisible;root.inert=!menuVisible;
-    document.body.classList.toggle('crystal-lobby',menuVisible);
+    if(document.body.classList.contains('crystal-lobby')!==menuVisible)document.body.classList.toggle('crystal-lobby',menuVisible);
     if (menuVisible && lastRoute!=='menu') {
       delete root.dataset.leaving;root.querySelectorAll('.is-selected').forEach(b=>b.classList.remove('is-selected'));
       if(lastRoute && lastFocus?.isConnected)lastFocus.focus({preventScroll:true});

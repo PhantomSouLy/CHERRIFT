@@ -37,6 +37,7 @@ jobs:
       - name: Validate every tracked file
         run: |
           npm run validate
+          npm run test:desktop
           npm run audit
           npm run test:integrity
           npm run test:online-api

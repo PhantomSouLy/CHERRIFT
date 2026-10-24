@@ -66,7 +66,7 @@
   function sync(){
     const root=q('#gachaChestOnlyV12');if(!desktop()||!visible(root)||document.body.classList.contains('is-playing')){if(active)restore();return;}
     const card=q('[data-gco-card]',root);const tier=tiers.find(t=>card?.classList.contains(t));if(!tier)return;
-    const changed=current!==tier;active=true;document.body.classList.add('blossom-gacha');for(const n of modified.keys())if(!n.isConnected)modified.delete(n);
+    const changed=current!==tier;active=true;if(!document.body.classList.contains('blossom-gacha'))document.body.classList.add('blossom-gacha');for(const n of modified.keys())if(!n.isConnected)modified.delete(n);
     chrome(root);art(root,tier,changed);selector(root,tier);detail(root,tier);ornaments(root,tier);modal(root,tier);
     if(changed)animate(card,[{opacity:.15,transform:'translate3d(18px,0,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],280);
     current=tier;focusModal(root);if(focusTier){q(`[data-gco-tier="${focusTier}"]`,root)?.focus({preventScroll:true});focusTier='';}

@@ -1019,99 +1019,10 @@ window.UI = {
     return { id, slot, type, rarity, stats };
   },
 
-  renderGear() {
-    const inv = document.getElementById("inventory");
-
-    if (inv) {
-      inv.ondragover = e => e.preventDefault();
-      inv.ondrop = e => {
-        e.preventDefault();
-        const slot = e.dataTransfer.getData("slot");
-        if (slot) this.unequipGear(slot);
-      };
-    }
-
-    document.querySelectorAll(".gear-slot").forEach(btn => {
-      const slot = btn.dataset.slot;
-      const g = this.save.equipped[slot];
-      btn.className = `gear-slot ${slot.toLowerCase()} ${g ? "" : "empty"} ${this.selectedGear && this.selectedGear.id === g?.id ? "selected" : ""}`;
-      btn.dataset.short = slot.slice(0, 3).toUpperCase();
-      btn.innerHTML = g ? `<span>${this.gearEmoji(g)}</span>` : "";
-      btn.onclick = () => { if (g) this.showGearDetails(g, "equipped"); else this.showEmptySlot(slot); this.highlightGear(g?.id); };
-
-      btn.draggable = !!g;
-      btn.ondragstart = e => {
-        if (!g) return;
-        e.dataTransfer.effectAllowed = "move";
-        e.dataTransfer.setData("slot", slot);
-        e.dataTransfer.setData("gearId", g.id);
-        btn.classList.add("dragging");
-      };
-      btn.ondragend = () => btn.classList.remove("dragging", "drop-target", "bad-drop");
-      btn.ondragover = e => {
-        e.preventDefault();
-        const id = e.dataTransfer.getData("gearId");
-        const item = this.save.inventory.find(x => x.id === id);
-        btn.classList.toggle("bad-drop", !!item && item.slot !== slot);
-        btn.classList.toggle("drop-target", !!item && item.slot === slot);
-      };
-      btn.ondragleave = () => btn.classList.remove("drop-target", "bad-drop");
-      btn.ondrop = e => {
-        e.preventDefault();
-        btn.classList.remove("drop-target", "bad-drop");
-        const id = e.dataTransfer.getData("gearId");
-        const item = this.save.inventory.find(x => x.id === id);
-        if (!item) return;
-        if (item.slot !== slot) {
-          this.toast(`${item.slot} item nem rakható ${slot} slotra`);
-          return;
-        }
-        this.equipGear(id);
-      };
-    });
-
-    inv.innerHTML = "";
-    this.save.inventory.forEach(g => {
-      const el = document.createElement("button");
-      el.className = `inv-item rarity-${g.rarity.toLowerCase()} ${this.selectedGear && this.selectedGear.id === g.id ? "selected" : ""}`;
-      el.draggable = true;
-      el.dataset.gearId = g.id;
-      el.innerHTML = `<span>${this.gearEmoji(g)}</span><small>${g.slot}</small>`;
-      el.onclick = () => { this.showGearDetails(g, "inventory"); this.highlightGear(g.id); };
-      el.ondragstart = e => {
-        e.dataTransfer.effectAllowed = "move";
-        e.dataTransfer.setData("gearId", g.id);
-        el.classList.add("dragging");
-        this.showGearDetails(g, "inventory");
-      };
-      el.ondragend = () => el.classList.remove("dragging");
-      inv.appendChild(el);
-    });
-
-    document.getElementById("inventoryCount").textContent = `${this.save.inventory.length} items`;
-    const stats = this.totalGearStats(this.save);
-    document.getElementById("totalStats").innerHTML = "<h3>Total Stats</h3>" + (Object.keys(stats).length ? Object.entries(stats).map(([k,v]) => `<div class="stat-line"><span>${k}</span><b>+${Math.round(v*10)/10}</b></div>`).join("") : "<p>No gear equipped.</p>");
-  },
-
-  highlightGear(id) { this.renderGear(); },
-
-  showEmptySlot(slot) {
-    this.selectedGear = null;
-    document.getElementById("gearDetails").innerHTML = `<div class="gear-details-empty"><b>${slot}</b> slot üres.<br>Húzz ide az inventoryból egy ${slot} itemet.</div>`;
-  },
-
-  showGearDetails(g, source) {
-    this.selectedGear = g;
-    const actions = source === "inventory" ? `<button data-action="equip">Equip</button><button data-action="sell">Sell</button>` : `<button data-action="unequip">Unequip</button>`;
-    document.getElementById("gearDetails").innerHTML = `
-      <div class="gear-detail-title"><div class="gear-detail-icon">${this.gearEmoji(g)}</div><div><h4>${this.gearName(g)}</h4><small class="rarity-${g.rarity.toLowerCase()} type-${g.type.toLowerCase()}">${g.rarity} · ${g.type}</small></div></div>
-      <div>${Object.entries(g.stats).map(([k,v]) => `<div class="stat-line"><span>${k}</span><b>+${v}</b></div>`).join("")}</div>
-      <div class="gear-detail-actions">${actions}</div>`;
-    document.querySelectorAll("#gearDetails [data-action]").forEach(btn => {
-      btn.onclick = () => { if (btn.dataset.action === "equip") this.equipGear(g.id); if (btn.dataset.action === "sell") this.sellGear(g.id); if (btn.dataset.action === "unequip") this.unequipGear(g.slot); };
-    });
-    this.renderGear();
-  },
+  renderGear() {},
+  highlightGear() { this.renderGear(); },
+  showEmptySlot() {},
+  showGearDetails() {},
 
   totalGearStats(save) {
     const out = {};
@@ -1154,7 +1065,6 @@ window.UI = {
     CherriftStorage.save(this.save);
     this.toast(`Sold +${value} coins`);
     this.selectedGear = null;
-    document.getElementById("gearDetails").innerHTML = `<div class="gear-details-empty">Item sold.</div>`;
     this.renderGear();
     this.refreshMenu();
   },
@@ -1557,43 +1467,6 @@ window.UI = {
       setText("skinPortrait","");
     };
 
-    UI.renderGear = function(){
-      cleanDragGhosts();
-      const inv=id("inventory"); if(!inv) return;
-      qa(".gear-slot").forEach(btn=>{
-        const slot=btn.dataset.slot, gear=this.save.equipped?.[slot];
-        btn.draggable=false; btn.ondragstart=e=>{e.preventDefault();return false;};
-        btn.className=`gear-slot ${slot.toLowerCase()} ${gear?"":"empty"} ${this.selectedGear&&this.selectedGear.id===gear?.id?"selected":""}`;
-        btn.dataset.short=slot.slice(0,3).toUpperCase(); btn.dataset.gearId=gear?.id||""; btn.innerHTML=gear?`<span>${this.gearEmoji(gear)}</span>`:"";
-        bindClick(btn,()=>{ if(gear) this.showGearDetails(gear,"equipped"); else this.showEmptySlot(slot); this.highlightGear(gear?.id); });
-      });
-      inv.innerHTML="";
-      this.save.inventory.forEach(gear=>{
-        const el=document.createElement("button");
-        el.type="button"; el.draggable=false; el.ondragstart=e=>{e.preventDefault();return false;};
-        el.className=`inv-item rarity-${gear.rarity.toLowerCase()} ${this.selectedGear&&this.selectedGear.id===gear.id?"selected":""}`;
-        el.dataset.gearId=gear.id; el.dataset.slot=gear.slot; el.innerHTML=`<span>${this.gearEmoji(gear)}</span><small>${gear.slot}</small>`;
-        bindClick(el,()=>{this.showGearDetails(gear,"inventory");this.highlightGear(gear.id);});
-        inv.appendChild(el);
-      });
-      setText("inventoryCount", `${this.save.inventory.length} items`);
-      const stats=this.totalGearStats(this.save), total=id("totalStats");
-      if(total) total.innerHTML="<h3>Total Stats</h3>"+(Object.keys(stats).length?Object.entries(stats).map(([k,v])=>`<div class="stat-line"><span>${k}</span><b>+${Math.round(v*10)/10}</b></div>`).join(""):"<p>No gear equipped.</p>");
-      if(!this.selectedGear) this.showEmptySlot("Select item");
-    };
-
-    UI.highlightGear = function(){ this.renderGear(); };
-    UI.showGearDetails = function(gear,source){
-      this.selectedGear=gear;
-      const actions=source==="inventory" ? `<button data-action="equip">Equip</button><button data-action="sell">Sell</button>` : `<button data-action="unequip">Unequip</button>`;
-      const details=id("gearDetails");
-      if(details){
-        details.innerHTML=`<div class="gear-detail-title"><div class="gear-detail-icon">${this.gearEmoji(gear)}</div><div><h4>${this.gearName(gear)}</h4><small class="rarity-${gear.rarity.toLowerCase()} type-${gear.type.toLowerCase()}">${gear.rarity} · ${gear.type}</small></div></div><div>${Object.entries(gear.stats).map(([k,v])=>`<div class="stat-line"><span>${k}</span><b>+${v}</b></div>`).join("")}</div><div class="gear-detail-actions">${actions}</div>`;
-        qa("#gearDetails [data-action]").forEach(btn=>bindClick(btn,()=>{ if(btn.dataset.action==="equip") this.equipGear(gear.id); if(btn.dataset.action==="sell") this.sellGear(gear.id); if(btn.dataset.action==="unequip") this.unequipGear(gear.slot); }));
-      }
-      this.renderGear();
-    };
-
     UI.openWorldSelect = function(){ normalizeSave(this.save); this.worldCarouselIndex=stageIndex(this.save.selectedStageId); this.open("worlds"); this.renderWorldPanel(); };
     UI.moveWorldCarousel = function(dir){ this.worldCarouselIndex=clamp((this.worldCarouselIndex||0)+dir,0,STAGES.length-1); this.renderWorldPanel(); };
     UI.renderWorldPanel = function(){
@@ -1700,147 +1573,8 @@ window.UI = {
     document.addEventListener("fullscreenchange",()=>setTimeout(()=>applyViewportClass(),160),{passive:true});
   }
 
-  // ---------------------------------------------------------------------------
-  // Gear drag v0.4.0b
-  // Clean pointer-based drag/drop. Native browser drag/drop is not used.
-  // Tap = details. Drag inventory item to matching slot = equip.
-  // Drag equipped item to inventory = unequip.
-  // ---------------------------------------------------------------------------
-  let gearDragV040b = null;
-
-  function cleanGearDragV040b() {
-    gearDragV040b = null;
-    document.body.classList.remove("gear-dragging-v040b");
-    id("inventory")?.classList.remove("drag-target-v040b");
-    qa(".gear-slot").forEach(el => el.classList.remove("drag-eligible", "drag-disabled"));
-    qa(".drag-ghost-v040b,.drag-ghost").forEach(el => el.remove());
-  }
-
-  function gearPayloadFromTargetV040b(target) {
-    const item = target.closest?.(".inv-item");
-    if (item) {
-      const gear = UI.save?.inventory?.find(g => g.id === item.dataset.gearId);
-      if (!gear) return null;
-      return { source:"inventory", gear, id:gear.id, slot:gear.slot, emoji:UI.gearEmoji?.(gear) || "💠" };
-    }
-    const slot = target.closest?.(".gear-slot");
-    if (slot && slot.dataset.gearId) {
-      const gear = UI.save?.equipped?.[slot.dataset.slot];
-      if (!gear) return null;
-      return { source:"equipped", gear, id:gear.id, slot:gear.slot, emoji:UI.gearEmoji?.(gear) || "💠" };
-    }
-    return null;
-  }
-
-  function createGearGhostV040b(payload, x, y) {
-    const ghost = document.createElement("div");
-    ghost.className = "drag-ghost-v040b";
-    ghost.innerHTML = `<span>${payload.emoji}</span>`;
-    document.body.appendChild(ghost);
-    moveGearGhostV040b(x, y, ghost);
-    return ghost;
-  }
-
-  function moveGearGhostV040b(x, y, ghost = gearDragV040b?.ghost) {
-    if (!ghost) return;
-    ghost.style.transform = `translate(${Math.round(x - 36)}px, ${Math.round(y - 36)}px)`;
-  }
-
-  function highlightGearTargetsV040b(payload) {
-    if (payload.source === "inventory") {
-      qa(".gear-slot").forEach(el => {
-        const ok = el.dataset.slot === payload.slot;
-        el.classList.toggle("drag-eligible", ok);
-        el.classList.toggle("drag-disabled", !ok);
-      });
-    } else {
-      id("inventory")?.classList.add("drag-target-v040b");
-    }
-  }
-
-  function beginGearDragV040b(e) {
-    if (!gearDragV040b || gearDragV040b.active) return;
-    gearDragV040b.active = true;
-    document.body.classList.add("gear-dragging-v040b");
-    gearDragV040b.ghost = createGearGhostV040b(gearDragV040b.payload, e.clientX, e.clientY);
-    highlightGearTargetsV040b(gearDragV040b.payload);
-  }
-
-  function finishGearDragV040b(e) {
-    if (!gearDragV040b || gearDragV040b.pointerId !== e.pointerId) return;
-    const payload = gearDragV040b.payload;
-    const wasActive = gearDragV040b.active;
-    const target = document.elementFromPoint(e.clientX, e.clientY);
-    cleanGearDragV040b();
-
-    if (!wasActive) {
-      if (payload.source === "inventory") {
-        UI.showGearDetails?.(payload.gear, "inventory");
-        UI.highlightGear?.(payload.id);
-      } else {
-        UI.showGearDetails?.(payload.gear, "equipped");
-        UI.highlightGear?.(payload.id);
-      }
-      return;
-    }
-
-    const slotBtn = target?.closest?.(".gear-slot");
-    const inv = target?.closest?.("#inventory");
-    if (payload.source === "inventory" && slotBtn && slotBtn.dataset.slot === payload.slot) {
-      UI.equipGear?.(payload.id);
-    } else if (payload.source === "equipped" && inv) {
-      UI.unequipGear?.(payload.slot);
-    } else {
-      UI.renderGear?.();
-    }
-  }
-
-  function installGearDragV040b() {
-    if (UI.__v040bGearDragInstalled) return;
-    UI.__v040bGearDragInstalled = true;
-    document.addEventListener("pointerdown", e => {
-      const gearPanel = e.target.closest?.("#gear");
-      if (!gearPanel || gearPanel.classList.contains("hidden")) return;
-      const payload = gearPayloadFromTargetV040b(e.target);
-      if (!payload) return;
-      e.preventDefault();
-      e.stopPropagation();
-      gearDragV040b = { pointerId:e.pointerId, payload, startX:e.clientX, startY:e.clientY, active:false, ghost:null };
-      try { e.target.setPointerCapture?.(e.pointerId); } catch (_) {}
-    }, { passive:false });
-    document.addEventListener("pointermove", e => {
-      if (!gearDragV040b || gearDragV040b.pointerId !== e.pointerId) return;
-      const moved = Math.hypot(e.clientX - gearDragV040b.startX, e.clientY - gearDragV040b.startY);
-      if (moved > 9) beginGearDragV040b(e);
-      if (gearDragV040b.active) { e.preventDefault(); e.stopPropagation(); moveGearGhostV040b(e.clientX, e.clientY); }
-    }, { passive:false });
-    document.addEventListener("pointerup", e => {
-      if (!gearDragV040b || gearDragV040b.pointerId !== e.pointerId) return;
-      e.preventDefault(); e.stopPropagation(); finishGearDragV040b(e);
-    }, { passive:false });
-    document.addEventListener("pointercancel", e => { if (gearDragV040b && gearDragV040b.pointerId === e.pointerId) cleanGearDragV040b(); }, { passive:true });
-    window.addEventListener("blur", cleanGearDragV040b);
-    document.addEventListener("visibilitychange", () => { if (document.hidden) cleanGearDragV040b(); });
-  }
-
-  const renderGearBeforeV040b = UI.renderGear?.bind(UI);
-  UI.renderGear = function renderGearV040b(...args) {
-    const result = renderGearBeforeV040b ? renderGearBeforeV040b(...args) : undefined;
-    installGearDragV040b();
-    return result;
-  };
-
-  const openBeforeV040b = UI.open?.bind(UI);
-  UI.open = function openV040b(panel, ...args) {
-    cleanGearDragV040b();
-    const result = openBeforeV040b ? openBeforeV040b(panel, ...args) : undefined;
-    if (panel === "gear") setTimeout(installGearDragV040b, 0);
-    return result;
-  };
-
   patchUI();
   patchGame();
-  installGearDragV040b();
   window.CHERRIFT_V040 = { version: VERSION, stages: STAGES, enemies: ENEMIES, css:"clean-v040b" };
 })();
 
@@ -4515,25 +4249,6 @@ console.info(`[CHERRIFT] ${VERSION} loaded. Mode: ${enabled ? "ON" : "OFF"}`);
       news.insertAdjacentElement("afterend", card);
     }
 
-    const invPanel = q("#gear .inventory-panel");
-    if (invPanel && !id("inventoryToolsV050")) {
-      const tools = document.createElement("div");
-      tools.id = "inventoryToolsV050";
-      tools.className = "inventory-tools-v050";
-      tools.innerHTML = `
-        <select id="inventoryFilterV050">
-          <option value="all">All slots</option>
-          ${CHERRIFT_DATA.slots.map(slot => `<option value="${slot}">${slot}</option>`).join("")}
-        </select>
-        <select id="inventorySortV050">
-          <option value="power">Power</option>
-          <option value="rarity">Rarity</option>
-          <option value="level">Item level</option>
-          <option value="newest">Newest</option>
-        </select>
-        <span id="inventoryCapV050">0/${MAX_INVENTORY}</span>`;
-      q(".panel-title-row", invPanel)?.insertAdjacentElement("afterend", tools);
-    }
   }
 
   function updateAccountUI(save) {
@@ -4551,40 +4266,12 @@ console.info(`[CHERRIFT] ${VERSION} loaded. Mode: ${enabled ? "ON" : "OFF"}`);
     return Object.keys(RARITIES).indexOf(name);
   }
 
-  function getVisibleInventory(save) {
-    const filter = id("inventoryFilterV050")?.value || "all";
-    const sort = id("inventorySortV050")?.value || "power";
-    let list = [...save.inventory];
-    if (filter !== "all") list = list.filter(item => item.slot === filter);
-    list.sort((a, b) => {
-      if (sort === "rarity") return rarityIndex(b.rarity) - rarityIndex(a.rarity) || itemPower(b) - itemPower(a);
-      if (sort === "level") return (b.itemLevel || 1) - (a.itemLevel || 1) || itemPower(b) - itemPower(a);
-      if (sort === "newest") return (b.createdAt || 0) - (a.createdAt || 0);
-      return itemPower(b) - itemPower(a);
-    });
-    return list;
-  }
-
-  function compareMarkup(item, equipped) {
-    if (!equipped || equipped.id === item.id) return "";
-    const keys = unique([...Object.keys(item.stats || {}), ...Object.keys(equipped.stats || {})]);
-    return `<div class="compare-v050"><h5>Compared to equipped</h5>${keys.map(key => {
-      const delta = (item.stats?.[key] || 0) - (equipped.stats?.[key] || 0);
-      const cls = delta > 0 ? "better" : delta < 0 ? "worse" : "";
-      return `<div><span>${key}</span><b class="${cls}">${delta > 0 ? "+" : ""}${Math.round(delta * 10) / 10}</b></div>`;
-    }).join("")}</div>`;
-  }
-
   const oldInit = UI.init.bind(UI);
   UI.init = function initV050(save, game) {
     normalize(save);
     injectUI();
     const result = oldInit(save, game);
     updateAccountUI(save);
-    const filter = id("inventoryFilterV050");
-    const sort = id("inventorySortV050");
-    if (filter) filter.onchange = () => this.renderGear();
-    if (sort) sort.onchange = () => this.renderGear();
     return result;
   };
 
@@ -4642,57 +4329,6 @@ console.info(`[CHERRIFT] ${VERSION} loaded. Mode: ${enabled ? "ON" : "OFF"}`);
     CherriftStorage.save(this.save);
     this.toast(item.locked ? "Item locked" : "Item unlocked");
     this.showGearDetails(item, this.save.inventory.includes(item) ? "inventory" : "equipped");
-  };
-
-  const oldShowDetails = UI.showGearDetails.bind(UI);
-  UI.showGearDetails = function showGearDetailsV050(item, source) {
-    oldShowDetails(item, source);
-    const details = id("gearDetails");
-    if (!details || !item) return;
-    const equipped = this.save.equipped?.[item.slot];
-    const title = q(".gear-detail-title h4", details);
-    if (title) title.textContent = `${item.rarity} ${item.type} ${item.slot} · Lv.${item.itemLevel || 1}`;
-    const power = document.createElement("div");
-    power.className = "item-power-v050";
-    power.innerHTML = `<span>Item Power</span><b>${itemPower(item)}</b>`;
-    q(".gear-detail-title", details)?.insertAdjacentElement("afterend", power);
-
-    if (source === "inventory") {
-      q(".gear-detail-actions", details)?.insertAdjacentHTML("beforeend",
-        `<button type="button" data-action="lock">${item.locked ? "Unlock" : "Lock"}</button>`);
-      details.insertAdjacentHTML("beforeend", compareMarkup(item, equipped));
-    } else {
-      q(".gear-detail-actions", details)?.insertAdjacentHTML("beforeend",
-        `<button type="button" data-action="lock">${item.locked ? "Unlock" : "Lock"}</button>`);
-    }
-
-    q('[data-action="sell"]', details)?.toggleAttribute("disabled", item.locked);
-    q('[data-action="lock"]', details)?.addEventListener("click", e => {
-      e.preventDefault();
-      e.stopPropagation();
-      this.toggleGearLockV050(item.id);
-    });
-  };
-
-  const oldRenderGear = UI.renderGear.bind(UI);
-  UI.renderGear = function renderGearV050(...args) {
-    normalize(this.save);
-    const originalInventory = this.save.inventory;
-    this.save.inventory = getVisibleInventory(this.save);
-    const result = oldRenderGear(...args);
-    this.save.inventory = originalInventory;
-
-    const cap = id("inventoryCapV050");
-    if (cap) cap.textContent = `${this.save.inventory.length}/${MAX_INVENTORY}`;
-
-    qa("#inventory .inv-item").forEach(button => {
-      const item = this.save.inventory.find(g => g.id === button.dataset.gearId);
-      if (!item) return;
-      button.classList.toggle("locked-v050", item.locked);
-      button.insertAdjacentHTML("beforeend",
-        `<i class="item-level-v050">Lv.${item.itemLevel || 1}</i><i class="item-power-badge-v050">${itemPower(item)}</i>${item.locked ? '<i class="item-lock-v050">🔒</i>' : ""}`);
-    });
-    return result;
   };
 
   const gameProto = CherriftGame.prototype;
@@ -5086,16 +4722,11 @@ function updateAchievements(s){
  for(const a of ACH)if(!s.achievements[a.id]&&a.test(s)){s.achievements[a.id]=Date.now();changed=true;UI.toast?.(`Achievement unlocked: ${a.name}`);}
  if(changed)baseSave(s);
 }
-function claimAchievement(a){
- const s=UI.save;if(!s.achievements[a.id]||s.achievementClaims[a.id])return;
- s.coins+=(a.reward.coins||0);s.keys+=(a.reward.keys||0);s.achievementClaims[a.id]=true;
- CherriftStorage.save(s);UI.toast(`Claimed: ${rewardText(a.reward)}`);renderAchievements();UI.refreshMenu();
-}
 function ensurePanels(){
  if(id("playerUpgrade"))return;
  id("app").insertAdjacentHTML("beforeend",`
  <section id="playerUpgrade" class="panel hidden v052-panel"><header class="panel-head"><button class="back">←</button><div><h2>Player Upgrade</h2><p>Collect XP, level up manually, then spend skill points.</p></div></header><div class="v052-upgrade-layout"><section class="glass v052-level-card"><div class="v052-level-orb"><small>PLAYER LEVEL</small><b id="v052Level">1</b></div><div class="v052-xp"><i id="v052XpFill"></i></div><p id="v052XpText"></p><button id="v052LevelUp" class="menu-btn primary center">LEVEL UP</button><small id="v052PointText"></small></section><section class="glass v052-tree"><h3>Bloom Skill Tree</h3><div id="v052Tree"></div></section></div></section>
- <section id="achievements" class="panel hidden v052-panel"><header class="panel-head"><button class="back">←</button><div><h2>Achievements</h2><p>Permanent milestones and rewards.</p></div></header><div id="v052Achievements" class="v052-achievements"></div></section>`);
+ <section id="achievements" class="panel hidden" aria-label="Achievements"></section>`);
 }
 function ensureDesktopButtons(){
  const nav=q(".menu-left .main-nav");if(!nav||id("desktopUpgradeV052"))return;
@@ -5111,11 +4742,6 @@ function renderUpgrade(){
  const btn=id("v052LevelUp");btn.disabled=a.xp<cost;btn.textContent=a.xp>=cost?"LEVEL UP":"MORE XP NEEDED";
  id("v052Tree").innerHTML=Object.entries(TREE).map(([k,n])=>{const rank=a.tree[k]||0,disabled=a.skillPoints<1||rank>=n.max;return `<article class="v052-node ${rank>=n.max?"max":""}"><span>${n.icon}</span><div><h4>${n.name}</h4><p>${n.desc}</p><small>Rank ${rank}/${n.max}</small></div><button data-node="${k}" ${disabled?"disabled":""}>+</button></article>`;}).join("");
  qa("[data-node]",id("v052Tree")).forEach(b=>b.onclick=()=>{const k=b.dataset.node;if(a.skillPoints<1||a.tree[k]>=TREE[k].max)return;a.skillPoints--;a.tree[k]++;CherriftStorage.save(s);renderUpgrade();UI.refreshMenu();});
-}
-function renderAchievements(){
- const s=normalize(UI.save);updateAchievements(s);
- id("v052Achievements").innerHTML=ACH.map(a=>{const unlocked=!!s.achievements[a.id],claimed=!!s.achievementClaims[a.id];return `<article class="glass v052-achievement ${unlocked?"unlocked":"locked"}"><span>${a.icon}</span><div><h3>${a.name}</h3><p>${a.desc}</p><small>${rewardText(a.reward)}</small></div><button data-ach="${a.id}" ${!unlocked||claimed?"disabled":""}>${claimed?"CLAIMED":unlocked?"CLAIM":"LOCKED"}</button></article>`;}).join("");
- qa("[data-ach]",id("v052Achievements")).forEach(b=>b.onclick=()=>claimAchievement(ACH.find(a=>a.id===b.dataset.ach)));
 }
 function levelUp(){
  const a=normalize(UI.save).account,cost=levelCost(a.level);if(a.xp<cost)return;
@@ -5135,7 +4761,7 @@ UI.open=function(panel,...args){
  const custom=panel==="playerUpgrade"||panel==="achievements";
  if(custom){document.body.classList.remove("is-playing");["menu","skins","gear","chests","settings","worlds","playerUpgrade","achievements"].forEach(n=>id(n)?.classList.toggle("hidden",n!==panel));["hud","skill","stageHud"].forEach(n=>id(n)?.classList.add("hidden"));}
  else oldOpen(panel,...args);
- if(panel==="playerUpgrade")renderUpgrade();if(panel==="achievements")renderAchievements();
+ if(panel==="playerUpgrade")renderUpgrade();if(panel==="achievements")UI.renderAchievements?.();
 };
 const oldRefresh=UI.refreshMenu.bind(UI);
 UI.refreshMenu=function(...args){const r=oldRefresh(...args);normalize(this.save);updateAchievements(this.save);return r;};
@@ -5173,7 +4799,6 @@ console.info("[CHERRIFT v0.5.2] Manual progression, achievements and fixed mobil
   }
 
   const TREE = CHERRIFT_V052.TREE;
-  const ACH = CHERRIFT_V052.ACH;
   const levelCost = CHERRIFT_V052.levelCost;
 
   function ensureCss() {
@@ -5190,10 +4815,6 @@ console.info("[CHERRIFT v0.5.2] Manual progression, achievements and fixed mobil
     save.achievements = save.achievements || {};
     save.achievementClaims = save.achievementClaims || {};
     return save;
-  }
-
-  function rewardText(reward) {
-    return [reward?.coins ? `${reward.coins} coins` : "", reward?.keys ? `${reward.keys} keys` : ""].filter(Boolean).join(" · ");
   }
 
   function refreshUpgradePanel() {
@@ -5215,17 +4836,6 @@ console.info("[CHERRIFT v0.5.2] Manual progression, achievements and fixed mobil
       const rank = Number(account.tree[key]) || 0;
       const disabled = account.skillPoints < 1 || rank >= node.max;
       return `<article class="v052-node ${rank >= node.max ? "max" : ""}"><span>${node.icon}</span><div><h4>${node.name}</h4><p>${node.desc}</p><small>Rank ${rank}/${node.max}</small></div><button type="button" data-v053-node="${key}" ${disabled ? "disabled" : ""}>+</button></article>`;
-    }).join("");
-  }
-
-  function refreshAchievementPanel() {
-    const save = normalize(UI.save);
-    const container = id("v052Achievements");
-    if (!container) return;
-    container.innerHTML = ACH.map(achievement => {
-      const unlocked = !!save.achievements[achievement.id];
-      const claimed = !!save.achievementClaims[achievement.id];
-      return `<article class="glass v052-achievement ${unlocked ? "unlocked" : "locked"}"><span>${achievement.icon}</span><div><h3>${achievement.name}</h3><p>${achievement.desc}</p><small>${rewardText(achievement.reward)}</small></div><button type="button" data-v053-achievement="${achievement.id}" ${!unlocked || claimed ? "disabled" : ""}>${claimed ? "CLAIMED" : unlocked ? "CLAIM" : "LOCKED"}</button></article>`;
     }).join("");
   }
 
@@ -5257,19 +4867,6 @@ console.info("[CHERRIFT v0.5.2] Manual progression, achievements and fixed mobil
     UI.toast?.(`${node.name} Rank ${account.tree[key]}`);
   }
 
-  function claimAchievement(achievementId) {
-    const save = normalize(UI.save);
-    const achievement = ACH.find(entry => entry.id === achievementId);
-    if (!achievement || !save.achievements[achievementId] || save.achievementClaims[achievementId]) return;
-    save.coins += achievement.reward?.coins || 0;
-    save.keys += achievement.reward?.keys || 0;
-    save.achievementClaims[achievementId] = true;
-    CherriftStorage.save(save);
-    refreshAchievementPanel();
-    UI.refreshMenu?.();
-    UI.toast?.(`Claimed: ${rewardText(achievement.reward)}`);
-  }
-
   function closeEveryPanel() {
     ["menu","skins","gear","chests","settings","worlds","playerUpgrade","achievements"].forEach(name => id(name)?.classList.add("hidden"));
   }
@@ -5282,13 +4879,12 @@ console.info("[CHERRIFT v0.5.2] Manual progression, achievements and fixed mobil
       id(panel)?.classList.remove("hidden");
       ["hud","skill","stageHud","levelModal","pauseModal","stageClearModal"].forEach(name => id(name)?.classList.add("hidden"));
       if (panel === "playerUpgrade") refreshUpgradePanel();
-      if (panel === "achievements") refreshAchievementPanel();
+      if (panel === "achievements") UI.renderAchievements?.();
     } else {
       previousOpen(panel, ...args);
       id("playerUpgrade")?.classList.add("hidden");
       id("achievements")?.classList.add("hidden");
     }
-    if (panel === "gear") renderMobileGear();
   };
 
   document.addEventListener("click", event => {
@@ -5313,95 +4909,10 @@ console.info("[CHERRIFT v0.5.2] Manual progression, achievements and fixed mobil
       spendSkillPoint(nodeButton.dataset.v053Node || nodeButton.dataset.node);
       return;
     }
-    const achievementButton = event.target.closest("[data-v053-achievement], [data-ach]");
-    if (achievementButton) {
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      claimAchievement(achievementButton.dataset.v053Achievement || achievementButton.dataset.ach);
-    }
   }, true);
 
-  function gearEmoji(item) { return item ? UI.gearEmoji?.(item) || "⚙️" : "＋"; }
-  function itemPower(item) { return window.CHERRIFT_V050?.itemPower ? CHERRIFT_V050.itemPower(item) : Math.round(Object.values(item?.stats || {}).reduce((sum, value) => sum + Number(value || 0), 0)); }
-  function rarityClass(item) { return `rarity-${String(item?.rarity || "Common").toLowerCase()}`; }
-
-  function ensureMobileGear() {
-    const panel = id("gear");
-    if (!panel || id("mobileGearV053")) return;
-    const mobileGear = document.createElement("div");
-    mobileGear.id = "mobileGearV053";
-    mobileGear.className = "mobile-gear-v053";
-    mobileGear.innerHTML = `<section class="mobile-gear-top-v053"><div class="mobile-gear-profile-v053"><div><small>PLAYER LEVEL</small><b id="mobileGearLevelV053">1</b></div><div><small>TOTAL POWER</small><b id="mobileGearPowerV053">0</b></div></div><div class="mobile-loadout-v053"><div class="mobile-slot-column-v053 left"><button data-mobile-slot="Weapon"></button><button data-mobile-slot="Gloves"></button><button data-mobile-slot="Ring"></button></div><div class="mobile-hero-v053"><div class="mobile-hero-glow-v053"></div><div id="mobileGearHeroV053" class="mobile-hero-icon-v053">🐰</div><button type="button" data-v052-open="skins">CHANGE CHERRY</button></div><div class="mobile-slot-column-v053 right"><button data-mobile-slot="Armor"></button><button data-mobile-slot="Helmet"></button><button data-mobile-slot="Boots"></button></div><button class="mobile-necklace-slot-v053" data-mobile-slot="Necklace"></button></div><div class="mobile-combat-stats-v053"><div><span>⚔️ ATK</span><b id="mobileGearAtkV053">0</b></div><div><span>❤️ HP</span><b id="mobileGearHpV053">0</b></div></div></section><section class="mobile-collection-v053"><header><button type="button" id="mobileGearSortV053">BY POWER</button><h3>MY COLLECTION</h3><span id="mobileGearCountV053">0/80</span></header><div id="mobileGearInventoryV053" class="mobile-gear-grid-v053"></div></section><section id="mobileGearSheetV053" class="mobile-gear-sheet-v053 hidden"><button type="button" class="mobile-sheet-close-v053">×</button><div id="mobileGearSheetContentV053"></div></section>`;
-    panel.appendChild(mobileGear);
-    q(".mobile-sheet-close-v053", mobileGear).onclick = () => id("mobileGearSheetV053")?.classList.add("hidden");
-    id("mobileGearSortV053").onclick = () => {
-      const button = id("mobileGearSortV053");
-      button.dataset.sort = button.dataset.sort === "rarity" ? "power" : "rarity";
-      button.textContent = button.dataset.sort === "rarity" ? "BY QUALITY" : "BY POWER";
-      renderMobileGear();
-    };
-  }
-
-  function showMobileGearDetails(item, source) {
-    const sheet = id("mobileGearSheetV053");
-    const content = id("mobileGearSheetContentV053");
-    if (!sheet || !content || !item) return;
-    const equipped = UI.save.equipped?.[item.slot];
-    const stats = Object.entries(item.stats || {}).map(([key, value]) => `<div class="mobile-sheet-stat-v053"><span>${key}</span><b>+${value}</b></div>`).join("");
-    const compare = source === "inventory" && equipped && equipped.id !== item.id ? Object.keys({ ...(item.stats || {}), ...(equipped.stats || {}) }).map(key => { const delta = (item.stats?.[key] || 0) - (equipped.stats?.[key] || 0); return `<div class="mobile-sheet-stat-v053"><span>${key}</span><b class="${delta > 0 ? "good" : delta < 0 ? "bad" : ""}">${delta > 0 ? "+" : ""}${Math.round(delta * 10) / 10}</b></div>`; }).join("") : "";
-    content.innerHTML = `<div class="mobile-sheet-title-v053"><div class="${rarityClass(item)}">${gearEmoji(item)}</div><div><h3>${item.rarity} ${item.type} ${item.slot}</h3><p>Lv.${item.itemLevel || 1} · Power ${itemPower(item)}</p></div></div><div class="mobile-sheet-stats-v053">${stats}</div>${compare ? `<h4>Compared to equipped</h4><div class="mobile-sheet-stats-v053">${compare}</div>` : ""}<div class="mobile-sheet-actions-v053">${source === "inventory" ? `<button type="button" data-mobile-action="equip">EQUIP</button>` : `<button type="button" data-mobile-action="unequip">UNEQUIP</button>`}${source === "inventory" ? `<button type="button" data-mobile-action="sell" ${item.locked ? "disabled" : ""}>SELL</button>` : ""}<button type="button" data-mobile-action="lock">${item.locked ? "UNLOCK" : "LOCK"}</button></div>`;
-    qa("[data-mobile-action]", content).forEach(button => {
-      button.onclick = () => {
-        const action = button.dataset.mobileAction;
-        if (action === "equip") UI.equipGear(item.id);
-        if (action === "unequip") UI.unequipGear(item.slot);
-        if (action === "sell") UI.sellGear(item.id);
-        if (action === "lock") UI.toggleGearLockV050?.(item.id);
-        sheet.classList.add("hidden");
-        setTimeout(renderMobileGear, 0);
-      };
-    });
-    sheet.classList.remove("hidden");
-  }
-
-  function renderMobileGear() {
-    if (!isMobile()) return;
-    ensureMobileGear();
-    const save = UI.save;
-    if (!save) return;
-    const skin = CHERRIFT_DATA.skins.find(entry => entry.id === save.selectedSkin) || CHERRIFT_DATA.skins[0];
-    const stats = UI.totalGearStats(save);
-    const power = Object.values(save.equipped || {}).reduce((sum, item) => sum + itemPower(item), 100);
-    if (id("mobileGearHeroV053")) id("mobileGearHeroV053").textContent = skin?.emoji || "🐰";
-    if (id("mobileGearLevelV053")) id("mobileGearLevelV053").textContent = save.account?.level || 1;
-    if (id("mobileGearPowerV053")) id("mobileGearPowerV053").textContent = Math.round(power);
-    if (id("mobileGearAtkV053")) id("mobileGearAtkV053").textContent = Math.round(20 + (stats.damage || 0));
-    if (id("mobileGearHpV053")) id("mobileGearHpV053").textContent = Math.round(100 + (stats.maxHp || 0));
-    qa("[data-mobile-slot]").forEach(button => {
-      const slot = button.dataset.mobileSlot;
-      const item = save.equipped?.[slot];
-      button.className = `mobile-gear-slot-v053 ${item ? rarityClass(item) : "empty"}`;
-      button.innerHTML = item ? `<span>${gearEmoji(item)}</span><small>Lv.${item.itemLevel || 1}</small>` : `<span>＋</span><small>${slot}</small>`;
-      button.onclick = () => { if (item) showMobileGearDetails(item, "equipped"); };
-    });
-    let inventory = [...(save.inventory || [])];
-    const sort = id("mobileGearSortV053")?.dataset.sort || "power";
-    const rarityOrder = { Common:0, Uncommon:1, Rare:2, Epic:3, Legendary:4 };
-    inventory.sort((a, b) => sort === "rarity" ? (rarityOrder[b.rarity] || 0) - (rarityOrder[a.rarity] || 0) || itemPower(b) - itemPower(a) : itemPower(b) - itemPower(a));
-    if (id("mobileGearCountV053")) id("mobileGearCountV053").textContent = `${inventory.length}/80`;
-    const grid = id("mobileGearInventoryV053");
-    if (grid) {
-      grid.innerHTML = inventory.map(item => `<button type="button" data-mobile-item="${item.id}" class="mobile-gear-item-v053 ${rarityClass(item)}">${item.locked ? '<i>🔒</i>' : ""}<span>${gearEmoji(item)}</span><b>Lv.${item.itemLevel || 1}</b><small>${itemPower(item)}</small></button>`).join("");
-      qa("[data-mobile-item]", grid).forEach(button => button.onclick = () => { const item = save.inventory.find(entry => entry.id === button.dataset.mobileItem); if (item) showMobileGearDetails(item, "inventory"); });
-    }
-  }
-
   ensureCss();
-  ensureMobileGear();
-  const previousRenderGear = UI.renderGear.bind(UI);
-  UI.renderGear = function renderGearV053(...args) { const result = previousRenderGear(...args); renderMobileGear(); return result; };
-  window.addEventListener("resize", () => { if (isMobile() && !id("gear")?.classList.contains("hidden")) renderMobileGear(); });
-  window.CHERRIFT_V053 = { version:VERSION, renderMobileGear };
+  window.CHERRIFT_V053 = { version:VERSION };
   console.info("[CHERRIFT v0.5.3] Mobile navigation and Archero gear fixes loaded.");
 })();
 /* ===== END src/cherrift_v053.js ===== */
@@ -5431,51 +4942,49 @@ function normalize(s){s.daily=s.daily||{};s.login=s.login||{};s.shop=s.shop||{};
 function progress(q,s){return Math.max(0,questStat(q.type,s.stats)-(q.start||0))}
 function reward(r){UI.save.coins+=(r.coins||0);UI.save.keys+=(r.keys||0);UI.save.bloomGems=(UI.save.bloomGems||UI.save.blossomGems||0)+(r.bloomGems||0);UI.save.blossomGems=UI.save.bloomGems;UI.save.chests=UI.save.chests||{common:0,rare:0,epic:0};for(const [key,value] of Object.entries(r.chests||{}))UI.save.chests[key]=(UI.save.chests[key]||0)+value;if(r.energy)UI.save.energy=Math.min(100,(UI.save.energy||0)+r.energy);if(r.drink){UI.save.energyState=UI.save.energyState||{};UI.save.energyState.drinks=UI.save.energyState.drinks||{};UI.save.energyState.drinks[r.drink]=(UI.save.energyState.drinks[r.drink]||0)+1}}
 function captureItemReward(source,callback){return window.CHERRIFT_OBTAINED?.capture?CHERRIFT_OBTAINED.capture(source,callback):callback()}
-function rewardLabel(r){return [r.coins?`${r.coins} Coin`:'',r.energy?`${r.energy} Energy`:'',r.chests?.common?`${r.chests.common} Common Chest`:'',r.chests?.rare?`${r.chests.rare} Rare Chest`:'',r.chests?.epic?`${r.chests.epic} Epic Chest`:''].filter(Boolean).join(' · ')}
 function save(){CherriftStorage.save(UI.save)}
 function ensure(){
  panel('dailyQuests','Daily Quests','Five fresh objectives every day.',`<div class="v055-toolbar"><button id="dailyRerollV055">REROLL</button><button id="dailyClaimAllV055">CLAIM ALL</button></div><div id="dailyListV055" class="v055-card-grid"></div><div id="dailyBonusV055" class="glass v055-bonus"></div>`);
  panel('loginRewards','Login Rewards','A seven-day repeating reward track.',`<div id="loginListV055" class="v055-login-grid"></div>`);
- panel('shopV055','Shop','Daily freebies and simple purchases.',`<div id="shopListV055" class="v055-card-grid"></div>`);
- const nav=q('.menu-left .main-nav');if(nav&&!id('dailyBtnV055'))[['dailyQuests','📅','DAILY'],['shopV055','🛒','SHOP'],['loginRewards','🎁','LOGIN REWARD']].forEach(([p,i,t],n)=>{const b=document.createElement('button');b.className='menu-btn';if(!n)b.id='dailyBtnV055';b.dataset.open=p;b.innerHTML=`<span>${i}</span><i>${t}</i><em>NEW</em><b>›</b>`;nav.appendChild(b)});
- let more=id('mobileMoreV055');if(!more){more=document.createElement('div');more.id='mobileMoreV055';more.className='mobile-more-v055';more.innerHTML=`<button data-v055-open="dailyQuests">📅<b>Daily</b></button><button data-v055-open="shopV055">🛒<b>Shop</b></button><button data-v055-open="loginRewards">🎁<b>Login</b></button>`;document.body.appendChild(more)}
+ const nav=q('.menu-left .main-nav');if(nav&&!id('dailyBtnV055'))[['dailyQuests','📅','DAILY'],['shopV082','🛒','SHOP'],['loginRewards','🎁','LOGIN REWARD']].forEach(([p,i,t],n)=>{const b=document.createElement('button');b.className='menu-btn';if(!n)b.id='dailyBtnV055';b.dataset.open=p;b.innerHTML=`<span>${i}</span><i>${t}</i><em>NEW</em><b>›</b>`;nav.appendChild(b)});
+ let more=id('mobileMoreV055');if(!more){more=document.createElement('div');more.id='mobileMoreV055';more.className='mobile-more-v055';more.innerHTML=`<button data-v055-open="dailyQuests">📅<b>Daily</b></button><button data-v055-open="shopV082">🛒<b>Shop</b></button><button data-v055-open="loginRewards">🎁<b>Login</b></button>`;document.body.appendChild(more)}
 }
 function renderDaily(){const s=normalize(UI.save);id('dailyListV055').innerHTML=s.daily.quests.map(x=>{const p=Math.min(x.target,progress(x,s)),done=p>=x.target;return `<article class="glass v055-card"><span>${x.icon}</span><div><h3>${x.title}</h3><p>${p}/${x.target}</p><div class="v055-progress"><i style="width:${p/x.target*100}%"></i></div><small>${x.reward.coins||0} coins</small></div><button data-daily-claim="${x.id}" ${!done||x.claimed?'disabled':''}>${x.claimed?'CLAIMED':'CLAIM'}</button></article>`}).join('');const c=s.daily.quests.filter(x=>x.claimed).length;id('dailyBonusV055').innerHTML=`<h3>Daily Completion Chest</h3><p>${c}/5 quests claimed</p><button id="dailyBonusClaimV055" ${c<5||s.daily.claimedBonus?'disabled':''}>${s.daily.claimedBonus?'CLAIMED':'CLAIM 500 COIN + 1 COMMON CHEST + 15 ENERGY'}</button>`;id('dailyRerollV055').textContent=`REROLL (${s.daily.rerolls||0})`}
 function renderLogin(){const R=[{coins:300},{chests:{common:1}},{coins:400,drink:'small'},{bloomGems:10},{coins:600},{chests:{rare:1}},{coins:1000,bloomGems:20,drink:'standard'}],s=normalize(UI.save),d=Math.max(0,dayNumber(dayKey())-dayNumber(s.login.firstDay))%7;id('loginListV055').innerHTML=R.map((r,i)=>`<article class="glass v055-login ${i===d?'today':''}"><span>DAY ${i+1}</span><b>${r.coins?`${r.coins} 🪙`:''}${r.bloomGems?` ${r.bloomGems} 💎`:''}${r.chests?.common?' 1 🟢 Chest':''}${r.chests?.rare?' 1 🔵 Chest':''}${r.drink?` 🧪 ${r.drink}`:''}</b><button data-login-day="${i}" ${i!==d||s.login.claimed[dayKey()]?'disabled':''}>${s.login.claimed[dayKey()]&&i===d?'CLAIMED':i===d?'CLAIM':'LOCKED'}</button></article>`).join('')}
-function renderShop(){const s=normalize(UI.save),O=[{id:'freeCoins',name:'Daily Coins',icon:'🪙',cost:0,reward:{coins:100}},{id:'freeEnergy',name:'Daily Energy',icon:'⚡',cost:0,reward:{energy:5}},{id:'commonChest',name:'Common Chest',icon:'🟢',cost:450,currency:'coins',reward:{chests:{common:1}}},{id:'rareChest',name:'Rare Chest',icon:'🔵',cost:80,currency:'bloom',reward:{chests:{rare:1}}},{id:'epicChest',name:'Epic Chest',icon:'🟣',cost:240,currency:'bloom',reward:{chests:{epic:1}}}];id('shopListV055').innerHTML=O.map(o=>`<article class="glass v055-shop-card"><span>${o.icon}</span><h3>${o.name}</h3><p>${rewardLabel(o.reward)}</p><button data-shop="${o.id}" ${o.cost===0&&s.shop.claims[o.id]?'disabled':''}>${o.cost===0?(s.shop.claims[o.id]?'CLAIMED':'FREE'):`${o.cost} ${o.currency==='bloom'?'BLOOM GEM':'COIN'}`}</button></article>`).join('')}
-const custom=['dailyQuests','loginRewards','shopV055'],prevOpen=UI.open.bind(UI);UI.open=function(p,...a){if(custom.includes(p)){['menu','skins','gear','chests','settings','worlds','playerUpgrade','achievements',...custom].forEach(x=>id(x)?.classList.toggle('hidden',x!==p));document.body.classList.remove('is-playing');if(p==='dailyQuests')renderDaily();if(p==='loginRewards')renderLogin();if(p==='shopV055')renderShop();return}prevOpen(p,...a);custom.forEach(x=>id(x)?.classList.add('hidden'))};
-function buy(k){const s=normalize(UI.save),O={freeCoins:{cost:0,reward:{coins:100}},freeEnergy:{cost:0,reward:{energy:5}},commonChest:{cost:450,currency:'coins',reward:{chests:{common:1}}},rareChest:{cost:80,currency:'bloom',reward:{chests:{rare:1}}},epicChest:{cost:240,currency:'bloom',reward:{chests:{epic:1}}}},o=O[k];if(!o)return;if(!o.cost){if(s.shop.claims[k])return;s.shop.claims[k]=true}else if(o.currency==='bloom'){const gems=Number(s.bloomGems||s.blossomGems)||0;if(gems<o.cost)return UI.toast('Not enough Bloom Gem');s.bloomGems=gems-o.cost;s.blossomGems=s.bloomGems}else{if(s.coins<o.cost)return UI.toast('Not enough Coin');s.coins-=o.cost}reward(o.reward);save();renderShop();UI.refreshMenu();UI.toast('Purchase complete')}
-document.addEventListener('click',e=>{const o=e.target.closest('[data-v055-open]');if(o){UI.open(o.dataset.v055Open);return}const c=e.target.closest('[data-daily-claim]');if(c){const x=UI.save.daily.quests.find(v=>v.id===c.dataset.dailyClaim);if(x&&!x.claimed&&progress(x,UI.save)>=x.target)captureItemReward('daily',()=>{x.claimed=true;reward(x.reward);save();renderDaily();UI.refreshMenu()});return}if(e.target.id==='dailyBonusClaimV055'){const s=UI.save;if(s.daily.quests.every(x=>x.claimed)&&!s.daily.claimedBonus)captureItemReward('daily',()=>{s.daily.claimedBonus=true;reward({coins:500,chests:{common:1},energy:15});save();renderDaily();UI.refreshMenu()});return}if(e.target.id==='dailyClaimAllV055'){captureItemReward('daily',()=>{UI.save.daily.quests.forEach(x=>{if(!x.claimed&&progress(x,UI.save)>=x.target){x.claimed=true;reward(x.reward)}});save();renderDaily();UI.refreshMenu()});return}if(e.target.id==='dailyRerollV055'){const s=UI.save;if(s.daily.rerolls>0){s.daily.rerolls--;s.daily.quests=makeDaily(s.stats);save();renderDaily()}return}const l=e.target.closest('[data-login-day]');if(l){const R=[{coins:300},{chests:{common:1}},{coins:400,drink:'small'},{bloomGems:10},{coins:600},{chests:{rare:1}},{coins:1000,bloomGems:20,drink:'standard'}],i=+l.dataset.loginDay;if(!UI.save.login.claimed[dayKey()])captureItemReward('login_reward',()=>{reward(R[i]);UI.save.login.claimed[dayKey()]=true;UI.save.stats.loginDays=(UI.save.stats.loginDays||0)+1;save();renderLogin();UI.refreshMenu()});return}const sh=e.target.closest('[data-shop]');if(sh)captureItemReward('shop',()=>buy(sh.dataset.shop))});
+const custom=['dailyQuests','loginRewards'],prevOpen=UI.open.bind(UI);UI.open=function(p,...a){if(custom.includes(p)){['menu','skins','gear','chests','settings','worlds','playerUpgrade','achievements',...custom].forEach(x=>id(x)?.classList.toggle('hidden',x!==p));document.body.classList.remove('is-playing');if(p==='dailyQuests')renderDaily();if(p==='loginRewards')renderLogin();return}prevOpen(p,...a);custom.forEach(x=>id(x)?.classList.add('hidden'))};
+document.addEventListener('click',e=>{const o=e.target.closest('[data-v055-open]');if(o){UI.open(o.dataset.v055Open);return}const c=e.target.closest('[data-daily-claim]');if(c){const x=UI.save.daily.quests.find(v=>v.id===c.dataset.dailyClaim);if(x&&!x.claimed&&progress(x,UI.save)>=x.target)captureItemReward('daily',()=>{x.claimed=true;reward(x.reward);save();renderDaily();UI.refreshMenu()});return}if(e.target.id==='dailyBonusClaimV055'){const s=UI.save;if(s.daily.quests.every(x=>x.claimed)&&!s.daily.claimedBonus)captureItemReward('daily',()=>{s.daily.claimedBonus=true;reward({coins:500,chests:{common:1},energy:15});save();renderDaily();UI.refreshMenu()});return}if(e.target.id==='dailyClaimAllV055'){captureItemReward('daily',()=>{UI.save.daily.quests.forEach(x=>{if(!x.claimed&&progress(x,UI.save)>=x.target){x.claimed=true;reward(x.reward)}});save();renderDaily();UI.refreshMenu()});return}if(e.target.id==='dailyRerollV055'){const s=UI.save;if(s.daily.rerolls>0){s.daily.rerolls--;s.daily.quests=makeDaily(s.stats);save();renderDaily()}return}const l=e.target.closest('[data-login-day]');if(l){const R=[{coins:300},{chests:{common:1}},{coins:400,drink:'small'},{bloomGems:10},{coins:600},{chests:{rare:1}},{coins:1000,bloomGems:20,drink:'standard'}],i=+l.dataset.loginDay;if(!UI.save.login.claimed[dayKey()])captureItemReward('login_reward',()=>{reward(R[i]);UI.save.login.claimed[dayKey()]=true;UI.save.stats.loginDays=(UI.save.stats.loginDays||0)+1;save();renderLogin();UI.refreshMenu()});return}});
 const gp=CherriftGame.prototype,oldD=gp.damageEnemy;gp.damageEnemy=function(e,d){const a=e&&!e.dead;oldD.call(this,e,d);if(a&&e.dead){normalize(this.save).stats.kills++;if(e.isBoss)this.save.stats.bosses++}};const oldC=gp.stageClear;gp.stageClear=function(...a){normalize(this.save).stats.clears++;return oldC.apply(this,a)};const oldS=gp.start;gp.start=async function(...a){normalize(this.save).stats.runs++;return oldS.apply(this,a)};const oldChest=UI.openChest?.bind(UI);if(oldChest)UI.openChest=function(...a){const n=this.save.inventory.length,r=oldChest(...a);if(this.save.inventory.length>n){normalize(this.save).stats.chests++;this.save.stats.gearFound++}return r};
 ensure();const oldInit=UI.init.bind(UI);UI.init=function(s,g){normalize(s);const r=oldInit(s,g);ensure();return r};window.CHERRIFT_V055A={version:'0.5.5a',normalize};console.info('[CHERRIFT] v0.5.5a loaded');
 })();
 /* ===== END src/cherrift_v055a.js ===== */
 
 
-/* ===== BEGIN src/cherrift_v055b.js ===== */
+/* Profile defaults and enemy discovery shared by the current collection. */
 (() => {
-'use strict';
-const id=n=>document.getElementById(n),q=(s,r=document)=>r.querySelector(s),qa=(s,r=document)=>[...r.querySelectorAll(s)];
-if(!window.CHERRIFT_V055A||!window.UI)return console.error('[v0.5.5b] v0.5.5a required');
-const enemies=window.CHERRIFT_V040?.enemies||{};
-function panel(pid,title,sub,body){if(id(pid))return;id('app').insertAdjacentHTML('beforeend',`<section id="${pid}" class="panel hidden v055-panel"><header class="panel-head"><button class="back">←</button><div><h2>${title}</h2><p>${sub}</p></div></header>${body}</section>`)}
-function normalize(s){s.profile=s.profile||{name:'Cherry Player',createdAt:Date.now()};s.discoveredEnemies=s.discoveredEnemies||{};return s}
-function power(s){return 100+Object.values(s.equipped||{}).reduce((sum,g)=>sum+(CHERRIFT_V050?.itemPower?.(g)||0),0)}
-function ensure(){panel('profileV055','Player Profile','Your long-term CHERRIFT progression.',`<div id="profileBodyV055" class="v055-profile"></div>`);panel('statisticsV055','Statistics','Lifetime account and combat records.',`<div id="statsBodyV055" class="v055-stat-grid"></div>`);panel('collectionV055','Collection','Gear, enemies, skins and worlds.',`<div class="v055-tabs"><button data-col-tab="gear">GEAR</button><button data-col-tab="enemies">ENEMIES</button><button data-col-tab="skins">SKINS</button><button data-col-tab="worlds">WORLDS</button></div><div id="collectionBodyV055" class="v055-collection-grid"></div>`);panel('bestiaryV055','Enemy Encyclopedia','Defeat enemies to reveal their records.',`<div id="bestiaryBodyV055" class="v055-collection-grid"></div>`);const nav=q('.menu-left .main-nav');if(nav&&!id('profileBtnV055'))[['profileV055','👤','PROFILE'],['statisticsV055','📊','STATISTICS'],['collectionV055','📚','COLLECTION'],['bestiaryV055','👹','BESTIARY']].forEach(([p,i,t],n)=>{const b=document.createElement('button');b.className='menu-btn';if(!n)b.id='profileBtnV055';b.dataset.open=p;b.innerHTML=`<span>${i}</span><i>${t}</i><em>VIEW</em><b>›</b>`;nav.appendChild(b)});const more=id('mobileMoreV055');if(more&&!q('[data-v055-open="profileV055"]',more))more.insertAdjacentHTML('beforeend',`<button data-v055-open="profileV055">👤<b>Profile</b></button><button data-v055-open="collectionV055">📚<b>Collection</b></button><button data-v055-open="statisticsV055">📊<b>Stats</b></button><button data-v055-open="bestiaryV055">👹<b>Bestiary</b></button>`)}
-function renderProfile(){const s=normalize(UI.save),clears=Object.keys(s.clearedStages||{}).length,ach=Object.keys(s.achievements||{}).length,total=window.CHERRIFT_V052?.ACH?.length||10;id('profileBodyV055').innerHTML=`<section class="glass v055-profile-hero"><span>${CHERRIFT_DATA.skins.find(x=>x.id===s.selectedSkin)?.emoji||'🐰'}</span><div><h2>${s.profile.name}</h2><p>Player Level ${s.account?.level||1}</p><b>Power ${Math.round(power(s))}</b></div></section><div class="v055-stat-grid"><article><small>ACHIEVEMENTS</small><b>${ach}/${total}</b></article><article><small>STAGES</small><b>${clears}/${CHERRIFT_V040.stages.length}</b></article><article><small>DAYS PLAYED</small><b>${Math.max(1,Math.ceil((Date.now()-s.profile.createdAt)/86400000))}</b></article><article><small>TOTAL XP</small><b>${Math.floor(s.account?.totalXp||0)}</b></article></div>`}
-function renderStats(){const s=CHERRIFT_V055A.normalize(UI.save),st=s.stats;id('statsBodyV055').innerHTML=Object.entries({Enemies:st.kills,Runs:st.runs,'Stage Clears':st.clears,'Boss Kills':st.bosses,'Coins Earned':st.coinsEarned,'Chests Opened':st.chests,'Gear Found':st.gearFound,'Best Time':UI.fmt?.(s.best?.time||0)||0}).map(([k,v])=>`<article class="glass"><small>${k}</small><b>${v}</b></article>`).join('')}
-function renderBestiary(target=id('bestiaryBodyV055')){const s=normalize(UI.save);target.innerHTML=Object.entries(enemies).map(([key,e])=>{const seen=s.discoveredEnemies[key];return `<article class="glass v055-collect ${seen?'':'unknown'}"><span>${seen?(e.boss?'👑':'👾'):'?'}</span><b>${seen?e.name:'Unknown Enemy'}</b><small>${seen?`HP ${e.hp} · SPD ${e.speed}`:'Defeat to discover'}</small></article>`}).join('')}
-function renderCollection(tab='gear'){const s=normalize(UI.save),body=id('collectionBodyV055');if(tab==='gear'){const all=[...(s.inventory||[]),...Object.values(s.equipped||{})];body.innerHTML=all.map(g=>`<article class="glass v055-collect"><span>${UI.gearEmoji(g)}</span><b>${g.rarity} ${g.slot}</b><small>Lv.${g.itemLevel||1}</small></article>`).join('')||'<p>No gear collected.</p>'}if(tab==='enemies')renderBestiary(body);if(tab==='skins')body.innerHTML=CHERRIFT_DATA.skins.map(x=>`<article class="glass v055-collect ${s.unlockedSkins.includes(x.id)?'':'unknown'}"><span>${s.unlockedSkins.includes(x.id)?x.emoji:'?'}</span><b>${s.unlockedSkins.includes(x.id)?x.name:'Unknown Skin'}</b></article>`).join('');if(tab==='worlds'){const worlds=[...new Set(CHERRIFT_V040.stages.map(x=>x.world))];body.innerHTML=worlds.map(w=>{const done=CHERRIFT_V040.stages.filter(x=>x.world===w).every(x=>s.clearedStages?.[x.id]);return `<article class="glass v055-collect ${done?'':'unknown'}"><span>🌍</span><b>World ${w}</b><small>${done?'Complete':'In progress'}</small></article>`}).join('')}}
-const custom=['profileV055','statisticsV055','collectionV055','bestiaryV055'],prev=UI.open.bind(UI);UI.open=function(p,...a){if(custom.includes(p)){['menu','skins','gear','chests','settings','worlds','playerUpgrade','achievements','dailyQuests','loginRewards','shopV055',...custom].forEach(x=>id(x)?.classList.toggle('hidden',x!==p));document.body.classList.remove('is-playing');if(p==='profileV055')renderProfile();if(p==='statisticsV055')renderStats();if(p==='collectionV055')renderCollection();if(p==='bestiaryV055')renderBestiary();return}prev(p,...a);custom.forEach(x=>id(x)?.classList.add('hidden'))};document.addEventListener('click',e=>{const t=e.target.closest('[data-col-tab]');if(t)renderCollection(t.dataset.colTab)});const gp=CherriftGame.prototype,oldD=gp.damageEnemy;gp.damageEnemy=function(e,d){const before=e&&!e.dead,type=e?.enemyType||e?.type;oldD.call(this,e,d);if(before&&e.dead&&type)normalize(this.save).discoveredEnemies[type]=true};ensure();const oldInit=UI.init.bind(UI);UI.init=function(s,g){normalize(s);const r=oldInit(s,g);ensure();return r};window.CHERRIFT_V055B={version:'0.5.5b'};console.info('[CHERRIFT] v0.5.5b loaded');
+  function normalize(save) {
+    save.profile ||= {name:'Cherry Player',createdAt:Date.now()};
+    save.discoveredEnemies ||= {};
+    return save;
+  }
+  const proto=CherriftGame.prototype, damage=proto.damageEnemy;
+  proto.damageEnemy=function(enemy,amount){
+    const alive=enemy&&!enemy.dead,type=enemy?.enemyType||enemy?.type;
+    const result=damage.call(this,enemy,amount);
+    if(alive&&enemy.dead&&type)normalize(this.save).discoveredEnemies[type]=true;
+    return result;
+  };
+  const init=UI.init.bind(UI);
+  UI.init=function(save,game){normalize(save);return init(save,game);};
 })();
-/* ===== END src/cherrift_v055b.js ===== */
+
+
 
 
 /* ===== BEGIN src/cherrift_v055c.js ===== */
 (() => {
 'use strict';
 const id=n=>document.getElementById(n);
-if(!window.CHERRIFT_V055B||!window.UI)return console.error('[v0.5.5c] v0.5.5b required');
+if(!window.UI)return;
 const CONFIG={xpMultiplier:1,coinMultiplier:1,skinBonuses:{cherry_default:{coin:.05},fairy_cherry:{xp:.05},beastclaw_cherry:{crit:.02}},recommendedPower:{1:100,2:350,3:700},flags:{daily:true,shop:true,stars:true}};window.CHERRIFT_REMOTE_CONFIG=CONFIG;
 const EXTRA=[{id:'stars10',name:'Rising Star',desc:'Earn 10 stage stars.',icon:'⭐',reward:{coins:250},test:s=>Object.values(s.stageStars||{}).reduce((a,b)=>a+b,0)>=10},{id:'stars20',name:'Star Collector',desc:'Earn 20 stage stars.',icon:'🌟',reward:{coins:500,keys:2},test:s=>Object.values(s.stageStars||{}).reduce((a,b)=>a+b,0)>=20},{id:'world3',name:'Savannah Hero',desc:'Clear World 3-5.',icon:'🦁',reward:{coins:700,keys:3},test:s=>!!s.clearedStages?.world_3_5},{id:'power1000',name:'Powerful Bloom',desc:'Reach 1000 total power.',icon:'💥',reward:{coins:350},test:s=>100+Object.values(s.equipped||{}).reduce((a,g)=>a+(CHERRIFT_V050?.itemPower?.(g)||0),0)>=1000}];if(window.CHERRIFT_V052?.ACH&&!CHERRIFT_V052.ACH.some(x=>x.id==='stars10'))CHERRIFT_V052.ACH.push(...EXTRA);
 function normalize(s){s.stageStars=s.stageStars||{};return s}
@@ -5656,37 +5165,10 @@ function patchMobileLibraryNavigation() {
       <h3>LIBRARY & MORE</h3>
       <button data-v0551-library="profile">👤<b>Library</b></button>
       <button data-v055-open="dailyQuests">📅<b>Daily</b></button>
-      <button data-v055-open="shopV055">🛒<b>Shop</b></button>
+      <button data-v055-open="shopV082">🛒<b>Shop</b></button>
       <button data-v055-open="loginRewards">🎁<b>Login</b></button>`;
   }
 }
-
-/* ---------- Mobile Gear interaction hotfix ---------- */
-
-function patchGearInteractions() {
-  if (!mobile()) return;
-
-  const gearPanel = id("gear");
-  if (!gearPanel) return;
-
-  gearPanel.classList.add("v0551-mobile-gear");
-
-  qa("#gear .gear-slot, #gear .inv-item, #gear [data-mobile-slot], #gear [data-mobile-item]")
-    .forEach(el => {
-      el.draggable = false;
-      el.ondragstart = event => event.preventDefault();
-      el.style.touchAction = "manipulation";
-    });
-}
-
-document.addEventListener("pointerdown", event => {
-  if (!mobile()) return;
-  const clickable = event.target.closest(
-    "#mobileGearV053 button, #mobileGearV053 [data-mobile-item], #mobileGearV053 [data-mobile-slot]"
-  );
-  if (!clickable) return;
-  event.stopPropagation();
-}, true);
 
 document.addEventListener("click", event => {
   const tab = event.target.closest("[data-library-tab]");
@@ -5717,7 +5199,7 @@ UI.open = function openV0551(panel, ...args) {
   if (panel === "libraryV0551") {
     [
       "menu","skins","gear","chests","settings","worlds","playerUpgrade","achievements",
-      "dailyQuests","loginRewards","shopV055","profileV055","statisticsV055",
+      "dailyQuests","loginRewards","shopV082","profileV055","statisticsV055",
       "collectionV055","bestiaryV055","libraryV0551"
     ].forEach(name => id(name)?.classList.toggle("hidden", name !== panel));
 
@@ -5728,30 +5210,7 @@ UI.open = function openV0551(panel, ...args) {
     id("libraryV0551")?.classList.add("hidden");
   }
 
-  if (panel === "gear") setTimeout(patchGearInteractions, 0);
 };
-
-/* Hide old separate mobile panels from mobile navigation only. */
-if (mobile()) {
-  ["profileV055","statisticsV055","collectionV055","bestiaryV055"].forEach(name => {
-    const panel = id(name);
-    if (panel) panel.dataset.mobileLegacy = "true";
-  });
-}
-
-const oldRenderGear = UI.renderGear?.bind(UI);
-if (oldRenderGear) {
-  UI.renderGear = function renderGearV0551(...args) {
-    const result = oldRenderGear(...args);
-    setTimeout(patchGearInteractions, 0);
-    return result;
-  };
-}
-
-window.addEventListener("resize", () => {
-  patchMobileLibraryNavigation();
-  patchGearInteractions();
-});
 
 window.CHERRIFT_V0551 = {
   version: VERSION,
@@ -5763,29 +5222,7 @@ console.info("[CHERRIFT] v0.5.5.1 mobile hotfix loaded.");
 /* ===== END src/cherrift_v0551.js ===== */
 
 
-/* ===== BEGIN src/cherrift_v0552.js ===== */
-(() => {
-"use strict";
-const VERSION="0.5.5.2-mobile-animated-gear-layout";
-const id=n=>document.getElementById(n),q=(s,r=document)=>r.querySelector(s),qa=(s,r=document)=>Array.from(r.querySelectorAll(s)),mobile=()=>matchMedia("(max-width:820px)").matches;
-if(!window.UI||!window.CHERRIFT_V0551||!window.CHERRIFT_CONFIG){console.error("[CHERRIFT v0.5.5.2] v0.5.5.1 required.");return;}
-function ensureCss(){document.documentElement.dataset.v0552Css="bundled";}
-function itemPower(item){return window.CHERRIFT_V050?.itemPower?.(item)||Math.round(Object.values(item?.stats||{}).reduce((a,b)=>a+(+b||0),0))}
-function rarityClass(item){return `rarity-${String(item?.rarity||"Common").toLowerCase()}`}
-function gearEmoji(item){return item?(UI.gearEmoji?.(item)||"⚙️"):"＋"}
-function selectedSkinConfig(){const sid=UI.save?.selectedSkin||CHERRIFT_CONFIG.player.defaultSkin;return CHERRIFT_CONFIG.player.skins?.[sid]||CHERRIFT_CONFIG.player.skins?.[CHERRIFT_CONFIG.player.defaultSkin]}
-function selectedSkinData(){return CHERRIFT_DATA.skins.find(s=>s.id===UI.save?.selectedSkin)||CHERRIFT_DATA.skins[0]}
-function totalStats(){return UI.totalGearStats?.(UI.save)||{}}
-function ensureNewLayout(){const old=id("mobileGearV053");if(!old||id("mobileGearV0552"))return;const r=document.createElement("div");r.id="mobileGearV0552";r.className="mobile-gear-v0552";r.innerHTML=`<section class="gear-summary-v0552"><div><small>PLAYER LEVEL</small><b id="gearLevelV0552">1</b></div><div class="power"><small>TOTAL POWER</small><b id="gearPowerV0552">100</b></div><div><small>ATK</small><b id="gearAtkV0552">20</b></div><div><small>HP</small><b id="gearHpV0552">100</b></div></section><section class="gear-loadout-v0552"><header><div><small>CURRENT LOADOUT</small><h3 id="gearSkinNameV0552">Base Cherry</h3></div><button type="button" data-v052-open="skins">CHANGE SKIN</button></header><div class="gear-stage-v0552"><div class="gear-slot-stack-v0552 left"><button type="button" data-gear-slot-v0552="Weapon"></button><button type="button" data-gear-slot-v0552="Gloves"></button><button type="button" data-gear-slot-v0552="Ring"></button></div><div class="gear-character-wrap-v0552"><div class="gear-character-aura-v0552"></div><div id="gearAnimatedCherryV0552" class="gear-animated-cherry-v0552"></div><div class="gear-character-floor-v0552"></div></div><div class="gear-slot-stack-v0552 right"><button type="button" data-gear-slot-v0552="Helmet"></button><button type="button" data-gear-slot-v0552="Armor"></button><button type="button" data-gear-slot-v0552="Boots"></button></div><button type="button" class="gear-necklace-v0552" data-gear-slot-v0552="Necklace"></button></div><div id="equippedStripV0552" class="equipped-strip-v0552"></div></section><section class="gear-inventory-v0552"><header><div><small>INVENTORY</small><h3>Equipment Collection</h3></div><div class="gear-inventory-actions-v0552"><button type="button" id="gearSortV0552">POWER</button><span id="gearCountV0552">0/80</span></div></header><div class="gear-filter-row-v0552" id="gearFiltersV0552"><button type="button" data-gear-filter-v0552="all" class="active">ALL</button><button type="button" data-gear-filter-v0552="Weapon">WEAPON</button><button type="button" data-gear-filter-v0552="Armor">ARMOR</button><button type="button" data-gear-filter-v0552="Boots">BOOTS</button><button type="button" data-gear-filter-v0552="other">OTHER</button></div><div id="gearGridV0552" class="gear-grid-v0552"></div></section><section id="gearDetailsV0552" class="gear-details-v0552 hidden"><button type="button" id="gearDetailsCloseV0552">×</button><div id="gearDetailsBodyV0552"></div></section>`;old.insertAdjacentElement("afterend",r);old.style.display="none";id("gearDetailsCloseV0552").onclick=()=>id("gearDetailsV0552")?.classList.add("hidden");id("gearSortV0552").dataset.sort="power";id("gearSortV0552").onclick=()=>{const b=id("gearSortV0552");b.dataset.sort=b.dataset.sort==="power"?"rarity":"power";b.textContent=b.dataset.sort==="power"?"POWER":"QUALITY";render()};qa("[data-gear-filter-v0552]").forEach(b=>b.onclick=()=>{qa("[data-gear-filter-v0552]").forEach(x=>x.classList.remove("active"));b.classList.add("active");render()})}
-function animateSelectedSkin(){const t=id("gearAnimatedCherryV0552");if(!t)return;const idle=selectedSkinConfig()?.states?.idle,src=idle?.dirs?.down,frames=Math.max(1,idle?.frames||4),fps=Math.max(1,idle?.fps||3);t.style.setProperty("--gear-frames",frames);t.style.setProperty("--gear-duration",`${frames/fps}s`);t.style.backgroundImage=`url("${src}")`;t.style.backgroundSize=`${frames*100}% 100%`}
-function slotMarkup(slot,item){return item?`<span>${gearEmoji(item)}</span><b>${slot}</b><small>Lv.${item.itemLevel||1}</small>`:`<span>＋</span><b>${slot}</b><small>EMPTY</small>`}
-function openDetails(item,source){if(!item)return;const panel=id("gearDetailsV0552"),body=id("gearDetailsBodyV0552");if(!panel||!body)return;const equipped=UI.save.equipped?.[item.slot],stats=Object.entries(item.stats||{}).map(([k,v])=>`<div><span>${k}</span><b>+${v}</b></div>`).join("");let compare="";if(source==="inventory"&&equipped&&equipped.id!==item.id)compare=Object.keys({...item.stats,...equipped.stats}).map(k=>{const d=(item.stats?.[k]||0)-(equipped.stats?.[k]||0);return `<div><span>${k}</span><b class="${d>0?"good":d<0?"bad":""}">${d>0?"+":""}${Math.round(d*10)/10}</b></div>`}).join("");body.innerHTML=`<div class="gear-detail-title-v0552"><div class="${rarityClass(item)}">${gearEmoji(item)}</div><div><h3>${item.rarity} ${item.type} ${item.slot}</h3><p>Lv.${item.itemLevel||1} · Power ${itemPower(item)}</p></div></div><div class="gear-detail-stats-v0552">${stats}</div>${compare?`<h4>Compared to equipped</h4><div class="gear-detail-stats-v0552">${compare}</div>`:""}<div class="gear-detail-actions-v0552">${source==="inventory"?`<button data-gear-action-v0552="equip">EQUIP</button>`:`<button data-gear-action-v0552="unequip">UNEQUIP</button>`}${source==="inventory"?`<button data-gear-action-v0552="sell" ${item.locked?"disabled":""}>SELL</button>`:""}<button data-gear-action-v0552="lock">${item.locked?"UNLOCK":"LOCK"}</button></div>`;qa("[data-gear-action-v0552]",body).forEach(b=>b.onclick=()=>{const a=b.dataset.gearActionV0552;if(a==="equip")UI.equipGear(item.id);if(a==="unequip")UI.unequipGear(item.slot);if(a==="sell")UI.sellGear(item.id);if(a==="lock")UI.toggleGearLockV050?.(item.id);panel.classList.add("hidden");setTimeout(render,0)});panel.classList.remove("hidden")}
-function renderEquippedStrip(){const w=id("equippedStripV0552");if(!w)return;const eq=Object.values(UI.save.equipped||{}).filter(Boolean);w.innerHTML=eq.length?eq.map(i=>`<button type="button" data-equipped-v0552="${i.id}" class="${rarityClass(i)}"><span>${gearEmoji(i)}</span><div><b>${i.slot}</b><small>Power ${itemPower(i)}</small></div></button>`).join(""):`<p>No equipment equipped yet.</p>`;qa("[data-equipped-v0552]",w).forEach(b=>b.onclick=()=>openDetails(eq.find(x=>x.id===b.dataset.equippedV0552),"equipped"))}
-function renderInventory(){const g=id("gearGridV0552");if(!g)return;const filter=q("[data-gear-filter-v0552].active")?.dataset.gearFilterV0552||"all",sort=id("gearSortV0552")?.dataset.sort||"power",ro={Common:0,Uncommon:1,Rare:2,Epic:3,Legendary:4};let items=[...(UI.save.inventory||[])];if(filter!=="all")items=filter==="other"?items.filter(x=>!["Weapon","Armor","Boots"].includes(x.slot)):items.filter(x=>x.slot===filter);items.sort((a,b)=>sort==="rarity"?(ro[b.rarity]||0)-(ro[a.rarity]||0)||itemPower(b)-itemPower(a):itemPower(b)-itemPower(a));id("gearCountV0552").textContent=`${UI.save.inventory.length}/80`;g.innerHTML=items.length?items.map(i=>`<button type="button" data-inventory-v0552="${i.id}" class="gear-item-v0552 ${rarityClass(i)}">${i.locked?'<i>🔒</i>':""}<span>${gearEmoji(i)}</span><b>Lv.${i.itemLevel||1}</b><small>${itemPower(i)}</small></button>`).join(""):`<p class="gear-empty-v0552">No items in this category.</p>`;qa("[data-inventory-v0552]",g).forEach(b=>b.onclick=()=>openDetails(UI.save.inventory.find(x=>x.id===b.dataset.inventoryV0552),"inventory"))}
-function render(){if(!mobile())return;ensureNewLayout();const s=UI.save;if(!s)return;const st=totalStats(),skin=selectedSkinData(),power=100+Object.values(s.equipped||{}).reduce((sum,i)=>sum+itemPower(i),0);id("gearLevelV0552").textContent=s.account?.level||1;id("gearPowerV0552").textContent=Math.round(power);id("gearAtkV0552").textContent=Math.round(20+(st.damage||0));id("gearHpV0552").textContent=Math.round(100+(st.maxHp||0));id("gearSkinNameV0552").textContent=skin?.name||"Cherry";animateSelectedSkin();qa("[data-gear-slot-v0552]").forEach(b=>{const slot=b.dataset.gearSlotV0552,item=s.equipped?.[slot];b.className=`gear-body-slot-v0552 ${item?rarityClass(item):"empty"}`;b.innerHTML=slotMarkup(slot,item);b.onclick=()=>{if(item)openDetails(item,"equipped");else{const m=s.inventory.filter(x=>x.slot===slot).sort((a,b)=>itemPower(b)-itemPower(a));m.length?openDetails(m[0],"inventory"):UI.toast?.(`No ${slot} item available`)}}});renderEquippedStrip();renderInventory()}
-ensureCss();const oldRG=UI.renderGear.bind(UI);UI.renderGear=function(...a){const r=oldRG(...a);setTimeout(render,0);return r};const oldO=UI.open.bind(UI);UI.open=function(panel,...a){const r=oldO(panel,...a);if(panel==="gear")setTimeout(render,0);return r};const oldR=UI.refreshMenu?.bind(UI);if(oldR)UI.refreshMenu=function(...a){const r=oldR(...a);if(mobile()&&!id("gear")?.classList.contains("hidden"))setTimeout(render,0);return r};window.addEventListener("resize",()=>{if(mobile()&&!id("gear")?.classList.contains("hidden"))render()});window.CHERRIFT_V0552={version:VERSION,render};console.info("[CHERRIFT] v0.5.5.2 animated mobile Gear loaded.");
-})();
-/* ===== END src/cherrift_v0552.js ===== */
+
 
 
 /* ===== BEGIN src/cherrift_v0553.js ===== */
@@ -8954,11 +8391,11 @@ function cleanupDrag() {
 ensureCss();
 ensureLayout();
 
-const previousRenderGear = UI.renderGear.bind(UI);
-UI.renderGear = function renderGearV0560(...args) {
-  const result = previousRenderGear(...args);
+UI.showGearDetails = openModal;
+UI.showEmptySlot = () => closeModal();
+UI.renderGear = function renderGearV0560() {
   renderGear();
-  return result;
+  window.CHERRIFT_DESKTOP_GEAR?.sync?.();
 };
 
 const previousOpen = UI.open.bind(UI);
@@ -10383,6 +9820,11 @@ const GEAR_SLOT_AREAS_V090 = {
 };
 
 function ensureCompleteGearLayout() {
+  // The PC atelier owns layout. Never write the retired desktop grid or slot
+  // coordinates over it from a refresh callback or MutationObserver.
+  const desktop = window.CHERRIFT_DESKTOP_MENU?.isDesktop?.() ??
+    (innerWidth >= 821 && !((navigator.maxTouchPoints > 0 || matchMedia('(pointer:coarse)').matches) && innerHeight <= 600));
+  if (desktop) return false;
   const stage = id("gearStageV0560");
   if (!stage) return false;
 
@@ -10454,18 +9896,6 @@ function ensureCompleteGearLayout() {
     }
     if (label) label.style.setProperty("display", "none", "important");
     if (state) state.style.setProperty("display", "none", "important");
-  }
-  if (!mobile && document.body.classList.contains("cr-ui-ready")) {
-    stage.style.setProperty("display", "block", "important");
-    stage.style.setProperty("min-height", "300px", "important");
-    const positions = {Helmet:[50,13],Armor:[16,34],Necklace:[84,34],Weapon:[16,55],Gloves:[84,55],Ring:[16,76],Boots:[84,76]};
-    for (const button of slots) {
-      const position = positions[button.dataset.v0560Slot];
-      if (!position) continue;
-      for (const [property,value] of Object.entries({position:"absolute",left:`${position[0]}%`,top:`${position[1]}%`,right:"auto",bottom:"auto",width:"66px",height:"66px",transform:"translate(-50%,-50%)","grid-area":"auto"})) {
-        button.style.setProperty(property,value,"important");
-      }
-    }
   }
   return slots.length === 7;
 }
@@ -10924,7 +10354,6 @@ function decorateProfiles() {
   const skin = currentSkin();
   const holders = [
     q("#libraryBodyV0551 .v0551-profile-card > span"),
-    q("#profileBodyV055 .v055-profile-hero > span"),
     id("mobileGearHeroV053")
   ].filter(Boolean);
   for (const holder of holders) {
@@ -12051,13 +11480,13 @@ function ensureLibraryServices() {
     <button type="button" data-v062-open="dailyQuests"><span>✓</span><b>Daily Quests</b></button>
     <button type="button" data-v062-open="achievements"><span>♛</span><b>Achievements</b></button>
     <button type="button" data-v062-open="loginRewards"><span>🎁</span><b>Login Rewards</b></button>
-    <button type="button" data-v062-open="shopV055"><span>🛒</span><b>Shop</b></button>`;
+    <button type="button" data-v062-open="shopV082"><span>🛒</span><b>Shop</b></button>`;
   tabs.insertAdjacentElement("afterend", services);
 }
 
 function activateExistingFeatures() {
   const routes = new Map([
-    ["SHOP", "shopV055"],
+    ["SHOP", "shopV082"],
     ["MISSIONS", "dailyQuests"],
     ["ACHIEVEMENTS", "achievements"]
   ]);
@@ -12087,7 +11516,7 @@ function activateExistingFeatures() {
   // Shop and Login have canonical destinations in the current header/Lobby.
   // The v0.6 compatibility pass used to append duplicate shortcut buttons on
   // every refresh, so remove any survivors instead of rebuilding old UI.
-  if (dashboard) qa('[data-v062-open="shopV055"],[data-v062-open="loginRewards"]', dashboard).forEach(button => button.remove());
+  if (dashboard) qa('[data-v062-open="shopV082"],[data-v062-open="loginRewards"]', dashboard).forEach(button => button.remove());
 }
 
 function disableDecorativeControls() {
@@ -19152,12 +18581,15 @@ function patchVersion(){
   }
 }
 
+let deviceSizeV090="";
 function deviceClass(){
   const touchLike=Number(navigator.maxTouchPoints||0)>0||matchMedia("(pointer:coarse)").matches;
   const mobile=matchMedia("(max-width:820px)").matches||(touchLike&&innerHeight<=600);
-  document.body.classList.toggle("v090-mobile",mobile);
-  document.body.classList.toggle("v090-landscape",mobile&&innerWidth>innerHeight);
-  if(UI.game&&mobile)requestAnimationFrame(()=>UI.game.resize?.());
+  const landscape=mobile&&innerWidth>innerHeight;
+  if(document.body.classList.contains("v090-mobile")!==mobile)document.body.classList.toggle("v090-mobile",mobile);
+  if(document.body.classList.contains("v090-landscape")!==landscape)document.body.classList.toggle("v090-landscape",landscape);
+  const size=`${innerWidth}:${innerHeight}:${mobile}`;
+  if(size!==deviceSizeV090){deviceSizeV090=size;if(UI.game&&mobile)requestAnimationFrame(()=>UI.game.resize?.());}
 }
 
 function selectedSkin(){
@@ -23395,19 +22827,19 @@ function ensureSubnav() {
 function renderDesktopChrome() {
   const rail = id("globalRailV060");
   if (!isDesktop()) {
-    document.body.classList.remove("v0933-desktop");
-    rail?.classList.remove("topnav-v0933");
-    id("desktopSubnavV0933")?.classList.add("hidden");
+    if(document.body.classList.contains("v0933-desktop"))document.body.classList.remove("v0933-desktop");
+    if(rail?.classList.contains("topnav-v0933"))rail.classList.remove("topnav-v0933");
+    const nav=id("desktopSubnavV0933");if(nav&&!nav.classList.contains("hidden"))nav.classList.add("hidden");
     return;
   }
 
-  document.body.classList.add("v0933-desktop");
-  rail?.classList.add("topnav-v0933");
+  if(!document.body.classList.contains("v0933-desktop"))document.body.classList.add("v0933-desktop");
+  if(rail&&!rail.classList.contains("topnav-v0933"))rail.classList.add("topnav-v0933");
   const route = detectRoute();
   runtime.route = route;
   const group = routeGroup(route);
   const nav = ensureSubnav();
-  nav.classList.remove("hidden");
+  if(nav.classList.contains("hidden"))nav.classList.remove("hidden");
   const signature = `${language()}|${route}|${group}`;
   if (runtime.subnavSignature !== signature) {
     runtime.subnavSignature = signature;
@@ -23418,201 +22850,10 @@ function renderDesktopChrome() {
   }
 }
 
-function stages() { return window.CHERRIFT_V040?.stages || []; }
-function worldStages(world) { return stages().filter(stage => Number(stage.world) === Number(world)); }
-function worldUnlocked(world) {
-  if (Number(world) === 1) return true;
-  const previous = worldStages(Number(world) - 1);
-  return previous.length > 0 && previous.every(stage => UI.save?.clearedStages?.[stage.id] || UI.save?.stageStats?.[stage.id]?.clears);
-}
-function stageUnlocked(stage) {
-  if (!stage) return false;
-  return UI.save?.unlockedStages?.includes(stage.id) || (worldUnlocked(stage.world) && Number(stage.index) === 1);
-}
-function starsFor(stage) {
-  return clamp(Math.floor(Number(UI.save?.stageStars?.[stage.id] || UI.save?.stageStats?.[stage.id]?.stars || 0)), 0, 3);
-}
-function rewardText(reward) {
-  const parts = [];
-  if (reward?.coins) parts.push(`${reward.coins} Coin`);
-  if (reward?.keys) parts.push(`${reward.keys} Key`);
-  if (reward?.gems) parts.push(`${reward.gems} Gem`);
-  return parts.join(" · ") || "—";
-}
-function worldName(world) {
-  return localized(`worlds.w${world}.name`, `${copy("Világ", "World")} ${world}`);
-}
-function worldArt(world) {
-  if (Number(world) === 1) return 'linear-gradient(180deg,rgba(5,3,12,.04),rgba(5,3,12,.70)),url("assets/map/world1/world1_splashart_1.png")';
-  if (Number(world) === 2) return 'linear-gradient(180deg,rgba(5,3,12,.06),rgba(5,3,12,.76)),url("assets/map/world2/world2_splashart_1.png")';
-  return 'radial-gradient(circle at 55% 20%,rgba(255,145,66,.28),transparent 34%),linear-gradient(180deg,rgba(20,8,7,.12),rgba(8,3,7,.82)),url("assets/map/world1/world1_splashart_1.png")';
-}
-function selectedStage() {
-  const list = worldStages(runtime.world);
-  return list.find(stage => stage.id === runtime.stageId)
-    || list.find(stage => stage.id === UI.save?.selectedStageId)
-    || list.find(stageUnlocked)
-    || list[0]
-    || null;
-}
-function worldProgress(world) {
-  const list = worldStages(world);
-  const earned = list.reduce((sum, stage) => sum + starsFor(stage), 0);
-  return {earned, max:list.length * 3};
-}
-function stageCard(stage, index) {
-  const unlocked = stageUnlocked(stage);
-  const active = stage.id === selectedStage()?.id;
-  const stars = starsFor(stage);
-  return `<button type="button" class="chapter-card-v0933 ${active ? "active" : ""} ${unlocked ? "" : "locked"}" data-v0933-stage="${escapeHtml(stage.id)}" style='--chapter-pos:${36 + index * 8}%;background-image:${escapeHtml(worldArt(stage.world))}'>
-    <span class="chapter-lock-v0933">${unlocked ? "" : "🔒"}</span>
-    <small>${stage.boss ? "BOSS" : `${copy("PÁLYA", "STAGE")} ${stage.index}`}</small>
-    <strong>${escapeHtml(stage.name || `${stage.world}-${stage.index}`)}</strong>
-    <b>${escapeHtml(stage.title || "")}</b>
-    <em>${"★".repeat(stars)}${"☆".repeat(3 - stars)}</em>
-  </button>`;
-}
-function renderWorldCards() {
-  return [1, 2, 3].map(world => {
-    const unlocked = worldUnlocked(world);
-    const progress = worldProgress(world);
-    return `<button type="button" class="world-card-v0933 ${unlocked ? "" : "locked"}" data-v0933-world="${world}" style='background-image:${escapeHtml(worldArt(world))}'>
-      <span>${unlocked ? `WORLD ${world}` : "🔒"}</span>
-      <div><small>${unlocked ? copy("VILÁG", "WORLD") : copy("ZÁROLVA", "LOCKED")}</small><h3>${escapeHtml(worldName(world))}</h3><p>${progress.earned} / ${progress.max} ★</p></div>
-    </button>`;
-  }).join("");
-}
-function chapterDetail(stage) {
-  if (!stage) return "";
-  const stars = starsFor(stage);
-  const firstClaimed = !!UI.save?.firstClearClaimed?.[stage.id];
-  return `<section class="chapter-detail-v0933">
-    <div class="chapter-detail-title-v0933"><small>${copy("KIVÁLASZTOTT PÁLYA", "SELECTED STAGE")}</small><h3>${escapeHtml(stage.name)} · ${escapeHtml(stage.title || "")}</h3></div>
-    <div class="chapter-stars-v0933" aria-label="${stars}/3 stars"><span>${"★".repeat(stars)}${"☆".repeat(3 - stars)}</span><b>${stars} / 3</b></div>
-    <div class="chapter-reward-v0933"><small>${copy("JUTALOM", "REWARD")}</small><b>${escapeHtml(rewardText(stage.repeatReward))}</b></div>
-    <div class="chapter-reward-v0933 first"><small>${copy("ELSŐ TELJESÍTÉS", "FIRST REWARD")}</small><b>${escapeHtml(rewardText(stage.firstClearReward))}${firstClaimed ? ` · ✓ ${copy("Begyűjtve", "Claimed")}` : ""}</b></div>
-  </section>`;
-}
-function worldPanelSignature() {
-  const save = UI.save || {};
-  return JSON.stringify({
-    mode:runtime.worldMode,
-    world:runtime.world,
-    stage:runtime.stageId,
-    language:language(),
-    selected:save.selectedStageId,
-    unlocked:save.unlockedStages,
-    cleared:save.clearedStages,
-    stars:save.stageStars,
-    stats:save.stageStats,
-    first:save.firstClearClaimed
-  });
-}
-function renderDesktopWorldSelect(force = false) {
-  if (!isDesktop()) return;
-  const panel = id("worlds");
-  if (!panel || panel.classList.contains("hidden") || !UI.save) return;
-  const stage = selectedStage();
-  runtime.stageId = stage?.id || null;
-  const signature = worldPanelSignature();
-  if (!force && panel.dataset.v0933Signature === signature && q(".chapter-select-v0933", panel)) return;
-  panel.dataset.v0933Signature = signature;
-  panel.dataset.i18nIgnore = "true";
-  const chapterCards = worldStages(runtime.world).map(stageCard).join("");
-  const playable = runtime.worldMode === "chapters" && stage && stageUnlocked(stage);
-
-  panel.innerHTML = `<section class="chapter-select-v0933 ${runtime.worldMode === "chapters" ? "show-chapters" : "show-worlds"}">
-    <header><img class="chapter-brand-logo-v099 cherrift-logo-full-v099" src="assets/ui/cherrift_logo.png" alt="CHERRIFT"><h2>${runtime.worldMode === "worlds" ? copy("Világválasztás", "World Selection") : `${copy("Világ", "World")} ${runtime.world}`}</h2><p>${runtime.worldMode === "worlds" ? copy("Válassz világot.", "Choose a world.") : copy("Válassz pályát, majd indítsd el.", "Choose a stage, then start.")}</p></header>
-    ${runtime.worldMode === "worlds"
-      ? `<div class="world-card-grid-v0933">${renderWorldCards()}</div>`
-      : `<div class="chapter-world-banner-v0933" style='background-image:${escapeHtml(worldArt(runtime.world))}'><button type="button" data-v0933-worlds-back aria-label="${copy("Világok", "Worlds")}" title="${copy("Világok", "Worlds")}">‹</button><div><small>WORLD ${runtime.world}</small><h3>${escapeHtml(worldName(runtime.world))}</h3></div></div><div class="chapter-card-grid-v0933">${chapterCards || `<p>${copy("Ebben a világban még nincs pálya.", "No stages are available in this world yet.")}</p>`}</div>${chapterDetail(stage)}`}
-    <footer>
-      <button type="button" class="secondary" data-v0933-back>${copy("Vissza", "Back")}</button>
-      <button type="button" class="primary" data-v0933-play ${playable ? "" : "disabled"}>${copy("Játék", "Play")}</button>
-    </footer>
-  </section>`;
-}
-function openWorld(world) {
-  if (!worldUnlocked(world)) {
-    UI.toast?.(copy("Ez a világ még zárolva van.", "This world is still locked."));
-    return;
-  }
-  runtime.world = Number(world);
-  runtime.worldMode = "chapters";
-  const list = worldStages(runtime.world);
-  runtime.stageId = list.find(stage => stage.id === UI.save?.selectedStageId)?.id || list.find(stageUnlocked)?.id || list[0]?.id || null;
-  renderDesktopWorldSelect(true);
-}
-function launchStage() {
-  const stage = selectedStage();
-  if (!stage || !stageUnlocked(stage)) {
-    UI.toast?.(copy("Ez a pálya még zárolva van.", "This stage is still locked."));
-    return;
-  }
-  UI.save.selectedStageId = stage.id;
-  UI.worldCarouselIndex = Math.max(0, stages().findIndex(entry => entry.id === stage.id));
-  CherriftStorage.save(UI.save);
-  UI.game?.start?.();
-}
-
 function patchUiLifecycle() {
-  if (UI.__v0933Layout) return;
-  UI.__v0933Layout = true;
-
-  const previousInit = UI.init?.bind(UI);
-  if (previousInit) {
-    UI.init = function initV0933(save, game) {
-      const result = previousInit(save, game);
-      const selected = stages().find(stage => stage.id === save?.selectedStageId);
-      runtime.world = selected?.world || 1;
-      runtime.stageId = selected?.id || null;
-      requestAnimationFrame(refreshAll);
-      return result;
-    };
-  }
-
-  const previousOpen = UI.open?.bind(UI);
-  if (previousOpen) {
-    UI.open = function openV0933(panel, ...args) {
-      if (panel === "worlds" && !panelVisible("worlds")) runtime.worldMode = "worlds";
-      const result = previousOpen(panel, ...args);
-      requestAnimationFrame(() => {
-        if (panel === "worlds" && isDesktop()) renderDesktopWorldSelect(true);
-        refreshAll();
-      });
-      return result;
-    };
-  }
-
-  const previousRefresh = UI.refreshMenu?.bind(UI);
-  if (previousRefresh) {
-    UI.refreshMenu = function refreshMenuV0933(...args) {
-      const result = previousRefresh(...args);
-      requestAnimationFrame(refreshAll);
-      return result;
-    };
-  }
-
-  const previousWorldOpen = UI.openWorldSelect?.bind(UI);
-  if (previousWorldOpen) {
-    UI.openWorldSelect = function openWorldSelectV0933(...args) {
-      const selected = stages().find(stage => stage.id === UI.save?.selectedStageId);
-      runtime.world = selected?.world || 1;
-      runtime.stageId = selected?.id || null;
-      runtime.worldMode = "worlds";
-      const result = previousWorldOpen(...args);
-      requestAnimationFrame(() => renderDesktopWorldSelect(true));
-      return result;
-    };
-  }
-
-  const previousWorldRender = UI.renderWorldPanel?.bind(UI);
-  if (previousWorldRender) {
-    UI.renderWorldPanel = function renderWorldPanelV0933(...args) {
-      const result = previousWorldRender(...args);
-      if (isDesktop()) requestAnimationFrame(() => renderDesktopWorldSelect(true));
-      return result;
-    };
+  for(const key of ['init','open','refreshMenu']) {
+    const previous=UI[key]?.bind(UI);
+    if(previous)UI[key]=function(...args){const result=previous(...args);scheduleRefresh();return result;};
   }
 }
 
@@ -23629,48 +22870,12 @@ function bindEvents() {
       else UI.open(route);
       return;
     }
-    const world = event.target.closest?.("[data-v0933-world]");
-    if (world) {
-      event.preventDefault();
-      openWorld(Number(world.dataset.v0933World));
-      return;
-    }
-    const stage = event.target.closest?.("[data-v0933-stage]");
-    if (stage) {
-      event.preventDefault();
-      const entry = stages().find(item => item.id === stage.dataset.v0933Stage);
-      if (!stageUnlocked(entry)) {
-        UI.toast?.(copy("Ez a pálya még zárolva van.", "This stage is still locked."));
-        return;
-      }
-      runtime.stageId = entry.id;
-      renderDesktopWorldSelect(true);
-      return;
-    }
-    if (event.target.closest?.("[data-v0933-worlds-back]")) {
-      event.preventDefault();
-      runtime.worldMode = "worlds";
-      renderDesktopWorldSelect(true);
-      return;
-    }
-    if (event.target.closest?.("[data-v0933-play]")) {
-      event.preventDefault();
-      launchStage();
-      return;
-    }
-    if (event.target.closest?.("[data-v0933-back]")) {
-      event.preventDefault();
-      if (runtime.worldMode === "chapters") {
-        runtime.worldMode = "worlds";
-        renderDesktopWorldSelect(true);
-      } else UI.open("menu");
-    }
+
   });
 }
 
 function refreshAll() {
   renderDesktopChrome();
-  if (isDesktop() && panelVisible("worlds")) renderDesktopWorldSelect();
 }
 function scheduleRefresh() {
   if (runtime.refreshQueued) return;
@@ -23710,7 +22915,7 @@ window.CHERRIFT_V0933 = {
   version:VERSION,
   cacheVersion:CACHE_VERSION,
   refresh:refreshAll,
-  renderWorld:renderDesktopWorldSelect
+  renderWorld:() => window.CHERRIFT_WORLD_UI?.openWorldSelector?.()
 };
 console.info("[CHERRIFT] v0.9.3.3 desktop navigation, Cherry selector and chapter layout loaded.");
 })();
@@ -23913,201 +23118,6 @@ function ensureSave(save = UI.save) {
 
 function ensureCss() {
   document.documentElement.dataset.v094Css = "bundled";
-}
-
-function ensureWorldScreen() {
-  let screen = id("worldsV094");
-  if (!screen) {
-    screen = document.createElement("section");
-    screen.id = "worldsV094";
-    screen.className = "panel hidden world-screen-v094";
-    screen.dataset.i18nIgnore = "true";
-    id("app")?.appendChild(screen);
-  }
-  return screen;
-}
-function hideLegacyWorldPanel() { id("worlds")?.classList.add("hidden"); }
-function hideWorldScreen() { ensureWorldScreen().classList.add("hidden"); }
-function showWorldScreen() {
-  hideLegacyWorldPanel();
-  ensureWorldScreen().classList.remove("hidden");
-  document.body.classList.add("v094-world-open");
-}
-
-function selectedStage() {
-  const list = worldStages(runtime.world);
-  return list.find(stage => stage.id === runtime.stageId)
-    || list.find(stage => stage.id === UI.save?.selectedStageId)
-    || list.find(stageUnlocked)
-    || list[0]
-    || null;
-}
-function worldName(world) {
-  const meta = WORLD_META[world];
-  return meta ? copy(meta.nameHu, meta.nameEn) : `${copy("Világ", "World")} ${world}`;
-}
-function worldDescription(world) {
-  const meta = WORLD_META[world];
-  return meta ? copy(meta.descHu, meta.descEn) : "";
-}
-function worldArt(world) { return WORLD_META[world]?.art || WORLD_META[1].art; }
-function worldProgress(world) {
-  const list = worldStages(world);
-  return {earned:list.reduce((sum, stage) => sum + starsFor(stage), 0), max:list.length * 3};
-}
-
-function renderWorldCards() {
-  const worlds=[1,2,3,4,5,6];
-  if (window.CHERRIFT_PREBETA?.hasActiveGmAccess?.(UI.save)) worlds.unshift(0);
-  return worlds.map(world => {
-    const unlocked = worldUnlocked(world);
-    const progress = worldProgress(world);
-    const training = world === 0;
-    return `<button type="button" class="world-card-v094 ${unlocked ? "" : "locked"} ${training ? "training" : ""}" data-v094-world="${world}" style='background-image:${worldArt(world)}'>
-      <span>${training ? copy("TESZT", "TEST") : unlocked ? `WORLD ${world}` : "🔒"}</span>
-      <div><small>${training ? copy("GYAKORLÓPÁLYA", "TRAINING GROUND") : unlocked ? copy("VILÁG", "WORLD") : copy("ZÁROLVA", "LOCKED")}</small>
-      <h3>${escapeHtml(worldName(world))}</h3><p>${training ? "∞ HP Dummy" : `${progress.earned} / ${progress.max} ★`}</p></div>
-    </button>`;
-  }).join("");
-}
-function renderStageCards() {
-  const chosen = selectedStage();
-  return worldStages(runtime.world).map(stage => {
-    const unlocked = stageUnlocked(stage);
-    const active = stage.id === chosen?.id;
-    const stars = starsFor(stage);
-    return `<button type="button" class="stage-card-v094 ${active ? "active" : ""} ${unlocked ? "" : "locked"}" data-v094-stage="${escapeHtml(stage.id)}" style='background-image:${worldArt(stage.world)}'>
-      <span>${stage.training ? "∞" : unlocked ? (stage.boss ? "BOSS" : `${stage.world}-${stage.index}`) : "🔒"}</span>
-      <small>${stage.training ? copy("TESZT PÁLYA", "TEST STAGE") : `${copy("PÁLYA", "STAGE")} ${stage.index}`}</small>
-      <h3>${escapeHtml(stage.title || stage.name)}</h3>
-      <p>${stage.training ? copy("10 másodperces sebzésmérés", "10-second damage meter") : `${"★".repeat(stars)}${"☆".repeat(3-stars)}`}</p>
-    </button>`;
-  }).join("");
-}
-function stageDetails(stage) {
-  if (!stage) return "";
-  if (stage.training) {
-    return `<section class="stage-details-v094 training"><div><small>${copy("KIVÁLASZTOTT PÁLYA", "SELECTED STAGE")}</small><h3>${copy("Teszt Training · Damage Laboratory", "Test Training · Damage Laboratory")}</h3><p>${copy("Egy nagy, kék, tüskés dummy vár a spawn mellett. Nem mozog, nem támad és nem tud meghalni.", "A large blue spiked dummy waits beside the spawn. It cannot move, attack, or die.")}</p></div><aside><small>${copy("MÉRÉS", "MEASUREMENT")}</small><b>${copy("Aktuális + összesített sebzés", "Current + total damage")}</b><em>${copy("10 mp tétlenség után reset", "Resets after 10s idle")}</em></aside></section>`;
-  }
-  return `<section class="stage-details-v094"><div><small>${copy("KIVÁLASZTOTT PÁLYA", "SELECTED STAGE")}</small><h3>${escapeHtml(stage.name)} · ${escapeHtml(stage.title || "")}</h3><p>${escapeHtml(stage.desc || worldDescription(stage.world))}</p></div><aside><small>${copy("JUTALOM", "REWARD")}</small><b>${escapeHtml(rewardText(stage.repeatReward))}</b><em>${copy("Első:", "First:")} ${escapeHtml(rewardText(stage.firstClearReward))}${firstClearClaimed(stage.id) ? ` · ✓ ${copy("Begyűjtve", "Claimed")}` : ""}</em></aside></section>`;
-}
-function renderWorldSelector(force = false) {
-  if (runtime.rendering || !UI.save) return;
-  const screen = ensureWorldScreen();
-  if (screen.classList.contains("hidden") && !force) return;
-  runtime.rendering = true;
-  try {
-    const stage = selectedStage();
-    runtime.stageId = stage?.id || null;
-    const playable = runtime.view === "stages" && stage && stageUnlocked(stage);
-    screen.innerHTML = `<div class="world-shell-v094 ${runtime.view === "stages" ? "show-stages" : "show-worlds"}">
-      <header class="world-header-v094"><button type="button" data-v094-back aria-label="Back">←</button><div><small>CHERRIFT · WORLD UPDATE</small><h2>${runtime.view === "worlds" ? copy("Világválasztás", "World Selection") : escapeHtml(worldName(runtime.world))}</h2><p>${runtime.view === "worlds" ? copy("PC-szerű selector, telefonra igazított kártyákkal.", "PC-style selector with phone-sized cards.") : escapeHtml(worldDescription(runtime.world))}</p></div></header>
-      ${runtime.view === "worlds"
-        ? `<main class="world-card-grid-v094">${renderWorldCards()}</main>`
-        : `<main><section class="world-banner-v094" style='background-image:${worldArt(runtime.world)}'><button type="button" data-v094-worlds-back aria-label="${copy("Világok", "Worlds")}" title="${copy("Világok", "Worlds")}">‹</button><div><small>${runtime.world === 0 ? copy("TESZT", "TEST") : `WORLD ${runtime.world}`}</small><h3>${escapeHtml(worldName(runtime.world))}</h3></div></section><section class="stage-card-grid-v094">${renderStageCards()}</section>${stageDetails(stage)}</main>`}
-      <footer class="world-footer-v094"><button type="button" class="secondary" data-v094-back>${copy("Vissza", "Back")}</button><button type="button" class="primary" data-v094-play ${playable ? "" : "disabled"}>${stage?.training ? copy("Training indítása", "Start Training") : copy("Játék", "Play")}</button></footer>
-    </div>`;
-  } finally {
-    runtime.rendering = false;
-  }
-}
-function scheduleRender(force = false) {
-  if (runtime.renderQueued) return;
-  runtime.renderQueued = true;
-  requestAnimationFrame(() => {
-    runtime.renderQueued = false;
-    renderWorldSelector(force);
-  });
-}
-function openWorldSelector() {
-  ensureSave();
-  const selected = stages().find(stage => stage.id === UI.save?.selectedStageId);
-  runtime.world = selected?.world ?? 0;
-  runtime.stageId = selected?.id || "training_test";
-  runtime.view = "worlds";
-  UI.open("worlds");
-}
-function openWorld(world) {
-  if (!worldUnlocked(world)) {
-    UI.toast?.(copy("Ez a világ még zárolva van.", "This world is still locked."));
-    return;
-  }
-  runtime.world = Number(world);
-  runtime.view = "stages";
-  const list = worldStages(runtime.world);
-  runtime.stageId = list.find(stage => stage.id === UI.save?.selectedStageId)?.id || list.find(stageUnlocked)?.id || list[0]?.id || null;
-  renderWorldSelector(true);
-}
-function launchStage() {
-  const stage = selectedStage();
-  if (!stage || !stageUnlocked(stage)) {
-    UI.toast?.(copy("Ez a pálya még zárolva van.", "This stage is still locked."));
-    return;
-  }
-  UI.save.selectedStageId = stage.id;
-  UI.worldCarouselIndex = Math.max(0, stages().findIndex(entry => entry.id === stage.id));
-  CherriftStorage.save(UI.save);
-  hideWorldScreen();
-  document.body.classList.remove("v094-world-open");
-  UI.game?.start?.();
-}
-
-function patchUi() {
-  const previousInit = UI.init?.bind(UI);
-  if (previousInit) {
-    UI.init = function initV094(save, game) {
-      ensureSave(save);
-      const result = previousInit(save, game);
-      ensureSave(save);
-      ensureWorldScreen();
-      return result;
-    };
-  }
-
-  const previousOpen = UI.open?.bind(UI);
-  if (previousOpen) {
-    UI.open = function openV094(panel, ...args) {
-      const result = previousOpen(panel, ...args);
-      if (panel === "worlds") {
-        hideLegacyWorldPanel();
-        showWorldScreen();
-        scheduleRender(true);
-      } else {
-        hideWorldScreen();
-        document.body.classList.remove("v094-world-open");
-      }
-      return result;
-    };
-  }
-
-  UI.openWorldSelect = openWorldSelector;
-  UI.renderWorldPanel = () => renderWorldSelector(true);
-  UI.launchSelectedWorld = launchStage;
-}
-
-function bindSelectorEvents() {
-  if (document.documentElement.dataset.v094WorldEvents) return;
-  document.documentElement.dataset.v094WorldEvents = "1";
-  document.addEventListener("click", event => {
-    const world = event.target.closest?.("[data-v094-world]");
-    if (world) { event.preventDefault(); openWorld(Number(world.dataset.v094World)); return; }
-    const stageButton = event.target.closest?.("[data-v094-stage]");
-    if (stageButton) {
-      event.preventDefault();
-      const stage = stages().find(entry => entry.id === stageButton.dataset.v094Stage);
-      if (!stageUnlocked(stage)) return UI.toast?.(copy("Ez a pálya még zárolva van.", "This stage is still locked."));
-      runtime.stageId = stage.id;
-      renderWorldSelector(true);
-      return;
-    }
-    if (event.target.closest?.("[data-v094-worlds-back]")) { event.preventDefault(); runtime.view = "worlds"; renderWorldSelector(true); return; }
-    if (event.target.closest?.("[data-v094-play]")) { event.preventDefault(); launchStage(); return; }
-    if (event.target.closest?.("[data-v094-back]")) {
-      event.preventDefault();
-      if (runtime.view === "stages") { runtime.view = "worlds"; renderWorldSelector(true); }
-      else UI.open("menu");
-    }
-  });
 }
 
 function hashString(value) {
@@ -24660,18 +23670,15 @@ function patchGame() {
 
 installStages();
 ensureCss();
-patchUi();
-bindSelectorEvents();
+const previousInit=UI.init.bind(UI);
+UI.init=function(save,game){ensureSave(save);const result=previousInit(save,game);ensureSave(save);return result;};
 patchGame();
-ensureWorldScreen();
-window.addEventListener("resize", () => scheduleRender());
-window.addEventListener("cherrift:languagechange", () => scheduleRender(true));
 
 window.CHERRIFT_V094 = {
   version:VERSION,
   cacheVersion:CACHE_VERSION,
   stages,
-  renderWorld:renderWorldSelector,
+  renderWorld:() => window.CHERRIFT_WORLD_UI?.openWorldSelector?.(),
   generateWorldMap
 };
 console.info("[CHERRIFT] v0.9.3.4.1 ground tile scale hotfix loaded.");
@@ -25157,8 +24164,7 @@ function ensureCss() {
   style.textContent = `
     body.is-playing #menu,
     body.is-playing #worlds,
-    body.is-playing #worldsV094,
-    body.is-playing .world-screen-v094,
+        body.is-playing .world-screen-v094,
     body.is-playing .mobile-home-v031,
     body.is-playing .menu-dashboard-v060,
     body.is-playing .v082-custom-panel,
@@ -25170,7 +24176,7 @@ function ensureCss() {
 }
 
 function forceGameplayPanelsHidden() {
-  ["menu","worlds","worldsV094"].forEach(name => document.getElementById(name)?.classList.add("hidden"));
+  ["menu","worlds"].forEach(name => document.getElementById(name)?.classList.add("hidden"));
   document.body.classList.remove("v094-world-open");
 }
 

@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { checkPcMenuCleanup } from "./pc_cleanup_checks.mjs";
 import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
@@ -41,6 +42,7 @@ let delayedSubresourceRequested = false;
 const activeMutationObservers = new Set();
 const maxMutationObserverCallbacks = 5000;
 let mutationObserverCallbacks = 0;
+let phaseObserverCallbacks = 0;
 let mutationObserverRunaway = false;
 
 function log(message) {
@@ -725,15 +727,16 @@ function installBrowserStubs(window) {
     constructor(callback) {
       this.inner = new NativeMutationObserver(records => {
         mutationObserverCallbacks += 1;
+        phaseObserverCallbacks += 1;
 
-        if (mutationObserverCallbacks > maxMutationObserverCallbacks) {
+        if (phaseObserverCallbacks > maxMutationObserverCallbacks) {
           if (!mutationObserverRunaway) {
             mutationObserverRunaway = true;
             for (const observer of activeMutationObservers) {
               observer.disconnect();
             }
             recordRuntimeError("mutation-observer-runaway", [
-              `more than ${maxMutationObserverCallbacks} callbacks during boot`
+              `more than ${maxMutationObserverCallbacks} callbacks in one boot/route phase`
             ]);
           }
           return;
@@ -1322,9 +1325,9 @@ try {
       5000
     );
     assert.equal(
-      document.getElementById("worldsV094")?.classList.contains("hidden"),
-      true,
-      `${requested}: legacy World grid stays hidden behind the carousel route`
+      document.getElementById("worldsV094"),
+      null,
+      `${requested}: retired World grid is never created`
     );
     assert.ok(
       document.querySelector("#worldSelectorV0942 .selector-card-v0942"),
@@ -1424,6 +1427,13 @@ try {
     `${requested}: MutationObservers remain bounded during startup`
   );
 
+  if (["desktop","wide-desktop","short-desktop"].includes(requested)) {
+    log("checking PC menu cleanup and deferred refreshes");
+    await checkPcMenuCleanup(window,requested === "desktop",route=>{
+      phaseObserverCallbacks=0;
+      log(`PC route ${route}`);
+    });
+  }
   log("PASS");
   console.log(
     `PASS ${requested} ${width}x${height} · deterministic Clean Runtime boot · ` +

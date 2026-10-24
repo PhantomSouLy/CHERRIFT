@@ -148,7 +148,7 @@
     if (root !== state.root) { if (state.root) restore(); state.root = root; state.mode = mode; }
     const key = signature(root, mode);
     if (key !== state.key) { if (!read(root, mode)) return; state.key = signature(root, mode); }
-    document.body.classList.add('crystal-world-selector'); chrome(root, mode); content(root, mode);
+    if(!document.body.classList.contains('crystal-world-selector'))document.body.classList.add('crystal-world-selector'); chrome(root, mode); content(root, mode);
   }
   function schedule() { if (state.reading || state.queued) return; state.queued = true; queueMicrotask(() => { state.queued = false; sync(); }); }
   function pick(index) {

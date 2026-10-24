@@ -30,11 +30,11 @@ Hét célzott regressziós teszt ellenőrzi a mobil érintetlenségét, natív D
 
 Valódi Chromium-böngészős vendégpróba: 1920×1080, 2560×1440, 1366×768, 1280×720 és 1024×768. Ellenőrzött mindhárom kategória, natív termékrészletek, fókusz és Escape, ideiglenesen kibővített kategóriasáv görgetése, pénznemek/tárgyak/tulajdonjog változatlansága és 390×844 mobilra visszaváltás. Külön 844×390 érintős, fekvő mobilpróba is sikeres. Az ideiglenes kategóriák csak a teszt böngészőmemóriájában szerepelnek.
 
-Élő Discord-fiókkal végrehajtott szerveres vásárlást nem végeztünk. Részletes ellenőrzési eredmények: TEST_RESULTS_SHOP.txt.
+A rework a repository része. Az aktuális indítási és ellenőrzési lépések a [README-ben](../README.md), a tisztítás és a teszteredmények a [cleanup-jelentésben](../REPO_CLEANUP_AUDIT_HU.md) találhatók.
 
 ## Telepítés
 
-A CHERRIFT-PC-Shop.zip csak az új és módosult fájlokat tartalmazza, a már beépített Collection-reworkre. Kibontás a projekt gyökerébe, az egyező fájlok felülírásával. Nem teljes játékcsomag. Részletek: TELEPITES-SHOP.txt.
+A rework a repository része. Az aktuális indítási és ellenőrzési lépések a [README-ben](../README.md), a tisztítás és a teszteredmények a [cleanup-jelentésben](../REPO_CLEANUP_AUDIT_HU.md) találhatók.
 
 Új modul: src/cherrift_desktop_shop.js; új stílus: assets/cherrift_desktop_shop.css. Az index.html és a manifest betölti a modult; a package.json és a CI tartalmazza a célzott tesztet. Az összes first-party belépőhivatkozás egyetlen új buildazonosítót használ.
 
