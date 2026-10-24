@@ -11,7 +11,7 @@
   const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
   const copy = (hu,en) => window.UI?.save?.settings?.language==='en' ? en : hu;
   const state={queued:false,started:false,visible:false,list:null,scroll:0,selected:'',view:'',displayed:'',displayedCutout:false,exit:0,focusKey:null,animations:new Set()};
-  const CUTOUT='assets/ui/skins/base-cherry-panorama-pc.webp';
+  const CUTOUT='assets/ui/skins/cherry_ui_skins/optimized/base_cherry_transp_1.webp';
   const ownSelector='[data-sp-owned]';
   const text=(node,value)=>{if(node && node.textContent!==String(value))node.textContent=value;};
   function make(tag,className,parent){const node=document.createElement(tag);node.className=className;node.dataset.spOwned='';parent.append(node);return node;}
@@ -55,7 +55,7 @@
       if(!button.hasAttribute('data-sp-card')){
         button.dataset.spCard='';
         const art=make('span','sp-card-art',button);art.setAttribute('aria-hidden','true');
-        const image=document.createElement('img');image.src=window.CHERRIFT_SKIN_UI?.assetsForSkin?.(entry)?.splash || entry.splash || entry.icon;image.alt='';image.loading='lazy';image.decoding='async';image.draggable=false;art.append(image);
+        const image=document.createElement('img');image.src=window.CHERRIFT_SKIN_UI?.assetsForSkin?.(entry)?.thumbnail || entry.thumbnail || entry.splash || entry.icon;image.alt='';image.loading='lazy';image.decoding='async';image.draggable=false;art.append(image);
         const label=make('span','sp-card-label',button);const name=document.createElement('b'),rarity=document.createElement('small');name.textContent=button.getAttribute('aria-label') || entry.name;rarity.textContent=entry.rarity || '';label.append(name,rarity);
       }
       button.setAttribute('aria-pressed',String(button.dataset.v093Skin===skin.id));
@@ -84,20 +84,23 @@
   function hero(root,skin,changed){
     const art=q('.skin-art-v093',root);if(!art)return;
     art.classList.add('sp-art');
-    const cutout=skin.id==='cherry_default';const source=cutout?CUTOUT:(window.CHERRIFT_SKIN_UI?.assetsForSkin?.(skin)?.splash || skin.splash || skin.icon);
+    const assets=window.CHERRIFT_SKIN_UI?.assetsForSkin?.(skin);
+    let cutout=Boolean(assets?.cutout) || skin.id==='cherry_default';
+    const source=assets?.cutout || (cutout?CUTOUT:(assets?.splash || skin.splash || skin.icon));
     let image=q('.sp-hero',art);
-    if(!image){image=make('img',`sp-hero${cutout?' sp-cutout':' sp-vignette'}`,art);image.alt='';image.draggable=false;image.decoding='async';image.src=source;
+    if(image && image.dataset.spSource!==source){image.remove();image=null;}
+    if(!image){image=make('img',`sp-hero${cutout?' sp-cutout':' sp-vignette'}`,art);image.alt='';image.draggable=false;image.decoding='async';image.dataset.spSource=source;image.src=source;
       let ghost;
       if(changed && state.displayed && state.displayed!==source){ghost=make('img',`sp-ghost${state.displayedCutout?' sp-cutout':' sp-vignette'}`,art);ghost.alt='';ghost.src=state.displayed;}
       const reveal=()=>{
         if(!image.isConnected)return;
-        state.displayed=source;state.displayedCutout=cutout;
+        state.displayed=image.getAttribute('src');state.displayedCutout=cutout;
         if(changed){animate(image,[{opacity:0,transform:'translate3d(24px,0,0) scale(1.025)'},{opacity:1,transform:'translate3d(0,0,0) scale(1)'}],{duration:380,easing:'cubic-bezier(.2,.75,.25,1)'});
           if(ghost){const a=animate(ghost,[{opacity:1},{opacity:0}],{duration:280,fill:'forwards'});if(a)a.finished.then(()=>ghost.remove()).catch(()=>ghost.remove());else ghost.remove();}
         }else ghost?.remove();
       };
       if(image.complete && image.naturalWidth)reveal();else image.addEventListener('load',reveal,{once:true});
-      image.addEventListener('error',()=>{ghost?.remove();if(image.src.endsWith(CUTOUT)){image.classList.replace('sp-cutout','sp-vignette');image.src=skin.splash || skin.icon;}},{once:true});
+      image.addEventListener('error',()=>{ghost?.remove();if(cutout){cutout=false;image.classList.replace('sp-cutout','sp-vignette');image.src=assets?.splash || skin.splash || skin.icon;}},{once:true});
     }
   }
   function info(root,skin){

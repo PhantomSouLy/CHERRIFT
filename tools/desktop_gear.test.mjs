@@ -17,3 +17,12 @@ test('desktop decorates native inventory and preserves handlers and save',()=>{c
 test('resize restores every native style and removes presentation elements',()=>{const f=fixture();try{f.w.innerWidth=390;f.w.CHERRIFT_DESKTOP_GEAR.sync();assert.equal(f.root.innerHTML,f.before);assert.equal(f.root.querySelectorAll('[data-cg-owned]').length,0);f.w.innerWidth=1920;f.w.CHERRIFT_DESKTOP_GEAR.sync();assert.equal(f.root.querySelectorAll('.cg-chrome').length,1);}finally{f.close();}});
 test('selected splash follows equipped skin without generating new poses',()=>{const f=fixture();try{f.w.UI.save.selectedSkin='other';f.w.CHERRIFT_DESKTOP_GEAR.sync();assert.equal(f.root.querySelector('.cg-hero').getAttribute('src'),'other.png');assert.equal(f.root.querySelector('.cg-caption h2').textContent,'Other Cherry');}finally{f.close();}});
 test('search filters presentation without deleting inventory or native cards',()=>{const f=fixture();try{const input=f.root.querySelector('.cg-search');input.value='missing';f.w.CHERRIFT_DESKTOP_GEAR.sync();assert(f.root.querySelector('[data-v0560-item-id]').classList.contains('cg-filtered'));assert.equal(f.w.UI.save.inventory.length,1);input.value='rare';f.w.CHERRIFT_DESKTOP_GEAR.sync();assert(!f.root.querySelector('[data-v0560-item-id]').classList.contains('cg-filtered'));}finally{f.close();}});
+
+test('equipment displays the selected new cutout and retains legacy art for unmapped skins',()=>{
+ const f=fixture();try{
+ f.w.CHERRIFT_SKIN_UI={assetsForSkin:skin=>skin.id==='cherry_default'?{cutout:'base-cutout.webp',splash:'base-splash.webp'}:null};
+ f.w.CHERRIFT_DESKTOP_GEAR.sync();
+ const image=f.root.querySelector('.cg-hero');assert.equal(image.getAttribute('src'),'base-cutout.webp');assert(image.classList.contains('cg-cutout'));
+ f.w.UI.save.selectedSkin='other';f.w.CHERRIFT_DESKTOP_GEAR.sync();assert.equal(image.getAttribute('src'),'other.png');assert(!image.classList.contains('cg-cutout'));
+ }finally{f.close();}
+});

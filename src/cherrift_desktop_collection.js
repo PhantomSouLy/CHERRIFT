@@ -140,8 +140,9 @@
     }
     const art = document.createElement('div'); art.className = 'rg-hero';
     if (selected.source) {
-      const image = document.createElement('img'); const cutout = selected.data?.id === 'cherry_default';
-      image.src = cutout ? 'assets/ui/skins/base-cherry-panorama-pc.webp' : selected.source; image.alt = selected.title; image.draggable = false; image.className = cutout ? 'rg-cutout' : 'rg-splash'; art.append(image);
+      const image = document.createElement('img');
+      const cutout = state.tab === 'skins' ? window.CHERRIFT_SKIN_UI?.assetsForSkin?.(selected.data)?.cutout : null;
+      image.src = cutout || selected.source; image.alt = selected.title; image.draggable = false; image.className = cutout ? 'rg-cutout' : 'rg-splash'; art.append(image);
     } else {
       const nativeArt = q('canvas,span', selected.card);
       if (nativeArt?.tagName === 'CANVAS') {

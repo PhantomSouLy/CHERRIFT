@@ -35,3 +35,12 @@ test('native detail dialog keeps focus and Escape closes it before returning to 
 test('desktop-to-mobile exactly restores native gallery markup and keeps native open preview',()=>{const f=fixture();try{f.q('[data-rg-preview]').click();f.w.innerWidth=390;f.sync();assert.equal(f.root.innerHTML,f.before);assert(!f.modal.classList.contains('hidden'));assert.equal(f.modal.getAttribute('role'),null);assert.equal(f.q('[data-rg-owned]'),null);assert.equal(JSON.stringify(f.w.UI.save),f.save);}finally{f.close();}});
 test('keyboard navigation skips locked entries and back closes native preview and presentation',()=>{const f=fixture();try{f.native.focus();f.native.dispatchEvent(new f.w.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true,cancelable:true}));assert.equal(f.w.document.activeElement,f.q('[data-v084-skin=archer]'));assert.equal(f.q('.rg-showcase h2').textContent,'Actual Archer');f.q('[data-rg-preview]').click();f.q('[data-rg-back]').click();assert.equal(f.calls.at(-1),'menu');assert(f.modal.classList.contains('hidden'));assert.equal(f.root.innerHTML,f.before);}finally{f.close();}});
 test('language changes translate added controls without changing collection data',()=>{const f=fixture();try{f.w.UI.save.settings.language='hu';f.sync();assert.equal(f.q('.rg-chrome h1').textContent,'GYŰJTEMÉNY');assert.equal(f.q('[data-rg-filter=owned]').textContent,'MEGSZERZETT');assert.equal(f.q('.rg-progress b').textContent,'2 / 3');assert.deepEqual(f.w.UI.save.unlockedSkins,['base','archer']);}finally{f.close();}});
+
+test('collection uses each available cutout and preserves the splash of legacy skins',()=>{
+ const f=fixture();try{
+ f.w.CHERRIFT_SKIN_UI={assetsForSkin:skin=>skin.id==='archer'?{cutout:'archer-cutout.webp'}:null};
+ f.q('[data-v084-skin=archer]').click();
+ const image=f.q('.rg-hero img');assert.equal(image.getAttribute('src'),'archer-cutout.webp');assert(image.classList.contains('rg-cutout'));
+ f.q('[data-v084-skin=base]').click();assert.equal(f.q('.rg-hero img').getAttribute('src'),f.w.CHERRIFT_DATA.skins[0].splash);assert(f.q('.rg-hero img').classList.contains('rg-splash'));
+ }finally{f.close();}
+});

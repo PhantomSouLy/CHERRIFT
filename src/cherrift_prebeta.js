@@ -388,12 +388,12 @@
   function refillEnergy(type){const save=normalizeSave(window.UI.save),def=B.energy.refills[type],used=n(save.energyState.refills[type]);if(!def||used>=def.dailyLimit)return UI.toast?.("A napi refill limit elfogyott.");if(type==="coins"&&save.coins<def.cost)return UI.toast?.("Nincs elég Coin.");if(type==="bloomGems"&&save.bloomGems<def.cost)return UI.toast?.("Nincs elég Bloom Gem.");if(type==="coins")save.coins-=def.cost;else{save.bloomGems-=def.cost;save.blossomGems=save.bloomGems;}save.energy=Math.min(B.energy.manualOvercap,save.energy+def.amount);save.energyState.refills[type]=used+1;CherriftStorage.save(save);UI.refreshMenu?.();showEnergyModal();}
   function useEnergyDrink(type){const save=normalizeSave(window.UI.save),amount=B.energy.drinks[type];if(!amount||n(save.energyState.drinks[type])<1)return;save.energyState.drinks[type]--;save.energy=Math.min(B.energy.manualOvercap,save.energy+amount);CherriftStorage.save(save);UI.refreshMenu?.();showEnergyModal();}
 
-  function avatarMarkup(profile,size="") { const frame=B.frames.find(entry=>entry.id===(profile?.frame_id||profile?.frameId||"frame0lvl"))||B.frames[0]; const image=profile?.avatar_url||profile?.avatarUrl||"assets/player/skins/base_cherry/base_cherry_splashart.png"; return `<span class="prebeta-avatar ${size}"><img src="${escapeHtml(image)}" alt=""><img class="prebeta-avatar-frame" src="${escapeHtml(frame.asset)}" alt=""></span>`; }
+  function avatarMarkup(profile,size="") { const frame=B.frames.find(entry=>entry.id===(profile?.frame_id||profile?.frameId||"frame0lvl"))||B.frames[0]; const image=profile?.avatar_url||profile?.avatarUrl||"assets/ui/skins/cherry_ui_skins/optimized/base_cherry_icon_1.webp"; return `<span class="prebeta-avatar ${size}"><img src="${escapeHtml(image)}" alt=""><img class="prebeta-avatar-frame" src="${escapeHtml(frame.asset)}" alt=""></span>`; }
   function accountAvatar(fallback=""){const account=window.CHERRIFT_AUTH?.getState?.().account||{};return account.avatar||account.avatarUrl||account.avatar_url||fallback;}
   function syncPlayerAvatars(){
     const save=window.UI?.save;if(!save)return;
     const skin=window.CHERRIFT_DATA?.skins?.find(item=>item.id===save.selectedSkin);
-    const source=accountAvatar(skin?.icon||"assets/player/skins/base_cherry/base_cherry_icon.png");
+    const source=accountAvatar(skin?.icon||"assets/ui/skins/cherry_ui_skins/optimized/base_cherry_icon_1.webp");
     const frame=B.frames.find(item=>item.id===save.profile?.frameId)?.asset||B.frames[0].asset;
     qa(".profile-avatar-bf .prebeta-avatar,.profile-avatar-v082 .prebeta-avatar,.mobile-profile-v0932 .prebeta-avatar,#railProfileIconV060 .prebeta-avatar,#railProfileIconV082 .prebeta-avatar").forEach(holder=>{
       const photo=q("img:not(.prebeta-avatar-frame)",holder),border=q(".prebeta-avatar-frame",holder);

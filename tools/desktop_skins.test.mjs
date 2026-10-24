@@ -35,3 +35,29 @@ test('native rerender can be decorated without accumulating controls',()=>{
 test('back uses the original lobby route and disappears when the route closes',async()=>{
  const f=fixture();try{f.root.querySelector('.sp-back').click();await new Promise(r=>setTimeout(r,10));assert.equal(f.calls.at(-1),'menu');f.root.classList.add('hidden');f.w.CHERRIFT_DESKTOP_SKINS.sync();assert.equal(f.root.querySelectorAll('[data-sp-owned]').length,0);}finally{f.close();}
 });
+
+test('new transparent art follows non-default skins and falls back to splash on load failure',()=>{
+ const f=fixture();try{
+ const entry=f.w.CHERRIFT_DATA.skins[1];
+ f.w.CHERRIFT_SKIN_UI.selectedSkin=()=>entry;
+ f.w.CHERRIFT_SKIN_UI.assetsForSkin=skin=>skin.id==='other'?{cutout:'new-cutout.webp',splash:'new-splash.webp',thumbnail:'new-thumb.webp'}:null;
+ f.w.CHERRIFT_DESKTOP_SKINS.sync();
+ let image=f.root.querySelector('.sp-hero');
+ assert.equal(image.getAttribute('src'),'new-cutout.webp');assert(image.classList.contains('sp-cutout'));
+ image.dispatchEvent(new f.w.Event('error'));
+ assert.equal(image.getAttribute('src'),'new-splash.webp');assert(image.classList.contains('sp-vignette'));
+ f.w.CHERRIFT_DESKTOP_SKINS.sync();assert.equal(f.root.querySelector('.sp-hero'),image);
+ f.w.CHERRIFT_SKIN_UI.selectedSkin=()=>f.w.CHERRIFT_DATA.skins[0];f.w.CHERRIFT_DESKTOP_SKINS.sync();
+ assert.notEqual(f.root.querySelector('.sp-hero'),image);
+ }finally{f.close();}
+});
+
+test('desktop skin cards load small thumbnails lazily and retain legacy splashes',()=>{
+ const f=fixture();try{
+ f.w.CHERRIFT_SKIN_UI.assetsForSkin=skin=>skin.id==='other'?{thumbnail:'tiny.webp',splash:'full.webp'}:null;
+ f.root.innerHTML=markup();f.w.CHERRIFT_DESKTOP_SKINS.sync();
+ const images=[...f.root.querySelectorAll('.sp-card-art img')];
+ assert.equal(images[0].getAttribute('src'),'base.png');assert.equal(images[1].getAttribute('src'),'tiny.webp');
+ assert.equal(images[1].loading,'lazy');
+ }finally{f.close();}
+});

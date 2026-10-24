@@ -1,0 +1,728 @@
+{
+  "version": 1,
+  "sourceBytes": 92165292,
+  "outputBytes": 8600544,
+  "savingPercent": 90.67,
+  "assets": [
+    {
+      "source": "archer_cherry_1.png",
+      "file": "archer_cherry_1.webp",
+      "role": "splash",
+      "width": 960,
+      "height": 1280,
+      "quality": 82,
+      "bytes": 207676,
+      "sourceBytes": 2677422,
+      "sourceSha256": "2605fb82be9b57ab58f4f0f801e5e9124bfcddc4e36eb470adb4a79190daca2b"
+    },
+    {
+      "source": "archer_cherry_2.png",
+      "file": "archer_cherry_2.webp",
+      "role": "splash",
+      "width": 960,
+      "height": 1280,
+      "quality": 82,
+      "bytes": 216750,
+      "sourceBytes": 2665336,
+      "sourceSha256": "3ce764a5674f00edc2341d3ce4220907656118846920c0eecf8674912f70a901"
+    },
+    {
+      "source": "archer_cherry_transp_1.png",
+      "file": "archer_cherry_transp_1.webp",
+      "role": "cutout",
+      "width": 768,
+      "height": 1024,
+      "quality": 82,
+      "bytes": 186616,
+      "sourceBytes": 1712787,
+      "sourceSha256": "ba32ea7d051afad26ec0b56cd54a28e2ce625f306791504d71d7fa100dc17d65"
+    },
+    {
+      "source": "archer_cherry_transp_2.png",
+      "file": "archer_cherry_transp_2.webp",
+      "role": "cutout",
+      "width": 768,
+      "height": 1024,
+      "quality": 82,
+      "bytes": 180872,
+      "sourceBytes": 1559752,
+      "sourceSha256": "6e98e5de28717be1ff11b84e6323cbff5972eb6eda5d80e5dc085eeeb58a9d2f"
+    },
+    {
+      "source": "base_cherry_1.png",
+      "file": "base_cherry_1.webp",
+      "role": "splash",
+      "width": 960,
+      "height": 1280,
+      "quality": 82,
+      "bytes": 158068,
+      "sourceBytes": 2401251,
+      "sourceSha256": "94792fa1ff7a176ea994e9750b55e4338c29c6fc4d8b3d272f9822140cb630c0"
+    },
+    {
+      "source": "base_cherry_2.png",
+      "file": "base_cherry_2.webp",
+      "role": "splash",
+      "width": 960,
+      "height": 1280,
+      "quality": 82,
+      "bytes": 166862,
+      "sourceBytes": 2364697,
+      "sourceSha256": "3e1013ae9f50dda281c74e2dbe5f2141d853f7dadbe930b2f67a6c9869a0d7b4"
+    },
+    {
+      "source": "base_cherry_transp_1.png",
+      "file": "base_cherry_transp_1.webp",
+      "role": "cutout",
+      "width": 768,
+      "height": 1024,
+      "quality": 82,
+      "bytes": 122214,
+      "sourceBytes": 1185247,
+      "sourceSha256": "94cc72de079ba77be45534442cefb7b384f8c81cd523479a288b3431763d1733"
+    },
+    {
+      "source": "base_cherry_transp_2.png",
+      "file": "base_cherry_transp_2.webp",
+      "role": "cutout",
+      "width": 768,
+      "height": 1024,
+      "quality": 82,
+      "bytes": 128060,
+      "sourceBytes": 1241955,
+      "sourceSha256": "d51c61a8f90b0ce8d25302ee65142ab29bd299f2a62fed37056688c31fdce015"
+    },
+    {
+      "source": "beastclaw_cherry_1.png",
+      "file": "beastclaw_cherry_1.webp",
+      "role": "splash",
+      "width": 960,
+      "height": 1280,
+      "quality": 82,
+      "bytes": 217346,
+      "sourceBytes": 2803061,
+      "sourceSha256": "37596636eb971c67b1ceb608374e20ac6598b68e0fa94137ac5b7a71ba3764d1"
+    },
+    {
+      "source": "beastclaw_cherry_2.png",
+      "file": "beastclaw_cherry_2.webp",
+      "role": "splash",
+      "width": 960,
+      "height": 1280,
+      "quality": 82,
+      "bytes": 260566,
+      "sourceBytes": 2998407,
+      "sourceSha256": "2a49f237f8dfd3935bca8339ed40b9fbc833b3608d6bc24a8e7ae493f6ff9aa1"
+    },
+    {
+      "source": "beastclaw_cherry_transp_1.png",
+      "file": "beastclaw_cherry_transp_1.webp",
+      "role": "cutout",
+      "width": 768,
+      "height": 1024,
+      "quality": 82,
+      "bytes": 180672,
+      "sourceBytes": 1671989,
+      "sourceSha256": "01a2e126ba75114d8d43dfd697ca42801af4b5b186e5a3e58c92984d93398124"
+    },
+    {
+      "source": "beastclaw_cherry_transp_2.png",
+      "file": "beastclaw_cherry_transp_2.webp",
+      "role": "cutout",
+      "width": 768,
+      "height": 1024,
+      "quality": 82,
+      "bytes": 190998,
+      "sourceBytes": 1789172,
+      "sourceSha256": "491dbc8ca0ecede82d7a3a81f52ade77f0d8b99b77212ae1b2c7dc9673b17cca"
+    },
+    {
+      "source": "fairy_cherry_1.png",
+      "file": "fairy_cherry_1.webp",
+      "role": "splash",
+      "width": 960,
+      "height": 1280,
+      "quality": 82,
+      "bytes": 204914,
+      "sourceBytes": 2655023,
+      "sourceSha256": "bd133bcaca6cb63837a52a4d71fff08f14d2f85bda27ccf37cbb7cd7ebce058d"
+    },
+    {
+      "source": "fairy_cherry_2.png",
+      "file": "fairy_cherry_2.webp",
+      "role": "splash",
+      "width": 960,
+      "height": 1280,
+      "quality": 82,
+      "bytes": 198280,
+      "sourceBytes": 2641949,
+      "sourceSha256": "2041cae9e0929b0ca19d945a95c93f6f7780a9db5023ec3b139337060bb9717a"
+    },
+    {
+      "source": "fairy_cherry_transp_1.png",
+      "file": "fairy_cherry_transp_1.webp",
+      "role": "cutout",
+      "width": 683,
+      "height": 1024,
+      "quality": 82,
+      "bytes": 205908,
+      "sourceBytes": 2391840,
+      "sourceSha256": "aaab492641cbf5668fb84b7964cafea0699cff9ffe9a8ba9a105e0867a8669ff"
+    },
+    {
+      "source": "fairy_cherry_transp_2.png",
+      "file": "fairy_cherry_transp_2.webp",
+      "role": "cutout",
+      "width": 683,
+      "height": 1024,
+      "quality": 82,
+      "bytes": 205544,
+      "sourceBytes": 2520528,
+      "sourceSha256": "35a422f1a4004125580bd6cc76f62183239a8d87870de7b9513c0b65ffbf5e6e"
+    },
+    {
+      "source": "gunner_cherry_1.png",
+      "file": "gunner_cherry_1.webp",
+      "role": "splash",
+      "width": 1024,
+      "height": 1280,
+      "quality": 82,
+      "bytes": 265908,
+      "sourceBytes": 2895189,
+      "sourceSha256": "3669f26a99c57f35c30142f165b665084851436b8bbce39b3f2445bbf5d6000b"
+    },
+    {
+      "source": "gunner_cherry_2.png",
+      "file": "gunner_cherry_2.webp",
+      "role": "splash",
+      "width": 1024,
+      "height": 1280,
+      "quality": 82,
+      "bytes": 269174,
+      "sourceBytes": 2944584,
+      "sourceSha256": "7379962deed6340b28985583aa2a10b45e202c659728b9f356c54944f358ab7f"
+    },
+    {
+      "source": "gunner_cherry_transp_1.png",
+      "file": "gunner_cherry_transp_1.webp",
+      "role": "cutout",
+      "width": 819,
+      "height": 1024,
+      "quality": 82,
+      "bytes": 226218,
+      "sourceBytes": 1764059,
+      "sourceSha256": "21e1b8f48beb5f7000d2befb96e532f1af77b21e0f0dae259419f8fd8929b81f"
+    },
+    {
+      "source": "gunner_cherry_transp_2.png",
+      "file": "gunner_cherry_transp_2.webp",
+      "role": "cutout",
+      "width": 819,
+      "height": 1024,
+      "quality": 82,
+      "bytes": 209756,
+      "sourceBytes": 1748143,
+      "sourceSha256": "07384c17a114dae66e22f5a12259365a9370fdb62869d605380bdb796a1a613b"
+    },
+    {
+      "source": "mage_cherry_1.png",
+      "file": "mage_cherry_1.webp",
+      "role": "splash",
+      "width": 960,
+      "height": 1280,
+      "quality": 82,
+      "bytes": 222668,
+      "sourceBytes": 2718909,
+      "sourceSha256": "051f62a13c4f1a3c853cd96ffca648bc96635021794a4e36c1c03e13fe651893"
+    },
+    {
+      "source": "mage_cherry_2.png",
+      "file": "mage_cherry_2.webp",
+      "role": "splash",
+      "width": 960,
+      "height": 1280,
+      "quality": 82,
+      "bytes": 188632,
+      "sourceBytes": 2554721,
+      "sourceSha256": "250b2246d56527f193806ef9abb76b63272500cf333a37b1d02b24e6fa13c0f9"
+    },
+    {
+      "source": "mage_cherry_transp_1.png",
+      "file": "mage_cherry_transp_1.webp",
+      "role": "cutout",
+      "width": 768,
+      "height": 1024,
+      "quality": 82,
+      "bytes": 235856,
+      "sourceBytes": 2088704,
+      "sourceSha256": "207fb4bd63314d5f670bf592e6d279cccd26240a63f122cebd708fc7d0ad3b1c"
+    },
+    {
+      "source": "mage_cherry_transp_2.png",
+      "file": "mage_cherry_transp_2.webp",
+      "role": "cutout",
+      "width": 768,
+      "height": 1024,
+      "quality": 82,
+      "bytes": 225384,
+      "sourceBytes": 1911225,
+      "sourceSha256": "ef60e80288e42ed3288f977cfdfdc1c1d26297d960ad2d692cfa9de3ac67bfbf"
+    },
+    {
+      "source": "ninja_cherry_1.png",
+      "file": "ninja_cherry_1.webp",
+      "role": "splash",
+      "width": 853,
+      "height": 1280,
+      "quality": 82,
+      "bytes": 212202,
+      "sourceBytes": 2807459,
+      "sourceSha256": "1b6ff7bccdcc5f992ac81e15ec2a9aeb7386c9c4ba8c19c4292f72e8ab00678b"
+    },
+    {
+      "source": "ninja_cherry_2.png",
+      "file": "ninja_cherry_2.webp",
+      "role": "splash",
+      "width": 853,
+      "height": 1280,
+      "quality": 82,
+      "bytes": 176716,
+      "sourceBytes": 2574277,
+      "sourceSha256": "71990de33f95744c99b35215274f364389d19000a681968b07bdbccd6081a47c"
+    },
+    {
+      "source": "ninja_cherry_transp_1.png",
+      "file": "ninja_cherry_transp_1.webp",
+      "role": "cutout",
+      "width": 683,
+      "height": 1024,
+      "quality": 82,
+      "bytes": 201880,
+      "sourceBytes": 2484202,
+      "sourceSha256": "3332aedf9b13b26fe8af1c3b26802d8f38fd07befa5570757b606cb2d21a9fd3"
+    },
+    {
+      "source": "ninja_cherry_transp_2.png",
+      "file": "ninja_cherry_transp_2.webp",
+      "role": "cutout",
+      "width": 683,
+      "height": 1024,
+      "quality": 82,
+      "bytes": 204472,
+      "sourceBytes": 2517179,
+      "sourceSha256": "783fff554f430b1d96ff585b03fe822812e8a5de8a57bf97e406a9e0e2dd204f"
+    },
+    {
+      "source": "sakura_dancer_cherry_1.png",
+      "file": "sakura_dancer_cherry_1.webp",
+      "role": "splash",
+      "width": 853,
+      "height": 1280,
+      "quality": 82,
+      "bytes": 226376,
+      "sourceBytes": 2871261,
+      "sourceSha256": "50ad6ccef55f056f75fcc61f948088b9113c84896bc0b51bea61dbb73a7d6684"
+    },
+    {
+      "source": "sakura_dancer_cherry_2.png",
+      "file": "sakura_dancer_cherry_2.webp",
+      "role": "splash",
+      "width": 853,
+      "height": 1280,
+      "quality": 82,
+      "bytes": 215100,
+      "sourceBytes": 2699848,
+      "sourceSha256": "c025407a218403e2b449063d29ec128fc638573a696105e2f06e002ea9c66d9f"
+    },
+    {
+      "source": "sakura_dancer_cherry_transp_1.png",
+      "file": "sakura_dancer_cherry_transp_1.webp",
+      "role": "cutout",
+      "width": 683,
+      "height": 1024,
+      "quality": 78,
+      "bytes": 227228,
+      "sourceBytes": 2618146,
+      "sourceSha256": "717edcf1dae8ae0cf83bee66b82b134b63733e0d7d518807662ba45ff04b217e"
+    },
+    {
+      "source": "sakura_dancer_cherry_transp_2.png",
+      "file": "sakura_dancer_cherry_transp_2.webp",
+      "role": "cutout",
+      "width": 683,
+      "height": 1024,
+      "quality": 74,
+      "bytes": 233184,
+      "sourceBytes": 2758988,
+      "sourceSha256": "7467a87d691543d9784500c407b7067e17336874f13456fea9af34034c1aa7a0"
+    },
+    {
+      "source": "succubus_cherry_1.png",
+      "file": "succubus_cherry_1.webp",
+      "role": "splash",
+      "width": 1024,
+      "height": 1280,
+      "quality": 82,
+      "bytes": 263220,
+      "sourceBytes": 2934631,
+      "sourceSha256": "6c6b8c5d27bd34b3e9c0d3033de24b0c29ea43faf1b83c7ae375bb3d8d375eb6"
+    },
+    {
+      "source": "succubus_cherry_2.png",
+      "file": "succubus_cherry_2.webp",
+      "role": "splash",
+      "width": 1024,
+      "height": 1280,
+      "quality": 82,
+      "bytes": 316844,
+      "sourceBytes": 3251200,
+      "sourceSha256": "23b9bd78faa82338a610ec808cc0cd58f71bfd5c885cc780687023c014bff789"
+    },
+    {
+      "source": "succubus_cherry_transp_1.png",
+      "file": "succubus_cherry_transp_1.webp",
+      "role": "cutout",
+      "width": 819,
+      "height": 1024,
+      "quality": 66,
+      "bytes": 236874,
+      "sourceBytes": 2269450,
+      "sourceSha256": "67593c2a142514458cfa53c5a3e3e1ed05d3a3ab02e633b50dd79792cf61fc54"
+    },
+    {
+      "source": "succubus_cherry_transp_2.png",
+      "file": "succubus_cherry_transp_2.webp",
+      "role": "cutout",
+      "width": 696,
+      "height": 870,
+      "quality": 78,
+      "bytes": 209340,
+      "sourceBytes": 2301853,
+      "sourceSha256": "a58bef164dee968a1715e752daa837b7a5579edcb6e367e73d4a5d4b52d95ae4"
+    },
+    {
+      "source": "warrior_cherry_1.png",
+      "file": "warrior_cherry_1.webp",
+      "role": "splash",
+      "width": 1280,
+      "height": 853,
+      "quality": 82,
+      "bytes": 155224,
+      "sourceBytes": 2373191,
+      "sourceSha256": "f0b061895be831a988beaed54a2c8795557f6b6c1d817e737d12191f467af6df"
+    },
+    {
+      "source": "warrior_cherry_2.png",
+      "file": "warrior_cherry_2.webp",
+      "role": "splash",
+      "width": 1280,
+      "height": 881,
+      "quality": 82,
+      "bytes": 112148,
+      "sourceBytes": 1874167,
+      "sourceSha256": "7dfc05a0c5b6f220e97c26a6872d6339661839b346296b36ddc9382154c8de6f"
+    },
+    {
+      "source": "warrior_cherry_trans_1.png",
+      "file": "warrior_cherry_transp_1.webp",
+      "role": "cutout",
+      "width": 517,
+      "height": 1024,
+      "quality": 82,
+      "bytes": 101160,
+      "sourceBytes": 1035803,
+      "sourceSha256": "727926c3b793eafbb86d62406e7f53d71b2bc3862971848599b543490ad07d65"
+    },
+    {
+      "source": "warrior_cherry_trans_2.png",
+      "file": "warrior_cherry_transp_2.webp",
+      "role": "cutout",
+      "width": 403,
+      "height": 1024,
+      "quality": 82,
+      "bytes": 89662,
+      "sourceBytes": 887687,
+      "sourceSha256": "c48c4b2d41103ed69ac2051ffd7df6d11f9046410bfd277eb2d9c01f19523820"
+    },
+    {
+      "source": "archer_cherry_1.png",
+      "file": "archer_cherry_icon_1.webp",
+      "role": "icon",
+      "width": 256,
+      "height": 256,
+      "quality": 82,
+      "bytes": 17088,
+      "sourceBytes": 2677422,
+      "sourceSha256": "2605fb82be9b57ab58f4f0f801e5e9124bfcddc4e36eb470adb4a79190daca2b",
+      "crop": [
+        358,
+        80,
+        836,
+        558
+      ]
+    },
+    {
+      "source": "archer_cherry_1.png",
+      "file": "archer_cherry_thumb_1.webp",
+      "role": "thumbnail",
+      "width": 288,
+      "height": 384,
+      "quality": 82,
+      "bytes": 37086,
+      "sourceBytes": 2677422,
+      "sourceSha256": "2605fb82be9b57ab58f4f0f801e5e9124bfcddc4e36eb470adb4a79190daca2b"
+    },
+    {
+      "source": "base_cherry_1.png",
+      "file": "base_cherry_icon_1.webp",
+      "role": "icon",
+      "width": 256,
+      "height": 256,
+      "quality": 82,
+      "bytes": 14386,
+      "sourceBytes": 2401251,
+      "sourceSha256": "94792fa1ff7a176ea994e9750b55e4338c29c6fc4d8b3d272f9822140cb630c0",
+      "crop": [
+        304,
+        109,
+        782,
+        587
+      ]
+    },
+    {
+      "source": "base_cherry_1.png",
+      "file": "base_cherry_thumb_1.webp",
+      "role": "thumbnail",
+      "width": 288,
+      "height": 384,
+      "quality": 82,
+      "bytes": 28640,
+      "sourceBytes": 2401251,
+      "sourceSha256": "94792fa1ff7a176ea994e9750b55e4338c29c6fc4d8b3d272f9822140cb630c0"
+    },
+    {
+      "source": "beastclaw_cherry_1.png",
+      "file": "beastclaw_cherry_icon_1.webp",
+      "role": "icon",
+      "width": 256,
+      "height": 256,
+      "quality": 82,
+      "bytes": 21560,
+      "sourceBytes": 2803061,
+      "sourceSha256": "37596636eb971c67b1ceb608374e20ac6598b68e0fa94137ac5b7a71ba3764d1",
+      "crop": [
+        337,
+        94,
+        815,
+        572
+      ]
+    },
+    {
+      "source": "beastclaw_cherry_1.png",
+      "file": "beastclaw_cherry_thumb_1.webp",
+      "role": "thumbnail",
+      "width": 288,
+      "height": 384,
+      "quality": 82,
+      "bytes": 37458,
+      "sourceBytes": 2803061,
+      "sourceSha256": "37596636eb971c67b1ceb608374e20ac6598b68e0fa94137ac5b7a71ba3764d1"
+    },
+    {
+      "source": "fairy_cherry_1.png",
+      "file": "fairy_cherry_icon_1.webp",
+      "role": "icon",
+      "width": 256,
+      "height": 256,
+      "quality": 82,
+      "bytes": 16224,
+      "sourceBytes": 2655023,
+      "sourceSha256": "bd133bcaca6cb63837a52a4d71fff08f14d2f85bda27ccf37cbb7cd7ebce058d",
+      "crop": [
+        293,
+        80,
+        771,
+        558
+      ]
+    },
+    {
+      "source": "fairy_cherry_1.png",
+      "file": "fairy_cherry_thumb_1.webp",
+      "role": "thumbnail",
+      "width": 288,
+      "height": 384,
+      "quality": 82,
+      "bytes": 33842,
+      "sourceBytes": 2655023,
+      "sourceSha256": "bd133bcaca6cb63837a52a4d71fff08f14d2f85bda27ccf37cbb7cd7ebce058d"
+    },
+    {
+      "source": "gunner_cherry_1.png",
+      "file": "gunner_cherry_icon_1.webp",
+      "role": "icon",
+      "width": 256,
+      "height": 256,
+      "quality": 82,
+      "bytes": 23568,
+      "sourceBytes": 2895189,
+      "sourceSha256": "3669f26a99c57f35c30142f165b665084851436b8bbce39b3f2445bbf5d6000b",
+      "crop": [
+        303,
+        89,
+        797,
+        583
+      ]
+    },
+    {
+      "source": "gunner_cherry_1.png",
+      "file": "gunner_cherry_thumb_1.webp",
+      "role": "thumbnail",
+      "width": 307,
+      "height": 384,
+      "quality": 82,
+      "bytes": 42222,
+      "sourceBytes": 2895189,
+      "sourceSha256": "3669f26a99c57f35c30142f165b665084851436b8bbce39b3f2445bbf5d6000b"
+    },
+    {
+      "source": "mage_cherry_1.png",
+      "file": "mage_cherry_icon_1.webp",
+      "role": "icon",
+      "width": 256,
+      "height": 256,
+      "quality": 82,
+      "bytes": 16968,
+      "sourceBytes": 2718909,
+      "sourceSha256": "051f62a13c4f1a3c853cd96ffca648bc96635021794a4e36c1c03e13fe651893",
+      "crop": [
+        337,
+        80,
+        815,
+        558
+      ]
+    },
+    {
+      "source": "mage_cherry_1.png",
+      "file": "mage_cherry_thumb_1.webp",
+      "role": "thumbnail",
+      "width": 288,
+      "height": 384,
+      "quality": 82,
+      "bytes": 34608,
+      "sourceBytes": 2718909,
+      "sourceSha256": "051f62a13c4f1a3c853cd96ffca648bc96635021794a4e36c1c03e13fe651893"
+    },
+    {
+      "source": "ninja_cherry_1.png",
+      "file": "ninja_cherry_icon_1.webp",
+      "role": "icon",
+      "width": 256,
+      "height": 256,
+      "quality": 82,
+      "bytes": 23058,
+      "sourceBytes": 2807459,
+      "sourceSha256": "1b6ff7bccdcc5f992ac81e15ec2a9aeb7386c9c4ba8c19c4292f72e8ab00678b",
+      "crop": [
+        348,
+        158,
+        799,
+        609
+      ]
+    },
+    {
+      "source": "ninja_cherry_1.png",
+      "file": "ninja_cherry_thumb_1.webp",
+      "role": "thumbnail",
+      "width": 256,
+      "height": 384,
+      "quality": 82,
+      "bytes": 34762,
+      "sourceBytes": 2807459,
+      "sourceSha256": "1b6ff7bccdcc5f992ac81e15ec2a9aeb7386c9c4ba8c19c4292f72e8ab00678b"
+    },
+    {
+      "source": "sakura_dancer_cherry_1.png",
+      "file": "sakura_dancer_cherry_icon_1.webp",
+      "role": "icon",
+      "width": 256,
+      "height": 256,
+      "quality": 82,
+      "bytes": 21148,
+      "sourceBytes": 2871261,
+      "sourceSha256": "50ad6ccef55f056f75fcc61f948088b9113c84896bc0b51bea61dbb73a7d6684",
+      "crop": [
+        327,
+        174,
+        778,
+        625
+      ]
+    },
+    {
+      "source": "sakura_dancer_cherry_1.png",
+      "file": "sakura_dancer_cherry_thumb_1.webp",
+      "role": "thumbnail",
+      "width": 256,
+      "height": 384,
+      "quality": 82,
+      "bytes": 32674,
+      "sourceBytes": 2871261,
+      "sourceSha256": "50ad6ccef55f056f75fcc61f948088b9113c84896bc0b51bea61dbb73a7d6684"
+    },
+    {
+      "source": "succubus_cherry_1.png",
+      "file": "succubus_cherry_icon_1.webp",
+      "role": "icon",
+      "width": 256,
+      "height": 256,
+      "quality": 82,
+      "bytes": 23504,
+      "sourceBytes": 2934631,
+      "sourceSha256": "6c6b8c5d27bd34b3e9c0d3033de24b0c29ea43faf1b83c7ae375bb3d8d375eb6",
+      "crop": [
+        303,
+        89,
+        797,
+        583
+      ]
+    },
+    {
+      "source": "succubus_cherry_1.png",
+      "file": "succubus_cherry_thumb_1.webp",
+      "role": "thumbnail",
+      "width": 307,
+      "height": 384,
+      "quality": 82,
+      "bytes": 41752,
+      "sourceBytes": 2934631,
+      "sourceSha256": "6c6b8c5d27bd34b3e9c0d3033de24b0c29ea43faf1b83c7ae375bb3d8d375eb6"
+    },
+    {
+      "source": "warrior_cherry_1.png",
+      "file": "warrior_cherry_icon_1.webp",
+      "role": "icon",
+      "width": 256,
+      "height": 256,
+      "quality": 82,
+      "bytes": 16864,
+      "sourceBytes": 2373191,
+      "sourceSha256": "f0b061895be831a988beaed54a2c8795557f6b6c1d817e737d12191f467af6df",
+      "crop": [
+        645,
+        123,
+        1075,
+        553
+      ]
+    },
+    {
+      "source": "warrior_cherry_1.png",
+      "file": "warrior_cherry_thumb_1.webp",
+      "role": "thumbnail",
+      "width": 384,
+      "height": 256,
+      "quality": 82,
+      "bytes": 26560,
+      "sourceBytes": 2373191,
+      "sourceSha256": "f0b061895be831a988beaed54a2c8795557f6b6c1d817e737d12191f467af6df"
+    }
+  ]
+}

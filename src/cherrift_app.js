@@ -1179,9 +1179,9 @@ window.UI = {
   };
 
   const SKIN_META = {
-    cherry_default:{ splash:"assets/player/skins/base_cherry/base_cherry_splashart.png", combat:"Ranged", skill:"Bloom Dash", info:"Gyors dash előre, rövid sérthetetlenséggel és ütközési sebzéssel." },
-    fairy_cherry:{ splash:"assets/player/skins/fairy_cherry/fairy_cherry_splashart.jpg", combat:"Magic", skill:"Magic Burst", info:"Mágikus burst Cherry körül. Több ellenfelet sebez egyszerre." },
-    beastclaw_cherry:{ splash:"assets/player/skins/beastclaw_cherry/beastclaw_cherry_splashart.png", combat:"Melee", skill:"Savage Rend", info:"Rövid előretörés és nagy területű karmolás. Közelharci burst sebzés." }
+    cherry_default:{ splash:"assets/ui/skins/cherry_ui_skins/optimized/base_cherry_1.webp", combat:"Ranged", skill:"Bloom Dash", info:"Gyors dash előre, rövid sérthetetlenséggel és ütközési sebzéssel." },
+    fairy_cherry:{ splash:"assets/ui/skins/cherry_ui_skins/optimized/fairy_cherry_1.webp", combat:"Magic", skill:"Magic Burst", info:"Mágikus burst Cherry körül. Több ellenfelet sebez egyszerre." },
+    beastclaw_cherry:{ splash:"assets/ui/skins/cherry_ui_skins/optimized/beastclaw_cherry_1.webp", combat:"Melee", skill:"Savage Rend", info:"Rövid előretörés és nagy területű karmolás. Közelharci burst sebzés." }
   };
 
   const WORLD1_GROUND = {
@@ -5317,7 +5317,7 @@ const skinData = [
     desc:"Két shurikent dobó ranged skin. A skill 360°-ban shurikeneket lő ki és ideiglenesen megnöveli a movement speedet.",
     stats:{damage:3,speed:8},
     gradient:["#9a62ff","#25143d"],
-    splash:"assets/player/skins/ninja_cherry/ninja_cherry_splashart.png?v=0553"
+    splash:"assets/ui/skins/cherry_ui_skins/optimized/ninja_cherry_1.webp"
   },
   {
     id:"succubus_cherry",
@@ -5330,7 +5330,7 @@ const skinData = [
     desc:"Területi vörös karmolásokkal támad. A Soul Drain vörös lelkeket küld az ellenfelekre, gyógyít és teljes HP-n shieldet készít.",
     stats:{damage:5,speed:2},
     gradient:["#ff9a3f","#4b1028"],
-    splash:"assets/player/skins/succubus_cherry/succubus_cherry_splashart.png?v=0553"
+    splash:"assets/ui/skins/cherry_ui_skins/optimized/succubus_cherry_1.webp"
   }
 ];
 
@@ -6569,28 +6569,28 @@ function addCss() {
 
 const PATHS = {
   base: {
-    splash:"assets/player/skins/base_cherry/base_cherry_splashart.png",
-    icon:"assets/player/skins/base_cherry/base_cherry_icon.png"
+    splash:"assets/ui/skins/cherry_ui_skins/optimized/base_cherry_1.webp",
+    icon:"assets/ui/skins/cherry_ui_skins/optimized/base_cherry_icon_1.webp"
   },
   fairy: {
-    splash:"assets/player/skins/fairy_cherry/fairy_cherry_splashart.jpg",
-    icon:"assets/player/skins/fairy_cherry/fairy_cherry_icon.jpg"
+    splash:"assets/ui/skins/cherry_ui_skins/optimized/fairy_cherry_1.webp",
+    icon:"assets/ui/skins/cherry_ui_skins/optimized/fairy_cherry_icon_1.webp"
   },
   beast: {
-    splash:"assets/player/skins/beastclaw_cherry/beastclaw_cherry_splashart.png",
-    icon:"assets/player/skins/beastclaw_cherry/beatclaw_cherry_icon.jpg"
+    splash:"assets/ui/skins/cherry_ui_skins/optimized/beastclaw_cherry_1.webp",
+    icon:"assets/ui/skins/cherry_ui_skins/optimized/beastclaw_cherry_icon_1.webp"
   },
   ninja: {
-    splash:"assets/player/skins/ninja_cherry/ninja_cherry_splashart.png",
-    icon:"assets/player/skins/ninja_cherry/ninja_cherry_icon.jpg"
+    splash:"assets/ui/skins/cherry_ui_skins/optimized/ninja_cherry_1.webp",
+    icon:"assets/ui/skins/cherry_ui_skins/optimized/ninja_cherry_icon_1.webp"
   },
   succubus: {
-    splash:"assets/player/skins/succubus_cherry/succubus_cherry_splashart.png",
-    icon:"assets/player/skins/succubus_cherry/succubus_cherry_icon.jpg"
+    splash:"assets/ui/skins/cherry_ui_skins/optimized/succubus_cherry_1.webp",
+    icon:"assets/ui/skins/cherry_ui_skins/optimized/succubus_cherry_icon_1.webp"
   },
   warrior: {
-    splash:"assets/player/skins/warrior_cherry/warrior_cherry_splashart.png",
-    icon:"assets/player/skins/warrior_cherry/warrior_cherry_icon.jpg"
+    splash:"assets/ui/skins/cherry_ui_skins/optimized/warrior_cherry_1.webp",
+    icon:"assets/ui/skins/cherry_ui_skins/optimized/warrior_cherry_icon_1.webp"
   }
 };
 
@@ -7098,8 +7098,8 @@ if (baseData) {
     weapon: "Pink Bloom Orb",
     skill: "Bloom Dash",
     desc: "Az alap Cherry skin. Ranged Bloom Orb támadás és gyors Bloom Dash skill.",
-    splash: "assets/player/skins/base_cherry/base_cherry_splashart.png?v=0558",
-    icon: "assets/player/skins/base_cherry/base_cherry_icon.png?v=0558"
+    splash: "assets/ui/skins/cherry_ui_skins/optimized/base_cherry_1.webp",
+    icon: "assets/ui/skins/cherry_ui_skins/optimized/base_cherry_icon_1.webp"
   });
 }
 
@@ -8510,7 +8510,7 @@ CHERRIFT_CONFIG.player.skins[SKIN_ID] = {
 
 const wuxiaData = {
   id: SKIN_ID,
-  name: "Wuxia Sakura Cherry",
+  name: "Sakura Dance Cherry",
   rarity: "Legendary",
   emoji: "🌸",
   weapon: "Twin Sakura Jian",
@@ -8519,14 +8519,14 @@ const wuxiaData = {
   uniquePassive: "+5% Movement Speed · +5% Attack Speed · Sakura petal trail",
   desc:
     "Legendary dual-sword melee skin. Every 10 defeated enemies reduces the remaining Blossom Spin cooldown by 30%. " +
-    "Wuxia Sakura Cherry moves 5% faster, attacks 5% faster, and leaves small fading sakura petals while walking. " +
+    "Sakura Dance Cherry moves 5% faster, attacks 5% faster, and leaves small fading sakura petals while walking. " +
     "Blossom Spin cuts a medium area and grants a 2% movement-speed burst that fades to zero over one second.",
   stats: { damage: 0, speed: 0 },
   gradient: ["#ffb2d3", "#5b1839"],
   splash:
-    "assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_splashart.jpg?v=090-hf1",
+    "assets/ui/skins/cherry_ui_skins/optimized/sakura_dancer_cherry_1.webp",
   icon:
-    "assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_icon.jpg?v=090-hf1"
+    "assets/ui/skins/cherry_ui_skins/optimized/sakura_dancer_cherry_icon_1.webp"
 };
 
 const existingSkinIndex = CHERRIFT_DATA.skins.findIndex(
@@ -9180,7 +9180,7 @@ window.CHERRIFT_V0561 = {
 };
 
 console.info(
-  "[CHERRIFT] v0.5.6.1 Wuxia Sakura Cherry loaded."
+  "[CHERRIFT] v0.5.6.1 Sakura Dance Cherry loaded."
 );
 })();
 /* ===== END src/cherrift_v0561.js ===== */
@@ -9476,32 +9476,32 @@ if (!window.UI || !window.CHERRIFT_DATA || !window.CHERRIFT_CONFIG) {
 
 const SKIN_ASSETS = {
   cherry_default: {
-    icon: "assets/player/skins/base_cherry/base_cherry_icon.png?v=060",
-    splash: "assets/player/skins/base_cherry/base_cherry_splashart.png?v=060"
+    icon: "assets/ui/skins/cherry_ui_skins/optimized/base_cherry_icon_1.webp",
+    splash: "assets/ui/skins/cherry_ui_skins/optimized/base_cherry_1.webp"
   },
   fairy_cherry: {
-    icon: "assets/player/skins/fairy_cherry/fairy_cherry_icon.jpg?v=060",
-    splash: "assets/player/skins/fairy_cherry/fairy_cherry_splashart.jpg?v=060"
+    icon: "assets/ui/skins/cherry_ui_skins/optimized/fairy_cherry_icon_1.webp",
+    splash: "assets/ui/skins/cherry_ui_skins/optimized/fairy_cherry_1.webp"
   },
   beastclaw_cherry: {
-    icon: "assets/player/skins/beastclaw_cherry/beatclaw_cherry_icon.jpg?v=060",
-    splash: "assets/player/skins/beastclaw_cherry/beastclaw_cherry_splashart.png?v=060"
+    icon: "assets/ui/skins/cherry_ui_skins/optimized/beastclaw_cherry_icon_1.webp",
+    splash: "assets/ui/skins/cherry_ui_skins/optimized/beastclaw_cherry_1.webp"
   },
   ninja_cherry: {
-    icon: "assets/player/skins/ninja_cherry/ninja_cherry_icon.jpg?v=060",
-    splash: "assets/player/skins/ninja_cherry/ninja_cherry_splashart.png?v=060"
+    icon: "assets/ui/skins/cherry_ui_skins/optimized/ninja_cherry_icon_1.webp",
+    splash: "assets/ui/skins/cherry_ui_skins/optimized/ninja_cherry_1.webp"
   },
   succubus_cherry: {
-    icon: "assets/player/skins/succubus_cherry/succubus_cherry_icon.jpg?v=060",
-    splash: "assets/player/skins/succubus_cherry/succubus_cherry_splashart.png?v=060"
+    icon: "assets/ui/skins/cherry_ui_skins/optimized/succubus_cherry_icon_1.webp",
+    splash: "assets/ui/skins/cherry_ui_skins/optimized/succubus_cherry_1.webp"
   },
   warrior_cherry: {
-    icon: "assets/player/skins/warrior_cherry/warrior_cherry_icon.jpg?v=060",
-    splash: "assets/player/skins/warrior_cherry/warrior_cherry_splashart.png?v=060"
+    icon: "assets/ui/skins/cherry_ui_skins/optimized/warrior_cherry_icon_1.webp",
+    splash: "assets/ui/skins/cherry_ui_skins/optimized/warrior_cherry_1.webp"
   },
   wuxia_sakura_cherry: {
-    icon: "assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_icon.jpg?v=060",
-    splash: "assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_splashart.jpg?v=060"
+    icon: "assets/ui/skins/cherry_ui_skins/optimized/sakura_dancer_cherry_icon_1.webp",
+    splash: "assets/ui/skins/cherry_ui_skins/optimized/sakura_dancer_cherry_1.webp"
   }
 };
 
@@ -11133,7 +11133,7 @@ window.CHERRIFT_LOCALES.en = {
     ninja_cherry: { name:"Ninja Cherry", desc:"A fast mobile shuriken fighter.", passive:"5% poison damage", skill:"Shuriken Shots", skillDesc:"Throws shuriken in every direction and gains movement speed." },
     succubus_cherry: { name:"Succubus Cherry", desc:"A life-draining ranged Cherry.", passive:"5% HP drain", skill:"Soul Drain", skillDesc:"Homing souls damage enemies and restore health." },
     warrior_cherry: { name:"Warrior Cherry", desc:"A durable close-range sword fighter.", passive:"+5% HP bonus", skill:"Whirlwind", skillDesc:"A multi-hit spinning sword attack around Cherry." },
-    wuxia_sakura_cherry: { name:"Wuxia Sakura Cherry", desc:"A swift dual-sword fighter.", passive:"Kills reduce remaining skill cooldown", skill:"Blossom Spin", skillDesc:"A Sakura sword spin that damages nearby enemies." },
+    wuxia_sakura_cherry: { name:"Sakura Dance Cherry", desc:"A swift dual-sword fighter.", passive:"Kills reduce remaining skill cooldown", skill:"Blossom Spin", skillDesc:"A Sakura sword spin that damages nearby enemies." },
     mage_cherry: { name:"Mage Cherry", desc:"A staff-wielding ranged caster.", passive:"HP recovery", skill:"Magical Shot", skillDesc:"Releases five homing magic orbs." },
     archer_cherry: { name:"Archer Cherry", desc:"A mobile ranged bow user.", passive:"+10% critical chance", skill:"Four Arrow Shot", skillDesc:"Fires four arrows in a wide cone." },
     gunner_cherry: { name:"Gunner Cherry", desc:"A mobile ranged Cherry wielding twin pistols and softly glowing pink bullets.", passive:"Fire while moving at full speed", skill:"Bullet Ballet", skillDesc:"Spins once and fires 48 bullets in every direction over 0.8 seconds. Each bullet deals 35% ATK damage." },
@@ -11251,7 +11251,7 @@ window.CHERRIFT_LOCALES.hu = {
     ninja_cherry: { name:"Ninja Cherry", desc:"Gyors, mozgó shurikenharcos.", passive:"5% méregsebzés", skill:"Shuriken Shots", skillDesc:"Minden irányba shurikent dob és gyorsabbá válik." },
     succubus_cherry: { name:"Succubus Cherry", desc:"Életerőt elszívó ranged Cherry.", passive:"5% HP Drain", skill:"Soul Drain", skillDesc:"Célkövető lelkek sebeznek és gyógyítanak." },
     warrior_cherry: { name:"Warrior Cherry", desc:"Tartós közelharci kardforgató.", passive:"+5% HP bónusz", skill:"Whirlwind", skillDesc:"Többször sebző forgó kardcsapás Cherry körül." },
-    wuxia_sakura_cherry: { name:"Wuxia Sakura Cherry", desc:"Gyors, kétkardos harcos.", passive:"A killek csökkentik a maradék skill cooldownját", skill:"Blossom Spin", skillDesc:"Sakura kardforgás, amely a közeli ellenfeleket sebzi." },
+    wuxia_sakura_cherry: { name:"Sakura Dance Cherry", desc:"Gyors, kétkardos harcos.", passive:"A killek csökkentik a maradék skill cooldownját", skill:"Blossom Spin", skillDesc:"Sakura kardforgás, amely a közeli ellenfeleket sebzi." },
     mage_cherry: { name:"Mage Cherry", desc:"Bottal harcoló távolsági mágus.", passive:"HP regeneráció", skill:"Magical Shot", skillDesc:"Öt célkövető mágikus gömböt idéz." },
     archer_cherry: { name:"Archer Cherry", desc:"Mozgékony távolsági íjász.", passive:"+10% kritikus esély", skill:"Four Arrow Shot", skillDesc:"Négy nyilat lő ki széles kúpban." },
     gunner_cherry: { name:"Gunner Cherry", desc:"Mozgékony távolsági Cherry két pisztollyal és enyhén rózsaszínen ragyogó golyókkal.", passive:"Teljes sebességű mozgás közben is lő", skill:"Bullet Ballet", skillDesc:"Egyet fordul, és 0,8 másodperc alatt 48 golyót lő ki minden irányba. Golyónként 35% ATK sebzést okoz." },
@@ -18049,16 +18049,16 @@ const skinData = [
     weapon:"Bloom Staff", skill:"Magical Shot", passive:"+5% HP recovery",
     desc:"A staff-wielding ranged Cherry. Magical Shot releases five homing magic orbs; all five focus the same target when only one enemy is present.",
     stats:{damage:2,speed:0}, gradient:["#ff9fd6","#4c245f"],
-    icon:"assets/player/skins/mage_cherry/mage_cherry_icon.png?v=090-hf1",
-    splash:"assets/player/skins/mage_cherry/mage_cherry_splashart.png?v=090-hf1"
+    icon:"assets/ui/skins/cherry_ui_skins/optimized/mage_cherry_icon_1.webp",
+    splash:"assets/ui/skins/cherry_ui_skins/optimized/mage_cherry_1.webp"
   },
   {
     id:"archer_cherry", name:"Archer Cherry", rarity:"Rare", emoji:"🏹",
     weapon:"Bloom Bow", skill:"Four Arrow Shot", passive:"+10% critical chance",
     desc:"A mobile ranged Cherry. Her skill fires four arrows in a wide cone while her raised bow stays clear during movement.",
     stats:{damage:2,speed:4}, gradient:["#ffb4ce","#5d392a"],
-    icon:"assets/player/skins/archer_cherry/archer_cherry_icon.jpg?v=090-hf1",
-    splash:"assets/player/skins/archer_cherry/archer_cherry_splashart.png?v=090-hf1"
+    icon:"assets/ui/skins/cherry_ui_skins/optimized/archer_cherry_icon_1.webp",
+    splash:"assets/ui/skins/cherry_ui_skins/optimized/archer_cherry_1.webp"
   }
 ];
 
@@ -18540,15 +18540,15 @@ function ensureCss(){
 }
 
 const ART={
-  cherry_default:["assets/player/skins/base_cherry/base_cherry_icon.png","assets/player/skins/base_cherry/base_cherry_splashart.png"],
-  fairy_cherry:["assets/player/skins/fairy_cherry/fairy_cherry_icon.jpg","assets/player/skins/fairy_cherry/fairy_cherry_splashart.jpg"],
-  beastclaw_cherry:["assets/player/skins/beastclaw_cherry/beatclaw_cherry_icon.jpg","assets/player/skins/beastclaw_cherry/beastclaw_cherry_splashart.png"],
-  ninja_cherry:["assets/player/skins/ninja_cherry/ninja_cherry_icon.jpg","assets/player/skins/ninja_cherry/ninja_cherry_splashart.png"],
-  succubus_cherry:["assets/player/skins/succubus_cherry/succubus_cherry_icon.jpg","assets/player/skins/succubus_cherry/succubus_cherry_splashart.png"],
-  warrior_cherry:["assets/player/skins/warrior_cherry/warrior_cherry_icon.jpg","assets/player/skins/warrior_cherry/warrior_cherry_splashart.png"],
-  wuxia_sakura_cherry:["assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_icon.jpg","assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_splashart.jpg"],
-  mage_cherry:["assets/player/skins/mage_cherry/mage_cherry_icon.png","assets/player/skins/mage_cherry/mage_cherry_splashart.png"],
-  archer_cherry:["assets/player/skins/archer_cherry/archer_cherry_icon.jpg","assets/player/skins/archer_cherry/archer_cherry_splashart.png"]
+  cherry_default:["assets/ui/skins/cherry_ui_skins/optimized/base_cherry_icon_1.webp","assets/ui/skins/cherry_ui_skins/optimized/base_cherry_1.webp"],
+  fairy_cherry:["assets/ui/skins/cherry_ui_skins/optimized/fairy_cherry_icon_1.webp","assets/ui/skins/cherry_ui_skins/optimized/fairy_cherry_1.webp"],
+  beastclaw_cherry:["assets/ui/skins/cherry_ui_skins/optimized/beastclaw_cherry_icon_1.webp","assets/ui/skins/cherry_ui_skins/optimized/beastclaw_cherry_1.webp"],
+  ninja_cherry:["assets/ui/skins/cherry_ui_skins/optimized/ninja_cherry_icon_1.webp","assets/ui/skins/cherry_ui_skins/optimized/ninja_cherry_1.webp"],
+  succubus_cherry:["assets/ui/skins/cherry_ui_skins/optimized/succubus_cherry_icon_1.webp","assets/ui/skins/cherry_ui_skins/optimized/succubus_cherry_1.webp"],
+  warrior_cherry:["assets/ui/skins/cherry_ui_skins/optimized/warrior_cherry_icon_1.webp","assets/ui/skins/cherry_ui_skins/optimized/warrior_cherry_1.webp"],
+  wuxia_sakura_cherry:["assets/ui/skins/cherry_ui_skins/optimized/sakura_dancer_cherry_icon_1.webp","assets/ui/skins/cherry_ui_skins/optimized/sakura_dancer_cherry_1.webp"],
+  mage_cherry:["assets/ui/skins/cherry_ui_skins/optimized/mage_cherry_icon_1.webp","assets/ui/skins/cherry_ui_skins/optimized/mage_cherry_1.webp"],
+  archer_cherry:["assets/ui/skins/cherry_ui_skins/optimized/archer_cherry_icon_1.webp","assets/ui/skins/cherry_ui_skins/optimized/archer_cherry_1.webp"]
 };
 for(const skin of CHERRIFT_DATA.skins||[]){
   if(ART[skin.id]){
@@ -18920,6 +18920,7 @@ function configureCommonSkins() {
 }
 
 function splashPath(folder) {
+  if (folder === "gunner_cherry") return "assets/ui/skins/cherry_ui_skins/optimized/gunner_cherry_1.webp";
   return `assets/player/skins/${folder}/${folder}_splashart.png?v=${CACHE_VERSION}`;
 }
 
@@ -20177,8 +20178,8 @@ const SKILL_ICON_ASSETS = Object.freeze({
   sport_cherry:"assets/ui/skill_icons/sport_cherry_skill_icon.png"
 });
 const THUMB_PLACEHOLDERS = Object.freeze({
-  warrior_cherry:"assets/player/skins/warrior_cherry/warrior_cherry_icon.jpg",
-  wuxia_sakura_cherry:"assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_icon.jpg"
+  warrior_cherry:"assets/ui/skins/cherry_ui_skins/optimized/warrior_cherry_icon_1.webp",
+  wuxia_sakura_cherry:"assets/ui/skins/cherry_ui_skins/optimized/sakura_dancer_cherry_icon_1.webp"
 });
 const WORLD_ART = {
   1:'linear-gradient(180deg,rgba(5,3,12,.02),rgba(5,3,12,.48)),url("assets/map/world1/world1_splashart_1.png")',

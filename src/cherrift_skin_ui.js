@@ -44,40 +44,72 @@
     wuxia_sakura_cherry:"celestial"
   });
 
-  // Canonical UI art for every shipped Cherry skin except Mage Cherry.
-  // Mage intentionally keeps its existing data untouched.
+  // UI-only WebP art. Skins without new illustrations keep their legacy assets.
+  // Gameplay sprites and persistent skin IDs remain independent of these paths.
   const SKIN_ASSETS = Object.freeze({
+    mage_cherry:Object.freeze({
+      icon:"assets/ui/skins/cherry_ui_skins/optimized/mage_cherry_icon_1.webp",
+      splash:"assets/ui/skins/cherry_ui_skins/optimized/mage_cherry_1.webp",
+      splashAlt:"assets/ui/skins/cherry_ui_skins/optimized/mage_cherry_2.webp",
+      cutout:"assets/ui/skins/cherry_ui_skins/optimized/mage_cherry_transp_1.webp",
+      cutoutAlt:"assets/ui/skins/cherry_ui_skins/optimized/mage_cherry_transp_2.webp",
+      thumbnail:"assets/ui/skins/cherry_ui_skins/optimized/mage_cherry_thumb_1.webp"
+    }),
     gunner_cherry:Object.freeze({
-      icon:"assets/player/skins/gunner_cherry/gunner_cherry_icon.png",
-      splash:"assets/player/skins/gunner_cherry/gunner_cherry_splashart.png"
+      icon:"assets/ui/skins/cherry_ui_skins/optimized/gunner_cherry_icon_1.webp",
+      splash:"assets/ui/skins/cherry_ui_skins/optimized/gunner_cherry_1.webp",
+      splashAlt:"assets/ui/skins/cherry_ui_skins/optimized/gunner_cherry_2.webp",
+      cutout:"assets/ui/skins/cherry_ui_skins/optimized/gunner_cherry_transp_1.webp",
+      cutoutAlt:"assets/ui/skins/cherry_ui_skins/optimized/gunner_cherry_transp_2.webp",
+      thumbnail:"assets/ui/skins/cherry_ui_skins/optimized/gunner_cherry_thumb_1.webp"
     }),
     cherry_default:Object.freeze({
-      icon:"assets/player/skins/base_cherry/base_cherry_icon.png",
-      splash:"assets/player/skins/base_cherry/base_cherry_splashart.png"
+      icon:"assets/ui/skins/cherry_ui_skins/optimized/base_cherry_icon_1.webp",
+      splash:"assets/ui/skins/cherry_ui_skins/optimized/base_cherry_1.webp",
+      splashAlt:"assets/ui/skins/cherry_ui_skins/optimized/base_cherry_2.webp",
+      cutout:"assets/ui/skins/cherry_ui_skins/optimized/base_cherry_transp_1.webp",
+      cutoutAlt:"assets/ui/skins/cherry_ui_skins/optimized/base_cherry_transp_2.webp",
+      thumbnail:"assets/ui/skins/cherry_ui_skins/optimized/base_cherry_thumb_1.webp"
     }),
     archer_cherry:Object.freeze({
-      icon:"assets/player/skins/archer_cherry/archer_cherry_icon.jpg",
-      splash:"assets/player/skins/archer_cherry/archer_cherry_splashart.png"
+      icon:"assets/ui/skins/cherry_ui_skins/optimized/archer_cherry_icon_1.webp",
+      splash:"assets/ui/skins/cherry_ui_skins/optimized/archer_cherry_1.webp",
+      splashAlt:"assets/ui/skins/cherry_ui_skins/optimized/archer_cherry_2.webp",
+      cutout:"assets/ui/skins/cherry_ui_skins/optimized/archer_cherry_transp_1.webp",
+      cutoutAlt:"assets/ui/skins/cherry_ui_skins/optimized/archer_cherry_transp_2.webp",
+      thumbnail:"assets/ui/skins/cherry_ui_skins/optimized/archer_cherry_thumb_1.webp"
     }),
     beastclaw_cherry:Object.freeze({
-      icon:"assets/player/skins/beastclaw_cherry/beatclaw_cherry_icon.jpg",
-      splash:"assets/player/skins/beastclaw_cherry/beastclaw_cherry_splashart.png"
+      icon:"assets/ui/skins/cherry_ui_skins/optimized/beastclaw_cherry_icon_1.webp",
+      splash:"assets/ui/skins/cherry_ui_skins/optimized/beastclaw_cherry_1.webp",
+      splashAlt:"assets/ui/skins/cherry_ui_skins/optimized/beastclaw_cherry_2.webp",
+      cutout:"assets/ui/skins/cherry_ui_skins/optimized/beastclaw_cherry_transp_1.webp",
+      cutoutAlt:"assets/ui/skins/cherry_ui_skins/optimized/beastclaw_cherry_transp_2.webp",
+      thumbnail:"assets/ui/skins/cherry_ui_skins/optimized/beastclaw_cherry_thumb_1.webp"
     }),
     cake_deliver_cherry:Object.freeze({
       icon:"assets/player/skins/cake_deliver_cherry/cake_delivery_cherry_icon.jpg",
       splash:"assets/player/skins/cake_deliver_cherry/cake_deliver_cherry_splashart.png"
     }),
     fairy_cherry:Object.freeze({
-      icon:"assets/player/skins/fairy_cherry/fairy_cherry_icon.jpg",
-      splash:"assets/player/skins/fairy_cherry/fairy_cherry_splashart.jpg"
+      icon:"assets/ui/skins/cherry_ui_skins/optimized/fairy_cherry_icon_1.webp",
+      splash:"assets/ui/skins/cherry_ui_skins/optimized/fairy_cherry_1.webp",
+      splashAlt:"assets/ui/skins/cherry_ui_skins/optimized/fairy_cherry_2.webp",
+      cutout:"assets/ui/skins/cherry_ui_skins/optimized/fairy_cherry_transp_1.webp",
+      cutoutAlt:"assets/ui/skins/cherry_ui_skins/optimized/fairy_cherry_transp_2.webp",
+      thumbnail:"assets/ui/skins/cherry_ui_skins/optimized/fairy_cherry_thumb_1.webp"
     }),
     kimono_cherry:Object.freeze({
       icon:"assets/player/skins/kimono_cherry/kimono_cherry_icon.jpg",
       splash:"assets/player/skins/kimono_cherry/kimono_cherry_splashart.png"
     }),
     ninja_cherry:Object.freeze({
-      icon:"assets/player/skins/ninja_cherry/ninja_cherry_icon.jpg",
-      splash:"assets/player/skins/ninja_cherry/ninja_cherry_splashart.png"
+      icon:"assets/ui/skins/cherry_ui_skins/optimized/ninja_cherry_icon_1.webp",
+      splash:"assets/ui/skins/cherry_ui_skins/optimized/ninja_cherry_1.webp",
+      splashAlt:"assets/ui/skins/cherry_ui_skins/optimized/ninja_cherry_2.webp",
+      cutout:"assets/ui/skins/cherry_ui_skins/optimized/ninja_cherry_transp_1.webp",
+      cutoutAlt:"assets/ui/skins/cherry_ui_skins/optimized/ninja_cherry_transp_2.webp",
+      thumbnail:"assets/ui/skins/cherry_ui_skins/optimized/ninja_cherry_thumb_1.webp"
     }),
     pajama_cherry:Object.freeze({
       icon:"assets/player/skins/pajama_cherry/pajama_cherry_icon.jpg",
@@ -92,16 +124,28 @@
       splash:"assets/player/skins/sport_cherry/sport_cherry_splashart.png"
     }),
     succubus_cherry:Object.freeze({
-      icon:"assets/player/skins/succubus_cherry/succubus_cherry_icon.jpg",
-      splash:"assets/player/skins/succubus_cherry/succubus_cherry_splashart.png"
+      icon:"assets/ui/skins/cherry_ui_skins/optimized/succubus_cherry_icon_1.webp",
+      splash:"assets/ui/skins/cherry_ui_skins/optimized/succubus_cherry_1.webp",
+      splashAlt:"assets/ui/skins/cherry_ui_skins/optimized/succubus_cherry_2.webp",
+      cutout:"assets/ui/skins/cherry_ui_skins/optimized/succubus_cherry_transp_1.webp",
+      cutoutAlt:"assets/ui/skins/cherry_ui_skins/optimized/succubus_cherry_transp_2.webp",
+      thumbnail:"assets/ui/skins/cherry_ui_skins/optimized/succubus_cherry_thumb_1.webp"
     }),
     warrior_cherry:Object.freeze({
-      icon:"assets/player/skins/warrior_cherry/warrior_cherry_icon.jpg",
-      splash:"assets/player/skins/warrior_cherry/warrior_cherry_splashart.png"
+      icon:"assets/ui/skins/cherry_ui_skins/optimized/warrior_cherry_icon_1.webp",
+      splash:"assets/ui/skins/cherry_ui_skins/optimized/warrior_cherry_1.webp",
+      splashAlt:"assets/ui/skins/cherry_ui_skins/optimized/warrior_cherry_2.webp",
+      cutout:"assets/ui/skins/cherry_ui_skins/optimized/warrior_cherry_transp_1.webp",
+      cutoutAlt:"assets/ui/skins/cherry_ui_skins/optimized/warrior_cherry_transp_2.webp",
+      thumbnail:"assets/ui/skins/cherry_ui_skins/optimized/warrior_cherry_thumb_1.webp"
     }),
     wuxia_sakura_cherry:Object.freeze({
-      icon:"assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_icon.jpg",
-      splash:"assets/player/skins/wuxia_sakura_cherry/wuxia_sakura_cherry_splashart.jpg"
+      icon:"assets/ui/skins/cherry_ui_skins/optimized/sakura_dancer_cherry_icon_1.webp",
+      splash:"assets/ui/skins/cherry_ui_skins/optimized/sakura_dancer_cherry_1.webp",
+      splashAlt:"assets/ui/skins/cherry_ui_skins/optimized/sakura_dancer_cherry_2.webp",
+      cutout:"assets/ui/skins/cherry_ui_skins/optimized/sakura_dancer_cherry_transp_1.webp",
+      cutoutAlt:"assets/ui/skins/cherry_ui_skins/optimized/sakura_dancer_cherry_transp_2.webp",
+      thumbnail:"assets/ui/skins/cherry_ui_skins/optimized/sakura_dancer_cherry_thumb_1.webp"
     })
   });
 
@@ -127,7 +171,7 @@
 
   function canonicalAssets(skin) {
     const skinId = typeof skin === "string" ? skin : skin?.id;
-    if (!skinId || skinId === "mage_cherry") return null;
+    if (!skinId) return null;
     return SKIN_ASSETS[skinId] || null;
   }
 
@@ -140,6 +184,8 @@
       try {
         skin.icon = assets.icon;
         skin.splash = assets.splash;
+        if (assets.cutout) skin.cutout = assets.cutout;
+        if (assets.thumbnail) skin.thumbnail = assets.thumbnail;
         if ("splashArt" in skin) skin.splashArt = assets.splash;
         if ("splashart" in skin) skin.splashart = assets.splash;
       } catch (error) {
@@ -884,7 +930,7 @@
   }
 
   window.CHERRIFT_SKIN_UI = Object.freeze({
-    version:"0.9.9.3-pc-splash-stable",
+    version:"0.9.9.4-cherry-webp",
     refresh:schedule,
     selectedSkin,
     skinElement,

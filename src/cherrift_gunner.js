@@ -30,7 +30,7 @@
     desc:"A mobile ranged Cherry with twin pistols and softly glowing pink bullets.",
     skillDesc:"Spins once and fires 48 bullets around her over 0.8 seconds. Each bullet deals 35% ATK damage.",
     stats:{damage:2,speed:4}, gradient:["#ff9bc9","#352038"], element:"cute",
-    icon:`${ROOT}gunner_cherry_icon.png`, splash:`${ROOT}gunner_cherry_splashart.png`,
+    icon:"assets/ui/skins/cherry_ui_skins/optimized/gunner_cherry_icon_1.webp", splash:"assets/ui/skins/cherry_ui_skins/optimized/gunner_cherry_1.webp",
     skillIcon:`${ROOT}gunner_cherry_skill_icon.png`
   });
   const proto = CherriftGame.prototype;
