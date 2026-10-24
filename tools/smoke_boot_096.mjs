@@ -1199,6 +1199,28 @@ try {
   );
 
   log("releasing lobby");
+  assert.equal(window.__CHERRIFT_ONLINE_INSTALLED__,true,`${requested}: online authority hooks install before gameplay can start`);
+  click(
+    window,
+    document.getElementById("bootStartV096"),
+    `${requested} click-to-start`
+  );
+
+  await waitFor(
+    () => !document.body.classList.contains("v060-booting"),
+    "lobby release",
+    10000
+  );
+
+  // Start consumes every opening gesture. Menu interactions must wait until
+  // the fading boot overlay is removed, just as they do in the browser.
+  await waitFor(
+    () => !document.getElementById("bootV060"),
+    "boot overlay dismissal before menu interactions",
+    10000
+  );
+  assert.equal(window.CHERRIFT_BOOT.getState().released,true,`${requested}: Start completed before menu actions`);
+
   if (gmReturning) {
     assert.equal(window.CHERRIFT_AUTH.getState().onlinePolicy,true);
     assert.equal(window.CHERRIFT_PREBETA.hasActiveGmAccess(window.UI.save),true);
@@ -1221,18 +1243,6 @@ try {
     await new Promise(resolve=>setTimeout(resolve,150));
     assert.equal(document.body.classList.contains("obtained-open-v098"),false,"Claim stays closed");
   }
-  assert.equal(window.__CHERRIFT_ONLINE_INSTALLED__,true,`${requested}: online authority hooks install before gameplay can start`);
-  click(
-    window,
-    document.getElementById("bootStartV096"),
-    `${requested} click-to-start`
-  );
-
-  await waitFor(
-    () => !document.body.classList.contains("v060-booting"),
-    "lobby release",
-    10000
-  );
 
   if (requested === "desktop" || requested === "phone-portrait") {
     if (requested === "desktop") {
