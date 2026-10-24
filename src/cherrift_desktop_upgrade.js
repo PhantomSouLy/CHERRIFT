@@ -123,7 +123,7 @@
     if(event.key==='ArrowRight')index++;else if(event.key==='ArrowLeft')index--;else if(event.key==='ArrowDown')index+=6;else if(event.key==='ArrowUp')index-=6;else if(event.key==='Home')index=0;else if(event.key==='End')index=nodes.length-1;else return;
     event.preventDefault();state.selected=nodes[(index+nodes.length)%nodes.length].id;sync();q(`[data-cc-select="${state.selected}"]`,q('#playerUpgrade'))?.focus({preventScroll:true});
   },true);
-  document.addEventListener('pointerover',event=>{if(!state.active||!desktop())return;const b=event.target.closest('#playerUpgrade button');if(b&&!b.disabled&&!b.contains(event.relatedTarget)&&performance.now()-state.hover>100){state.hover=performance.now();window.CHERRIFT_V060?.playClickSound?.();}},{passive:true});
+  document.addEventListener('pointerover',event=>{if(!state.active||!desktop())return;const b=event.target.closest('#playerUpgrade button');if(b&&!b.disabled&&!b.contains(event.relatedTarget)&&performance.now()-state.hover>100){state.hover=performance.now();if(!window.CHERRIFT_MENU_AUDIO)window.CHERRIFT_V060?.playClickSound?.();}},{passive:true});
   window.addEventListener('resize',schedule,{passive:true});for(const e of ['cherrift:languagechange','cherrift:savechange'])window.addEventListener(e,()=>{state.signature='';schedule();});
   window.addEventListener('cherrift:runtime-clean-ready',start,{once:true});window.CHERRIFT_DESKTOP_UPGRADE=Object.freeze({sync,isDesktop:desktop});
 })();

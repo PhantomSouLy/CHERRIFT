@@ -48,7 +48,7 @@
     root.addEventListener('pointerover', event => {
       const button = event.target.closest('button');
       if (!button || button.contains(event.relatedTarget) || button.disabled || performance.now()-lastHover < 90) return;
-      lastHover=performance.now(); window.CHERRIFT_V060?.playClickSound?.();
+      lastHover=performance.now(); if(!window.CHERRIFT_MENU_AUDIO)window.CHERRIFT_V060?.playClickSound?.();
     });
     root.querySelector('dialog').addEventListener('close',()=>dialogFocus?.focus({preventScroll:true}));
   }

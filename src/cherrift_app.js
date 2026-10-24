@@ -9549,6 +9549,7 @@ function clickableControlFrom(target) {
 }
 
 function playClickSound() {
+  if (window.CHERRIFT_MENU_AUDIO) return window.CHERRIFT_MENU_AUDIO.play("click");
   const volume = clickSoundVolume();
   if (volume <= 0) return false;
   ensureClickSounds();
@@ -9569,6 +9570,7 @@ function playClickSound() {
 function bindClickSounds() {
   if (runtime.clickSoundBound) return;
   runtime.clickSoundBound = true;
+  if (window.CHERRIFT_MENU_AUDIO) return;
   ensureClickSounds();
   window.addEventListener("click", event => {
     if (!event.isTrusted || !clickableControlFrom(event.target)) return;

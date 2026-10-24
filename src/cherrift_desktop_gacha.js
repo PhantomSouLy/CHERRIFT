@@ -94,7 +94,7 @@
     if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();back();}
     else if(['ArrowLeft','ArrowRight','Home','End'].includes(event.key)&&event.target.closest('#gcoDots')){const index=tiers.indexOf(current),next=event.key==='Home'?0:event.key==='End'?2:Math.max(0,Math.min(2,index+(event.key==='ArrowRight'?1:-1)));event.preventDefault();q(`[data-gco-tier="${tiers[next]}"]`,root)?.click();q(`[data-gco-tier="${tiers[next]}"]`,root)?.focus({preventScroll:true});}
   },true);
-  document.addEventListener('pointerover',event=>{if(!active||!desktop())return;const b=event.target.closest('#gachaChestOnlyV12 button');if(b&&!b.disabled&&!b.contains(event.relatedTarget)&&performance.now()-lastHover>100){lastHover=performance.now();window.CHERRIFT_V060?.playClickSound?.();}},{passive:true});
+  document.addEventListener('pointerover',event=>{if(!active||!desktop())return;const b=event.target.closest('#gachaChestOnlyV12 button');if(b&&!b.disabled&&!b.contains(event.relatedTarget)&&performance.now()-lastHover>100){lastHover=performance.now();if(!window.CHERRIFT_MENU_AUDIO)window.CHERRIFT_V060?.playClickSound?.();}},{passive:true});
   window.addEventListener('resize',schedule,{passive:true});for(const e of ['cherrift:languagechange','cherrift:economychange','cherrift:savechange'])window.addEventListener(e,schedule);
   window.addEventListener('cherrift:runtime-clean-ready',start,{once:true});window.CHERRIFT_DESKTOP_GACHA=Object.freeze({sync,isDesktop:desktop});
 })();

@@ -131,7 +131,7 @@
   document.addEventListener('pointerover', event => {
     if (!state.active || !desktop()) return;
     const b = event.target.closest('#mailBugfixV0941 button,#mailDetailModalV096 button');
-    if (b && !b.disabled && !b.contains(event.relatedTarget) && performance.now() - state.hover > 100) { state.hover = performance.now(); window.CHERRIFT_V060?.playClickSound?.(); }
+    if (b && !b.disabled && !b.contains(event.relatedTarget) && performance.now() - state.hover > 100) { state.hover = performance.now(); if(!window.CHERRIFT_MENU_AUDIO)window.CHERRIFT_V060?.playClickSound?.(); }
   }, { passive: true });
   document.addEventListener('scroll', event => { if (state.active && event.target === state.list) state.scroll = state.list.scrollTop; }, true);
   function start() {

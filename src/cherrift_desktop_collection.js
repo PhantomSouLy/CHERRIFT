@@ -234,7 +234,7 @@
     event.preventDefault(); const next = list[Math.max(0, Math.min(list.length - 1, index))]; next?.card.focus({ preventScroll: true }); next?.card.scrollIntoView?.({ block: 'nearest' }); if (next) select(next.card);
   }, true);
   let hover = 0;
-  document.addEventListener('pointerover', event => { if (!state.active || !desktop()) return; const b = event.target.closest('#libraryV0551 button'); if (b && !b.disabled && !b.contains(event.relatedTarget) && performance.now() - hover > 100) { hover = performance.now(); window.CHERRIFT_V060?.playClickSound?.(); } }, { passive: true });
+  document.addEventListener('pointerover', event => { if (!state.active || !desktop()) return; const b = event.target.closest('#libraryV0551 button'); if (b && !b.disabled && !b.contains(event.relatedTarget) && performance.now() - hover > 100) { hover = performance.now(); if(!window.CHERRIFT_MENU_AUDIO)window.CHERRIFT_V060?.playClickSound?.(); } }, { passive: true });
   function start() {
     if (state.started || !q('#app')) return; state.started = true;
     new MutationObserver(records => { if (records.some(r => !r.target.closest?.('[data-rg-owned]') && (r.target === document.body || r.target === q('#app') || r.target.parentElement === q('#app') || r.target.closest?.('#libraryV0551,#collectionModalV084')))) schedule(); }).observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ['class', 'disabled'] }); sync();

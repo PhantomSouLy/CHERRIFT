@@ -139,7 +139,7 @@
     if(!desktop() || !document.body.classList.contains('sakura-skins'))return;
     const button=event.target.closest('#skins button');
     if(!button || button.disabled || button.contains(event.relatedTarget) || performance.now()-lastHover<90)return;
-    lastHover=performance.now();window.CHERRIFT_V060?.playClickSound?.();
+    lastHover=performance.now();if(!window.CHERRIFT_MENU_AUDIO)window.CHERRIFT_V060?.playClickSound?.();
   },{passive:true});
   document.addEventListener('pointerdown',event=>{
     if(desktop() && visible($('skins'))){const button=event.target.closest('#skins [data-v093-skin]');if(button)state.focusKey=button.dataset.v093Skin;}

@@ -157,7 +157,7 @@
   }, true);
   document.addEventListener('pointerover', event => {
     if (!state.active || !desktop()) return; const b = event.target.closest('#settings button');
-    if (b && !b.disabled && !b.contains(event.relatedTarget) && performance.now() - state.hover > 110) { state.hover = performance.now(); window.CHERRIFT_V060?.playClickSound?.(); }
+    if (b && !b.disabled && !b.contains(event.relatedTarget) && performance.now() - state.hover > 110) { state.hover = performance.now(); if(!window.CHERRIFT_MENU_AUDIO)window.CHERRIFT_V060?.playClickSound?.(); }
   }, { passive: true });
   window.addEventListener('resize', schedule, { passive: true });
   for (const e of ['cherrift:savechange', 'cherrift:languagechange']) window.addEventListener(e, schedule);

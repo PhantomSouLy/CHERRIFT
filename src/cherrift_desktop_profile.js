@@ -142,7 +142,7 @@
     if (event.key === 'Escape') { event.preventDefault(); event.stopImmediatePropagation(); back(); }
     else if (event.target.matches('.profile-avatar-bf') && ['Enter', ' '].includes(event.key)) { event.preventDefault(); state.returnFocus = 'frames'; event.target.click(); schedule(); }
   }, true);
-  document.addEventListener('pointerover', event => { if (!state.active || !desktop()) return; const b = event.target.closest('#profileBugfixV0941 button'); if (b && !b.disabled && !b.contains(event.relatedTarget) && performance.now() - state.hover > 100) { state.hover = performance.now(); window.CHERRIFT_V060?.playClickSound?.(); } }, { passive: true });
+  document.addEventListener('pointerover', event => { if (!state.active || !desktop()) return; const b = event.target.closest('#profileBugfixV0941 button'); if (b && !b.disabled && !b.contains(event.relatedTarget) && performance.now() - state.hover > 100) { state.hover = performance.now(); if(!window.CHERRIFT_MENU_AUDIO)window.CHERRIFT_V060?.playClickSound?.(); } }, { passive: true });
   window.addEventListener('resize', schedule, { passive: true }); for (const e of ['cherrift:savechange', 'cherrift:languagechange']) window.addEventListener(e, schedule);
   window.addEventListener('cherrift:runtime-clean-ready', start, { once: true });
   window.CHERRIFT_DESKTOP_PROFILE = Object.freeze({ sync, isDesktop: desktop });

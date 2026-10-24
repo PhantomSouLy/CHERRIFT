@@ -13,4 +13,43 @@ test('PC presentation retains native controls, boot phase, progress and save',()
 test('accessible progress reads native phase values without advancing them',()=>{const f=fixture();try{assert.equal(f.q('#bootFillV060').parentElement.getAttribute('aria-valuenow'),'37');assert.equal(f.q('#loadingFill').parentElement.getAttribute('aria-valuenow'),'72');f.q('#loadingFill').style.width='100%';f.sync();assert.equal(f.q('#loadingFill').parentElement.getAttribute('aria-valuenow'),'100');assert(f.q('#stageLoading').classList.contains('hidden'));assert.equal(f.q('#loadingText').textContent,'Preparing Cherry...')}finally{f.close()}});
 test('resize removes only added elements and restores native accessibility attributes',()=>{const f=fixture();try{f.w.innerWidth=390;f.sync();assert.equal(f.w.document.body.innerHTML,f.before);f.w.innerWidth=1920;f.sync();assert.equal(f.q('#bootV060').querySelectorAll('.mlj-tip').length,1);assert.equal(f.q('#stageLoading').querySelectorAll('.mlj-motes>i').length,12)}finally{f.close()}});
 test('language switches and repeated sync never duplicate decorative content',()=>{const f=fixture();try{f.w.UI.save.settings.language='hu';for(let i=0;i<5;i++)f.sync();assert(f.q('.mlj-tip').textContent.startsWith('TIPP'));assert.equal(f.w.document.querySelectorAll('.mlj-tip').length,2);assert.equal(f.w.document.querySelectorAll('.mlj-motes').length,2);assert.equal(f.q('#bootFillV060').parentElement.getAttribute('aria-label'),'Betöltés állapota')}finally{f.close()}});
-test('PC indicator uses the supplied 4 by 2 sprite without replacing original logo or backgrounds',()=>{const png=readFileSync(new URL('../assets/ui/loading_sprite_sheet.png',import.meta.url));assert.equal(png.readUInt32BE(16),1774);assert.equal(png.readUInt32BE(20),887);assert.equal(png[25],6);const css=readFileSync(new URL('../assets/cherrift_desktop_loading.css',import.meta.url),'utf8');assert(css.includes('background-size:400% 200%'));assert(css.includes('87.5%,100%{background-position:100% 100%}'));assert(!css.includes('base_cherry_walk_right'));assert(!css.includes('loading_pc_1920x1080'));assert(!css.includes('cherrift_logo.png'));});
+test('Sakura Path keeps the supplied 4 by 2 sprite and existing logo',()=>{const png=readFileSync(new URL('../assets/ui/loading_sprite_sheet.png',import.meta.url));assert.equal(png.readUInt32BE(16),1774);assert.equal(png.readUInt32BE(20),887);assert.equal(png[25],6);const css=readFileSync(new URL('../assets/cherrift_desktop_loading.css',import.meta.url),'utf8');assert(css.includes('background-size:400% 200%'));assert(css.includes('87.5%,100%{background-position:100% 100%}'));assert(!css.includes('base_cherry_walk_right'));assert(!css.includes('loading_pc_1920x1080'));assert(!css.includes('cherrift_logo.png'));});
+
+test('the curved path and original Cherry sheet mirror native progress without inventing it',()=>{
+ const f=fixture();try{
+ f.q('#bootV060').dataset.bootPhase='loading';f.q('#bootFillV060').style.width='65%';f.sync();
+ const path=f.q('#bootV060 .sakura-path');assert(!path.hidden);
+ assert.equal(f.q('#bootV060 .sakura-path-fill').style.strokeDashoffset,'35');
+ assert.equal(f.q('#bootV060 .sakura-runner').style.left,'64.4%');
+ assert(!path.classList.contains('sakura-path-ready'));
+ f.q('#bootV060').dataset.bootPhase='start';f.q('#bootFillV060').style.width='100%';f.sync();
+ assert(path.classList.contains('sakura-path-ready'));assert.equal(f.q('#bootV060 .sakura-path-fill').style.strokeDashoffset,'0');
+ assert.equal(f.q('#bootV060').querySelectorAll('.sakura-start-ornament').length,1);
+ assert.equal(f.q('#bootFillV060').style.width,'100%');assert.equal(JSON.stringify(f.w.UI.save),f.save);
+ }finally{f.close()}
+});
+
+test('hidden scenes pause their water and scenery; stage loading never adds a lobby prompt',()=>{
+ const f=fixture();try{
+ assert.equal(f.q('#stageLoading .sakura-scene').dataset.motion,'paused');
+ f.q('#stageLoading').classList.remove('hidden');f.sync();assert.equal(f.q('#stageLoading .sakura-scene').dataset.motion,'running');
+ f.q('#loadingFill').style.width='100%';f.sync();assert(!f.q('#stageLoading .sakura-path').classList.contains('sakura-path-ready'));
+ assert.equal(f.q('#stageLoading .sakura-start-ornament'),null);
+ f.q('#stageLoading').classList.add('hidden');f.sync();assert.equal(f.q('#stageLoading .sakura-scene').dataset.motion,'paused');
+ for(let i=0;i<5;i++)f.sync();assert.equal(f.q('#bootV060').querySelectorAll('.sakura-scene').length,1);
+ assert.equal(f.q('#stageLoading').querySelectorAll('.sakura-water').length,1);
+ }finally{f.close()}
+});
+
+test('production scene uses optimized WebP layers with no baked-in interface',()=>{
+ let total=0;
+ for(const name of ['landscape','floating-island','sakura-branch']){
+ const image=readFileSync(new URL(`../assets/ui/loading/sakura-path/${name}.webp`,import.meta.url));
+ assert.equal(image.toString('ascii',0,4),'RIFF');assert.equal(image.toString('ascii',8,12),'WEBP');total+=image.length;
+ }
+ assert(total<600000,'the entire three-layer scene remains under 600 kB');
+ const css=readFileSync(new URL('../assets/cherrift_desktop_loading.css',import.meta.url),'utf8');
+ assert(css.includes('.sakura-path-ready .sakura-runner {opacity:0;visibility:hidden}'));
+ assert(css.includes('#bootStartV096[hidden] {display:none!important}'));
+ assert(css.includes('@media(prefers-reduced-motion:reduce)'));
+});

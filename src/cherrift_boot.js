@@ -4,7 +4,7 @@
   if (window.__CHERRIFT_BOOT_V096__) return;
   window.__CHERRIFT_BOOT_V096__ = true;
 
-  const VERSION = "0.9.8.1-dom-ready-gate";
+  const VERSION = "0.9.8.2-sakura-start";
   const startedAt = performance.now();
   const minimumVisibleMs = 900;
   const warningAfterMs = 12000;
@@ -21,12 +21,14 @@
     stable:false,
     phase:"loading",
     released:false,
+    completing:false,
     authMode:"checking",
     loopToken:0,
     warningShown:false
   };
 
   let shownProgress = 3;
+  let startRevealTimer = 0;
 
   const byId = value => document.getElementById(value);
   const boot = () => byId("bootV060");
@@ -266,6 +268,9 @@
   }
 
   function setPhase(phase) {
+    window.clearTimeout(startRevealTimer);
+    startRevealTimer = 0;
+    state.completing = false;
     state.phase = phase;
     state.loopToken += 1;
 
@@ -332,7 +337,7 @@
     }
 
     if (start) {
-      start.textContent = phone ? "Tap here" : "Click here";
+      start.textContent = phone ? "Tap here" : "Press any button";
     }
   }
 
@@ -406,20 +411,32 @@
   }
 
   function showStart(mode = "guest") {
-    if (state.released) return;
-
+    if (state.released || !state.stable || state.completing || state.phase === "start") return;
+    if (!["guest", "discord"].includes(authMode())) return;
     state.authMode = mode;
     paintProgress(100);
     syncCopy();
-    setPhase("start");
-
-    if (!isPhoneBoot()) {
-      requestAnimationFrame(() => {
-        byId("bootStartV096")?.focus({
-          preventScroll:true
-        });
-      });
-    }
+    // Keep the runner visible while the last .55s of the curved meter settles.
+    // Readiness alone must not replace it before the line visibly reaches 100%.
+    setPhase("loading");
+    state.completing = true;
+    const token = state.loopToken;
+    const duration = matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 600;
+    startRevealTimer = window.setTimeout(() => {
+      startRevealTimer = 0;
+      state.completing = false;
+      if (state.released || token !== state.loopToken) return;
+      const current = refreshReadiness();
+      if (!state.stable || !["guest", "discord"].includes(authMode(current))) {
+        startLoadingLoop();
+        return;
+      }
+      syncCopy();
+      setPhase("start");
+      if (!isPhoneBoot()) {
+        requestAnimationFrame(() => byId("bootStartV096")?.focus({preventScroll:true}));
+      }
+    }, duration);
   }
 
   function startLoadingLoop(message = "") {
@@ -696,42 +713,33 @@
     requestAnimationFrame(() => tick(token));
   }
 
-  document.addEventListener(
-    "click",
-    event => {
-      const auth =
-        event.target.closest?.("[data-boot-auth]");
-
-      if (auth && !auth.disabled) {
-        event.preventDefault();
-        chooseAuth(auth.dataset.bootAuth);
-        return;
-      }
-
-      if (
-        event.target.closest?.("#bootStartV096")
-      ) {
-        event.preventDefault();
-        releaseToLobby();
-      }
+  function consumeStartInput(event) {
+    // Swallow the opening gesture (and follow-up input during the fade) so it
+    // cannot also activate a lobby button or gameplay shortcut underneath.
+    if (state.released && boot()) {
+      event.preventDefault(); event.stopImmediatePropagation();
+      return true;
     }
-  );
+    if (state.phase !== "start" || !state.stable || state.released) return false;
+    event.preventDefault(); event.stopImmediatePropagation();
+    releaseToLobby();
+    return true;
+  }
 
-  document.addEventListener(
-    "keydown",
-    event => {
-      if (
-        state.phase === "start" &&
-        (
-          event.key === "Enter" ||
-          event.key === " "
-        )
-      ) {
-        event.preventDefault();
-        releaseToLobby();
-      }
+  document.addEventListener("click", event => {
+    if (consumeStartInput(event)) return;
+    const auth = event.target.closest?.("[data-boot-auth]");
+    if (auth && !auth.disabled) {
+      event.preventDefault();
+      chooseAuth(auth.dataset.bootAuth);
     }
-  );
+  }, true);
+
+  document.addEventListener("keydown", event => {
+    // Leave browser shortcuts and IME composition to the browser.
+    if (event.repeat || event.isComposing || event.ctrlKey || event.metaKey || event.altKey) return;
+    consumeStartInput(event);
+  }, true);
 
   window.addEventListener(
     "cherrift:authgate",

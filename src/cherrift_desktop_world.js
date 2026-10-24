@@ -203,7 +203,7 @@
   }, true);
   document.addEventListener('pointerover', event => {
     if (!desktop() || !state.root) return; const b = event.target.closest('[data-wg-owned] button');
-    if (b && !b.disabled && !b.contains(event.relatedTarget) && performance.now() - state.hover > 100) { state.hover = performance.now(); window.CHERRIFT_V060?.playClickSound?.(); }
+    if (b && !b.disabled && !b.contains(event.relatedTarget) && performance.now() - state.hover > 100) { state.hover = performance.now(); if(!window.CHERRIFT_MENU_AUDIO)window.CHERRIFT_V060?.playClickSound?.(); }
   }, { passive: true });
   document.addEventListener('pointermove', event => {
     if (!state.root || !desktop() || reduced()) return;

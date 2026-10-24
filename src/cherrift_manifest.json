@@ -1,9 +1,10 @@
 {
   "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "1024-cherry-webp",
+  "buildId": "1024-crystal-audio",
   "entrypoints": {
     "application": "src/cherrift_app.js",
+    "menuAudio": "src/cherrift_menu_audio.js",
     "presentation": "src/cherrift_presentation.js",
     "gunner": "src/cherrift_gunner.js",
     "runtime": "src/cherrift_runtime.js",

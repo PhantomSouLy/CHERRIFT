@@ -1,56 +1,105 @@
-/* Moonlit Journey / PC only. Original background and logo assets are retained. */
-@media(min-width:821px){
- html[data-cr-pc-loading]{--mlj-edge:clamp(26px,4.5vw,96px);--mlj-bottom:clamp(24px,5vh,70px);--mlj-band:clamp(112px,15vh,178px);--mlj-pink:#f6b4d5;--mlj-gold:#dcb6a2}
- html[data-cr-pc-loading] #bootV060 .boot-brand-v096 {left:var(--mlj-edge)!important;top:clamp(60px,15vh,230px)!important;width:clamp(300px,35vw,670px)!important;text-align:left!important;transform:none!important;animation:mlj-brand-in .9s cubic-bezier(.2,.75,.25,1) both}
- html[data-cr-pc-loading] #bootV060 .boot-logo-v060 {width:100%!important;height:auto!important;max-height:clamp(140px,24vh,300px)!important;object-fit:contain!important;object-position:left center!important;margin:0!important;filter:drop-shadow(0 9px 20px #13081780) drop-shadow(0 0 28px #f1a0cf35)!important}
- html[data-cr-pc-loading] #bootV060 .boot-sub-v060 {margin:18px 0 0!important;letter-spacing:.35em!important;font:10px/1.5 system-ui!important;color:#ffe4f1!important}
- html[data-cr-pc-loading] #bootV060[data-boot-phase=loading]::after,html[data-cr-pc-loading] #stageLoading::after {content:'';position:absolute;z-index:0;left:var(--mlj-edge);right:var(--mlj-edge);bottom:var(--mlj-bottom);height:var(--mlj-band);border:1px solid #d6a8bb70;border-radius:8px;background:linear-gradient(110deg,#241127ee,#26152acc 60%,#1d1023e0);box-shadow:inset 0 1px #ffe0ed1a,0 18px 45px #0c04184d;backdrop-filter:blur(14px);pointer-events:none;animation:mlj-band-in .6s ease both}
- html[data-cr-pc-loading] #bootV060 .boot-stage-v096 {left:var(--mlj-edge)!important;right:auto!important;bottom:calc(var(--mlj-bottom) + 12px)!important;width:min(510px,42vw)!important;transform:none!important;z-index:4!important}
- html[data-cr-pc-loading] #bootV060[data-boot-phase=loading] .boot-stage-v096 {left:39%!important;right:calc(var(--mlj-edge) + 35px)!important;bottom:calc(var(--mlj-bottom) + var(--mlj-band)/2 - 28px)!important;width:auto!important;display:block!important}
- html[data-cr-pc-loading] #bootV060 .boot-auth-v096 {border-radius:12px!important;border-color:#dbacc0a6!important;background:linear-gradient(120deg,#27122bea,#341930d9)!important;box-shadow:0 15px 50px #0c061955,inset 0 1px #ffe7f11a!important;animation:mlj-band-in .5s ease both}
- html[data-cr-pc-loading] #bootV060 .boot-auth-v096 h2 {font:500 clamp(24px,2vw,34px)/1.2 Georgia!important;color:#ffe2f2!important}
- html[data-cr-pc-loading] #bootV060 .boot-auth-actions-v096 button {transition:transform .18s ease,box-shadow .18s ease,filter .18s ease!important}
- html[data-cr-pc-loading] #bootV060 .boot-auth-actions-v096 button:hover {transform:translateY(-2px);box-shadow:0 5px 25px #ee90c335!important}
- html[data-cr-pc-loading] #bootV060 .boot-start-v096 {font:500 clamp(22px,2.5vw,38px)/1.2 Georgia!important;letter-spacing:.08em!important;color:#ffe1f0!important;text-shadow:0 0 25px #ffaccf66;animation:mlj-start-glow 2.6s ease-in-out infinite!important;min-height:66px!important;text-align:left!important}
- html[data-cr-pc-loading] :is(#bootV060,#stageLoading) :is(.boot-track-v060,.loading-bar) {position:relative!important;height:12px!important;border:1px solid #e6c2b09c!important;border-radius:20px!important;background:#160d218f!important;overflow:hidden!important;box-shadow:inset 0 1px 5px #0d041a99,0 0 14px #e99cc524!important}
- html[data-cr-pc-loading] :is(#bootV060,#stageLoading) :is(#bootFillV060,#loadingFill) {position:relative!important;display:block!important;height:100%!important;border-radius:inherit!important;background:linear-gradient(90deg,#a44d85,#f19fcb 55%,#ffe6c7)!important;box-shadow:0 0 15px #ffc3db80!important;transition:width .35s cubic-bezier(.2,.75,.25,1)!important;overflow:hidden!important}
- html[data-cr-pc-loading] :is(#bootV060,#stageLoading) :is(#bootFillV060,#loadingFill)::after {content:'';position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(100deg,transparent 15%,#fff4 45%,#fff8 50%,transparent 80%);animation:mlj-progress-sheen 2s ease-in-out infinite;pointer-events:none}
- html[data-cr-pc-loading] #bootV060 .boot-status-v060 {margin-top:12px!important;align-items:center!important;font:12px/1.5 system-ui!important;color:#edcadf!important}
- html[data-cr-pc-loading] #bootV060 #bootPercentV060 {font:25px/1 Georgia!important;font-weight:400!important;color:#ffe6e5!important;min-width:3.5ch;text-align:right;font-variant-numeric:tabular-nums}
- html[data-cr-pc-loading] :is(#bootV060,#stageLoading) .cherrift-loading-companion-v099 {position:absolute!important;z-index:5!important;left:calc(var(--mlj-edge) + 26px)!important;right:auto!important;bottom:calc(var(--mlj-bottom) + var(--mlj-band)/2 - 48px)!important;width:calc(34vw - var(--mlj-edge))!important;min-height:96px!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:12px!important;transform:none!important;pointer-events:none;filter:drop-shadow(0 4px 8px #13031f40)!important}
- html[data-cr-pc-loading] #bootV060:not([data-boot-phase=loading]) .cherrift-loading-companion-v099 {display:none!important}
- html[data-cr-pc-loading] :is(#bootV060,#stageLoading) .cherrift-loading-sprite-bob-v099 {position:relative!important;order:-1!important;flex:0 0 96px!important;width:96px!important;height:96px!important;animation:none!important}
- html[data-cr-pc-loading] :is(#bootV060,#stageLoading) .cherrift-loading-sprite-v099 {width:96px!important;height:96px!important;background-image:url('ui/loading_sprite_sheet.png')!important;background-size:400% 200%!important;background-repeat:no-repeat!important;background-position:0 0;animation:mlj-cherry-run .8s steps(1,end) infinite!important;filter:drop-shadow(0 2px 5px #f6b4d52b)}
- html[data-cr-pc-loading] :is(#bootV060,#stageLoading) .cherrift-loading-sprite-bob-v099::after {content:'';position:absolute;left:7px;bottom:9px;width:30px;height:2px;border-radius:100%;background:#ffd6e5aa;box-shadow:-8px -5px 0 -0.5px #efb9d399;transform-origin:right center;animation:mlj-run-trail .4s ease-out infinite;pointer-events:none}
- html[data-cr-pc-loading] :is(#bootV060,#stageLoading) .cherrift-loading-label-v099 {padding:0!important;display:flex!important;align-items:baseline!important;font:500 clamp(22px,2.5vw,42px)/1.2 Georgia!important;letter-spacing:.02em!important;color:#ffe3f2!important;text-shadow:0 0 18px #f4a2ce33!important;white-space:nowrap}
- html[data-cr-pc-loading] :is(#bootV060,#stageLoading) .cherrift-loading-word-v099>i {animation:none!important}
- html[data-cr-pc-loading] :is(#bootV060,#stageLoading) .cherrift-loading-dots-v099>i {animation:mlj-dot 1.2s ease-in-out infinite!important;width:.26em!important}
- html[data-cr-pc-loading] :is(#bootV060,#stageLoading) .cherrift-loading-dots-v099>i:nth-child(2) {animation-delay:.18s!important}
- html[data-cr-pc-loading] :is(#bootV060,#stageLoading) .cherrift-loading-dots-v099>i:nth-child(3) {animation-delay:.36s!important}
- html[data-cr-pc-loading] #stageLoading .loading-card {display:contents!important}
- html[data-cr-pc-loading] #stageLoading .loading-logo {position:absolute!important;z-index:2!important;left:var(--mlj-edge)!important;top:15vh!important;width:35vw!important;max-width:670px!important;height:auto!important;max-height:24vh!important;object-fit:contain!important;object-position:left center!important;animation:mlj-brand-in .7s ease both;filter:drop-shadow(0 8px 25px #0d031b80)!important}
- html[data-cr-pc-loading] #stageLoading .loading-bar {position:absolute!important;z-index:3!important;left:39%!important;right:calc(var(--mlj-edge) + 35px)!important;bottom:calc(var(--mlj-bottom) + var(--mlj-band)/2 + 2px)!important;width:auto!important;margin:0!important}
- html[data-cr-pc-loading] #stageLoading #loadingText {position:absolute;z-index:3;left:39%;right:calc(var(--mlj-edge) + 35px);bottom:calc(var(--mlj-bottom) + var(--mlj-band)/2 - 29px);font:12px/1.5 system-ui!important;color:#edcadf!important;text-align:left}
- html[data-cr-pc-loading] #stageLoading #loadingStageName {position:absolute;z-index:3;left:39%;right:calc(var(--mlj-edge) + 35px);bottom:calc(var(--mlj-bottom) + var(--mlj-band)/2 + 25px);font:16px/1.5 Georgia!important;color:#ffe6f1!important;text-align:left;margin:0!important;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
- html[data-cr-pc-loading] :is(#bootV060,#stageLoading) .mlj-tip {position:absolute;z-index:4;bottom:calc(var(--mlj-bottom)/2 - 8px);left:var(--mlj-edge);right:var(--mlj-edge);margin:0;text-align:center;color:#e6c0d3;font:11px/1.5 Georgia;letter-spacing:.04em;pointer-events:none;text-shadow:0 2px 6px #14071c}
- html[data-cr-pc-loading] #bootV060:not([data-boot-phase=loading]) .mlj-tip {display:none}
- html[data-cr-pc-loading] :is(#bootV060,#stageLoading) .mlj-motes {position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none}
- html[data-cr-pc-loading] .mlj-motes>i {position:absolute;left:calc(4% + var(--n)*8%);bottom:-10%;width:calc(2px + var(--n)*.15px);height:5px;background:#f9cadc;border-radius:80% 10% 80% 10%;opacity:0;animation:mlj-mote-rise calc(8s + var(--n)*.35s) linear infinite;animation-delay:calc(var(--n)*-.9s);box-shadow:0 0 10px #ffbfe555}
- html[data-cr-pc-loading] #bootV060.done .mlj-motes>i,html[data-cr-pc-loading] #stageLoading.hidden .mlj-motes>i {animation-play-state:paused}
- html[data-cr-pc-loading] :is(#bootV060,#stageLoading) button:focus-visible {outline:2px solid #ffdaee!important;outline-offset:5px!important}
- @media(max-width:1100px){html[data-cr-pc-loading] :is(#bootV060,#stageLoading) .cherrift-loading-sprite-bob-v099 {flex-basis:72px!important;width:72px!important;height:72px!important}html[data-cr-pc-loading] :is(#bootV060,#stageLoading) .cherrift-loading-sprite-v099 {width:72px!important;height:72px!important}html[data-cr-pc-loading] :is(#bootV060,#stageLoading) .cherrift-loading-companion-v099 {gap:8px!important}html[data-cr-pc-loading] :is(#bootV060,#stageLoading) .cherrift-loading-label-v099 {font-size:23px!important}html[data-cr-pc-loading] #bootV060 .boot-auth-v096 {padding:18px!important}html[data-cr-pc-loading] #bootV060 .boot-sub-v060 {font-size:9px!important;letter-spacing:.2em!important}}
- @media(max-height:650px){html[data-cr-pc-loading] {--mlj-bottom:24px;--mlj-band:105px}html[data-cr-pc-loading] #bootV060 .boot-brand-v096 {top:6vh!important}html[data-cr-pc-loading] #bootV060 .boot-logo-v060 {max-height:23vh!important}html[data-cr-pc-loading] #bootV060 .boot-sub-v060 {margin-top:8px!important}html[data-cr-pc-loading] #bootV060 .boot-auth-v096 {padding:14px 18px!important}html[data-cr-pc-loading] #bootV060 .boot-auth-v096 p {font-size:11px!important}html[data-cr-pc-loading] #bootV060 .boot-auth-actions-v096 button {min-height:40px!important}}
- @media(prefers-reduced-motion:reduce){
- html[data-cr-pc-loading] body :is(#bootV060,#stageLoading) :is(#bootFillV060,#loadingFill) {transition:none!important}
-
- html[data-cr-pc-loading] body :is(#bootV060,#stageLoading) :is(.boot-brand-v096,.loading-logo,.boot-start-v096,.cherrift-loading-sprite-v099,.cherrift-loading-sprite-bob-v099,.cherrift-loading-word-v099>i,.cherrift-loading-dots-v099>i,.mlj-motes>i),html[data-cr-pc-loading] body #bootV060[data-boot-phase]::after,html[data-cr-pc-loading] body #stageLoading::after,html[data-cr-pc-loading] body :is(#bootV060,#stageLoading) :is(#bootFillV060,#loadingFill)::after {animation:none!important;transition:none!important}
-html[data-cr-pc-loading] :is(#bootV060,#stageLoading) *,html[data-cr-pc-loading] :is(#bootV060,#stageLoading)::after,html[data-cr-pc-loading] :is(#bootV060,#stageLoading) *::after {animation:none!important;transition:none!important}}
+/* Sakura Path. Desktop composition; native mobile layout and controls remain. */
+@media (min-width:821px) {
+  html[data-cr-pc-loading] :is(#bootV060.boot-v060,#stageLoading.stage-loading) {
+    background-color:#291526!important;background-image:url('ui/loading/sakura-path/landscape.webp')!important;
+    background-size:cover!important;background-position:center!important;isolation:isolate;overflow:hidden!important;
+    --sakura-line-bottom:18vh;--sakura-line-height:6.8vw;
+  }
+  html[data-cr-pc-loading] :is(#bootV060,#stageLoading)::before,
+  html[data-cr-pc-loading] :is(#bootV060,#stageLoading)::after {display:none!important}
+  html[data-cr-pc-loading] #bootV060 .boot-shade-v096 {display:none}
+  html[data-cr-pc-loading] .sakura-scene {position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+  html[data-cr-pc-loading] .sakura-landscape {position:absolute;inset:-1.5%;animation:sakura-camera 26s ease-in-out infinite alternate;transform-origin:50% 58%}
+  html[data-cr-pc-loading] :is(.sakura-backdrop,.sakura-water,.sakura-falls) {position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+  html[data-cr-pc-loading] .sakura-water {opacity:.66}
+  html[data-cr-pc-loading] .sakura-falls {opacity:.38}
+  html[data-cr-pc-loading] .sakura-falls path {fill:none;stroke:#fff1e5;stroke-width:3;stroke-linecap:round;stroke-dasharray:7 17;filter:blur(1.4px);animation:sakura-fall 2s linear infinite}
+  html[data-cr-pc-loading] .sakura-island {position:absolute;object-fit:contain;filter:drop-shadow(0 10px 12px #63376026);pointer-events:none}
+  html[data-cr-pc-loading] .sakura-island-near {left:21%;top:9%;width:clamp(65px,8.5vw,180px);height:24%;animation:sakura-float 9s ease-in-out infinite alternate}
+  html[data-cr-pc-loading] .sakura-island-far {left:64%;top:7%;width:clamp(32px,4vw,85px);height:12%;opacity:.73;animation:sakura-float 12s -5s ease-in-out infinite alternate-reverse}
+  html[data-cr-pc-loading] .sakura-branch {position:absolute;left:-3%;top:-3%;width:49%;height:auto;transform-origin:0 7%;animation:sakura-wind 10s ease-in-out infinite alternate;filter:drop-shadow(0 5px 5px #34112c22)}
+  html[data-cr-pc-loading] .sakura-mist {position:absolute;left:-10%;right:-10%;height:12%;pointer-events:none;background:radial-gradient(ellipse at 30% 60%,#ffe8d22b,transparent 48%),radial-gradient(ellipse at 70% 40%,#ffc9df40,transparent 56%);filter:blur(14px);animation:sakura-mist 19s ease-in-out infinite alternate}
+  html[data-cr-pc-loading] .sakura-mist-one {top:55%}
+  html[data-cr-pc-loading] .sakura-mist-two {top:68%;opacity:.65;animation-duration:27s;animation-direction:alternate-reverse}
+  html[data-cr-pc-loading] .sakura-shade {position:absolute;inset:0;background:linear-gradient(180deg,#2410290d 0,transparent 45%,#210e2420 60%,#1d0c26a6 100%)}
+  html[data-cr-pc-loading] #bootV060 .boot-brand-v096 {z-index:3;top:2.5vh!important;left:50%!important;width:min(620px,45vw)!important;height:34vh;transform:translateX(-50%)!important;filter:drop-shadow(0 6px 15px #3d143a77)!important}
+  html[data-cr-pc-loading] #bootV060 .boot-logo-v060 {width:100%!important;height:100%!important;max-height:none!important;object-fit:contain!important;margin:0!important;filter:none!important}
+  html[data-cr-pc-loading] #bootV060 .boot-sub-v060 {display:none!important}
+  html[data-cr-pc-loading] #bootV060 .boot-stage-v096 {display:contents!important}
+  html[data-cr-pc-loading] #bootV060 .boot-auth-v096 {position:absolute;z-index:5;left:50%;bottom:8vh;width:min(560px,70vw);transform:translateX(-50%);border-radius:16px!important;border-color:#ffceda88!important;background:linear-gradient(135deg,#351a37e8,#51273fdb)!important;box-shadow:0 18px 65px #230d2b66,inset 0 1px #fff2!important;backdrop-filter:blur(18px)}
+  html[data-cr-pc-loading] #bootV060 .boot-auth-v096 h2 {font:500 clamp(24px,2vw,34px)/1.2 Georgia!important;color:#fff0f7!important}
+  html[data-cr-pc-loading] #bootV060 .boot-error-v062 {position:absolute;z-index:6;left:50%;bottom:7vh;width:min(560px,75vw);transform:translateX(-50%)}
+  /* Native meters remain available to assistive technology, the curved line mirrors them. */
+  html[data-cr-pc-loading] :is(#bootV060 .boot-track-v060,#stageLoading .loading-bar) {position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip-path:inset(50%)!important;border:0!important}
+  html[data-cr-pc-loading] #bootV060 .boot-loading-v096:not([hidden]) {display:contents!important}
+  html[data-cr-pc-loading] #bootV060 .boot-status-v060 {position:absolute!important;z-index:4;left:11.6%;right:11.6%;bottom:calc(var(--sakura-line-bottom) - 17px);display:flex!important;justify-content:space-between!important;gap:20px;margin:0!important;color:#fff0f4!important;font:clamp(11px,1vw,16px)/1.4 Georgia,serif!important;letter-spacing:.015em!important;text-shadow:0 2px 7px #2d0d2b,0 0 12px #2d0d2b}
+  html[data-cr-pc-loading] #bootPercentV060 {font-variant-numeric:tabular-nums;font-size:1.12em}
+  html[data-cr-pc-loading] :is(#bootV060,#stageLoading) .cherrift-loading-companion-v099 {display:none!important}
+  html[data-cr-pc-loading] .sakura-path {position:absolute;z-index:4;left:10%;width:80%;height:var(--sakura-line-height);bottom:var(--sakura-line-bottom);pointer-events:none;filter:drop-shadow(0 0 6px #fb69acb3)}
+  html[data-cr-pc-loading] .sakura-path[hidden] {display:none!important}
+  html[data-cr-pc-loading] .sakura-path-svg {position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+  html[data-cr-pc-loading] .sakura-path-track {fill:none;stroke:#ffe0e866;stroke-width:2;vector-effect:non-scaling-stroke}
+  html[data-cr-pc-loading] .sakura-path-fill {fill:none;stroke:#fff0ed;stroke-width:3;stroke-dasharray:100;stroke-dashoffset:100;stroke-linecap:round;vector-effect:non-scaling-stroke;transition:stroke-dashoffset .55s ease-out;filter:drop-shadow(0 0 3px #ff7bb6)}
+  html[data-cr-pc-loading] .sakura-flower {fill:#ffe5ed;stroke:#ffb8d5;stroke-width:.5}
+  html[data-cr-pc-loading] .sakura-runner {position:absolute;width:clamp(70px,6.5vw,124px);height:clamp(70px,6.5vw,124px);transform:translate(-65%,-93%);transition:left .55s ease-out,top .55s ease-out,opacity .35s ease;filter:drop-shadow(0 3px 10px #ffd1e76b)}
+  html[data-cr-pc-loading] .sakura-runner-frame {display:block;width:100%;height:100%;background-image:url('ui/loading_sprite_sheet.png');background-size:400% 200%;background-repeat:no-repeat;animation:mlj-cherry-run .8s steps(1,end) infinite}
+  html[data-cr-pc-loading] .sakura-runner>i {position:absolute;left:8%;bottom:12%;width:30%;height:2px;background:#ffe7ef;box-shadow:-12px -5px #ffcedb8c;animation:sakura-trail .6s ease-out infinite}
+  html[data-cr-pc-loading] .sakura-path-ready .sakura-runner {opacity:0;visibility:hidden}
+  html[data-cr-pc-loading] #bootV060 #bootStartV096 {position:absolute!important;z-index:6;left:50%!important;bottom:6.8vh!important;display:flex!important;flex-direction:column;gap:8px;align-items:center;justify-content:center;min-height:72px!important;min-width:300px;padding:8px 20px!important;transform:translateX(-50%)!important;text-align:center!important;color:#fff1f4!important;font:400 clamp(24px,2.3vw,39px)/1.25 Georgia,serif!important;letter-spacing:.015em!important;text-shadow:0 2px 8px #30102e,0 0 20px #ffc5dd7a!important;animation:sakura-ready-reveal .6s ease both,sakura-ready-pulse 2.8s .6s ease-in-out infinite!important;background:none!important;border:0!important}
+  html[data-cr-pc-loading] #bootV060 #bootStartV096[hidden] {display:none!important}
+  html[data-cr-pc-loading] #bootV060 #bootStartV096>i:not(.sakura-start-ornament) {display:none!important}
+  html[data-cr-pc-loading] #bootV060 #bootStartV096 .sakura-start-ornament {display:flex!important;width:220px;align-items:center;justify-content:center;gap:10px;font-style:normal;color:#ffc2df;filter:drop-shadow(0 0 5px #ff8fc6)}
+  html[data-cr-pc-loading] #bootV060 #bootStartV096:focus-visible {outline:0!important}
+  html[data-cr-pc-loading] #bootV060 #bootStartV096:focus-visible .sakura-start-ornament {color:#fff2f6;filter:drop-shadow(0 0 8px #ffbee2)}
+  html[data-cr-pc-loading] .sakura-start-ornament span {height:1px;flex:1;background:linear-gradient(90deg,transparent,#ffd2e2)}
+  html[data-cr-pc-loading] .sakura-start-ornament span:last-child {transform:rotate(180deg)}
+  html[data-cr-pc-loading] .sakura-start-ornament b {font:25px/1 Georgia;transform:scaleX(1.1)}
+  html[data-cr-pc-loading] :is(#bootV060,#stageLoading) .mlj-tip {position:absolute;z-index:4;bottom:2.3vh;left:12%;right:12%;margin:0;text-align:center;color:#ffe7f0b8;font:11px/1.5 Georgia,serif;letter-spacing:.03em;pointer-events:none;text-shadow:0 2px 6px #210d26}
+  html[data-cr-pc-loading] #bootV060:not([data-boot-phase=loading]) .mlj-tip {display:none}
+  html[data-cr-pc-loading] .mlj-motes {position:absolute;z-index:2;inset:0;overflow:hidden;pointer-events:none}
+  html[data-cr-pc-loading] .mlj-motes>i {position:absolute;left:var(--petal-start-x);top:var(--petal-start-y);width:var(--petal-size);height:calc(var(--petal-size) * 1.45);opacity:0;perspective:250px;animation:sakura-petal-fall var(--petal-fall-duration) linear infinite;animation-delay:var(--petal-fall-delay)}
+  html[data-cr-pc-loading] .mlj-motes>i>span {display:block;width:100%;height:100%;border-radius:75% 16% 65% 25%;background:linear-gradient(135deg,#ffe2e8,#f994bf 75%,#d977a5);box-shadow:0 0 5px #ffc3dd40;filter:blur(var(--petal-blur));animation:sakura-petal-flutter var(--petal-flutter-duration) ease-in-out infinite;animation-delay:var(--petal-flutter-delay)}
+  html[data-cr-pc-loading] #stageLoading .loading-card {display:contents!important;background:none!important;border:0!important;box-shadow:none!important}
+  html[data-cr-pc-loading] #stageLoading .loading-logo {position:absolute!important;z-index:3;top:2.5vh!important;left:50%!important;width:min(620px,45vw)!important;height:34vh!important;max-height:none!important;object-fit:contain!important;transform:translateX(-50%)!important;margin:0!important}
+  html[data-cr-pc-loading] #stageLoading #loadingStageName {position:absolute;z-index:4;left:12%;right:12%;bottom:calc(var(--sakura-line-bottom) + 9vw);margin:0;color:#fff0f7;font:clamp(14px,1.4vw,24px)/1.3 Georgia;text-shadow:0 2px 8px #30102e;text-align:center}
+  html[data-cr-pc-loading] #stageLoading #loadingText {position:absolute;z-index:4;left:12%;right:12%;bottom:calc(var(--sakura-line-bottom) - 25px);margin:0;color:#fff0f7;font:clamp(11px,1vw,16px)/1.4 Georgia;text-shadow:0 2px 8px #30102e;text-align:center}
+  html[data-cr-pc-loading] :is(#bootV060,#stageLoading) button:focus-visible {outline:2px solid #ffe3f0!important;outline-offset:6px!important}
+  html[data-cr-pc-loading] .sakura-scene[data-motion=paused] *,html[data-cr-pc-loading] .mlj-motes[data-motion=paused] *,html[data-cr-pc-loading] .sakura-path[data-motion=paused] * {animation-play-state:paused!important}
+  html[data-cr-pc-loading] :is(#bootV060.done,#stageLoading.hidden) :is(.sakura-runner-frame,.sakura-runner>i) {animation-play-state:paused!important}
+  @media(max-height:650px) {
+    html[data-cr-pc-loading] :is(#bootV060,#stageLoading) {--sakura-line-bottom:20vh}
+    html[data-cr-pc-loading] #bootV060 #bootStartV096 {bottom:3.5vh!important;min-height:58px!important;font-size:26px!important}
+    html[data-cr-pc-loading] #bootV060 .boot-auth-v096 {bottom:4vh;padding:14px 20px!important}
+    html[data-cr-pc-loading] #bootV060 .boot-auth-v096 p {font-size:11px!important}
+    html[data-cr-pc-loading] #bootV060 .boot-auth-actions-v096 button {min-height:38px!important}
+    html[data-cr-pc-loading] .mlj-tip {bottom:1.5vh!important;font-size:9px!important}
+  }
+  @media(prefers-reduced-motion:reduce) {
+    html[data-cr-pc-loading] :is(#bootV060,#stageLoading) *,html[data-cr-pc-loading] :is(#bootV060,#stageLoading) *::after {animation:none!important;transition:none!important}
+    html[data-cr-pc-loading] .sakura-water {display:none}
+  }
 }
 @keyframes mlj-cherry-run {0%,12.49%{background-position:0 0}12.5%,24.99%{background-position:33.333333% 0}25%,37.49%{background-position:66.666667% 0}37.5%,49.99%{background-position:100% 0}50%,62.49%{background-position:0 100%}62.5%,74.99%{background-position:33.333333% 100%}75%,87.49%{background-position:66.666667% 100%}87.5%,100%{background-position:100% 100%}}
-@keyframes mlj-progress-sheen {0%,15%{transform:translateX(-100%)}80%,100%{transform:translateX(100%)}}
-@keyframes mlj-dot {0%,70%,100%{opacity:.35;transform:translateY(0)}35%{opacity:1;transform:translateY(-2px)}}
-@keyframes mlj-run-trail {from{opacity:.55;transform:translateX(0) scaleX(.5)}to{opacity:0;transform:translateX(-14px) scaleX(1.3)}}
-@keyframes mlj-mote-rise {0%{opacity:0;transform:translate3d(0,0,0) rotate(0)}12%,70%{opacity:.45}100%{opacity:0;transform:translate3d(36px,-70vh,0) rotate(80deg)}}
-@keyframes mlj-brand-in {from{opacity:.85;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-@keyframes mlj-band-in {from{opacity:.8;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-@keyframes mlj-start-glow {0%,100%{filter:drop-shadow(0 0 5px #ffb4d04d)}50%{filter:drop-shadow(0 0 15px #ffb4d080)}}
+@keyframes sakura-camera {from{transform:scale(1) translate3d(0,0,0)}to{transform:scale(1.016) translate3d(-.15%,.25%,0)}}
+@keyframes sakura-float {from{transform:translate3d(0,-5px,0) rotate(-.5deg)}to{transform:translate3d(3px,8px,0) rotate(.5deg)}}
+@keyframes sakura-wind {from{transform:rotate(-.8deg) translateY(-2px)}to{transform:rotate(1deg) translateY(3px)}}
+@keyframes sakura-mist {from{transform:translate3d(-4%,0,0);opacity:.45}to{transform:translate3d(5%,-4px,0);opacity:.9}}
+@keyframes sakura-fall {to{stroke-dashoffset:-48}}
+@keyframes sakura-petal-fall {
+  0%{opacity:0;transform:translate3d(0,0,0)}
+  12%{opacity:var(--petal-opacity)}
+  24%{transform:translate3d(var(--petal-x1),var(--petal-y1),0)}
+  48%{transform:translate3d(var(--petal-x2),var(--petal-y2),0)}
+  74%{transform:translate3d(var(--petal-x3),var(--petal-y3),0)}
+  86%{opacity:var(--petal-opacity)}
+  100%{opacity:0;transform:translate3d(var(--petal-x4),var(--petal-y4),0)}
+}
+@keyframes sakura-petal-flutter {
+  0%,100%{transform:rotateZ(var(--petal-roll)) rotateY(-25deg) rotateX(12deg) scaleX(var(--petal-aspect))}
+  25%{transform:rotateZ(calc(var(--petal-roll) + var(--petal-turn))) rotateY(68deg) rotateX(-22deg) scaleX(var(--petal-aspect))}
+  50%{transform:rotateZ(calc(var(--petal-roll) - 18deg)) rotateY(-48deg) rotateX(25deg) scaleX(var(--petal-aspect))}
+  75%{transform:rotateZ(calc(var(--petal-roll) - var(--petal-turn))) rotateY(55deg) rotateX(-12deg) scaleX(var(--petal-aspect))}
+}
+@keyframes sakura-trail {from{opacity:.65;transform:translateX(0) scaleX(.6)}to{opacity:0;transform:translateX(-20px) scaleX(1.3)}}
+@keyframes sakura-ready-reveal {from{opacity:0;filter:blur(5px)}to{opacity:1;filter:blur(0)}}
+@keyframes sakura-ready-pulse {0%,100%{opacity:.78;filter:drop-shadow(0 0 3px #ffc0df33)}50%{opacity:1;filter:drop-shadow(0 0 13px #ffc0df99)}}

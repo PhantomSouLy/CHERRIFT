@@ -1,0 +1,37 @@
+{
+  "sampleRate": 48000,
+  "channels": 2,
+  "bits": 16,
+  "assets": [
+    {
+      "kind": "play",
+      "file": "crystal-play.wav",
+      "seconds": 0.55,
+      "bytes": 105644
+    },
+    {
+      "kind": "click",
+      "file": "crystal-click.wav",
+      "seconds": 0.22,
+      "bytes": 42284
+    },
+    {
+      "kind": "hover",
+      "file": "crystal-hover.wav",
+      "seconds": 0.12,
+      "bytes": 23084
+    },
+    {
+      "kind": "back",
+      "file": "crystal-back.wav",
+      "seconds": 0.32,
+      "bytes": 61484
+    },
+    {
+      "kind": "page",
+      "file": "crystal-page.wav",
+      "seconds": 0.29,
+      "bytes": 55724
+    }
+  ]
+}
