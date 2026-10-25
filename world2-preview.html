@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="hu"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CHERRIFT · World2 műhely</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#17251e;color:#f5f5df;font:14px system-ui,sans-serif}header{height:74px;padding:12px 24px;display:flex;align-items:center;gap:16px;background:#15251f;border-bottom:1px solid #40513b}h1{font-size:20px;margin:0}small{display:block;color:#b8c9ab;font-size:12px;margin-top:3px}nav{display:flex;gap:8px;margin-left:auto;align-items:center}button,select{background:#2a4032;border:1px solid #5d7050;border-radius:8px;padding:10px 13px;color:#f5f5df;font:inherit;cursor:pointer}button:hover{background:#3f5740}canvas{display:block;width:100vw;height:calc(100vh - 110px)}footer{height:36px;display:flex;align-items:center;gap:24px;padding:0 24px;background:#15251f;color:#b8c9ab;font-size:12px}#status{margin-left:auto}button.active{border-color:#e4cd7c;color:#ffe7a1}@media(max-width:700px){header{height:114px;flex-wrap:wrap;padding:10px}nav{width:100%;margin:0}button,select{padding:8px;font-size:12px}canvas{height:calc(100vh - 150px)}footer{padding:0 10px;font-size:10px;gap:8px}}
+</style>
+<header><div><h1>WORLD 2 <span style="color:#d8c472">/</span> Holdfényes rét</h1><small>CHERRIFT · interaktív pályaelőnézet</small></div><nav><select id="quality" aria-label="Grafikai minőség"><option value="low">Low</option><option value="medium">Medium</option><option value="high" selected>High</option></select><button id="reroll">Új elrendezés</button><button id="edge">Pályaszél</button><button id="mobToggle">Mobok: ki</button></nav></header>
+<canvas id="map"></canvas><footer><span>WASD / nyilak: mozgás · húzás / érintés: irányítás</span><span id="status">Grafika betöltése…</span></footer>
+<script src="src/cherrift_world1.js?v=1024-world1-meadow"></script><script src="src/cherrift_world2.js?v=1026-world2-moonlit"></script><script>
+window.CHERRIFT_CONFIG={worldSize:4200};
+const canvas=document.getElementById('map'),ctx=canvas.getContext('2d'),api=CHERRIFT_WORLD2;
+const game={canvas,ctx,w:innerWidth,h:innerHeight-110,stage:{id:'world_2_1',world:2},save:{settings:{effectQuality:'high'}},player:{x:0,y:0,r:18},camera:{x:0,y:0},zoom:1.14,t:0,obstacles:[],pickups:[],bullets:[],effects:[],enemies:[],resize(){this.w=canvas.clientWidth;this.h=canvas.clientHeight;api.applyResolution(this);},drawObstacle(c,o){api.drawObject(this,c,o);},drawObj(c,o){if(o.meadow)return this.drawObstacle(c,o);const im=o===this.player?hero:slime;if(!im.complete||!im.naturalWidth)return;const cols=4,rows=o===this.player?1:3,sw=im.naturalWidth/cols,sh=im.naturalHeight/rows,frame=Math.floor(this.t*6)%4,size=o===this.player?116:78;c.drawImage(im,frame*sw,o===this.player?0:sh,sw,sh,o.x-size/2,o.y-size/2,size,size);}};
+window.UI={game};
+const hero=new Image();hero.src='assets/player/skins/base_cherry/base_cherry_idle_down.png';
+const slime=new Image();slime.src='assets/enemies/world_2/ghost_slime_sprite_sheet.png';
+const keys=new Set();let pointer=null,mobs=false,last=performance.now();
+function status(){document.getElementById('status').textContent=`${game.save.settings.effectQuality.toUpperCase()} · ${game.__cherriftCleanSolidObjects.length} akadály · seed ${String(game.__meadow.seed).slice(0,12)}`;}
+async function reroll(){await api.prepare(game);api.build(game);game.player.x=game.player.y=game.camera.x=game.camera.y=0;game.enemies=[];game.resize();status();}
+document.getElementById('reroll').onclick=reroll;
+document.getElementById('quality').onchange=async e=>{game.save.settings.effectQuality=e.target.value;await api.selectArt(game);status();};
+document.getElementById('edge').onclick=()=>{game.player.x=api.boundary()-140;game.player.y=-300;game.camera.x=game.player.x;game.camera.y=game.player.y;};
+document.getElementById('mobToggle').onclick=e=>{mobs=!mobs;e.target.textContent=`Mobok: ${mobs?'be':'ki'}`;e.target.classList.toggle('active',mobs);game.enemies=[];};
+addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();keys.add(e.key.toLowerCase());});addEventListener('keyup',e=>keys.delete(e.key.toLowerCase()));addEventListener('blur',()=>{keys.clear();pointer=null;});
+canvas.onpointerdown=e=>{canvas.setPointerCapture(e.pointerId);pointer={x:e.offsetX,y:e.offsetY};};canvas.onpointermove=e=>{if(pointer)pointer={x:e.offsetX,y:e.offsetY};};canvas.onpointerup=canvas.onpointercancel=()=>pointer=null;canvas.style.touchAction='none';
+addEventListener('resize',()=>game.resize());
+function loop(now){const dt=Math.min(.04,(now-last)/1000);last=now;game.t+=dt;
+ let x=Number(keys.has('d')||keys.has('arrowright'))-Number(keys.has('a')||keys.has('arrowleft')),y=Number(keys.has('s')||keys.has('arrowdown'))-Number(keys.has('w')||keys.has('arrowup'));
+ if(pointer){x=pointer.x-game.w/2;y=pointer.y-game.h/2;if(Math.hypot(x,y)<10)x=y=0;}
+ const len=Math.hypot(x,y)||1,p=game.player,b=api.boundary();
+ const nx=Math.max(-b,Math.min(b,p.x+x/len*240*dt)),ny=Math.max(-b,Math.min(b,p.y+y/len*240*dt));if(!api.collides(game,nx,p.y))p.x=nx;if(!api.collides(game,p.x,ny))p.y=ny;
+ game.camera.x+=(p.x-game.camera.x)*Math.min(1,dt*8);game.camera.y+=(p.y-game.camera.y)*Math.min(1,dt*8);
+ if(mobs){if(game.enemies.length<12&&Math.random()<dt*2){const a=Math.random()*Math.PI*2;game.enemies.push({x:p.x+Math.cos(a)*700,y:p.y+Math.sin(a)*500});}for(const e of game.enemies){const dx=p.x-e.x,dy=p.y-e.y,l=Math.hypot(dx,dy)||1;e.x+=dx/l*85*dt;e.y+=dy/l*85*dt;}game.enemies=game.enemies.filter(e=>Math.hypot(e.x-p.x,e.y-p.y)>25);}
+ ctx.clearRect(0,0,game.w,game.h);api.drawWorld(game,ctx);requestAnimationFrame(loop);
+}
+reroll().then(()=>requestAnimationFrame(loop)).catch(e=>document.getElementById('status').textContent=e.message);
+</script></html>

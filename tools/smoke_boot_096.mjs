@@ -1171,9 +1171,11 @@ try {
         `${requested}: Gunner ${animation}/${direction} is loaded`);
     }
   }
-  // Exercise the production World1 hooks after the complete script stack loads.
+  // Exercise both meadow worlds through the fully installed production stack.
+  for(const world of [1,2]) {
+  const api=world===1?window.CHERRIFT_WORLD1:window.CHERRIFT_WORLD2;
   const meadowProbe=Object.create(window.CherriftGame.prototype);
-  Object.assign(meadowProbe,{stage:{id:'world_1_1',world:1},save:{settings:{effectQuality:'high'}},
+  Object.assign(meadowProbe,{stage:{id:`world_${world}_1`,world},save:{settings:{effectQuality:'high'}},
     __meadowSeed:'production-smoke',w:width,h:height,zoom:1.14,camera:{x:0,y:0},
     player:{x:0,y:0,r:18},enemies:[],pickups:[],bullets:[],effects:[],
     canvas:document.createElement('canvas'),ctx:canvasContext()});
@@ -1184,17 +1186,18 @@ try {
   const meadowRock=meadowProbe.__cherriftCleanSolidObjects.find(o=>o.objectKey==='rock1');
   meadowProbe.player.x=meadowRock.x;meadowProbe.player.y=meadowRock.y;
   assert.equal(meadowProbe.hitObstacle(),true,`${requested}: actual collision uses new footprints`);
-  await window.CHERRIFT_WORLD1.selectArt(meadowProbe);
+  await api.selectArt(meadowProbe);
   meadowProbe.drawWorld(meadowProbe.ctx);
   assert.equal(meadowProbe.__meadowArt.tier,'high',`${requested}: actual renderer has decoded tier assets`);
-  assert.equal(window.CHERRIFT_RUNTIME.worldMaps[1].objects,window.CHERRIFT_WORLD1.spec.objects);
-  assert.equal(window.CHERRIFT_RUNTIME.worldMaps[1].ground,window.CHERRIFT_WORLD1.spec.ground);
+  assert.equal(window.CHERRIFT_RUNTIME.worldMaps[world].objects,api.spec.objects);
+  assert.equal(window.CHERRIFT_RUNTIME.worldMaps[world].ground,api.spec.ground);
   meadowProbe.mode='playing';meadowProbe.player.invuln=10;meadowProbe.player.hp=100;
   meadowProbe.player.x=meadowRock.x+120;
   const passingMob={x:meadowRock.x-5,y:meadowRock.y,r:20,hp:34,maxHp:34,speed:100,hit:0,phase:0,enemyType:'pink_slime',spec:{ranged:false}};
   meadowProbe.enemies=[passingMob];const beforeMobX=passingMob.x;
   meadowProbe.updateEnemies(.1);
   assert(passingMob.x>beforeMobX,`${requested}: actual enemy AI crosses player-blocking props`);
+  }
   const gunnerProbe = Object.create(window.CherriftGame.prototype);
   gunnerProbe.player = {skin:"gunner_cherry",x:0,y:0,speed:200,attackCastTimer:.2};
   gunnerProbe.activeSkinConfig = () => gunner;

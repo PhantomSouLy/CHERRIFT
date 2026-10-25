@@ -1204,7 +1204,7 @@ window.UI = {
       flower2:"assets/map/world1/meadow/high/flower2.webp",
       mushroom:"assets/map/world1/meadow/high/mushroom.webp",
       world1:"assets/map/world1/meadow/splash.webp",
-      world2:"assets/map/world2/world2_splashart_1.png",
+      world2:"assets/map/world2/moonlit/splash.webp",
       ...WORLD1_GROUND
     });
 
@@ -1593,7 +1593,7 @@ window.UI = {
    Final world rules:
    - World 1 ground: assets/map/world1/meadow/high/ground.webp
    - World 2 ground: same seamless texture + night overlay
-   - World 2 splash: assets/map/world2/world2_splashart_1.png
+   - World 2 splash: assets/map/world2/moonlit/splash.webp
    - World 2-1 stays unlocked for testing
    ============================================================ */
 (() => {
@@ -1609,7 +1609,7 @@ window.UI = {
   const STAGES = window.CHERRIFT_V040?.stages || [];
   const SHARED_GROUND = "assets/map/world1/meadow/high/ground.webp";
   const WORLD1_SPLASH = "assets/map/world1/meadow/splash.webp";
-  const WORLD2_SPLASH = "assets/map/world2/world2_splashart_1.png";
+  const WORLD2_SPLASH = "assets/map/world2/moonlit/splash.webp";
 
   const WORLD1_DECOR = {
     bush1: "assets/map/world1/meadow/high/bush1.webp",
@@ -1920,7 +1920,7 @@ window.UI = {
   const VERSION = "0.4.1b-bugfix";
   const SHARED_GROUND = "assets/map/world1/meadow/high/ground.webp";
   const WORLD1_SPLASH = "assets/map/world1/meadow/splash.webp";
-  const WORLD2_SPLASH = "assets/map/world2/world2_splashart_1.png";
+  const WORLD2_SPLASH = "assets/map/world2/moonlit/splash.webp";
   const STAGES = window.CHERRIFT_V040?.stages || [];
   const id = name => document.getElementById(name);
   const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -20203,7 +20203,7 @@ const THUMB_PLACEHOLDERS = Object.freeze({
 });
 const WORLD_ART = {
   1:'linear-gradient(180deg,rgba(5,3,12,.02),rgba(5,3,12,.48)),url("assets/map/world1/meadow/splash.webp")',
-  2:'linear-gradient(180deg,rgba(5,3,12,.05),rgba(5,3,12,.58)),url("assets/map/world2/world2_splashart_1.png")',
+  2:'linear-gradient(180deg,rgba(5,3,12,.05),rgba(5,3,12,.58)),url("assets/map/world2/moonlit/splash.webp")',
   3:"radial-gradient(circle at 55% 20%,rgba(255,145,66,.36),transparent 32%),linear-gradient(160deg,#4a2920,#1a0b10 68%,#08050c)",
   4:"radial-gradient(circle at 20% 20%,rgba(116,211,255,.22),transparent 30%),linear-gradient(150deg,#163547,#0b1928 60%,#060810)",
   5:"radial-gradient(circle at 75% 22%,rgba(193,132,255,.23),transparent 28%),linear-gradient(150deg,#34204c,#130d27 62%,#080611)",
@@ -22990,7 +22990,7 @@ const WORLD_META = {
     nameHu:"Night Bloom", nameEn:"Night Bloom",
     descHu:"World 1 éjszakai változata meleg Cherry-fénnyel és pulzáló szentjánosbogarakkal.",
     descEn:"Night version of World 1 with Cherry's warm body light and pulsing fireflies.",
-    art:'linear-gradient(180deg,rgba(4,3,8,.10),rgba(4,3,8,.76)),url("assets/map/world2/world2_splashart_1.png"),url("assets/map/world2/world2_ground_1.png")'
+    art:'linear-gradient(180deg,rgba(4,3,8,.10),rgba(4,3,8,.76)),url("assets/map/world2/moonlit/splash.webp"),url("assets/map/world2/world2_ground_1.png")'
   },
   3:{
     nameHu:"Sunlit Savanna", nameEn:"Sunlit Savanna",

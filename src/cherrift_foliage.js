@@ -126,7 +126,7 @@
 
   function updateFoliage(game){
     if ((game.mode !== "playing" && !document.body.classList.contains("is-playing")) || !game.player) return;
-    if (game.__meadow && game.stage?.world === 1 && game.save?.settings?.effectQuality === "low") {
+    if (game.__meadow && [1,2].includes(game.stage?.world) && game.save?.settings?.effectQuality === "low") {
       game.__cherriftFoliage?.active.clear();
       return;
     }

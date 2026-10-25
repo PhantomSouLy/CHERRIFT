@@ -243,7 +243,7 @@
   }
   function worldArt(world) {
     if (world === 1) return window.CHERRIFT_WORLD1_ASSETS.splashArts[0];
-    if (world === 2) return "assets/map/world2/world2_splashart_1.png";
+    if (world === 2) return "assets/map/world2/moonlit/splash.webp";
     if (world === 3) return "assets/map/world3/world3_splashart_1.png";
     if (world === 4) return "assets/map/world4/world4_splashart_1.png";
     if (world === 5) return "assets/map/world5/world5_splashart_1.png";
@@ -257,6 +257,7 @@
       const artIndex = index <= 2 ? 1 : index <= 4 ? 2 : 3;
       return window.CHERRIFT_WORLD1_ASSETS.splashArts[artIndex - 1];
     }
+    if (world === 2) return window.CHERRIFT_WORLD2.splash;
     if (world === 4) return stage.splash || stage.splashArt || stage.art || stage.image || `assets/map/world4/world4_splashart_${index <= 2 ? 1 : 2}.png`;
     if (world === 5) return `assets/map/world5/world5_splashart_${index <= 2 ? 1 : index <= 4 ? 2 : 3}.png`;
     if (world === 6) return `assets/map/world6/world6_splashart_${index <= 2 ? 1 : index <= 4 ? 2 : 3}.png`;

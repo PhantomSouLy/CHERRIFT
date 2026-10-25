@@ -1,7 +1,7 @@
 {
   "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "1025-world1-meadow-active",
+  "buildId": "1026-world2-moonlit",
   "entrypoints": {
     "application": "src/cherrift_app.js",
     "menuAudio": "src/cherrift_menu_audio.js",
@@ -30,7 +30,8 @@
     "desktopLoading": "src/cherrift_desktop_loading.js",
     "desktopSocial": "src/cherrift_desktop_social.js",
     "desktopLogin": "src/cherrift_desktop_login.js",
-    "world1": "src/cherrift_world1.js"
+    "world1": "src/cherrift_world1.js",
+    "world2": "src/cherrift_world2.js"
   },
   "stylesheets": {
     "shell": "assets/cherrift_shell.css",
@@ -186,6 +187,10 @@
     "desktopLoginPresentationOnly": [
       "src/cherrift_desktop_login.js",
       "assets/cherrift_desktop_login.css"
+    ],
+    "world2": [
+      "src/cherrift_world2.js",
+      "assets/map/world2/moonlit/"
     ]
   },
   "cleanup": {

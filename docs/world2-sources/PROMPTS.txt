@@ -1,0 +1,9 @@
+Built-in image_gen; edit mode lighting-weather. No CLI/API fallback.
+
+OBJECTS
+Use case: lighting-weather. Asset type: transparent 16-sprite game atlas. Edit target Image 1 the daytime World1 objects atlas; Image 2 supporting night palette reference. Transform ONLY lighting and colors of Image 1 to moonlit night matching Image 2: readable deep teal foliage, cool blue silver leaf highlights, muted brown wood, blue lavender rocks, subtly lit white/yellow flowers and red mushrooms. Preserve EXACT canvas dimensions, each object's shape, size, position, ground contact and all 16 cells in identical order. No rearrangement, no extra scenery, no fireflies baked into art, no labels. Keep genuine transparent background and clean alpha edges, no opaque backdrop. Three trees and one bush top row; two bushes and two rocks second row; small rock log stump mushrooms third; three flowers grass fourth. Game-ready painterly sprites.
+
+GROUND
+Use case: lighting-weather. Asset type: tileable top-down ground texture for a 2D roguelike game. Image 1 EDIT TARGET is World1 quiet grass texture. Image 2 supporting moonlit night palette. Convert Image 1 ONLY to nighttime moonlit meadow matching Image 2 ground: medium-dark muted teal blue-green grass, softly readable silvery blue blades, no crushed black shadows. Preserve uniform texture density, fine brush style, same flat orthographic top-down camera. Fill entire square edge to edge, seamless compatible edges. No objects, flowers, paths, rocks, fireflies, glows, horizon, sky, vignettes, spotlights, text. The texture should remain quiet so tiny enemy and player sprites stand out.
+
+Sources: World1 objects.png and grass.png as edit targets; accepted World2 concept as palette reference. Export preparation crops, fits canonical canvases without changing aspect ratio, preserves alpha, and resizes into the three tiers. Fireflies are separate procedural canvas effects.

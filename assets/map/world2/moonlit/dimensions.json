@@ -1,0 +1,66 @@
+{
+  "tree1": {
+    "width": 274,
+    "height": 304
+  },
+  "tree2": {
+    "width": 218,
+    "height": 261
+  },
+  "tree3": {
+    "width": 254,
+    "height": 302
+  },
+  "bush1": {
+    "width": 238,
+    "height": 214
+  },
+  "bush2": {
+    "width": 266,
+    "height": 206
+  },
+  "bush3": {
+    "width": 263,
+    "height": 215
+  },
+  "rock1": {
+    "width": 294,
+    "height": 208
+  },
+  "rock2": {
+    "width": 246,
+    "height": 179
+  },
+  "rockSmall": {
+    "width": 223,
+    "height": 126
+  },
+  "log": {
+    "width": 301,
+    "height": 221
+  },
+  "stump": {
+    "width": 260,
+    "height": 172
+  },
+  "mushroom": {
+    "width": 224,
+    "height": 171
+  },
+  "flower1": {
+    "width": 230,
+    "height": 187
+  },
+  "flower2": {
+    "width": 243,
+    "height": 179
+  },
+  "flower3": {
+    "width": 249,
+    "height": 173
+  },
+  "grass": {
+    "width": 214,
+    "height": 177
+  }
+}

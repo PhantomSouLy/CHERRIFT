@@ -4,8 +4,9 @@
 (() => {
   'use strict';
   if (window.CHERRIFT_WORLD1) return;
-  const ROOT = 'assets/map/world1/meadow/';
-  const SPLASH = 'assets/map/world1/meadow/splash.webp';
+  function createMeadow(worldId, ROOT) {
+  const night=worldId===2;
+  const SPLASH = `${ROOT}splash.webp`;
   const PROFILES = Object.freeze({
     low:Object.freeze({dpr:1, detail:.45, foliage:false}),
     medium:Object.freeze({dpr:1.25, detail:.75, foliage:true}),
@@ -24,11 +25,11 @@
     anchor:key.startsWith('tree')?.89:.83,solid:rx>0,rx,ry,r:Math.max(rx,ry),
     reactive:/bush|flower|grass|mushroom/.test(key)
   })])));
-  const spec = Object.freeze({ground:'assets/map/world1/meadow/high/ground.webp',objects,tint:null});
+  const spec = Object.freeze({ground:`${ROOT}high/ground.webp`,objects,tint:null});
   const cache = new Map();
   let request = 0;
   const profile = game => Object.hasOwn(PROFILES,game?.save?.settings?.effectQuality) ? game.save.settings.effectQuality : 'medium';
-  const isWorld = game => Number((game?.stage || game?.getSelectedStage?.())?.world) === 1;
+  const isWorld = game => Number((game?.stage || game?.getSelectedStage?.())?.world) === worldId;
   const boundary = () => Math.max(1200,Number(window.CHERRIFT_CONFIG?.worldSize || 4200)/2)-200;
   function randomFor(seed) {
     let value=2166136261;
@@ -87,7 +88,7 @@
     const result=[],solid=[];
     function add(key,x,y,exterior=false) {
       const s=objects[key],scale=.88+random()*.24,h=s.h*scale,w=s.w*scale;
-      const o={__cherriftCleanWorld:true,cherriftMapObject:true,meadow:true,worldId:1,
+      const o={__cherriftCleanWorld:true,cherriftMapObject:true,meadow:true,worldId,
         kind:`meadow_${key}`,objectKey:key,assetKey:`meadow_${key}`,x,y,drawW:w,drawH:h,boxW:w,boxH:h,
         anchor:s.anchor,solid:s.solid&&!exterior,rx:s.rx*scale,ry:s.ry*scale,r:s.r*scale,
         phase:random()*Math.PI*2,detail:random(),exterior,reactive:s.reactive,alpha:1};
@@ -122,7 +123,11 @@
     }
     const patches=Array.from({length:65},()=>({x:(random()*2-1)*(half+500),y:(random()*2-1)*(half+500),r:70+random()*100,phase:random()}));
     game.obstacles=result;game.__cherriftCleanSolidObjects=solid;
-    game.__cherriftCleanWorld=1;game.__meadow={seed,patches};
+    game.__cherriftCleanWorld=worldId;game.__meadow={seed,patches,worldId};
+    game.__meadow.fireflies=night?Array.from({length:900},()=>({
+      x:(random()*2-1)*(half+450),y:(random()*2-1)*(half+450),
+      phase:random()*Math.PI*2,speed:.10+random()*.13,rank:random(),radius:28+random()*32
+    })):[];
     window.CHERRIFT_REACTIVE_FOLIAGE?.refresh?.(game);
     return result;
   }
@@ -153,14 +158,14 @@
         pattern?.setTransform?.({a:384/im.width,b:0,c:0,d:384/im.height,e:0,f:0});
         art.patterns.set(c,pattern);
       }
-      c.fillStyle=pattern||'#a4b656';
-    } else c.fillStyle='#a4b656';
+      c.fillStyle=pattern||(night?'#24484f':'#a4b656');
+    } else c.fillStyle=(night?'#24484f':'#a4b656');
     c.fillRect(x,y,vw+16,vh+16);
     // Quiet worn earth patches; no extra texture or collision layer is needed.
     for(const p of game.__meadow?.patches||[])if(inView(game,p,p.r*2)) {
       c.save();c.translate(p.x,p.y);c.scale(1.5,.62);
       const grad=c.createRadialGradient(0,0,0,0,0,p.r);
-      grad.addColorStop(0,'rgba(205,178,108,.40)');grad.addColorStop(.55,'rgba(205,178,108,.20)');grad.addColorStop(1,'rgba(205,178,108,0)');
+      grad.addColorStop(0,night?'rgba(108,123,155,.20)':'rgba(205,178,108,.40)');grad.addColorStop(.55,night?'rgba(108,123,155,.10)':'rgba(205,178,108,.20)');grad.addColorStop(1,night?'rgba(108,123,155,0)':'rgba(205,178,108,0)');
       c.fillStyle=grad;c.fillRect(-p.r,-p.r,p.r*2,p.r*2);c.restore();
     }
     c.restore();
@@ -207,7 +212,37 @@
     for(const o of visible)if(groundObject(o))game.drawObstacle(c,o);
     const sorted=visible.filter(o=>!groundObject(o)).sort((a,b)=>(a.y||0)-(b.y||0));
     for(const o of sorted)game.drawObj(c,o);
+    if(night)drawFireflies(game,c);
     drawEdge(game,c);c.restore();
+  }
+  // World anchored particles use gameplay time, so pausing also freezes them.
+  // Analytic motion is smooth and independent of frame rate and quality changes.
+  const glowSprites=new Map();
+  function fireflyPosition(p,time=0) {
+    const t=(Number(time)||0)*p.speed;
+    return {x:p.x+Math.sin(t+p.phase)*p.radius+Math.sin(t*.57+p.phase*2)*12,
+      y:p.y+Math.cos(t*.81+p.phase)*p.radius*.65+Math.sin(t*.43+p.phase)*10};
+  }
+  function drawFireflies(game,c) {
+    const tier=profile(game),amount=tier==='low'?.28:tier==='medium'?.6:1;
+    let sprite=glowSprites.get(tier);
+    if(!sprite) {
+      sprite=document.createElement('canvas');sprite.width=sprite.height=48;
+      const g=sprite.getContext('2d'),gradient=g.createRadialGradient(24,24,0,24,24,24);
+      gradient.addColorStop(0,'rgba(236,255,174,.9)');gradient.addColorStop(.12,'rgba(209,245,106,.48)');
+      gradient.addColorStop(.4,'rgba(181,229,79,.13)');gradient.addColorStop(1,'rgba(181,229,79,0)');
+      g.fillStyle=gradient;g.fillRect(0,0,48,48);glowSprites.set(tier,sprite);
+    }
+    c.save();c.globalCompositeOperation='screen';
+    for(const p of game.__meadow?.fireflies||[]) {
+      if(p.rank>amount)continue;
+      const pos=fireflyPosition(p,game.t);if(!inView(game,pos,30))continue;
+      const pulse=.48+.42*(.5+.5*Math.sin((Number(game.t)||0)*1.4+p.phase));
+      c.globalAlpha=pulse;const size=tier==='low'?14:tier==='medium'?22:28;
+      c.drawImage(sprite,pos.x-size/2,pos.y-size/2,size,size);
+      c.fillStyle='#edffb5';c.beginPath();c.arc(pos.x,pos.y,.85,0,Math.PI*2);c.fill();
+    }
+    c.restore();
   }
   function applyResolution(game) {
     if(!isWorld(game)||!game.canvas||!game.ctx)return;
@@ -219,11 +254,14 @@
     if(event.target?.id!=='effectQualityV085')return;
     // The canonical setting handler owns persistence; wait for it to finish.
     queueMicrotask(()=>{
-      const game=window.UI?.game;if(!isWorld(game)||!game.__meadow)return;
-      selectArt(game).catch(error=>{console.error('[World1]',error);window.UI?.toast?.('World1: a grafika betöltése sikertelen.');});
+      const game=window.UI?.game;if(!isWorld(game)||game.__meadow?.worldId!==worldId)return;
+      selectArt(game).catch(error=>{console.error(`[World${worldId}]`,error);window.UI?.toast?.(`World${worldId}: a grafika betöltése sikertelen.`);});
     });
   }
   document.addEventListener('change',settingsChanged);
-  window.CHERRIFT_WORLD1=Object.freeze({version:'1.0-sunlit-meadow',spec,splash:SPLASH,profiles:PROFILES,profile,isWorld,boundary,
-    load,prepare,selectArt,build,collides,drawGround,drawObject,drawWorld,applyResolution,shouldDraw,lane});
+  return Object.freeze({version:night?'1.0-moonlit-meadow':'1.0-sunlit-meadow',spec,splash:SPLASH,profiles:PROFILES,profile,isWorld,boundary,
+    load,prepare,selectArt,build,collides,drawGround,drawObject,drawWorld,applyResolution,shouldDraw,lane,fireflyPosition,drawFireflies});
+  }
+  window.CHERRIFT_CREATE_MEADOW=createMeadow;
+  window.CHERRIFT_WORLD1=createMeadow(1,'assets/map/world1/meadow/');
 })();

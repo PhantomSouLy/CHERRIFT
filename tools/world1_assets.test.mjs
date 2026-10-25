@@ -9,7 +9,7 @@ function fixture(phone=false){
   const c=vm.createContext({window,document:{addEventListener(){}},Image,Math,Map,WeakMap,Number,performance,
     innerWidth:1920,innerHeight:1080,mobile:()=>phone,clamp:(v,a,b)=>Math.max(a,Math.min(b,v)),
     state:{worldImages:new Map(),patterns:new WeakMap(),fireflySprites:new WeakMap()}});
-  vm.runInContext(read('src/cherrift_world1.js'),c);vm.runInContext(read('src/cherrift_world1_assets.js'),c);
+  vm.runInContext(read('src/cherrift_world1.js'),c);vm.runInContext(read('src/cherrift_world1_assets.js'),c);vm.runInContext(read('src/cherrift_world2.js'),c);
   const runtime=read('src/cherrift_runtime.js');
   vm.runInContext(runtime.slice(runtime.indexOf('const WORLD_MAPS ='),runtime.indexOf('const ACHIEVEMENTS =')),c);
   vm.runInContext(runtime.slice(runtime.indexOf('function preload('),runtime.indexOf('function hitObstacle(')),c);
@@ -34,8 +34,8 @@ test('new map and compatibility catalogue load before every World1 consumer',()=
   const html=read('index.html');assert(html.indexOf('src/cherrift_world1.js')<html.indexOf('src/cherrift_world1_assets.js'));
   for(const consumer of ['cherrift_app.js','cherrift_world_ui.js','cherrift_runtime.js'])assert(html.indexOf('src/cherrift_world1_assets.js')<html.indexOf('src/'+consumer));
 });
-test('World2–6 retain their own maps and asset paths',()=>{
-  for(const phone of [false,true])for(let world=2;world<=6;world++){
+test('World3–6 retain their own maps and asset paths',()=>{
+  for(const phone of [false,true])for(let world=3;world<=6;world++){
     const c=fixture(phone),game={stage:{id:`world_${world}_1`,world}};c.buildWorld(game,world);
     assert(game.obstacles.every(o=>o.worldId===world&&!o.meadow));assert(c.state.worldImages.get(`ground:${world}`).src.startsWith(`assets/map/world${world}/`));
   }
