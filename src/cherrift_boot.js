@@ -489,8 +489,11 @@
 
     window.UI?.open?.("menu");
 
-    requestAnimationFrame(() =>
-      requestAnimationFrame(() => {
+    let fading = false;
+    const beginFade = () => {
+        if (fading) return;
+        fading = true;
+        window.clearTimeout(fadeFallback);
         const root = boot();
 
         root?.classList.add("done");
@@ -514,8 +517,11 @@
             }
           )
         );
-      })
-    );
+    };
+    // Background or heavily loaded tabs may not deliver both animation frames.
+    // The presentation must never leave an invisible layer consuming all input.
+    const fadeFallback = window.setTimeout(beginFade, 250);
+    requestAnimationFrame(() => requestAnimationFrame(beginFade));
   }
 
   async function chooseAuth(action) {

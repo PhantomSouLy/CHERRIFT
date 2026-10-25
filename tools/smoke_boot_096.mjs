@@ -312,6 +312,7 @@ function createFakeSupabase(window) {
 
   const authListeners = new Set();
   let updatedAt = "2026-08-20T00:00:00.000Z";
+  let authoritativeSave = null;
 
   function emitAuth(event) {
     for (const listener of authListeners) {
@@ -333,6 +334,7 @@ function createFakeSupabase(window) {
         cloudBootstrapCalls += 1;
         if (cloudTimeoutCase) return new Promise(() => {});
         const save = fallbackStarterSave(window, session?.user?.id || "");
+        authoritativeSave = cloneJson(save);
         return {
           data: {
             gameplay_policy:"online-v1",
@@ -350,6 +352,7 @@ function createFakeSupabase(window) {
           data: {
             ok: true,
             conflict: false,
+            ...(gmReturning ? {save_data:cloneJson(authoritativeSave)} : {}),
             updated_at: updatedAt
           },
           error: null
@@ -810,7 +813,7 @@ function fatalErrors() {
 async function waitFor(check, message, timeout = 30000) {
   const startedAt = Date.now();
 
-  while (Date.now() - startedAt < timeout) {
+  while (true) {
     const fatal = fatalErrors();
 
     if (fatal.length) {
@@ -834,6 +837,9 @@ async function waitFor(check, message, timeout = 30000) {
       throw error;
     }
 
+    // A busy event loop may resume after the deadline with readiness already
+    // satisfied. Check the actual state before deciding the wait timed out.
+    if (Date.now() - startedAt >= timeout) break;
     await new Promise(resolve => setTimeout(resolve, 25));
   }
 
@@ -1231,10 +1237,14 @@ try {
       assert.equal(window.CHERRIFT_AUTH.acceptServerSave(cloneJson(raw),`gm-revision-${i}`,context),true);
       window.UI.refreshMenu();
       window.CherriftStorage.save(window.UI.save);
+      assert.equal(await window.CHERRIFT_AUTH.flushCloudSave(),true,"GM autosave accepts the authoritative server response");
       await new Promise(resolve=>setTimeout(resolve,100));
       assert.equal(document.body.classList.contains("obtained-open-v098"),false,
         "GM hydration and repeated autosaves never announce the preview skin as loot");
     }
+    const recoveryKey="cherrift-discord-backup-v2:"+context.userId+":recovery";
+    assert.equal(JSON.parse(window.localStorage.getItem(recoveryKey)||"[]").length,0,
+      "GM preview hydration does not accumulate recovery snapshots");
     const gunner=window.CHERRIFT_DATA.skins.find(skin=>skin.id==="gunner_cherry");
     assert.equal(window.CHERRIFT_OBTAINED.show([{kind:"skin",key:"skin:gunner_cherry",skinId:gunner.id,label:gunner.name,amount:1,rarity:gunner.rarity}],{source:"gacha"}),true);
     assert.equal(document.body.classList.contains("obtained-open-v098"),true,"explicit acquisitions still open");

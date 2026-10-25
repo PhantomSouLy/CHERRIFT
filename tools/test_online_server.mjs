@@ -183,6 +183,23 @@ vm.runInContext(source, context);
 const authScript = `(() => {
  if(location.search.includes('slowBoot=1')) window.CHERRIFT_TIMEOUTS={...window.CHERRIFT_TIMEOUTS,cloudBootstrapMs:30000};
  const user=${JSON.stringify(user)}, session={access_token:'local-fixture-token',user};
+ if(new URLSearchParams(location.search).has('quotaRecovery')) {
+  const owner=user.id,key='cherrift-discord-backup-v2:'+owner,security={accountOwnerId:owner};
+  localStorage.setItem(key,JSON.stringify({ownerUserId:owner,cloudUpdatedAt:'fixture-old',dirty:true,saveData:{coins:900,security}}));
+  const record={ownerUserId:owner,savedAt:'2026-10-24',cloudUpdatedAt:'fixture-old',saveData:{coins:800,security}};
+  let filled=false;
+  for(let size=50000;size<=10000000;size+=50000) {
+   try {localStorage.setItem(key+':recovery',JSON.stringify([{...record,notes:'x'.repeat(size)}]));}
+   catch(error){if(error.name!=='QuotaExceededError')throw error;filled=true;break;}
+  }
+  console.info('[Recovery fixture] native quota reached: '+filled);
+  window.addEventListener('cherrift:authgate',async event=>{
+   if(event.detail.mode!=='discord'||event.detail.visible)return;
+   const records=await window.CHERRIFT_RECOVERY.list(owner);
+   console.info('[Recovery fixture] '+JSON.stringify({cloudReady:window.CHERRIFT_AUTH.getState().cloudReady,legacyRemoved:localStorage.getItem(key+':recovery')===null,archivedCopies:records.length}));
+  });
+ }
+
  const client={auth:{getSession:async()=>({data:{session},error:null}),onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}}),signOut:async()=>({error:null})},functions:{invoke:async(_name,options)=>{try{if(location.search.includes('slowBoot=1')&&options.body.action==='bootstrap_save')await new Promise(resolve=>setTimeout(resolve,20000));const response=await fetch('/__test-api',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer local-fixture-token'},body:JSON.stringify(options.body)});const data=await response.json();return response.ok?{data,error:null}:{data,error:{message:data.error||'fixture_error'}};}catch(error){return {data:null,error};}}}};
  window.supabase={createClient:()=>client};
 })();`;

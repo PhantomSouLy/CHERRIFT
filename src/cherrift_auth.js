@@ -4,7 +4,7 @@
   if (window.__CHERRIFT_AUTH_V3__) return;
   window.__CHERRIFT_AUTH_V3__ = true;
 
-  const VERSION = "3.0.0-local-first-bootstrap+3.1.0-deterministic-pkce";
+  const VERSION = "3.0.0-local-first-bootstrap+3.2.0-durable-recovery";
   const SAVE_VERSION = "0.9.5-prebeta.2";
   const CONFIG = window.CHERRIFT_SUPABASE_CONFIG || {};
   const PLAYER_FUNCTION = CONFIG.playerFunctionName || "player-api";
@@ -43,6 +43,7 @@
       loginFailed:"A Discord-belépés nem sikerült.",
       serviceUnavailable:"A Discord ellenőrzése nem válaszolt időben. Vendégként beléphetsz, vagy újrapróbálhatod a Discord-logint.",
       cloudUnavailable:"A felhőmentés most nem válaszol. A helyi másolat megmaradt; a játékhoz és új jutalmakhoz helyre kell állítani a kapcsolatot.",
+      recoveryStorageUnavailable:"A böngésző nem tudta megőrizni a helyi mentésmásolatot. A felhőmentésed megmaradt. Ellenőrizd a webhely tárolási engedélyét és a szabad lemezterületet.",
       cloudSaveFailed:"A felhőmentés átmenetileg nem sikerült. A biztonsági mentés helyben megmaradt.",
       guestDisabled:"A vendégmód ebben a tesztidőszakban nem érhető el.",
       connected:"Discord-fiók csatlakoztatva",
@@ -78,6 +79,7 @@
       loginFailed:"Discord sign-in was not completed.",
       serviceUnavailable:"Discord did not answer in time. Continue as Guest or retry Discord sign-in.",
       cloudUnavailable:"Cloud save is unavailable. Your local copy is preserved; reconnect to play and earn rewards.",
+      recoveryStorageUnavailable:"The browser could not preserve the local recovery copy. Your cloud save is safe. Check site storage permissions and available disk space.",
       cloudSaveFailed:"Cloud saving temporarily failed. The local account backup is still safe.",
       guestDisabled:"Guest mode is unavailable during this test period.",
       connected:"Discord account connected",
@@ -405,7 +407,8 @@
     }
   }
 
-  function preserveRecovery(save, userId, revision) {
+  async function preserveRecovery(save, userId, revision) {
+    if (window.CHERRIFT_RECOVERY) return window.CHERRIFT_RECOVERY.preserve(save, userId, revision);
     if (!save || !userId) return false;
     // A conflict must not destroy either branch. Keep the unsynced snapshot
     // under a separate account-owned key before acknowledging the remote.
@@ -426,20 +429,43 @@
   }
 
   function hasRecovery(userId) {
+    if (window.CHERRIFT_RECOVERY) return window.CHERRIFT_RECOVERY.has(userId);
     try { return !!window.localStorage.getItem(`${backupKey(userId)}:recovery`); }
     catch (_) { return false; }
   }
 
   function progressDiffers(left, right) {
+    const stable = value => Array.isArray(value) ? value.map(stable)
+      : isObject(value) ? Object.fromEntries(Object.keys(value).sort().map(key => [key, stable(value[key])])) : value;
+    const durableValue = (save, key) => {
+      if (key === "account" && isObject(save?.account)) {
+        const account = cloneJson(save.account), tree = account.skillTreeV082 || {};
+        // UI normalization expands an absent rank to 0. Those are the same
+        // owned skill state, not unsynced progression needing another archive.
+        account.skillTreeV082 = {...tree, resetCount:Number(tree.resetCount || 0),
+          ranks:Object.fromEntries(Object.entries(tree.ranks || {}).filter(([,rank]) => Number(rank) !== 0))};
+        return account;
+      }
+      // GM preview unlocks are temporary presentation state. Compare their
+      // original owned lists, not every preview skin and chapter, with the API.
+      const backup = save?.prebeta?.gmAccessActive && save.prebeta.gmAccessBackup;
+      const value = (key === "unlockedSkins" || key === "unlockedStages") && Array.isArray(backup?.[key])
+        ? backup[key] : save?.[key];
+      return Array.isArray(value) && (key === "unlockedSkins" || key === "unlockedStages")
+        ? [...new Set(value)].sort() : value;
+    };
     return ["coins","bloomGems","sakuraEssence","chests","inventory","account","stageStars","unlockedStages","unlockedSkins"]
-      .some(key => JSON.stringify(left?.[key]) !== JSON.stringify(right?.[key]));
+      .some(key => JSON.stringify(stable(durableValue(left, key))) !== JSON.stringify(stable(durableValue(right, key))));
   }
 
-  function downloadRecovery() {
+  async function downloadRecovery() {
     const userId = runtime.session?.user?.id;
     if (!userId) return;
-    const data = window.localStorage.getItem(`${backupKey(userId)}:recovery`);
-    if (!data) return;
+    const context = accountContext();
+    const data = window.CHERRIFT_RECOVERY
+      ? JSON.stringify(await window.CHERRIFT_RECOVERY.list(userId))
+      : window.localStorage.getItem(`${backupKey(userId)}:recovery`);
+    if (!isCurrentAccount(context) || !data || data === "[]") return;
     const url = URL.createObjectURL(new Blob([data], { type:"application/json" }));
     const link = document.createElement("a");
     link.href = url;
@@ -556,7 +582,7 @@
     applyDiscordProfile(save, session);
     runtime.cloudReady = false;
     runtime.offlineAccount = true;
-    runtime.errorKey = "cloudUnavailable";
+    runtime.errorKey = error?.message === "recovery_storage_unavailable" ? "recoveryStorageUnavailable" : "cloudUnavailable";
     runtime.errorDetail = String(error?.message || error || "").slice(0, 180);
     writeBackup(save, session?.user?.id, backup?.dirty || false);
     return save;
@@ -598,7 +624,8 @@
     if (!isCurrentAccount(context)) return false;
     if (response.conflict && isObject(response.save_data)) {
       const local = runtime.pendingSave || snapshot;
-      if (!preserveRecovery(local, context.userId, revision)) throw new Error("recovery_storage_unavailable");
+      if (!await preserveRecovery(local, context.userId, revision)) throw new Error("recovery_storage_unavailable");
+      if (!isCurrentAccount(context)) return false;
       runtime.lastCloudSavedAt = String(response.updated_at || "");
       const remote = normalizeSave(response.save_data);
       applyDiscordProfile(remote);
@@ -613,7 +640,8 @@
     runtime.lastCloudSavedAt = String(response.updated_at || runtime.lastCloudSavedAt);
     const acknowledged = isObject(response.save_data) ? normalizeSave(response.save_data) : snapshot;
     if (runtime.onlinePolicy && progressDiffers(snapshot, acknowledged) &&
-      !preserveRecovery(snapshot, context.userId, revision)) throw new Error("recovery_storage_unavailable");
+      !await preserveRecovery(snapshot, context.userId, revision)) throw new Error("recovery_storage_unavailable");
+    if (!isCurrentAccount(context)) return false;
     runtime.lastSavedJson = JSON.stringify(acknowledged);
     // A newer local save may have appeared while this request was in flight.
     // Its base revision advances with this acknowledgement; keep it dirty.
@@ -684,7 +712,7 @@
         runtime.pendingSave ||= snapshot;
         runtime.cloudReady = false;
         runtime.offlineAccount = true;
-        runtime.errorKey = "cloudUnavailable";
+        runtime.errorKey = error?.message === "recovery_storage_unavailable" ? "recoveryStorageUnavailable" : "cloudUnavailable";
         runtime.errorDetail = String(error?.message || error || "").slice(0, 180);
         writeBackup(runtime.pendingSave, context.userId);
         syncAccountUi();
@@ -757,7 +785,7 @@
     if (status) status.textContent = runtime.statusKey ? text(runtime.statusKey) : "";
     const error = id("authErrorV064");
     const errorText = runtime.errorKey
-      ? `${text(runtime.errorKey)}${runtime.errorDetail ? ` ${runtime.errorDetail}` : ""}`
+      ? `${text(runtime.errorKey)}${runtime.errorDetail && runtime.errorKey !== "recoveryStorageUnavailable" ? ` ${runtime.errorDetail}` : ""}`
       : "";
     if (error) {
       error.textContent = errorText;
@@ -786,8 +814,8 @@
     runtime.gateVisible = true;
     runtime.busy = false;
     runtime.statusKey = options.statusKey || "";
-    runtime.errorKey = options.errorKey || runtime.errorKey || "";
-    runtime.errorDetail = options.errorDetail || runtime.errorDetail || "";
+    runtime.errorKey = Object.hasOwn(options, "errorKey") ? options.errorKey || "" : runtime.errorKey || "";
+    runtime.errorDetail = Object.hasOwn(options, "errorDetail") ? options.errorDetail || "" : runtime.errorDetail || "";
     gate.hidden = false;
     document.body.classList.add("auth-gated-v064");
     renderGate();
@@ -914,8 +942,10 @@
     runtime.session = session;
     runtime.activeUserId = nextUserId;
     const context = accountContext();
-    const backup = readBackup(nextUserId);
     try {
+      if (window.CHERRIFT_RECOVERY) await window.CHERRIFT_RECOVERY.migrate(nextUserId);
+      if (!isCurrentAccount(context)) return null;
+      const backup = readBackup(nextUserId);
       const { save:remote, updatedAt } = await bootstrapCloud(context);
       if (!isCurrentAccount(context)) return null;
       let save = remote;
@@ -930,10 +960,11 @@
           applyDiscordProfile(save, session);
           runtime.pendingSave = cloneJson(save);
           runtime.saveTimer = window.setTimeout(() => flushCloudSave(), SAVE_DEBOUNCE_MS);
-        } else if (!preserveRecovery(backup.save, nextUserId, backup.cloudUpdatedAt)) {
+        } else if (!await preserveRecovery(backup.save, nextUserId, backup.cloudUpdatedAt)) {
           throw new Error("recovery_storage_unavailable");
         }
       }
+      if (!isCurrentAccount(context)) return null;
       writeBackup(save, nextUserId, !!runtime.pendingSave);
       return save;
     } catch (error) {
@@ -1055,7 +1086,7 @@
     runtime.session = null;
     runtime.activeUserId = "";
     switchUiToGuestSave();
-    openGate({ statusKey:"signedOut" });
+    openGate({ statusKey:"signedOut", errorKey:"", errorDetail:"" });
     syncAccountUi();
     return true;
   }
@@ -1089,7 +1120,8 @@
           if (!isCurrentAccount(context)) return false;
           const local = runtime.pendingSave;
           if (local && JSON.stringify(local) !== JSON.stringify(remote) &&
-            !preserveRecovery(local, context.userId, runtime.lastCloudSavedAt)) throw new Error("recovery_storage_unavailable");
+            !await preserveRecovery(local, context.userId, runtime.lastCloudSavedAt)) throw new Error("recovery_storage_unavailable");
+          if (!isCurrentAccount(context)) return false;
           runtime.lastCloudSavedAt = updatedAt;
           runtime.lastSavedJson = JSON.stringify(remote);
           runtime.pendingSave = null;
@@ -1107,7 +1139,7 @@
         if (!isCurrentAccount(context)) return false;
         runtime.cloudReady = false;
         runtime.offlineAccount = true;
-        runtime.errorKey = "cloudUnavailable";
+        runtime.errorKey = error?.message === "recovery_storage_unavailable" ? "recoveryStorageUnavailable" : "cloudUnavailable";
         runtime.errorDetail = String(error?.message || error || "").slice(0, 180);
         console.warn("[CHERRIFT Auth] Cloud reconnect failed.", error);
         syncAccountUi();
@@ -1153,7 +1185,7 @@
       runtime.session = null;
       runtime.activeUserId = "";
       switchUiToGuestSave();
-      openGate({ statusKey:"signedOut" });
+      openGate({ statusKey:"signedOut", errorKey:"", errorDetail:"" });
       syncAccountUi();
     }
   }
@@ -1169,7 +1201,13 @@
       renderGate();
 
       try {
+        // OAuth/session persistence also uses localStorage. Release space from
+        // committed legacy archives before the SDK can write a new auth token.
+        if (window.CHERRIFT_RECOVERY) await window.CHERRIFT_RECOVERY.migrateAll();
+        if (attempt !== runtime.authAttempt || runtime.guestExplicit) return false;
+        if (!runtime.client) runtime.client = createClient();
         if (!runtime.client) throw new Error("supabase_client_unavailable");
+        bindAuthSubscription();
         let session = null;
 
         if (oauthCode) {
@@ -1237,7 +1275,6 @@
     runtime.started = true;
 
     if (!runtime.bootstrapDone) bootstrapSave(runtime.loadGuestSave);
-    if (!runtime.client) runtime.client = createClient();
     runtime.mode = "checking";
     runtime.gateVisible = false;
     runtime.busy = true;
@@ -1269,10 +1306,8 @@
           }
         });
     }, 0);
-    // Register after the discovery timer. Even a custom client that invokes
-    // INITIAL_SESSION synchronously cannot start a second competing bootstrap
-    // before discoverSession() marks the attempt as active.
-    bindAuthSubscription();
+    // Discovery migrates local recovery archives before creating the Auth
+    // client, then binds its callback while the discovery attempt owns startup.
     return true;
   }
 

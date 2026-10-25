@@ -93,3 +93,15 @@ test('auth changes cancel a pending reveal, repeated showStart calls do not rest
 test('reduced motion preserves readiness and skips the visual completion delay',()=>{
   const f=fixture(true);try{f.boot.refresh();f.boot.showStart();assert.equal(f.timer(),0);assert.equal(f.boot.getState().phase,'start');}finally{f.close();}
 });
+
+
+test('the input-blocking boot layer is removed even when animation frames stall',()=>{
+ const f=fixture();try{
+  f.boot.refresh();f.boot.showStart();f.timer();
+  f.w.document.querySelector('#bootStartV096').click();
+  assert.equal(f.timer(),250);assert(f.w.document.querySelector('#bootV060').classList.contains('done'));
+  assert.equal(f.timer(),650);assert.equal(f.w.document.querySelector('#bootV060'),null);
+  const before=f.underlying();f.w.document.querySelector('#underlying').click();assert.equal(f.underlying(),before+1);
+  f.frame();f.frame();assert.equal(f.timers.size,0,'late frames cannot schedule another fade or duplicate readiness');
+ }finally{f.close()}
+});

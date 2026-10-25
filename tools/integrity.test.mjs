@@ -780,3 +780,25 @@ test("recovered Play still requires the server's chapter unlock even with a GM t
  assert.equal(f.server().security.online.run,undefined);
  assert.match(f.messages.at(-1),/nincs feloldva/);
 });
+
+
+test("account switching during async recovery archival cannot acknowledge into the new account",async()=>{
+ const {context:c,runtime:r,applied,data}=authHarness();r.onlinePolicy=true;
+ let finish;c.window.CHERRIFT_RECOVERY={preserve:()=>new Promise(resolve=>finish=resolve)};
+ const pending=c.sendProgress({coins:900,security:{accountOwnerId:"a"}});
+ while(!finish)await Promise.resolve();
+ r.session={user:{id:"b"}};r.accountGeneration++;r.lastCloudSavedAt="b1";
+ finish(true);assert.equal(await pending,false);
+ assert.equal(r.lastCloudSavedAt,"b1");assert.equal(applied.length,0);assert.equal(data.size,0);
+});
+
+
+test("UI zero skill ranks and key order are equivalent, but actual ranks and resets remain recoverable",()=>{
+ const {context:c}=authHarness();
+ const server={account:{level:1,skillTreeV082:{ranks:{}}},coins:500};
+ const normalized={coins:500,account:{skillTreeV082:{resetCount:0,ranks:{damage:0,maxHp:0}},level:1}};
+ assert.equal(c.progressDiffers(normalized,server),false);
+ normalized.account.skillTreeV082.ranks.damage=1;assert.equal(c.progressDiffers(normalized,server),true);
+ normalized.account.skillTreeV082.ranks.damage=0;normalized.account.skillTreeV082.resetCount=1;
+ assert.equal(c.progressDiffers(normalized,server),true);
+});

@@ -1,7 +1,7 @@
 {
   "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "1024-cloud-audio-fix",
+  "buildId": "1025-recovery-storage-fix",
   "entrypoints": {
     "application": "src/cherrift_app.js",
     "menuAudio": "src/cherrift_menu_audio.js",
@@ -9,6 +9,7 @@
     "gunner": "src/cherrift_gunner.js",
     "runtime": "src/cherrift_runtime.js",
     "auth": "src/cherrift_auth.js",
+    "recovery": "src/cherrift_recovery.js",
     "networkGuard": "src/cherrift_network_guard.js",
     "foliage": "src/cherrift_foliage.js",
     "skinUi": "src/cherrift_skin_ui.js",
