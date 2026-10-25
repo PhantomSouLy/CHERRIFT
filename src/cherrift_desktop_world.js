@@ -129,6 +129,7 @@
     const summaryKey = JSON.stringify(rows); if (summary.dataset.key !== summaryKey) { summary.replaceChildren(); for (const row of rows) { const cell = document.createElement('div'), label = document.createElement('small'), value = document.createElement('b'); label.textContent = row.label; value.textContent = row.value; cell.append(label, value); summary.append(cell); } summary.dataset.key = summaryKey; }
     const action = q('[data-wg-action]', footer); action.disabled = !!q(source[mode].action, root)?.disabled || !!state.launch || !!state.exit;
     const training = mode === 'world' && entry.badge === 'T';
+    action.dataset.menuSound = mode === 'chapter' || training ? 'play' : 'click';
     text(q('b', action), mode === 'chapter' || training ? 'PLAY' : copy('FEJEZETEK', 'CHAPTERS'));
     text(q('.wg-action-area>p', footer), entry.locked ? copy('Még nincs feloldva', 'Not unlocked yet') : mode === 'world' && !training ? 'WORLD → CHAPTER' : copy('Készen állsz?', 'Ready to begin?'));
   }

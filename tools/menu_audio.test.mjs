@@ -85,3 +85,26 @@ test('rapid events are bounded to five voices and only handled keyboard navigati
  f.clock(5200);f.send('keydown',{target:f.q('skin'),key:'ArrowRight',defaultPrevented:true});await Promise.resolve();assert(f.played.at(-1).src.endsWith('crystal-page.wav'));
  }finally{f.close()}
 });
+
+
+test('new desktop buttons remain audible inside pointer-transparent chrome and footers',()=>{
+ const f=fixture();try{
+  const layer=f.w.document.createElement('footer');layer.style.pointerEvents='none';
+  layer.innerHTML='<button data-wg-action style="pointer-events:auto"><b>Play</b></button><button data-wg-back style="pointer-events:auto">Back</button><button data-sp-card="2" style="pointer-events:auto">Skin</button><button id="blocked-pointer">Blocked</button>';
+  f.q('app').append(layer);
+  for(const [selector,kind] of [['[data-wg-action]','play'],['[data-wg-back]','back'],['[data-sp-card]','page']]){
+   f.clock(1000+f.played.length*200);const button=layer.querySelector(selector);
+   f.send('click',{target:button.firstElementChild||button});
+   assert(f.played.at(-1)?.src.endsWith('crystal-'+kind+'.wav'),selector+' emits '+kind);
+  }
+  const count=f.played.length;f.send('click',{target:layer.querySelector('#blocked-pointer')});assert.equal(f.played.length,count);
+  f.send('pointerdown');f.send('pointerover',{target:layer.querySelector('[data-wg-action]'),pointerType:'mouse',relatedTarget:null});
+  f.hoverTick();assert(f.played.at(-1).src.endsWith('crystal-hover.wav'));
+ }finally{f.close()}
+});
+
+test('trusted audio runs before online handlers consume persistent-action clicks',()=>{
+ const index=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+ assert(index.indexOf('src/cherrift_menu_audio.js')<index.indexOf('src/cherrift_online.js'));
+ const f=fixture();try{f.w.UI.save.settings.soundEnabled=false;f.send('click');assert.equal(f.played.length,0)}finally{f.close()}
+});

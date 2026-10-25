@@ -129,6 +129,7 @@
     activeUserId:"",
     cloudErrorShown:false,
     reconnecting:false,
+    reconnectPromise:null,
     pendingAuthEvent:null
   };
 
@@ -683,7 +684,10 @@
         runtime.pendingSave ||= snapshot;
         runtime.cloudReady = false;
         runtime.offlineAccount = true;
+        runtime.errorKey = "cloudUnavailable";
+        runtime.errorDetail = String(error?.message || error || "").slice(0, 180);
         writeBackup(runtime.pendingSave, context.userId);
+        syncAccountUi();
         if (!runtime.cloudErrorShown) {
           runtime.cloudErrorShown = true;
           window.UI?.toast?.(text("cloudSaveFailed"));
@@ -875,6 +879,7 @@
   function switchUiToGuestSave() {
     runtime.accountGeneration += 1;
     runtime.reconnecting = false;
+    runtime.reconnectPromise = null;
     runtime.savePromise = Promise.resolve();
     runtime.mode = "guest";
     const save = currentGuestSave();
@@ -903,6 +908,7 @@
       runtime.cloudReady = false;
       runtime.offlineAccount = false;
       runtime.reconnecting = false;
+      runtime.reconnectPromise = null;
       window.CHERRIFT_OBTAINED?.reset?.();
     }
     runtime.session = session;
@@ -1055,44 +1061,65 @@
   }
 
   async function reconnectCloud() {
-    if (
-      runtime.reconnecting ||
-      runtime.mode !== "discord" ||
-      !runtime.session?.user ||
-      (runtime.cloudReady && runtime.onlinePolicy)
-    ) return false;
-    runtime.reconnecting = true;
+    // Play must join background recovery instead of reporting unavailable while
+    // the same account's reconnect request is still in flight.
+    if (runtime.reconnectPromise) return runtime.reconnectPromise;
+    if (runtime.mode !== "discord" || !runtime.session?.user) return false;
+    if (runtime.cloudReady && runtime.onlinePolicy) return true;
     const context = accountContext();
-    try {
-      if (runtime.pendingSave && runtime.lastCloudSavedAt && runtime.onlinePolicy) {
+    runtime.reconnecting = true;
+    runtime.reconnectPromise = (async () => {
+      try {
+        // Serialize with outstanding saves so a late upload cannot downgrade a
+        // freshly recovered connection or replace its revision.
+        await runtime.savePromise.catch(() => {});
+        if (!isCurrentAccount(context)) return false;
+        if (runtime.pendingSave && runtime.lastCloudSavedAt && runtime.onlinePolicy) {
+          runtime.cloudReady = true;
+          await flushCloudSave();
+          if (!isCurrentAccount(context)) return false;
+        }
+        if (!runtime.cloudReady || !runtime.onlinePolicy) {
+          // A persistent upload failure used to trap every Play in the same
+          // retry. Reload the authoritative server state and retain the local
+          // branch before replacing it; never bypass server run authorization.
+          window.clearTimeout(runtime.saveTimer);
+          runtime.saveTimer = 0;
+          const { save:remote, updatedAt } = await bootstrapCloud(context);
+          if (!isCurrentAccount(context)) return false;
+          const local = runtime.pendingSave;
+          if (local && JSON.stringify(local) !== JSON.stringify(remote) &&
+            !preserveRecovery(local, context.userId, runtime.lastCloudSavedAt)) throw new Error("recovery_storage_unavailable");
+          runtime.lastCloudSavedAt = updatedAt;
+          runtime.lastSavedJson = JSON.stringify(remote);
+          runtime.pendingSave = null;
+          writeBackup(remote, context.userId, false);
+          applySaveToUi(remote, "cloud-reconnect");
+        }
         runtime.cloudReady = true;
-        await flushCloudSave();
+        runtime.offlineAccount = false;
+        runtime.cloudErrorShown = false;
+        runtime.errorKey = "";
+        runtime.errorDetail = "";
+        syncAccountUi();
+        return true;
+      } catch (error) {
         if (!isCurrentAccount(context)) return false;
-        if (!runtime.cloudReady) return false;
-      } else {
-        const local = runtime.pendingSave;
-        const { save:remote, updatedAt } = await bootstrapCloud(context);
-        if (!isCurrentAccount(context)) return false;
-        if (local && !preserveRecovery(local, context.userId, runtime.lastCloudSavedAt)) throw new Error("recovery_storage_unavailable");
-        runtime.lastCloudSavedAt = updatedAt;
-        runtime.lastSavedJson = JSON.stringify(remote);
-        runtime.pendingSave = null;
-        writeBackup(remote, context.userId, false);
-        applySaveToUi(remote, "cloud-reconnect");
+        runtime.cloudReady = false;
+        runtime.offlineAccount = true;
+        runtime.errorKey = "cloudUnavailable";
+        runtime.errorDetail = String(error?.message || error || "").slice(0, 180);
+        console.warn("[CHERRIFT Auth] Cloud reconnect failed.", error);
+        syncAccountUi();
+        return false;
+      } finally {
+        if (isCurrentAccount(context)) {
+          runtime.reconnecting = false;
+          runtime.reconnectPromise = null;
+        }
       }
-      runtime.cloudReady = true;
-      runtime.offlineAccount = false;
-      syncAccountUi();
-      return true;
-    } catch (error) {
-      if (!isCurrentAccount(context)) return false;
-      runtime.cloudReady = false;
-      runtime.offlineAccount = true;
-      console.warn("[CHERRIFT Auth] Cloud reconnect failed.", error);
-      return false;
-    } finally {
-      if (isCurrentAccount(context)) runtime.reconnecting = false;
-    }
+    })();
+    return runtime.reconnectPromise;
   }
 
   function bindAuthSubscription() {
@@ -1116,6 +1143,9 @@
         completeDiscordSession(session, attempt).catch(error => {
           console.error("[CHERRIFT Auth] Session completion failed:", error);
         });
+      } else {
+        runtime.session = session;
+        if (event === "TOKEN_REFRESHED" && !runtime.cloudReady) reconnectCloud();
       }
       return;
     }
@@ -1316,6 +1346,8 @@
         onlinePolicy:runtime.onlinePolicy,
         memoryOnly:false,
         offlineAccount:runtime.offlineAccount,
+        reconnecting:runtime.reconnecting,
+        connectionError:runtime.cloudReady ? "" : runtime.errorDetail,
         savePending:!!runtime.pendingSave,
         lastCloudSavedAt:runtime.lastCloudSavedAt,
         account:account ? { ...account } : null

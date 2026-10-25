@@ -263,6 +263,12 @@
       start = proto.start;
     proto.start = async function (...args) {
       const requestedBy = window.CHERRIFT_AUTH.captureAccount();
+      // Recovery and abandoning an old run hydrate server state. Preserve the
+      // chapter chosen for this gesture before either can restore an older one.
+      const requestedStageId = (
+        this.getSelectedStage?.() ||
+        window.CHERRIFT_V040?.stages?.find(s => s.id === UI.save.selectedStageId)
+      )?.id;
       if (!await ensureOnline()) return false;
       if (!window.CHERRIFT_AUTH.isCurrentAccount(requestedBy)) return false;
       if (state.runId || state.busy) return false;
@@ -273,12 +279,7 @@
         });
         if (!abandoned) return false;
       }
-      const stage =
-        this.getSelectedStage?.() ||
-        window.CHERRIFT_V040?.stages?.find(
-          (s) => s.id === UI.save.selectedStageId,
-        );
-      const result = await perform("start_run", { stage_id: stage?.id });
+      const result = await perform("start_run", { stage_id: requestedStageId });
       if (!result) return false;
       state.runId = result.save_data.security.online.run.id;
       state.lastStar = 0;

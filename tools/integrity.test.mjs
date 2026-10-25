@@ -414,6 +414,7 @@ function authHarness() {
     "reconnectCloud",
     "gameAction",
     "acceptServerSave",
+    "processPendingAuthEvent",
   ])
     vm.runInContext(functionSource(authSource, name), context);
   return { context, runtime, data, applied, requests };
@@ -663,4 +664,119 @@ test("a checkpoint unlocks the next chapter using the existing one-star rule", (
   ).save;
   assert.ok(s.unlockedStages.includes("world_1_2"));
   assert.ok(!s.unlockedStages.includes("world_2_1"));
+});
+
+
+test("Play joins background cloud recovery instead of failing while reconnect is in flight",async()=>{
+ const {context:c,runtime:r,requests}=authHarness();r.cloudReady=false;
+ let finish;c.callPlayerApi=action=>{requests.push(action);return new Promise(resolve=>finish=resolve)};
+ const background=c.reconnectCloud();const play=c.reconnectCloud();
+ while(!finish)await Promise.resolve();assert.deepEqual(requests,["bootstrap_save"]);
+ finish({gameplay_policy:"online-v1",save_data:{coins:500,security:{accountOwnerId:"a"}},updated_at:"r2"});
+ assert.equal(await background,true);assert.equal(await play,true);
+ assert.equal(r.cloudReady,true);assert.equal(r.reconnectPromise,null);
+});
+
+test("a rejected pending upload recovers through bootstrap and preserves the local branch",async()=>{
+ const {context:c,runtime:r,data,requests,applied}=authHarness();
+ r.cloudReady=false;r.onlinePolicy=true;r.pendingSave={coins:900,security:{accountOwnerId:"a"}};
+ c.callPlayerApi=async action=>{
+  requests.push(action);if(action==="save_progress")throw new Error("cloud_save_rejected");
+  return {gameplay_policy:"online-v1",save_data:{coins:500,security:{accountOwnerId:"a"}},updated_at:"r2"};
+ };
+ assert.equal(await c.reconnectCloud(),true);
+ assert.deepEqual(requests,["save_progress","bootstrap_save"]);
+ assert.equal(r.cloudReady,true);assert.equal(r.offlineAccount,false);assert.equal(r.pendingSave,null);
+ assert.equal(applied.at(-1).coins,500);
+ assert.equal(JSON.parse(data.get("cherrift-discord-backup-v2:a:recovery"))[0].saveData.coins,900);
+});
+
+test("failed recovery keeps the dirty save and reports a retryable connection error",async()=>{
+ const {context:c,runtime:r,data}=authHarness();r.cloudReady=false;r.onlinePolicy=true;
+ r.pendingSave={coins:900,security:{accountOwnerId:"a"}};
+ c.callPlayerApi=async()=>{throw new Error("network unavailable")};
+ assert.equal(await c.reconnectCloud(),false);assert.equal(r.cloudReady,false);
+ assert.equal(r.pendingSave.coins,900);assert.equal(r.reconnecting,false);assert.equal(r.reconnectPromise,null);
+ assert.match(r.errorDetail,/network unavailable/);
+ assert.equal(JSON.parse(data.get("cherrift-discord-backup-v2:a")).saveData.coins,900);
+});
+
+test("account switch during reconnect cannot hydrate or mark the next account online",async()=>{
+ const {context:c,runtime:r,applied}=authHarness();r.cloudReady=false;
+ let finish;c.callPlayerApi=()=>new Promise(resolve=>finish=resolve);
+ const old=c.reconnectCloud();while(!finish)await Promise.resolve();
+ r.session={user:{id:"b"}};r.activeUserId="b";r.accountGeneration++;r.lastCloudSavedAt="b1";
+ r.reconnectPromise=Promise.resolve("new account recovery");
+ finish({gameplay_policy:"online-v1",save_data:{coins:500},updated_at:"a2"});
+ assert.equal(await old,false);assert.equal(applied.length,0);assert.equal(r.lastCloudSavedAt,"b1");
+ assert.equal(await r.reconnectPromise,"new account recovery");
+});
+
+
+test("a refreshed same-account session is updated without rehydrating and retries offline cloud",()=>{
+ const {context:c,runtime:r,applied}=authHarness();r.bootstrapDone=true;r.started=true;r.cloudReady=false;
+ const refreshed={access_token:"refreshed-fixture",user:{id:"a"}};r.pendingAuthEvent={event:"TOKEN_REFRESHED",session:refreshed};
+ let retries=0;c.reconnectCloud=()=>{retries++;return Promise.resolve(true)};
+ c.processPendingAuthEvent();assert.equal(r.session,refreshed);assert.equal(retries,1);
+ assert.equal(applied.length,0);assert.equal(r.accountGeneration,1);
+});
+
+
+function recoveredPlayHarness({pending=false,gm=true,queueDuringHydration=false,previousRun=false}={}) {
+ const auth=authHarness(), online=onlineHarness(), {context:c,runtime:r}=auth;
+ const calls=[];let revision=1,server=starter();
+ if(gm){server.ownedTitles=["gm"];server.profile.activeTitle="gm";}
+ server.unlockedStages.push("world_1_2");server.stageStars.world_1_1=1;server.selectedStageId="world_1_1";
+ if(previousRun)server=act(server,"start_run",{stage_id:"world_1_1"}).save;
+ online.window.UI.save={...structuredClone(server),selectedStageId:"world_1_2"};
+ r.onlinePolicy=true;r.cloudReady=false;
+ if(pending)r.pendingSave={...structuredClone(online.window.UI.save),coins:900};
+ c.window.UI=online.window.UI;
+ c.applySaveToUi=save=>{
+  online.window.UI.save=save;
+  if(queueDuringHydration)c.queueCloudSave(save);
+ };
+ online.Game.prototype.getSelectedStage=()=>({id:online.window.UI.save.selectedStageId});
+ Object.assign(online.window.CHERRIFT_AUTH,{
+  getState:()=>r,captureAccount:c.accountContext,isCurrentAccount:c.isCurrentAccount,
+  reconnectCloud:c.reconnectCloud,gameAction:c.gameAction
+ });
+ c.callPlayerApi=async(action,payload)=>{
+  calls.push({action,operation:payload?.operation,stage:payload?.params?.stage_id});
+  if(action==="save_progress")throw new Error("cloud_save_rejected");
+  if(action==="game_action")server=act(server,payload.operation,payload.params).save;
+  return {ok:true,gameplay_policy:"online-v1",save_data:structuredClone(server),updated_at:"r"+(++revision)};
+ };
+ return {...online,auth,calls,server:()=>server};
+}
+
+test("GM Play recovers a rejected save and starts the chapter clicked before hydration",async()=>{
+ const f=recoveredPlayHarness({pending:true,queueDuringHydration:true});const game=new f.Game();
+ assert.equal(await game.start(),true);assert.equal(game.started,true);
+ assert.deepEqual(f.calls.map(x=>x.operation||x.action),["save_progress","bootstrap_save","start_run"]);
+ assert.equal(f.server().security.online.run.stageId,"world_1_2");
+ assert.equal(f.window.UI.save.selectedStageId,"world_1_2");
+ assert.equal(f.server().coins,500,"local fallback cannot mint currency");
+ const recovery=JSON.parse(f.auth.data.get("cherrift-discord-backup-v2:a:recovery"));
+ assert.equal(recovery[0].saveData.coins,900,"unsynced local branch remains available");
+});
+
+test("ordinary Play keeps the selected chapter after loading authoritative cloud state",async()=>{
+ const f=recoveredPlayHarness({gm:false});const game=new f.Game();
+ assert.equal(await game.start(),true);assert.equal(f.server().security.online.run.stageId,"world_1_2");
+});
+
+
+test("closing an existing run cannot replace the new Play selection with its older chapter",async()=>{
+ const f=recoveredPlayHarness({previousRun:true});f.auth.runtime.cloudReady=true;
+ const game=new f.Game();assert.equal(await game.start(),true);
+ assert.deepEqual(f.calls.map(x=>x.operation||x.action),["abandon_run","start_run"]);
+ assert.equal(f.server().security.online.run.stageId,"world_1_2");
+});
+
+test("recovered Play still requires the server's chapter unlock even with a GM title",async()=>{
+ const f=recoveredPlayHarness();f.server().stageStars.world_1_1=0;
+ const game=new f.Game();assert.equal(await game.start(),false);assert.notEqual(game.started,true);
+ assert.equal(f.server().security.online.run,undefined);
+ assert.match(f.messages.at(-1),/nincs feloldva/);
 });

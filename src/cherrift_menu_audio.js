@@ -10,8 +10,8 @@
     page: Object.freeze({src:'assets/audio/menu/crystal-page.wav', gain:.50, gap:65})
   });
   const selector = 'button,a[href],summary,select,input[type=button],input[type=submit],input[type=reset],input[type=checkbox],input[type=radio],input[type=range],[role=button],[role=menuitem],[role=switch],[data-open],[data-action],[data-node]';
-  const playSelector = '.crystal-play,[data-chapter-play],[data-world-start],#mobilePlayBtn,#btnPlay,[data-menu-sound="play"]';
-  const pageSelector = '[data-v093-skin],[data-v093-skin-view],[data-sp-step],[data-wg-step],[data-wg-pick],[data-v093-world-step],[data-v084-skin],[data-rg-step],[data-menu-sound="page"]';
+  const playSelector = '[data-wg-action],.crystal-play,[data-chapter-play],[data-world-start],#mobilePlayBtn,#btnPlay,[data-menu-sound="play"]';
+  const pageSelector = '[data-sp-card],[data-wg-card],[data-cc-skin],[data-v093-skin],[data-v093-skin-view],[data-sp-step],[data-wg-step],[data-wg-pick],[data-v093-world-step],[data-v084-skin],[data-rg-step],[data-menu-sound="page"]';
   const pools = new Map(), last = new Map();
   let unlocked = false, hoverTimer = 0, hoverTarget = null, active = [];
 
@@ -34,13 +34,16 @@
     for (let node = control; node; node = node.parentElement) {
       if (node.hidden || node.classList.contains('hidden') || node.getAttribute('aria-hidden') === 'true') return null;
       const style = getComputedStyle(node);
-      if (style.display === 'none' || style.visibility === 'hidden' || style.pointerEvents === 'none') return null;
+      if (style.display === 'none' || style.visibility === 'hidden') return null;
     }
+    // A decorative ancestor may disable pointer events while its buttons
+    // explicitly re-enable them. Hit testing follows the control's computed value.
+    if (getComputedStyle(control).pointerEvents === 'none') return null;
     return control;
   }
   function volume(kind) {
     const settings = window.UI?.save?.settings || {};
-    if (settings.muted === true || settings.menuSounds === false) return 0;
+    if (settings.muted === true || settings.menuSounds === false || settings.soundEnabled === false) return 0;
     const saved = Number(settings.volume ?? 60);
     return cues[kind].gain * Math.max(0, Math.min(1, (Number.isFinite(saved) ? saved : 60) / 100));
   }
@@ -106,5 +109,5 @@
     if (!document.hidden) return;
     clearHover(true); for (const sound of active) sound.pause(); active = [];
   });
-  window.CHERRIFT_MENU_AUDIO = Object.freeze({version:'1.0-crystal', play, classifyControl, cues});
+  window.CHERRIFT_MENU_AUDIO = Object.freeze({version:'1.1-crystal-hit-testing', play, classifyControl, cues});
 })();
