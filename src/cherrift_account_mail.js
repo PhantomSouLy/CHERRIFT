@@ -1099,7 +1099,7 @@
     const world = num(stage.world) || 1;
     const index = num(stage.index || stage.stage) || 1;
     const artIndex = index <= 2 ? 1 : index <= 4 ? 2 : world === 4 ? 2 : 3;
-    return [...new Set([stage.splash, stage.splashArt, stage.art, stage.image, stage.preview, stage.thumbnail, `assets/map/world${world}/world${world}_splashart_${artIndex}.png`, "assets/map/world1/world1_splashart_1.png"].filter(Boolean))];
+    return [...new Set([stage.splash, stage.splashArt, stage.art, stage.image, stage.preview, stage.thumbnail, (world === 1 ? window.CHERRIFT_WORLD1_ASSETS.splashArts[0] : `assets/map/world${world}/world${world}_splashart_${artIndex}.png`), "assets/map/world1/meadow/splash.webp"].filter(Boolean))];
   }
   function applyFirstWorkingBackground(element, candidates) {
     const token = ++state.stageArtToken;

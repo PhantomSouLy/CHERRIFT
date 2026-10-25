@@ -374,6 +374,10 @@ if (existsSync(skinRoot)) {
 }
 
 for (let world = 1; world <= 6; world++) {
+  if (world === 1) {
+    if (!existsSync(join(root,"assets/map/world1/meadow/splash.webp"))) errors.push("World1 meadow splash is missing");
+    continue;
+  }
   const directory = join(root, "assets", "map", `world${world}`);
   const variantCount = world === 4 ? 2 : 3;
   for (let variant = 1; variant <= variantCount; variant++) {

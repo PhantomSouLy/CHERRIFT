@@ -1,0 +1,14 @@
+CHERRIFT World1 – image_gen, built-in mode
+Reference: accepted Concept 1 (Sunlit Meadow), concept.png.
+
+FINAL GROUND PROMPT
+Use case: stylized-concept. Production seamless grass ground texture for a top-down 2D action RPG. The reference is only for overall meadow palette. Create a NEW square opaque 1024x1024 texture that is MUCH CALMER and LOWER CONTRAST than the reference's detailed foliage. Predominantly soft muted warm sage-green, subtle fine short grass strokes and broad very faint tonal variation. The ground must recede behind separately drawn characters, rocks and trees. No recognizable leaves or bushes, no clumps of large individual plants, no bright yellow spots, no dark patches, no checker, no radial or kaleidoscope pattern. Restrained painterly brushwork, almost flat from a distance, like the quiet walking area of a polished cozy RPG. Straight overhead camera, uniform diffuse lighting, no shadows, no objects, no flowers, no paths, no text. All edges seamlessly tileable. This image is a terrain texture, not a landscape.
+
+OBJECT MASTER PROMPT
+Production environment sprite atlas for CHERRIFT World1. Match the reference's hand-painted sunny meadow trees, mossy cream-gray stones, yellow-green foliage, pale daisies and warm timber. New artwork. Transparent RGBA sheet with 4 columns and 4 rows. Uniform high overhead three-quarter orthographic game camera and upper-left sunlight. 16 separate objects in this order: row 1 three rounded deciduous trees and a leafy shrub; row 2 flowering shrub, irregular green shrub, mossy limestone boulder and two-rock cluster; row 3 small stone, horizontal fallen hollow log, stump and red mushrooms; row 4 white daisies, yellow flowers, mixed meadow flowers and grass tuft. Complete isolated sprites with clear padding, small contact shadows, no background, text, characters or cherry blossoms.
+
+LAYOUT CORRECTION PROMPT
+Re-layout the 16 designs in a four-by-four grid with transparent padding. Keep the same designs, painterly style, sequence and orthographic camera. Scale trees down so no silhouettes overlap neighbouring sprites. No lines, labels or background. The exported objects.png is the corrected generation. The production extraction script uses measured cell boundaries to retain each complete silhouette.
+
+SOURCE HANDLING
+The original grass generation was replaced with the quieter final ground above. No legacy World1 graphics were resized or repurposed. Sprite extraction and low/medium/high proportional exports use prepare_world1_art.py.

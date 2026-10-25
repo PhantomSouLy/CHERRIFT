@@ -1,13 +1,14 @@
 {
   "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "1025-cosmetic-polish-1",
+  "buildId": "1025-world1-meadow-active",
   "entrypoints": {
     "application": "src/cherrift_app.js",
     "menuAudio": "src/cherrift_menu_audio.js",
     "presentation": "src/cherrift_presentation.js",
     "gunner": "src/cherrift_gunner.js",
     "runtime": "src/cherrift_runtime.js",
+    "world1Assets": "src/cherrift_world1_assets.js",
     "auth": "src/cherrift_auth.js",
     "recovery": "src/cherrift_recovery.js",
     "networkGuard": "src/cherrift_network_guard.js",
@@ -28,7 +29,8 @@
     "desktopAchievements": "src/cherrift_desktop_achievements.js",
     "desktopLoading": "src/cherrift_desktop_loading.js",
     "desktopSocial": "src/cherrift_desktop_social.js",
-    "desktopLogin": "src/cherrift_desktop_login.js"
+    "desktopLogin": "src/cherrift_desktop_login.js",
+    "world1": "src/cherrift_world1.js"
   },
   "stylesheets": {
     "shell": "assets/cherrift_shell.css",
@@ -106,6 +108,8 @@
       "assets/cherrift_skill_builder.css"
     ],
     "gameplayRuntime": [
+      "src/cherrift_world1.js",
+      "src/cherrift_world1_assets.js",
       "src/cherrift_runtime.js",
       "assets/cherrift_runtime.css"
     ],

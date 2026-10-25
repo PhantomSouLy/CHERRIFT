@@ -91,14 +91,14 @@ window.CHERRIFT_CONFIG = {
   },
 
   map: {
-    grass: "assets/map/world1/world1_ground_1.png",
-    rockSmall: "assets/map/world1/world1_rock_small_1.png",
-    rockBig: "assets/map/world1/world1_rock_1.png",
-    bush1: "assets/map/world1/world1_bush_1.png",
-    bush2: "assets/map/world1/world1_bush_2.png",
-    log: "assets/map/world1/world1_log_1.png",
-    treeSmall: "assets/map/world1/world1_tree_1.png",
-    treeBig: "assets/map/world1/world1_tree_2.png"
+    grass: "assets/map/world1/meadow/high/ground.webp",
+    rockSmall: "assets/map/world1/meadow/high/rockSmall.webp",
+    rockBig: "assets/map/world1/meadow/high/rock1.webp",
+    bush1: "assets/map/world1/meadow/high/bush1.webp",
+    bush2: "assets/map/world1/meadow/high/bush2.webp",
+    log: "assets/map/world1/meadow/high/log.webp",
+    treeSmall: "assets/map/world1/meadow/high/tree1.webp",
+    treeBig: "assets/map/world1/meadow/high/tree2.webp"
   },
 
   pickups: {

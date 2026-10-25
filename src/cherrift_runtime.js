@@ -96,7 +96,7 @@
   });
 
   const WORLD_MAPS = Object.freeze({
-    1:{ground:"assets/map/world1/world1_ground_1.png",tint:"rgba(252,244,205,.025)",objects:{bush1:{src:"assets/map/world1/world1_bush_1.png",count:11,w:96,h:76,anchor:.73},bush2:{src:"assets/map/world1/world1_bush_2.png",count:10,w:94,h:74,anchor:.73},bush3:{src:"assets/map/world1/world1_bush_3.png",count:9,w:92,h:72,anchor:.73},flower1:{src:"assets/map/world1/world1_flower_1.png",count:11,w:31,h:31,anchor:.66},flower2:{src:"assets/map/world1/world1_flower_2.png",count:9,w:34,h:34,anchor:.66},flower3:{src:"assets/map/world1/world1_flower_3.png",count:9,w:31,h:31,anchor:.66},log:{src:"assets/map/world1/world1_log_1.png",count:7,w:104,h:62,anchor:.70,solid:true,r:28},mushroom:{src:"assets/map/world1/world1_mushroom_1.png",count:11,w:42,h:40,anchor:.72},rock1:{src:"assets/map/world1/world1_rock_1.png",count:9,w:92,h:72,anchor:.72,solid:true,r:27},rock2:{src:"assets/map/world1/world1_rock_2.png",count:9,w:86,h:68,anchor:.72,solid:true,r:25},rockSmall:{src:"assets/map/world1/world1_rock_small_1.png",count:13,w:42,h:34,anchor:.70},tree1:{src:"assets/map/world1/world1_tree_1.png",count:8,w:132,h:176,anchor:.84,solid:true,r:25},tree2:{src:"assets/map/world1/world1_tree_2.png",count:7,w:142,h:192,anchor:.85,solid:true,r:27}}},
+    1:window.CHERRIFT_WORLD1_ASSETS,
     2:{ground:"assets/map/world2/world2_ground_1.png",tint:"rgba(13,18,47,.16)",objects:{bush1:{src:"assets/map/world2/world2_bush_1.png",count:10,w:94,h:74,anchor:.73},bush2:{src:"assets/map/world2/world2_bush_2.png",count:9,w:92,h:72,anchor:.73},bush3:{src:"assets/map/world2/world2_bush_3.png",count:9,w:90,h:70,anchor:.73},flower1:{src:"assets/map/world2/world2_flower_1.png",count:8,w:34,h:34,anchor:.66},flower2:{src:"assets/map/world2/world2_flower_2.png",count:8,w:34,h:34,anchor:.66},flower3:{src:"assets/map/world2/world2_flower_3.png",count:8,w:36,h:36,anchor:.66},rock1:{src:"assets/map/world2/world2_rock_1.png",count:9,w:88,h:68,anchor:.72,solid:true,r:25},rock2:{src:"assets/map/world2/world2_rock_2.png",count:9,w:88,h:68,anchor:.72,solid:true,r:25},rock3:{src:"assets/map/world2/world2_rock_3.png",count:8,w:82,h:64,anchor:.72,solid:true,r:24},tree1:{src:"assets/map/world2/world2_tree_1.png",count:8,w:132,h:178,anchor:.84,solid:true,r:25},tree2:{src:"assets/map/world2/world2_tree_2.png",count:7,w:142,h:192,anchor:.85,solid:true,r:27},firefly:{src:"assets/map/world2/world2_firefly_01.png",count:7,w:18,h:18,anchor:.50,alpha:.78,glow:true}}},
     3:{ground:"assets/map/world3/world3_ground_1.png",tint:"rgba(201,159,76,.035)",objects:{bones:{src:"assets/map/world3/world3_bones.png",count:7,w:72,h:50,anchor:.68},bush1:{src:"assets/map/world3/world3_bush_1.png",count:9,w:96,h:76,anchor:.73},bush2:{src:"assets/map/world3/world3_bush_2.png",count:9,w:94,h:74,anchor:.73},log:{src:"assets/map/world3/world3_log.png",count:7,w:104,h:62,anchor:.70,solid:true,r:28},rock1:{src:"assets/map/world3/world3_rock_1.png",count:10,w:90,h:70,anchor:.72,solid:true,r:26},rock2:{src:"assets/map/world3/world3_rock_2.png",count:9,w:86,h:68,anchor:.72,solid:true,r:25},grass1:{src:"assets/map/world3/world3_tall_grass_1.png",count:13,w:78,h:60,anchor:.76},grass2:{src:"assets/map/world3/world3_tall_grass_2.png",count:12,w:74,h:58,anchor:.76},tree1:{src:"assets/map/world3/world3_tree_1.png",count:7,w:138,h:184,anchor:.85,solid:true,r:27},tree2:{src:"assets/map/world3/world3_tree_2.png",count:6,w:146,h:196,anchor:.86,solid:true,r:29}}},
     4:{ground:"assets/map/world4/world4_ground_1.png",tint:"rgba(176,83,46,.045)",objects:{bigRock:{src:"assets/map/world4/world4_big_rock_1.png",count:6,w:126,h:94,anchor:.73,solid:true,r:36},bones:{src:"assets/map/world4/world4_bones_1.png",count:8,w:74,h:50,anchor:.68},bush:{src:"assets/map/world4/world4_bush_1.png",count:9,w:86,h:68,anchor:.73},cactus1:{src:"assets/map/world4/world4_cactus_1.png",count:7,w:104,h:142,anchor:.84,solid:true,r:23},cactus2:{src:"assets/map/world4/world4_cactus_2.png",count:8,w:84,h:118,anchor:.83,solid:true,r:20},flower:{src:"assets/map/world4/world4_flower_1.png",count:7,w:46,h:42,anchor:.68},rock1:{src:"assets/map/world4/world4_rock_1.png",count:9,w:104,h:78,anchor:.72,solid:true,r:30},rock2:{src:"assets/map/world4/world4_rock_2.png",count:9,w:92,h:72,anchor:.72,solid:true,r:27},veryBig:{src:"assets/map/world4/world4_rock_very_big_1.png",count:5,w:148,h:108,anchor:.73,solid:true,r:42},tree:{src:"assets/map/world4/world4_tree_1.png",count:6,w:136,h:184,anchor:.85,solid:true,r:27}}},
@@ -170,7 +170,7 @@
       const chapter = Number(stage?.index || String(stage?.id || "").match(/_(\d+)$/)?.[1]);
       if (!(world >= 1 && world <= 6) || !(chapter >= 1 && chapter <= 5) || stage.training) continue;
       const variant = chapter <= 2 ? 1 : chapter <= 4 ? 2 : world === 4 ? 2 : 3;
-      stage.splash = `assets/map/world${world}/world${world}_splashart_${variant}.png`;
+      stage.splash = world === 1 ? WORLD_MAPS[1].splashArts[variant - 1] : `assets/map/world${world}/world${world}_splashart_${variant}.png`;
       const pool = WORLD_POOLS[world]?.[chapter - 1];
       if (pool?.length) stage.enemyPool = [...pool];
     }
@@ -212,6 +212,7 @@
   }
 
   function preloadWorld(world){
+    if (world === 1) return; // Prepared and decoded before World1 starts.
     const config = WORLD_MAPS[world];
     if (!config) return;
     preload(config.ground,state.worldImages,`ground:${world}`);
@@ -219,6 +220,7 @@
   }
 
   function buildWorld(game,world){
+    if (world === 1) return window.CHERRIFT_WORLD1.build(game);
     const config = WORLD_MAPS[world];
     if (!config) return game?.obstacles;
     preloadWorld(world);
@@ -280,6 +282,7 @@
 
   function drawGround(game,context,zoom,previous){
     const world = stageWorld(game);
+    if (world === 1) return window.CHERRIFT_WORLD1.drawGround(game,context,zoom);
     const config = WORLD_MAPS[world];
     const image = state.worldImages.get(`ground:${world}`) || preload(config?.ground,state.worldImages,`ground:${world}`);
     if (!config || !image?.complete || !(image.naturalWidth || image.width)) return previous?.call(game,context,zoom);
@@ -357,6 +360,7 @@
 
   function hitObstacle(game,previous){
     const player=game.player, world=stageWorld(game);
+    if (world === 1) return window.CHERRIFT_WORLD1.collides(game);
     if (!player || !WORLD_MAPS[world]) return previous?.call(game) || false;
     for (const object of game.__cherriftCleanSolidObjects || (game.obstacles || []).filter(entry => entry?.solid)) {
       if (!object?.__cherriftCleanWorld) continue;
@@ -421,6 +425,7 @@
     const previousGenerateMap=proto.generateMap;
     const previousStart=proto.start;
     const previousDrawGround=proto.drawGround;
+    const previousDrawWorld=proto.drawWorld;
     const previousDrawObstacle=proto.drawObstacle;
     const previousHitObstacle=proto.hitObstacle;
     const previousSpawnEnemy=proto.spawnEnemy;
@@ -445,14 +450,17 @@
     };
 
     if (typeof previousGenerateMap==="function") proto.generateMap=function(...args){
+      if (stageWorld(this) === 1) return buildWorld(this,1);
       const legacy=previousGenerateMap.apply(this,args), world=stageWorld(this);
       return WORLD_MAPS[world]?buildWorld(this,world):legacy;
     };
     if (typeof previousStart==="function") proto.start=async function(...args){
-      const before=stageWorld(this);
+      const before=Number(this.getSelectedStage?.()?.world) || stageWorld(this);
+      if (before === 1) await window.CHERRIFT_WORLD1.prepare(this);
       if (WORLD_MAPS[before]) preloadWorld(before);
       const result=await previousStart.apply(this,args), world=stageWorld(this);
       if (WORLD_MAPS[world]) buildWorld(this,world);
+      if (world === 1) window.CHERRIFT_WORLD1.applyResolution(this);
       if (this.player&&!this.player.__cleanBaseCombat) {
         this.player.crit=Math.max(0,Number(this.player.crit||0)-.02);
         this.player.critDamage=Math.max(1,Number(this.player.critDamage||1.5)-.25);
@@ -461,8 +469,13 @@
       return result;
     };
     if (typeof previousDrawGround==="function") proto.drawGround=function(context,zoom=1){ return drawGround(this,context,zoom,previousDrawGround); };
+    proto.drawWorld=function(context){
+      if (stageWorld(this) === 1) return window.CHERRIFT_WORLD1.drawWorld(this,context);
+      return previousDrawWorld.call(this,context);
+    };
     if (typeof previousDrawObstacle==="function") proto.drawObstacle=function(context,object){
       const world=stageWorld(this);
+      if (world === 1) return window.CHERRIFT_WORLD1.drawObject(this,context,object);
       if (WORLD_MAPS[world]) {
         if (!object?.__cherriftCleanWorld || Number(object.worldId)!==world) return;
         return drawObject(this,context,object);
@@ -475,6 +488,14 @@
     if (typeof previousSpawnEnemy==="function") proto.spawnEnemy=function(...args){
       const before=this.enemies?.length||0, result=previousSpawnEnemy.apply(this,args);
       for (const enemy of (this.enemies||[]).slice(before)) customizeEnemy(enemy);
+      if (stageWorld(this) === 1 && this.camera) {
+        const halfW=this.w/(this.zoom||1)/2+110, halfH=this.h/(this.zoom||1)/2+110;
+        for (const enemy of (this.enemies||[]).slice(before)) {
+          const side=Math.floor(Math.random()*4),along=Math.random()*2-1;
+          enemy.x=this.camera.x+(side<2?(side===0?-halfW:halfW):along*halfW);
+          enemy.y=this.camera.y+(side>=2?(side===2?-halfH:halfH):along*halfH);
+        }
+      }
       return result;
     };
     if (typeof previousDrawEnemy==="function") proto.drawEnemy=function(context,enemy){
@@ -499,6 +520,7 @@
       const phone=matchMedia("(max-width:820px)").matches;
       this.dpr=Math.max(1,Math.min(window.devicePixelRatio||1,phone?(lowEnd?1:1.2):1.5));
       const result=previousResize.apply(this,args);
+      window.CHERRIFT_WORLD1.applyResolution(this);
       this.__cherriftNeedsRender=true;
       if (this.ctx) {
         this.ctx.imageSmoothingEnabled=true;

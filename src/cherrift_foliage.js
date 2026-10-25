@@ -26,6 +26,7 @@
   }
 
   function profileFor(object){
+    if (object?.exterior) return null;
     const currentMapObject = object?.cherriftMapObject || object?.__cherriftCleanWorld ||
       (!!object && Number.isFinite(Number(object.x)) && Number.isFinite(Number(object.y)) && !!(object.assetKey || object.kind));
     if (!currentMapObject || object.solid || object.glow || /firefly/i.test(String(object.kind || object.objectKey || ""))) return null;
@@ -125,6 +126,10 @@
 
   function updateFoliage(game){
     if ((game.mode !== "playing" && !document.body.classList.contains("is-playing")) || !game.player) return;
+    if (game.__meadow && game.stage?.world === 1 && game.save?.settings?.effectQuality === "low") {
+      game.__cherriftFoliage?.active.clear();
+      return;
+    }
     const controller = controllerFor(game);
     const now = seconds(game);
 
@@ -203,6 +208,7 @@
     controller.inside = nextInside;
   }
 
+  function installHooks(){
   const previousUpdate = proto.update;
   proto.update = function updateReactiveFoliage(dt){
     const result = previousUpdate.call(this, dt);
@@ -240,6 +246,10 @@
       context.restore();
     }
   };
+
+  }
+  if (window.CHERRIFT_RUNTIME) installHooks();
+  else window.addEventListener("cherrift:runtime-ready",installHooks,{once:true});
 
   window.CHERRIFT_REACTIVE_FOLIAGE = Object.freeze({
     version:VERSION,

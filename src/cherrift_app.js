@@ -1190,20 +1190,20 @@ window.UI = {
   };
 
   const WORLD1_GROUND = {
-    basic:"assets/map/world1/world1_ground_1.png",
-    flowersRocks:"assets/map/world1/world1_ground_1.png",
-    dirtClearing:"assets/map/world1/world1_ground_1.png",
-    grassDirtMix:"assets/map/world1/world1_ground_1.png",
-    cloverFlowers:"assets/map/world1/world1_ground_1.png"
+    basic:"assets/map/world1/meadow/high/ground.webp",
+    flowersRocks:"assets/map/world1/meadow/high/ground.webp",
+    dirtClearing:"assets/map/world1/meadow/high/ground.webp",
+    grassDirtMix:"assets/map/world1/meadow/high/ground.webp",
+    cloverFlowers:"assets/map/world1/meadow/high/ground.webp"
   };
 
   function installConfigData() {
     Object.assign(CHERRIFT_CONFIG.map, {
-      grassNight:"assets/map/world1/world1_ground_1.png",
-      flower1:"assets/map/world1/world1_flower_1.png",
-      flower2:"assets/map/world1/world1_flower_2.png",
-      mushroom:"assets/map/world1/world1_mushroom_1.png",
-      world1:"assets/map/world1/world1_splashart_1.png",
+      grassNight:"assets/map/world1/meadow/high/ground.webp",
+      flower1:"assets/map/world1/meadow/high/flower1.webp",
+      flower2:"assets/map/world1/meadow/high/flower2.webp",
+      mushroom:"assets/map/world1/meadow/high/mushroom.webp",
+      world1:"assets/map/world1/meadow/splash.webp",
       world2:"assets/map/world2/world2_splashart_1.png",
       ...WORLD1_GROUND
     });
@@ -1591,7 +1591,7 @@ window.UI = {
    Clean replacement for old v0.4.0d/e/f/g/h world patches.
 
    Final world rules:
-   - World 1 ground: assets/map/world1/world1_ground_1.png
+   - World 1 ground: assets/map/world1/meadow/high/ground.webp
    - World 2 ground: same seamless texture + night overlay
    - World 2 splash: assets/map/world2/world2_splashart_1.png
    - World 2-1 stays unlocked for testing
@@ -1607,21 +1607,21 @@ window.UI = {
   const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 
   const STAGES = window.CHERRIFT_V040?.stages || [];
-  const SHARED_GROUND = "assets/map/world1/world1_ground_1.png";
-  const WORLD1_SPLASH = "assets/map/world1/world1_splashart_1.png";
+  const SHARED_GROUND = "assets/map/world1/meadow/high/ground.webp";
+  const WORLD1_SPLASH = "assets/map/world1/meadow/splash.webp";
   const WORLD2_SPLASH = "assets/map/world2/world2_splashart_1.png";
 
   const WORLD1_DECOR = {
-    bush1: "assets/map/world1/world1_bush_1.png",
-    bush2: "assets/map/world1/world1_bush_2.png",
-    flower1: "assets/map/world1/world1_flower_1.png",
-    flower2: "assets/map/world1/world1_flower_2.png",
-    log: "assets/map/world1/world1_log_1.png",
-    mushroom: "assets/map/world1/world1_mushroom_1.png",
-    rockBig: "assets/map/world1/world1_rock_1.png",
-    rockSmall: "assets/map/world1/world1_rock_small_1.png",
-    treeBig: "assets/map/world1/world1_tree_2.png",
-    treeSmall: "assets/map/world1/world1_tree_1.png"
+    bush1: "assets/map/world1/meadow/high/bush1.webp",
+    bush2: "assets/map/world1/meadow/high/bush2.webp",
+    flower1: "assets/map/world1/meadow/high/flower1.webp",
+    flower2: "assets/map/world1/meadow/high/flower2.webp",
+    log: "assets/map/world1/meadow/high/log.webp",
+    mushroom: "assets/map/world1/meadow/high/mushroom.webp",
+    rockBig: "assets/map/world1/meadow/high/rock1.webp",
+    rockSmall: "assets/map/world1/meadow/high/rockSmall.webp",
+    treeBig: "assets/map/world1/meadow/high/tree2.webp",
+    treeSmall: "assets/map/world1/meadow/high/tree1.webp"
   };
 
   CHERRIFT_CONFIG.version = VERSION;
@@ -1918,8 +1918,8 @@ window.UI = {
   if (!window.CHERRIFT_CONFIG || !window.CHERRIFT_DATA || !window.CherriftGame || !window.UI) return;
 
   const VERSION = "0.4.1b-bugfix";
-  const SHARED_GROUND = "assets/map/world1/world1_ground_1.png";
-  const WORLD1_SPLASH = "assets/map/world1/world1_splashart_1.png";
+  const SHARED_GROUND = "assets/map/world1/meadow/high/ground.webp";
+  const WORLD1_SPLASH = "assets/map/world1/meadow/splash.webp";
   const WORLD2_SPLASH = "assets/map/world2/world2_splashart_1.png";
   const STAGES = window.CHERRIFT_V040?.stages || [];
   const id = name => document.getElementById(name);
@@ -2248,7 +2248,7 @@ window.UI = {
 
 /* ============================================================
    CHERRIFT v0.4.1 GROUND ASSET FINAL SAFETY
-   - Uses assets/map/world1/world1_ground_1.png directly
+   - Uses assets/map/world1/meadow/high/ground.webp directly
    - Does not rely only on canvas pattern
    - World 2 keeps the night overlay
    ============================================================ */
@@ -2257,7 +2257,7 @@ window.UI = {
 
   if (!window.CherriftGame || !window.CHERRIFT_CONFIG) return;
 
-  const SHARED_GROUND_K = "assets/map/world1/world1_ground_1.png";
+  const SHARED_GROUND_K = "assets/map/world1/meadow/high/ground.webp";
   CHERRIFT_CONFIG.map.grass = SHARED_GROUND_K;
   CHERRIFT_CONFIG.map.grassNight = SHARED_GROUND_K;
   CHERRIFT_CONFIG.map.world1GrassSeamless = SHARED_GROUND_K;
@@ -2740,7 +2740,7 @@ window.UI = {
   };
 
   // Faster night ground final override.
-  const SHARED_GROUND = "assets/map/world1/world1_ground_1.png";
+  const SHARED_GROUND = "assets/map/world1/meadow/high/ground.webp";
   CHERRIFT_CONFIG.map.grass = SHARED_GROUND;
   CHERRIFT_CONFIG.map.grassNight = SHARED_GROUND;
   CHERRIFT_CONFIG.map.world1GrassSeamless = SHARED_GROUND;
@@ -2810,7 +2810,7 @@ window.UI = {
 /* ============================================================
    CHERRIFT v0.4.1e FINAL PERF + ENEMY + GROUND FIX
    - Removes dependency on the huge embedded base64 ground.
-   - Uses external assets/map/world1/world1_ground_1.png only.
+   - Uses external assets/map/world1/meadow/high/ground.webp only.
    - Direct-loads enemy sprite sheets and uses cached frame canvases.
    - Uses cheap World 2 night overlay.
    - Adds 3.5 sec VICTORY delay before Stage Cleared modal.
@@ -3215,7 +3215,7 @@ window.UI = {
   // ------------------------------------------------------------
   // Fast external ground renderer
   // ------------------------------------------------------------
-  const GROUND_SRC = "assets/map/world1/world1_ground_1.png";
+  const GROUND_SRC = "assets/map/world1/meadow/high/ground.webp";
   CHERRIFT_CONFIG.map.grass = GROUND_SRC;
   CHERRIFT_CONFIG.map.grassNight = GROUND_SRC;
   CHERRIFT_CONFIG.map.world1GrassSeamless = GROUND_SRC;
@@ -3476,7 +3476,7 @@ window.UI = {
   // ------------------------------------------------------------
   // Ground: world2 super cheap. Pattern still used for world1.
   // ------------------------------------------------------------
-  const GROUND_SRC = "assets/map/world1/world1_ground_1.png";
+  const GROUND_SRC = "assets/map/world1/meadow/high/ground.webp";
   CHERRIFT_CONFIG.map.grass = GROUND_SRC;
   CHERRIFT_CONFIG.map.grassNight = GROUND_SRC;
   CHERRIFT_CONFIG.map.world1GrassSeamless = GROUND_SRC;
@@ -17577,7 +17577,7 @@ function ensureSettings() {
   normalizeSettings(UI.save);
   const display = document.querySelector('[data-v060-settings-page="display"]');
   const gameplay = display;
-  addSetting(display, "effectQuality", "Effect quality", "Particle density and glow cost", [["low", "Low"], ["medium", "Medium"], ["high", "High"]]);
+  addSetting(display, "effectQuality", UI.save?.settings?.language === "en" ? "Graphics quality" : "Grafikai minőség", UI.save?.settings?.language === "en" ? "World1 textures and effect detail" : "World1 képfelbontás és effektrészletesség", [["low", "Low"], ["medium", "Medium"], ["high", "High"]]);
   addSetting(display, "cameraMotion", "Camera motion", "Speed zoom, dash kick and look-ahead", [["off", "Off"], ["low", "Low"], ["full", "Full"]]);
   addSetting(gameplay, "screenShake", "Screen shake", "Impact feedback without moving the HUD", [["off", "Off"], ["low", "Low"], ["full", "Full"]]);
   const sound = id("combatSoundsV085") || document.createElement("label");
@@ -20202,7 +20202,7 @@ const THUMB_PLACEHOLDERS = Object.freeze({
   wuxia_sakura_cherry:"assets/ui/skins/cherry_ui_skins/optimized/sakura_dancer_cherry_icon_1.webp"
 });
 const WORLD_ART = {
-  1:'linear-gradient(180deg,rgba(5,3,12,.02),rgba(5,3,12,.48)),url("assets/map/world1/world1_splashart_1.png")',
+  1:'linear-gradient(180deg,rgba(5,3,12,.02),rgba(5,3,12,.48)),url("assets/map/world1/meadow/splash.webp")',
   2:'linear-gradient(180deg,rgba(5,3,12,.05),rgba(5,3,12,.58)),url("assets/map/world2/world2_splashart_1.png")',
   3:"radial-gradient(circle at 55% 20%,rgba(255,145,66,.36),transparent 32%),linear-gradient(160deg,#4a2920,#1a0b10 68%,#08050c)",
   4:"radial-gradient(circle at 20% 20%,rgba(116,211,255,.22),transparent 30%),linear-gradient(150deg,#163547,#0b1928 60%,#060810)",
@@ -22984,7 +22984,7 @@ const WORLD_META = {
     nameHu:"Blooming Meadow", nameEn:"Blooming Meadow",
     descHu:"Világos erdő, nagyobb fákkal és tiszta, valódi map dekorációkkal.",
     descEn:"Bright forest with larger trees and clean map decorations.",
-    art:'linear-gradient(180deg,rgba(5,3,12,.03),rgba(5,3,12,.64)),url("assets/map/world1/world1_splashart_1.png"),url("assets/map/world1/world1_ground_1.png")'
+    art:'linear-gradient(180deg,rgba(5,3,12,.03),rgba(5,3,12,.64)),url("assets/map/world1/meadow/splash.webp"),url("assets/map/world1/meadow/high/ground.webp")'
   },
   2:{
     nameHu:"Night Bloom", nameEn:"Night Bloom",
@@ -23021,12 +23021,12 @@ const WORLD_META = {
 const MAP_ASSETS = {
   0:{ground:"assets/map/training_teszt.png"},
   1:{
-    ground:"assets/map/world1/world1_ground_1.png",
-    bush1:"assets/map/world1/world1_bush_1.png", bush2:"assets/map/world1/world1_bush_2.png", bush3:"assets/map/world1/world1_bush_3.png",
-    flower1:"assets/map/world1/world1_flower_1.png", flower2:"assets/map/world1/world1_flower_2.png", flower3:"assets/map/world1/world1_flower_3.png",
-    log:"assets/map/world1/world1_log_1.png", mushroom:"assets/map/world1/world1_mushroom_1.png",
-    rock1:"assets/map/world1/world1_rock_1.png", rock2:"assets/map/world1/world1_rock_2.png", rockSmall:"assets/map/world1/world1_rock_small_1.png",
-    tree1:"assets/map/world1/world1_tree_1.png", tree2:"assets/map/world1/world1_tree_2.png"
+    ground:"assets/map/world1/meadow/high/ground.webp",
+    bush1:"assets/map/world1/meadow/high/bush1.webp", bush2:"assets/map/world1/meadow/high/bush2.webp", bush3:"assets/map/world1/meadow/high/bush3.webp",
+    flower1:"assets/map/world1/meadow/high/flower1.webp", flower2:"assets/map/world1/meadow/high/flower2.webp", flower3:"assets/map/world1/meadow/high/flower3.webp",
+    log:"assets/map/world1/meadow/high/log.webp", mushroom:"assets/map/world1/meadow/high/mushroom.webp",
+    rock1:"assets/map/world1/meadow/high/rock1.webp", rock2:"assets/map/world1/meadow/high/rock2.webp", rockSmall:"assets/map/world1/meadow/high/rockSmall.webp",
+    tree1:"assets/map/world1/meadow/high/tree1.webp", tree2:"assets/map/world1/meadow/high/tree2.webp"
   },
   2:{
     ground:"assets/map/world2/world2_ground_1.png",
@@ -23923,7 +23923,7 @@ if (!window.CherriftGame) {
 
 const GROUND_PATHS = Object.freeze({
   0:"assets/map/training_teszt.png",
-  1:"assets/map/world1/world1_ground_1.png",
+  1:"assets/map/world1/meadow/high/ground.webp",
   2:"assets/map/world2/world2_ground_1.png",
   3:"assets/map/world3/world3_ground_1.png",
   4:"assets/map/world4/world4_ground_1.png"
@@ -24081,19 +24081,19 @@ if (!window.CherriftGame || !window.UI) {
 }
 
 const MAP_OBJECT_PATHS = Object.freeze({
-  w1_bush1:"assets/map/world1/world1_bush_1.png",
-  w1_bush2:"assets/map/world1/world1_bush_2.png",
-  w1_bush3:"assets/map/world1/world1_bush_3.png",
-  w1_flower1:"assets/map/world1/world1_flower_1.png",
-  w1_flower2:"assets/map/world1/world1_flower_2.png",
-  w1_flower3:"assets/map/world1/world1_flower_3.png",
-  w1_log:"assets/map/world1/world1_log_1.png",
-  w1_mushroom:"assets/map/world1/world1_mushroom_1.png",
-  w1_rock1:"assets/map/world1/world1_rock_1.png",
-  w1_rock2:"assets/map/world1/world1_rock_2.png",
-  w1_rockSmall:"assets/map/world1/world1_rock_small_1.png",
-  w1_tree1:"assets/map/world1/world1_tree_1.png",
-  w1_tree2:"assets/map/world1/world1_tree_2.png",
+  w1_bush1:"assets/map/world1/meadow/high/bush1.webp",
+  w1_bush2:"assets/map/world1/meadow/high/bush2.webp",
+  w1_bush3:"assets/map/world1/meadow/high/bush3.webp",
+  w1_flower1:"assets/map/world1/meadow/high/flower1.webp",
+  w1_flower2:"assets/map/world1/meadow/high/flower2.webp",
+  w1_flower3:"assets/map/world1/meadow/high/flower3.webp",
+  w1_log:"assets/map/world1/meadow/high/log.webp",
+  w1_mushroom:"assets/map/world1/meadow/high/mushroom.webp",
+  w1_rock1:"assets/map/world1/meadow/high/rock1.webp",
+  w1_rock2:"assets/map/world1/meadow/high/rock2.webp",
+  w1_rockSmall:"assets/map/world1/meadow/high/rockSmall.webp",
+  w1_tree1:"assets/map/world1/meadow/high/tree1.webp",
+  w1_tree2:"assets/map/world1/meadow/high/tree2.webp",
 
   w2_bush1:"assets/map/world2/world2_bush_1.png",
   w2_bush2:"assets/map/world2/world2_bush_2.png",
@@ -24135,7 +24135,7 @@ const MAP_OBJECT_PATHS = Object.freeze({
 
 const GROUND_PATHS = Object.freeze({
   0:"assets/map/training_teszt.png",
-  1:"assets/map/world1/world1_ground_1.png",
+  1:"assets/map/world1/meadow/high/ground.webp",
   2:"assets/map/world2/world2_ground_1.png",
   3:"assets/map/world3/world3_ground_1.png",
   4:"assets/map/world4/world4_ground_1.png"
