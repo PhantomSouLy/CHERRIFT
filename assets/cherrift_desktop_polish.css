@@ -1,0 +1,103 @@
+/* Screenshot review, 2026-10-25. Loaded after route styles so shared native
+   styles cannot repaint headings, tabs or portrait geometry on desktop. */
+@media(min-width:821px){
+ html body.crystal-desktop .crystal-topbar{width:max-content!important;max-width:64vw;gap:clamp(8px,1vw,20px);padding:8px 12px;background:linear-gradient(90deg,#190c27d9,#190c2780);border-radius:12px}
+ html body.crystal-desktop .crystal-profile{flex:0 0 auto!important;margin-right:clamp(6px,1vw,20px)}
+ html body.crystal-desktop .crystal-wallet b{color:#ffe8f6!important}
+ html body.crystal-desktop .crystal-button-copy{top:50%!important;justify-content:center;height:65%}
+ html body.crystal-desktop .crystal-button-copy small{display:none!important}
+ html body.crystal-desktop .crystal-button-copy b{color:#fff0fb!important;line-height:1!important;font-size:clamp(22px,min(2.4vw,4.1vh),60px)!important}
+ html body.crystal-desktop .crystal-play .crystal-button-copy{top:50%!important}
+ html body.crystal-desktop .crystal-play .crystal-button-copy b{color:#4b163b!important;font-size:clamp(50px,min(6vw,10vh),140px)!important}
+
+ /* A replaceable landscape moves behind a fixed transparent ornament. */
+ html body.crystal-desktop .crystal-scenery{background-image:var(--cherrift-landscape,url('ui/backgrounds/crystal-landscape-pc.webp'));inset:-16px;mask-image:linear-gradient(90deg,#000 25%,#000b 45%,transparent 67%)}
+ html body.crystal-desktop #crystalDesktopMenu::before{content:'';position:absolute;inset:0;z-index:-2;pointer-events:none;background:url('ui/backgrounds/crystal-foreground-pc.webp') center/cover no-repeat}
+ html body.crystal-desktop #crystalDesktopMenu::after{content:'';position:absolute;inset:0;z-index:-4;pointer-events:none;background:radial-gradient(ellipse at 80% 35%,#2a153c,#120a20 75%)}
+ body.crystal-world-selector .wg-scene{background:#170e25!important}
+ html body.crystal-desktop:not(.is-playing):not(.crystal-world-selector) #app>:is(#gear,#skins,#playerUpgrade,#socialV082,#loginRewards).panel,
+ html body.crystal-desktop :is(.cp-scenery,.cm-scenery,.cs-scenery){background-image:url('ui/backgrounds/crystal-foreground-pc.webp'),linear-gradient(90deg,transparent 30%,#170c25 67%),var(--cherrift-landscape,url('ui/backgrounds/crystal-landscape-pc.webp'))!important;background-position:center!important;background-size:cover!important;background-repeat:no-repeat!important}
+ body.crystal-world-selector .wg-scene::before{content:'';position:absolute;inset:0;background:url('ui/backgrounds/crystal-foreground-pc.webp') center/cover no-repeat;opacity:.45;z-index:1}
+ body.crystal-world-selector .wg-landscape{width:73%;opacity:.36;mask-image:linear-gradient(90deg,#000 30%,#000b 65%,transparent)}
+ body.crystal-world-selector .wg-story{width:29%;top:30%}
+ body.crystal-world-selector .wg-story h2{font-size:clamp(30px,3.6vw,76px);overflow-wrap:normal;hyphens:auto}
+
+ /* Uniform portrait aperture for every frame, including cloned topbars. */
+ html body .prebeta-avatar{isolation:isolate;overflow:visible!important;background:transparent!important}
+ html body.crystal-desktop .prebeta-avatar>img:not(.prebeta-avatar-frame),
+ html body.crystal-desktop #app .profile-avatar-bf .prebeta-avatar>img:not(.prebeta-avatar-frame){position:absolute!important;inset:auto!important;left:20%!important;top:var(--frame-portrait-top,20%)!important;width:60%!important;height:var(--frame-portrait-height,60%)!important;object-fit:cover!important;object-position:center 30%!important;border-radius:50%!important;max-width:none!important}
+ html body.crystal-desktop .prebeta-avatar>.prebeta-avatar-frame,
+ html body.crystal-desktop #app .profile-avatar-bf .prebeta-avatar>.prebeta-avatar-frame{inset:auto!important;left:var(--frame-left,0%)!important;top:var(--frame-top,0%)!important;width:var(--frame-width,100%)!important;height:var(--frame-width,100%)!important;max-width:none!important;object-fit:contain!important;z-index:1;pointer-events:none!important}
+ html body.crystal-desktop .crystal-profile-art{border:0;background:transparent}
+ html body.crystal-profile #profileBugfixV0941 .profile-avatar-bf{top:33%!important;width:min(14vw,22vh)!important;height:min(14vw,22vh)!important;background:transparent!important;box-shadow:none!important}
+ html body.crystal-profile #profileBugfixV0941 .profile-name-row-bf{top:57%;left:8%;width:31%;display:flex!important;align-items:center;justify-content:center;gap:10px}
+ html body.crystal-profile #profileBugfixV0941 .profile-name-row-bf h3{overflow:hidden;max-height:none;font-size:clamp(22px,2.4vw,48px)!important;line-height:1.2!important;text-overflow:ellipsis;white-space:nowrap;max-width:85%}
+ html body.crystal-profile #profileBugfixV0941 .cp-edit-name{display:grid!important;place-items:center;flex:0 0 30px;width:30px;height:30px;min-height:30px;padding:0!important;border:1px solid #eeb6d980!important;border-radius:50%!important;color:#ffe5f5!important;background:#30162ed9!important;font:22px Georgia!important}
+ html body.crystal-desktop.crystal-profile #app .cp-title-ribbon{top:48%!important}
+ html body.crystal-profile #profileBugfixV0941 .profile-lines-bf{top:65%;left:8%;width:31%;max-height:none;overflow:visible;gap:1vh;font-size:clamp(12px,1vw,19px)!important;text-shadow:0 2px 6px #14091e}
+ html body.crystal-profile #profileBugfixV0941 .profile-discord-bf{top:75%;left:8%;width:31%;max-height:none;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:clamp(10px,.85vw,16px)!important}
+ html body.crystal-profile .cp-xp{left:9%;top:81%;width:29%;padding:12px 16px;box-sizing:border-box;border:1px solid #e7a8ce66;border-radius:8px;background:#1e102cdd}
+ html body.crystal-profile .cp-xp>div{font:clamp(10px,.8vw,16px)/1.4 Georgia!important;color:#fff1fa;flex-wrap:wrap}
+ html body.crystal-profile #profileBugfixV0941 .cp-xp progress{height:12px}
+ html body.crystal-profile #profileBugfixV0941 .profile-stats-bf{left:53%!important;right:6%!important;top:35%!important;bottom:30%!important;padding:1.5vh 1vw!important;background:#1a0c29e8!important;border-radius:10px;gap:1vh!important;box-sizing:border-box!important}
+ html body.crystal-profile #profileBugfixV0941 .profile-stat-bf{padding:1vh 1vw 1vh 4.6vw!important}
+ html body.crystal-profile #profileBugfixV0941 .profile-stat-bf small{font-size:clamp(9px,.72vw,15px)!important;color:#ecd0e1!important}
+ html body.crystal-profile #profileBugfixV0941 .profile-stat-bf b{font-size:clamp(18px,2.3vh,32px)!important}
+ html body.crystal-profile #profileBugfixV0941 .profile-actions-bf{display:none!important}
+ html body.crystal-profile .cp-account{left:53%;right:6%;top:82%}
+ html body.crystal-desktop.crystal-profile #app .cp-navigation button,
+ html body.crystal-desktop.crystal-mail #app .cm-filters button{transform:none!important;clip-path:none!important;border:0!important;background:transparent url('ui/settings/crystal-tab-pc.webp') center/100% 170% no-repeat!important;color:#fff0fa!important;text-shadow:0 2px 5px #18091e!important;padding:0 1vw!important;font-weight:600!important}
+ html body.crystal-desktop.crystal-profile #app .cp-navigation button[aria-current],
+ html body.crystal-desktop.crystal-mail #app .cm-filters button[aria-pressed=true]{background-image:url('ui/settings/crystal-tab-pc.webp')!important;box-shadow:none!important;filter:brightness(1.35) drop-shadow(0 0 8px #f29bc655)}
+ html body.crystal-desktop.crystal-profile #app .cp-navigation button:not(:disabled):hover{transform:translateY(-2px)!important}
+
+ html body.crystal-settings #settings .cs-back[hidden]{display:none!important}
+ html body.crystal-desktop.crystal-settings #app>#settings .cs-return{min-height:42px;height:7.5vh;padding:0 2vw;border:1px solid #e8afd080;border-radius:8px;color:#ffe3f5;background:linear-gradient(145deg,#572343,#28132f);font:clamp(13px,1.1vw,24px) Georgia;box-shadow:inset 0 1px #ffe9f322}
+ html body.crystal-settings #settings .settings-page-v060>header h3,
+ html body.crystal-settings #settings .setting-line-v060>span>b{color:#ffeaf7!important}
+ html body.crystal-settings #settings :is(.settings-page-v060>header p,.setting-line-v060>span>small){color:#ddc5df!important}
+
+ html body.crystal-mail .cm-filters{left:8.5%;width:21%;top:24%;height:5%}
+ html body.crystal-mail #mailBugfixBody{left:8.5%!important;width:21%!important;top:31%!important;height:52%!important;padding:1vh .6vw!important;box-sizing:border-box!important;background:#1b0f29bd!important;border-radius:8px!important;overflow:hidden!important}
+ html body.crystal-mail .mail-toolbar-bf{background:transparent!important;color:#ffe7f3!important;display:flex!important;align-items:center;justify-content:space-between;gap:8px}
+ html body.crystal-mail .mail-toolbar-bf h3{margin:0!important;background:none!important}
+ html body.crystal-mail .mail-list-actions-bf{display:grid!important;padding-top:1.2vh!important;gap:.6vh!important}
+ html body.crystal-desktop.crystal-mail #app .mail-list-actions-bf .bf-button{min-height:4vh!important;border-radius:6px!important;background:linear-gradient(145deg,#53223f,#291630)!important;color:#ffe3f3!important;font-size:clamp(10px,.8vw,17px)!important}
+ html body.crystal-desktop.crystal-mail #app .mail-list-actions-bf [data-mail-claim-all]{background:linear-gradient(145deg,#ad527f,#653452)!important;border:1px solid #f1b6d780!important}
+
+ html body.crystal-desktop.celestial-gear #app>#gear :is(#gearInventoryZoneV0560,.cg-overview){background:none!important;box-shadow:none!important;isolation:isolate}
+ html body.crystal-desktop.celestial-gear #app>#gear :is(#gearInventoryZoneV0560,.cg-overview)::after{content:'';position:absolute;inset:2.5vh .5vw;background:#180f29ed;border-radius:12px;z-index:-1;pointer-events:none}
+ html body.crystal-desktop.celestial-gear #app>#gear .cg-title{left:auto;right:6%;top:10vh}
+ html body.crystal-desktop.celestial-gear #app>#gear .cg-title small{display:none}
+ html body.crystal-desktop.celestial-gear #app>#gear .cg-back{padding:.8vh 1.2vw!important;border:1px solid #eeb5d789!important;border-radius:6px!important;background:#24112de6!important;color:#fff1fa!important;text-shadow:0 2px 5px #100719}
+ html body.crystal-desktop.celestial-gear #app>#gear #gearStageV0560 [data-v0560-slot]{border:2px solid #d7a2ce!important;border-radius:12px!important;background:linear-gradient(135deg,#513350ee,#1a102bdd)!important;box-shadow:inset 0 0 0 3px #1b112c,inset 0 0 0 4px #aa7ea966,0 5px 18px #0a041a88!important}
+ html body.crystal-desktop.celestial-gear #app>#gear #gearStageV0560 [data-v0560-slot]::after{inset:4px!important;border:1px solid #dcb7da88!important;border-radius:6px!important;background:none!important;opacity:1!important;z-index:0!important}
+ html body.crystal-desktop.celestial-gear #app>#gear #gearStageV0560 [data-v0560-slot]>*{z-index:1}
+ html body.crystal-desktop.celestial-gear #app>#gearModalV0560 .gear-modal-card-v0560{background:transparent!important;box-shadow:none!important;isolation:isolate}
+ html body.crystal-desktop.celestial-gear #app>#gearModalV0560 .gear-modal-card-v0560::after{content:'';position:absolute;inset:2.5vh .5vw;border-radius:12px;background:#180f29fa;z-index:-1;pointer-events:none}
+
+ html body.sakura-skins #skins .cr-desktop-skin-name-row{padding:1vh 3vw 1vh 2.6vw!important;justify-content:flex-start!important;gap:.6vw!important}
+ html body.sakura-skins #skins .cr-desktop-skin-name-row h3{font-size:clamp(22px,min(2.3vw,4vh),50px)!important;white-space:nowrap!important}
+ html body.sakura-skins #skins .cr-desktop-element-icon{cursor:pointer!important;pointer-events:auto!important;order:2!important}
+ html body.sakura-skins #skins .skin-title-v093{top:10vh!important;left:2.7vw!important}
+ html body.sakura-skins #skins .skin-title-v093>.rarity-pill{border:0!important;background:none!important;padding:0!important;letter-spacing:.18em!important;font-size:clamp(9px,.72vw,14px)!important}
+ html body.sakura-skins #skins .sp-weapon{top:14vh;height:11vh;display:flex;align-items:center;padding:1vh 6vw 1vh 3vw;cursor:pointer;pointer-events:auto}
+ html body.sakura-skins #skins .sp-weapon>small,html body.sakura-skins #skins .sp-weapon>span,
+ html body.sakura-skins #skins .cr-desktop-skin-info article>small,html body.sakura-skins #skins .cr-desktop-skin-info article>p,
+ html body.sakura-skins #skins .skin-details-v093>.skill-card-v093,
+ html body.sakura-skins #skins .cr-skin-action-row>.cr-skin-tools{display:none!important}
+ html body.sakura-skins #skins .sp-weapon>b,
+ html body.sakura-skins #skins .cr-desktop-skill-title>b{font:italic 500 clamp(18px,min(1.8vw,3.3vh),38px)/1.15 Georgia!important;color:#fff0fc!important;text-shadow:0 2px 8px #13081e!important}
+ html body.sakura-skins #skins .cr-desktop-skin-info{top:27vh!important;height:12vh!important;pointer-events:auto!important}
+ html body.sakura-skins #skins .cr-desktop-skill-card{display:flex!important;align-items:center!important;padding:1vh 3vw!important;cursor:pointer;pointer-events:auto!important}
+ html body.sakura-skins #skins .cr-desktop-skill-title{margin:0!important;display:flex!important;align-items:center!important}
+ html body.sakura-skins #skins :is(.sp-weapon,.cr-desktop-skill-card):hover{filter:brightness(1.2)}
+ html body .cr-skin-popover-mini{position:fixed!important;right:auto!important;bottom:auto!important;transform:none!important;width:min(310px,32vw)!important;max-height:min(440px,75vh)!important;overflow:auto!important;padding:16px!important;background:linear-gradient(145deg,#38203dfc,#170d26fc)!important;border:1px solid #e7add280!important;border-radius:12px!important;box-shadow:0 12px 40px #080315bb,0 0 22px #d77cb52b!important;z-index:100250!important;color:#ffe8f6!important}
+ html body .cr-skin-popover-mini header{display:flex;gap:12px;justify-content:space-between;align-items:center}
+ html body .cr-skin-popover-mini h3{font:500 20px/1.2 Georgia!important;margin:0!important;color:#ffe8f6!important}
+ html body .cr-skin-popover-mini :is(p,b,small){color:#ecd3e5!important;font-size:13px!important;line-height:1.6!important}
+ html body .cr-skin-popover-mini article{margin-top:12px!important;padding:0!important;background:none!important;border:0!important}
+ html body .cr-skin-popover-mini button{background:none!important;border:0!important;color:#ffd6ee!important;font-size:24px!important}
+ html[data-cr-pc-loading] .sakura-runner{transform:translate(-50%,-98%);transition:opacity .3s ease}
+ html[data-cr-pc-loading] .sakura-path-fill{transition:none}
+}

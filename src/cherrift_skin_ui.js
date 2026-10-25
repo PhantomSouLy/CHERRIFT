@@ -287,16 +287,18 @@
   }
 
   function skillInfo(skin, root) {
-    const dialog = q(".skin-skill-dialog-v093");
+    const candidate = q('.skin-skill-dialog-v093');
+    const nativeName = clean(q('.skill-card-v093 b,.skin-skill-v093 b,.skin-ability-v093 b,[data-skin-skill] b', root)?.textContent);
+    const dialog = candidate && (!nativeName || clean(q('h3', candidate)?.textContent) === nativeName) ? candidate : null;
     const skillObject = skin?.skill && typeof skin.skill === "object" ? skin.skill : null;
     const name = clean(
-      q("h3", dialog)?.textContent ??
       skin?.skillName ??
       skin?.abilityName ??
       (typeof skin?.skill === "string" ? skin.skill : null) ??
       skillObject?.name ??
       q(".skill-card-v093 b,.skin-skill-v093 b,.skin-ability-v093 b,[data-skin-skill] b", root)?.textContent ??
-      q(".skill-card-v093,.skin-skill-v093,.skin-ability-v093,[data-skin-skill]", root)?.textContent
+      q(".skill-card-v093,.skin-skill-v093,.skin-ability-v093,[data-skin-skill]", root)?.textContent ??
+      q("h3", dialog)?.textContent
     ) || "Skill";
 
     const dialogDescription = qa("p", dialog)
@@ -310,8 +312,8 @@
       skillObject?.description ??
       skillObject?.desc;
     const description =
-      dialogDescription ||
       (typeof rawDescription === "string" ? clean(rawDescription) : "") ||
+      dialogDescription ||
       clean(skin?.desc);
 
     return { name, description:description || "—" };
@@ -322,7 +324,7 @@
     state.popover = null;
   }
 
-  function openPopover(kind) {
+  function openPopover(kind, anchor) {
     closePopover();
     const root = document.getElementById("skins");
     const skin = selectedSkin();
@@ -333,7 +335,10 @@
     panel.setAttribute("role", "dialog");
     panel.setAttribute("aria-modal", "false");
 
-    if (kind === "element") {
+    if (kind === "weapon") {
+      const config = window.CHERRIFT_CONFIG?.player?.skins?.[skin.id] || {};
+      panel.innerHTML = `<header><h3>${esc(skin.weapon || copy("Fegyver", "Weapon"))}</h3><button type="button" data-cr-popover-close aria-label="Close">×</button></header><article><p>${esc(skin.weaponDescription || copy(config.attackType === 'melee' ? 'Közelharci támadás.' : 'Távolsági támadás.', config.attackType === 'melee' ? 'Melee attack.' : 'Ranged attack.'))}</p></article>`;
+    } else if (kind === "element") {
       const element = skinElement(skin);
       panel.innerHTML = `
         <header>
@@ -344,13 +349,11 @@
           <img class="cr-element-popover-icon" src="${esc(element.icon)}" alt="">
           <small>Elemental Resonance</small>
           <b>${esc(element.name)}</b>
-          <p>${esc(copy(
-            "Ez a skin Elemental Resonance elem típusa.",
-            "This is the skin's Elemental Resonance affinity."
-          ))}</p>
+          <p>${esc(element.description || copy('Leírás: – Majd bővítve lesz', 'Description: – To be expanded'))}</p>
         </article>`;
     } else {
       const skill = skillInfo(skin, root);
+      const cooldown = Number(window.CHERRIFT_CONFIG?.player?.skins?.[skin.id]?.skillCooldown);
       panel.innerHTML = `
         <header>
           <h3>${esc(skin?.name || "Cherry")}</h3>
@@ -364,11 +367,19 @@
           <small>Skill</small>
           <b>${esc(skill.name)}</b>
           <p>${esc(skill.description)}</p>
+          ${Number.isFinite(cooldown) && cooldown > 0 ? `<p>CD: ${cooldown}s</p>` : ''}
         </article>`;
     }
 
     document.body.appendChild(panel);
     state.popover = panel;
+    if (desktopMode() && anchor) {
+      panel.classList.add('cr-skin-popover-mini');
+      const rect = anchor.getBoundingClientRect(), size = panel.getBoundingClientRect();
+      const left = rect.left - size.width - 14;
+      panel.style.left = `${Math.max(12, Math.min(innerWidth - size.width - 12, left >= 12 ? left : rect.right + 14))}px`;
+      panel.style.top = `${Math.max(12, Math.min(innerHeight - size.height - 12, rect.top))}px`;
+    }
   }
 
   function patchDialog(skin) {
@@ -590,6 +601,9 @@
         nameRow.prepend(icon);
       }
       if (icon.getAttribute("src") !== element.icon) icon.src = element.icon;
+      icon.dataset.crSkinElement = '1';
+      icon.setAttribute('role', 'button'); icon.tabIndex = 0;
+      icon.setAttribute('aria-label', `Elemental Resonance: ${element.name}`);
       icon.title = element.name;
       icon.style.width = "36px";
       icon.style.height = "36px";
@@ -642,6 +656,9 @@
           </div>
           <p>${esc(skillDescription || "—")}</p>
         </article>`;
+      const skillCard = q('.cr-desktop-skill-card', info);
+      skillCard.dataset.crSkinInfo = '1'; skillCard.tabIndex = 0;
+      skillCard.setAttribute('role', 'button'); skillCard.setAttribute('aria-label', skill.name);
     }
     info.style.display = "grid";
     info.style.gap = "10px";
@@ -883,12 +900,18 @@
   }
 
   function bind() {
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && state.popover) { event.preventDefault(); event.stopImmediatePropagation(); closePopover(); }
+      else if (['Enter', ' '].includes(event.key) && event.target.matches?.('[data-cr-skin-info],[data-cr-skin-element],[data-sp-weapon-info]') && event.target.tagName !== 'BUTTON') { event.preventDefault(); event.target.click(); }
+    }, true);
     document.addEventListener("click", event => {
+      const weapon = event.target?.closest?.('[data-sp-weapon-info]');
+      if (weapon) { event.preventDefault(); event.stopImmediatePropagation(); openPopover('weapon', weapon); return; }
       const info = event.target?.closest?.("[data-cr-skin-info]");
       if (info) {
         event.preventDefault();
         event.stopImmediatePropagation();
-        openPopover("info");
+        openPopover("info", info);
         return;
       }
 
@@ -896,7 +919,7 @@
       if (element) {
         event.preventDefault();
         event.stopImmediatePropagation();
-        openPopover("element");
+        openPopover("element", element);
         return;
       }
 

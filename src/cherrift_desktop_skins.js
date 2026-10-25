@@ -109,6 +109,7 @@
     let weapon=q('.sp-weapon',details);
     if(!weapon){weapon=make('section','sp-weapon',details);const label=document.createElement('small'),name=document.createElement('b'),mode=document.createElement('span'),icon=document.createElement('img');icon.alt='';weapon.append(label,name,mode,icon);}
     text(q('small',weapon),copy('FEGYVER','WEAPON'));text(q('b',weapon),skin.weapon || '—');
+    weapon.dataset.spWeaponInfo='';weapon.tabIndex=0;weapon.setAttribute('role','button');weapon.setAttribute('aria-label',skin.weapon || copy('Fegyver','Weapon'));
     const config=window.CHERRIFT_CONFIG?.player?.skins?.[skin.id];text(q('span',weapon),copy(config?.attackType==='melee'?'KÖZELHARC':'TÁVOLSÁGI TÁMADÁS',config?.attackType==='melee'?'MELEE':'RANGED ATTACK'));
     const element=window.CHERRIFT_SKIN_UI?.skinElement?.(skin);if(element?.icon && q('img',weapon).getAttribute('src')!==element.icon)q('img',weapon).src=element.icon;
     const tabs=q('.skin-view-tabs-v093',root);if(tabs){tabs.setAttribute('aria-label',copy('Karakter előnézet','Character preview'));qa('button',tabs).forEach(button=>{button.setAttribute('role','tab');button.setAttribute('aria-selected',String(button.classList.contains('active')));});}

@@ -1128,7 +1128,12 @@ window.UI = {
 
   fullscreen() { const el = document.documentElement; if (!document.fullscreenElement && el.requestFullscreen) el.requestFullscreen(); else if (document.exitFullscreen) document.exitFullscreen(); },
   fmt(sec) { sec = Math.floor(sec || 0); const m = Math.floor(sec / 60).toString().padStart(2, "0"); const s = (sec % 60).toString().padStart(2, "0"); return `${m}:${s}`; },
-  toast(msg) { const t = document.getElementById("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(this.toastTimer); this.toastTimer = setTimeout(() => t.classList.remove("show"), 1700); }
+  toast(msg) {
+    const t = document.getElementById("toast"); if (!t) return;
+    clearTimeout(this.toastTimer); t.hidden = false; t.textContent = msg;
+    t.classList.add("show");
+    this.toastTimer = setTimeout(() => { t.classList.remove("show"); t.hidden = true; t.textContent = ""; }, 1700);
+  }
 };
 /* ===== END src/ui.js ===== */
 
@@ -4717,10 +4722,23 @@ const baseSave=CherriftStorage.save.bind(CherriftStorage);
 CherriftStorage.load=function(){const s=normalize(baseLoad());baseSave(s);return s;};
 CherriftStorage.save=function(s){return baseSave(normalize(s));};
 function rewardText(r){return [r.coins?`${r.coins} coins`:"",r.keys?`${r.keys} keys`:""].filter(Boolean).join(" · ");}
+// Existing milestones are reconciled quietly at startup. A refresh or cloud
+// replacement must not replay the same unlock notification on every screen.
+let achievementBaselineReady=false;
+const announcedAchievements=new Set();
 function updateAchievements(s){
  normalize(s);let changed=false;
- for(const a of ACH)if(!s.achievements[a.id]&&a.test(s)){s.achievements[a.id]=Date.now();changed=true;UI.toast?.(`Achievement unlocked: ${a.name}`);}
+ const notifications=[];
+ for(const a of ACH){
+  if(s.achievements[a.id]){announcedAchievements.add(a.id);continue;}
+  if(!a.test(s))continue;
+  s.achievements[a.id]=Date.now();changed=true;
+  if(achievementBaselineReady&&!announcedAchievements.has(a.id))notifications.push(a.name);
+  announcedAchievements.add(a.id);
+ }
+ achievementBaselineReady=true;
  if(changed)baseSave(s);
+ if(notifications.length)UI.toast?.(`Achievement unlocked: ${notifications.join(', ')}`);
 }
 function ensurePanels(){
  if(id("playerUpgrade"))return;
@@ -20481,6 +20499,7 @@ function equipSelectedSkin() {
   UI.refreshMenu?.();
   UI.toast?.(t("skin.equippedToast", {name:skinName(skin)}));
   renderSkinSelector();
+  window.dispatchEvent(new CustomEvent('cherrift:savechange', {detail:{source:'skin-equipped', skinId:skin.id}}));
 }
 
 function stages() {

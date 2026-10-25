@@ -487,8 +487,6 @@
       "auth-gated-v064"
     );
 
-    window.UI?.open?.("menu");
-
     let fading = false;
     const beginFade = () => {
         if (fading) return;
@@ -522,6 +520,9 @@
     // The presentation must never leave an invisible layer consuming all input.
     const fadeFallback = window.setTimeout(beginFade, 250);
     requestAnimationFrame(() => requestAnimationFrame(beginFade));
+    // Menu rendering must not prevent the input-blocking overlay cleanup
+    // from being scheduled, even if a route renderer fails synchronously.
+    window.UI?.open?.("menu");
   }
 
   async function chooseAuth(action) {

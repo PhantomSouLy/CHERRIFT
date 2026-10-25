@@ -23,12 +23,13 @@
   function hero(root){
     const stage=q('#gearStageV0560',root);if(!stage)return;
     clearLayout(stage);qa('[data-v0560-slot]',stage).forEach(slot=>{clearLayout(slot);if(!window.UI?.save?.equipped?.[slot.dataset.v0560Slot]&&!q('.cg-empty-icon',slot)){const img=make('img','cg-empty-icon',slot);img.src=`assets/items/cores/${core[slot.dataset.v0560Slot]}_core.png`;img.alt='';}});
+    // The roster selection is a preview; only save.selectedSkin is equipped.
     const skin=window.CHERRIFT_DATA?.skins?.find(s=>s.id===window.UI?.save?.selectedSkin)||window.CHERRIFT_DATA?.skins?.[0];if(!skin)return;
     const assets=window.CHERRIFT_SKIN_UI?.assetsForSkin?.(skin);
     const path=assets?.cutout || assets?.splash || skin.splash || skin.icon;
     let image=q('.cg-hero',stage);if(!image){image=make('img','cg-hero',stage);image.alt='';image.draggable=false;image.decoding='async';}
     image.classList.toggle('cg-cutout',Boolean(assets?.cutout));
-    if(source!==path){source=path;image.src=path;animate(image,[{opacity:0,transform:'translate3d(15px,0,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],380);}
+    if(source!==path){source=path;image.src=path;image.dataset.skinId=skin.id;image.onerror=()=>{if(image.getAttribute('src')!==(skin.splash||skin.icon)){image.classList.remove('cg-cutout');image.src=skin.splash||skin.icon;}};animate(image,[{opacity:0,transform:'translate3d(15px,0,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],380);}
     let caption=q('.cg-caption',root);if(!caption){caption=make('div','cg-caption',root);caption.innerHTML='<small>CURRENT CHERRY</small><h2></h2><p></p><button type="button" data-cg-change></button>';}
     if(q('h2',caption).textContent!==skin.name)q('h2',caption).textContent=skin.name;
     const changeLabel=copy('CHERRY VÁLASZTÁSA','CHANGE CHERRY');if(q('[data-cg-change]',caption).textContent!==changeLabel)q('[data-cg-change]',caption).textContent=changeLabel;

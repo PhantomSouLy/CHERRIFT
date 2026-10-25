@@ -16,6 +16,19 @@ test('mobile portrait and coarse landscape preserve native markup and data',()=>
 test('desktop decorates native inventory and preserves handlers and save',()=>{const f=fixture();try{f.w.CHERRIFT_DESKTOP_GEAR.sync();assert.equal(f.root.querySelectorAll('.cg-chrome').length,1);assert.equal(f.root.querySelectorAll('.cg-hero').length,1);assert.equal(f.root.querySelector('[data-v0560-slot]'),f.slot);f.root.querySelector('[data-cg-slot]').click();assert.equal(f.clicks(),1);assert.equal(JSON.stringify(f.w.UI.save),f.save);}finally{f.close();}});
 test('resize restores every native style and removes presentation elements',()=>{const f=fixture();try{f.w.innerWidth=390;f.w.CHERRIFT_DESKTOP_GEAR.sync();assert.equal(f.root.innerHTML,f.before);assert.equal(f.root.querySelectorAll('[data-cg-owned]').length,0);f.w.innerWidth=1920;f.w.CHERRIFT_DESKTOP_GEAR.sync();assert.equal(f.root.querySelectorAll('.cg-chrome').length,1);}finally{f.close();}});
 test('selected splash follows equipped skin without generating new poses',()=>{const f=fixture();try{f.w.UI.save.selectedSkin='other';f.w.CHERRIFT_DESKTOP_GEAR.sync();assert.equal(f.root.querySelector('.cg-hero').getAttribute('src'),'other.png');assert.equal(f.root.querySelector('.cg-caption h2').textContent,'Other Cherry');}finally{f.close();}});
+
+test('equipping a skin broadcasts its new art to the gear screen while roster preview stays independent',async()=>{
+ const f=fixture();try{
+  f.w.CHERRIFT_SKIN_UI={selectedSkin:()=>f.w.CHERRIFT_DATA.skins[1],assetsForSkin:skin=>({splash:`${skin.id}.webp`})};
+  f.w.CHERRIFT_DESKTOP_GEAR.sync();
+  assert.equal(f.root.querySelector('.cg-hero').getAttribute('src'),'cherry_default.webp');
+  f.w.UI.save.selectedSkin='other';
+  f.w.dispatchEvent(new f.w.CustomEvent('cherrift:savechange',{detail:{source:'skin-equipped',skinId:'other'}}));
+  await Promise.resolve();
+  assert.equal(f.root.querySelector('.cg-hero').getAttribute('src'),'other.webp');
+  assert.equal(f.root.querySelector('.cg-hero').dataset.skinId,'other');
+ }finally{f.close();}
+});
 test('search filters presentation without deleting inventory or native cards',()=>{const f=fixture();try{const input=f.root.querySelector('.cg-search');input.value='missing';f.w.CHERRIFT_DESKTOP_GEAR.sync();assert(f.root.querySelector('[data-v0560-item-id]').classList.contains('cg-filtered'));assert.equal(f.w.UI.save.inventory.length,1);input.value='rare';f.w.CHERRIFT_DESKTOP_GEAR.sync();assert(!f.root.querySelector('[data-v0560-item-id]').classList.contains('cg-filtered'));}finally{f.close();}});
 
 test('equipment displays the selected new cutout and retains legacy art for unmapped skins',()=>{

@@ -115,13 +115,24 @@
     const line = q('.sakura-path-fill', progress);
     const offset = String(100 - value);
     if (line.style.strokeDashoffset !== offset) line.style.strokeDashoffset = offset;
-    const runner = q('.sakura-runner', progress), t = value / 100;
-    const x = `${2 + 96 * t}%`, y = `${(16 + 164 * t * (1 - t)) / 85 * 100}%`;
+    // Dash progress uses arc length, not the quadratic's parameter. Sample the
+    // very same SVG path so the runner's feet always meet the luminous tip.
+    const runner = q('.sakura-runner', progress);
+    let t = value / 100;
+    const trackPath = q('.sakura-path-track', progress);
+    const point = trackPath.getPointAtLength?.(trackPath.getTotalLength?.() * t);
+    if (point) t = (point.x - 20) / 960;
+    // Draw the sub-curve itself. Non-scaling SVG strokes and normalized dashes
+    // disagree in Chromium when this very wide path is stretched responsively.
+    const endX = 20 + 960 * t, endY = 16 + 164 * t * (1 - t);
+    line.setAttribute('d', `M20 16 Q${20 + 480 * t} ${16 + 82 * t} ${endX} ${endY}`);
+    line.style.strokeDasharray = 'none';
+    const x = `${point ? point.x / 10 : 2 + 96 * t}%`, y = `${(point ? point.y : 16 + 164 * t * (1 - t)) / 85 * 100}%`;
     if (runner.style.left !== x) runner.style.left = x;
     if (runner.style.top !== y) runner.style.top = y;
     const ready = boot && root.dataset.bootPhase === 'start';
     progress.classList.toggle('sakura-path-ready', ready);
-    progress.hidden = boot && !['loading', 'start'].includes(root.dataset.bootPhase);
+    progress.hidden = boot && root.dataset.bootPhase !== 'loading';
     const active = !document.hidden && !root.hidden && !root.classList.contains('hidden') && !root.classList.contains('done');
     const status = active && !reduced.matches ? 'running' : 'paused';
     if (scenery.dataset.motion !== status) {

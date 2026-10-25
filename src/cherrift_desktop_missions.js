@@ -53,7 +53,7 @@
       const token = document.createElement('span'); token.title = `${value} ${label}`; token.setAttribute('aria-label', `${value} ${label}`);
       if (asset) { const image = document.createElement('img'); image.src = asset; image.alt = ''; image.draggable = false; token.append(image); }
       else { const icon = document.createElement('i'); icon.textContent = label.includes('Drink') || label.includes('ital') ? '♧' : 'ϟ'; icon.setAttribute('aria-hidden', 'true'); token.append(icon); }
-      const amount = document.createElement('b'); amount.textContent = value.toLocaleString(); token.append(amount); parent.append(token);
+      const amount = document.createElement('b'); amount.textContent = value.toLocaleString(window.UI?.save?.settings?.language === 'en' ? 'en-US' : 'hu-HU'); token.append(amount); parent.append(token);
     }
   }
   function chrome(root, weekly) {

@@ -78,6 +78,7 @@ function safeSnapshot() {
   return {
     documentReadyState: window.document?.readyState || "unknown",
     bodyClass: window.document?.body?.className || "",
+    bootElement: window.document?.getElementById('bootV060')?.outerHTML?.slice(0,300) || null,
     boot,
     auth,
     globals: {

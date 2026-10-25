@@ -47,7 +47,7 @@
     let bar = q('.cs-chrome', root);
     if (!bar) {
       bar = make('header', 'cs-chrome', root);
-      bar.innerHTML = '<img class="cs-logo" src="assets/ui/cherrift_logo.png" alt="CHERRIFT"><div class="cs-heading"><small>CHERRIFT OPTIONS</small><h1>SETTINGS</h1></div><button type="button" class="cs-back" data-cs-back></button>';
+      bar.innerHTML = '<img class="cs-logo" src="assets/ui/cherrift_logo.png" alt="CHERRIFT"><div class="cs-heading"><h1>SETTINGS</h1></div><button type="button" class="cs-back" data-cs-back hidden></button>';
       const scenery = make('div', 'cs-scenery', root); scenery.setAttribute('aria-hidden', 'true');
       const ornament = make('img', 'cs-ornament', root); ornament.src = 'assets/ui/settings/crystal-settings-frame-pc.webp'; ornament.alt = ''; ornament.draggable = false;
       const petals = make('div', 'cs-petals', root); petals.setAttribute('aria-hidden', 'true'); for (let i = 0; i < 8; i++) { const p = document.createElement('i'); p.style.setProperty('--i', i); petals.append(p); }
@@ -63,10 +63,11 @@
       if (key) q(`[data-crystal-route="${key}"],[data-crystal-tool="${key}"]`, clone)?.focus({ preventScroll: true });
     }
     let footer = q('.cs-footer', root);
-    if (!footer) { footer = make('footer', 'cs-footer', root); footer.innerHTML = '<p><span aria-hidden="true">✦</span><b></b><small></small></p><button type="button" data-cs-back class="cs-done"></button><button type="button" data-cs-resume class="cs-done cs-resume"></button>'; }
+    if (!footer) { footer = make('footer', 'cs-footer', root); footer.innerHTML = '<p><span aria-hidden="true">✦</span><b></b><small></small></p><button type="button" data-cs-back class="cs-return"></button><button type="button" data-cs-back class="cs-done"></button><button type="button" data-cs-resume class="cs-done cs-resume"></button>'; }
     text(q('.cs-footer p b', root), copy('AUTOMATIKUS MENTÉS', 'AUTOMATIC SAVE'));
     text(q('.cs-footer p small', root), copy('A módosítások azonnal érvényesek.', 'Changes take effect immediately.'));
-    text(q('.cs-footer [data-cs-back]', root), copy('KÉSZ', 'DONE'));
+    text(q('.cs-footer .cs-return', root), copy('VISSZA', 'BACK'));
+    text(q('.cs-footer .cs-done', root), copy('KÉSZ', 'DONE'));
     const resume = q('[data-cs-resume]', footer); resume.hidden = !paused; text(resume, copy('FOLYTATÁS', 'RESUME'));
   }
   function decorate(root) {

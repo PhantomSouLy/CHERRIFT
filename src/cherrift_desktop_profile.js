@@ -60,6 +60,12 @@
     }
   }
   function details(root) {
+    const nameRow = q('.profile-name-row-bf', root);
+    if (nameRow && !q('.cp-edit-name', nameRow)) {
+      const edit = make('button', 'cp-edit-name', nameRow);
+      edit.type = 'button'; edit.dataset.cpAction = 'name'; edit.textContent = '✎';
+      edit.setAttribute('aria-label', copy('Névváltás', 'Edit name'));
+    }
     const avatar = q('.profile-avatar-bf', root);
     if (avatar && typeof avatar.onclick === 'function') {
       attr(avatar, 'role', 'button'); attr(avatar, 'tabindex', '0'); attr(avatar, 'aria-label', copy('Profilkeret kiválasztása', 'Choose profile frame'));
@@ -75,8 +81,9 @@
     let actions = q('.cp-account', root);
     if (!actions) { actions = make('section', 'cp-account', root); actions.innerHTML = '<h2></h2><div><button type="button" data-cp-action="name"></button><button type="button" data-cp-action="redeem"></button><button type="button" data-cp-action="account"></button></div>'; }
     text(q('h2', actions), copy('FIÓK', 'ACCOUNT'));
-    for (const [key, hu, en] of [['name', 'NÉVVÁLTÁS', 'EDIT NAME'], ['redeem', 'KÓDBEVÁLTÁS', 'REDEEM CODE'], ['account', 'FIÓK', 'ACCOUNT']]) text(q(`[data-cp-action="${key}"]`, actions), copy(hu, en));
-    q('[data-cp-action=name]', actions).disabled = !q('[data-profile-name-edit]', root);
+    const statsButton = q('[data-cp-action=name]', actions);
+    if (statsButton) statsButton.dataset.cpAction = 'stats';
+    for (const [key, hu, en] of [['stats', 'STAT RÉSZLETEK', 'STAT DETAILS'], ['redeem', 'KÓDBEVÁLTÁS', 'REDEEM CODE'], ['account', 'FIÓK', 'ACCOUNT']]) text(q(`[data-cp-action="${key}"]`, actions), copy(hu, en));
     q('[data-cp-action=redeem]', actions).disabled = !q('#redeemBugfixModalV0941');
     const grid = q('.profile-stats-bf', root);
     if (grid && state.painted !== grid) { animate(grid, [{ opacity: .3, transform: 'translate3d(20px,0,0)' }, { opacity: 1, transform: 'translate3d(0,0,0)' }]); state.painted = grid; }
@@ -120,6 +127,7 @@
       else if (action === 'titles') q('[data-profile-title-edit]', root)?.click();
       else if (action === 'frames') q('.profile-avatar-bf', root)?.click();
       else if (action === 'name') q('[data-profile-name-edit]', root)?.click();
+      else if (action === 'stats') q('[data-profile-stats]', root)?.click();
       else if (action === 'redeem') q('#redeemBugfixModalV0941')?.classList.remove('hidden');
       else if (action === 'account') { window.UI?.open?.('settings'); window.CHERRIFT_DESKTOP_SETTINGS?.sync?.(); q('[data-v060-settings="account"]', q('#settings'))?.click(); window.CHERRIFT_DESKTOP_SETTINGS?.sync?.(); }
       schedule();

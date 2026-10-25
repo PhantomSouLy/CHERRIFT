@@ -105,3 +105,14 @@ test('the input-blocking boot layer is removed even when animation frames stall'
   f.frame();f.frame();assert.equal(f.timers.size,0,'late frames cannot schedule another fade or duplicate readiness');
  }finally{f.close()}
 });
+
+test('overlay cleanup is armed before a failing lobby renderer can interrupt release',()=>{
+ const f=fixture();try{
+  f.boot.refresh();f.boot.showStart();f.timer();
+  f.w.addEventListener('error',event=>event.preventDefault());
+  f.w.UI.open=()=>{throw new Error('route failed');};
+  f.w.document.querySelector('#bootStartV096').click();
+  assert.equal(f.timer(),250);assert.equal(f.timer(),650);
+  assert.equal(f.w.document.querySelector('#bootV060'),null);
+ }finally{f.close();}
+});

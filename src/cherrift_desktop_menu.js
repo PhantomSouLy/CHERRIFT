@@ -12,7 +12,7 @@
     ['worlds','PLAY','play','Lépj át egy másik világba','Step into another tomorrow'],
     ['skins','CHERRY','cherry','Találd meg a saját Cherryd','Find your Cherry'],
     ['gear','GEAR','gear','Készülj fel a kalandra','Power your journey'],
-    ['gachaV082','COLLECTION','collection','Emlékek a világokon át','Memories across worlds'],
+    ['gachaV082','GACHA','collection','Emlékek a világokon át','Memories across worlds'],
     ['settings','SETTINGS','settings','A te világod. A te beállításaid.','Tailor your experience']
   ];
   let root, observer, sourceObserver, frame = 0, pending = 0, lastRoute = '', lastFocus = null, dialogFocus;

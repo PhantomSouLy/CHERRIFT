@@ -1,7 +1,7 @@
 {
   "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "1025-recovery-storage-fix",
+  "buildId": "1025-cosmetic-polish-1",
   "entrypoints": {
     "application": "src/cherrift_app.js",
     "menuAudio": "src/cherrift_menu_audio.js",
@@ -55,7 +55,9 @@
     "desktopAchievements": "assets/cherrift_desktop_achievements.css",
     "desktopLoading": "assets/cherrift_desktop_loading.css",
     "desktopSocial": "assets/cherrift_desktop_social.css",
-    "desktopLogin": "assets/cherrift_desktop_login.css"
+    "desktopLogin": "assets/cherrift_desktop_login.css",
+    "frameGeometry": "assets/cherrift_frame_geometry.css",
+    "desktopPolish": "assets/cherrift_desktop_polish.css"
   },
   "externalConfiguration": [
     "src/config.js",
@@ -117,7 +119,9 @@
     ],
     "desktopPresentationOnly": [
       "src/cherrift_desktop_menu.js",
-      "assets/cherrift_desktop_menu.css"
+      "assets/cherrift_desktop_menu.css",
+      "assets/cherrift_desktop_polish.css",
+      "assets/cherrift_frame_geometry.css"
     ],
     "desktopSkinPresentationOnly": [
       "src/cherrift_desktop_skins.js",
