@@ -10,6 +10,15 @@ const ignoredDirectories = new Set([".git", "node_modules"]);
 const sourceExtensions = new Set([".html", ".css", ".js", ".mjs"]);
 const imageExtensions = [".png", ".jpg", ".jpeg", ".webp"];
 const errors = [];
+const migrationDir=join(root,'supabase','migrations');
+const migrationVersions=new Set();
+for(const name of readdirSync(migrationDir).filter(name=>name.endsWith('.sql'))){
+  const match=name.match(/^(\d{14})_[a-z0-9_]+\.sql$/);
+  if(!match){errors.push(`supabase/migrations/${name}: expected a unique 14-digit migration version`);continue;}
+  if(migrationVersions.has(match[1]))errors.push(`supabase/migrations/${name}: duplicate migration version ${match[1]}`);
+  migrationVersions.add(match[1]);
+}
+
 const warnings = [];
 
 function walk(directory) {
@@ -281,17 +290,17 @@ else {
   }
 }
 
-const prebetaMigrationPath = join(root, "supabase", "migrations", "20260801_prebeta_v095.sql");
+const prebetaMigrationPath = join(root, "supabase", "migrations", "20260801000000_prebeta_v095.sql");
 if (existsSync(prebetaMigrationPath)) {
   const migration = readFileSync(prebetaMigrationPath, "utf8");
   if (!/join public\.gm_admins[\s\S]{0,180}admins\.role = 'owner'[\s\S]{0,100}admins\.active = true/.test(migration)) {
-    errors.push("supabase/migrations/20260801_prebeta_v095.sql: owner entitlements must be restricted to an active GM owner");
+    errors.push("supabase/migrations/20260801000000_prebeta_v095.sql: owner entitlements must be restricted to an active GM owner");
   }
 }
 
 for (const requiredSql of [
   "supabase/VERIFY_CURRENT_SCHEMA.sql",
-  "supabase/migrations/20260821_auth_runtime_guard.sql"
+  "supabase/migrations/20260821000000_auth_runtime_guard.sql"
 ]) {
   if (!existsSync(join(root, requiredSql))) errors.push(`${requiredSql}: required Auth/RLS recovery SQL is missing`);
 }

@@ -37,6 +37,7 @@ jobs:
       - name: Validate every tracked file
         run: |
           npm run validate
+          npm run test:migrations
           npm run test:menu-audio
           npm run test:boot-start
           npm run test:desktop

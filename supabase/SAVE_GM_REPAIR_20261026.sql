@@ -366,6 +366,17 @@ $function$
 ;
 
 -- Retired browser-write path: current clients write only via validated player-api.
-revoke insert,update,delete,truncate,references,trigger on public.player_saves from anon,authenticated;
-alter function public.update_player_save_timestamp() set search_path = '';
-revoke execute on function public.rls_auto_enable() from public,anon,authenticated;
+-- Legacy objects exist on upgraded projects but not on clean previews.
+do $legacy$
+begin
+  if to_regclass('public.player_saves') is not null then
+    execute 'revoke insert,update,delete,truncate,references,trigger on public.player_saves from anon,authenticated';
+  end if;
+  if to_regprocedure('public.update_player_save_timestamp()') is not null then
+    execute 'alter function public.update_player_save_timestamp() set search_path = ''''';
+  end if;
+  if to_regprocedure('public.rls_auto_enable()') is not null then
+    execute 'revoke execute on function public.rls_auto_enable() from public,anon,authenticated';
+  end if;
+end;
+$legacy$;
