@@ -802,3 +802,44 @@ test("UI zero skill ranks and key order are equivalent, but actual ranks and res
  normalized.account.skillTreeV082.ranks.damage=0;normalized.account.skillTreeV082.resetCount=1;
  assert.equal(c.progressDiffers(normalized,server),true);
 });
+
+
+test("an equivalent online revision conflict retries presentation without archiving progress",async()=>{
+ const {context:c,runtime:r,data,applied}=authHarness();r.onlinePolicy=true;
+ const local={coins:500,account:{level:1},settings:{effectQuality:"low"},security:{accountOwnerId:"a"}};
+ const seen=[];
+ c.callPlayerApi=async (_action,payload)=>{
+  seen.push(payload.expected_updated_at);
+  if(seen.length===1)return {conflict:true,updated_at:"r2",save_data:{...local,settings:{effectQuality:"high"}}};
+  return {ok:true,updated_at:"r3",save_data:local};
+ };
+ assert.equal(await c.sendProgress(local),true);
+ assert.deepEqual(seen,["r1","r2"]);assert.equal(r.lastCloudSavedAt,"r3");
+ assert.equal(data.has("cherrift-discord-backup-v2:a:recovery"),false);
+ assert.equal(applied.at(-1).settings.effectQuality,"low");
+});
+
+test("a GM reset is still authoritative even when numeric progression happens to match",async()=>{
+ const {context:c,runtime:r,data}=authHarness();r.onlinePolicy=true;
+ const local={coins:500,prebeta:{serverEdit:{requestId:"old"}},security:{accountOwnerId:"a"}};
+ let calls=0;c.callPlayerApi=async()=>{calls++;return {conflict:true,updated_at:"r2",save_data:{...local,prebeta:{serverEdit:{requestId:"reset"}}}};};
+ assert.equal(await c.sendProgress(local),false);assert.equal(calls,1);
+ assert(data.has("cherrift-discord-backup-v2:a:recovery"));assert.equal(r.lastCloudSavedAt,"r2");
+});
+
+test("online presentation conflict retry is bounded",async()=>{
+ const {context:c,runtime:r}=authHarness();r.onlinePolicy=true;
+ const save={coins:500,security:{accountOwnerId:"a"}};
+ let calls=0;c.callPlayerApi=async()=>({conflict:true,updated_at:`r${++calls+1}`,save_data:save});
+ assert.equal(await c.sendProgress(save),false);assert.equal(calls,2);
+});
+
+test("cloud presentation saves retain valid graphics quality without changing progression",()=>{
+ const c=vm.createContext({structuredClone,TextEncoder,Date,serverPower,prepareSave,MAX_SAVE_BYTES:1500000,
+   GM_TITLE_IDS:new Set(["gm","senior_gm","head_gm"]),sanitizeElementalResonance:x=>x,discordProfile:()=>({authProvider:"discord"}),starterSave:starter});
+ for(const name of ["isObject","safeText","boundedInteger","sanitizeProgressSave"])vm.runInContext(functionSource(server,name),c);
+ const current=starter();current.settings={effectQuality:"medium"};
+ for(const quality of ["low","medium","high"]){const value={...current,coins:1e12,settings:{effectQuality:quality}};
+  const actual=c.sanitizeProgressSave(value,current,{id:"a"});assert.equal(actual.settings.effectQuality,quality);assert.equal(actual.coins,500);}
+ assert.equal(c.sanitizeProgressSave({...current,settings:{effectQuality:"invalid"}},current,{id:"a"}).settings.effectQuality,"medium");
+});

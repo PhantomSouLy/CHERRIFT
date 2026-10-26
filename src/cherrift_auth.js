@@ -4,7 +4,7 @@
   if (window.__CHERRIFT_AUTH_V3__) return;
   window.__CHERRIFT_AUTH_V3__ = true;
 
-  const VERSION = "3.0.0-local-first-bootstrap+3.2.0-durable-recovery";
+  const VERSION = "3.0.0-local-first-bootstrap+3.2.1-save-revision-repair";
   const SAVE_VERSION = "0.9.5-prebeta.2";
   const CONFIG = window.CHERRIFT_SUPABASE_CONFIG || {};
   const PLAYER_FUNCTION = CONFIG.playerFunctionName || "player-api";
@@ -613,7 +613,7 @@
     return true;
   }
 
-  async function sendProgress(snapshot, context = accountContext()) {
+  async function sendProgress(snapshot, context = accountContext(), retry = 0) {
     if (!isCurrentAccount(context)) return false;
     const revision = runtime.lastCloudSavedAt;
     const response = await callPlayerApi("save_progress", {
@@ -624,6 +624,14 @@
     if (!isCurrentAccount(context)) return false;
     if (response.conflict && isObject(response.save_data)) {
       const local = runtime.pendingSave || snapshot;
+      // A second tab or an optional server action can advance the revision
+      // without changing owned progress. Retry presentation changes once;
+      // a GM edit/reset marker or differing progress still requires recovery.
+      const sameEdit = local.prebeta?.serverEdit?.requestId === response.save_data.prebeta?.serverEdit?.requestId;
+      if (runtime.onlinePolicy && retry === 0 && sameEdit && !progressDiffers(local, response.save_data)) {
+        runtime.lastCloudSavedAt = String(response.updated_at || "");
+        return sendProgress(local, context, retry + 1);
+      }
       if (!await preserveRecovery(local, context.userId, revision)) throw new Error("recovery_storage_unavailable");
       if (!isCurrentAccount(context)) return false;
       runtime.lastCloudSavedAt = String(response.updated_at || "");

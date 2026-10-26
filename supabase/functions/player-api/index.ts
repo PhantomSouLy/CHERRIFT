@@ -271,6 +271,9 @@ function sanitizeProgressSave(value: unknown, current: JsonObject, user: any): J
     fpsLimit:settings.fpsLimit === 30 ? 30 : 60,
     touchMode:settings.touchMode !== false,
   };
+  if (["low","medium","high"].includes(String(settings.effectQuality))) {
+    (next.settings as JsonObject).effectQuality=settings.effectQuality;
+  }
   for (const key of ["mobilePerformanceMode","soundEnabled","musicEnabled","showDamageNumbers","showFps"]) {
     if (typeof settings[key] === "boolean") (next.settings as JsonObject)[key]=settings[key];
   }

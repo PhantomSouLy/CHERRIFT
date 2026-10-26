@@ -1,0 +1,386 @@
+{
+  "tree1": {
+    "width": 438,
+    "height": 378,
+    "logicalWidth": 286,
+    "logicalHeight": 247,
+    "artHeight": 184,
+    "anchor": 0.79095,
+    "solid": true,
+    "rx": 20,
+    "ry": 12,
+    "sourceCell": [
+      0,
+      0,
+      375,
+      415
+    ],
+    "alphaBounds": [
+      18,
+      92,
+      360,
+      374
+    ],
+    "padding": 48
+  },
+  "tree2": {
+    "width": 325,
+    "height": 307,
+    "logicalWidth": 227,
+    "logicalHeight": 214,
+    "artHeight": 164,
+    "anchor": 0.79853,
+    "solid": true,
+    "rx": 18,
+    "ry": 11,
+    "sourceCell": [
+      375,
+      0,
+      645,
+      415
+    ],
+    "alphaBounds": [
+      11,
+      132,
+      264,
+      367
+    ],
+    "padding": 36
+  },
+  "tree3": {
+    "width": 388,
+    "height": 388,
+    "logicalWidth": 263,
+    "logicalHeight": 263,
+    "artHeight": 205,
+    "anchor": 0.80356,
+    "solid": true,
+    "rx": 28,
+    "ry": 16,
+    "sourceCell": [
+      645,
+      0,
+      975,
+      415
+    ],
+    "alphaBounds": [
+      11,
+      77,
+      313,
+      379
+    ],
+    "padding": 43
+  },
+  "bush1": {
+    "width": 297,
+    "height": 245,
+    "logicalWidth": 114,
+    "logicalHeight": 94,
+    "artHeight": 69,
+    "anchor": 0.7411,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "sourceCell": [
+      975,
+      0,
+      1254,
+      415
+    ],
+    "alphaBounds": [
+      18,
+      194,
+      249,
+      373
+    ],
+    "padding": 33
+  },
+  "bush2": {
+    "width": 306,
+    "height": 234,
+    "logicalWidth": 111,
+    "logicalHeight": 85,
+    "artHeight": 60,
+    "anchor": 0.7341,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "sourceCell": [
+      0,
+      415,
+      330,
+      720
+    ],
+    "alphaBounds": [
+      51,
+      86,
+      289,
+      252
+    ],
+    "padding": 34
+  },
+  "deadBush": {
+    "width": 301,
+    "height": 249,
+    "logicalWidth": 90,
+    "logicalHeight": 75,
+    "artHeight": 55,
+    "anchor": 0.74253,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "sourceCell": [
+      330,
+      415,
+      640,
+      720
+    ],
+    "alphaBounds": [
+      34,
+      74,
+      269,
+      257
+    ],
+    "padding": 33
+  },
+  "rock1": {
+    "width": 399,
+    "height": 320,
+    "logicalWidth": 120,
+    "logicalHeight": 97,
+    "artHeight": 70,
+    "anchor": 0.73925,
+    "solid": true,
+    "rx": 29,
+    "ry": 15,
+    "sourceCell": [
+      640,
+      415,
+      975,
+      720
+    ],
+    "alphaBounds": [
+      7,
+      34,
+      318,
+      266
+    ],
+    "padding": 44
+  },
+  "rock2": {
+    "width": 290,
+    "height": 198,
+    "logicalWidth": 123,
+    "logicalHeight": 84,
+    "artHeight": 57,
+    "anchor": 0.72333,
+    "solid": true,
+    "rx": 24,
+    "ry": 13,
+    "sourceCell": [
+      975,
+      415,
+      1254,
+      720
+    ],
+    "alphaBounds": [
+      21,
+      126,
+      247,
+      260
+    ],
+    "padding": 32
+  },
+  "rockSmall": {
+    "width": 289,
+    "height": 164,
+    "logicalWidth": 66,
+    "logicalHeight": 38,
+    "artHeight": 23,
+    "anchor": 0.70122,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "sourceCell": [
+      0,
+      720,
+      320,
+      965
+    ],
+    "alphaBounds": [
+      63,
+      100,
+      288,
+      200
+    ],
+    "padding": 32
+  },
+  "log": {
+    "width": 409,
+    "height": 269,
+    "logicalWidth": 128,
+    "logicalHeight": 84,
+    "artHeight": 56,
+    "anchor": 0.71959,
+    "solid": true,
+    "rx": 28,
+    "ry": 12,
+    "sourceCell": [
+      320,
+      720,
+      665,
+      965
+    ],
+    "alphaBounds": [
+      18,
+      37,
+      337,
+      216
+    ],
+    "padding": 45
+  },
+  "stump": {
+    "width": 315,
+    "height": 214,
+    "logicalWidth": 116,
+    "logicalHeight": 79,
+    "artHeight": 53,
+    "anchor": 0.72206,
+    "solid": true,
+    "rx": 21,
+    "ry": 12,
+    "sourceCell": [
+      665,
+      720,
+      970,
+      965
+    ],
+    "alphaBounds": [
+      29,
+      69,
+      274,
+      213
+    ],
+    "padding": 35
+  },
+  "bones": {
+    "width": 327,
+    "height": 204,
+    "logicalWidth": 74,
+    "logicalHeight": 46,
+    "artHeight": 30,
+    "anchor": 0.71353,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "sourceCell": [
+      970,
+      720,
+      1254,
+      965
+    ],
+    "alphaBounds": [
+      8,
+      86,
+      263,
+      218
+    ],
+    "padding": 36
+  },
+  "grass1": {
+    "width": 290,
+    "height": 276,
+    "logicalWidth": 47,
+    "logicalHeight": 44,
+    "artHeight": 34,
+    "anchor": 0.75348,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "sourceCell": [
+      0,
+      965,
+      330,
+      1254
+    ],
+    "alphaBounds": [
+      59,
+      20,
+      285,
+      232
+    ],
+    "padding": 32
+  },
+  "grass2": {
+    "width": 327,
+    "height": 268,
+    "logicalWidth": 50,
+    "logicalHeight": 41,
+    "artHeight": 30,
+    "anchor": 0.74134,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "sourceCell": [
+      330,
+      965,
+      665,
+      1254
+    ],
+    "alphaBounds": [
+      41,
+      37,
+      296,
+      233
+    ],
+    "padding": 36
+  },
+  "grass3": {
+    "width": 245,
+    "height": 174,
+    "logicalWidth": 55,
+    "logicalHeight": 39,
+    "artHeight": 27,
+    "anchor": 0.72759,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "sourceCell": [
+      665,
+      965,
+      975,
+      1254
+    ],
+    "alphaBounds": [
+      49,
+      104,
+      240,
+      224
+    ],
+    "padding": 27
+  },
+  "pebbles": {
+    "width": 242,
+    "height": 154,
+    "logicalWidth": 51,
+    "logicalHeight": 32,
+    "artHeight": 21,
+    "anchor": 0.71429,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "sourceCell": [
+      975,
+      965,
+      1254,
+      1254
+    ],
+    "alphaBounds": [
+      44,
+      124,
+      232,
+      224
+    ],
+    "padding": 27
+  }
+}
