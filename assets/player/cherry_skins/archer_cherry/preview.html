@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="hu"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CHERRIFT · Archer Cherry 01</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#1a1420;color:#f6e8ed;font:16px system-ui,sans-serif}main{max-width:1000px;margin:auto;padding:24px}h1{font-size:26px;margin:0 0 6px}p{color:#c5b3c0}section{background:#271e2e;border:1px solid #52404f;border-radius:18px;padding:20px;margin:18px 0}.controls{display:flex;gap:12px;flex-wrap:wrap;align-items:end}label{display:grid;gap:7px;font-size:14px}button,select{background:#372a40;color:#fff;border:1px solid #775567;border-radius:8px;padding:10px;font:inherit}button{cursor:pointer}button:hover{background:#654257}canvas{display:block;max-width:100%;height:auto;margin:auto;border-radius:12px;background:#ddd4d5}.stage{margin:20px 0}input{accent-color:#ec9cba}#scrub{width:100%}output{font-variant-numeric:tabular-nums}.foot{font-size:13px}button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #ffd1e5}#error{color:#ffa4a4}
+</style>
+<main><h1>Archer Cherry · 01</h1><p>Chibi animációs előnézet · 8 irány · 6 állapot</p>
+<section><div class="controls">
+<label>Animáció<select id="state"><option value="idle">Nyugodt állás</option><option value="idle2">Második álló animáció</option><option value="walk">Járás</option><option value="attack">Álló íjlövés</option><option value="walk_attack">Íjlövés járás közben</option><option value="skill">Four Arrow Shot</option></select></label>
+<label>Irány<select id="dir"><option value="down">Le</option><option value="down_right">Le-jobbra</option><option value="right">Jobbra</option><option value="up_right">Fel-jobbra</option><option value="up">Fel</option><option value="up_left">Fel-balra</option><option value="left">Balra</option><option value="down_left">Le-balra</option></select></label>
+<label>Sebesség<select id="rate"><option value="0.5">0,5×</option><option value="1" selected>1×</option><option value="2">2×</option></select></label>
+<label>Háttér<select id="bg"><option value="light">Világos</option><option value="dark">Sötét</option><option value="green">Zöld</option><option value="grid">Sakktábla</option></select></label>
+<button id="play">Szünet</button><button id="replay">Újra</button><button id="step">Következő képkocka</button></div>
+<div class="stage"><canvas id="view" width="768" height="510" aria-label="Animált Archer Cherry, nagy és játékbeli méretben"></canvas></div>
+<label>Képkocka <input id="scrub" type="range" min="0" max="5" value="0" step="1"></label><p><output id="status"></output></p><p id="error" role="alert"></p>
+</section><p class="foot">Balra: nagyított nézet. Jobbra: a játékhoz közeli megjelenési méret. A nyilak és találati effektek a játékban külön objektumok, itt a karakter animációja látható. Szóköz: lejátszás/szünet. Jobbra nyíl: képkockaléptetés.</p>
+<p class="foot">A bal oldali irányok a jobb oldali rajzok tükrözései. Az animációk teljes karakterrajzokat váltanak, köztes képkockák nélkül.</p></main>
+<script>
+const $=id=>document.getElementById(id),canvas=$('view'),ctx=canvas.getContext('2d');
+const fps={idle:3,idle2:3,walk:8,attack:15,walk_attack:15,skill:15};
+let img=null,frame=0,elapsed=0,playing=true,last=0,request=0;
+function render(){
+ const bg=$('bg').value;ctx.fillStyle=bg==='dark'?'#211a28':bg==='green'?'#517342':'#e2d9db';ctx.fillRect(0,0,768,510);
+ if(bg==='grid'){for(let y=0;y<510;y+=24)for(let x=0;x<768;x+=24){ctx.fillStyle=((x+y)/24)%2?'#bbb4b9':'#e2d9db';ctx.fillRect(x,y,24,24);}}
+ ctx.fillStyle=bg==='dark'?'#eee':'#423544';ctx.font='15px system-ui';ctx.fillText('Nagyított nézet',105,34);ctx.fillText('Játékbeli méret',535,34);
+ ctx.strokeStyle=bg==='dark'?'#806e81':'#a399a3';ctx.beginPath();ctx.moveTo(40,440);ctx.lineTo(728,440);ctx.stroke();
+ if(img){ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(img,frame*192,0,192,192,35,72,384,384);ctx.drawImage(img,frame*192,0,192,192,535,335,110,110);}
+ $('scrub').value=frame;$('status').textContent=`${frame+1} / 6 · ${fps[$('state').value]} fps · ${$('dir').value}`;$('play').textContent=playing?'Szünet':'Lejátszás';
+}
+async function load(){const current=++request;frame=0;elapsed=0;playing=true;img=null;$('error').textContent='';const image=new Image();
+ image.onload=()=>{if(current!==request)return;img=image;render();};image.onerror=()=>{if(current===request){$('error').textContent='A sprite sheet nem tölthető be. A teljes mappát tartsd együtt az előnézettel.';render();}};
+ image.src=`sheets192/archer_cherry_${$('state').value}_${$('dir').value}.png`;render();}
+function tick(t){const dt=last?Math.min(.1,(t-last)/1000):0;last=t;if(playing&&img){elapsed+=dt*Number($('rate').value)*fps[$('state').value];if(elapsed>=1){const steps=Math.floor(elapsed);elapsed-=steps;if(['idle','walk'].includes($('state').value))frame=(frame+steps)%6;else{frame=Math.min(5,frame+steps);if(frame===5)playing=false;}}}render();requestAnimationFrame(tick);}
+$('play').onclick=()=>{if(!playing&&frame===5&&!['idle','walk'].includes($('state').value)){frame=0;elapsed=0;}playing=!playing;render();};
+$('replay').onclick=()=>{frame=0;elapsed=0;playing=true;render();};$('step').onclick=()=>{playing=false;frame=(frame+1)%6;render();};
+$('scrub').oninput=()=>{playing=false;frame=Number($('scrub').value);elapsed=0;render();};for(const id of ['state','dir'])$(id).onchange=load;$('bg').onchange=render;
+document.addEventListener('keydown',e=>{if(e.target.matches('select,input'))return;if(e.code==='Space'){e.preventDefault();$('play').click();}if(e.code==='ArrowRight'){e.preventDefault();$('step').click();}});
+load();requestAnimationFrame(tick);
+</script></html>

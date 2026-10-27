@@ -14,7 +14,7 @@
     "test:gunner": "node --test tools/gunner.test.mjs",
     "test:base-cherry": "node --test tools/base_cherry.test.mjs",
     "catalog:build": "node tools/build_game_catalog.mjs",
-    "test": "npm run validate && npm run test:migrations && npm run test:menu-audio && npm run test:boot-start && npm run test:cherry-art && npm run test:cosmetics && npm run test:world1 && npm run test:world2 && npm run test:desktop && npm run audit && npm run test:recovery && npm run test:integrity && npm run test:online-api && npm run test:gunner && npm run test:base-cherry && npm run test:ninja-chibi && npm run test:mobile-gameplay && npm run smoke:supabase-lock && npm run smoke",
+    "test": "npm run validate && npm run test:migrations && npm run test:menu-audio && npm run test:boot-start && npm run test:cherry-art && npm run test:cosmetics && npm run test:world1 && npm run test:world2 && npm run test:desktop && npm run audit && npm run test:recovery && npm run test:integrity && npm run test:online-api && npm run test:gunner && npm run test:base-cherry && npm run test:ninja-chibi && npm run test:archer-chibi && npm run test:mobile-gameplay && npm run smoke:supabase-lock && npm run smoke",
     "test:menu-audio": "node --test tools/menu_audio.test.mjs",
     "test:boot-start": "node --test tools/boot_start.test.mjs",
     "test:cherry-art": "node --test tools/cherry_ui_art.test.mjs",
@@ -41,6 +41,7 @@
     "test:world2": "node --test tools/world2.test.mjs",
     "test:migrations": "node tools/migrations_replay.mjs",
     "test:ninja-chibi": "node --test tools/ninja_chibi.test.mjs",
+    "test:archer-chibi": "node --test tools/archer_chibi.test.mjs",
     "test:mobile-gameplay": "node --no-warnings --test tools/mobile_gameplay.test.mjs"
   },
   "devDependencies": {
@@ -54,3 +55,4 @@
     "@supabase/supabase-js": "^2.110.7"
   }
 }
+

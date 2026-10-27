@@ -1,0 +1,2863 @@
+{
+  "id": "archer_cherry",
+  "style": "chibi-concept-01",
+  "integrated": true,
+  "runtime": "src/cherrift_archer_chibi.js",
+  "frameSize": 192,
+  "anchor": [
+    96,
+    184
+  ],
+  "individualFrameSize": 256,
+  "individualAnchor": [
+    128,
+    244
+  ],
+  "directions": [
+    "down",
+    "down_right",
+    "right",
+    "up_right",
+    "up",
+    "up_left",
+    "left",
+    "down_left"
+  ],
+  "states": {
+    "idle": {
+      "frames": 6,
+      "fps": 3,
+      "duration": 2.0,
+      "loop": true,
+      "sheets": {
+        "down": "sheets192/archer_cherry_idle_down.png",
+        "down_right": "sheets192/archer_cherry_idle_down_right.png",
+        "right": "sheets192/archer_cherry_idle_right.png",
+        "up_right": "sheets192/archer_cherry_idle_up_right.png",
+        "up": "sheets192/archer_cherry_idle_up.png",
+        "up_left": "sheets192/archer_cherry_idle_up_left.png",
+        "left": "sheets192/archer_cherry_idle_left.png",
+        "down_left": "sheets192/archer_cherry_idle_down_left.png"
+      }
+    },
+    "idle2": {
+      "frames": 6,
+      "fps": 3,
+      "duration": 2.0,
+      "loop": false,
+      "sheets": {
+        "down": "sheets192/archer_cherry_idle2_down.png",
+        "down_right": "sheets192/archer_cherry_idle2_down_right.png",
+        "right": "sheets192/archer_cherry_idle2_right.png",
+        "up_right": "sheets192/archer_cherry_idle2_up_right.png",
+        "up": "sheets192/archer_cherry_idle2_up.png",
+        "up_left": "sheets192/archer_cherry_idle2_up_left.png",
+        "left": "sheets192/archer_cherry_idle2_left.png",
+        "down_left": "sheets192/archer_cherry_idle2_down_left.png"
+      }
+    },
+    "walk": {
+      "frames": 6,
+      "fps": 8,
+      "duration": 0.75,
+      "loop": true,
+      "sheets": {
+        "down": "sheets192/archer_cherry_walk_down.png",
+        "down_right": "sheets192/archer_cherry_walk_down_right.png",
+        "right": "sheets192/archer_cherry_walk_right.png",
+        "up_right": "sheets192/archer_cherry_walk_up_right.png",
+        "up": "sheets192/archer_cherry_walk_up.png",
+        "up_left": "sheets192/archer_cherry_walk_up_left.png",
+        "left": "sheets192/archer_cherry_walk_left.png",
+        "down_left": "sheets192/archer_cherry_walk_down_left.png"
+      }
+    },
+    "attack": {
+      "frames": 6,
+      "fps": 15,
+      "duration": 0.4,
+      "loop": false,
+      "sheets": {
+        "down": "sheets192/archer_cherry_attack_down.png",
+        "down_right": "sheets192/archer_cherry_attack_down_right.png",
+        "right": "sheets192/archer_cherry_attack_right.png",
+        "up_right": "sheets192/archer_cherry_attack_up_right.png",
+        "up": "sheets192/archer_cherry_attack_up.png",
+        "up_left": "sheets192/archer_cherry_attack_up_left.png",
+        "left": "sheets192/archer_cherry_attack_left.png",
+        "down_left": "sheets192/archer_cherry_attack_down_left.png"
+      }
+    },
+    "walk_attack": {
+      "frames": 6,
+      "fps": 15,
+      "duration": 0.4,
+      "loop": false,
+      "sheets": {
+        "down": "sheets192/archer_cherry_walk_attack_down.png",
+        "down_right": "sheets192/archer_cherry_walk_attack_down_right.png",
+        "right": "sheets192/archer_cherry_walk_attack_right.png",
+        "up_right": "sheets192/archer_cherry_walk_attack_up_right.png",
+        "up": "sheets192/archer_cherry_walk_attack_up.png",
+        "up_left": "sheets192/archer_cherry_walk_attack_up_left.png",
+        "left": "sheets192/archer_cherry_walk_attack_left.png",
+        "down_left": "sheets192/archer_cherry_walk_attack_down_left.png"
+      }
+    },
+    "skill": {
+      "frames": 6,
+      "fps": 15,
+      "duration": 0.4,
+      "loop": false,
+      "sheets": {
+        "down": "sheets192/archer_cherry_skill_down.png",
+        "down_right": "sheets192/archer_cherry_skill_down_right.png",
+        "right": "sheets192/archer_cherry_skill_right.png",
+        "up_right": "sheets192/archer_cherry_skill_up_right.png",
+        "up": "sheets192/archer_cherry_skill_up.png",
+        "up_left": "sheets192/archer_cherry_skill_up_left.png",
+        "left": "sheets192/archer_cherry_skill_left.png",
+        "down_left": "sheets192/archer_cherry_skill_down_left.png"
+      }
+    }
+  },
+  "sourceAlignment": {
+    "down": {
+      "uniformScale": 1.0239234449760766,
+      "locomotionScale": 0.8359375,
+      "frames": [
+        {
+          "state": "idle",
+          "index": 0,
+          "source": "down.png",
+          "box": [
+            59,
+            8,
+            236,
+            218
+          ],
+          "translation": [
+            35,
+            33
+          ]
+        },
+        {
+          "state": "idle",
+          "index": 1,
+          "source": "down.png",
+          "box": [
+            276,
+            7,
+            453,
+            217
+          ],
+          "translation": [
+            36,
+            33
+          ]
+        },
+        {
+          "state": "idle",
+          "index": 2,
+          "source": "down.png",
+          "box": [
+            458,
+            7,
+            629,
+            218
+          ],
+          "translation": [
+            42,
+            32
+          ]
+        },
+        {
+          "state": "idle",
+          "index": 3,
+          "source": "down.png",
+          "box": [
+            638,
+            5,
+            819,
+            218
+          ],
+          "translation": [
+            36,
+            30
+          ]
+        },
+        {
+          "state": "idle",
+          "index": 4,
+          "source": "down.png",
+          "box": [
+            826,
+            5,
+            1005,
+            218
+          ],
+          "translation": [
+            38,
+            30
+          ]
+        },
+        {
+          "state": "idle",
+          "index": 5,
+          "source": "down.png",
+          "box": [
+            1026,
+            5,
+            1198,
+            219
+          ],
+          "translation": [
+            41,
+            29
+          ]
+        },
+        {
+          "state": "idle2",
+          "index": 0,
+          "source": "locomotion-down.png",
+          "box": [
+            106,
+            3,
+            316,
+            265
+          ],
+          "translation": [
+            40,
+            28
+          ]
+        },
+        {
+          "state": "idle2",
+          "index": 1,
+          "source": "locomotion-down.png",
+          "box": [
+            407,
+            4,
+            617,
+            265
+          ],
+          "translation": [
+            44,
+            29
+          ]
+        },
+        {
+          "state": "idle2",
+          "index": 2,
+          "source": "locomotion-down.png",
+          "box": [
+            711,
+            6,
+            918,
+            265
+          ],
+          "translation": [
+            49,
+            31
+          ]
+        },
+        {
+          "state": "idle2",
+          "index": 3,
+          "source": "locomotion-down.png",
+          "box": [
+            107,
+            254,
+            321,
+            518
+          ],
+          "translation": [
+            43,
+            27
+          ]
+        },
+        {
+          "state": "idle2",
+          "index": 4,
+          "source": "locomotion-down.png",
+          "box": [
+            398,
+            263,
+            619,
+            519
+          ],
+          "translation": [
+            37,
+            33
+          ]
+        },
+        {
+          "state": "idle2",
+          "index": 5,
+          "source": "locomotion-down.png",
+          "box": [
+            701,
+            259,
+            917,
+            518
+          ],
+          "translation": [
+            40,
+            31
+          ]
+        },
+        {
+          "state": "walk",
+          "index": 0,
+          "source": "locomotion-down.png",
+          "box": [
+            86,
+            507,
+            315,
+            781
+          ],
+          "translation": [
+            39,
+            18
+          ]
+        },
+        {
+          "state": "walk",
+          "index": 1,
+          "source": "locomotion-down.png",
+          "box": [
+            388,
+            509,
+            622,
+            781
+          ],
+          "translation": [
+            25,
+            20
+          ]
+        },
+        {
+          "state": "walk",
+          "index": 2,
+          "source": "locomotion-down.png",
+          "box": [
+            709,
+            510,
+            940,
+            781
+          ],
+          "translation": [
+            37,
+            21
+          ]
+        },
+        {
+          "state": "walk",
+          "index": 3,
+          "source": "locomotion-down.png",
+          "box": [
+            86,
+            767,
+            314,
+            1027
+          ],
+          "translation": [
+            37,
+            30
+          ]
+        },
+        {
+          "state": "walk",
+          "index": 4,
+          "source": "locomotion-down.png",
+          "box": [
+            393,
+            775,
+            619,
+            1027
+          ],
+          "translation": [
+            37,
+            37
+          ]
+        },
+        {
+          "state": "walk",
+          "index": 5,
+          "source": "locomotion-down.png",
+          "box": [
+            697,
+            767,
+            941,
+            1027
+          ],
+          "translation": [
+            29,
+            30
+          ]
+        },
+        {
+          "state": "attack",
+          "index": 0,
+          "source": "down.png",
+          "box": [
+            49,
+            655,
+            237,
+            868
+          ],
+          "translation": [
+            31,
+            30
+          ]
+        },
+        {
+          "state": "attack",
+          "index": 1,
+          "source": "down.png",
+          "box": [
+            253,
+            653,
+            443,
+            873
+          ],
+          "translation": [
+            44,
+            23
+          ]
+        },
+        {
+          "state": "attack",
+          "index": 2,
+          "source": "down.png",
+          "box": [
+            457,
+            656,
+            636,
+            873
+          ],
+          "translation": [
+            56,
+            26
+          ]
+        },
+        {
+          "state": "attack",
+          "index": 3,
+          "source": "down.png",
+          "box": [
+            644,
+            656,
+            828,
+            876
+          ],
+          "translation": [
+            39,
+            23
+          ]
+        },
+        {
+          "state": "attack",
+          "index": 4,
+          "source": "down.png",
+          "box": [
+            831,
+            655,
+            1019,
+            876
+          ],
+          "translation": [
+            36,
+            22
+          ]
+        },
+        {
+          "state": "attack",
+          "index": 5,
+          "source": "down.png",
+          "box": [
+            1032,
+            657,
+            1218,
+            876
+          ],
+          "translation": [
+            33,
+            24
+          ]
+        },
+        {
+          "state": "walk_attack",
+          "index": 0,
+          "source": "locomotion-down.png",
+          "box": [
+            87,
+            1011,
+            324,
+            1276
+          ],
+          "translation": [
+            34,
+            26
+          ]
+        },
+        {
+          "state": "walk_attack",
+          "index": 1,
+          "source": "locomotion-down.png",
+          "box": [
+            391,
+            1008,
+            633,
+            1277
+          ],
+          "translation": [
+            34,
+            22
+          ]
+        },
+        {
+          "state": "walk_attack",
+          "index": 2,
+          "source": "locomotion-down.png",
+          "box": [
+            705,
+            1011,
+            949,
+            1277
+          ],
+          "translation": [
+            35,
+            25
+          ]
+        },
+        {
+          "state": "walk_attack",
+          "index": 3,
+          "source": "locomotion-down.png",
+          "box": [
+            82,
+            1259,
+            315,
+            1524
+          ],
+          "translation": [
+            34,
+            26
+          ]
+        },
+        {
+          "state": "walk_attack",
+          "index": 4,
+          "source": "locomotion-down.png",
+          "box": [
+            398,
+            1264,
+            630,
+            1524
+          ],
+          "translation": [
+            45,
+            30
+          ]
+        },
+        {
+          "state": "walk_attack",
+          "index": 5,
+          "source": "locomotion-down.png",
+          "box": [
+            714,
+            1260,
+            943,
+            1524
+          ],
+          "translation": [
+            39,
+            27
+          ]
+        },
+        {
+          "state": "skill",
+          "index": 0,
+          "source": "down.png",
+          "box": [
+            56,
+            1077,
+            245,
+            1245
+          ],
+          "translation": [
+            37,
+            76
+          ]
+        },
+        {
+          "state": "skill",
+          "index": 1,
+          "source": "down.png",
+          "box": [
+            265,
+            1067,
+            448,
+            1253
+          ],
+          "translation": [
+            41,
+            58
+          ]
+        },
+        {
+          "state": "skill",
+          "index": 2,
+          "source": "down.png",
+          "box": [
+            454,
+            1065,
+            637,
+            1254
+          ],
+          "translation": [
+            31,
+            54
+          ]
+        },
+        {
+          "state": "skill",
+          "index": 3,
+          "source": "down.png",
+          "box": [
+            648,
+            1069,
+            830,
+            1254
+          ],
+          "translation": [
+            35,
+            57
+          ]
+        },
+        {
+          "state": "skill",
+          "index": 4,
+          "source": "down.png",
+          "box": [
+            839,
+            1065,
+            1018,
+            1254
+          ],
+          "translation": [
+            39,
+            54
+          ]
+        },
+        {
+          "state": "skill",
+          "index": 5,
+          "source": "down.png",
+          "box": [
+            1039,
+            1060,
+            1213,
+            1254
+          ],
+          "translation": [
+            33,
+            48
+          ]
+        }
+      ]
+    },
+    "right": {
+      "uniformScale": 0.7409090909090909,
+      "locomotionScale": 0.703030303030303,
+      "frames": [
+        {
+          "state": "idle",
+          "index": 0,
+          "source": "right.png",
+          "box": [
+            17,
+            0,
+            192,
+            236
+          ],
+          "translation": [
+            59,
+            71
+          ]
+        },
+        {
+          "state": "idle",
+          "index": 1,
+          "source": "right.png",
+          "box": [
+            244,
+            0,
+            415,
+            236
+          ],
+          "translation": [
+            51,
+            72
+          ]
+        },
+        {
+          "state": "idle",
+          "index": 2,
+          "source": "right.png",
+          "box": [
+            462,
+            0,
+            629,
+            237
+          ],
+          "translation": [
+            53,
+            71
+          ]
+        },
+        {
+          "state": "idle",
+          "index": 3,
+          "source": "right.png",
+          "box": [
+            673,
+            2,
+            852,
+            237
+          ],
+          "translation": [
+            50,
+            73
+          ]
+        },
+        {
+          "state": "idle",
+          "index": 4,
+          "source": "right.png",
+          "box": [
+            898,
+            1,
+            1072,
+            236
+          ],
+          "translation": [
+            59,
+            73
+          ]
+        },
+        {
+          "state": "idle",
+          "index": 5,
+          "source": "right.png",
+          "box": [
+            1085,
+            0,
+            1252,
+            236
+          ],
+          "translation": [
+            55,
+            72
+          ]
+        },
+        {
+          "state": "idle2",
+          "index": 0,
+          "source": "locomotion-right.png",
+          "box": [
+            154,
+            1,
+            395,
+            248
+          ],
+          "translation": [
+            36,
+            73
+          ]
+        },
+        {
+          "state": "idle2",
+          "index": 1,
+          "source": "locomotion-right.png",
+          "box": [
+            512,
+            0,
+            750,
+            248
+          ],
+          "translation": [
+            41,
+            72
+          ]
+        },
+        {
+          "state": "idle2",
+          "index": 2,
+          "source": "locomotion-right.png",
+          "box": [
+            886,
+            3,
+            1122,
+            248
+          ],
+          "translation": [
+            43,
+            75
+          ]
+        },
+        {
+          "state": "idle2",
+          "index": 3,
+          "source": "locomotion-right.png",
+          "box": [
+            154,
+            229,
+            395,
+            478
+          ],
+          "translation": [
+            37,
+            72
+          ]
+        },
+        {
+          "state": "idle2",
+          "index": 4,
+          "source": "locomotion-right.png",
+          "box": [
+            514,
+            227,
+            754,
+            478
+          ],
+          "translation": [
+            39,
+            70
+          ]
+        },
+        {
+          "state": "idle2",
+          "index": 5,
+          "source": "locomotion-right.png",
+          "box": [
+            878,
+            226,
+            1120,
+            478
+          ],
+          "translation": [
+            39,
+            70
+          ]
+        },
+        {
+          "state": "walk",
+          "index": 0,
+          "source": "locomotion-right.png",
+          "box": [
+            165,
+            470,
+            421,
+            688
+          ],
+          "translation": [
+            24,
+            94
+          ]
+        },
+        {
+          "state": "walk",
+          "index": 1,
+          "source": "locomotion-right.png",
+          "box": [
+            512,
+            470,
+            775,
+            689
+          ],
+          "translation": [
+            42,
+            93
+          ]
+        },
+        {
+          "state": "walk",
+          "index": 2,
+          "source": "locomotion-right.png",
+          "box": [
+            887,
+            468,
+            1151,
+            689
+          ],
+          "translation": [
+            28,
+            91
+          ]
+        },
+        {
+          "state": "walk",
+          "index": 3,
+          "source": "locomotion-right.png",
+          "box": [
+            163,
+            676,
+            428,
+            883
+          ],
+          "translation": [
+            42,
+            101
+          ]
+        },
+        {
+          "state": "walk",
+          "index": 4,
+          "source": "locomotion-right.png",
+          "box": [
+            516,
+            680,
+            777,
+            884
+          ],
+          "translation": [
+            44,
+            103
+          ]
+        },
+        {
+          "state": "walk",
+          "index": 5,
+          "source": "locomotion-right.png",
+          "box": [
+            907,
+            675,
+            1155,
+            883
+          ],
+          "translation": [
+            50,
+            101
+          ]
+        },
+        {
+          "state": "attack",
+          "index": 0,
+          "source": "right.png",
+          "box": [
+            8,
+            469,
+            202,
+            710
+          ],
+          "translation": [
+            42,
+            68
+          ]
+        },
+        {
+          "state": "attack",
+          "index": 1,
+          "source": "right.png",
+          "box": [
+            244,
+            468,
+            439,
+            710
+          ],
+          "translation": [
+            41,
+            68
+          ]
+        },
+        {
+          "state": "attack",
+          "index": 2,
+          "source": "right.png",
+          "box": [
+            454,
+            470,
+            663,
+            709
+          ],
+          "translation": [
+            33,
+            70
+          ]
+        },
+        {
+          "state": "attack",
+          "index": 3,
+          "source": "right.png",
+          "box": [
+            670,
+            470,
+            874,
+            711
+          ],
+          "translation": [
+            30,
+            68
+          ]
+        },
+        {
+          "state": "attack",
+          "index": 4,
+          "source": "right.png",
+          "box": [
+            886,
+            468,
+            1076,
+            710
+          ],
+          "translation": [
+            35,
+            68
+          ]
+        },
+        {
+          "state": "attack",
+          "index": 5,
+          "source": "right.png",
+          "box": [
+            1087,
+            463,
+            1254,
+            711
+          ],
+          "translation": [
+            50,
+            63
+          ]
+        },
+        {
+          "state": "walk_attack",
+          "index": 0,
+          "source": "locomotion-right.png",
+          "box": [
+            162,
+            867,
+            426,
+            1077
+          ],
+          "translation": [
+            12,
+            99
+          ]
+        },
+        {
+          "state": "walk_attack",
+          "index": 1,
+          "source": "locomotion-right.png",
+          "box": [
+            516,
+            872,
+            786,
+            1078
+          ],
+          "translation": [
+            39,
+            102
+          ]
+        },
+        {
+          "state": "walk_attack",
+          "index": 2,
+          "source": "locomotion-right.png",
+          "box": [
+            888,
+            872,
+            1167,
+            1077
+          ],
+          "translation": [
+            43,
+            103
+          ]
+        },
+        {
+          "state": "walk_attack",
+          "index": 3,
+          "source": "locomotion-right.png",
+          "box": [
+            169,
+            1064,
+            419,
+            1245
+          ],
+          "translation": [
+            34,
+            118
+          ]
+        },
+        {
+          "state": "walk_attack",
+          "index": 4,
+          "source": "locomotion-right.png",
+          "box": [
+            519,
+            1062,
+            759,
+            1245
+          ],
+          "translation": [
+            43,
+            117
+          ]
+        },
+        {
+          "state": "walk_attack",
+          "index": 5,
+          "source": "locomotion-right.png",
+          "box": [
+            904,
+            1068,
+            1149,
+            1245
+          ],
+          "translation": [
+            49,
+            121
+          ]
+        },
+        {
+          "state": "skill",
+          "index": 0,
+          "source": "right.png",
+          "box": [
+            4,
+            948,
+            208,
+            1184
+          ],
+          "translation": [
+            43,
+            72
+          ]
+        },
+        {
+          "state": "skill",
+          "index": 1,
+          "source": "right.png",
+          "box": [
+            214,
+            939,
+            458,
+            1184
+          ],
+          "translation": [
+            35,
+            65
+          ]
+        },
+        {
+          "state": "skill",
+          "index": 2,
+          "source": "right.png",
+          "box": [
+            444,
+            938,
+            682,
+            1185
+          ],
+          "translation": [
+            38,
+            64
+          ]
+        },
+        {
+          "state": "skill",
+          "index": 3,
+          "source": "right.png",
+          "box": [
+            666,
+            943,
+            874,
+            1185
+          ],
+          "translation": [
+            38,
+            68
+          ]
+        },
+        {
+          "state": "skill",
+          "index": 4,
+          "source": "right.png",
+          "box": [
+            886,
+            939,
+            1090,
+            1185
+          ],
+          "translation": [
+            44,
+            65
+          ]
+        },
+        {
+          "state": "skill",
+          "index": 5,
+          "source": "right.png",
+          "box": [
+            1085,
+            939,
+            1253,
+            1192
+          ],
+          "translation": [
+            52,
+            60
+          ]
+        }
+      ]
+    },
+    "up": {
+      "uniformScale": 0.9747899159663865,
+      "locomotionScale": 0.7673045121663123,
+      "frames": [
+        {
+          "state": "idle",
+          "index": 0,
+          "source": "up.png",
+          "box": [
+            47,
+            6,
+            207,
+            205
+          ],
+          "translation": [
+            48,
+            54
+          ]
+        },
+        {
+          "state": "idle",
+          "index": 1,
+          "source": "up.png",
+          "box": [
+            253,
+            5,
+            402,
+            205
+          ],
+          "translation": [
+            60,
+            53
+          ]
+        },
+        {
+          "state": "idle",
+          "index": 2,
+          "source": "up.png",
+          "box": [
+            450,
+            8,
+            606,
+            205
+          ],
+          "translation": [
+            49,
+            56
+          ]
+        },
+        {
+          "state": "idle",
+          "index": 3,
+          "source": "up.png",
+          "box": [
+            656,
+            5,
+            807,
+            205
+          ],
+          "translation": [
+            66,
+            53
+          ]
+        },
+        {
+          "state": "idle",
+          "index": 4,
+          "source": "up.png",
+          "box": [
+            847,
+            5,
+            1000,
+            205
+          ],
+          "translation": [
+            57,
+            53
+          ]
+        },
+        {
+          "state": "idle",
+          "index": 5,
+          "source": "up.png",
+          "box": [
+            1052,
+            6,
+            1210,
+            205
+          ],
+          "translation": [
+            59,
+            54
+          ]
+        },
+        {
+          "state": "idle2",
+          "index": 0,
+          "source": "locomotion-up.png",
+          "box": [
+            97,
+            5,
+            327,
+            258
+          ],
+          "translation": [
+            34,
+            53
+          ]
+        },
+        {
+          "state": "idle2",
+          "index": 1,
+          "source": "locomotion-up.png",
+          "box": [
+            414,
+            7,
+            608,
+            258
+          ],
+          "translation": [
+            58,
+            54
+          ]
+        },
+        {
+          "state": "idle2",
+          "index": 2,
+          "source": "locomotion-up.png",
+          "box": [
+            712,
+            8,
+            922,
+            258
+          ],
+          "translation": [
+            43,
+            55
+          ]
+        },
+        {
+          "state": "idle2",
+          "index": 3,
+          "source": "locomotion-up.png",
+          "box": [
+            109,
+            249,
+            322,
+            512
+          ],
+          "translation": [
+            41,
+            45
+          ]
+        },
+        {
+          "state": "idle2",
+          "index": 4,
+          "source": "locomotion-up.png",
+          "box": [
+            416,
+            259,
+            621,
+            512
+          ],
+          "translation": [
+            52,
+            53
+          ]
+        },
+        {
+          "state": "idle2",
+          "index": 5,
+          "source": "locomotion-up.png",
+          "box": [
+            717,
+            253,
+            947,
+            512
+          ],
+          "translation": [
+            43,
+            48
+          ]
+        },
+        {
+          "state": "walk",
+          "index": 0,
+          "source": "locomotion-up.png",
+          "box": [
+            139,
+            508,
+            334,
+            761
+          ],
+          "translation": [
+            65,
+            53
+          ]
+        },
+        {
+          "state": "walk",
+          "index": 1,
+          "source": "locomotion-up.png",
+          "box": [
+            427,
+            513,
+            631,
+            762
+          ],
+          "translation": [
+            64,
+            56
+          ]
+        },
+        {
+          "state": "walk",
+          "index": 2,
+          "source": "locomotion-up.png",
+          "box": [
+            722,
+            508,
+            947,
+            762
+          ],
+          "translation": [
+            61,
+            52
+          ]
+        },
+        {
+          "state": "walk",
+          "index": 3,
+          "source": "locomotion-up.png",
+          "box": [
+            133,
+            758,
+            352,
+            1011
+          ],
+          "translation": [
+            58,
+            53
+          ]
+        },
+        {
+          "state": "walk",
+          "index": 4,
+          "source": "locomotion-up.png",
+          "box": [
+            428,
+            759,
+            652,
+            1008
+          ],
+          "translation": [
+            61,
+            56
+          ]
+        },
+        {
+          "state": "walk",
+          "index": 5,
+          "source": "locomotion-up.png",
+          "box": [
+            717,
+            750,
+            937,
+            1006
+          ],
+          "translation": [
+            57,
+            51
+          ]
+        },
+        {
+          "state": "attack",
+          "index": 0,
+          "source": "up.png",
+          "box": [
+            42,
+            618,
+            220,
+            820
+          ],
+          "translation": [
+            50,
+            51
+          ]
+        },
+        {
+          "state": "attack",
+          "index": 1,
+          "source": "up.png",
+          "box": [
+            249,
+            618,
+            428,
+            820
+          ],
+          "translation": [
+            41,
+            51
+          ]
+        },
+        {
+          "state": "attack",
+          "index": 2,
+          "source": "up.png",
+          "box": [
+            432,
+            612,
+            619,
+            818
+          ],
+          "translation": [
+            12,
+            47
+          ]
+        },
+        {
+          "state": "attack",
+          "index": 3,
+          "source": "up.png",
+          "box": [
+            654,
+            615,
+            832,
+            818
+          ],
+          "translation": [
+            36,
+            50
+          ]
+        },
+        {
+          "state": "attack",
+          "index": 4,
+          "source": "up.png",
+          "box": [
+            864,
+            617,
+            1046,
+            820
+          ],
+          "translation": [
+            38,
+            50
+          ]
+        },
+        {
+          "state": "attack",
+          "index": 5,
+          "source": "up.png",
+          "box": [
+            1065,
+            614,
+            1216,
+            817
+          ],
+          "translation": [
+            57,
+            50
+          ]
+        },
+        {
+          "state": "walk_attack",
+          "index": 0,
+          "source": "locomotion-up.png",
+          "box": [
+            104,
+            995,
+            364,
+            1247
+          ],
+          "translation": [
+            39,
+            54
+          ]
+        },
+        {
+          "state": "walk_attack",
+          "index": 1,
+          "source": "locomotion-up.png",
+          "box": [
+            413,
+            994,
+            634,
+            1244
+          ],
+          "translation": [
+            50,
+            55
+          ]
+        },
+        {
+          "state": "walk_attack",
+          "index": 2,
+          "source": "locomotion-up.png",
+          "box": [
+            707,
+            996,
+            964,
+            1245
+          ],
+          "translation": [
+            37,
+            56
+          ]
+        },
+        {
+          "state": "walk_attack",
+          "index": 3,
+          "source": "locomotion-up.png",
+          "box": [
+            110,
+            1226,
+            370,
+            1507
+          ],
+          "translation": [
+            39,
+            31
+          ]
+        },
+        {
+          "state": "walk_attack",
+          "index": 4,
+          "source": "locomotion-up.png",
+          "box": [
+            418,
+            1236,
+            663,
+            1508
+          ],
+          "translation": [
+            47,
+            38
+          ]
+        },
+        {
+          "state": "walk_attack",
+          "index": 5,
+          "source": "locomotion-up.png",
+          "box": [
+            717,
+            1238,
+            986,
+            1506
+          ],
+          "translation": [
+            32,
+            41
+          ]
+        },
+        {
+          "state": "skill",
+          "index": 0,
+          "source": "up.png",
+          "box": [
+            47,
+            1033,
+            213,
+            1220
+          ],
+          "translation": [
+            46,
+            66
+          ]
+        },
+        {
+          "state": "skill",
+          "index": 1,
+          "source": "up.png",
+          "box": [
+            269,
+            1025,
+            435,
+            1219
+          ],
+          "translation": [
+            41,
+            59
+          ]
+        },
+        {
+          "state": "skill",
+          "index": 2,
+          "source": "up.png",
+          "box": [
+            470,
+            1034,
+            643,
+            1217
+          ],
+          "translation": [
+            49,
+            70
+          ]
+        },
+        {
+          "state": "skill",
+          "index": 3,
+          "source": "up.png",
+          "box": [
+            667,
+            1019,
+            866,
+            1217
+          ],
+          "translation": [
+            30,
+            55
+          ]
+        },
+        {
+          "state": "skill",
+          "index": 4,
+          "source": "up.png",
+          "box": [
+            877,
+            1027,
+            1052,
+            1217
+          ],
+          "translation": [
+            45,
+            63
+          ]
+        },
+        {
+          "state": "skill",
+          "index": 5,
+          "source": "up.png",
+          "box": [
+            1064,
+            1018,
+            1222,
+            1221
+          ],
+          "translation": [
+            57,
+            50
+          ]
+        }
+      ]
+    },
+    "down_right": {
+      "uniformScale": 0.8405797101449275,
+      "locomotionScale": 0.618904706938566,
+      "frames": [
+        {
+          "state": "idle",
+          "index": 0,
+          "source": "down_right.png",
+          "box": [
+            31,
+            19,
+            215,
+            231
+          ],
+          "translation": [
+            58,
+            69
+          ]
+        },
+        {
+          "state": "idle",
+          "index": 1,
+          "source": "down_right.png",
+          "box": [
+            239,
+            19,
+            424,
+            231
+          ],
+          "translation": [
+            54,
+            69
+          ]
+        },
+        {
+          "state": "idle",
+          "index": 2,
+          "source": "down_right.png",
+          "box": [
+            446,
+            18,
+            631,
+            231
+          ],
+          "translation": [
+            57,
+            68
+          ]
+        },
+        {
+          "state": "idle",
+          "index": 3,
+          "source": "down_right.png",
+          "box": [
+            636,
+            19,
+            819,
+            231
+          ],
+          "translation": [
+            57,
+            69
+          ]
+        },
+        {
+          "state": "idle",
+          "index": 4,
+          "source": "down_right.png",
+          "box": [
+            841,
+            20,
+            1028,
+            231
+          ],
+          "translation": [
+            57,
+            70
+          ]
+        },
+        {
+          "state": "idle",
+          "index": 5,
+          "source": "down_right.png",
+          "box": [
+            1047,
+            19,
+            1237,
+            231
+          ],
+          "translation": [
+            57,
+            69
+          ]
+        },
+        {
+          "state": "idle2",
+          "index": 0,
+          "source": "locomotion-down_right.png",
+          "box": [
+            139,
+            3,
+            350,
+            290
+          ],
+          "translation": [
+            60,
+            69
+          ]
+        },
+        {
+          "state": "idle2",
+          "index": 1,
+          "source": "locomotion-down_right.png",
+          "box": [
+            422,
+            3,
+            627,
+            291
+          ],
+          "translation": [
+            64,
+            68
+          ]
+        },
+        {
+          "state": "idle2",
+          "index": 2,
+          "source": "locomotion-down_right.png",
+          "box": [
+            730,
+            3,
+            939,
+            291
+          ],
+          "translation": [
+            64,
+            68
+          ]
+        },
+        {
+          "state": "idle2",
+          "index": 3,
+          "source": "locomotion-down_right.png",
+          "box": [
+            144,
+            275,
+            358,
+            561
+          ],
+          "translation": [
+            61,
+            69
+          ]
+        },
+        {
+          "state": "idle2",
+          "index": 4,
+          "source": "locomotion-down_right.png",
+          "box": [
+            420,
+            275,
+            638,
+            561
+          ],
+          "translation": [
+            61,
+            69
+          ]
+        },
+        {
+          "state": "idle2",
+          "index": 5,
+          "source": "locomotion-down_right.png",
+          "box": [
+            723,
+            274,
+            939,
+            559
+          ],
+          "translation": [
+            55,
+            70
+          ]
+        },
+        {
+          "state": "walk",
+          "index": 0,
+          "source": "locomotion-down_right.png",
+          "box": [
+            147,
+            550,
+            377,
+            810
+          ],
+          "translation": [
+            44,
+            86
+          ]
+        },
+        {
+          "state": "walk",
+          "index": 1,
+          "source": "locomotion-down_right.png",
+          "box": [
+            428,
+            547,
+            651,
+            810
+          ],
+          "translation": [
+            53,
+            84
+          ]
+        },
+        {
+          "state": "walk",
+          "index": 2,
+          "source": "locomotion-down_right.png",
+          "box": [
+            743,
+            547,
+            964,
+            807
+          ],
+          "translation": [
+            47,
+            86
+          ]
+        },
+        {
+          "state": "walk",
+          "index": 3,
+          "source": "locomotion-down_right.png",
+          "box": [
+            146,
+            795,
+            383,
+            1052
+          ],
+          "translation": [
+            33,
+            87
+          ]
+        },
+        {
+          "state": "walk",
+          "index": 4,
+          "source": "locomotion-down_right.png",
+          "box": [
+            430,
+            789,
+            657,
+            1052
+          ],
+          "translation": [
+            42,
+            84
+          ]
+        },
+        {
+          "state": "walk",
+          "index": 5,
+          "source": "locomotion-down_right.png",
+          "box": [
+            747,
+            794,
+            968,
+            1051
+          ],
+          "translation": [
+            44,
+            87
+          ]
+        },
+        {
+          "state": "attack",
+          "index": 0,
+          "source": "down_right.png",
+          "box": [
+            25,
+            460,
+            222,
+            681
+          ],
+          "translation": [
+            50,
+            62
+          ]
+        },
+        {
+          "state": "attack",
+          "index": 1,
+          "source": "down_right.png",
+          "box": [
+            234,
+            461,
+            435,
+            680
+          ],
+          "translation": [
+            36,
+            63
+          ]
+        },
+        {
+          "state": "attack",
+          "index": 2,
+          "source": "down_right.png",
+          "box": [
+            446,
+            462,
+            642,
+            681
+          ],
+          "translation": [
+            43,
+            63
+          ]
+        },
+        {
+          "state": "attack",
+          "index": 3,
+          "source": "down_right.png",
+          "box": [
+            637,
+            462,
+            841,
+            681
+          ],
+          "translation": [
+            42,
+            63
+          ]
+        },
+        {
+          "state": "attack",
+          "index": 4,
+          "source": "down_right.png",
+          "box": [
+            852,
+            464,
+            1043,
+            681
+          ],
+          "translation": [
+            37,
+            65
+          ]
+        },
+        {
+          "state": "attack",
+          "index": 5,
+          "source": "down_right.png",
+          "box": [
+            1053,
+            461,
+            1242,
+            681
+          ],
+          "translation": [
+            57,
+            62
+          ]
+        },
+        {
+          "state": "walk_attack",
+          "index": 0,
+          "source": "locomotion-down_right.png",
+          "box": [
+            142,
+            1035,
+            402,
+            1293
+          ],
+          "translation": [
+            30,
+            87
+          ]
+        },
+        {
+          "state": "walk_attack",
+          "index": 1,
+          "source": "locomotion-down_right.png",
+          "box": [
+            434,
+            1041,
+            698,
+            1297
+          ],
+          "translation": [
+            35,
+            88
+          ]
+        },
+        {
+          "state": "walk_attack",
+          "index": 2,
+          "source": "locomotion-down_right.png",
+          "box": [
+            723,
+            1038,
+            972,
+            1295
+          ],
+          "translation": [
+            37,
+            87
+          ]
+        },
+        {
+          "state": "walk_attack",
+          "index": 3,
+          "source": "locomotion-down_right.png",
+          "box": [
+            163,
+            1279,
+            416,
+            1531
+          ],
+          "translation": [
+            29,
+            91
+          ]
+        },
+        {
+          "state": "walk_attack",
+          "index": 4,
+          "source": "locomotion-down_right.png",
+          "box": [
+            446,
+            1278,
+            721,
+            1534
+          ],
+          "translation": [
+            29,
+            88
+          ]
+        },
+        {
+          "state": "walk_attack",
+          "index": 5,
+          "source": "locomotion-down_right.png",
+          "box": [
+            738,
+            1277,
+            980,
+            1534
+          ],
+          "translation": [
+            31,
+            87
+          ]
+        },
+        {
+          "state": "skill",
+          "index": 0,
+          "source": "down_right.png",
+          "box": [
+            21,
+            936,
+            240,
+            1150
+          ],
+          "translation": [
+            42,
+            67
+          ]
+        },
+        {
+          "state": "skill",
+          "index": 1,
+          "source": "down_right.png",
+          "box": [
+            244,
+            937,
+            445,
+            1172
+          ],
+          "translation": [
+            28,
+            50
+          ]
+        },
+        {
+          "state": "skill",
+          "index": 2,
+          "source": "down_right.png",
+          "box": [
+            446,
+            937,
+            652,
+            1169
+          ],
+          "translation": [
+            21,
+            52
+          ]
+        },
+        {
+          "state": "skill",
+          "index": 3,
+          "source": "down_right.png",
+          "box": [
+            639,
+            938,
+            840,
+            1174
+          ],
+          "translation": [
+            12,
+            49
+          ]
+        },
+        {
+          "state": "skill",
+          "index": 4,
+          "source": "down_right.png",
+          "box": [
+            849,
+            940,
+            1055,
+            1174
+          ],
+          "translation": [
+            24,
+            51
+          ]
+        },
+        {
+          "state": "skill",
+          "index": 5,
+          "source": "down_right.png",
+          "box": [
+            1050,
+            939,
+            1245,
+            1168
+          ],
+          "translation": [
+            44,
+            55
+          ]
+        }
+      ]
+    },
+    "up_right": {
+      "uniformScale": 0.9508196721311475,
+      "locomotionScale": 0.7946559421969257,
+      "frames": [
+        {
+          "state": "idle",
+          "index": 0,
+          "source": "up_right.png",
+          "box": [
+            56,
+            7,
+            233,
+            214
+          ],
+          "translation": [
+            46,
+            51
+          ]
+        },
+        {
+          "state": "idle",
+          "index": 1,
+          "source": "up_right.png",
+          "box": [
+            256,
+            8,
+            429,
+            214
+          ],
+          "translation": [
+            52,
+            52
+          ]
+        },
+        {
+          "state": "idle",
+          "index": 2,
+          "source": "up_right.png",
+          "box": [
+            446,
+            9,
+            625,
+            214
+          ],
+          "translation": [
+            39,
+            53
+          ]
+        },
+        {
+          "state": "idle",
+          "index": 3,
+          "source": "up_right.png",
+          "box": [
+            649,
+            8,
+            825,
+            214
+          ],
+          "translation": [
+            50,
+            53
+          ]
+        },
+        {
+          "state": "idle",
+          "index": 4,
+          "source": "up_right.png",
+          "box": [
+            853,
+            11,
+            1028,
+            214
+          ],
+          "translation": [
+            51,
+            55
+          ]
+        },
+        {
+          "state": "idle",
+          "index": 5,
+          "source": "up_right.png",
+          "box": [
+            1055,
+            10,
+            1221,
+            213
+          ],
+          "translation": [
+            56,
+            55
+          ]
+        },
+        {
+          "state": "idle2",
+          "index": 0,
+          "source": "locomotion-up_right.png",
+          "box": [
+            118,
+            4,
+            329,
+            248
+          ],
+          "translation": [
+            45,
+            53
+          ]
+        },
+        {
+          "state": "idle2",
+          "index": 1,
+          "source": "locomotion-up_right.png",
+          "box": [
+            404,
+            4,
+            618,
+            249
+          ],
+          "translation": [
+            43,
+            52
+          ]
+        },
+        {
+          "state": "idle2",
+          "index": 2,
+          "source": "locomotion-up_right.png",
+          "box": [
+            682,
+            7,
+            901,
+            249
+          ],
+          "translation": [
+            43,
+            55
+          ]
+        },
+        {
+          "state": "idle2",
+          "index": 3,
+          "source": "locomotion-up_right.png",
+          "box": [
+            119,
+            246,
+            342,
+            499
+          ],
+          "translation": [
+            37,
+            46
+          ]
+        },
+        {
+          "state": "idle2",
+          "index": 4,
+          "source": "locomotion-up_right.png",
+          "box": [
+            404,
+            247,
+            625,
+            499
+          ],
+          "translation": [
+            41,
+            47
+          ]
+        },
+        {
+          "state": "idle2",
+          "index": 5,
+          "source": "locomotion-up_right.png",
+          "box": [
+            687,
+            257,
+            919,
+            499
+          ],
+          "translation": [
+            37,
+            55
+          ]
+        },
+        {
+          "state": "walk",
+          "index": 0,
+          "source": "locomotion-up_right.png",
+          "box": [
+            106,
+            500,
+            348,
+            754
+          ],
+          "translation": [
+            33,
+            45
+          ]
+        },
+        {
+          "state": "walk",
+          "index": 1,
+          "source": "locomotion-up_right.png",
+          "box": [
+            410,
+            497,
+            640,
+            749
+          ],
+          "translation": [
+            37,
+            47
+          ]
+        },
+        {
+          "state": "walk",
+          "index": 2,
+          "source": "locomotion-up_right.png",
+          "box": [
+            703,
+            497,
+            933,
+            748
+          ],
+          "translation": [
+            34,
+            48
+          ]
+        },
+        {
+          "state": "walk",
+          "index": 3,
+          "source": "locomotion-up_right.png",
+          "box": [
+            114,
+            751,
+            355,
+            1001
+          ],
+          "translation": [
+            29,
+            49
+          ]
+        },
+        {
+          "state": "walk",
+          "index": 4,
+          "source": "locomotion-up_right.png",
+          "box": [
+            420,
+            745,
+            647,
+            1004
+          ],
+          "translation": [
+            38,
+            41
+          ]
+        },
+        {
+          "state": "walk",
+          "index": 5,
+          "source": "locomotion-up_right.png",
+          "box": [
+            707,
+            748,
+            933,
+            1001
+          ],
+          "translation": [
+            41,
+            46
+          ]
+        },
+        {
+          "state": "attack",
+          "index": 0,
+          "source": "up_right.png",
+          "box": [
+            27,
+            630,
+            224,
+            840
+          ],
+          "translation": [
+            43,
+            48
+          ]
+        },
+        {
+          "state": "attack",
+          "index": 1,
+          "source": "up_right.png",
+          "box": [
+            235,
+            632,
+            437,
+            839
+          ],
+          "translation": [
+            42,
+            51
+          ]
+        },
+        {
+          "state": "attack",
+          "index": 2,
+          "source": "up_right.png",
+          "box": [
+            435,
+            631,
+            636,
+            839
+          ],
+          "translation": [
+            49,
+            50
+          ]
+        },
+        {
+          "state": "attack",
+          "index": 3,
+          "source": "up_right.png",
+          "box": [
+            632,
+            628,
+            841,
+            837
+          ],
+          "translation": [
+            41,
+            49
+          ]
+        },
+        {
+          "state": "attack",
+          "index": 4,
+          "source": "up_right.png",
+          "box": [
+            846,
+            628,
+            1041,
+            839
+          ],
+          "translation": [
+            45,
+            47
+          ]
+        },
+        {
+          "state": "attack",
+          "index": 5,
+          "source": "up_right.png",
+          "box": [
+            1068,
+            634,
+            1235,
+            838
+          ],
+          "translation": [
+            55,
+            54
+          ]
+        },
+        {
+          "state": "walk_attack",
+          "index": 0,
+          "source": "locomotion-up_right.png",
+          "box": [
+            113,
+            1000,
+            371,
+            1255
+          ],
+          "translation": [
+            34,
+            45
+          ]
+        },
+        {
+          "state": "walk_attack",
+          "index": 1,
+          "source": "locomotion-up_right.png",
+          "box": [
+            407,
+            994,
+            660,
+            1253
+          ],
+          "translation": [
+            33,
+            41
+          ]
+        },
+        {
+          "state": "walk_attack",
+          "index": 2,
+          "source": "locomotion-up_right.png",
+          "box": [
+            707,
+            994,
+            948,
+            1245
+          ],
+          "translation": [
+            31,
+            48
+          ]
+        },
+        {
+          "state": "walk_attack",
+          "index": 3,
+          "source": "locomotion-up_right.png",
+          "box": [
+            108,
+            1236,
+            364,
+            1517
+          ],
+          "translation": [
+            28,
+            24
+          ]
+        },
+        {
+          "state": "walk_attack",
+          "index": 4,
+          "source": "locomotion-up_right.png",
+          "box": [
+            408,
+            1246,
+            653,
+            1517
+          ],
+          "translation": [
+            31,
+            32
+          ]
+        },
+        {
+          "state": "walk_attack",
+          "index": 5,
+          "source": "locomotion-up_right.png",
+          "box": [
+            721,
+            1245,
+            934,
+            1517
+          ],
+          "translation": [
+            50,
+            31
+          ]
+        },
+        {
+          "state": "skill",
+          "index": 0,
+          "source": "up_right.png",
+          "box": [
+            35,
+            1041,
+            223,
+            1231
+          ],
+          "translation": [
+            51,
+            67
+          ]
+        },
+        {
+          "state": "skill",
+          "index": 1,
+          "source": "up_right.png",
+          "box": [
+            241,
+            1032,
+            450,
+            1235
+          ],
+          "translation": [
+            45,
+            55
+          ]
+        },
+        {
+          "state": "skill",
+          "index": 2,
+          "source": "up_right.png",
+          "box": [
+            438,
+            1034,
+            657,
+            1236
+          ],
+          "translation": [
+            40,
+            56
+          ]
+        },
+        {
+          "state": "skill",
+          "index": 3,
+          "source": "up_right.png",
+          "box": [
+            637,
+            1033,
+            844,
+            1235
+          ],
+          "translation": [
+            40,
+            56
+          ]
+        },
+        {
+          "state": "skill",
+          "index": 4,
+          "source": "up_right.png",
+          "box": [
+            853,
+            1034,
+            1035,
+            1236
+          ],
+          "translation": [
+            47,
+            56
+          ]
+        },
+        {
+          "state": "skill",
+          "index": 5,
+          "source": "up_right.png",
+          "box": [
+            1054,
+            1035,
+            1235,
+            1234
+          ],
+          "translation": [
+            50,
+            59
+          ]
+        }
+      ]
+    }
+  },
+  "mirroredDirections": {
+    "left": "right",
+    "down_left": "down_right",
+    "up_left": "up_right"
+  },
+  "rendering": "fully drawn character frames; no bones, interpolation or crossfades",
+  "qualityNote": "Technical bounds validated. Generated drawings can vary slightly between frames and views; visual gameplay review is still required."
+}
