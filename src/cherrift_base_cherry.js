@@ -14,7 +14,7 @@
 
   config.states = Object.fromEntries(Object.entries(FPS).map(([name, fps]) => [name, {
     frames:6, fps, duration:6 / fps, loop:["idle", "walk"].includes(name), pivot:PIVOT,
-    dirs:Object.fromEntries(DIRECTIONS.map(dir => [dir, `${ROOT}/base_cherry_${name}_${dir}.png?v=1027-base-chibi2`]))
+    dirs:Object.fromEntries(DIRECTIONS.map(dir => [dir, `${ROOT}/base_cherry_${name}_${dir}.png?v=1027-cherry-motion1`]))
   }]));
   config.attackMovementMode = "mobile";
   config.attackMoveSpeedMultiplier = 1;
@@ -134,9 +134,10 @@
     const elapsed = casting ? Math.max(0, (p.skillCastDuration || state.duration) - (p.skillCastTimer || 0))
       : attack ? attack.elapsed : stateName === "idle2" ? idleTime % 8 - 6 : this.t || 0;
     // Both attack strips must finish all six poses on the same cast clock.
-    const frame = attack ? Math.min(count - 1, Math.floor(attack.elapsed / attack.duration * count))
+    let frame = attack ? Math.min(count - 1, Math.floor(attack.elapsed / attack.duration * count))
       : casting || stateName === "idle2" ? Math.min(count - 1, Math.floor(elapsed * state.fps))
       : Math.floor(elapsed * state.fps) % count;
+    if (p.moving && stateName === "walk") frame = window.CHERRIFT_CHERRY_MOTION?.walkFrame(p,count) ?? frame;
     const width = (CHERRIFT_CONFIG.player.displayWidth || 116) * .95;
     const height = (CHERRIFT_CONFIG.player.displayHeight || 116) * .95;
     ctx.save();
@@ -147,10 +148,11 @@
     ctx.save();
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
-    ctx.drawImage(image, frame * 192, 0, 192, 192,
+    if (window.CHERRIFT_CHERRY_MOTION) window.CHERRIFT_CHERRY_MOTION.draw(ctx,image,ID,stateName,facing,frame,p,width,height);
+    else ctx.drawImage(image, frame * 192, 0, 192, 192,
       p.x - PIVOT.x * width / 192, p.y + 30 - PIVOT.y * height / 192, width, height);
     ctx.restore();
   };
 
-  window.CHERRIFT_BASE_CHERRY = Object.freeze({version:"1027-base-chibi2", directions:[...DIRECTIONS]});
+  window.CHERRIFT_BASE_CHERRY = Object.freeze({version:"1027-cherry-motion1", directions:[...DIRECTIONS]});
 })();

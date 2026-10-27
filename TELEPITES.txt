@@ -1,0 +1,26 @@
+CHERRIFT – Base / Archer / Ninja Cherry javítás
+
+Telepítés:
+1. A ZIP tartalmát másold a CHERRIFT projekt gyökérmappájába.
+2. Engedélyezd a meglévő fájlok felülírását; a src és tools mappák tartalmát egyesítsd.
+3. Indítsd újra a játékot, szükség esetén kényszerített frissítéssel.
+4. GitHub Desktop / GitSync használatakor commitold és töltsd fel a módosításokat.
+
+A javítás a 7b74fa4bbbe6d4e0449835d19535d9be8fcb1009 main verzióból készült.
+Build: 1027-cherry-motion1
+
+Javítások:
+- Egységes látható magasság az irányok között, talphoz igazított rajzolás.
+- Váltott lábú járás az eredeti képrészletekkel, stabil felsőtesttel.
+- A lépésóra a valódi mozgást követi, támadás vagy irányváltás nem nullázza.
+- Mozgó támadásnál külön marad a támadási képkocka és a lábak lépésfázisa.
+- Az eredeti PNG-k, a karakterek dizájnja és a harci értékek változatlanok.
+
+Ellenőrzés:
+- npm run validate: sikeres
+- 38 célzott automatikus teszt: sikeres
+- 2016 járás / mozgó támadás kirajzolási ellenőrzés: sikeres
+- Teljes élő PC/mobil játékpróba nem történt.
+- Supabase-módosítás nem szükséges ehhez a javításhoz.
+
+A GitHub-feltöltés nem történt meg: a kapcsolat 403 jogosultsági hibát adott.

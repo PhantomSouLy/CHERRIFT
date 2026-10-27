@@ -13,7 +13,7 @@
     attack:[6,6/attackDuration],walk_attack:[6,6/attackDuration],skill:[6,6/skillDuration]};
   skin.states=Object.fromEntries(Object.entries(specs).map(([name,[frames,fps]])=>[name,{
     frames,fps,duration:frames/fps,pivot:PIVOT,loop:["idle","walk"].includes(name),
-    dirs:Object.fromEntries(DIRS.map(dir=>[dir,`${ROOT}/archer_cherry_${name}_${dir}.png?v=1027-archer1`]))
+    dirs:Object.fromEntries(DIRS.map(dir=>[dir,`${ROOT}/archer_cherry_${name}_${dir}.png?v=1027-cherry-motion1`]))
   }]));
   // Preserve passiveCrit, movement penalty, attack/skill types, cooldowns and
   // all projectile timing/damage. Only sprite configuration changes here.
@@ -100,14 +100,16 @@
       frame=Math.min(count-1,Math.floor(attack.elapsed/attack.duration*count));
     } else if (name==="idle2") frame=Math.min(count-1,Math.floor((idle%8-6)*state.fps));
     else frame=Math.floor((this.t || 0)*state.fps)%count;
+    if (p.moving && name === "walk") frame=window.CHERRIFT_CHERRY_MOTION?.walkFrame(p,count) ?? frame;
     const width=(CHERRIFT_CONFIG.player.displayWidth || 116)*.95;
     const height=(CHERRIFT_CONFIG.player.displayHeight || 116)*.95;
     ctx.save();ctx.globalAlpha*=.2;ctx.fillStyle="#000";
     ctx.beginPath();ctx.ellipse(p.x,p.y+25,26,8,0,0,Math.PI*2);ctx.fill();ctx.restore();
     ctx.save();ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality="high";
-    ctx.drawImage(image,frame*192,0,192,192,
+    if (window.CHERRIFT_CHERRY_MOTION) window.CHERRIFT_CHERRY_MOTION.draw(ctx,image,ID,name,dir,frame,p,width,height);
+    else ctx.drawImage(image,frame*192,0,192,192,
       p.x-PIVOT.x*width/192,p.y+30-PIVOT.y*height/192,width,height);
     ctx.restore();
   };
-  window.CHERRIFT_ARCHER_CHIBI=Object.freeze({version:"1027-archer1",directions:[...DIRS]});
+  window.CHERRIFT_ARCHER_CHIBI=Object.freeze({version:"1027-cherry-motion1",directions:[...DIRS]});
 })();

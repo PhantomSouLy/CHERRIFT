@@ -1,7 +1,7 @@
 {
   "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "1027-base-chibi",
+  "buildId": "1027-cherry-motion1",
   "entrypoints": {
     "application": "src/cherrift_app.js",
     "menuAudio": "src/cherrift_menu_audio.js",
@@ -32,7 +32,10 @@
     "desktopLogin": "src/cherrift_desktop_login.js",
     "world1": "src/cherrift_world1.js",
     "world2": "src/cherrift_world2.js",
-    "reworkMaps": "src/cherrift_rework_maps.js"
+    "reworkMaps": "src/cherrift_rework_maps.js",
+    "cherryGeometry": "src/cherrift_cherry_geometry.js",
+    "cherryGait": "src/cherrift_cherry_gait.js",
+    "cherryMotion": "src/cherrift_cherry_motion.js"
   },
   "stylesheets": {
     "shell": "assets/cherrift_shell.css",
