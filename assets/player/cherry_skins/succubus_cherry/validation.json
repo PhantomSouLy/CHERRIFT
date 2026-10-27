@@ -1,0 +1,13 @@
+{
+  "directions": 8,
+  "states": 8,
+  "framesPerState": 6,
+  "frames": 384,
+  "sheets": 64,
+  "empty": [],
+  "clipped": [],
+  "heightRange": [
+    153,
+    157
+  ]
+}

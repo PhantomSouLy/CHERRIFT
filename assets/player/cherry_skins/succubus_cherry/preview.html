@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="hu"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CHERRIFT • Succubus Cherry animációk</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#17121f;color:#fcecf5;font:16px system-ui,sans-serif}main{max-width:1000px;margin:auto;padding:24px}small{color:#d6b5ca}h1{margin:8px 0;font-size:clamp(24px,4vw,38px)}.gold{color:#edc88a;letter-spacing:.16em;font-size:12px}p{line-height:1.6;color:#d6b5ca}.controls{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0}select,button,input{font:inherit}select,button{border:1px solid #775264;color:#ffedf7;background:#302035;padding:10px 14px;border-radius:10px}button{cursor:pointer}canvas{display:block;width:min(100%,768px);height:auto;margin:auto;border:1px solid #80586f;border-radius:18px;background:radial-gradient(ellipse,#614052,#302435)}.meta{display:flex;justify-content:space-between;margin:10px 0;gap:8px;font-size:13px}.notes{font-size:13px}label{display:flex;align-items:center;gap:8px}.grid{background-color:#735e72;background-image:linear-gradient(45deg,#685568 25%,transparent 25%),linear-gradient(-45deg,#685568 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#685568 75%),linear-gradient(-45deg,transparent 75%,#685568 75%);background-size:32px 32px;background-position:0 0,0 16px,16px -16px,-16px 0}
+</style>
+<main><div class="gold">LEGENDARY · ABYSSAL</div><h1>Succubus Cherry</h1><small>8 irány · 3 idle · 384 képkocka</small>
+<div class="controls"><select id="state" aria-label="Animáció"><option value="idle">Alap idle</option><option value="idle2">Idle 2 – intés</option><option value="idle3">Idle 3 – szárnynyújtás</option><option value="walk">Járás</option><option value="attack_ranged">Távoli támadás</option><option value="attack_melee">Közeli támadás</option><option value="walk_attack_ranged">Járás + támadás</option><option value="skill">Soul Drain – mozdulatsor</option></select>
+<select id="dir" aria-label="Irány"><option value="down">Le / szemből</option><option value="down_right">Le-jobbra</option><option value="right">Jobbra</option><option value="up_right">Fel-jobbra</option><option value="up">Fel / hátulról</option><option value="up_left">Fel-balra</option><option value="left">Balra</option><option value="down_left">Le-balra</option></select>
+<button id="pause">Szünet</button><button id="step">Következő képkocka</button><button id="grid">Átlátszósági háttér</button></div>
+<canvas id="preview" width="768" height="512"></canvas><div class="meta"><span id="status">Betöltés…</span><label>Tempó <input id="speed" type="range" min=".25" max="1.5" step=".25" value="1"></label></div>
+<p class="notes">A vonal a közös talajszintet jelöli, a kereszt a rögzített igazítási pontot. Az előnézet ismétli a kiválasztott mozdulatsort; a játékban a két extra idle ritkábban, véletlenszerű szünetekkel játszódik le. A skill effektje itt nem jelenik meg: a játék meglévő effektje marad használatban.</p></main>
+<script>
+const $=id=>document.getElementById(id),canvas=$('preview'),ctx=canvas.getContext('2d');
+const fps={idle:3,idle2:3,idle3:3,walk:8,attack_ranged:16,attack_melee:18,walk_attack_ranged:8,skill:9};
+let image=null,clock=0,previous=0,paused=false,request=0;
+async function load(){const token=++request;clock=0;const im=new Image();im.src=`sheets192/succubus_cherry_${$('state').value}_${$('dir').value}.png`;try{await im.decode();if(token===request)image=im;}catch{$('status').textContent='A képfájl nem található. Az előnézetet a kicsomagolt mappában nyisd meg.';}}
+$('state').onchange=load;$('dir').onchange=load;$('pause').onclick=()=>{paused=!paused;$('pause').textContent=paused?'Lejátszás':'Szünet';};
+$('step').onclick=()=>{paused=true;$('pause').textContent='Lejátszás';clock+=1/fps[$('state').value];};$('grid').onclick=()=>canvas.classList.toggle('grid');
+function tick(now){const dt=previous?Math.min(.1,(now-previous)/1000):0;previous=now;if(!paused)clock+=dt*Number($('speed').value);
+ctx.clearRect(0,0,768,512);const x=384,y=470,scale=2.35,frame=Math.floor(clock*fps[$('state').value])%6;
+ctx.strokeStyle='#d9adc255';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(40,y);ctx.lineTo(728,y);ctx.moveTo(x-8,y);ctx.lineTo(x+8,y);ctx.moveTo(x,y-8);ctx.lineTo(x,y+8);ctx.stroke();
+if(image){ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(image,frame*192,0,192,192,x-96*scale,y-184*scale,192*scale,192*scale);$('status').textContent=`${$('state').selectedOptions[0].text} · ${frame+1}/6 · ${fps[$('state').value]} fps`;}
+requestAnimationFrame(tick);}load();requestAnimationFrame(tick);
+</script></html>

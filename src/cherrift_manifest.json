@@ -1,7 +1,7 @@
 {
   "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "1027-cherry-shot1",
+  "buildId": "1027-succubus-chibi1",
   "entrypoints": {
     "application": "src/cherrift_app.js",
     "menuAudio": "src/cherrift_menu_audio.js",
@@ -36,7 +36,8 @@
     "cherryGeometry": "src/cherrift_cherry_geometry.js",
     "cherryGait": "src/cherrift_cherry_gait.js",
     "cherryMotion": "src/cherrift_cherry_motion.js",
-    "cherryShotAlignment": "src/cherrift_cherry_shot_alignment.js"
+    "cherryShotAlignment": "src/cherrift_cherry_shot_alignment.js",
+    "succubusChibi": "src/cherrift_succubus_chibi.js"
   },
   "stylesheets": {
     "shell": "assets/cherrift_shell.css",
