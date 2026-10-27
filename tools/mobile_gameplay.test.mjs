@@ -85,12 +85,17 @@ test('World 3–6 and training use existing tier assets and exact catalogue geom
     }
   }finally{f.dom.window.close();}
 });
-test('training has dense separate flowers at spawn and map edges; chunk culling excludes distant cells',()=>{
+test('training has a flower-free dummy clearing and dense flowers elsewhere; chunk culling excludes distant cells',()=>{
   const f=mapFixture();try {
     const map=f.w.CHERRIFT_REWORK_MAPS[0];f.g.stage={id:'training_test',world:0,training:true};map.build(f.g,'lilies');
     assert(f.g.__reworkMap.flowerCount>16000);assert(f.g.obstacles.length<300);
     const visible=map.visibleFlowers(f.g);assert(visible.length>300);assert(visible.length<f.g.__reworkMap.flowerCount/8);
-    assert(visible.some(o=>Math.hypot(o.x,o.y)<45));assert(visible.every(o=>o.flower&&!o.solid));
+    assert(visible.some(o=>Math.hypot(o.x-150,o.y)>300));
+    for(const flowers of f.g.__reworkMap.chunks.values())for(const o of flowers) {
+      const left=o.x-o.drawW/2,right=o.x+o.drawW/2,top=o.y-o.drawH*o.anchor,bottom=top+o.drawH;
+      const nearestX=Math.max(left,Math.min(150,right)),nearestY=Math.max(top,Math.min(0,bottom));
+      assert(Math.hypot(nearestX-150,nearestY)>=220,'even the sprite edges stay outside the dummy clearing');
+    }assert(visible.every(o=>o.flower&&!o.solid));
     f.g.camera={x:1700,y:1700};assert(map.visibleFlowers(f.g).length>100);
     const snap=JSON.stringify([...f.g.__reworkMap.chunks]);map.build(f.g,'lilies');assert.equal(JSON.stringify([...f.g.__reworkMap.chunks]),snap);
   }finally{f.dom.window.close();}

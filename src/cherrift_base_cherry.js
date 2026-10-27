@@ -1,4 +1,4 @@
-/* Full-character Base Cherry sprite rework. Loaded after the legacy runtime. */
+/* Chibi Base Cherry: full-character sprite animation, refreshed artwork cache. */
 (() => {
   "use strict";
   if (!window.CherriftGame || !window.CHERRIFT_CONFIG || window.CHERRIFT_BASE_CHERRY) return;
@@ -14,7 +14,7 @@
 
   config.states = Object.fromEntries(Object.entries(FPS).map(([name, fps]) => [name, {
     frames:6, fps, duration:6 / fps, loop:["idle", "walk"].includes(name), pivot:PIVOT,
-    dirs:Object.fromEntries(DIRECTIONS.map(dir => [dir, `${ROOT}/base_cherry_${name}_${dir}.png?v=1027-base1`]))
+    dirs:Object.fromEntries(DIRECTIONS.map(dir => [dir, `${ROOT}/base_cherry_${name}_${dir}.png?v=1027-base-chibi2`]))
   }]));
   config.attackMovementMode = "mobile";
   config.attackMoveSpeedMultiplier = 1;
@@ -152,5 +152,5 @@
     ctx.restore();
   };
 
-  window.CHERRIFT_BASE_CHERRY = Object.freeze({version:"1027-base1", directions:[...DIRECTIONS]});
+  window.CHERRIFT_BASE_CHERRY = Object.freeze({version:"1027-base-chibi2", directions:[...DIRECTIONS]});
 })();
