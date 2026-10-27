@@ -1,0 +1,215 @@
+{
+  "id": "ninja_cherry",
+  "style": "chibi-concept-03",
+  "frameSize": 192,
+  "anchor": [
+    96,
+    184
+  ],
+  "individualFrameSize": 256,
+  "individualAnchor": [
+    128,
+    244
+  ],
+  "directions": [
+    "down",
+    "down_right",
+    "right",
+    "up_right",
+    "up",
+    "up_left",
+    "left",
+    "down_left"
+  ],
+  "states": {
+    "idle": {
+      "frames": 6,
+      "fps": 3,
+      "loop": true,
+      "duration": 2.0,
+      "sheets": {
+        "down": "sheets192/ninja_cherry_idle_down.png",
+        "down_right": "sheets192/ninja_cherry_idle_down_right.png",
+        "right": "sheets192/ninja_cherry_idle_right.png",
+        "up_right": "sheets192/ninja_cherry_idle_up_right.png",
+        "up": "sheets192/ninja_cherry_idle_up.png",
+        "up_left": "sheets192/ninja_cherry_idle_up_left.png",
+        "left": "sheets192/ninja_cherry_idle_left.png",
+        "down_left": "sheets192/ninja_cherry_idle_down_left.png"
+      }
+    },
+    "idle2": {
+      "frames": 6,
+      "fps": 3,
+      "loop": false,
+      "duration": 2.0,
+      "sheets": {
+        "down": "sheets192/ninja_cherry_idle2_down.png",
+        "down_right": "sheets192/ninja_cherry_idle2_down_right.png",
+        "right": "sheets192/ninja_cherry_idle2_right.png",
+        "up_right": "sheets192/ninja_cherry_idle2_up_right.png",
+        "up": "sheets192/ninja_cherry_idle2_up.png",
+        "up_left": "sheets192/ninja_cherry_idle2_up_left.png",
+        "left": "sheets192/ninja_cherry_idle2_left.png",
+        "down_left": "sheets192/ninja_cherry_idle2_down_left.png"
+      }
+    },
+    "walk": {
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "duration": 0.75,
+      "sheets": {
+        "down": "sheets192/ninja_cherry_walk_down.png",
+        "down_right": "sheets192/ninja_cherry_walk_down_right.png",
+        "right": "sheets192/ninja_cherry_walk_right.png",
+        "up_right": "sheets192/ninja_cherry_walk_up_right.png",
+        "up": "sheets192/ninja_cherry_walk_up.png",
+        "up_left": "sheets192/ninja_cherry_walk_up_left.png",
+        "left": "sheets192/ninja_cherry_walk_left.png",
+        "down_left": "sheets192/ninja_cherry_walk_down_left.png"
+      }
+    },
+    "attack_ranged": {
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "duration": 0.5,
+      "sheets": {
+        "down": "sheets192/ninja_cherry_attack_ranged_down.png",
+        "down_right": "sheets192/ninja_cherry_attack_ranged_down_right.png",
+        "right": "sheets192/ninja_cherry_attack_ranged_right.png",
+        "up_right": "sheets192/ninja_cherry_attack_ranged_up_right.png",
+        "up": "sheets192/ninja_cherry_attack_ranged_up.png",
+        "up_left": "sheets192/ninja_cherry_attack_ranged_up_left.png",
+        "left": "sheets192/ninja_cherry_attack_ranged_left.png",
+        "down_left": "sheets192/ninja_cherry_attack_ranged_down_left.png"
+      }
+    },
+    "attack_melee": {
+      "frames": 6,
+      "fps": 16,
+      "loop": false,
+      "duration": 0.375,
+      "sheets": {
+        "down": "sheets192/ninja_cherry_attack_melee_down.png",
+        "down_right": "sheets192/ninja_cherry_attack_melee_down_right.png",
+        "right": "sheets192/ninja_cherry_attack_melee_right.png",
+        "up_right": "sheets192/ninja_cherry_attack_melee_up_right.png",
+        "up": "sheets192/ninja_cherry_attack_melee_up.png",
+        "up_left": "sheets192/ninja_cherry_attack_melee_up_left.png",
+        "left": "sheets192/ninja_cherry_attack_melee_left.png",
+        "down_left": "sheets192/ninja_cherry_attack_melee_down_left.png"
+      }
+    },
+    "walk_attack_ranged": {
+      "frames": 6,
+      "fps": 10,
+      "loop": false,
+      "duration": 0.6,
+      "sheets": {
+        "down": "sheets192/ninja_cherry_walk_attack_ranged_down.png",
+        "down_right": "sheets192/ninja_cherry_walk_attack_ranged_down_right.png",
+        "right": "sheets192/ninja_cherry_walk_attack_ranged_right.png",
+        "up_right": "sheets192/ninja_cherry_walk_attack_ranged_up_right.png",
+        "up": "sheets192/ninja_cherry_walk_attack_ranged_up.png",
+        "up_left": "sheets192/ninja_cherry_walk_attack_ranged_up_left.png",
+        "left": "sheets192/ninja_cherry_walk_attack_ranged_left.png",
+        "down_left": "sheets192/ninja_cherry_walk_attack_ranged_down_left.png"
+      }
+    },
+    "walk_attack_melee": {
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "duration": 0.5,
+      "sheets": {
+        "down": "sheets192/ninja_cherry_walk_attack_melee_down.png",
+        "down_right": "sheets192/ninja_cherry_walk_attack_melee_down_right.png",
+        "right": "sheets192/ninja_cherry_walk_attack_melee_right.png",
+        "up_right": "sheets192/ninja_cherry_walk_attack_melee_up_right.png",
+        "up": "sheets192/ninja_cherry_walk_attack_melee_up.png",
+        "up_left": "sheets192/ninja_cherry_walk_attack_melee_up_left.png",
+        "left": "sheets192/ninja_cherry_walk_attack_melee_left.png",
+        "down_left": "sheets192/ninja_cherry_walk_attack_melee_down_left.png"
+      }
+    },
+    "skill": {
+      "frames": 8,
+      "fps": 19.047619047619047,
+      "loop": false,
+      "duration": 0.42,
+      "sheets": {
+        "down": "sheets192/ninja_cherry_skill_down.png",
+        "down_right": "sheets192/ninja_cherry_skill_down_right.png",
+        "right": "sheets192/ninja_cherry_skill_right.png",
+        "up_right": "sheets192/ninja_cherry_skill_up_right.png",
+        "up": "sheets192/ninja_cherry_skill_up.png",
+        "up_left": "sheets192/ninja_cherry_skill_up_left.png",
+        "left": "sheets192/ninja_cherry_skill_left.png",
+        "down_left": "sheets192/ninja_cherry_skill_down_left.png"
+      }
+    }
+  },
+  "mirroredDirections": {
+    "left": "right",
+    "up_left": "up_right",
+    "down_left": "down_right"
+  },
+  "sourceAlignment": {
+    "down": {
+      "idleSourceHeight": 247.0,
+      "scales": [
+        0.8502024291497976,
+        0.6730769230769231
+      ],
+      "mode": "estimated lower-foot-band center, clamped to safe margins / soles baseline"
+    },
+    "right": {
+      "idleSourceHeight": 255.5,
+      "scales": [
+        0.821917808219178,
+        0.862453531598513
+      ],
+      "mode": "estimated lower-foot-band center, clamped to safe margins / soles baseline"
+    },
+    "up": {
+      "idleSourceHeight": 248.0,
+      "scales": [
+        0.8467741935483871,
+        0.7051671732522796
+      ],
+      "mode": "estimated lower-foot-band center, clamped to safe margins / soles baseline"
+    },
+    "down_right": {
+      "idleSourceHeight": 278.0,
+      "scales": [
+        0.7553956834532374,
+        0.6491499227202473
+      ],
+      "mode": "estimated lower-foot-band center, clamped to safe margins / soles baseline"
+    },
+    "up_right": {
+      "idleSourceHeight": 250.0,
+      "scales": [
+        0.84,
+        0.7318611987381703
+      ],
+      "mode": "estimated lower-foot-band center, clamped to safe margins / soles baseline"
+    }
+  },
+  "skillCycleDirections": [
+    "down",
+    "down_left",
+    "left",
+    "up_left",
+    "up",
+    "up_right",
+    "right",
+    "down_right"
+  ],
+  "skillNote": "One shared set of 8 fully drawn turn poses, cyclically reordered per starting direction. Projectiles and buff are separate gameplay objects.",
+  "integrated": true,
+  "runtime": "src/cherrift_ninja_chibi.js",
+  "integrationNote": "Original combat, cast timers and buff are authoritative; sprite attack frames are mapped to each actual cast duration."
+}
