@@ -1,0 +1,402 @@
+{
+  "lilySingle1": {
+    "width": 244,
+    "height": 268,
+    "logicalWidth": 52,
+    "logicalHeight": 57,
+    "artHeight": 44,
+    "anchor": 0.86478,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "layer": "flowers",
+    "sourceCell": [
+      0,
+      0,
+      330,
+      330
+    ],
+    "alphaBounds": [
+      77,
+      89,
+      261,
+      297
+    ],
+    "padding": 30
+  },
+  "lilySingle2": {
+    "width": 230,
+    "height": 278,
+    "logicalWidth": 45,
+    "logicalHeight": 54,
+    "artHeight": 42,
+    "anchor": 0.86518,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "layer": "flowers",
+    "sourceCell": [
+      330,
+      0,
+      625,
+      330
+    ],
+    "alphaBounds": [
+      96,
+      81,
+      264,
+      297
+    ],
+    "padding": 31
+  },
+  "lilyDouble": {
+    "width": 323,
+    "height": 323,
+    "logicalWidth": 60,
+    "logicalHeight": 60,
+    "artHeight": 47,
+    "anchor": 0.86523,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "layer": "flowers",
+    "sourceCell": [
+      625,
+      0,
+      950,
+      330
+    ],
+    "alphaBounds": [
+      30,
+      46,
+      281,
+      297
+    ],
+    "padding": 36
+  },
+  "lilyBuds": {
+    "width": 262,
+    "height": 301,
+    "logicalWidth": 47,
+    "logicalHeight": 54,
+    "artHeight": 42,
+    "anchor": 0.86694,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "layer": "flowers",
+    "sourceCell": [
+      950,
+      0,
+      1254,
+      330
+    ],
+    "alphaBounds": [
+      63,
+      62,
+      259,
+      297
+    ],
+    "padding": 33
+  },
+  "lilyClump1": {
+    "width": 326,
+    "height": 314,
+    "logicalWidth": 65,
+    "logicalHeight": 62,
+    "artHeight": 48,
+    "anchor": 0.86223,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "layer": "flowers",
+    "sourceCell": [
+      0,
+      330,
+      320,
+      655
+    ],
+    "alphaBounds": [
+      40,
+      50,
+      294,
+      292
+    ],
+    "padding": 36
+  },
+  "lilyClump2": {
+    "width": 371,
+    "height": 332,
+    "logicalWidth": 70,
+    "logicalHeight": 62,
+    "artHeight": 47,
+    "anchor": 0.85392,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "layer": "flowers",
+    "sourceCell": [
+      320,
+      330,
+      630,
+      655
+    ],
+    "alphaBounds": [
+      13,
+      43,
+      302,
+      293
+    ],
+    "padding": 41
+  },
+  "lilyClump3": {
+    "width": 382,
+    "height": 333,
+    "logicalWidth": 77,
+    "logicalHeight": 67,
+    "artHeight": 50,
+    "anchor": 0.85144,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "layer": "flowers",
+    "sourceCell": [
+      630,
+      330,
+      945,
+      655
+    ],
+    "alphaBounds": [
+      9,
+      45,
+      307,
+      294
+    ],
+    "padding": 42
+  },
+  "lilyClump4": {
+    "width": 362,
+    "height": 330,
+    "logicalWidth": 71,
+    "logicalHeight": 65,
+    "artHeight": 49,
+    "anchor": 0.85606,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "layer": "flowers",
+    "sourceCell": [
+      945,
+      330,
+      1254,
+      655
+    ],
+    "alphaBounds": [
+      11,
+      43,
+      293,
+      293
+    ],
+    "padding": 40
+  },
+  "lilyLow": {
+    "width": 305,
+    "height": 223,
+    "logicalWidth": 67,
+    "logicalHeight": 49,
+    "artHeight": 34,
+    "anchor": 0.82668,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "layer": "flowers",
+    "sourceCell": [
+      0,
+      655,
+      320,
+      975
+    ],
+    "alphaBounds": [
+      58,
+      119,
+      295,
+      274
+    ],
+    "padding": 34
+  },
+  "lilyTall": {
+    "width": 345,
+    "height": 330,
+    "logicalWidth": 73,
+    "logicalHeight": 70,
+    "artHeight": 54,
+    "anchor": 0.86176,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "layer": "flowers",
+    "sourceCell": [
+      320,
+      655,
+      625,
+      975
+    ],
+    "alphaBounds": [
+      18,
+      25,
+      287,
+      279
+    ],
+    "padding": 38
+  },
+  "rock1": {
+    "width": 387,
+    "height": 314,
+    "logicalWidth": 127,
+    "logicalHeight": 103,
+    "artHeight": 75,
+    "anchor": 0.73962,
+    "solid": true,
+    "rx": 28,
+    "ry": 16,
+    "layer": "props",
+    "sourceCell": [
+      625,
+      655,
+      955,
+      975
+    ],
+    "alphaBounds": [
+      11,
+      59,
+      312,
+      287
+    ],
+    "padding": 43
+  },
+  "rock2": {
+    "width": 305,
+    "height": 221,
+    "logicalWidth": 104,
+    "logicalHeight": 75,
+    "artHeight": 52,
+    "anchor": 0.72846,
+    "solid": true,
+    "rx": 25,
+    "ry": 13,
+    "layer": "props",
+    "sourceCell": [
+      955,
+      655,
+      1254,
+      975
+    ],
+    "alphaBounds": [
+      23,
+      133,
+      260,
+      286
+    ],
+    "padding": 34
+  },
+  "rockSmall": {
+    "width": 125,
+    "height": 89,
+    "logicalWidth": 37,
+    "logicalHeight": 26,
+    "artHeight": 18,
+    "anchor": 0.72618,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "layer": "props",
+    "sourceCell": [
+      0,
+      975,
+      330,
+      1254
+    ],
+    "alphaBounds": [
+      120,
+      121,
+      217,
+      182
+    ],
+    "padding": 14
+  },
+  "pebbles": {
+    "width": 234,
+    "height": 145,
+    "logicalWidth": 38,
+    "logicalHeight": 23,
+    "artHeight": 15,
+    "anchor": 0.71166,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "layer": "props",
+    "sourceCell": [
+      330,
+      975,
+      625,
+      1254
+    ],
+    "alphaBounds": [
+      61,
+      115,
+      243,
+      208
+    ],
+    "padding": 26
+  },
+  "moss": {
+    "width": 226,
+    "height": 159,
+    "logicalWidth": 37,
+    "logicalHeight": 26,
+    "artHeight": 18,
+    "anchor": 0.72623,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "layer": "props",
+    "sourceCell": [
+      625,
+      975,
+      950,
+      1254
+    ],
+    "alphaBounds": [
+      70,
+      102,
+      246,
+      211
+    ],
+    "padding": 25
+  },
+  "grass": {
+    "width": 215,
+    "height": 219,
+    "logicalWidth": 30,
+    "logicalHeight": 31,
+    "artHeight": 24,
+    "anchor": 0.75767,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "layer": "props",
+    "sourceCell": [
+      950,
+      975,
+      1254,
+      1254
+    ],
+    "alphaBounds": [
+      55,
+      28,
+      222,
+      199
+    ],
+    "padding": 24
+  }
+}

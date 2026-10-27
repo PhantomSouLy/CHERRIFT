@@ -1,0 +1,386 @@
+{
+  "pillar1": {
+    "width": 328,
+    "height": 456,
+    "logicalWidth": 147,
+    "logicalHeight": 205,
+    "artHeight": 160,
+    "anchor": 0.80447,
+    "solid": true,
+    "rx": 24,
+    "ry": 15,
+    "sourceCell": [
+      0,
+      0,
+      330,
+      420
+    ],
+    "alphaBounds": [
+      60,
+      48,
+      288,
+      404
+    ],
+    "padding": 50
+  },
+  "pillar2": {
+    "width": 271,
+    "height": 299,
+    "logicalWidth": 134,
+    "logicalHeight": 148,
+    "artHeight": 115,
+    "anchor": 0.80391,
+    "solid": true,
+    "rx": 23,
+    "ry": 14,
+    "sourceCell": [
+      330,
+      0,
+      620,
+      420
+    ],
+    "alphaBounds": [
+      46,
+      166,
+      251,
+      399
+    ],
+    "padding": 33
+  },
+  "statue1": {
+    "width": 387,
+    "height": 433,
+    "logicalWidth": 207,
+    "logicalHeight": 231,
+    "artHeight": 180,
+    "anchor": 0.80353,
+    "solid": true,
+    "rx": 34,
+    "ry": 22,
+    "sourceCell": [
+      620,
+      0,
+      955,
+      420
+    ],
+    "alphaBounds": [
+      22,
+      76,
+      313,
+      413
+    ],
+    "padding": 48
+  },
+  "statue2": {
+    "width": 347,
+    "height": 427,
+    "logicalWidth": 181,
+    "logicalHeight": 223,
+    "artHeight": 174,
+    "anchor": 0.80415,
+    "solid": true,
+    "rx": 31,
+    "ry": 20,
+    "sourceCell": [
+      955,
+      0,
+      1254,
+      420
+    ],
+    "alphaBounds": [
+      18,
+      74,
+      271,
+      407
+    ],
+    "padding": 47
+  },
+  "runestone": {
+    "width": 332,
+    "height": 364,
+    "logicalWidth": 129,
+    "logicalHeight": 141,
+    "artHeight": 110,
+    "anchor": 0.75747,
+    "solid": true,
+    "rx": 24,
+    "ry": 16,
+    "sourceCell": [
+      0,
+      420,
+      330,
+      775
+    ],
+    "alphaBounds": [
+      45,
+      46,
+      297,
+      330
+    ],
+    "padding": 40
+  },
+  "crystal": {
+    "width": 259,
+    "height": 253,
+    "logicalWidth": 100,
+    "logicalHeight": 97,
+    "artHeight": 75,
+    "anchor": 0.75435,
+    "solid": true,
+    "rx": 18,
+    "ry": 12,
+    "sourceCell": [
+      330,
+      420,
+      620,
+      775
+    ],
+    "alphaBounds": [
+      46,
+      123,
+      247,
+      318
+    ],
+    "padding": 29
+  },
+  "crystalSmall": {
+    "width": 232,
+    "height": 186,
+    "logicalWidth": 78,
+    "logicalHeight": 62,
+    "artHeight": 45,
+    "anchor": 0.73774,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "sourceCell": [
+      620,
+      420,
+      955,
+      775
+    ],
+    "alphaBounds": [
+      81,
+      187,
+      261,
+      321
+    ],
+    "padding": 26
+  },
+  "tree": {
+    "width": 338,
+    "height": 414,
+    "logicalWidth": 194,
+    "logicalHeight": 238,
+    "artHeight": 185,
+    "anchor": 0.80333,
+    "solid": true,
+    "rx": 24,
+    "ry": 14,
+    "sourceCell": [
+      955,
+      420,
+      1254,
+      775
+    ],
+    "alphaBounds": [
+      17,
+      11,
+      263,
+      333
+    ],
+    "padding": 46
+  },
+  "rock1": {
+    "width": 314,
+    "height": 292,
+    "logicalWidth": 110,
+    "logicalHeight": 103,
+    "artHeight": 78,
+    "anchor": 0.75089,
+    "solid": true,
+    "rx": 28,
+    "ry": 17,
+    "sourceCell": [
+      0,
+      775,
+      330,
+      1035
+    ],
+    "alphaBounds": [
+      46,
+      22,
+      290,
+      244
+    ],
+    "padding": 35
+  },
+  "rock2": {
+    "width": 265,
+    "height": 199,
+    "logicalWidth": 113,
+    "logicalHeight": 85,
+    "artHeight": 60,
+    "anchor": 0.73382,
+    "solid": true,
+    "rx": 25,
+    "ry": 13,
+    "sourceCell": [
+      330,
+      775,
+      620,
+      1035
+    ],
+    "alphaBounds": [
+      41,
+      85,
+      248,
+      226
+    ],
+    "padding": 29
+  },
+  "wall": {
+    "width": 326,
+    "height": 261,
+    "logicalWidth": 172,
+    "logicalHeight": 138,
+    "artHeight": 100,
+    "anchor": 0.73897,
+    "solid": true,
+    "rx": 40,
+    "ry": 17,
+    "sourceCell": [
+      620,
+      775,
+      955,
+      1035
+    ],
+    "alphaBounds": [
+      35,
+      51,
+      289,
+      240
+    ],
+    "padding": 36
+  },
+  "fallenPillar": {
+    "width": 299,
+    "height": 235,
+    "logicalWidth": 103,
+    "logicalHeight": 81,
+    "artHeight": 58,
+    "anchor": 0.73732,
+    "solid": true,
+    "rx": 36,
+    "ry": 15,
+    "sourceCell": [
+      955,
+      775,
+      1254,
+      1035
+    ],
+    "alphaBounds": [
+      27,
+      69,
+      260,
+      238
+    ],
+    "padding": 33
+  },
+  "bones": {
+    "width": 237,
+    "height": 143,
+    "logicalWidth": 94,
+    "logicalHeight": 57,
+    "artHeight": 36,
+    "anchor": 0.71,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "sourceCell": [
+      0,
+      1035,
+      330,
+      1254
+    ],
+    "alphaBounds": [
+      73,
+      67,
+      258,
+      158
+    ],
+    "padding": 26
+  },
+  "deadBush": {
+    "width": 245,
+    "height": 213,
+    "logicalWidth": 77,
+    "logicalHeight": 67,
+    "artHeight": 50,
+    "anchor": 0.74634,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "sourceCell": [
+      330,
+      1035,
+      620,
+      1254
+    ],
+    "alphaBounds": [
+      42,
+      18,
+      233,
+      177
+    ],
+    "padding": 27
+  },
+  "rubble": {
+    "width": 296,
+    "height": 190,
+    "logicalWidth": 67,
+    "logicalHeight": 43,
+    "artHeight": 28,
+    "anchor": 0.71537,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "sourceCell": [
+      620,
+      1035,
+      955,
+      1254
+    ],
+    "alphaBounds": [
+      56,
+      56,
+      286,
+      180
+    ],
+    "padding": 33
+  },
+  "crystalTiny": {
+    "width": 161,
+    "height": 131,
+    "logicalWidth": 42,
+    "logicalHeight": 34,
+    "artHeight": 25,
+    "anchor": 0.73931,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "sourceCell": [
+      955,
+      1035,
+      1254,
+      1254
+    ],
+    "alphaBounds": [
+      78,
+      71,
+      203,
+      166
+    ],
+    "padding": 18
+  }
+}

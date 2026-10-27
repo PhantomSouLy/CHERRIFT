@@ -1,0 +1,386 @@
+{
+  "mushroomRock": {
+    "width": 353,
+    "height": 331,
+    "logicalWidth": 198,
+    "logicalHeight": 186,
+    "artHeight": 142,
+    "anchor": 0.75224,
+    "solid": true,
+    "rx": 34,
+    "ry": 20,
+    "sourceCell": [
+      0,
+      0,
+      340,
+      370
+    ],
+    "alphaBounds": [
+      43,
+      78,
+      318,
+      331
+    ],
+    "padding": 39
+  },
+  "pillar": {
+    "width": 301,
+    "height": 351,
+    "logicalWidth": 190,
+    "logicalHeight": 221,
+    "artHeight": 172,
+    "anchor": 0.80333,
+    "solid": true,
+    "rx": 23,
+    "ry": 14,
+    "sourceCell": [
+      340,
+      0,
+      620,
+      370
+    ],
+    "alphaBounds": [
+      30,
+      68,
+      253,
+      341
+    ],
+    "padding": 39
+  },
+  "leaningRock": {
+    "width": 336,
+    "height": 308,
+    "logicalWidth": 184,
+    "logicalHeight": 168,
+    "artHeight": 128,
+    "anchor": 0.75071,
+    "solid": true,
+    "rx": 33,
+    "ry": 16,
+    "sourceCell": [
+      620,
+      0,
+      930,
+      370
+    ],
+    "alphaBounds": [
+      19,
+      95,
+      281,
+      329
+    ],
+    "padding": 37
+  },
+  "bigRock": {
+    "width": 379,
+    "height": 274,
+    "logicalWidth": 188,
+    "logicalHeight": 136,
+    "artHeight": 94,
+    "anchor": 0.72883,
+    "solid": true,
+    "rx": 42,
+    "ry": 21,
+    "sourceCell": [
+      930,
+      0,
+      1254,
+      370
+    ],
+    "alphaBounds": [
+      8,
+      135,
+      303,
+      325
+    ],
+    "padding": 42
+  },
+  "rock1": {
+    "width": 344,
+    "height": 244,
+    "logicalWidth": 139,
+    "logicalHeight": 99,
+    "artHeight": 68,
+    "anchor": 0.72721,
+    "solid": true,
+    "rx": 27,
+    "ry": 15,
+    "sourceCell": [
+      0,
+      370,
+      340,
+      670
+    ],
+    "alphaBounds": [
+      51,
+      66,
+      319,
+      234
+    ],
+    "padding": 38
+  },
+  "rockSmall": {
+    "width": 223,
+    "height": 147,
+    "logicalWidth": 62,
+    "logicalHeight": 41,
+    "artHeight": 27,
+    "anchor": 0.71776,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "sourceCell": [
+      340,
+      370,
+      610,
+      670
+    ],
+    "alphaBounds": [
+      55,
+      128,
+      228,
+      225
+    ],
+    "padding": 25
+  },
+  "dune1": {
+    "width": 401,
+    "height": 258,
+    "logicalWidth": 179,
+    "logicalHeight": 115,
+    "artHeight": 76,
+    "anchor": 0.71744,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "sourceCell": [
+      610,
+      370,
+      970,
+      670
+    ],
+    "alphaBounds": [
+      25,
+      95,
+      338,
+      265
+    ],
+    "padding": 44
+  },
+  "dune2": {
+    "width": 283,
+    "height": 171,
+    "logicalWidth": 138,
+    "logicalHeight": 83,
+    "artHeight": 53,
+    "anchor": 0.71035,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "sourceCell": [
+      970,
+      370,
+      1254,
+      670
+    ],
+    "alphaBounds": [
+      20,
+      130,
+      241,
+      239
+    ],
+    "padding": 31
+  },
+  "cactus1": {
+    "width": 242,
+    "height": 253,
+    "logicalWidth": 96,
+    "logicalHeight": 100,
+    "artHeight": 78,
+    "anchor": 0.80368,
+    "solid": true,
+    "rx": 15,
+    "ry": 10,
+    "sourceCell": [
+      0,
+      670,
+      330,
+      960
+    ],
+    "alphaBounds": [
+      79,
+      43,
+      265,
+      240
+    ],
+    "padding": 28
+  },
+  "cactus2": {
+    "width": 279,
+    "height": 215,
+    "logicalWidth": 106,
+    "logicalHeight": 82,
+    "artHeight": 58,
+    "anchor": 0.77753,
+    "solid": true,
+    "rx": 18,
+    "ry": 11,
+    "sourceCell": [
+      330,
+      670,
+      640,
+      960
+    ],
+    "alphaBounds": [
+      47,
+      83,
+      264,
+      236
+    ],
+    "padding": 31
+  },
+  "deadBush": {
+    "width": 288,
+    "height": 243,
+    "logicalWidth": 95,
+    "logicalHeight": 80,
+    "artHeight": 59,
+    "anchor": 0.74309,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "sourceCell": [
+      640,
+      670,
+      960,
+      960
+    ],
+    "alphaBounds": [
+      34,
+      62,
+      258,
+      241
+    ],
+    "padding": 32
+  },
+  "bush": {
+    "width": 289,
+    "height": 244,
+    "logicalWidth": 90,
+    "logicalHeight": 76,
+    "artHeight": 56,
+    "anchor": 0.74344,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "sourceCell": [
+      960,
+      670,
+      1254,
+      960
+    ],
+    "alphaBounds": [
+      21,
+      61,
+      246,
+      241
+    ],
+    "padding": 32
+  },
+  "grass": {
+    "width": 254,
+    "height": 218,
+    "logicalWidth": 55,
+    "logicalHeight": 47,
+    "artHeight": 35,
+    "anchor": 0.74523,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "sourceCell": [
+      0,
+      960,
+      330,
+      1254
+    ],
+    "alphaBounds": [
+      78,
+      45,
+      276,
+      207
+    ],
+    "padding": 28
+  },
+  "bones": {
+    "width": 307,
+    "height": 211,
+    "logicalWidth": 79,
+    "logicalHeight": 55,
+    "artHeight": 37,
+    "anchor": 0.72365,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "sourceCell": [
+      330,
+      960,
+      640,
+      1254
+    ],
+    "alphaBounds": [
+      28,
+      56,
+      267,
+      199
+    ],
+    "padding": 34
+  },
+  "flower": {
+    "width": 264,
+    "height": 239,
+    "logicalWidth": 55,
+    "logicalHeight": 50,
+    "artHeight": 38,
+    "anchor": 0.74992,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "sourceCell": [
+      640,
+      960,
+      960,
+      1254
+    ],
+    "alphaBounds": [
+      44,
+      34,
+      250,
+      215
+    ],
+    "padding": 29
+  },
+  "pebbles": {
+    "width": 253,
+    "height": 181,
+    "logicalWidth": 47,
+    "logicalHeight": 33,
+    "artHeight": 23,
+    "anchor": 0.7279,
+    "solid": false,
+    "rx": 0,
+    "ry": 0,
+    "sourceCell": [
+      960,
+      960,
+      1254,
+      1254
+    ],
+    "alphaBounds": [
+      30,
+      73,
+      227,
+      198
+    ],
+    "padding": 28
+  }
+}

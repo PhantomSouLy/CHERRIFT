@@ -1,0 +1,436 @@
+{
+  "version": "world4-red-desert-20261026",
+  "theme": "layered red sandstone canyon with open classic desert",
+  "runtimeIntegrated": false,
+  "tiers": [
+    "low",
+    "medium",
+    "high"
+  ],
+  "logicalGroundTileSize": 384,
+  "spriteCount": 16,
+  "ground": {
+    "src": "assets/map/world4/red-desert/{tier}/ground.webp",
+    "tiling": "mirrored 2x2, as World1/2"
+  },
+  "splash": {
+    "src": "assets/map/world4/red-desert/{tier}/splash.webp"
+  },
+  "objects": {
+    "butte": {
+      "src": "assets/map/world4/red-desert/{tier}/butte.webp",
+      "width": 391,
+      "height": 331,
+      "logicalWidth": 239,
+      "logicalHeight": 203,
+      "artHeight": 150,
+      "anchor": 0.74426,
+      "solid": true,
+      "rx": 47,
+      "ry": 24,
+      "sourceCell": [
+        0,
+        0,
+        350,
+        370
+      ],
+      "alphaBounds": [
+        27,
+        105,
+        332,
+        350
+      ],
+      "padding": 43
+    },
+    "spire": {
+      "src": "assets/map/world4/red-desert/{tier}/spire.webp",
+      "width": 300,
+      "height": 387,
+      "logicalWidth": 189,
+      "logicalHeight": 244,
+      "artHeight": 190,
+      "anchor": 0.80333,
+      "solid": true,
+      "rx": 25,
+      "ry": 15,
+      "sourceCell": [
+        350,
+        0,
+        600,
+        370
+      ],
+      "alphaBounds": [
+        20,
+        60,
+        234,
+        361
+      ],
+      "padding": 43
+    },
+    "arch": {
+      "src": "assets/map/world4/red-desert/{tier}/arch.webp",
+      "width": 420,
+      "height": 282,
+      "logicalWidth": 298,
+      "logicalHeight": 200,
+      "artHeight": 135,
+      "anchor": 0.72234,
+      "solid": true,
+      "rx": 0,
+      "ry": 0,
+      "sourceCell": [
+        600,
+        0,
+        955,
+        370
+      ],
+      "alphaBounds": [
+        20,
+        155,
+        348,
+        345
+      ],
+      "padding": 46,
+      "collisionParts": [
+        {
+          "x": -0.34,
+          "y": 0,
+          "rx": 17,
+          "ry": 12
+        },
+        {
+          "x": 0.34,
+          "y": 0,
+          "rx": 17,
+          "ry": 12
+        }
+      ],
+      "collisionNote": "x is relative to logicalWidth; two supports only; keep opening walkable. Validate in runtime."
+    },
+    "tree": {
+      "src": "assets/map/world4/red-desert/{tier}/tree.webp",
+      "width": 344,
+      "height": 355,
+      "logicalWidth": 229,
+      "logicalHeight": 236,
+      "artHeight": 184,
+      "anchor": 0.80431,
+      "solid": true,
+      "rx": 24,
+      "ry": 14,
+      "sourceCell": [
+        955,
+        0,
+        1254,
+        370
+      ],
+      "alphaBounds": [
+        1,
+        81,
+        267,
+        358
+      ],
+      "padding": 39
+    },
+    "cactus1": {
+      "src": "assets/map/world4/red-desert/{tier}/cactus1.webp",
+      "width": 271,
+      "height": 409,
+      "logicalWidth": 121,
+      "logicalHeight": 182,
+      "artHeight": 142,
+      "anchor": 0.80418,
+      "solid": true,
+      "rx": 20,
+      "ry": 12,
+      "sourceCell": [
+        0,
+        370,
+        320,
+        720
+      ],
+      "alphaBounds": [
+        80,
+        10,
+        261,
+        329
+      ],
+      "padding": 45
+    },
+    "cactus2": {
+      "src": "assets/map/world4/red-desert/{tier}/cactus2.webp",
+      "width": 244,
+      "height": 334,
+      "logicalWidth": 111,
+      "logicalHeight": 152,
+      "artHeight": 118,
+      "anchor": 0.80359,
+      "solid": true,
+      "rx": 18,
+      "ry": 11,
+      "sourceCell": [
+        320,
+        370,
+        640,
+        720
+      ],
+      "alphaBounds": [
+        72,
+        66,
+        242,
+        326
+      ],
+      "padding": 37
+    },
+    "pricklyPear": {
+      "src": "assets/map/world4/red-desert/{tier}/pricklyPear.webp",
+      "width": 246,
+      "height": 241,
+      "logicalWidth": 92,
+      "logicalHeight": 90,
+      "artHeight": 70,
+      "anchor": 0.75606,
+      "solid": true,
+      "rx": 20,
+      "ry": 12,
+      "sourceCell": [
+        640,
+        370,
+        960,
+        720
+      ],
+      "alphaBounds": [
+        51,
+        139,
+        243,
+        326
+      ],
+      "padding": 27
+    },
+    "barrelCactus": {
+      "src": "assets/map/world4/red-desert/{tier}/barrelCactus.webp",
+      "width": 216,
+      "height": 197,
+      "logicalWidth": 87,
+      "logicalHeight": 79,
+      "artHeight": 60,
+      "anchor": 0.74959,
+      "solid": true,
+      "rx": 19,
+      "ry": 12,
+      "sourceCell": [
+        960,
+        370,
+        1254,
+        720
+      ],
+      "alphaBounds": [
+        51,
+        182,
+        219,
+        331
+      ],
+      "padding": 24
+    },
+    "rock1": {
+      "src": "assets/map/world4/red-desert/{tier}/rock1.webp",
+      "width": 323,
+      "height": 269,
+      "logicalWidth": 128,
+      "logicalHeight": 107,
+      "artHeight": 78,
+      "anchor": 0.74167,
+      "solid": true,
+      "rx": 30,
+      "ry": 17,
+      "sourceCell": [
+        0,
+        720,
+        335,
+        985
+      ],
+      "alphaBounds": [
+        50,
+        57,
+        301,
+        254
+      ],
+      "padding": 36
+    },
+    "rock2": {
+      "src": "assets/map/world4/red-desert/{tier}/rock2.webp",
+      "width": 377,
+      "height": 224,
+      "logicalWidth": 172,
+      "logicalHeight": 102,
+      "artHeight": 64,
+      "anchor": 0.70625,
+      "solid": true,
+      "rx": 32,
+      "ry": 14,
+      "sourceCell": [
+        335,
+        720,
+        665,
+        985
+      ],
+      "alphaBounds": [
+        19,
+        107,
+        312,
+        247
+      ],
+      "padding": 42
+    },
+    "rockSmall": {
+      "src": "assets/map/world4/red-desert/{tier}/rockSmall.webp",
+      "width": 265,
+      "height": 151,
+      "logicalWidth": 74,
+      "logicalHeight": 42,
+      "artHeight": 26,
+      "anchor": 0.70325,
+      "solid": false,
+      "rx": 0,
+      "ry": 0,
+      "sourceCell": [
+        665,
+        720,
+        955,
+        985
+      ],
+      "alphaBounds": [
+        36,
+        148,
+        243,
+        241
+      ],
+      "padding": 29
+    },
+    "bush": {
+      "src": "assets/map/world4/red-desert/{tier}/bush.webp",
+      "width": 317,
+      "height": 252,
+      "logicalWidth": 105,
+      "logicalHeight": 83,
+      "artHeight": 60,
+      "anchor": 0.73833,
+      "solid": false,
+      "rx": 0,
+      "ry": 0,
+      "sourceCell": [
+        955,
+        720,
+        1254,
+        985
+      ],
+      "alphaBounds": [
+        15,
+        63,
+        262,
+        245
+      ],
+      "padding": 35
+    },
+    "grass": {
+      "src": "assets/map/world4/red-desert/{tier}/grass.webp",
+      "width": 336,
+      "height": 273,
+      "logicalWidth": 64,
+      "logicalHeight": 52,
+      "artHeight": 38,
+      "anchor": 0.74055,
+      "solid": false,
+      "rx": 0,
+      "ry": 0,
+      "sourceCell": [
+        0,
+        985,
+        325,
+        1254
+      ],
+      "alphaBounds": [
+        38,
+        16,
+        300,
+        215
+      ],
+      "padding": 37
+    },
+    "bones": {
+      "src": "assets/map/world4/red-desert/{tier}/bones.webp",
+      "width": 347,
+      "height": 239,
+      "logicalWidth": 92,
+      "logicalHeight": 63,
+      "artHeight": 43,
+      "anchor": 0.72506,
+      "solid": false,
+      "rx": 0,
+      "ry": 0,
+      "sourceCell": [
+        325,
+        985,
+        645,
+        1254
+      ],
+      "alphaBounds": [
+        17,
+        43,
+        288,
+        206
+      ],
+      "padding": 38
+    },
+    "log": {
+      "src": "assets/map/world4/red-desert/{tier}/log.webp",
+      "width": 356,
+      "height": 246,
+      "logicalWidth": 110,
+      "logicalHeight": 76,
+      "artHeight": 52,
+      "anchor": 0.72537,
+      "solid": true,
+      "rx": 29,
+      "ry": 11,
+      "sourceCell": [
+        645,
+        985,
+        960,
+        1254
+      ],
+      "alphaBounds": [
+        19,
+        44,
+        297,
+        212
+      ],
+      "padding": 39
+    },
+    "pebbles": {
+      "src": "assets/map/world4/red-desert/{tier}/pebbles.webp",
+      "width": 261,
+      "height": 171,
+      "logicalWidth": 58,
+      "logicalHeight": 38,
+      "artHeight": 25,
+      "anchor": 0.71807,
+      "solid": false,
+      "rx": 0,
+      "ry": 0,
+      "sourceCell": [
+        960,
+        985,
+        1254,
+        1254
+      ],
+      "alphaBounds": [
+        47,
+        93,
+        250,
+        206
+      ],
+      "padding": 29
+    }
+  }
+}
