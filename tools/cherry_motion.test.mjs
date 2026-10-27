@@ -56,3 +56,31 @@ test('missing geometry falls back safely, and browser modules load before skin r
   const html=readFileSync('index.html','utf8');
   for(const name of ['geometry','gait','motion'])assert.ok(html.indexOf(`src/cherrift_cherry_${name}.js`)<html.indexOf('src/cherrift_base_cherry.js'));
 });
+
+
+test('forward diagonal firing keeps the original face stationary through the entire cast',()=>{
+  const {window,context,motion}=fixture();
+  vm.runInContext(readFileSync('src/cherrift_cherry_shot_alignment.js','utf8'),context);
+  // Independently measured midpoints of the two original eyes, source pixels.
+  const eyes=[97.05,120.45,100.8,99.35,119.35,114.85];
+  for(const dir of ['down_right','down_left']){
+    const positions=[];const oldPositions=[];
+    const data=window.CHERRIFT_CHERRY_GEOMETRY.cherry_default.attack[dir];
+    for(let frame=0;frame<6;frame++){
+      let args;motion.draw({drawImage(...a){args=a;}},{},'cherry_default','attack',dir,frame,{x:400,y:300},110.2,110.2);
+      const x=dir==='down_right'?eyes[frame]:193-eyes[frame];
+      positions.push(args[5]+x*args[7]/192);
+      oldPositions.push(400+(x-data[frame][2])*args[7]/192);
+    }
+    assert.ok(Math.max(...oldPositions)-Math.min(...oldPositions)>15,'original regression reproduces');
+    assert.ok(Math.max(...positions)-Math.min(...positions)<1,'eyes stay within one display pixel');
+  }
+  for(const [id,states] of Object.entries(window.CHERRIFT_CHERRY_SHOT_ALIGNMENT))for(const [state,dirs] of Object.entries(states)){
+    assert.ok(['idle','attack','attack_ranged'].includes(state));
+    assert.deepEqual(Object.keys(dirs).sort(),['down_left','down_right']);
+    for(const [dir,frames] of Object.entries(dirs)){
+      assert.equal(frames.length,window.CHERRIFT_CHERRY_GEOMETRY[id][state][dir].length);
+      assert.ok(frames.every(Number.isFinite));
+    }
+  }
+});

@@ -36,7 +36,13 @@
         p.x - 96 * width / 192, p.y + 30 - 184 * height / 192, width, height);
       return;
     }
-    const [top, bottom, footX] = geometry;
+    const [top, bottom, measuredFootX] = geometry;
+    // Forward diagonal shot art shifts its torso inside the exported cells.
+    // Feet and weapons change silhouette while firing; register the unchanged
+    // face to the idle pose instead of recentering the whole character on them.
+    // Only stationary forward-diagonal idle/shot states have these overrides.
+    const footX = window.CHERRIFT_CHERRY_SHOT_ALIGNMENT?.[id]?.[state]?.[dir]?.[sourceFrame]
+      ?? measuredFootX;
     // Same visible height in every direction/state, isotropic scale preserves
     // body proportions. The common soles baseline eliminates vertical hopping.
     // Skills keep their crouch/lean relative to their own idle directional size.

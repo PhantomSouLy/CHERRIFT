@@ -1,26 +1,24 @@
-CHERRIFT – Base / Archer / Ninja Cherry javítás
+CHERRIFT – Átlós lövés stabilizálása
 
-Telepítés:
-1. A ZIP tartalmát másold a CHERRIFT projekt gyökérmappájába.
-2. Engedélyezd a meglévő fájlok felülírását; a src és tools mappák tartalmát egyesítsd.
-3. Indítsd újra a játékot, szükség esetén kényszerített frissítéssel.
-4. GitHub Desktop / GitSync használatakor commitold és töltsd fel a módosításokat.
+Az előző Cherry Skins Motion Fix javításra telepítendő.
+Másold a ZIP tartalmát a CHERRIFT projekt gyökerébe, a mappák egyesítésével
+és a felsorolt fájlok felülírásával. Ezután frissítsd vagy indítsd újra a játékot.
+Build: 1027-cherry-shot1
 
-A javítás a 7b74fa4bbbe6d4e0449835d19535d9be8fcb1009 main verzióból készült.
-Build: 1027-cherry-motion1
+Érintett: Base Cherry, Archer Cherry, Ninja Cherry.
+Javítás: az álló helyzetben leadott lefelé-jobbra és lefelé-balra irányuló
+lövések vízszintes igazítása stabil testrészhez kötött. A korábbi rajzoló
+képkockánként a lábak/sziluett alapján középre húzta a teljes karaktert;
+a rajzok belső eltolódása ezt különösen ezekben az irányokban felerősítette.
 
-Javítások:
-- Egységes látható magasság az irányok között, talphoz igazított rajzolás.
-- Váltott lábú járás az eredeti képrészletekkel, stabil felsőtesttel.
-- A lépésóra a valódi mozgást követi, támadás vagy irányváltás nem nullázza.
-- Mozgó támadásnál külön marad a támadási képkocka és a lábak lépésfázisa.
-- Az eredeti PNG-k, a karakterek dizájnja és a harci értékek változatlanok.
+A mozgás, a járásjavítás, a harci értékek és a PNG-k változatlanok.
+Nem szükséges új assetet generálni vagy Supabase-módosítást futtatni.
 
-Ellenőrzés:
-- npm run validate: sikeres
-- 38 célzott automatikus teszt: sikeres
-- 2016 járás / mozgó támadás kirajzolási ellenőrzés: sikeres
-- Teljes élő PC/mobil játékpróba nem történt.
-- Supabase-módosítás nem szükséges ehhez a javításhoz.
+Ellenőrzés: 39 célzott teszt és a repó validálása sikeres.
+A Base Cherry eredeti szemközéppontjain végzett független mérésben a
+lövés alatti vízszintes eltérés 1 megjelenítési képpont alatt marad.
+Kirajzolási előtte/utána ellenőrzés mindhárom skinnél megtörtént.
+Élő mobilos játékpróba még szükséges.
 
-A GitHub-feltöltés nem történt meg: a kapcsolat 403 jogosultsági hibát adott.
+A javítás nincs feltöltve GitHubra; a csatlakoztatott kapcsolat korábban
+403 írási jogosultsági hibát adott. A fájlokat kézzel kell commitolni/feltölteni.
