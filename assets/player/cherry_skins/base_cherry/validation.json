@@ -1,0 +1,10 @@
+{
+  "directions": 8,
+  "states": 6,
+  "framesPerState": 6,
+  "png256": 288,
+  "png192": 288,
+  "sheets192": 48,
+  "empty": [],
+  "clipped": []
+}

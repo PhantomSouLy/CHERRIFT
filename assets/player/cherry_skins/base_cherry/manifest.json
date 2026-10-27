@@ -1,0 +1,3918 @@
+{
+  "version": "base-cherry-full-sprites-1",
+  "runtimeIntegrated": false,
+  "rendering": "full-character frame animation; no bones",
+  "directions": [
+    "down",
+    "down_right",
+    "right",
+    "up_right",
+    "up",
+    "up_left",
+    "left",
+    "down_left"
+  ],
+  "states": {
+    "idle": {
+      "frames": 6,
+      "fps": 3,
+      "loop": true
+    },
+    "idle2": {
+      "frames": 6,
+      "fps": 3,
+      "loop": true
+    },
+    "walk": {
+      "frames": 6,
+      "fps": 8,
+      "loop": true
+    },
+    "attack": {
+      "frames": 6,
+      "fps": 12,
+      "loop": true
+    },
+    "walk_attack": {
+      "frames": 6,
+      "fps": 8,
+      "loop": true
+    },
+    "skill": {
+      "frames": 6,
+      "fps": 14,
+      "loop": false
+    }
+  },
+  "canvas256": 256,
+  "anchor256": [
+    128,
+    244
+  ],
+  "canvas192": 192,
+  "anchor192": [
+    96,
+    184
+  ],
+  "mirroredDirections": {
+    "left": "right",
+    "down_left": "down_right",
+    "up_left": "up_right"
+  },
+  "sourceAlignment": {
+    "down": {
+      "uniformScale": 1.1030927835051547,
+      "idleHeightSource": 194.0,
+      "frames": [
+        {
+          "state": "idle",
+          "index": 0,
+          "sourceBox": [
+            54,
+            34,
+            232,
+            234
+          ],
+          "coreBox": [
+            59,
+            39,
+            227,
+            229
+          ],
+          "translation": [
+            32,
+            28
+          ],
+          "sourceAnchorX": 87.0
+        },
+        {
+          "state": "idle",
+          "index": 1,
+          "sourceBox": [
+            252,
+            34,
+            427,
+            232
+          ],
+          "coreBox": [
+            257,
+            39,
+            422,
+            227
+          ],
+          "translation": [
+            34,
+            30
+          ],
+          "sourceAnchorX": 85.5
+        },
+        {
+          "state": "idle",
+          "index": 2,
+          "sourceBox": [
+            446,
+            34,
+            623,
+            232
+          ],
+          "coreBox": [
+            451,
+            39,
+            618,
+            227
+          ],
+          "translation": [
+            33,
+            30
+          ],
+          "sourceAnchorX": 86.5
+        },
+        {
+          "state": "idle",
+          "index": 3,
+          "sourceBox": [
+            642,
+            34,
+            817,
+            231
+          ],
+          "coreBox": [
+            647,
+            39,
+            812,
+            226
+          ],
+          "translation": [
+            34,
+            31
+          ],
+          "sourceAnchorX": 85.5
+        },
+        {
+          "state": "idle",
+          "index": 4,
+          "sourceBox": [
+            836,
+            34,
+            1016,
+            231
+          ],
+          "coreBox": [
+            841,
+            39,
+            1011,
+            226
+          ],
+          "translation": [
+            31,
+            31
+          ],
+          "sourceAnchorX": 88.0
+        },
+        {
+          "state": "idle",
+          "index": 5,
+          "sourceBox": [
+            1028,
+            34,
+            1205,
+            232
+          ],
+          "coreBox": [
+            1033,
+            39,
+            1200,
+            227
+          ],
+          "translation": [
+            33,
+            30
+          ],
+          "sourceAnchorX": 86.5
+        },
+        {
+          "state": "idle2",
+          "index": 0,
+          "sourceBox": [
+            50,
+            237,
+            231,
+            443
+          ],
+          "coreBox": [
+            55,
+            242,
+            226,
+            438
+          ],
+          "translation": [
+            30,
+            21
+          ],
+          "sourceAnchorX": 88.5
+        },
+        {
+          "state": "idle2",
+          "index": 1,
+          "sourceBox": [
+            249,
+            237,
+            426,
+            443
+          ],
+          "coreBox": [
+            254,
+            242,
+            421,
+            438
+          ],
+          "translation": [
+            33,
+            21
+          ],
+          "sourceAnchorX": 86.5
+        },
+        {
+          "state": "idle2",
+          "index": 2,
+          "sourceBox": [
+            445,
+            237,
+            623,
+            443
+          ],
+          "coreBox": [
+            450,
+            242,
+            618,
+            438
+          ],
+          "translation": [
+            32,
+            21
+          ],
+          "sourceAnchorX": 87.0
+        },
+        {
+          "state": "idle2",
+          "index": 3,
+          "sourceBox": [
+            640,
+            237,
+            820,
+            443
+          ],
+          "coreBox": [
+            645,
+            242,
+            815,
+            438
+          ],
+          "translation": [
+            31,
+            21
+          ],
+          "sourceAnchorX": 88.0
+        },
+        {
+          "state": "idle2",
+          "index": 4,
+          "sourceBox": [
+            834,
+            237,
+            1016,
+            443
+          ],
+          "coreBox": [
+            839,
+            242,
+            1011,
+            438
+          ],
+          "translation": [
+            30,
+            21
+          ],
+          "sourceAnchorX": 89.0
+        },
+        {
+          "state": "idle2",
+          "index": 5,
+          "sourceBox": [
+            1029,
+            237,
+            1210,
+            443
+          ],
+          "coreBox": [
+            1034,
+            242,
+            1205,
+            438
+          ],
+          "translation": [
+            30,
+            21
+          ],
+          "sourceAnchorX": 88.5
+        },
+        {
+          "state": "walk",
+          "index": 0,
+          "sourceBox": [
+            50,
+            446,
+            243,
+            656
+          ],
+          "coreBox": [
+            55,
+            451,
+            238,
+            651
+          ],
+          "translation": [
+            24,
+            17
+          ],
+          "sourceAnchorX": 94.5
+        },
+        {
+          "state": "walk",
+          "index": 1,
+          "sourceBox": [
+            247,
+            446,
+            439,
+            656
+          ],
+          "coreBox": [
+            252,
+            451,
+            434,
+            651
+          ],
+          "translation": [
+            24,
+            17
+          ],
+          "sourceAnchorX": 94.0
+        },
+        {
+          "state": "walk",
+          "index": 2,
+          "sourceBox": [
+            445,
+            446,
+            633,
+            656
+          ],
+          "coreBox": [
+            450,
+            451,
+            628,
+            651
+          ],
+          "translation": [
+            27,
+            17
+          ],
+          "sourceAnchorX": 92.0
+        },
+        {
+          "state": "walk",
+          "index": 3,
+          "sourceBox": [
+            639,
+            446,
+            829,
+            656
+          ],
+          "coreBox": [
+            644,
+            451,
+            824,
+            651
+          ],
+          "translation": [
+            25,
+            17
+          ],
+          "sourceAnchorX": 93.0
+        },
+        {
+          "state": "walk",
+          "index": 4,
+          "sourceBox": [
+            834,
+            446,
+            1025,
+            656
+          ],
+          "coreBox": [
+            839,
+            451,
+            1020,
+            651
+          ],
+          "translation": [
+            25,
+            17
+          ],
+          "sourceAnchorX": 93.5
+        },
+        {
+          "state": "walk",
+          "index": 5,
+          "sourceBox": [
+            1029,
+            446,
+            1214,
+            656
+          ],
+          "coreBox": [
+            1034,
+            451,
+            1209,
+            651
+          ],
+          "translation": [
+            28,
+            17
+          ],
+          "sourceAnchorX": 90.5
+        },
+        {
+          "state": "attack",
+          "index": 0,
+          "sourceBox": [
+            51,
+            655,
+            238,
+            862
+          ],
+          "coreBox": [
+            56,
+            660,
+            233,
+            857
+          ],
+          "translation": [
+            27,
+            20
+          ],
+          "sourceAnchorX": 91.5
+        },
+        {
+          "state": "attack",
+          "index": 1,
+          "sourceBox": [
+            248,
+            656,
+            431,
+            863
+          ],
+          "coreBox": [
+            253,
+            661,
+            426,
+            858
+          ],
+          "translation": [
+            29,
+            20
+          ],
+          "sourceAnchorX": 89.5
+        },
+        {
+          "state": "attack",
+          "index": 2,
+          "sourceBox": [
+            436,
+            655,
+            634,
+            866
+          ],
+          "coreBox": [
+            441,
+            660,
+            629,
+            861
+          ],
+          "translation": [
+            21,
+            16
+          ],
+          "sourceAnchorX": 97.0
+        },
+        {
+          "state": "attack",
+          "index": 3,
+          "sourceBox": [
+            639,
+            656,
+            828,
+            866
+          ],
+          "coreBox": [
+            644,
+            661,
+            823,
+            861
+          ],
+          "translation": [
+            26,
+            17
+          ],
+          "sourceAnchorX": 92.5
+        },
+        {
+          "state": "attack",
+          "index": 4,
+          "sourceBox": [
+            833,
+            655,
+            1022,
+            866
+          ],
+          "coreBox": [
+            838,
+            660,
+            1017,
+            861
+          ],
+          "translation": [
+            26,
+            16
+          ],
+          "sourceAnchorX": 92.5
+        },
+        {
+          "state": "attack",
+          "index": 5,
+          "sourceBox": [
+            1025,
+            655,
+            1210,
+            862
+          ],
+          "coreBox": [
+            1030,
+            660,
+            1205,
+            857
+          ],
+          "translation": [
+            28,
+            20
+          ],
+          "sourceAnchorX": 90.5
+        },
+        {
+          "state": "walk_attack",
+          "index": 0,
+          "sourceBox": [
+            50,
+            864,
+            241,
+            1070
+          ],
+          "coreBox": [
+            55,
+            869,
+            236,
+            1065
+          ],
+          "translation": [
+            25,
+            21
+          ],
+          "sourceAnchorX": 93.5
+        },
+        {
+          "state": "walk_attack",
+          "index": 1,
+          "sourceBox": [
+            247,
+            864,
+            434,
+            1066
+          ],
+          "coreBox": [
+            252,
+            869,
+            429,
+            1061
+          ],
+          "translation": [
+            27,
+            26
+          ],
+          "sourceAnchorX": 91.5
+        },
+        {
+          "state": "walk_attack",
+          "index": 2,
+          "sourceBox": [
+            442,
+            863,
+            632,
+            1066
+          ],
+          "coreBox": [
+            447,
+            868,
+            627,
+            1061
+          ],
+          "translation": [
+            25,
+            24
+          ],
+          "sourceAnchorX": 93.0
+        },
+        {
+          "state": "walk_attack",
+          "index": 3,
+          "sourceBox": [
+            640,
+            863,
+            830,
+            1066
+          ],
+          "coreBox": [
+            645,
+            868,
+            825,
+            1061
+          ],
+          "translation": [
+            25,
+            24
+          ],
+          "sourceAnchorX": 93.0
+        },
+        {
+          "state": "walk_attack",
+          "index": 4,
+          "sourceBox": [
+            832,
+            862,
+            1023,
+            1066
+          ],
+          "coreBox": [
+            837,
+            867,
+            1018,
+            1061
+          ],
+          "translation": [
+            25,
+            23
+          ],
+          "sourceAnchorX": 93.5
+        },
+        {
+          "state": "walk_attack",
+          "index": 5,
+          "sourceBox": [
+            1024,
+            864,
+            1211,
+            1066
+          ],
+          "coreBox": [
+            1029,
+            869,
+            1206,
+            1061
+          ],
+          "translation": [
+            27,
+            26
+          ],
+          "sourceAnchorX": 91.5
+        },
+        {
+          "state": "skill",
+          "index": 0,
+          "sourceBox": [
+            44,
+            1061,
+            233,
+            1239
+          ],
+          "coreBox": [
+            49,
+            1066,
+            228,
+            1234
+          ],
+          "translation": [
+            26,
+            52
+          ],
+          "sourceAnchorX": 92.5
+        },
+        {
+          "state": "skill",
+          "index": 1,
+          "sourceBox": [
+            253,
+            1060,
+            427,
+            1243
+          ],
+          "coreBox": [
+            258,
+            1065,
+            422,
+            1238
+          ],
+          "translation": [
+            34,
+            47
+          ],
+          "sourceAnchorX": 85.0
+        },
+        {
+          "state": "skill",
+          "index": 2,
+          "sourceBox": [
+            440,
+            1062,
+            632,
+            1243
+          ],
+          "coreBox": [
+            445,
+            1067,
+            627,
+            1238
+          ],
+          "translation": [
+            24,
+            49
+          ],
+          "sourceAnchorX": 94.0
+        },
+        {
+          "state": "skill",
+          "index": 3,
+          "sourceBox": [
+            644,
+            1062,
+            827,
+            1243
+          ],
+          "coreBox": [
+            649,
+            1067,
+            822,
+            1238
+          ],
+          "translation": [
+            29,
+            49
+          ],
+          "sourceAnchorX": 89.5
+        },
+        {
+          "state": "skill",
+          "index": 4,
+          "sourceBox": [
+            836,
+            1061,
+            1029,
+            1243
+          ],
+          "coreBox": [
+            841,
+            1066,
+            1024,
+            1238
+          ],
+          "translation": [
+            24,
+            48
+          ],
+          "sourceAnchorX": 94.5
+        },
+        {
+          "state": "skill",
+          "index": 5,
+          "sourceBox": [
+            1034,
+            1061,
+            1212,
+            1240
+          ],
+          "coreBox": [
+            1039,
+            1066,
+            1207,
+            1235
+          ],
+          "translation": [
+            32,
+            51
+          ],
+          "sourceAnchorX": 87.0
+        }
+      ],
+      "locomotionReplacement": {
+        "states": [
+          "walk",
+          "walk_attack"
+        ],
+        "scale": 0.6340740740740741,
+        "source": "sources/locomotion-down.png"
+      }
+    },
+    "right": {
+      "uniformScale": 1.0515970515970516,
+      "idleHeightSource": 203.5,
+      "frames": [
+        {
+          "state": "idle",
+          "index": 0,
+          "sourceBox": [
+            57,
+            12,
+            215,
+            219
+          ],
+          "coreBox": [
+            62,
+            17,
+            210,
+            214
+          ],
+          "translation": [
+            47,
+            31
+          ],
+          "sourceAnchorX": 77.0
+        },
+        {
+          "state": "idle",
+          "index": 1,
+          "sourceBox": [
+            266,
+            13,
+            429,
+            220
+          ],
+          "coreBox": [
+            271,
+            18,
+            424,
+            215
+          ],
+          "translation": [
+            44,
+            31
+          ],
+          "sourceAnchorX": 79.5
+        },
+        {
+          "state": "idle",
+          "index": 2,
+          "sourceBox": [
+            460,
+            12,
+            629,
+            221
+          ],
+          "coreBox": [
+            465,
+            17,
+            624,
+            216
+          ],
+          "translation": [
+            41,
+            28
+          ],
+          "sourceAnchorX": 82.5
+        },
+        {
+          "state": "idle",
+          "index": 3,
+          "sourceBox": [
+            665,
+            13,
+            832,
+            221
+          ],
+          "coreBox": [
+            670,
+            18,
+            827,
+            216
+          ],
+          "translation": [
+            42,
+            29
+          ],
+          "sourceAnchorX": 81.5
+        },
+        {
+          "state": "idle",
+          "index": 4,
+          "sourceBox": [
+            871,
+            13,
+            1034,
+            221
+          ],
+          "coreBox": [
+            876,
+            18,
+            1029,
+            216
+          ],
+          "translation": [
+            44,
+            29
+          ],
+          "sourceAnchorX": 79.5
+        },
+        {
+          "state": "idle",
+          "index": 5,
+          "sourceBox": [
+            1072,
+            13,
+            1235,
+            220
+          ],
+          "coreBox": [
+            1077,
+            18,
+            1230,
+            215
+          ],
+          "translation": [
+            44,
+            31
+          ],
+          "sourceAnchorX": 79.5
+        },
+        {
+          "state": "idle2",
+          "index": 0,
+          "sourceBox": [
+            54,
+            223,
+            217,
+            431
+          ],
+          "coreBox": [
+            59,
+            228,
+            212,
+            426
+          ],
+          "translation": [
+            44,
+            29
+          ],
+          "sourceAnchorX": 79.5
+        },
+        {
+          "state": "idle2",
+          "index": 1,
+          "sourceBox": [
+            261,
+            226,
+            429,
+            433
+          ],
+          "coreBox": [
+            266,
+            231,
+            424,
+            428
+          ],
+          "translation": [
+            42,
+            31
+          ],
+          "sourceAnchorX": 82.0
+        },
+        {
+          "state": "idle2",
+          "index": 2,
+          "sourceBox": [
+            465,
+            226,
+            631,
+            433
+          ],
+          "coreBox": [
+            470,
+            231,
+            626,
+            428
+          ],
+          "translation": [
+            43,
+            31
+          ],
+          "sourceAnchorX": 81.0
+        },
+        {
+          "state": "idle2",
+          "index": 3,
+          "sourceBox": [
+            669,
+            227,
+            832,
+            434
+          ],
+          "coreBox": [
+            674,
+            232,
+            827,
+            429
+          ],
+          "translation": [
+            44,
+            31
+          ],
+          "sourceAnchorX": 79.5
+        },
+        {
+          "state": "idle2",
+          "index": 4,
+          "sourceBox": [
+            872,
+            226,
+            1037,
+            434
+          ],
+          "coreBox": [
+            877,
+            231,
+            1032,
+            429
+          ],
+          "translation": [
+            43,
+            29
+          ],
+          "sourceAnchorX": 80.5
+        },
+        {
+          "state": "idle2",
+          "index": 5,
+          "sourceBox": [
+            1071,
+            226,
+            1235,
+            433
+          ],
+          "coreBox": [
+            1076,
+            231,
+            1230,
+            428
+          ],
+          "translation": [
+            44,
+            31
+          ],
+          "sourceAnchorX": 80.0
+        },
+        {
+          "state": "walk",
+          "index": 0,
+          "sourceBox": [
+            40,
+            433,
+            209,
+            644
+          ],
+          "coreBox": [
+            45,
+            438,
+            204,
+            639
+          ],
+          "translation": [
+            41,
+            26
+          ],
+          "sourceAnchorX": 82.5
+        },
+        {
+          "state": "walk",
+          "index": 1,
+          "sourceBox": [
+            248,
+            434,
+            425,
+            644
+          ],
+          "coreBox": [
+            253,
+            439,
+            420,
+            639
+          ],
+          "translation": [
+            37,
+            27
+          ],
+          "sourceAnchorX": 86.5
+        },
+        {
+          "state": "walk",
+          "index": 2,
+          "sourceBox": [
+            461,
+            435,
+            631,
+            645
+          ],
+          "coreBox": [
+            466,
+            440,
+            626,
+            640
+          ],
+          "translation": [
+            41,
+            27
+          ],
+          "sourceAnchorX": 83.0
+        },
+        {
+          "state": "walk",
+          "index": 3,
+          "sourceBox": [
+            654,
+            436,
+            829,
+            644
+          ],
+          "coreBox": [
+            659,
+            441,
+            824,
+            639
+          ],
+          "translation": [
+            38,
+            29
+          ],
+          "sourceAnchorX": 85.5
+        },
+        {
+          "state": "walk",
+          "index": 4,
+          "sourceBox": [
+            862,
+            437,
+            1039,
+            645
+          ],
+          "coreBox": [
+            867,
+            442,
+            1034,
+            640
+          ],
+          "translation": [
+            37,
+            29
+          ],
+          "sourceAnchorX": 86.5
+        },
+        {
+          "state": "walk",
+          "index": 5,
+          "sourceBox": [
+            1070,
+            438,
+            1237,
+            645
+          ],
+          "coreBox": [
+            1075,
+            443,
+            1232,
+            640
+          ],
+          "translation": [
+            42,
+            31
+          ],
+          "sourceAnchorX": 81.5
+        },
+        {
+          "state": "attack",
+          "index": 0,
+          "sourceBox": [
+            49,
+            650,
+            219,
+            858
+          ],
+          "coreBox": [
+            54,
+            655,
+            214,
+            853
+          ],
+          "translation": [
+            41,
+            29
+          ],
+          "sourceAnchorX": 83.0
+        },
+        {
+          "state": "attack",
+          "index": 1,
+          "sourceBox": [
+            262,
+            651,
+            427,
+            859
+          ],
+          "coreBox": [
+            267,
+            656,
+            422,
+            854
+          ],
+          "translation": [
+            43,
+            29
+          ],
+          "sourceAnchorX": 80.5
+        },
+        {
+          "state": "attack",
+          "index": 2,
+          "sourceBox": [
+            455,
+            651,
+            643,
+            859
+          ],
+          "coreBox": [
+            460,
+            656,
+            638,
+            854
+          ],
+          "translation": [
+            31,
+            29
+          ],
+          "sourceAnchorX": 92.0
+        },
+        {
+          "state": "attack",
+          "index": 3,
+          "sourceBox": [
+            666,
+            652,
+            863,
+            859
+          ],
+          "coreBox": [
+            671,
+            657,
+            858,
+            854
+          ],
+          "translation": [
+            27,
+            31
+          ],
+          "sourceAnchorX": 96.5
+        },
+        {
+          "state": "attack",
+          "index": 4,
+          "sourceBox": [
+            868,
+            652,
+            1066,
+            860
+          ],
+          "coreBox": [
+            873,
+            657,
+            1061,
+            855
+          ],
+          "translation": [
+            26,
+            29
+          ],
+          "sourceAnchorX": 97.0
+        },
+        {
+          "state": "attack",
+          "index": 5,
+          "sourceBox": [
+            1073,
+            652,
+            1244,
+            859
+          ],
+          "coreBox": [
+            1078,
+            657,
+            1239,
+            854
+          ],
+          "translation": [
+            40,
+            31
+          ],
+          "sourceAnchorX": 83.5
+        },
+        {
+          "state": "walk_attack",
+          "index": 0,
+          "sourceBox": [
+            40,
+            860,
+            238,
+            1066
+          ],
+          "coreBox": [
+            45,
+            865,
+            233,
+            1061
+          ],
+          "translation": [
+            26,
+            32
+          ],
+          "sourceAnchorX": 97.0
+        },
+        {
+          "state": "walk_attack",
+          "index": 1,
+          "sourceBox": [
+            252,
+            863,
+            451,
+            1066
+          ],
+          "coreBox": [
+            257,
+            868,
+            446,
+            1061
+          ],
+          "translation": [
+            25,
+            35
+          ],
+          "sourceAnchorX": 97.5
+        },
+        {
+          "state": "walk_attack",
+          "index": 2,
+          "sourceBox": [
+            458,
+            863,
+            657,
+            1066
+          ],
+          "coreBox": [
+            463,
+            868,
+            652,
+            1061
+          ],
+          "translation": [
+            25,
+            35
+          ],
+          "sourceAnchorX": 97.5
+        },
+        {
+          "state": "walk_attack",
+          "index": 3,
+          "sourceBox": [
+            656,
+            861,
+            861,
+            1066
+          ],
+          "coreBox": [
+            661,
+            866,
+            856,
+            1061
+          ],
+          "translation": [
+            22,
+            33
+          ],
+          "sourceAnchorX": 100.5
+        },
+        {
+          "state": "walk_attack",
+          "index": 4,
+          "sourceBox": [
+            870,
+            863,
+            1072,
+            1066
+          ],
+          "coreBox": [
+            875,
+            868,
+            1067,
+            1061
+          ],
+          "translation": [
+            24,
+            35
+          ],
+          "sourceAnchorX": 99.0
+        },
+        {
+          "state": "walk_attack",
+          "index": 5,
+          "sourceBox": [
+            1071,
+            863,
+            1253,
+            1066
+          ],
+          "coreBox": [
+            1076,
+            868,
+            1248,
+            1061
+          ],
+          "translation": [
+            34,
+            35
+          ],
+          "sourceAnchorX": 89.0
+        },
+        {
+          "state": "skill",
+          "index": 0,
+          "sourceBox": [
+            29,
+            1065,
+            225,
+            1249
+          ],
+          "coreBox": [
+            34,
+            1070,
+            220,
+            1244
+          ],
+          "translation": [
+            27,
+            55
+          ],
+          "sourceAnchorX": 96.0
+        },
+        {
+          "state": "skill",
+          "index": 1,
+          "sourceBox": [
+            251,
+            1065,
+            443,
+            1250
+          ],
+          "coreBox": [
+            256,
+            1070,
+            438,
+            1245
+          ],
+          "translation": [
+            29,
+            54
+          ],
+          "sourceAnchorX": 94.0
+        },
+        {
+          "state": "skill",
+          "index": 2,
+          "sourceBox": [
+            462,
+            1060,
+            654,
+            1249
+          ],
+          "coreBox": [
+            467,
+            1065,
+            649,
+            1244
+          ],
+          "translation": [
+            29,
+            49
+          ],
+          "sourceAnchorX": 94.0
+        },
+        {
+          "state": "skill",
+          "index": 3,
+          "sourceBox": [
+            655,
+            1065,
+            873,
+            1250
+          ],
+          "coreBox": [
+            660,
+            1070,
+            868,
+            1245
+          ],
+          "translation": [
+            15,
+            54
+          ],
+          "sourceAnchorX": 107.0
+        },
+        {
+          "state": "skill",
+          "index": 4,
+          "sourceBox": [
+            880,
+            1065,
+            1079,
+            1250
+          ],
+          "coreBox": [
+            885,
+            1070,
+            1074,
+            1245
+          ],
+          "translation": [
+            25,
+            54
+          ],
+          "sourceAnchorX": 97.5
+        },
+        {
+          "state": "skill",
+          "index": 5,
+          "sourceBox": [
+            1079,
+            1065,
+            1252,
+            1251
+          ],
+          "coreBox": [
+            1084,
+            1070,
+            1247,
+            1246
+          ],
+          "translation": [
+            39,
+            53
+          ],
+          "sourceAnchorX": 84.5
+        }
+      ],
+      "locomotionReplacement": {
+        "states": [
+          "walk",
+          "walk_attack"
+        ],
+        "scale": 0.7918088737201365,
+        "source": "sources/locomotion-right.png"
+      }
+    },
+    "up": {
+      "uniformScale": 1.1059431524547803,
+      "idleHeightSource": 193.5,
+      "frames": [
+        {
+          "state": "idle",
+          "index": 0,
+          "sourceBox": [
+            59,
+            8,
+            204,
+            204
+          ],
+          "coreBox": [
+            64,
+            13,
+            199,
+            199
+          ],
+          "translation": [
+            50,
+            32
+          ],
+          "sourceAnchorX": 70.5
+        },
+        {
+          "state": "idle",
+          "index": 1,
+          "sourceBox": [
+            257,
+            7,
+            403,
+            204
+          ],
+          "coreBox": [
+            262,
+            12,
+            398,
+            199
+          ],
+          "translation": [
+            49,
+            31
+          ],
+          "sourceAnchorX": 71.0
+        },
+        {
+          "state": "idle",
+          "index": 2,
+          "sourceBox": [
+            456,
+            6,
+            600,
+            204
+          ],
+          "coreBox": [
+            461,
+            11,
+            595,
+            199
+          ],
+          "translation": [
+            51,
+            29
+          ],
+          "sourceAnchorX": 70.0
+        },
+        {
+          "state": "idle",
+          "index": 3,
+          "sourceBox": [
+            657,
+            7,
+            802,
+            204
+          ],
+          "coreBox": [
+            662,
+            12,
+            797,
+            199
+          ],
+          "translation": [
+            50,
+            31
+          ],
+          "sourceAnchorX": 70.5
+        },
+        {
+          "state": "idle",
+          "index": 4,
+          "sourceBox": [
+            859,
+            6,
+            1003,
+            204
+          ],
+          "coreBox": [
+            864,
+            11,
+            998,
+            199
+          ],
+          "translation": [
+            51,
+            29
+          ],
+          "sourceAnchorX": 70.0
+        },
+        {
+          "state": "idle",
+          "index": 5,
+          "sourceBox": [
+            1051,
+            5,
+            1198,
+            204
+          ],
+          "coreBox": [
+            1056,
+            10,
+            1193,
+            199
+          ],
+          "translation": [
+            49,
+            28
+          ],
+          "sourceAnchorX": 71.5
+        },
+        {
+          "state": "idle2",
+          "index": 0,
+          "sourceBox": [
+            52,
+            206,
+            206,
+            413
+          ],
+          "coreBox": [
+            57,
+            211,
+            201,
+            408
+          ],
+          "translation": [
+            45,
+            19
+          ],
+          "sourceAnchorX": 75.0
+        },
+        {
+          "state": "idle2",
+          "index": 1,
+          "sourceBox": [
+            253,
+            207,
+            403,
+            413
+          ],
+          "coreBox": [
+            258,
+            212,
+            398,
+            408
+          ],
+          "translation": [
+            47,
+            21
+          ],
+          "sourceAnchorX": 73.0
+        },
+        {
+          "state": "idle2",
+          "index": 2,
+          "sourceBox": [
+            451,
+            206,
+            603,
+            412
+          ],
+          "coreBox": [
+            456,
+            211,
+            598,
+            407
+          ],
+          "translation": [
+            46,
+            21
+          ],
+          "sourceAnchorX": 74.0
+        },
+        {
+          "state": "idle2",
+          "index": 3,
+          "sourceBox": [
+            648,
+            207,
+            803,
+            413
+          ],
+          "coreBox": [
+            653,
+            212,
+            798,
+            408
+          ],
+          "translation": [
+            45,
+            21
+          ],
+          "sourceAnchorX": 75.5
+        },
+        {
+          "state": "idle2",
+          "index": 4,
+          "sourceBox": [
+            853,
+            206,
+            1006,
+            412
+          ],
+          "coreBox": [
+            858,
+            211,
+            1001,
+            407
+          ],
+          "translation": [
+            46,
+            21
+          ],
+          "sourceAnchorX": 74.5
+        },
+        {
+          "state": "idle2",
+          "index": 5,
+          "sourceBox": [
+            1048,
+            206,
+            1198,
+            412
+          ],
+          "coreBox": [
+            1053,
+            211,
+            1193,
+            407
+          ],
+          "translation": [
+            47,
+            21
+          ],
+          "sourceAnchorX": 73.0
+        },
+        {
+          "state": "walk",
+          "index": 0,
+          "sourceBox": [
+            54,
+            414,
+            208,
+            622
+          ],
+          "coreBox": [
+            59,
+            419,
+            203,
+            617
+          ],
+          "translation": [
+            45,
+            18
+          ],
+          "sourceAnchorX": 75.0
+        },
+        {
+          "state": "walk",
+          "index": 1,
+          "sourceBox": [
+            253,
+            417,
+            403,
+            623
+          ],
+          "coreBox": [
+            258,
+            422,
+            398,
+            618
+          ],
+          "translation": [
+            47,
+            21
+          ],
+          "sourceAnchorX": 73.0
+        },
+        {
+          "state": "walk",
+          "index": 2,
+          "sourceBox": [
+            456,
+            416,
+            600,
+            622
+          ],
+          "coreBox": [
+            461,
+            421,
+            595,
+            617
+          ],
+          "translation": [
+            51,
+            21
+          ],
+          "sourceAnchorX": 70.0
+        },
+        {
+          "state": "walk",
+          "index": 3,
+          "sourceBox": [
+            650,
+            414,
+            804,
+            622
+          ],
+          "coreBox": [
+            655,
+            419,
+            799,
+            617
+          ],
+          "translation": [
+            45,
+            18
+          ],
+          "sourceAnchorX": 75.0
+        },
+        {
+          "state": "walk",
+          "index": 4,
+          "sourceBox": [
+            850,
+            416,
+            1003,
+            622
+          ],
+          "coreBox": [
+            855,
+            421,
+            998,
+            617
+          ],
+          "translation": [
+            46,
+            21
+          ],
+          "sourceAnchorX": 74.5
+        },
+        {
+          "state": "walk",
+          "index": 5,
+          "sourceBox": [
+            1050,
+            415,
+            1197,
+            623
+          ],
+          "coreBox": [
+            1055,
+            420,
+            1192,
+            618
+          ],
+          "translation": [
+            49,
+            18
+          ],
+          "sourceAnchorX": 71.5
+        },
+        {
+          "state": "attack",
+          "index": 0,
+          "sourceBox": [
+            54,
+            626,
+            203,
+            830
+          ],
+          "coreBox": [
+            59,
+            631,
+            198,
+            825
+          ],
+          "translation": [
+            48,
+            23
+          ],
+          "sourceAnchorX": 72.5
+        },
+        {
+          "state": "attack",
+          "index": 1,
+          "sourceBox": [
+            253,
+            627,
+            406,
+            830
+          ],
+          "coreBox": [
+            258,
+            632,
+            401,
+            825
+          ],
+          "translation": [
+            46,
+            24
+          ],
+          "sourceAnchorX": 74.5
+        },
+        {
+          "state": "attack",
+          "index": 2,
+          "sourceBox": [
+            454,
+            626,
+            610,
+            830
+          ],
+          "coreBox": [
+            459,
+            631,
+            605,
+            825
+          ],
+          "translation": [
+            44,
+            23
+          ],
+          "sourceAnchorX": 76.0
+        },
+        {
+          "state": "attack",
+          "index": 3,
+          "sourceBox": [
+            654,
+            629,
+            809,
+            830
+          ],
+          "coreBox": [
+            659,
+            634,
+            804,
+            825
+          ],
+          "translation": [
+            45,
+            26
+          ],
+          "sourceAnchorX": 75.5
+        },
+        {
+          "state": "attack",
+          "index": 4,
+          "sourceBox": [
+            854,
+            627,
+            1005,
+            829
+          ],
+          "coreBox": [
+            859,
+            632,
+            1000,
+            824
+          ],
+          "translation": [
+            47,
+            25
+          ],
+          "sourceAnchorX": 73.5
+        },
+        {
+          "state": "attack",
+          "index": 5,
+          "sourceBox": [
+            1052,
+            626,
+            1204,
+            829
+          ],
+          "coreBox": [
+            1057,
+            631,
+            1199,
+            824
+          ],
+          "translation": [
+            46,
+            24
+          ],
+          "sourceAnchorX": 74.0
+        },
+        {
+          "state": "walk_attack",
+          "index": 0,
+          "sourceBox": [
+            52,
+            834,
+            207,
+            1031
+          ],
+          "coreBox": [
+            57,
+            839,
+            202,
+            1026
+          ],
+          "translation": [
+            45,
+            31
+          ],
+          "sourceAnchorX": 75.5
+        },
+        {
+          "state": "walk_attack",
+          "index": 1,
+          "sourceBox": [
+            243,
+            835,
+            406,
+            1031
+          ],
+          "coreBox": [
+            248,
+            840,
+            401,
+            1026
+          ],
+          "translation": [
+            40,
+            32
+          ],
+          "sourceAnchorX": 79.5
+        },
+        {
+          "state": "walk_attack",
+          "index": 2,
+          "sourceBox": [
+            438,
+            835,
+            609,
+            1031
+          ],
+          "coreBox": [
+            443,
+            840,
+            604,
+            1026
+          ],
+          "translation": [
+            36,
+            32
+          ],
+          "sourceAnchorX": 83.5
+        },
+        {
+          "state": "walk_attack",
+          "index": 3,
+          "sourceBox": [
+            641,
+            834,
+            811,
+            1031
+          ],
+          "coreBox": [
+            646,
+            839,
+            806,
+            1026
+          ],
+          "translation": [
+            36,
+            31
+          ],
+          "sourceAnchorX": 83.0
+        },
+        {
+          "state": "walk_attack",
+          "index": 4,
+          "sourceBox": [
+            845,
+            835,
+            996,
+            1029
+          ],
+          "coreBox": [
+            850,
+            840,
+            991,
+            1024
+          ],
+          "translation": [
+            47,
+            34
+          ],
+          "sourceAnchorX": 73.5
+        },
+        {
+          "state": "walk_attack",
+          "index": 5,
+          "sourceBox": [
+            1042,
+            834,
+            1203,
+            1031
+          ],
+          "coreBox": [
+            1047,
+            839,
+            1198,
+            1026
+          ],
+          "translation": [
+            41,
+            31
+          ],
+          "sourceAnchorX": 78.5
+        },
+        {
+          "state": "skill",
+          "index": 0,
+          "sourceBox": [
+            54,
+            1037,
+            206,
+            1232
+          ],
+          "coreBox": [
+            59,
+            1042,
+            201,
+            1227
+          ],
+          "translation": [
+            46,
+            33
+          ],
+          "sourceAnchorX": 74.0
+        },
+        {
+          "state": "skill",
+          "index": 1,
+          "sourceBox": [
+            243,
+            1038,
+            397,
+            1232
+          ],
+          "coreBox": [
+            248,
+            1043,
+            392,
+            1227
+          ],
+          "translation": [
+            45,
+            34
+          ],
+          "sourceAnchorX": 75.0
+        },
+        {
+          "state": "skill",
+          "index": 2,
+          "sourceBox": [
+            434,
+            1037,
+            597,
+            1233
+          ],
+          "coreBox": [
+            439,
+            1042,
+            592,
+            1228
+          ],
+          "translation": [
+            40,
+            32
+          ],
+          "sourceAnchorX": 79.5
+        },
+        {
+          "state": "skill",
+          "index": 3,
+          "sourceBox": [
+            632,
+            1041,
+            795,
+            1210
+          ],
+          "coreBox": [
+            637,
+            1046,
+            790,
+            1205
+          ],
+          "translation": [
+            40,
+            62
+          ],
+          "sourceAnchorX": 79.5
+        },
+        {
+          "state": "skill",
+          "index": 4,
+          "sourceBox": [
+            838,
+            1036,
+            999,
+            1229
+          ],
+          "coreBox": [
+            843,
+            1041,
+            994,
+            1224
+          ],
+          "translation": [
+            41,
+            35
+          ],
+          "sourceAnchorX": 78.5
+        },
+        {
+          "state": "skill",
+          "index": 5,
+          "sourceBox": [
+            1049,
+            1034,
+            1197,
+            1232
+          ],
+          "coreBox": [
+            1054,
+            1039,
+            1192,
+            1227
+          ],
+          "translation": [
+            48,
+            29
+          ],
+          "sourceAnchorX": 72.0
+        }
+      ],
+      "locomotionReplacement": {
+        "states": [
+          "walk",
+          "walk_attack"
+        ],
+        "scale": 0.6948051948051948,
+        "source": "sources/locomotion-up.png"
+      }
+    },
+    "down_right": {
+      "uniformScale": 1.0780856423173804,
+      "idleHeightSource": 198.5,
+      "frames": [
+        {
+          "state": "idle",
+          "index": 0,
+          "sourceBox": [
+            34,
+            9,
+            179,
+            211
+          ],
+          "coreBox": [
+            39,
+            14,
+            174,
+            206
+          ],
+          "translation": [
+            52,
+            31
+          ],
+          "sourceAnchorX": 70.5
+        },
+        {
+          "state": "idle",
+          "index": 1,
+          "sourceBox": [
+            239,
+            10,
+            380,
+            211
+          ],
+          "coreBox": [
+            244,
+            15,
+            375,
+            206
+          ],
+          "translation": [
+            54,
+            32
+          ],
+          "sourceAnchorX": 68.5
+        },
+        {
+          "state": "idle",
+          "index": 2,
+          "sourceBox": [
+            445,
+            9,
+            590,
+            211
+          ],
+          "coreBox": [
+            450,
+            14,
+            585,
+            206
+          ],
+          "translation": [
+            52,
+            31
+          ],
+          "sourceAnchorX": 70.5
+        },
+        {
+          "state": "idle",
+          "index": 3,
+          "sourceBox": [
+            653,
+            8,
+            800,
+            211
+          ],
+          "coreBox": [
+            658,
+            13,
+            795,
+            206
+          ],
+          "translation": [
+            51,
+            29
+          ],
+          "sourceAnchorX": 71.5
+        },
+        {
+          "state": "idle",
+          "index": 4,
+          "sourceBox": [
+            862,
+            8,
+            1008,
+            211
+          ],
+          "coreBox": [
+            867,
+            13,
+            1003,
+            206
+          ],
+          "translation": [
+            51,
+            29
+          ],
+          "sourceAnchorX": 71.0
+        },
+        {
+          "state": "idle",
+          "index": 5,
+          "sourceBox": [
+            1071,
+            8,
+            1216,
+            211
+          ],
+          "coreBox": [
+            1076,
+            13,
+            1211,
+            206
+          ],
+          "translation": [
+            52,
+            29
+          ],
+          "sourceAnchorX": 70.5
+        },
+        {
+          "state": "idle2",
+          "index": 0,
+          "sourceBox": [
+            25,
+            215,
+            181,
+            423
+          ],
+          "coreBox": [
+            30,
+            220,
+            176,
+            418
+          ],
+          "translation": [
+            46,
+            24
+          ],
+          "sourceAnchorX": 76.0
+        },
+        {
+          "state": "idle2",
+          "index": 1,
+          "sourceBox": [
+            241,
+            214,
+            407,
+            423
+          ],
+          "coreBox": [
+            246,
+            219,
+            402,
+            418
+          ],
+          "translation": [
+            41,
+            23
+          ],
+          "sourceAnchorX": 81.0
+        },
+        {
+          "state": "idle2",
+          "index": 2,
+          "sourceBox": [
+            449,
+            215,
+            614,
+            423
+          ],
+          "coreBox": [
+            454,
+            220,
+            609,
+            418
+          ],
+          "translation": [
+            41,
+            24
+          ],
+          "sourceAnchorX": 80.5
+        },
+        {
+          "state": "idle2",
+          "index": 3,
+          "sourceBox": [
+            654,
+            212,
+            814,
+            423
+          ],
+          "coreBox": [
+            659,
+            217,
+            809,
+            418
+          ],
+          "translation": [
+            44,
+            21
+          ],
+          "sourceAnchorX": 78.0
+        },
+        {
+          "state": "idle2",
+          "index": 4,
+          "sourceBox": [
+            864,
+            213,
+            1022,
+            423
+          ],
+          "coreBox": [
+            869,
+            218,
+            1017,
+            418
+          ],
+          "translation": [
+            45,
+            22
+          ],
+          "sourceAnchorX": 77.0
+        },
+        {
+          "state": "idle2",
+          "index": 5,
+          "sourceBox": [
+            1076,
+            215,
+            1226,
+            422
+          ],
+          "coreBox": [
+            1081,
+            220,
+            1221,
+            417
+          ],
+          "translation": [
+            49,
+            25
+          ],
+          "sourceAnchorX": 73.0
+        },
+        {
+          "state": "walk",
+          "index": 0,
+          "sourceBox": [
+            26,
+            422,
+            180,
+            627
+          ],
+          "coreBox": [
+            31,
+            427,
+            175,
+            622
+          ],
+          "translation": [
+            47,
+            27
+          ],
+          "sourceAnchorX": 75.0
+        },
+        {
+          "state": "walk",
+          "index": 1,
+          "sourceBox": [
+            242,
+            426,
+            391,
+            628
+          ],
+          "coreBox": [
+            247,
+            431,
+            386,
+            623
+          ],
+          "translation": [
+            50,
+            31
+          ],
+          "sourceAnchorX": 72.5
+        },
+        {
+          "state": "walk",
+          "index": 2,
+          "sourceBox": [
+            447,
+            425,
+            597,
+            627
+          ],
+          "coreBox": [
+            452,
+            430,
+            592,
+            622
+          ],
+          "translation": [
+            49,
+            31
+          ],
+          "sourceAnchorX": 73.0
+        },
+        {
+          "state": "walk",
+          "index": 3,
+          "sourceBox": [
+            653,
+            426,
+            809,
+            628
+          ],
+          "coreBox": [
+            658,
+            431,
+            804,
+            623
+          ],
+          "translation": [
+            46,
+            31
+          ],
+          "sourceAnchorX": 76.0
+        },
+        {
+          "state": "walk",
+          "index": 4,
+          "sourceBox": [
+            864,
+            425,
+            1021,
+            627
+          ],
+          "coreBox": [
+            869,
+            430,
+            1016,
+            622
+          ],
+          "translation": [
+            46,
+            31
+          ],
+          "sourceAnchorX": 76.5
+        },
+        {
+          "state": "walk",
+          "index": 5,
+          "sourceBox": [
+            1072,
+            423,
+            1220,
+            627
+          ],
+          "coreBox": [
+            1077,
+            428,
+            1215,
+            622
+          ],
+          "translation": [
+            50,
+            28
+          ],
+          "sourceAnchorX": 72.0
+        },
+        {
+          "state": "attack",
+          "index": 0,
+          "sourceBox": [
+            31,
+            631,
+            180,
+            833
+          ],
+          "coreBox": [
+            36,
+            636,
+            175,
+            828
+          ],
+          "translation": [
+            50,
+            31
+          ],
+          "sourceAnchorX": 72.5
+        },
+        {
+          "state": "attack",
+          "index": 1,
+          "sourceBox": [
+            242,
+            630,
+            390,
+            831
+          ],
+          "coreBox": [
+            247,
+            635,
+            385,
+            826
+          ],
+          "translation": [
+            50,
+            32
+          ],
+          "sourceAnchorX": 72.0
+        },
+        {
+          "state": "attack",
+          "index": 2,
+          "sourceBox": [
+            443,
+            628,
+            615,
+            832
+          ],
+          "coreBox": [
+            448,
+            633,
+            610,
+            827
+          ],
+          "translation": [
+            37,
+            28
+          ],
+          "sourceAnchorX": 84.0
+        },
+        {
+          "state": "attack",
+          "index": 3,
+          "sourceBox": [
+            649,
+            628,
+            822,
+            835
+          ],
+          "coreBox": [
+            654,
+            633,
+            817,
+            830
+          ],
+          "translation": [
+            37,
+            25
+          ],
+          "sourceAnchorX": 84.5
+        },
+        {
+          "state": "attack",
+          "index": 4,
+          "sourceBox": [
+            869,
+            630,
+            1020,
+            831
+          ],
+          "coreBox": [
+            874,
+            635,
+            1015,
+            826
+          ],
+          "translation": [
+            49,
+            32
+          ],
+          "sourceAnchorX": 73.5
+        },
+        {
+          "state": "attack",
+          "index": 5,
+          "sourceBox": [
+            1078,
+            630,
+            1227,
+            833
+          ],
+          "coreBox": [
+            1083,
+            635,
+            1222,
+            828
+          ],
+          "translation": [
+            50,
+            29
+          ],
+          "sourceAnchorX": 72.5
+        },
+        {
+          "state": "walk_attack",
+          "index": 0,
+          "sourceBox": [
+            26,
+            840,
+            205,
+            1036
+          ],
+          "coreBox": [
+            31,
+            845,
+            200,
+            1031
+          ],
+          "translation": [
+            34,
+            37
+          ],
+          "sourceAnchorX": 87.5
+        },
+        {
+          "state": "walk_attack",
+          "index": 1,
+          "sourceBox": [
+            242,
+            841,
+            428,
+            1040
+          ],
+          "coreBox": [
+            247,
+            846,
+            423,
+            1035
+          ],
+          "translation": [
+            30,
+            34
+          ],
+          "sourceAnchorX": 91.0
+        },
+        {
+          "state": "walk_attack",
+          "index": 2,
+          "sourceBox": [
+            451,
+            836,
+            630,
+            1040
+          ],
+          "coreBox": [
+            456,
+            841,
+            625,
+            1035
+          ],
+          "translation": [
+            34,
+            28
+          ],
+          "sourceAnchorX": 87.5
+        },
+        {
+          "state": "walk_attack",
+          "index": 3,
+          "sourceBox": [
+            648,
+            839,
+            830,
+            1037
+          ],
+          "coreBox": [
+            653,
+            844,
+            825,
+            1032
+          ],
+          "translation": [
+            32,
+            35
+          ],
+          "sourceAnchorX": 89.0
+        },
+        {
+          "state": "walk_attack",
+          "index": 4,
+          "sourceBox": [
+            864,
+            839,
+            1048,
+            1040
+          ],
+          "coreBox": [
+            869,
+            844,
+            1043,
+            1035
+          ],
+          "translation": [
+            31,
+            32
+          ],
+          "sourceAnchorX": 90.0
+        },
+        {
+          "state": "walk_attack",
+          "index": 5,
+          "sourceBox": [
+            1073,
+            841,
+            1251,
+            1041
+          ],
+          "coreBox": [
+            1078,
+            846,
+            1246,
+            1036
+          ],
+          "translation": [
+            34,
+            33
+          ],
+          "sourceAnchorX": 87.0
+        },
+        {
+          "state": "skill",
+          "index": 0,
+          "sourceBox": [
+            32,
+            1051,
+            182,
+            1233
+          ],
+          "coreBox": [
+            37,
+            1056,
+            177,
+            1228
+          ],
+          "translation": [
+            49,
+            52
+          ],
+          "sourceAnchorX": 73.0
+        },
+        {
+          "state": "skill",
+          "index": 1,
+          "sourceBox": [
+            236,
+            1049,
+            393,
+            1231
+          ],
+          "coreBox": [
+            241,
+            1054,
+            388,
+            1226
+          ],
+          "translation": [
+            46,
+            52
+          ],
+          "sourceAnchorX": 76.5
+        },
+        {
+          "state": "skill",
+          "index": 2,
+          "sourceBox": [
+            437,
+            1048,
+            614,
+            1230
+          ],
+          "coreBox": [
+            442,
+            1053,
+            609,
+            1225
+          ],
+          "translation": [
+            35,
+            52
+          ],
+          "sourceAnchorX": 86.5
+        },
+        {
+          "state": "skill",
+          "index": 3,
+          "sourceBox": [
+            650,
+            1049,
+            832,
+            1234
+          ],
+          "coreBox": [
+            655,
+            1054,
+            827,
+            1229
+          ],
+          "translation": [
+            32,
+            49
+          ],
+          "sourceAnchorX": 89.0
+        },
+        {
+          "state": "skill",
+          "index": 4,
+          "sourceBox": [
+            873,
+            1051,
+            1046,
+            1234
+          ],
+          "coreBox": [
+            878,
+            1056,
+            1041,
+            1229
+          ],
+          "translation": [
+            37,
+            51
+          ],
+          "sourceAnchorX": 84.5
+        },
+        {
+          "state": "skill",
+          "index": 5,
+          "sourceBox": [
+            1078,
+            1041,
+            1226,
+            1237
+          ],
+          "coreBox": [
+            1083,
+            1046,
+            1221,
+            1232
+          ],
+          "translation": [
+            50,
+            37
+          ],
+          "sourceAnchorX": 72.0
+        }
+      ],
+      "locomotionReplacement": {
+        "states": [
+          "walk",
+          "walk_attack"
+        ],
+        "scale": 0.6848,
+        "source": "sources/locomotion-down_right.png"
+      }
+    },
+    "up_right": {
+      "uniformScale": 1.1174934725848564,
+      "idleHeightSource": 191.5,
+      "frames": [
+        {
+          "state": "idle",
+          "index": 0,
+          "sourceBox": [
+            58,
+            9,
+            181,
+            204
+          ],
+          "coreBox": [
+            63,
+            14,
+            176,
+            199
+          ],
+          "translation": [
+            62,
+            31
+          ],
+          "sourceAnchorX": 59.5
+        },
+        {
+          "state": "idle",
+          "index": 1,
+          "sourceBox": [
+            255,
+            9,
+            383,
+            204
+          ],
+          "coreBox": [
+            260,
+            14,
+            378,
+            199
+          ],
+          "translation": [
+            59,
+            31
+          ],
+          "sourceAnchorX": 62.0
+        },
+        {
+          "state": "idle",
+          "index": 2,
+          "sourceBox": [
+            456,
+            9,
+            585,
+            204
+          ],
+          "coreBox": [
+            461,
+            14,
+            580,
+            199
+          ],
+          "translation": [
+            58,
+            31
+          ],
+          "sourceAnchorX": 62.5
+        },
+        {
+          "state": "idle",
+          "index": 3,
+          "sourceBox": [
+            659,
+            8,
+            784,
+            204
+          ],
+          "coreBox": [
+            664,
+            13,
+            779,
+            199
+          ],
+          "translation": [
+            60,
+            29
+          ],
+          "sourceAnchorX": 60.5
+        },
+        {
+          "state": "idle",
+          "index": 4,
+          "sourceBox": [
+            863,
+            8,
+            988,
+            204
+          ],
+          "coreBox": [
+            868,
+            13,
+            983,
+            199
+          ],
+          "translation": [
+            60,
+            29
+          ],
+          "sourceAnchorX": 60.5
+        },
+        {
+          "state": "idle",
+          "index": 5,
+          "sourceBox": [
+            1070,
+            8,
+            1193,
+            204
+          ],
+          "coreBox": [
+            1075,
+            13,
+            1188,
+            199
+          ],
+          "translation": [
+            62,
+            29
+          ],
+          "sourceAnchorX": 59.5
+        },
+        {
+          "state": "idle2",
+          "index": 0,
+          "sourceBox": [
+            57,
+            212,
+            179,
+            411
+          ],
+          "coreBox": [
+            62,
+            217,
+            174,
+            406
+          ],
+          "translation": [
+            62,
+            26
+          ],
+          "sourceAnchorX": 59.0
+        },
+        {
+          "state": "idle2",
+          "index": 1,
+          "sourceBox": [
+            257,
+            212,
+            383,
+            410
+          ],
+          "coreBox": [
+            262,
+            217,
+            378,
+            405
+          ],
+          "translation": [
+            60,
+            27
+          ],
+          "sourceAnchorX": 61.0
+        },
+        {
+          "state": "idle2",
+          "index": 2,
+          "sourceBox": [
+            457,
+            212,
+            585,
+            411
+          ],
+          "coreBox": [
+            462,
+            217,
+            580,
+            406
+          ],
+          "translation": [
+            59,
+            26
+          ],
+          "sourceAnchorX": 62.0
+        },
+        {
+          "state": "idle2",
+          "index": 3,
+          "sourceBox": [
+            661,
+            215,
+            788,
+            411
+          ],
+          "coreBox": [
+            666,
+            220,
+            783,
+            406
+          ],
+          "translation": [
+            59,
+            29
+          ],
+          "sourceAnchorX": 61.5
+        },
+        {
+          "state": "idle2",
+          "index": 4,
+          "sourceBox": [
+            864,
+            210,
+            991,
+            410
+          ],
+          "coreBox": [
+            869,
+            215,
+            986,
+            405
+          ],
+          "translation": [
+            59,
+            25
+          ],
+          "sourceAnchorX": 61.5
+        },
+        {
+          "state": "idle2",
+          "index": 5,
+          "sourceBox": [
+            1072,
+            213,
+            1193,
+            410
+          ],
+          "coreBox": [
+            1077,
+            218,
+            1188,
+            405
+          ],
+          "translation": [
+            63,
+            28
+          ],
+          "sourceAnchorX": 58.5
+        },
+        {
+          "state": "walk",
+          "index": 0,
+          "sourceBox": [
+            45,
+            422,
+            176,
+            622
+          ],
+          "coreBox": [
+            50,
+            427,
+            171,
+            617
+          ],
+          "translation": [
+            57,
+            25
+          ],
+          "sourceAnchorX": 63.5
+        },
+        {
+          "state": "walk",
+          "index": 1,
+          "sourceBox": [
+            252,
+            419,
+            382,
+            620
+          ],
+          "coreBox": [
+            257,
+            424,
+            377,
+            615
+          ],
+          "translation": [
+            58,
+            24
+          ],
+          "sourceAnchorX": 63.0
+        },
+        {
+          "state": "walk",
+          "index": 2,
+          "sourceBox": [
+            452,
+            422,
+            579,
+            620
+          ],
+          "coreBox": [
+            457,
+            427,
+            574,
+            615
+          ],
+          "translation": [
+            59,
+            27
+          ],
+          "sourceAnchorX": 61.5
+        },
+        {
+          "state": "walk",
+          "index": 3,
+          "sourceBox": [
+            655,
+            423,
+            788,
+            620
+          ],
+          "coreBox": [
+            660,
+            428,
+            783,
+            615
+          ],
+          "translation": [
+            56,
+            28
+          ],
+          "sourceAnchorX": 64.5
+        },
+        {
+          "state": "walk",
+          "index": 4,
+          "sourceBox": [
+            865,
+            422,
+            997,
+            620
+          ],
+          "coreBox": [
+            870,
+            427,
+            992,
+            615
+          ],
+          "translation": [
+            56,
+            27
+          ],
+          "sourceAnchorX": 64.0
+        },
+        {
+          "state": "walk",
+          "index": 5,
+          "sourceBox": [
+            1073,
+            422,
+            1201,
+            619
+          ],
+          "coreBox": [
+            1078,
+            427,
+            1196,
+            614
+          ],
+          "translation": [
+            59,
+            28
+          ],
+          "sourceAnchorX": 62.0
+        },
+        {
+          "state": "attack",
+          "index": 0,
+          "sourceBox": [
+            55,
+            630,
+            180,
+            823
+          ],
+          "coreBox": [
+            60,
+            635,
+            175,
+            818
+          ],
+          "translation": [
+            60,
+            33
+          ],
+          "sourceAnchorX": 60.5
+        },
+        {
+          "state": "attack",
+          "index": 1,
+          "sourceBox": [
+            254,
+            631,
+            391,
+            824
+          ],
+          "coreBox": [
+            259,
+            636,
+            386,
+            819
+          ],
+          "translation": [
+            54,
+            33
+          ],
+          "sourceAnchorX": 66.5
+        },
+        {
+          "state": "attack",
+          "index": 2,
+          "sourceBox": [
+            448,
+            627,
+            611,
+            823
+          ],
+          "coreBox": [
+            453,
+            632,
+            606,
+            818
+          ],
+          "translation": [
+            39,
+            29
+          ],
+          "sourceAnchorX": 79.5
+        },
+        {
+          "state": "attack",
+          "index": 3,
+          "sourceBox": [
+            647,
+            631,
+            816,
+            824
+          ],
+          "coreBox": [
+            652,
+            636,
+            811,
+            819
+          ],
+          "translation": [
+            36,
+            33
+          ],
+          "sourceAnchorX": 82.5
+        },
+        {
+          "state": "attack",
+          "index": 4,
+          "sourceBox": [
+            861,
+            632,
+            998,
+            823
+          ],
+          "coreBox": [
+            866,
+            637,
+            993,
+            818
+          ],
+          "translation": [
+            54,
+            35
+          ],
+          "sourceAnchorX": 66.5
+        },
+        {
+          "state": "attack",
+          "index": 5,
+          "sourceBox": [
+            1072,
+            630,
+            1194,
+            824
+          ],
+          "coreBox": [
+            1077,
+            635,
+            1189,
+            819
+          ],
+          "translation": [
+            62,
+            32
+          ],
+          "sourceAnchorX": 59.0
+        },
+        {
+          "state": "walk_attack",
+          "index": 0,
+          "sourceBox": [
+            47,
+            837,
+            198,
+            1035
+          ],
+          "coreBox": [
+            52,
+            842,
+            193,
+            1030
+          ],
+          "translation": [
+            46,
+            27
+          ],
+          "sourceAnchorX": 73.5
+        },
+        {
+          "state": "walk_attack",
+          "index": 1,
+          "sourceBox": [
+            251,
+            838,
+            405,
+            1037
+          ],
+          "coreBox": [
+            256,
+            843,
+            400,
+            1032
+          ],
+          "translation": [
+            44,
+            26
+          ],
+          "sourceAnchorX": 75.0
+        },
+        {
+          "state": "walk_attack",
+          "index": 2,
+          "sourceBox": [
+            450,
+            839,
+            609,
+            1038
+          ],
+          "coreBox": [
+            455,
+            844,
+            604,
+            1033
+          ],
+          "translation": [
+            41,
+            26
+          ],
+          "sourceAnchorX": 77.5
+        },
+        {
+          "state": "walk_attack",
+          "index": 3,
+          "sourceBox": [
+            645,
+            836,
+            817,
+            1039
+          ],
+          "coreBox": [
+            650,
+            841,
+            812,
+            1034
+          ],
+          "translation": [
+            34,
+            22
+          ],
+          "sourceAnchorX": 84.0
+        },
+        {
+          "state": "walk_attack",
+          "index": 4,
+          "sourceBox": [
+            864,
+            835,
+            1020,
+            1036
+          ],
+          "coreBox": [
+            869,
+            840,
+            1015,
+            1031
+          ],
+          "translation": [
+            43,
+            24
+          ],
+          "sourceAnchorX": 76.0
+        },
+        {
+          "state": "walk_attack",
+          "index": 5,
+          "sourceBox": [
+            1063,
+            837,
+            1212,
+            1033
+          ],
+          "coreBox": [
+            1068,
+            842,
+            1207,
+            1028
+          ],
+          "translation": [
+            47,
+            29
+          ],
+          "sourceAnchorX": 72.5
+        },
+        {
+          "state": "skill",
+          "index": 0,
+          "sourceBox": [
+            51,
+            1045,
+            175,
+            1235
+          ],
+          "coreBox": [
+            56,
+            1050,
+            170,
+            1230
+          ],
+          "translation": [
+            61,
+            36
+          ],
+          "sourceAnchorX": 60.0
+        },
+        {
+          "state": "skill",
+          "index": 1,
+          "sourceBox": [
+            239,
+            1052,
+            393,
+            1231
+          ],
+          "coreBox": [
+            244,
+            1057,
+            388,
+            1226
+          ],
+          "translation": [
+            44,
+            48
+          ],
+          "sourceAnchorX": 75.0
+        },
+        {
+          "state": "skill",
+          "index": 2,
+          "sourceBox": [
+            429,
+            1064,
+            589,
+            1235
+          ],
+          "coreBox": [
+            434,
+            1069,
+            584,
+            1230
+          ],
+          "translation": [
+            41,
+            57
+          ],
+          "sourceAnchorX": 78.0
+        },
+        {
+          "state": "skill",
+          "index": 3,
+          "sourceBox": [
+            624,
+            1055,
+            817,
+            1234
+          ],
+          "coreBox": [
+            629,
+            1060,
+            812,
+            1229
+          ],
+          "translation": [
+            22,
+            48
+          ],
+          "sourceAnchorX": 94.5
+        },
+        {
+          "state": "skill",
+          "index": 4,
+          "sourceBox": [
+            859,
+            1050,
+            993,
+            1232
+          ],
+          "coreBox": [
+            864,
+            1055,
+            988,
+            1227
+          ],
+          "translation": [
+            55,
+            45
+          ],
+          "sourceAnchorX": 65.0
+        },
+        {
+          "state": "skill",
+          "index": 5,
+          "sourceBox": [
+            1071,
+            1042,
+            1197,
+            1237
+          ],
+          "coreBox": [
+            1076,
+            1047,
+            1192,
+            1232
+          ],
+          "translation": [
+            60,
+            31
+          ],
+          "sourceAnchorX": 61.0
+        }
+      ],
+      "locomotionReplacement": {
+        "states": [
+          "walk",
+          "walk_attack"
+        ],
+        "scale": 0.7278911564625851,
+        "source": "sources/locomotion-up_right.png"
+      }
+    }
+  },
+  "quality": {
+    "technical": "validated",
+    "motion": "requires visual review; no claim of pixel-identical anatomy between generated frames"
+  }
+}
