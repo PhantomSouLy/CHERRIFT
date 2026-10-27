@@ -242,6 +242,7 @@
     return previous.length > 0 && previous.every(stageCleared);
   }
   function worldArt(world) {
+    if (window.CHERRIFT_REWORK_MAPS[world]) return window.CHERRIFT_REWORK_MAPS[world].splash;
     if (world === 1) return window.CHERRIFT_WORLD1_ASSETS.splashArts[0];
     if (world === 2) return "assets/map/world2/moonlit/splash.webp";
     if (world === 3) return "assets/map/world3/world3_splashart_1.png";
@@ -253,6 +254,7 @@
   function chapterArt(stage) {
     const world = stageWorld(stage);
     const index = stageIndex(stage);
+    if (window.CHERRIFT_REWORK_MAPS[world]) return window.CHERRIFT_REWORK_MAPS[world].splash;
     if (world === 1) {
       const artIndex = index <= 2 ? 1 : index <= 4 ? 2 : 3;
       return window.CHERRIFT_WORLD1_ASSETS.splashArts[artIndex - 1];
@@ -302,7 +304,7 @@
   function worldEntries() {
     const entries = [];
     const training = trainingStage();
-    if (training && window.CHERRIFT_PREBETA?.hasActiveGmAccess?.(UI.save)) entries.push({ type:"training", world:0, stage:training, name:"Training", art:training.splash || training.art || "assets/map/world3/world3_ground_1.png", unlocked:true });
+    if (training && window.CHERRIFT_PREBETA?.hasActiveGmAccess?.(UI.save)) entries.push({ type:"training", world:0, stage:training, name:"Training", art:window.CHERRIFT_REWORK_MAPS[0].splash, unlocked:true });
     for (let world = 1; world <= worldCount(); world += 1) entries.push({ type:"world", world, name:`World ${world}`, art:worldArt(world), unlocked:worldUnlocked(world) });
     return entries;
   }

@@ -285,6 +285,7 @@ test("raw save uploads cannot change any protected progression or entitlement", 
     Date,
     serverPower,
     prepareSave,
+    catalog,
     MAX_SAVE_BYTES: 1500000,
     GM_TITLE_IDS: new Set(["gm", "senior_gm", "head_gm"]),
     sanitizeElementalResonance: (x) => x,
@@ -774,8 +775,8 @@ test("closing an existing run cannot replace the new Play selection with its old
  assert.equal(f.server().security.online.run.stageId,"world_1_2");
 });
 
-test("recovered Play still requires the server's chapter unlock even with a GM title",async()=>{
- const f=recoveredPlayHarness();f.server().stageStars.world_1_1=0;
+test("recovered Play still requires chapter unlock when an owned GM title is inactive",async()=>{
+ const f=recoveredPlayHarness();f.server().stageStars.world_1_1=0;f.server().profile.activeTitle="";
  const game=new f.Game();assert.equal(await game.start(),false);assert.notEqual(game.started,true);
  assert.equal(f.server().security.online.run,undefined);
  assert.match(f.messages.at(-1),/nincs feloldva/);
@@ -835,7 +836,7 @@ test("online presentation conflict retry is bounded",async()=>{
 });
 
 test("cloud presentation saves retain valid graphics quality without changing progression",()=>{
- const c=vm.createContext({structuredClone,TextEncoder,Date,serverPower,prepareSave,MAX_SAVE_BYTES:1500000,
+ const c=vm.createContext({structuredClone,TextEncoder,Date,serverPower,prepareSave,catalog,MAX_SAVE_BYTES:1500000,
    GM_TITLE_IDS:new Set(["gm","senior_gm","head_gm"]),sanitizeElementalResonance:x=>x,discordProfile:()=>({authProvider:"discord"}),starterSave:starter});
  for(const name of ["isObject","safeText","boundedInteger","sanitizeProgressSave"])vm.runInContext(functionSource(server,name),c);
  const current=starter();current.settings={effectQuality:"medium"};

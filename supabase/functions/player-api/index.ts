@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { applyGameAction, prepareSave, serverPower } from "../_shared/gameplay.mjs";
+import { applyGameAction, prepareSave, serverPower, catalog } from "../_shared/gameplay.mjs";
 
 type JsonObject = Record<string, unknown>;
 
@@ -242,7 +242,7 @@ function sanitizeProgressSave(value: unknown, current: JsonObject, user: any): J
   next.profile = {
     ...requestedProfile,
     ...discordProfile(user),
-    activeTitle:Array.isArray(current.ownedTitles) && current.ownedTitles.includes(requestedProfile.activeTitle)
+    activeTitle:requestedProfile.activeTitle === "" || (Array.isArray(current.ownedTitles) && current.ownedTitles.includes(requestedProfile.activeTitle))
       ? safeText(requestedProfile.activeTitle, 80) : safeText(currentProfile.activeTitle, 80),
     frameId:safeText(currentProfile.frameId, 50) || "frame0lvl",
     createdAt:Number(currentProfile.createdAt || requestedProfile.createdAt || Date.now()),
@@ -281,8 +281,16 @@ function sanitizeProgressSave(value: unknown, current: JsonObject, user: any): J
     (next.settings as JsonObject).uiTheme=settings.uiTheme;
     next.selectedTheme=settings.uiTheme;
   }
-  if ((next.unlockedSkins as string[]).includes(String(value.selectedSkin))) next.selectedSkin = value.selectedSkin;
-  if ((next.unlockedStages as string[]).includes(String(value.selectedStageId))) next.selectedStageId = value.selectedStageId;
+  const activeTitle = String((next.profile as JsonObject).activeTitle || "");
+  const gmPreview = GM_TITLE_IDS.has(activeTitle) && currentTitles.includes(activeTitle);
+  const requestedSkin = String(value.selectedSkin || "");
+  const knownSkin = catalog.skins.some((skin: { id: string }) => skin.id === requestedSkin);
+  if (knownSkin && ((next.unlockedSkins as string[]).includes(requestedSkin) || gmPreview)) next.selectedSkin = requestedSkin;
+  else if (!(next.unlockedSkins as string[]).includes(String(next.selectedSkin))) next.selectedSkin = "cherry_default";
+  const requestedStage = String(value.selectedStageId || "");
+  const knownStage = requestedStage === "training_test" || catalog.stages.some((stage: { id: string }) => stage.id === requestedStage);
+  if (knownStage && ((next.unlockedStages as string[]).includes(requestedStage) || gmPreview)) next.selectedStageId = requestedStage;
+  else if (!(next.unlockedStages as string[]).includes(String(next.selectedStageId))) next.selectedStageId = "world_1_1";
   next.power = serverPower(next);
   return next;
 }

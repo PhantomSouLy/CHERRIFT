@@ -1,7 +1,7 @@
 {
   "version": "world4-red-desert-20261026",
   "theme": "layered red sandstone canyon with open classic desert",
-  "runtimeIntegrated": false,
+  "runtimeIntegrated": true,
   "tiers": [
     "low",
     "medium",

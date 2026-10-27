@@ -1,7 +1,7 @@
 {
   "version": "training-spider-lilies-20261026",
   "theme": "layered pale ash-gray soil and dense separate crimson spider lilies",
-  "runtimeIntegrated": false,
+  "runtimeIntegrated": true,
   "tiers": [
     "low",
     "medium",

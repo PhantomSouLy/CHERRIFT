@@ -45,6 +45,7 @@ jobs:
           npm run test:recovery
           npm run test:integrity
           npm run test:online-api
+          npm run test:mobile-gameplay
           npm run test:gunner
           npm run smoke:supabase-lock
 
@@ -65,6 +66,7 @@ jobs:
           - phone-landscape
           - returning-session
           - gm-returning-session
+          - gm-phone
           - auth-timeout
           - cloud-timeout
 

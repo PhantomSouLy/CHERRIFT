@@ -1,7 +1,7 @@
 {
   "version": "world5-sand-desert-20261026",
   "theme": "layered pale wind-eroded sandstone and simple golden sand desert",
-  "runtimeIntegrated": false,
+  "runtimeIntegrated": true,
   "tiers": [
     "low",
     "medium",

@@ -1368,6 +1368,7 @@ window.UI = {
     UI.init = function(save, game){
       this.save = normalizeSave(save);
       this.game = game;
+      game.save = this.save;
       this.skinIndex = Math.max(0, CHERRIFT_DATA.skins.findIndex(s=>s.id===this.save.selectedSkin));
       this.worldCarouselIndex = stageIndex(this.save.selectedStageId);
       this.bind();
@@ -20493,6 +20494,7 @@ function equipSelectedSkin() {
   const skin = selectedSkin();
   if (!isSkinUnlocked(skin.id)) return UI.toast?.(t("error.lockedSkin"));
   UI.save.selectedSkin = skin.id;
+  if (UI.game) UI.game.save = UI.save;
   if (!UI.save.uiV093.seenSkins.includes(skin.id)) UI.save.uiV093.seenSkins.push(skin.id);
   CherriftStorage.save(UI.save);
   syncHudSkillIcon();
@@ -23108,7 +23110,7 @@ function upsertStage(stage) {
 }
 function installStages() {
   const training = {
-    id:"training_test", world:0, index:0, name:"Training Test", title:"Damage Laboratory", theme:"training",
+    id:"training_test", world:0, index:0, name:"Training Test", title:"Red Spider Lilies", theme:"training",
     goalKills:Number.POSITIVE_INFINITY, maxEnemies:0, raidEvery:Number.POSITIVE_INFINITY, raidCount:0, enemyPool:[], training:true,
     repeatReward:{}, firstClearReward:{}, desc:"Infinite dummy damage test. The 10-second total resets after inactivity."
   };
@@ -23363,7 +23365,7 @@ function patchGame() {
   const previousStart = proto.start;
   proto.start = async function startV094(...args) {
     const stage = this.getSelectedStage?.() || stages().find(entry => entry.id === this.save?.selectedStageId);
-    await preloadWorld(this, Number(stage?.world ?? 1));
+    if (!window.CHERRIFT_REWORK_MAPS?.[Number(stage?.world ?? 1)]) await preloadWorld(this, Number(stage?.world ?? 1));
     hideTrainingPanel();
     const result = await previousStart.apply(this, args);
     this.__v094PatternCache = new Map();

@@ -1,4 +1,7 @@
 import assert from "node:assert/strict";
+import vm from "node:vm";
+import {stripTypeScriptTypes} from "node:module";
+import {applyGameAction,prepareSave,serverPower,catalog} from "../supabase/functions/_shared/gameplay.mjs";
 import { checkPcMenuCleanup } from "./pc_cleanup_checks.mjs";
 import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
@@ -19,6 +22,7 @@ const cases = {
   "phone-landscape": [844, 390],
   "returning-session": [1280, 760],
   "gm-returning-session": [1280, 760],
+  "gm-phone": [390, 844],
   "auth-timeout": [1280, 760],
   "cloud-timeout": [390, 844]
 };
@@ -30,7 +34,14 @@ if (!cases[requested]) {
 const [width, height] = cases[requested];
 const authTimeoutCase = requested === "auth-timeout";
 const cloudTimeoutCase = requested === "cloud-timeout";
-const gmReturning = requested === "gm-returning-session";
+const gmReturning = ["gm-returning-session","gm-phone"].includes(requested);
+let sanitizeServerSave;
+if (gmReturning) {
+  const c=vm.createContext({console,Date,crypto,TextEncoder,structuredClone,applyGameAction,prepareSave,serverPower,catalog,
+    createClient:()=>({}),Deno:{env:{get:()=>""},serve(){}},Request,Response,Headers});
+  const source=stripTypeScriptTypes(await readFile(new URL("../supabase/functions/player-api/index.ts",import.meta.url),"utf8"),{mode:"transform"}).replace(/^import .*;\s*$/gm,"");
+  vm.runInContext(source+"\nglobalThis.sanitize=sanitizeProgressSave;",c);sanitizeServerSave=c.sanitize;
+}
 const returning = requested === "returning-session" || gmReturning || cloudTimeoutCase;
 const runtimeErrors = [];
 const missingLocalRequests = [];
@@ -273,10 +284,10 @@ function fallbackStarterSave(window, userId = "") {
   result.profile ||= {};
   result.profile.name ||= "Returning Cherry";
   if (gmReturning) {
-    result.profile.activeTitle = "gm";
-    result.ownedTitles = ["gm"];
+    result.profile.activeTitle = "head_gm";
+    result.ownedTitles = ["head_gm"];
     result.unlockedSkins = (window.CHERRIFT_DATA?.skins || [])
-      .map(skin => skin.id).filter(id => id !== "gunner_cherry");
+      .map(skin => skin.id).filter(id => !["gunner_cherry","ninja_cherry"].includes(id));
     result.prebeta = {...result.prebeta, gmAccessActive:false};
   }
   result.security = {
@@ -348,6 +359,7 @@ function createFakeSupabase(window) {
       }
 
       case "save_progress":
+        if (gmReturning) authoritativeSave=sanitizeServerSave(body.save_data,authoritativeSave,session.user);
         updatedAt = new Date().toISOString();
         return {
           data: {
@@ -359,6 +371,12 @@ function createFakeSupabase(window) {
           error: null
         };
 
+      case "game_action": {
+        if(!gmReturning)return {data:{ok:true},error:null};
+        const result=applyGameAction(authoritativeSave,body.operation,body.params);
+        authoritativeSave=result.save;updatedAt=new Date().toISOString();
+        return {data:{ok:true,save_data:cloneJson(authoritativeSave),rewards:result.rewards,updated_at:updatedAt},error:null};
+      }
       case "reward_catalog":
         return { data: { resources: [] }, error: null };
 
@@ -1280,6 +1298,39 @@ try {
     window.CherriftStorage.save(window.UI.save);
     await new Promise(resolve=>setTimeout(resolve,150));
     assert.equal(document.body.classList.contains("obtained-open-v098"),false,"Claim stays closed");
+    window.UI.open("skins");
+    const ninjaCard=document.querySelector('[data-v093-skin="ninja_cherry"]');
+    assert(ninjaCard,"Ninja is available in the actual selector");click(window,ninjaCard,"choose Ninja");
+    click(window,document.querySelector('[data-v093-equip]'),"equip Ninja");
+    assert.equal(window.UI.save.selectedSkin,"ninja_cherry");
+    assert.equal(await window.CHERRIFT_AUTH.flushCloudSave(),true);
+    assert.equal(window.UI.save.selectedSkin,"ninja_cherry","server acknowledgement retains GM preview selection");
+    assert.equal(window.UI.game.save,window.UI.save,"menu and gameplay share acknowledged save");
+    assert.equal(window.UI.game.activeSkinData().id,"ninja_cherry");
+    const backup=JSON.parse(window.localStorage.getItem("cherrift-discord-backup-v2:"+context.userId));
+    assert.equal(backup.saveData.selectedSkin,"ninja_cherry","reload backup retains equipped skin");
+    assert(!backup.saveData.prebeta.gmAccessBackup.unlockedSkins.includes("ninja_cherry"),"GM selection never grants permanent ownership");
+    window.UI.save.selectedStageId="world_6_5";window.CherriftStorage.save(window.UI.save);
+    await window.CHERRIFT_AUTH.flushCloudSave();
+    await window.UI.game.start();
+    assert.equal(window.UI.game.mode,"playing","actual GM run starts on World 6");
+    assert.equal(window.UI.game.stage.world,6,"World 6 is never remapped to World 3");
+    assert.equal(window.UI.game.player.skin,"ninja_cherry","actual spawned actor is Ninja");
+    assert.equal(window.UI.game.__reworkArt.world,6);window.UI.game.drawWorld(window.UI.game.ctx);
+    await waitFor(()=>!window.UI.game.__v062StartPromise && document.body.classList.contains("is-playing"),"first run fully presented",5000);
+    // End through the native path so the next run exercises server acknowledgement again.
+    window.UI.quit();await window.CHERRIFT_AUTH.flushCloudSave();
+    await waitFor(()=>window.UI.save.security?.online?.run?.ended,"first server run closed",5000);
+    window.UI.save.selectedStageId="training_test";window.CherriftStorage.save(window.UI.save);
+    await window.CHERRIFT_AUTH.flushCloudSave();await window.UI.game.start();
+    assert.equal(window.UI.game.mode,"playing");assert(window.UI.game.stage.training);
+    assert.equal(window.UI.game.__reworkArt.world,0);assert(window.UI.game.__reworkMap.flowerCount>16000);
+    assert(window.UI.game.enemies.some(e=>e.isTrainingDummyV094));
+    await waitFor(()=>!window.UI.game.__v062StartPromise && document.body.classList.contains("is-playing"),"training fully presented",5000);
+    window.UI.game.drawWorld(window.UI.game.ctx);window.UI.quit();
+    await waitFor(()=>window.UI.save.security?.online?.run?.ended,"training server run closed",5000);
+    await window.CHERRIFT_AUTH.flushCloudSave();
+
   }
 
   if (requested === "desktop" || requested === "phone-portrait") {

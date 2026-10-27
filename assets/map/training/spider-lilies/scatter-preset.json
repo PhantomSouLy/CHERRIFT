@@ -1,17 +1,45 @@
 {
   "version": "training-spider-lilies-concept3",
-  "runtimeIntegrated": false,
+  "runtimeIntegrated": true,
   "units": "logical game units; starting values requiring in-game review",
   "flowers": {
-    "keys": ["lilySingle1", "lilySingle2", "lilyDouble", "lilyBuds", "lilyClump1", "lilyClump2", "lilyClump3", "lilyClump4", "lilyLow", "lilyTall"],
-    "weights": [8, 8, 12, 4, 16, 14, 12, 8, 10, 8],
+    "keys": [
+      "lilySingle1",
+      "lilySingle2",
+      "lilyDouble",
+      "lilyBuds",
+      "lilyClump1",
+      "lilyClump2",
+      "lilyClump3",
+      "lilyClump4",
+      "lilyLow",
+      "lilyTall"
+    ],
+    "weights": [
+      8,
+      8,
+      12,
+      4,
+      16,
+      14,
+      12,
+      8,
+      10,
+      8
+    ],
     "placement": "seeded jittered grid across full playable map, including center and starting area",
     "cellSize": 28,
     "occupancy": 0.94,
     "jitterFraction": 0.42,
-    "scaleRange": [0.85, 1.15],
+    "scaleRange": [
+      0.85,
+      1.15
+    ],
     "horizontalFlipProbability": 0.5,
-    "rotationRadiansRange": [-0.04, 0.04],
+    "rotationRadiansRange": [
+      -0.04,
+      0.04
+    ],
     "solid": false,
     "excludeLargeEmptyCenter": true,
     "avoidSolidObstacleFootprints": true,
@@ -21,8 +49,16 @@
     "renderAdvice": "camera culling plus spatial chunks; avoid scanning all flowers per frame"
   },
   "props": {
-    "solidKeys": ["rock1", "rock2"],
-    "decorativeKeys": ["rockSmall", "pebbles", "moss", "grass"],
+    "solidKeys": [
+      "rock1",
+      "rock2"
+    ],
+    "decorativeKeys": [
+      "rockSmall",
+      "pebbles",
+      "moss",
+      "grass"
+    ],
     "density": "sparse accents; flowers remain dominant"
   },
   "fog": {

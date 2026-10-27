@@ -409,5 +409,6 @@
       ],
       "padding": 27
     }
-  }
+  },
+  "runtimeIntegrated": true
 }

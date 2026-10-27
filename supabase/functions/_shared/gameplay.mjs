@@ -264,6 +264,8 @@ function sellValue(item) {
   );
 }
 function stageAllowed(s, stage) {
+  const title = s.profile?.activeTitle;
+  if (["gm", "senior_gm", "head_gm"].includes(title) && s.ownedTitles.includes(title)) return true;
   const rights = s.prebeta?.entitlements || {};
   if (rights.owner || rights.allContent) return true;
   const w = stage.world,

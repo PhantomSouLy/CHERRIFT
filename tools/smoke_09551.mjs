@@ -13,6 +13,7 @@ const allCases = [
   "phone-landscape",
   "returning-session",
   "gm-returning-session",
+  "gm-phone",
   "auth-timeout",
   "cloud-timeout"
 ];

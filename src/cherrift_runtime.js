@@ -98,10 +98,7 @@
   const WORLD_MAPS = Object.freeze({
     1:window.CHERRIFT_WORLD1_ASSETS,
     2:window.CHERRIFT_WORLD2.spec,
-    3:{ground:"assets/map/world3/world3_ground_1.png",tint:"rgba(201,159,76,.035)",objects:{bones:{src:"assets/map/world3/world3_bones.png",count:7,w:72,h:50,anchor:.68},bush1:{src:"assets/map/world3/world3_bush_1.png",count:9,w:96,h:76,anchor:.73},bush2:{src:"assets/map/world3/world3_bush_2.png",count:9,w:94,h:74,anchor:.73},log:{src:"assets/map/world3/world3_log.png",count:7,w:104,h:62,anchor:.70,solid:true,r:28},rock1:{src:"assets/map/world3/world3_rock_1.png",count:10,w:90,h:70,anchor:.72,solid:true,r:26},rock2:{src:"assets/map/world3/world3_rock_2.png",count:9,w:86,h:68,anchor:.72,solid:true,r:25},grass1:{src:"assets/map/world3/world3_tall_grass_1.png",count:13,w:78,h:60,anchor:.76},grass2:{src:"assets/map/world3/world3_tall_grass_2.png",count:12,w:74,h:58,anchor:.76},tree1:{src:"assets/map/world3/world3_tree_1.png",count:7,w:138,h:184,anchor:.85,solid:true,r:27},tree2:{src:"assets/map/world3/world3_tree_2.png",count:6,w:146,h:196,anchor:.86,solid:true,r:29}}},
-    4:{ground:"assets/map/world4/world4_ground_1.png",tint:"rgba(176,83,46,.045)",objects:{bigRock:{src:"assets/map/world4/world4_big_rock_1.png",count:6,w:126,h:94,anchor:.73,solid:true,r:36},bones:{src:"assets/map/world4/world4_bones_1.png",count:8,w:74,h:50,anchor:.68},bush:{src:"assets/map/world4/world4_bush_1.png",count:9,w:86,h:68,anchor:.73},cactus1:{src:"assets/map/world4/world4_cactus_1.png",count:7,w:104,h:142,anchor:.84,solid:true,r:23},cactus2:{src:"assets/map/world4/world4_cactus_2.png",count:8,w:84,h:118,anchor:.83,solid:true,r:20},flower:{src:"assets/map/world4/world4_flower_1.png",count:7,w:46,h:42,anchor:.68},rock1:{src:"assets/map/world4/world4_rock_1.png",count:9,w:104,h:78,anchor:.72,solid:true,r:30},rock2:{src:"assets/map/world4/world4_rock_2.png",count:9,w:92,h:72,anchor:.72,solid:true,r:27},veryBig:{src:"assets/map/world4/world4_rock_very_big_1.png",count:5,w:148,h:108,anchor:.73,solid:true,r:42},tree:{src:"assets/map/world4/world4_tree_1.png",count:6,w:136,h:184,anchor:.85,solid:true,r:27}}},
-    5:{ground:"assets/map/world5/world5_ground_1.png",tint:"rgba(246,183,89,.035)",objects:{dune:{src:"assets/map/world5/world5_dune_01.png",count:13,w:190,h:90,anchor:.62},deadBush:{src:"assets/map/world5/world5_dead_bush_01.png",count:12,w:64,h:50,anchor:.72},bones:{src:"assets/map/world5/world5_bones_01.png",count:8,w:76,h:52,anchor:.68},cactus:{src:"assets/map/world5/world5_mini_cactus_01.png",count:14,w:58,h:78,anchor:.79,solid:true,r:15},flower:{src:"assets/map/world5/world5_flower_01.png",count:10,w:38,h:38,anchor:.66}}},
-    6:{ground:"assets/map/world6/world6_ground_1.png",tint:"rgba(20,11,43,.16)",objects:{bonePiles:{src:"assets/map/world6/world6_bone_piles_01.png",count:8,w:76,h:52,anchor:.68},crystal:{src:"assets/map/world6/world6_crystal_01.png",count:11,w:62,h:72,anchor:.77,solid:true,r:14},pillar:{src:"assets/map/world6/world6_pillar_01.png",count:8,w:88,h:148,anchor:.83,solid:true,r:22},runestone:{src:"assets/map/world6/world6_runestone_01.png",count:9,w:78,h:106,anchor:.81,solid:true,r:19},statue1:{src:"assets/map/world6/world6_statue_01.png",count:5,w:86,h:138,anchor:.83,solid:true,r:22},statue2:{src:"assets/map/world6/world6_statue_02.png",count:5,w:86,h:138,anchor:.83,solid:true,r:22},stone:{src:"assets/map/world6/world6_stone_01.png",count:14,w:78,h:58,anchor:.71,solid:true,r:18},tree:{src:"assets/map/world6/world6_tree_01.png",count:9,w:122,h:184,anchor:.85,solid:true,r:24}}}
+    ...Object.fromEntries(Object.entries(window.CHERRIFT_REWORK_MAPS).map(([world,map])=>[world,map.spec]))
   });
 
   const ACHIEVEMENTS = Object.freeze([
@@ -170,7 +167,7 @@
       const chapter = Number(stage?.index || String(stage?.id || "").match(/_(\d+)$/)?.[1]);
       if (!(world >= 1 && world <= 6) || !(chapter >= 1 && chapter <= 5) || stage.training) continue;
       const variant = chapter <= 2 ? 1 : chapter <= 4 ? 2 : world === 4 ? 2 : 3;
-      stage.splash = world === 2 ? window.CHERRIFT_WORLD2.splash : world === 1 ? WORLD_MAPS[1].splashArts[variant - 1] : `assets/map/world${world}/world${world}_splashart_${variant}.png`;
+      stage.splash = window.CHERRIFT_REWORK_MAPS[world]?.splash || (world === 2 ? window.CHERRIFT_WORLD2.splash : world === 1 ? WORLD_MAPS[1].splashArts[variant - 1] : `assets/map/world${world}/world${world}_splashart_${variant}.png`);
       const pool = WORLD_POOLS[world]?.[chapter - 1];
       if (pool?.length) stage.enemyPool = [...pool];
     }
@@ -211,7 +208,7 @@
     return Math.max(1,Math.round(baseCount * factor));
   }
 
-  const meadowFor = world => world===1?window.CHERRIFT_WORLD1:world===2?window.CHERRIFT_WORLD2:null;
+  const meadowFor = world => world===1?window.CHERRIFT_WORLD1:world===2?window.CHERRIFT_WORLD2:window.CHERRIFT_REWORK_MAPS[world] || null;
 
   function preloadWorld(world){
     if (meadowFor(world)) return; // Meadow art is decoded before the run starts.
@@ -457,7 +454,8 @@
       return WORLD_MAPS[world]?buildWorld(this,world):legacy;
     };
     if (typeof previousStart==="function") proto.start=async function(...args){
-      const before=Number(this.getSelectedStage?.()?.world) || stageWorld(this);
+      configureWorldStages();
+      const before=Number(this.getSelectedStage?.()?.world ?? stageWorld(this));
       if (meadowFor(before)) await meadowFor(before).prepare(this);
       if (WORLD_MAPS[before]) preloadWorld(before);
       const result=await previousStart.apply(this,args), world=stageWorld(this);

@@ -268,7 +268,7 @@
         theme:world===5?"red_desert":"savanna",goalKills:killTargets[world][index-1],maxEnemies:48+index*4,
         raidEvery:44+index*3,raidCount:20+index*3,enemyPool:["pink_slime","green_slime","blue_slime","big_slime","spider","beetle","crawler","moth"],
         repeatReward:{coins:rewards.repeat[index-1]},firstClearReward:{coins:rewards.first[index-1]},accountXp:stageXp(world,index),
-        splash:world===5?`assets/map/world4/world4_splashart_${index<=2?1:2}.png`:`assets/map/world3/world3_splashart_${index<=2?1:index<=4?2:3}.png`,
+        splash:window.CHERRIFT_REWORK_MAPS[world].splash,
         placeholder:true,desc:"Pre-beta placeholder chapter; artwork can be replaced without changing progression."};
       const current = list.find(entry => entry.id === stage.id); if (current) Object.assign(current,stage); else list.push(stage);
     }
@@ -344,7 +344,7 @@
   function patchGame() {
     const proto=window.CherriftGame?.prototype; if(!proto||proto.__prebeta095)return; proto.__prebeta095=true;
     const start=proto.start; proto.start=async function(...args){ if(!startRunAllowed(this))return false; const result=await start.apply(this,args);if(this.player){const bonus=titleStats(this.save),hpBonus=bonus.maxHp+bonus.allStats;this.player.damage+=bonus.damage+bonus.allStats;this.player.maxHp+=hpBonus;this.player.hp+=hpBonus;this.player.speed+=bonus.allStats;if(this.player.skin==="mage_cherry"&&Number.isFinite(Number(this.player.regen)))this.player.regen+=hpBonus*.005;if(Number.isFinite(Number(this.player.armor)))this.player.armor+=bonus.allStats;}return result; };
-    const generate=proto.generateMap; if(generate) proto.generateMap=function(...args){ const stage=this.stage||this.getSelectedStage?.(); if(!stage||stage.world<5)return generate.apply(this,args); const world=stage.world; stage.world=world===5?4:3; try{return generate.apply(this,args);}finally{stage.world=world;} };
+    // The canonical runtime owns every installed world; keep its real identity.
     const spawn=proto.spawnEnemy; if(spawn) proto.spawnEnemy=function(...args){ const before=this.enemies?.length||0,result=spawn.apply(this,args),world=B.worlds?.[stageWorld(this.stage)]||B.worlds?.[1]; for(const enemy of (this.enemies||[]).slice(before)){ const chapter=1+(stageIndex(this.stage)-1)*.09; const elite=enemy.eliteV088?1.65:1; enemy.hp*=world.hp*chapter*elite; enemy.maxHp*=world.hp*chapter*elite; enemy.speed*=world.speed; } return result; };
     const updateEnemies=proto.updateEnemies; if(updateEnemies) proto.updateEnemies=function(dt){ const hp=Number(this.player?.hp); const result=updateEnemies.call(this,dt); const lost=hp-Number(this.player?.hp); const mult=B.worlds?.[stageWorld(this.stage)]?.damage||1; if(lost>0&&this.player)this.player.hp=Math.max(0,this.player.hp-lost*(mult-1)); return result; };
     const stageClear=proto.stageClear; if(stageClear) proto.stageClear=function(...args){

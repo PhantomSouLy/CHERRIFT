@@ -10,6 +10,7 @@ import {
   applyGameAction,
   prepareSave,
   serverPower,
+  catalog,
 } from "../supabase/functions/_shared/gameplay.mjs";
 const root = path.resolve("."),
   tables = new Map();
@@ -164,6 +165,7 @@ const context = vm.createContext({
   applyGameAction,
   prepareSave,
   serverPower,
+  catalog,
   createClient: () => client,
   Deno: {
     env: {

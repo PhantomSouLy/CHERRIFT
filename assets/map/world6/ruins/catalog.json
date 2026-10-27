@@ -1,7 +1,7 @@
 {
   "version": "world6-ruins-20261026",
   "theme": "layered cursed stone courtyard with restrained amethyst accents",
-  "runtimeIntegrated": false,
+  "runtimeIntegrated": true,
   "tiers": [
     "low",
     "medium",
