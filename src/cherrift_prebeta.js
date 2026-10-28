@@ -423,7 +423,19 @@
   function openPrebetaPanel(panel){if(panel==="socialV082"){renderSocial();return true;}if(panel==="rankingPrebeta"){renderRanking();return true;}return false;}
 
   function addNavigation(){const drawer=q("#mobileMenuV082 .mobile-menu-grid-v082");if(drawer&&!q('[data-prebeta-open="rankingPrebeta"]',drawer))drawer.insertAdjacentHTML("beforeend",'<button type="button" data-prebeta-open="rankingPrebeta"><i><img src="assets/player/frames/frame_rank1.png" alt=""></i><b>Ranking</b></button>');}
-  function updateEnergyUi(){const save=window.UI?.save;if(!save)return;refreshEnergy(save);qa(".mobile-energy-v0932").forEach(node=>{node.classList.add("prebeta-energy-pill");node.innerHTML=`<i>⚡</i><b>${save.energy}/${save.energyState.max}</b>`;node.onclick=showEnergyModal;});const mobile=id("mobileEnergyValue");if(mobile)mobile.textContent=`${save.energy}/${save.energyState.max}`;}
+  function updateEnergyUi(){
+    const save=window.UI?.save;if(!save)return;refreshEnergy(save);
+    const value=`${save.energy}/${save.energyState.max}`;
+    qa(".mobile-energy-v0932").forEach(node=>{
+      // Repeated menu/cloud refreshes must not wake every global observer when
+      // the energy display has not changed. Keep the existing click owner.
+      if(!node.classList.contains("prebeta-energy-pill"))node.classList.add("prebeta-energy-pill");
+      const markup=`<i>⚡</i><b>${value}</b>`;
+      if(node.innerHTML!==markup)node.innerHTML=markup;
+      node.onclick=showEnergyModal;
+    });
+    const mobile=id("mobileEnergyValue");if(mobile&&mobile.textContent!==value)mobile.textContent=value;
+  }
 
   function patchUi(){if(!window.UI||state.patched)return;state.patched=true;window.CHERRIFT_TITLES=B.titles;const open=UI.open?.bind(UI);UI.open=function(panel,...args){if(panel==="socialV082"){renderSocial();return;}if(panel==="rankingPrebeta"){renderRanking();return;}const result=open?.(panel,...args);setTimeout(()=>{decorateProfile();addNavigation();updateEnergyUi();},0);return result;};const refresh=UI.refreshMenu?.bind(UI);if(refresh)UI.refreshMenu=function(...args){normalizeSave(this.save);const result=refresh(...args);setTimeout(()=>{updateEnergyUi();addNavigation();decorateProfile();},0);return result;};}
 

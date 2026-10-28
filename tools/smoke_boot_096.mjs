@@ -747,13 +747,27 @@ function installBrowserStubs(window) {
   const NativeMutationObserver = window.MutationObserver;
   window.MutationObserver = class BootSmokeMutationObserver {
     constructor(callback) {
+      this.origin = new Error().stack?.split("\n").slice(2, 5).join("\n");
+      this.callbacks = 0;
+      this.lastMutations = [];
       this.inner = new NativeMutationObserver(records => {
+        this.callbacks += 1;
+        this.lastMutations = records.slice(0, 4).map(record => ({
+          type: record.type,
+          target: record.target.id || record.target.nodeName,
+          className: typeof record.target.className === "string" ? record.target.className : "",
+          parent: record.target.parentElement?.id || record.target.parentElement?.className,
+          attribute: record.attributeName
+        }));
         mutationObserverCallbacks += 1;
         phaseObserverCallbacks += 1;
 
         if (phaseObserverCallbacks > maxMutationObserverCallbacks) {
           if (!mutationObserverRunaway) {
             mutationObserverRunaway = true;
+            console.error("[boot-smoke] observer diagnostics", JSON.stringify(
+              [...activeMutationObservers].sort((a,b)=>b.callbacks-a.callbacks)
+                .slice(0, 8).map(({origin,callbacks,lastMutations})=>({origin,callbacks,lastMutations})), null, 2));
             for (const observer of activeMutationObservers) {
               observer.disconnect();
             }
@@ -1534,6 +1548,10 @@ try {
     });
   }
   log("PASS");
+  if (process.env.CHERRIFT_SMOKE_OBSERVER_DIAGNOSTICS === "1") {
+    console.log(JSON.stringify([...activeMutationObservers].sort((a,b)=>b.callbacks-a.callbacks)
+      .map(({origin,callbacks,lastMutations})=>({origin,callbacks,lastMutations})), null, 2));
+  }
   console.log(
     `PASS ${requested} ${width}x${height} · deterministic Clean Runtime boot · ` +
     `observer callbacks=${mutationObserverCallbacks}`
