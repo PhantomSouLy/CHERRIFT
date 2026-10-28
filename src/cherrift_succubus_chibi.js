@@ -7,7 +7,7 @@
   const ID='succubus_cherry', skin=CHERRIFT_CONFIG.player.skins[ID];
   if (!skin) return;
   const ROOT='assets/player/cherry_skins/succubus_cherry/sheets192';
-  const VERSION='1027-succubus-chibi1';
+  const VERSION='1028-succubus-legs2';
   const DIRS=['right','down_right','down','down_left','left','up_left','up','up_right'];
   const old=skin.states;
   const rangedDuration=old.attack_ranged.duration || 6/16;
@@ -137,7 +137,8 @@
     ctx.save();ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
     // These strips are registered offline to a fixed body pivot. Never derive
     // a new x anchor from changing feet, wing/tail silhouettes or weapons.
-    ctx.drawImage(image,frame*192,0,192,192,p.x-96*width/192,p.y+30-184*height/192,width,height);
+    const gait=window.CHERRIFT_SUCCUBUS_GAIT?.get(image,this.assets.get(`player_${ID}_idle_${dir}`),name,dir,frame);
+    ctx.drawImage(gait || image,gait?0:frame*192,0,192,192,p.x-96*width/192,p.y+30-184*height/192,width,height);
     ctx.restore();
     // Keep the existing brief overheal shield visual, without calling the old
     // character renderer (which would draw a second, legacy body underneath).
