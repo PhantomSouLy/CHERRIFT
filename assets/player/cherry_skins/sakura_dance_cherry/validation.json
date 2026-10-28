@@ -1,0 +1,18 @@
+{
+  "directions": 8,
+  "states": 7,
+  "framesPerState": 6,
+  "frames": 336,
+  "sheets": 56,
+  "empty": [],
+  "clipped": [],
+  "heightRange": [
+    116,
+    118
+  ],
+  "combatAndIntegrationTests": 11,
+  "renderCombinationsChecked": 336,
+  "upperBodyPixelsPreserved": true,
+  "supportFootUnclipped": true,
+  "liveBrowserGameTest": false
+}
