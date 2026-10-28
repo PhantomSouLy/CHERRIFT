@@ -46,7 +46,14 @@ test('walk attacks retain the cast frame while their legs follow the independent
   window.CHERRIFT_CHERRY_GAIT={get(...args){gaitArgs=args;return {corrected:true};}};
   motion.draw({drawImage(...a){drawArgs=a;}},{original:true},'ninja_cherry','walk_attack_ranged','right',4,
     {x:0,y:0,cherryStrideTime:.14},116,116);
-  assert.equal(gaitArgs[3],1,'leg phase');assert.equal(gaitArgs[5],4,'attack pose');assert.equal(drawArgs[0].corrected,true);assert.equal(drawArgs[1],0);
+  assert.equal(gaitArgs[3],1.12,'leg phase');assert.equal(gaitArgs[5],4,'attack pose');assert.equal(drawArgs[0].corrected,true);assert.equal(drawArgs[1],0);
+});
+test('shared upper-body interpolation and native stride have independent clocks',()=>{
+ const {window,motion}=fixture();let request,gait;
+ window.CHERRIFT_CHERRY_GAIT={get(...args){gait=args;return {corrected:true};}};
+ const ctx={drawImage(){}};window.CHERRIFT_ANIMATION_SMOOTHING={draw(...args){request=args;args[9].makeFrame(ctx,2);assert.equal(gait,undefined,'raw upper-body provider must not contain the gait');args[9].makeLower(ctx);return true;}};
+ motion.draw(ctx,{},'ninja_cherry','walk_attack_ranged','right',4,{x:0,y:0,cherryStrideTime:.14},116,116,4.45);
+ assert.equal(request[5],4.45);assert.equal(gait[3],1.12);assert.equal(gait[5],4);assert.equal(request[9].loop,false);
 });
 
 test('missing geometry falls back safely, and browser modules load before skin renderers',()=>{
@@ -84,3 +91,4 @@ test('forward diagonal firing keeps the original face stationary through the ent
     }
   }
 });
+

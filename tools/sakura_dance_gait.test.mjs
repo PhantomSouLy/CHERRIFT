@@ -21,13 +21,14 @@ test('animation entrypoints share manifest build and are loaded in dependency or
  const html=readFileSync('index.html','utf8'),manifest=JSON.parse(readFileSync('src/cherrift_manifest.json','utf8'));
  const ids=[...html.matchAll(/(?:src|href)=["'](?:src|assets)\/[^"']+\?v=([^"']+)/gi)].map(m=>m[1]);assert.deepEqual([...new Set(ids)],[manifest.buildId]);
  assert.ok(html.indexOf('src/cherrift_sakura_dance_gait.js')<html.indexOf('src/cherrift_sakura_dance_chibi.js'));
- const preview=readFileSync('assets/player/cherry_skins/sakura_dance_cherry/preview.html','utf8');assert.match(preview,/\(clock\*8\)%6/);
+ const preview=readFileSync('animation-preview.html','utf8');assert.match(preview,/CHERRIFT_ANIMATION_SMOOTHING/);
 });
 test('detached old boot pixels are removed while pixels connected to the torso survive',()=>{
  const pixels=new Uint8ClampedArray(192*192*4);
- for(let y=150;y<164;y++)for(let x=91;x<95;x++)pixels[(y*192+x)*4+3]=255;
+ for(let y=140;y<164;y++)for(let x=91;x<95;x++)pixels[(y*192+x)*4+3]=255;
  for(let y=176;y<183;y++)for(let x=110;x<115;x++)pixels[(y*192+x)*4+3]=255;
  const {gait}=fixture(pixels);gait.get({}, {},'walk','down',0,0);
  assert.equal(pixels[(180*192+112)*4+3],0,'old detached shoe erased');
- assert.equal(pixels[(161*192+92)*4+3],255,'connected costume preserved');
+ assert.equal(pixels[(145*192+92)*4+3],255,'connected costume preserved');
 });
+

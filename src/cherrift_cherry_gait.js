@@ -29,13 +29,12 @@
       up: [[95,145,97,183,[[84,141],[105,141],[109,165],[110,186],[86,186],[83,161]]], [112,145,113,165,[[104,141],[124,142],[124,160],[115,171],[104,167]]]]
     }
   };
-  const cache = new WeakMap();
-  const mirrored = {left:'right', down_left:'down_right', up_left:'up_right'};
-  function polygon(ctx, points) {
-    ctx.beginPath(); points.forEach(([x,y],i) => i ? ctx.lineTo(x,y) : ctx.moveTo(x,y)); ctx.closePath();
-  }
-  function canvas() { const c=document.createElement('canvas'); c.width=c.height=192; return c; }
-  function create(image, id, direction, geometry, sourceFrame, requestedFrame) {
+  const prepared=new WeakMap(),outputs=new WeakMap(),recent=new Map();
+  const mirrored={left:'right',down_left:'down_right',up_left:'up_right'};
+  function polygon(ctx,points){ctx.beginPath();points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();}
+  function canvas(){const c=document.createElement('canvas');c.width=c.height=192;return c;}
+  function prepare(image,id,direction,geometry,sourceFrame){
+    let map=prepared.get(image);if(!map){map=new Map();prepared.set(image,map);}const key=id+':'+direction+':'+sourceFrame;if(map.has(key)){const cached=map.get(key);recent.delete(cached);recent.set(cached,true);return cached;}
     const mirror = !!mirrored[direction], dir=mirrored[direction] || direction;
     const rig = rigs[id]?.[dir];
     if (!rig || !geometry || typeof document === 'undefined') return null;
@@ -69,42 +68,17 @@
     const side = dir === 'right';
     const diagonal = dir.includes('_');
     const axis=(legs[0].hx+legs[1].hx)/2;
-    for (const frame of [requestedFrame]) {
-      const out=canvas(),ctx=out.getContext('2d');
-      const phase=Math.cos(frame*Math.PI/3);
-      const poses=[0,1].map(i=>({i,contact:phase*(i===0?1:-1)}))
-        .sort((a,b)=>a.contact-b.contact);
-      for(const {i,contact} of poses) {
-        // Reuse the intact leg from this original frame for the formerly
-        // occluded rear contact. Rigid transforms preserve its drawn anatomy.
-        const source=side?i:0, leg=legs[source];
-        const rootX=side?legs[i].hx:axis+(mirror?-1:1)*(i===0?-5:5);
-        const rootY=legs[i].hy;
-        const angle=Math.atan2(leg.fx-leg.hx,leg.fy-leg.hy);
-        const desired=(mirror?-1:1)*(side ? .42 : diagonal ? .24 : .07)*contact;
-        const scale=side ? .94+.06*contact : .84+.16*contact;
-        ctx.save();ctx.translate(rootX,rootY);
-        ctx.rotate(angle-desired);
-        ctx.scale(scale,scale);
-        ctx.translate(-leg.hx,-leg.hy);
-        ctx.drawImage(layers[source],0,0);ctx.restore();
-      }
-      ctx.drawImage(body,0,0);
-      return out;
-    }
-    return null;
+    const result={body,legs,layers,side,diagonal,axis,mirror,owner:map,key};if(map.size>=8){const oldest=map.get(map.keys().next().value);recent.delete(oldest);map.delete(oldest.key);}map.set(key,result);recent.set(result,true);while(recent.size>16){const oldest=recent.keys().next().value;recent.delete(oldest);oldest.owner.delete(oldest.key);}return result;
   }
-  function get(image,id,dir,frame,geometry,sourceFrame=0) {
-    let variants=cache.get(image);
-    if (!variants) {variants=new Map();cache.set(image,variants);}
-    const key=sourceFrame*6+frame%6;
-    if (!variants.has(key)) {
-      // Bound each strip to six small canvases on mobile. Source images remain
-      // owned by the existing asset loader; no extra network requests.
-      if(variants.size>=6) variants.delete(variants.keys().next().value);
-      variants.set(key,create(image,id,dir,geometry,sourceFrame,frame%6));
-    }
-    return variants.get(key) || null;
+  function get(image,id,dir,phase,geometry,sourceFrame=0){
+    const rig=prepare(image,id,dir,geometry,sourceFrame);if(!rig)return null;let out=outputs.get(image);if(!out){out=canvas();outputs.set(image,out);}const ctx=out.getContext('2d');ctx.clearRect(0,0,192,192);
+    const {body,legs,layers,side,diagonal,axis,mirror}=rig,contact=Math.cos(phase*Math.PI/3);
+    for(let i=0;i<2;i++){
+      const step=contact*(i===0?1:-1),source=side?i:0,leg=legs[source];
+      const rootX=side?legs[i].hx:axis+(mirror?-1:1)*(i===0?-5:5),rootY=legs[i].hy;
+      const angle=Math.atan2(leg.fx-leg.hx,leg.fy-leg.hy),desired=(mirror?-1:1)*(side?.42:diagonal?.24:.07)*step,scale=side?.94+.06*step:.84+.16*step;
+      ctx.save();ctx.translate(rootX,rootY);ctx.rotate(angle-desired);ctx.scale(scale,scale);ctx.translate(-leg.hx,-leg.hy);ctx.drawImage(layers[source],0,0);ctx.restore();
+    }ctx.drawImage(body,0,0);return out;
   }
   window.CHERRIFT_CHERRY_GAIT=Object.freeze({get});
 })();

@@ -23,6 +23,7 @@ test('runtime and standalone preview use the same compositor',()=>{
  assert.ok(html.indexOf('src/cherrift_succubus_gait.js')<html.indexOf('src/cherrift_succubus_chibi.js'));
  const runtime=readFileSync('src/cherrift_succubus_chibi.js','utf8');
  assert.match(runtime,/CHERRIFT_SUCCUBUS_GAIT\?\.get/);
- const preview=readFileSync('assets/player/cherry_skins/succubus_cherry/preview.html','utf8');
- assert.match(preview,/CHERRIFT_SUCCUBUS_GAIT.get/);
+ const preview=readFileSync('animation-preview.html','utf8');
+ assert.match(preview,/CHERRIFT_SUCCUBUS_GAIT/);
 });
+

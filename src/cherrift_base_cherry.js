@@ -94,7 +94,7 @@
     if (attack) {
       attack.elapsed = Math.min(attack.duration, attack.elapsed + Math.max(0, dt));
       // Use one shared attack clock while switching standing/moving artwork.
-      // Petal Trace replaces the old common artwork; combat semantics stay intact.
+      // Keep the existing common Bloom Orb projectile and damage semantics.
       if (!attack.fired && attack.elapsed >= 2.5 / FPS.attack) {
         attack.fired = true;
         const target = attack.target;
@@ -103,8 +103,7 @@
           const length = Math.hypot(dx, dy) || 1;
           this.bullets.push({x:p.x, y:p.y - 10, vx:dx / length * p.bulletSpeed,
             vy:dy / length * p.bulletSpeed, r:8, dmg:p.damage, life:1.45,
-            style:"base_petal_trace", archetype:p.commonArchetype || "offensive"});
-          window.CHERRIFT_BASE_PETAL_VFX?.shot(this, this.bullets[this.bullets.length - 1]);
+            style:"common_attack_v091", archetype:p.commonArchetype || "offensive"});
         }
       }
       p.attackCastTimer = Math.max(0, attack.duration - attack.elapsed);
@@ -139,6 +138,7 @@
       : casting || stateName === "idle2" ? Math.min(count - 1, Math.floor(elapsed * state.fps))
       : Math.floor(elapsed * state.fps) % count;
     if (p.moving && stateName === "walk") frame = window.CHERRIFT_CHERRY_MOTION?.walkFrame(p,count) ?? frame;
+    const phase=attack?Math.min(count-1,attack.elapsed/attack.duration*count):casting?Math.min(count-1,elapsed*state.fps):stateName==='idle2'?Math.min(count-1,elapsed*state.fps):stateName==='walk'?((p.cherryStrideTime||0)*8)%count:(elapsed*state.fps)%count;
     const width = (CHERRIFT_CONFIG.player.displayWidth || 116) * .95;
     const height = (CHERRIFT_CONFIG.player.displayHeight || 116) * .95;
     ctx.save();
@@ -149,7 +149,7 @@
     ctx.save();
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
-    if (window.CHERRIFT_CHERRY_MOTION) window.CHERRIFT_CHERRY_MOTION.draw(ctx,image,ID,stateName,facing,frame,p,width,height);
+    if (window.CHERRIFT_CHERRY_MOTION) window.CHERRIFT_CHERRY_MOTION.draw(ctx,image,ID,stateName,facing,frame,p,width,height,phase);
     else ctx.drawImage(image, frame * 192, 0, 192, 192,
       p.x - PIVOT.x * width / 192, p.y + 30 - PIVOT.y * height / 192, width, height);
     ctx.restore();
@@ -157,3 +157,4 @@
 
   window.CHERRIFT_BASE_CHERRY = Object.freeze({version:"1027-cherry-motion1", directions:[...DIRECTIONS]});
 })();
+

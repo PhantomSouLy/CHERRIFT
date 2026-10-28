@@ -104,15 +104,16 @@ test('missing special art falls back to the new idle, other skins delegate, and 
 test('moving ranged casts use the same stride compositor as walking and keep its phase',()=>{
  const {game,context,ctx,calls}=fixture(),p=game.player,requests=[];
  const composed={width:192,height:192};
- context.window.CHERRIFT_SUCCUBUS_GAIT={get(image,idle,state,dir,frame){
-  requests.push({state,dir,frame,idle});return state==='walk'||state==='walk_attack_ranged'?composed:null;
+ context.window.CHERRIFT_SUCCUBUS_GAIT={get(image,idle,state,dir,frame,phase){
+  requests.push({state,dir,frame,idle,phase});return state==='walk'||state==='walk_attack_ranged'?composed:null;
  }};
  p.moving=true;p.succubusStride=.4;p.succubusFacing='down_right';
- game.drawPlayer(ctx,p);assert.equal(requests.at(-1).state,'walk');assert.equal(requests.at(-1).frame,3);
+ game.drawPlayer(ctx,p);assert.equal(requests.at(-1).state,'walk');assert.equal(requests.at(-1).frame,0);assert.equal(requests.at(-1).phase,3.2);
  assert.equal(calls.at(-1)[0],composed);assert.equal(calls.at(-1)[1],0);
  game.autoFire();game.drawPlayer(ctx,p);
- assert.equal(requests.at(-1).state,'walk_attack_ranged');assert.equal(requests.at(-1).frame,3);
+ assert.equal(requests.at(-1).state,'walk');assert.equal(requests.at(-1).frame,0);assert.equal(requests.at(-1).phase,3.2);
  assert.equal(calls.at(-1)[0],composed);assert.match(requests.at(-1).idle.key,/_idle_/);
  p.__succubusAttackV095=null;p.moving=false;game.drawPlayer(ctx,p);
- assert.equal(requests.at(-1).state,'idle');assert.notEqual(calls.at(-1)[0],composed);
+ assert.notEqual(calls.at(-1)[0],composed);
 });
+

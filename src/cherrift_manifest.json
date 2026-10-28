@@ -1,7 +1,7 @@
 {
   "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "1028-ninja-shadow1",
+  "buildId": "1028-animation-smooth3",
   "entrypoints": {
     "application": "src/cherrift_app.js",
     "menuAudio": "src/cherrift_menu_audio.js",
@@ -41,7 +41,9 @@
     "succubusGait": "src/cherrift_succubus_gait.js",
     "sakuraDanceGait": "src/cherrift_sakura_dance_gait.js",
     "sakuraDanceChibi": "src/cherrift_sakura_dance_chibi.js",
-    "ninjaShadowSakura": "src/cherrift_ninja_shadow_sakura.js"
+    "ninjaShadowSakura": "src/cherrift_ninja_shadow_sakura.js",
+    "animationFlow": "src/cherrift_animation_flow.js",
+    "animationSmoothing": "src/cherrift_animation_smoothing.js"
   },
   "stylesheets": {
     "shell": "assets/cherrift_shell.css",
@@ -212,3 +214,4 @@
     "legacyRuntimeAliasesRemainInsideBundle": true
   }
 }
+

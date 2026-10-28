@@ -24,7 +24,7 @@ function fixture(patched=true){
  const game=new Game();Object.assign(game,{mode:'playing',t:0,bullets:[],effects:[],enemies:[{x:80,y:60,r:16,hp:1000}],input:{getMoveVector:()=>({x:0,y:0})},
  player:{skin:'wuxia_sakura_cherry',x:0,y:0,speed:235,damage:20,hp:100,maxHp:100,fireTimer:0,fireInterval:.8,skillTimer:0,skillCooldown:8,skillCastTimer:0,attackCastTimer:0,lastDir:'down',moving:false,sakuraIdleSeed:123}});
  const calls=[];game.assets={get:key=>({key,width:1152,height:192})};
- const ctx={globalAlpha:1,save(){},restore(){},beginPath(){},ellipse(){},fill(){},drawImage(...args){calls.push(args)}};
+ const ctx={globalAlpha:1,save(){},restore(){},beginPath(){},rect(){},clip(){},ellipse(){},fill(){},drawImage(...args){calls.push(args)}};
  return {game,config,before,context,ctx,calls};
 }
 const combat=g=>JSON.parse(JSON.stringify({hp:g.player.hp,speed:g.player.speed,fire:g.player.fireTimer,attack:g.player.attackCastTimer,skill:g.player.skillCastTimer,cooldown:g.player.skillTimer,discount:g.player.wuxiaNextCastDiscount,progress:g.player.wuxiaKillProgress,effects:g.effects,enemies:g.enemies}));
@@ -61,9 +61,9 @@ test('three idles alternate at random waits, return to default, and interrupt on
 });
 test('moving attack has independent cast frame and continuous travel phase; pause freezes all clocks',()=>{
  const {game,context,ctx,calls}=fixture(),p=game.player,requests=[];
- const composed={};context.window.CHERRIFT_SAKURA_DANCE_GAIT={get(...args){requests.push(args);return args[2]==='walk_attack'?composed:null;}};
+ const composed={};context.window.CHERRIFT_SAKURA_DANCE_GAIT={get(...args){requests.push(args);return args[2]==='walk'?composed:null;}};
  p.sakuraStride=.4;p.moving=true;game.autoFire();game.drawPlayer(ctx,p);
- assert.equal(requests.at(-1)[2],'walk_attack');assert.equal(requests.at(-1)[4],0);assert.equal(requests.at(-1)[5],3.2);assert.equal(calls.at(-1)[0],composed);
+ assert.equal(requests.at(-1)[2],'walk');assert.equal(requests.at(-1)[4],0);assert.equal(requests.at(-1)[5],3.2);assert.ok(calls.some(c=>c[0]===composed));
  game.mode='paused';const t=game.t,cast=p.attackCastTimer;game.update(.5);assert.equal(p.attackCastTimer,cast);assert.equal(game.t,t);assert.equal(p.sakuraStride,.4);
 });
 test('other skins delegate and double initialization cannot stack combat',()=>{
@@ -81,3 +81,12 @@ test('eight directions share the same scale and pivot, missing art uses only new
  }
  p.moving=true;game.assets.get=key=>key.includes('_idle_')?{key,width:1152,height:192}:null;game.drawPlayer(ctx,p);assert.match(calls.at(-1)[0].key,/_idle_/);
 });
+test('idle, moving torso, attack and skill supply fractional pose clocks to the shared renderer',()=>{
+ const {game,context,ctx}=fixture(),p=game.player,seen=[];context.window.CHERRIFT_SAKURA_DANCE_GAIT={get:()=>({})};
+ context.window.CHERRIFT_ANIMATION_SMOOTHING={draw(...args){seen.push({state:args[3],phase:args[5],options:args[9]});return true;}};
+ p.sakuraIdleVariant='idle2';p.sakuraIdleElapsed=.123;game.drawPlayer(ctx,p);assert.equal(seen.at(-1).state,'idle2');assert.ok(seen.at(-1).phase>0&&seen.at(-1).phase<1);
+ p.sakuraIdleVariant=null;p.moving=true;p.sakuraStride=.123;game.drawPlayer(ctx,p);assert.equal(seen.at(-1).state,'walk');assert.ok(seen.at(-1).phase>0&&seen.at(-1).phase<1);assert.equal(typeof seen.at(-1).options.makeLower,'function');
+ p.moving=false;game.autoFire();p.attackCastTimer=p.attackCastDuration-.05;game.drawPlayer(ctx,p);assert.equal(seen.at(-1).state,'attack');assert.ok(seen.at(-1).phase>0&&seen.at(-1).phase<1);
+ game.skill();p.skillCastTimer=p.skillCastDuration-.025;game.drawPlayer(ctx,p);assert.equal(seen.at(-1).state,'skill');assert.ok(seen.at(-1).phase>0&&seen.at(-1).phase<1);
+});
+

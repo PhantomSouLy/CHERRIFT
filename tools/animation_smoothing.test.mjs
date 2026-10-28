@@ -1,0 +1,46 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {readFileSync,existsSync} from 'node:fs';import vm from 'node:vm';
+const code=readFileSync('src/cherrift_animation_smoothing.js','utf8');
+function fixture(){
+ class Canvas{constructor(){this._width=192;this._height=192;this.pixels=new Uint8ClampedArray(192*192*4);}set width(v){this._width=v;this.pixels=new Uint8ClampedArray(v*this._height*4);}get width(){return this._width;}set height(v){this._height=v;this.pixels=new Uint8ClampedArray(v*this._width*4);}get height(){return this._height;}
+  getContext(type){if(type!=='2d')return null;const self=this;let tr=[1,1,0,0],stack=[];return {save(){stack.push([...tr]);},restore(){tr=stack.pop();},translate(x,y){tr[2]+=x;tr[3]+=y;},scale(x,y){tr[0]*=x;tr[1]*=y;},beginPath(){},rect(){},clip(){},
+   fillRect(x,y,w,h){x=Math.round(tr[2]+x*tr[0]);y=Math.round(tr[3]+y*tr[1]);w=Math.round(w*tr[0]);h=Math.round(h*tr[1]);for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++){const n=(j*self.width+i)*4;self.pixels[n]=self.pixels[n+1]=self.pixels[n+2]=self.pixels[n+3]=255;}},
+   drawImage(src,dx=0,dy=0){for(let y=0;y<src.height;y++)for(let x=0;x<src.width;x++){const xx=x+dx,yy=y+dy;if(xx<0||xx>=self.width||yy<0||yy>=self.height)continue;const a=(y*src.width+x)*4,b=(yy*self.width+xx)*4;self.pixels.set(src.pixels.subarray(a,a+4),b);}},
+   getImageData(){return {data:self.pixels.slice(),width:self.width,height:self.height};},createImageData(w,h){return {data:new Uint8ClampedArray(w*h*4),width:w,height:h};},putImageData(d){self.pixels.set(d.data);}
+  };}}
+ class Flow{constructor(){this.width=64;this.height=192;this.pixels=new Uint8ClampedArray(64*192*4);for(let y=0;y<192;y++)for(let x=0;x<64;x++){const i=(y*64+x)*4;this.pixels.set([x<32?132:124,128,255,255],i);}}set src(v){queueMicrotask(()=>this.onload());}}
+ const window={CHERRIFT_ANIMATION_FLOW:{},__CHERRIFT_SMOOTH_REFERENCE_CPU__:true},meta={frames:6,offsets:Array.from({length:6},()=>[0,0]),file:'fixture.png'};
+ for(let i=0;i<10;i++)window.CHERRIFT_ANIMATION_FLOW[`test${i}/idle/right`]=meta;
+ const context=vm.createContext({window,document:{createElement:()=>new Canvas()},Image:Flow,Uint8ClampedArray,Float32Array,queueMicrotask});vm.runInContext(code,context);
+ const make=(c,f)=>c.fillRect(42+f*3,81,12,24);return {api:window.CHERRIFT_ANIMATION_SMOOTHING,make};
+}
+test('motion vectors move a synthetic pose to its exact midpoint instead of ghosting two rectangles',async()=>{
+ const {api,make}=fixture(),image={};assert.equal(api.sample(image,'test0','idle','right',.5,make,{loop:true}),null);await Promise.resolve();
+ const canvas=api.sample(image,'test0','idle','right',.5,make,{loop:true}),p=canvas.pixels;
+ assert.equal(p[(122*256+92)*4+3],0);assert.equal(p[(122*256+93)*4+3],255);assert.equal(p[(122*256+100)*4+3],255);assert.equal(p[(122*256+101)*4+3],0);
+ assert.equal(api.stats().backend,'cpu-reference');
+});
+test('idle loops continuously; attacks clamp at the final pose and do not wrap to the first',async()=>{
+ const {api,make}=fixture(),image={};api.sample(image,'test0','idle','right',0,make);await Promise.resolve();
+ const a=api.sample(image,'test0','idle','right',5,make).pixels.slice(),b=api.sample(image,'test0','idle','right',50,make).pixels.slice();assert.deepEqual(a,b);
+ const c=api.sample(image,'test0','idle','right',6,make,{loop:true}).pixels.slice(),d=api.sample(image,'test0','idle','right',0,make,{loop:true}).pixels.slice();assert.deepEqual(c,d);
+});
+test('the shared cache is bounded across skins and directions',async()=>{
+ const {api,make}=fixture();for(let i=0;i<10;i++){api.sample({},`test${i}`,'idle','right',0,make);await Promise.resolve();}assert.equal(api.stats().cached,api.stats().maxCached);assert.equal(api.stats().maxCached,6);
+});
+test('the interpolation gutter keeps the existing world pivot and visible character scale',async()=>{
+ const {api,make}=fixture(),image={};api.sample(image,'test0','idle','right',0,make);await Promise.resolve();let args;
+ api.draw({drawImage(...a){args=a;}},image,'test0','idle','right',.5,{x:400,y:300},110,110,{makeFrame:make,loop:true});
+ assert.equal(args[1]+128*args[3]/256,400);assert.ok(Math.abs(args[2]+(64+184*2/3)*args[4]/256-330)<1e-8);
+ assert.equal(104*args[4]/256,156*110/192);
+});
+test('all five refreshed skins and all their registered states have motion data; every map exists',()=>{
+ const context={window:{}};vm.runInNewContext(readFileSync('src/cherrift_animation_flow.js','utf8'),context);const maps=context.window.CHERRIFT_ANIMATION_FLOW;
+ assert.equal(Object.keys(maps).length,175);let pairs=0;
+ for(const id of ['cherry_default','archer_cherry','ninja_cherry','succubus_cherry','wuxia_sakura_cherry'])for(const state of ['idle','walk','skill'])for(const dir of ['down','down_right','right','up_right','up'])assert.ok(maps[`${id}/${state}/${dir}`]);
+ for(const meta of Object.values(maps)){assert.equal(meta.offsets.length,meta.frames);assert.ok(existsSync('assets/player/animation_flow/'+meta.file));pairs+=meta.frames;}assert.equal(pairs,1060);
+});
+test('render adapters use the shared fractional sampler and leave gameplay outside the interpolation engine',()=>{
+ for(const file of ['base_cherry','archer_chibi','ninja_chibi'])assert.match(readFileSync(`src/cherrift_${file}.js`,'utf8'),/width,height,phase/);
+ for(const file of ['sakura_dance_chibi','succubus_chibi'])assert.match(readFileSync(`src/cherrift_${file}.js`,'utf8'),/CHERRIFT_ANIMATION_SMOOTHING/);
+ assert.doesNotMatch(code,/damageEnemy|Math\.random|fireTimer\s*=|skillTimer\s*=/);
+});

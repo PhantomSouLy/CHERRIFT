@@ -75,11 +75,24 @@
   }else if(name==='idle2'||name==='idle3')frame=Math.min(count-1,Math.floor((p.sakuraIdleElapsed||0)*config.fps));
   else frame=Math.floor((name==='walk'?p.sakuraStride||0:this.t||0)*config.fps)%count;
   const gaitPhase=((p.sakuraStride||0)*8)%6;
-  const gait=window.CHERRIFT_SAKURA_DANCE_GAIT?.get(image,this.assets.get(`player_${ID}_idle_${dir}`),name,dir,frame,gaitPhase);
+    const visualPhase=name==='skill'||name==='attack'||name==='walk_attack'
+      ?Math.min(count-1,Math.max(0,((cast?p.skillCastDuration||skillDuration:p.attackCastDuration||attackDuration)-(cast?p.skillCastTimer:p.attackCastTimer))/(cast?p.skillCastDuration||skillDuration:p.attackCastDuration||attackDuration)*count))
+      :name==='idle2'||name==='idle3'?Math.min(count-1,(p.sakuraIdleElapsed||0)*config.fps):name==='walk'?gaitPhase:((this.t||0)*config.fps)%count;
+    const moving=name==='walk'||name==='walk_attack',idleImage=this.assets.get(`player_${ID}_idle_${dir}`);
+    const walkImage=moving?this.assets.get(`player_${ID}_walk_${dir}`)||image:null;
+    const gait=moving?window.CHERRIFT_SAKURA_DANCE_GAIT?.get(walkImage,idleImage,'walk',dir,0,gaitPhase):null;
   const width=(CHERRIFT_CONFIG.player.displayWidth||116)*.95*4/3,height=(CHERRIFT_CONFIG.player.displayHeight||116)*.95*4/3;
   ctx.save();ctx.globalAlpha*=.2;ctx.fillStyle='#000';ctx.beginPath();ctx.ellipse(p.x,p.y+25,26,8,0,0,Math.PI*2);ctx.fill();ctx.restore();
   ctx.save();ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
-  ctx.drawImage(gait||image,gait?0:frame*192,0,192,192,p.x-width/2,p.y+30-184*height/192,width,height);ctx.restore();
+    const drawLower=c=>c.drawImage(gait||image,gait?0:frame*192,0,192,192,p.x-width/2,p.y+30-184*height/192,width,height);
+    const drawn=window.CHERRIFT_ANIMATION_SMOOTHING?.draw(ctx,image,ID,name,dir,visualPhase,p,width,height,{
+      makeFrame:(c,f)=>c.drawImage(image,f*192,0,192,192,0,0,192,192),makeLower:gait?drawLower:null,cut:150,loop:name==='idle'||name==='walk'
+    });
+    if(!drawn){
+      if(gait){const x=p.x-width/2,y=p.y+30-184*height/192;ctx.save();ctx.beginPath();ctx.rect(x,y+150*height/192,width,42*height/192);ctx.clip();drawLower(ctx);ctx.restore();ctx.save();ctx.beginPath();ctx.rect(x,y,width,150*height/192);ctx.clip();ctx.drawImage(image,frame*192,0,192,192,x,y,width,height);ctx.restore();}
+      else ctx.drawImage(image,frame*192,0,192,192,p.x-width/2,p.y+30-184*height/192,width,height);
+    }ctx.restore();
  };
- window.CHERRIFT_SAKURA_DANCE_CHIBI=Object.freeze({version:VERSION,motionVersion:'1028-sakura-motion2',id:ID,directions:[...DIRS],idleVariants:['idle','idle2','idle3']});
+ window.CHERRIFT_SAKURA_DANCE_CHIBI=Object.freeze({version:VERSION,motionVersion:'1028-animation-smooth3',id:ID,directions:[...DIRS],idleVariants:['idle','idle2','idle3']});
 })();
+

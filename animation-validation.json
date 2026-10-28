@@ -1,0 +1,36 @@
+{
+  "motionMaps": 175,
+  "interpolatedPairsChecked": 1060,
+  "emptyPoses": [],
+  "edgeContacts": [],
+  "sakuraUpperBodyMotion": [
+    {
+      "dir": "down",
+      "upperChangedPixels": 4836
+    },
+    {
+      "dir": "right",
+      "upperChangedPixels": 4160
+    },
+    {
+      "dir": "left",
+      "upperChangedPixels": 4201
+    },
+    {
+      "dir": "up_left",
+      "upperChangedPixels": 4515
+    },
+    {
+      "dir": "up",
+      "upperChangedPixels": 4214
+    }
+  ],
+  "gpuBackend": "llvmpipe (LLVM 20.1.2, 256 bits)",
+  "targetedTests": 63,
+  "originalPNGsChanged": false,
+  "liveBrowserGameTested": false,
+  "renderCacheLimit": 6,
+  "workingFrameSize": 256,
+  "logicalFrameSize": 192,
+  "buildId": "1028-animation-smooth3"
+}
