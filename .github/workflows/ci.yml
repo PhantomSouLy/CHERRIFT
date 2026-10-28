@@ -53,7 +53,9 @@ jobs:
     name: Smoke · ${{ matrix.case }}
     needs: validate
     runs-on: ubuntu-latest
-    timeout-minutes: 4
+    # Includes repository download, dependency install, smoke and post-job cleanup.
+    # The smoke process still has its independent 120-second watchdog.
+    timeout-minutes: 8
 
     strategy:
       fail-fast: false
@@ -87,3 +89,4 @@ jobs:
         env:
           CHERRIFT_SMOKE_TIMEOUT_MS: 120000
         run: npm run smoke -- --case=${{ matrix.case }}
+

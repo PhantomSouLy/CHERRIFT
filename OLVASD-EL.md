@@ -1,11 +1,9 @@
-# CHERRIFT – Sakura Dance betöltés és CI-javítás
+# CHERRIFT – teljes smoke-feladat időkerete
 
-A ZIP-ben lévő `index.html` fájllal írd felül a GitHub repository gyökerében lévő `index.html` fájlt. Más fájl cseréje nem szükséges ehhez a javításhoz.
+Cseréld le a repository `.github/workflows/ci.yml` fájlját a ZIP-ben lévő azonos útvonalú fájlra. Az indexet és a skineket nem kell cserélni.
 
-Az aktuális projekt manifestjének buildazonosítója: `1028-succubus-legs2`. Az indexben keveredett ezzel a `1028-sakura-dance1`, emiatt az ellenőrzés megállt. A javítás az összes saját böngészős hivatkozást a manifesthez igazítja.
+A 40705370805 számú GitHub-futás naplójában a desktop smoke teszt sikeresen lefutott 43,5 másodperc alatt. A repository fetch 14:24:22-től 14:28:08-ig tartott, így a teljes feladatnak kevés volt a 4 perces keret. A forrásellenőrzés és az összes többi smoke eset sikeres.
 
-A Sakura Dance két modulja már megvan a repositoryban, de az indexből hiányzott a betöltésük. A javítás a meglévő modulok után, helyes sorrendben betölti a lábkezelést és a karakter animációs modulját.
+A javítás kizárólag a smoke job teljes időkeretét emeli 4-ről 8 percre. Az egyes smoke tesztek meglévő 120 másodperces watchdogja, minden teszteset, parancs és ellenőrzés megmarad.
 
-Ellenőrzés: az eredeti `tools/validate.mjs` buildazonosító-ellenőrzése a korábbi indexen hibát ad, a javított indexen sikeres. A GitHub aktuális fájlfája alapján az index összes helyi script- és stílusfüggősége létezik. A teljes GitHub Actions-futást a fájl feltöltése után lehet ellenőrizni.
-
-Közvetlen GitHub-mentés nem történt: az integráció íráskor 403 (Resource not accessible by integration) hibát adott.
+A fájl feltöltése új ellenőrzést indít; ennek eredményét a GitHub Actions alatt kell megvárni.
