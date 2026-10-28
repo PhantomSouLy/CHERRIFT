@@ -576,7 +576,9 @@ class CherriftGame {
           if (Math.random() < this.player.crit) { dmg *= this.player.critDamage; this.effects.push({ type:"crit", x:e.x, y:e.y, t:0, life:.35 }); }
           this.damageEnemy(e, dmg);
           this.hitFx = (this.hitFx % 3) + 1;
-          this.effects.push({ type:"hit", x:b.x, y:b.y, t:0, life:.22, style:b.style, imgKey:`baseHit${this.hitFx}` });
+          this.effects.push(b.style === "base_petal_trace"
+            ? {type:"basePetalHit", x:b.x, y:b.y, t:0, life:.26, angle:Math.atan2(b.vy,b.vx)}
+            : {type:"hit", x:b.x, y:b.y, t:0, life:.22, style:b.style, imgKey:`baseHit${this.hitFx}`});
           break;
         }
       }
@@ -671,7 +673,7 @@ class CherriftGame {
       p.dashTimer = skin.dashDuration || duration;
       p.dashSpeed = skin.dashSpeed || 760;
       p.invuln = Math.max(p.invuln || 0, p.dashTimer);
-      this.effects.push({ type:"dash", x:p.x, y:p.y, vx:v.x, vy:v.y, t:0, life:.32 });
+      if (p.skin !== "cherry_default") this.effects.push({ type:"dash", x:p.x, y:p.y, vx:v.x, vy:v.y, t:0, life:.32 });
       for (const e of this.enemies) if (Math.hypot(e.x - p.x, e.y - p.y) < skin.dashDamageRadius) this.damageEnemy(e, p.damage * skin.dashDamageMult);
       return;
     }
@@ -1563,7 +1565,7 @@ window.UI = {
       for(let i=0;i<count;i++){ const off=(i-(count-1)/2)*spread, a=count>1?base+off:base; this.bullets.push({x:p.x,y:p.y-10,vx:(count>1?Math.cos(a):dx/l)*p.bulletSpeed,vy:(count>1?Math.sin(a):dy/l)*p.bulletSpeed,r:style==="petal"?8:7,dmg:p.damage,life:1.45,style}); }
     };
     proto.meleeHit=function(angle,range,coneDeg,damage){ const half=coneDeg*Math.PI/180/2; for(const e of this.enemies){ if(e.dead) continue; const dx=e.x-this.player.x,dy=e.y-this.player.y,d=Math.hypot(dx,dy); if(d>range+e.r) continue; const ea=Math.atan2(dy,dx); const da=Math.atan2(Math.sin(ea-angle),Math.cos(ea-angle)); if(Math.abs(da)<=half||d<50) this.damageEnemy(e,damage); } };
-    proto.skill=function(){ const p=this.player; if(!p||p.skillTimer>0) return; const skin=this.activeSkinConfig(), state=skin.states.skill, duration=state.duration||.4, dir=p.lastDir||"down"; p.skillTimer=p.skillCooldown; p.skillCastTimer=duration; p.skillCastDuration=duration; p.skillDir=dir; if(skin.skillType==="savage_rend"){ const v=this.dirVector(dir), angle=Math.atan2(v.y,v.x); p.invuln=Math.max(p.invuln||0,.24); p.dashDir=v; p.dashTimer=.16; p.dashSpeed=640; this.meleeHit(angle,185*(p.meleeRangeMult||1),150+(p.meleeConeBonus||0),p.damage*3.2); this.effects.push({type:"slash",x:p.x,y:p.y,a:angle,r:190*(p.meleeRangeMult||1),t:0,life:.38}); return; } if(skin.skillType==="dash"){ const mv=this.input.getMoveVector(), v=Math.hypot(mv.x,mv.y)>.08?mv:this.dirVector(dir); p.dashDir=v; p.dashTimer=skin.dashDuration||duration; p.dashSpeed=skin.dashSpeed||760; p.invuln=Math.max(p.invuln||0,p.dashTimer); this.effects.push({type:"dash",x:p.x,y:p.y,vx:v.x,vy:v.y,t:0,life:.32}); for(const e of this.enemies) if(Math.hypot(e.x-p.x,e.y-p.y)<skin.dashDamageRadius) this.damageEnemy(e,p.damage*skin.dashDamageMult); return; } const radius=skin.burstRadius||185; this.effects.push({type:"burst",x:p.x,y:p.y,r:radius,t:0,life:.45}); for(const e of this.enemies) if(Math.hypot(e.x-p.x,e.y-p.y)<radius+e.r) this.damageEnemy(e,p.damage*3.2); };
+    proto.skill=function(){ const p=this.player; if(!p||p.skillTimer>0) return; const skin=this.activeSkinConfig(), state=skin.states.skill, duration=state.duration||.4, dir=p.lastDir||"down"; p.skillTimer=p.skillCooldown; p.skillCastTimer=duration; p.skillCastDuration=duration; p.skillDir=dir; if(skin.skillType==="savage_rend"){ const v=this.dirVector(dir), angle=Math.atan2(v.y,v.x); p.invuln=Math.max(p.invuln||0,.24); p.dashDir=v; p.dashTimer=.16; p.dashSpeed=640; this.meleeHit(angle,185*(p.meleeRangeMult||1),150+(p.meleeConeBonus||0),p.damage*3.2); this.effects.push({type:"slash",x:p.x,y:p.y,a:angle,r:190*(p.meleeRangeMult||1),t:0,life:.38}); return; } if(skin.skillType==="dash"){ const mv=this.input.getMoveVector(), v=Math.hypot(mv.x,mv.y)>.08?mv:this.dirVector(dir); p.dashDir=v; p.dashTimer=skin.dashDuration||duration; p.dashSpeed=skin.dashSpeed||760; p.invuln=Math.max(p.invuln||0,p.dashTimer); if(p.skin!=="cherry_default") this.effects.push({type:"dash",x:p.x,y:p.y,vx:v.x,vy:v.y,t:0,life:.32}); for(const e of this.enemies) if(Math.hypot(e.x-p.x,e.y-p.y)<skin.dashDamageRadius) this.damageEnemy(e,p.damage*skin.dashDamageMult); return; } const radius=skin.burstRadius||185; this.effects.push({type:"burst",x:p.x,y:p.y,r:radius,t:0,life:.45}); for(const e of this.enemies) if(Math.hypot(e.x-p.x,e.y-p.y)<radius+e.r) this.damageEnemy(e,p.damage*3.2); };
     proto.damageEnemy=function(enemy,damage){ const was=enemy.dead; if(UI.save?.settings?.damageNumbers!==false&&damage>0) this.effects.push({type:"damageText",x:enemy.x+(Math.random()-.5)*18,y:enemy.y-enemy.r-8,value:Math.max(1,Math.round(damage)),t:0,life:.48,big:damage>(this.player?.damage||20)*1.45}); baseDamageEnemy.call(this,enemy,damage); if(!was&&enemy.dead) this.effects.push({type:"deathPop",x:enemy.x,y:enemy.y,r:enemy.r||24,t:0,life:.28}); };
     proto.updateEnemies=function(dt){ baseUpdateEnemies.call(this,dt); };
     proto.drawWorld=function(c){ c.fillStyle="#1f7d45"; c.fillRect(0,0,this.w,this.h); this.zoom=computeZoom(this); const zoom=this.zoom; c.save(); c.translate(this.w/2,this.h/2); c.scale(zoom,zoom); c.translate(-this.camera.x,-this.camera.y); this.drawGround(c,zoom); const ground=this.obstacles.filter(o=>o.kind==="flowers"||o.kind==="mushroom"), solid=this.obstacles.filter(o=>!(o.kind==="flowers"||o.kind==="mushroom")); for(const o of ground) this.drawObstacle(c,o); const drawables=[...solid,...this.pickups,...this.enemies,...(this.player?[this.player]:[]),...this.bullets,...this.effects]; drawables.sort((a,b)=>(a.y||0)-(b.y||0)); for(const o of drawables) this.drawObj(c,o); c.restore(); };
@@ -17709,7 +17711,7 @@ proto.update = function updateV085(dt) {
   }
   this.__shakeV085 = Math.max(0, (this.__shakeV085 || 0) - dt * 18);
   this.__trailTimerV085 = Math.max(0, (this.__trailTimerV085 || 0) - dt);
-  if ((speed > player.speed * .75 || player.dashTimer > 0) && this.__trailTimerV085 <= 0) {
+  if (player.skin !== "cherry_default" && (speed > player.speed * .75 || player.dashTimer > 0) && this.__trailTimerV085 <= 0) {
     this.__trailTimerV085 = .075 / Math.max(.35, quality(this));
     this.effects.push({type:"motionTrailV085", x:player.x-dx*2, y:player.y-dy*2, t:0, life:.28, dash:player.dashTimer>0});
   }
@@ -17750,7 +17752,7 @@ proto.skill = function skillV085(...args) {
   const ready = !!this.player && this.player.skillTimer <= 0;
   const result = previousSkill.apply(this, args);
   if (ready && this.player?.skillTimer > 0) {
-    this.effects.push({type:"skillPulseV085", x:this.player.x, y:this.player.y, t:0, life:.38});
+    if (this.player.skin !== "cherry_default") this.effects.push({type:"skillPulseV085", x:this.player.x, y:this.player.y, t:0, life:.38});
     this.__shakeV085 = Math.max(this.__shakeV085 || 0, .55 * motionLevel(this, "screenShake"));
     playCue(this, "skill");
     document.body.classList.remove("skill-cast-v085");

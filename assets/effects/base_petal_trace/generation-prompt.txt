@@ -1,0 +1,12 @@
+Generated using the imagegen skill and built-in image generation, transparent_background=true.
+Reference: approved 02 PETAL TRACE concept.
+
+Use case: stylized-concept. PRODUCTION GAME VFX TEXTURE ATLAS, NOT a concept board. Use attached image only as ART DIRECTION REFERENCE for CHERRIFT Base Cherry approved concept 02 PETAL TRACE. Generate the actual isolated reusable effect textures, no characters or UI.
+Landscape transparent PNG, exactly 3 columns by 2 rows of equal cells, all six motifs isolated with generous transparent margins of at least 15% cell size. Each motif fits INSIDE its own cell, no crossing into neighbours. True transparent alpha background, no baked checkerboard, no floor or background, no text labels, no panel borders. Polished hand-painted 2D game VFX, soft rose pink and luminous ivory, graceful small sakura accents, restrained BASE/COMMON intensity. Not dark ninja smoke, not lightning, not fire, no legendary ornamentation.
+TOP LEFT: one SMALL ROUND pink-white magical orb with bright creamy white core, thin flowing rose rim, NO trail and NO surrounding petals, centered in cell, round with modest luminous fringe.
+TOP CENTER: one compact HIT effect, a delicate broken pink crescent/swoosh and exactly three individual petal flakes around a tiny white contact glint. Airy open center, no full flower and no large explosion.
+TOP RIGHT: one horizontal DASH WAKE pointing to the RIGHT, two narrow tapering soft pink ribbons with three sparse individual sakura petals. Tip at right is thin and subdued because the character will stand there. Long left trailing ends fade to alpha. No orb, no character or ground.
+BOTTOM LEFT: ONE single sakura petal, pink curved almond shape with tiny notched edge, fine pale highlight, no stem, no sparks, no other objects. Oriented horizontally.
+BOTTOM CENTER: ONE tiny ivory-pink four-point CAST FLASH, soft compact burst, no ring, a simple crisp glint with short points and small glow.
+BOTTOM RIGHT: ONE tiny neutral warm grey-white DUST PUFF cluster, low horizontal shape with two or three little soft puffs, translucent feathered edges, no pink magic or petals, for simple walking footsteps.
+Keep objects clean and legible after shrinking to 8–70 game pixels. These are reusable production assets, not an illustration. The six motifs must be clearly separated in exact 3x2 layout.

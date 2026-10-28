@@ -11,10 +11,11 @@ const attacks=between(legacy,'const oldAutoFire = proto.autoFire;','const oldUpd
 const helpers=between(legacy,'function rotate(x,y,angle)','function healFromDamage(');
 const melee=between(hybrid,'function dirFromVector(dx,dy)','const oldDrawPlayer=proto.drawPlayer;');
 
-function fixture(patched=true){
+function fixture(patched=true,vfx=false){
   const config={player:{displayWidth:116,displayHeight:116,skins:{}}};
   class Game{
     autoFire(){this.delegated='fire'} skill(){this.delegated='skill'} drawPlayer(){this.delegated='draw'}
+    drawBullet(){this.delegated='bullet'} drawEffect(){this.delegated='effect'}
     movePlayer(v,dt){this.player.x+=v.x*this.player.speed*dt;this.player.y+=v.y*this.player.speed*dt;}
     update(dt){if(this.mode!=='playing')return;const p=this.player;p.fireTimer-=dt;p.skillTimer=Math.max(0,p.skillTimer-dt);p.skillCastTimer=Math.max(0,p.skillCastTimer-dt);this.movePlayer(this.input.getMoveVector(),dt);}
     nearest(){return this.enemies.find(e=>!e.dead)}
@@ -30,6 +31,7 @@ function fixture(patched=true){
   vm.runInContext('(()=>{const proto=CherriftGame.prototype;'+melee+'})();',context);
   const before=JSON.parse(JSON.stringify(config.player.skins.ninja_cherry));
   if(patched)vm.runInContext(readFileSync('src/cherrift_ninja_chibi.js','utf8'),context);
+  if(vfx)vm.runInContext(readFileSync('src/cherrift_ninja_shadow_sakura.js','utf8'),context);
   const game=new Game();
   Object.assign(game,{mode:'playing',t:0,bullets:[],effects:[],enemies:[{x:500,y:500,r:16,hp:500}],
     input:{getMoveVector:()=>({x:0,y:0})},
@@ -110,4 +112,53 @@ test('browser module load order and shared build ID satisfy the repository valid
   assert.ok(html.indexOf('src/cherrift_ninja_chibi.js')>html.indexOf('src/cherrift_base_cherry.js'));
   const versions=[...html.matchAll(/(?:src|href)=["'](?:src|assets)\/[^"']+\?v=([^"']+)/gi)].map(m=>m[1]);
   assert.ok(versions.length);assert.equal(new Set(versions).size,1);assert.equal(versions[0],manifest.buildId);
+});
+
+function canvasFixture(f) {
+  const events=[],stack=[];
+  const c=new Proxy({globalAlpha:1,save(){stack.push(this.globalAlpha);},restore(){this.globalAlpha=stack.pop();},
+    drawImage(...args){events.push({key:args[0].key,x:args[5],alpha:this.globalAlpha});},
+    createLinearGradient(){return {addColorStop(){}};},createRadialGradient(){return {addColorStop(){}};}},
+    {get:(o,k)=>k in o?o[k]:()=>{}});
+  return {c,events};
+}
+test('Shadow Sakura preserves real ranged/melee/skill damage, poison and cooldowns',()=>{
+  for(const mode of ['ranged','melee','skill']){
+    const a=fixture().game,b=fixture(true,true).game;
+    if(mode==='melee')for(const g of [a,b]){g.enemies=[{x:60,y:0,r:16,hp:500},{x:80,y:0,r:16,hp:500}];}
+    for(const g of [a,b])mode==='skill'?g.skill():g.autoFire();
+    const combat=g=>{const s=snapshot(g);delete s.effects;return s;};
+    assert.deepEqual(combat(b),combat(a),mode);
+    if(mode==='melee'){assert.equal(b.effects.filter(e=>e.type==='ninjaShadowSlash').length,1);assert(!b.effects.some(e=>e.type==='ninja_melee_arc'));}
+    if(mode==='skill'){assert.equal(b.effects.filter(e=>e.type==='ninjaShadowStorm').length,1);assert.equal(b.bullets.length,12);b.skill();assert.equal(b.bullets.length,12);}
+  }
+});
+test('Shadow Sakura footsteps need real travel, ghost budget is bounded and pause freezes rendering',()=>{
+  const f=fixture(true,true),g=f.game,{c,events}=canvasFixture(f);g.player.moving=true;g.input.getMoveVector=()=>({x:1,y:0});
+  for(let i=0;i<20;i++)g.update(.1);
+  g.drawPlayer(c,g.player);assert.equal(events.length,3,'two echoes plus the actual sprite');assert.equal(events.at(-1).alpha,1);
+  g.mode='paused';const before=events.map(e=>e.alpha);g.update(2);events.length=0;g.drawPlayer(c,g.player);assert.deepEqual(events.map(e=>e.alpha),before);
+  g.mode='playing';g.input.getMoveVector=()=>({x:0,y:0});g.update(.3);events.length=0;g.drawPlayer(c,g.player);assert.equal(events.length,1,'no travel emits no echoes');
+  g.save={settings:{effectQuality:'low'}};g.input.getMoveVector=()=>({x:1,y:0});for(let i=0;i<4;i++)g.update(.1);events.length=0;g.drawPlayer(c,g.player);assert.equal(events.length,2,'low quality has at most one echo');
+  assert.equal(c.globalAlpha,1);
+});
+test('Shadow Sakura renderers delegate unrelated effects and initialize only once',()=>{
+  const f=fixture(true,true),g=f.game,{c}=canvasFixture(f);
+  g.drawBullet(c,{style:'mage_orb'});assert.equal(g.delegated,'bullet');g.drawEffect(c,{type:'death'});assert.equal(g.delegated,'effect');
+  for(const type of ['ninjaShadowSlash','ninjaShadowStorm','poison_hit'])g.drawEffect(c,{type,x:0,y:0,t:.1,life:.3,angle:0});
+  g.drawBullet(c,{style:'ninja_shuriken',x:0,y:0,vx:1,vy:0,spin:.3,life:1});assert.equal(c.globalAlpha,1);
+  const before=g.skill;vm.runInContext(readFileSync('src/cherrift_ninja_shadow_sakura.js','utf8'),f.context);assert.equal(g.skill,before);
+  const html=readFileSync('index.html','utf8');assert(html.indexOf('src/cherrift_ninja_shadow_sakura.js')>html.indexOf('src/cherrift_ninja_chibi.js'));
+});
+test('Shadow Sakura uses the generated alpha atlas when decoded, with in-bounds source regions',()=>{
+  const f=fixture(),g=f.game;
+  f.context.Image=class{constructor(){this.complete=true;this.naturalWidth=1254;this.naturalHeight=1254;}};
+  vm.runInContext(readFileSync('src/cherrift_ninja_shadow_sakura.js','utf8'),f.context);
+  const {c}=canvasFixture(f),samples=[];c.drawImage=(...args)=>samples.push(args);
+  g.drawBullet(c,{style:'ninja_shuriken',x:0,y:0,vx:1,vy:0,spin:0,life:1});
+  g.drawEffect(c,{type:'poison_hit',x:0,y:0,t:.1,life:.3});
+  assert(samples.length>=3);
+  for(const [img,x,y,w,h] of samples){assert.equal(img.naturalWidth,1254);assert(x>=0&&y>=0&&w>0&&h>0&&x+w<=1254&&y+h<=1254);}
+  const png=readFileSync('assets/effects/ninja_shadow_sakura/shadow_sakura_atlas.png');
+  assert.equal(png.readUInt32BE(16),1254);assert.equal(png.readUInt32BE(20),1254);assert.equal(png[25],6,'PNG uses RGBA');
 });
