@@ -63,7 +63,7 @@ test('moving attack has independent cast frame and continuous travel phase; paus
  const {game,context,ctx,calls}=fixture(),p=game.player,requests=[];
  const composed={};context.window.CHERRIFT_SAKURA_DANCE_GAIT={get(...args){requests.push(args);return args[2]==='walk_attack'?composed:null;}};
  p.sakuraStride=.4;p.moving=true;game.autoFire();game.drawPlayer(ctx,p);
- assert.equal(requests.at(-1)[2],'walk_attack');assert.equal(requests.at(-1)[4],0);assert.equal(requests.at(-1)[5],3);assert.equal(calls.at(-1)[0],composed);
+ assert.equal(requests.at(-1)[2],'walk_attack');assert.equal(requests.at(-1)[4],0);assert.equal(requests.at(-1)[5],3.2);assert.equal(calls.at(-1)[0],composed);
  game.mode='paused';const t=game.t,cast=p.attackCastTimer;game.update(.5);assert.equal(p.attackCastTimer,cast);assert.equal(game.t,t);assert.equal(p.sakuraStride,.4);
 });
 test('other skins delegate and double initialization cannot stack combat',()=>{

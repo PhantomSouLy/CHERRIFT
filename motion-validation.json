@@ -1,0 +1,10 @@
+{
+  "testsPassed": 13,
+  "walkRenderSamples": 1920,
+  "upperBodyDrift": 0,
+  "supportFootMaxY": 183,
+  "originalWalkBootRegionsClean": true,
+  "liveGameTested": false,
+  "sourcePNGsChanged": false,
+  "buildId": "1028-sakura-motion2"
+}
