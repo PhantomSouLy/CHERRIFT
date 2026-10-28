@@ -29,6 +29,8 @@ let engineStamp = -1;
 const lastFileHash = new Map();
 const filesWaiting = new Set();
 let lastChangeAt = 0;
+const launchedAt = Date.now();
+let acceptedChanges = 0;
 
 if (!fs.existsSync(indexPath) || !fs.existsSync(gameplayPath) || !fs.existsSync(catalogPath)) {
   console.error('\n[CHERRIFT Preview] Nem a teljes CHERRIFT repository mellett található a local-preview mappa.');
@@ -152,14 +154,21 @@ function changed(name) {
       let digest;
       try {digest = createHash('sha256').update(fs.readFileSync(file)).digest('hex');}
       catch {digest = 'deleted';}
+      // Ignore stale file system notifications (common with editors, Windows Indexer,
+      // OneDrive/antivirus). Only writes newer than this server instance count.
+      // This prevents opening an asset from triggering a first-time reload.
+      let modified = 0;
+      try {modified = fs.statSync(file).mtimeMs;} catch {modified = Date.now();}
+      if (modified < launchedAt - 1000 && !lastFileHash.has(rel)) continue;
       if (lastFileHash.get(rel) === digest) continue;
       lastFileHash.set(rel, digest);
       actual.push(rel);
     }
     filesWaiting.clear();
     if (!actual.length) return;
-    console.log('[PREVIEW] Forrás változott:', actual.join(', '));
-    for (const res of streams) sendSse(res, 'reload', {paths:actual, changedAt:lastChangeAt});
+    acceptedChanges++;
+    console.log('[PREVIEW] Forrás változott (nincs automatikus teljes oldalfrissítés):', actual.join(', '));
+    for (const res of streams) sendSse(res, 'change', {paths:actual, changedAt:lastChangeAt});
   }, 1100);
 }
 
@@ -205,7 +214,7 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'GET' && pathname === '/__preview__/overlay.js')
       return respond(res,200,overlayScript,'text/javascript; charset=utf-8');
     if (req.method === 'GET' && pathname === '/__preview__/health')
-      return respond(res,200,JSON.stringify({ok:true,mode:'local-preview-v2',root,watch:!!watcher}),'application/json');
+      return respond(res,200,JSON.stringify({ok:true,mode:'local-preview-v3',root,watch:!!watcher,acceptedChanges}),'application/json');
     if (req.method === 'GET' && pathname === '/__preview__/events') {
       res.writeHead(200,{...common,'Content-Type':'text/event-stream','Connection':'keep-alive','X-Accel-Buffering':'no'});
       streams.add(res);
@@ -232,7 +241,7 @@ server.listen(port,host,()=>{
   console.log('===============================================');
   console.log(` Megnyitás: ${self}`);
   console.log(` Repo:      ${root}`);
-  console.log(' Figyelés:  '+(watcher?'BE (automatikus reload)':'KI (kézi F5)'));
+  console.log(' Figyelés:  '+(watcher?'BE (CSS/kép hot frissítés; JS esetén kézi)':'KI (kézi F5)'));
   console.log(' Leállítás: Ctrl+C');
   console.log(' Éles Supabase: NINCS kapcsolat\n');
   if (process.platform==='win32' && !process.env.CHERRIFT_PREVIEW_NO_BROWSER) {
