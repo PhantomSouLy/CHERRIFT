@@ -1,0 +1,11 @@
+CHERRIFT – Petal Trace javítás
+
+A ZIP tartalmát másold a CHERRIFT gyökerébe, azonos útvonalon felülírva a fájlokat. A src és tools mappák tartalma a projekt azonos nevű mappáiba kerüljön. A korábbi animációs csomag maradjon fent.
+
+Javítás: a Base Cherry ismét base_petal_trace stílusú lövedéket indít és meghívja a Petal Trace indítóeffektjét. Az index.html most betölti a már meglévő cherrift_base_petal_vfx.js modult is. A sebzés, sebesség, találati sugár és animációsimítás megmarad.
+
+Az index.html saját build-queryjei és a manifest buildId mezője egységesen 1028-animation-smooth4; ez biztosítja a friss JavaScript betöltését. A külső Supabase vendor verziója változatlan.
+
+70 célzott teszt sikeres, beleértve az öt skin, a Petal Trace, a közös simítás és a tükrözési javítás tesztjeit. Új regressziós teszt ellenőrzi a Petal Trace modul betöltését és sorrendjét. A teljes GitHub Actions-futást feltöltés után ellenőrizni kell.
+
+A javítás a 44be76b GitHub-verzióra készült. Közvetlen feltöltés nem történt: a GitHub-kapcsolat 403 Resource not accessible by integration hibát adott. Supabase-módosítás nem szükséges.

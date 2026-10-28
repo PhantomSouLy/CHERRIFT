@@ -94,7 +94,7 @@
     if (attack) {
       attack.elapsed = Math.min(attack.duration, attack.elapsed + Math.max(0, dt));
       // Use one shared attack clock while switching standing/moving artwork.
-      // Keep the existing common Bloom Orb projectile and damage semantics.
+      // Petal Trace replaces the old common artwork; combat semantics stay intact.
       if (!attack.fired && attack.elapsed >= 2.5 / FPS.attack) {
         attack.fired = true;
         const target = attack.target;
@@ -103,7 +103,8 @@
           const length = Math.hypot(dx, dy) || 1;
           this.bullets.push({x:p.x, y:p.y - 10, vx:dx / length * p.bulletSpeed,
             vy:dy / length * p.bulletSpeed, r:8, dmg:p.damage, life:1.45,
-            style:"common_attack_v091", archetype:p.commonArchetype || "offensive"});
+            style:"base_petal_trace", archetype:p.commonArchetype || "offensive"});
+          window.CHERRIFT_BASE_PETAL_VFX?.shot(this, this.bullets[this.bullets.length - 1]);
         }
       }
       p.attackCastTimer = Math.max(0, attack.duration - attack.elapsed);

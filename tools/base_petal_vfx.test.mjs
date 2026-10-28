@@ -3,6 +3,14 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
+test('the shipped entrypoint loads Petal Trace once after the Base Cherry renderer with the current build',()=>{
+  const html=read('index.html');
+  const scripts=[...html.matchAll(/<script\b[^>]*src=["']([^"']+)["']/g)].map(m=>m[1]);
+  const petal=scripts.filter(src=>src.startsWith('src/cherrift_base_petal_vfx.js?'));
+  const build=JSON.parse(read('src/cherrift_manifest.json')).buildId;
+  assert.deepEqual(petal,[`src/cherrift_base_petal_vfx.js?v=${build}`]);
+  assert(scripts.indexOf(petal[0])>scripts.indexOf(`src/cherrift_base_cherry.js?v=${build}`));
+});
 function fixture(quality='high') {
   class Game {
     movePlayer(v,dt){this.player.x+=v.x*dt;this.player.y+=v.y*dt;}
