@@ -49,7 +49,8 @@
     ctx.drawImage(image, frame * 192, 0, 192, 192,
       p.x - footX * w / 192, p.y + 30 - bottom * h / 192, w, h);
   }
-  function draw(ctx,image,id,state,dir,frame,p,width,height,phase=frame){
+  function draw(ctx,image,id,state,dir,frame,p,width,height,phase=frame,resources={}){
+    if(id==='cherry_default'&&window.CHERRIFT_BASE_WALK?.draw(ctx,image,state,dir,phase,(p.cherryStrideTime||0)*8,p,width,height,drawRaw,resources.walkImage||(state==='walk'?image:null)))return;
     const smooth=window.CHERRIFT_ANIMATION_SMOOTHING;
     if(smooth?.draw(ctx,image,id,state,dir,phase,p,width,height,{
       makeFrame:(c,f)=>drawRaw(c,image,id,state,dir,f,{...p,x:96,y:154,__smoothSkipGait:true},192,192),
@@ -59,4 +60,5 @@
   }
   window.CHERRIFT_CHERRY_MOTION = Object.freeze({walkFrame, draw,renderPose:drawRaw});
 })();
+
 

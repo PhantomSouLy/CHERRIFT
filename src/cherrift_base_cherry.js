@@ -150,7 +150,7 @@
     ctx.save();
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
-    if (window.CHERRIFT_CHERRY_MOTION) window.CHERRIFT_CHERRY_MOTION.draw(ctx,image,ID,stateName,facing,frame,p,width,height,phase);
+    if (window.CHERRIFT_CHERRY_MOTION) window.CHERRIFT_CHERRY_MOTION.draw(ctx,image,ID,stateName,facing,frame,p,width,height,phase,{walkImage:stateName.startsWith('walk')?this.assets.get(key('walk',facing)):null});
     else ctx.drawImage(image, frame * 192, 0, 192, 192,
       p.x - PIVOT.x * width / 192, p.y + 30 - PIVOT.y * height / 192, width, height);
     ctx.restore();
@@ -158,4 +158,5 @@
 
   window.CHERRIFT_BASE_CHERRY = Object.freeze({version:"1027-cherry-motion1", directions:[...DIRECTIONS]});
 })();
+
 

@@ -1,0 +1,15 @@
+{
+  "buildId": "1029-base-step-direction2",
+  "targetedTestsPassed": 45,
+  "renderedPoses": 576,
+  "hipContactChecks": 1248,
+  "hipContactMisses": 0,
+  "liveGameTested": false,
+  "modifiedSkin": "cherry_default",
+  "supportFootMovesBackward": true,
+  "swingFootMovesForward": true,
+  "horizontalStabilizationDirections": [
+    "left",
+    "right"
+  ]
+}

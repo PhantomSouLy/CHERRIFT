@@ -1,0 +1,18 @@
+CHERRIFT – Base Cherry lépésirány és oldalnézeti stabilitás, v2
+
+TELEPÍTÉS
+Ez a korábbi Base Walk + Training Lane csomag teljes, javított változata. Az előző helyett is használható, illetve arra is rámásolható. A ZIP teljes tartalmát másold a CHERRIFT projekt gyökerébe, azonos útvonalon felülírva a fájlokat, majd frissítsd a játék oldalát. Az új build 1029-base-step-direction2. A meglévő közös simítófájlok, sprite-PNG-k és animation_flow adatok maradjanak fent.
+
+JAVÍTÁS
+A hat oldalirányú/átlós Base járásnál és járó támadásnál a lábak órája megfordult. Most a támaszkodó láb hátrafelé halad a karakterhez képest, az emelt láb pedig előrelendül. A haj, felsőtest és támadás eredeti képkockasora előrefelé fut tovább.
+
+A bal és jobb oldali rajzokhoz külön, szubpixeles vízszintes regisztráció készült az eredeti arc alapján. A két láb támaszpontja ezekben a nézetekben már nem követi a rajzolt képkockák apró x-eltéréseit. A csípő és a teljes festett testréteg azonos korrekciót kap, ezért az illesztés megmarad. A korrekciót az exportált rajzokból előre számolt adatok adják; játék közben nincs arckeresés vagy képelemzés.
+
+A hat irány lábváltása, a folyamatos térdmozgás, az eredeti rajzok és a Petal Trace harci működése megmaradt. A dummy vonalában lévő teljes szélességű, 900 egység magas virágmentes sávot ez a változat is tartalmazza. Más skin saját renderelőjét nem cseréli.
+
+ELLENŐRZÉS
+45 célzott teszt sikeres. Az új regresszió ellenőrzi a talajon lévő láb hátrafelé és a levegőben lévő láb előrefelé mozgását mind a hat irányban, valamint azt, hogy az oldalnézeti támaszpont nem ugrál a rajzolt pózzal. A szubpixeles korrekció a ciklushatáron is folyamatos.
+
+576 járó/járva támadó póz natív Canvas-renderelőből ellenőrizve. Az 1248 csípőillesztési ellenőrzésben nem volt hiányzó kapcsolat. A mellékelt MP4 ebből a renderelőből készült, nem élő játékfelvétel. Teljes élő PC/mobil teszt és GitHub Actions-futás még szükséges.
+
+GitHubra közvetlen feltöltés nem történt. Supabase-módosítás nem szükséges.
