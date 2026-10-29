@@ -1,7 +1,7 @@
 {
   "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "1028-animation-smooth4",
+  "buildId": "1028-succubus-crimson1",
   "entrypoints": {
     "application": "src/cherrift_app.js",
     "menuAudio": "src/cherrift_menu_audio.js",
@@ -42,8 +42,8 @@
     "sakuraDanceGait": "src/cherrift_sakura_dance_gait.js",
     "sakuraDanceChibi": "src/cherrift_sakura_dance_chibi.js",
     "ninjaShadowSakura": "src/cherrift_ninja_shadow_sakura.js",
-    "animationFlow": "src/cherrift_animation_flow.js",
-    "animationSmoothing": "src/cherrift_animation_smoothing.js"
+    "basePetalVfx": "src/cherrift_base_petal_vfx.js",
+    "succubusCrimsonHunger": "src/cherrift_succubus_crimson_hunger.js"
   },
   "stylesheets": {
     "shell": "assets/cherrift_shell.css",
@@ -214,4 +214,3 @@
     "legacyRuntimeAliasesRemainInsideBundle": true
   }
 }
-

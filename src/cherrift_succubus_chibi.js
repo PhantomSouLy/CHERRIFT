@@ -137,28 +137,10 @@
     ctx.save();ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
     // These strips are registered offline to a fixed body pivot. Never derive
     // a new x anchor from changing feet, wing/tail silhouettes or weapons.
-    const moving=name==='walk'||name==='walk_attack_ranged',stride=((p.succubusStride||0)*8)%count;
-    const phase=name==='skill'?Math.min(count-1,cast.elapsed/cast.duration*count):attack&&name.includes('attack')&&name!=='walk_attack_ranged'?Math.min(count-1,attack.elapsed/attack.duration*count):name==='idle2'||name==='idle3'?Math.min(count-1,(p.succubusIdleElapsed||0)*config.fps):moving?stride:((this.t||0)*config.fps)%count;
-    const walkImage=moving?this.assets.get(`player_${ID}_walk_${dir}`)||image:null;
-    const gait=moving?window.CHERRIFT_SUCCUBUS_GAIT?.get(walkImage,this.assets.get(`player_${ID}_idle_${dir}`),'walk',dir,0,stride):null;
-    const lower=c=>c.drawImage(gait||image,gait?0:frame*192,0,192,192,p.x-width/2,p.y+30-184*height/192,width,height);
-    const drawn=window.CHERRIFT_ANIMATION_SMOOTHING?.draw(ctx,image,ID,name,dir,phase,p,width,height,{
-      makeFrame:(c,f)=>c.drawImage(image,f*192,0,192,192,0,0,192,192),makeLower:gait?lower:null,cut:150,loop:name==='idle'||moving
-    });
-    if(!drawn)lower(ctx);
+    const gait=window.CHERRIFT_SUCCUBUS_GAIT?.get(image,this.assets.get(`player_${ID}_idle_${dir}`),name,dir,frame);
+    ctx.drawImage(gait || image,gait?0:frame*192,0,192,192,p.x-96*width/192,p.y+30-184*height/192,width,height);
     ctx.restore();
-    // Keep the existing brief overheal shield visual, without calling the old
-    // character renderer (which would draw a second, legacy body underneath).
-    if((p.__succubusShieldFxUntilV095 || 0)>(this.t || 0)){
-      const shield=this.assets.get('succubus_shield');
-      if(shield){
-        const age=Math.max(0,(this.t || 0)-(p.__succubusShieldFxStartV095 || 0));
-        const remaining=p.__succubusShieldFxUntilV095-(this.t || 0);
-        const alpha=Math.min(Math.min(1,age/.16),Math.min(1,remaining/.28))*.42;
-        ctx.save();ctx.globalAlpha*=Math.max(0,alpha);ctx.drawImage(shield,p.x-66,p.y-83,132,132);ctx.restore();
-      }
-    }
+
   };
   window.CHERRIFT_SUCCUBUS_CHIBI=Object.freeze({version:VERSION,directions:[...DIRS],idleVariants:['idle','idle2','idle3']});
 })();
-
