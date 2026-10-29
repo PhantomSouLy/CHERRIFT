@@ -85,7 +85,7 @@ test('idle, moving torso, attack and skill supply fractional pose clocks to the 
  const {game,context,ctx}=fixture(),p=game.player,seen=[];context.window.CHERRIFT_SAKURA_DANCE_GAIT={get:()=>({})};
  context.window.CHERRIFT_ANIMATION_SMOOTHING={draw(...args){seen.push({state:args[3],phase:args[5],options:args[9]});return true;}};
  p.sakuraIdleVariant='idle2';p.sakuraIdleElapsed=.123;game.drawPlayer(ctx,p);assert.equal(seen.at(-1).state,'idle2');assert.ok(seen.at(-1).phase>0&&seen.at(-1).phase<1);
- p.sakuraIdleVariant=null;p.moving=true;p.sakuraStride=.123;game.drawPlayer(ctx,p);assert.equal(seen.at(-1).state,'walk');assert.ok(seen.at(-1).phase>0&&seen.at(-1).phase<1);assert.equal(seen.at(-1).options.makeLower,undefined);
+ p.sakuraIdleVariant=null;p.moving=true;p.sakuraStride=.123;game.drawPlayer(ctx,p);assert.equal(seen.at(-1).state,'walk');assert.ok(seen.at(-1).phase>0&&seen.at(-1).phase<1);assert.equal(seen.at(-1).options.makeLower,undefined);assert.equal(seen.at(-1).options.gaitPhase,p.sakuraStride*8);
  p.moving=false;game.autoFire();p.attackCastTimer=p.attackCastDuration-.05;game.drawPlayer(ctx,p);assert.equal(seen.at(-1).state,'attack');assert.ok(seen.at(-1).phase>0&&seen.at(-1).phase<1);
  game.skill();p.skillCastTimer=p.skillCastDuration-.025;game.drawPlayer(ctx,p);assert.equal(seen.at(-1).state,'skill');assert.ok(seen.at(-1).phase>0&&seen.at(-1).phase<1);
 });

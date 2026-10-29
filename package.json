@@ -46,7 +46,7 @@
     "test:cherry-motion": "node --test tools/cherry_motion.test.mjs",
     "test:succubus-chibi": "node --test tools/succubus_chibi.test.mjs tools/succubus_gait.test.mjs",
     "test:sakura-dance": "node --test tools/sakura_dance_chibi.test.mjs tools/sakura_dance_gait.test.mjs",
-    "test:animation-smoothing": "node --test tools/animation_smoothing.test.mjs tools/animation_mirror.test.mjs"
+    "test:animation-smoothing": "node --test tools/animation_smoothing.test.mjs tools/animation_mirror.test.mjs tools/walk_cycle.test.mjs"
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.5.11",

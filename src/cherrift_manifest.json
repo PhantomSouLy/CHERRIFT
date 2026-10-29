@@ -1,7 +1,7 @@
 {
   "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "1029-whole-pose1",
+  "buildId": "1029-grounded-step1",
   "entrypoints": {
     "application": "src/cherrift_app.js",
     "menuAudio": "src/cherrift_menu_audio.js",
@@ -45,7 +45,8 @@
     "basePetalVfx": "src/cherrift_base_petal_vfx.js",
     "succubusCrimsonHunger": "src/cherrift_succubus_crimson_hunger.js",
     "animationFlow": "src/cherrift_animation_flow.js",
-    "animationSmoothing": "src/cherrift_animation_smoothing.js"
+    "animationSmoothing": "src/cherrift_animation_smoothing.js",
+    "walkCycle": "src/cherrift_walk_cycle.js"
   },
   "stylesheets": {
     "shell": "assets/cherrift_shell.css",

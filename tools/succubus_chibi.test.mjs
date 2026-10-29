@@ -109,7 +109,7 @@ test('moving ranged casts smooth the complete pose on the travel clock',()=>{
  p.moving=true;p.succubusStride=.4;p.succubusFacing='down_right';
  game.drawPlayer(ctx,p);assert.equal(requests.at(-1)[3],'walk');assert.equal(requests.at(-1)[5],3.2);
  game.autoFire();game.drawPlayer(ctx,p);assert.equal(requests.at(-1)[3],'walk_attack_ranged');assert.equal(requests.at(-1)[5],3.2);
- assert.equal(requests.at(-1)[9].makeLower,undefined);
+ assert.equal(requests.at(-1)[9].makeLower,undefined);assert.equal(requests.at(-1)[9].gaitPhase,3.2);
  context.window.CHERRIFT_ANIMATION_SMOOTHING=null;game.drawPlayer(ctx,p);assert.match(calls.at(-1)[0].key,/_walk_attack_ranged_/);assert.equal(calls.at(-1)[1],3*192);
 });
 

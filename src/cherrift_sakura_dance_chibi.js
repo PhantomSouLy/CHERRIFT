@@ -82,7 +82,7 @@
   ctx.save();ctx.globalAlpha*=.2;ctx.fillStyle='#000';ctx.beginPath();ctx.ellipse(p.x,p.y+25,26,8,0,0,Math.PI*2);ctx.fill();ctx.restore();
   ctx.save();ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
     const drawn=window.CHERRIFT_ANIMATION_SMOOTHING?.draw(ctx,image,ID,name,dir,visualPhase,p,width,height,{
-      makeFrame:(c,f)=>c.drawImage(image,f*192,0,192,192,0,0,192,192),loop:name==='idle'||name==='walk'
+      makeFrame:(c,f)=>c.drawImage(image,f*192,0,192,192,0,0,192,192),gaitPhase,loop:name==='idle'||name==='walk'
     });
     if(!drawn)ctx.drawImage(image,frame*192,0,192,192,p.x-width/2,p.y+30-184*height/192,width,height);
     ctx.restore();
