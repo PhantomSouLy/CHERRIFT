@@ -1,0 +1,7 @@
+CHERRIFT – tesztpálya ellenőrzés javítása
+
+Másold a tools/mobile_gameplay.test.mjs fájlt a repository azonos helyére, a meglévő helyére. A Base v2 javítás maradjon bent.
+
+A régi ellenőrzés több mint 16000 virágot és a dummy közelében több mint 300 látható virágot várt. Az új teljes szélességű, 900 egység magas üres sáv mellett ezek elavult feltételek. Az ellenőrzés most a teljes virágsprite sávon kívüli helyét, a megmaradó sűrű mezőt és a kamera körüli chunk szűrést vizsgálja. A játék kódját és a skineket nem módosítja.
+
+Ellenőrzés: 18 célzott teszt sikeres (mobil játékmenet, sáv, Base járás). A teljes asset-katalógus teszt helyben nem futtatható: a munkamásolat nem tartalmazza az összes pálya-assetet. Teljes GitHub Actions futás szükséges feltöltés után.
