@@ -102,20 +102,15 @@ test('missing special art falls back to the new idle, other skins delegate, and 
  game.drawPlayer(ctx,game.player);assert.ok(calls.at(-1)[0].key.includes('_idle_'));
  game.player.skin='mage_cherry';game.drawPlayer(ctx,game.player);assert.equal(game.delegated,'draw');game.autoFire();assert.equal(game.delegated,'fire');
 });
-test('moving ranged casts use the same stride compositor as walking and keep its phase',()=>{
+test('moving ranged casts smooth the complete pose on the travel clock',()=>{
  const {game,context,ctx,calls}=fixture(),p=game.player,requests=[];
- const composed={width:192,height:192};
- context.window.CHERRIFT_SUCCUBUS_GAIT={get(image,idle,state,dir,frame){
-  requests.push({state,dir,frame,idle});return state==='walk'||state==='walk_attack_ranged'?composed:null;
- }};
+ context.window.CHERRIFT_SUCCUBUS_GAIT={get(){throw Error('separate legs must not be drawn');}};
+ context.window.CHERRIFT_ANIMATION_SMOOTHING={draw(...args){requests.push(args);return true;}};
  p.moving=true;p.succubusStride=.4;p.succubusFacing='down_right';
- game.drawPlayer(ctx,p);assert.equal(requests.at(-1).state,'walk');assert.equal(requests.at(-1).frame,3);
- assert.equal(calls.at(-1)[0],composed);assert.equal(calls.at(-1)[1],0);
- game.autoFire();game.drawPlayer(ctx,p);
- assert.equal(requests.at(-1).state,'walk_attack_ranged');assert.equal(requests.at(-1).frame,3);
- assert.equal(calls.at(-1)[0],composed);assert.match(requests.at(-1).idle.key,/_idle_/);
- p.__succubusAttackV095=null;p.moving=false;game.drawPlayer(ctx,p);
- assert.equal(requests.at(-1).state,'idle');assert.notEqual(calls.at(-1)[0],composed);
+ game.drawPlayer(ctx,p);assert.equal(requests.at(-1)[3],'walk');assert.equal(requests.at(-1)[5],3.2);
+ game.autoFire();game.drawPlayer(ctx,p);assert.equal(requests.at(-1)[3],'walk_attack_ranged');assert.equal(requests.at(-1)[5],3.2);
+ assert.equal(requests.at(-1)[9].makeLower,undefined);
+ context.window.CHERRIFT_ANIMATION_SMOOTHING=null;game.drawPlayer(ctx,p);assert.match(calls.at(-1)[0].key,/_walk_attack_ranged_/);assert.equal(calls.at(-1)[1],3*192);
 });
 
 function crimsonCanvas(){

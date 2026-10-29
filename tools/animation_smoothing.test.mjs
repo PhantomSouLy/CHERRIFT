@@ -33,6 +33,23 @@ test('the interpolation gutter keeps the existing world pivot and visible charac
  assert.equal(args[1]+128*args[3]/256,400);assert.ok(Math.abs(args[2]+(64+184*2/3)*args[4]/256-330)<1e-8);
  assert.equal(104*args[4]/256,156*110/192);
 });
+test('a complete interpolated pose is drawn once; stale lower-body callbacks cannot split it',async()=>{
+ const {api,make}=fixture(),image={};api.sample(image,'test0','idle','right',0,make);await Promise.resolve();
+ const draws=[];const ctx={drawImage(...args){draws.push(args);},clip(){throw Error('horizontal body cut');}};
+ const ok=api.draw(ctx,image,'test0','idle','right',.5,{x:400,y:300},110,110,{
+  makeFrame:make,makeLower(){throw Error('stale independent lower body');},cut:150,loop:true
+ });
+ assert.equal(ok,true);assert.equal(draws.length,1);assert.equal(draws[0][0].width,256);
+});
+test('the shipped entrypoint loads flow data and smoothing before every renderer and preserves both VFX modules',()=>{
+ const html=readFileSync('index.html','utf8'),build=JSON.parse(readFileSync('src/cherrift_manifest.json','utf8')).buildId;
+ const scripts=[...html.matchAll(/<script\b[^>]*src=["']([^"']+)["']/g)].map(m=>m[1]);
+ const at=name=>scripts.indexOf(`src/cherrift_${name}.js?v=${build}`);
+ assert.ok(at('animation_flow')>=0);assert.ok(at('animation_smoothing')>at('animation_flow'));
+ for(const name of ['cherry_motion','base_cherry','archer_chibi','ninja_chibi','succubus_chibi','sakura_dance_chibi'])assert.ok(at(name)>at('animation_smoothing'),name);
+ assert.ok(at('base_petal_vfx')>at('base_cherry'));assert.ok(at('succubus_crimson_hunger')>at('succubus_chibi'));
+ const versions=[...html.matchAll(/(?:src|href)=["'](?:src|assets)\/[^"']+\?v=([^"']+)/gi)].map(m=>m[1]);assert.deepEqual([...new Set(versions)],[build]);
+});
 test('all five refreshed skins and all their registered states have motion data; every map exists',()=>{
  const context={window:{}};vm.runInNewContext(readFileSync('src/cherrift_animation_flow.js','utf8'),context);const maps=context.window.CHERRIFT_ANIMATION_FLOW;
  assert.equal(Object.keys(maps).length,175);let pairs=0;

@@ -2,7 +2,7 @@
    hit events, cooldowns or random-number streams are changed. */
 (()=>{
  'use strict';if(window.CHERRIFT_ANIMATION_SMOOTHING)return;
- const VERSION='1028-animation-smooth3',SIZE=256,mirrors={left:'right',down_left:'down_right',up_left:'up_right'};
+ const VERSION='1029-whole-pose1',SIZE=256,mirrors={left:'right',down_left:'down_right',up_left:'up_right'};
  const entries=new Map(),MAX=6;let backend;
  function canvas(w=256,h=256){const c=document.createElement('canvas');c.width=w;c.height=h;return c;}
  function entry(image,id,state,dir,makeFrame){
@@ -52,31 +52,69 @@
   const a=(iy*width+ix)*4,b=(iy*width+jx)*4,c=(jy*width+ix)*4,d=(jy*width+jx)*4;
   for(let k=0;k<4;k++)out[k]=(data[a+k]*(1-fx)+data[b+k]*fx)*(1-fy)+(data[c+k]*(1-fx)+data[d+k]*fx)*fy;return out;
  }
- function cpuSample(e,f,n,t){
+ function preparePixels(e){
   if(!e.pixels){e.pixels=e.atlas.getContext('2d').getImageData(0,0,e.atlas.width,256).data;for(let i=0;i<e.pixels.length;i+=4){const a=e.pixels[i+3]/255;for(let c=0;c<3;c++)e.pixels[i+c]*=a;}}
+  if(!e.bounds){
+   e.bounds=Array.from({length:e.meta.frames},()=>[256,256,-1,-1]);
+   for(let y=0;y<256;y++)for(let x=0;x<e.atlas.width;x++)if(e.pixels[(y*e.atlas.width+x)*4+3]){
+    const b=e.bounds[Math.floor(x/256)],px=x%256;b[0]=Math.min(b[0],px);b[1]=Math.min(b[1],y);b[2]=Math.max(b[2],px);b[3]=Math.max(b[3],y);
+   }
+   e.flowMargin=Array.from({length:e.meta.frames},(_,frame)=>{let margin=0;for(let at=frame*32*64*4;at<(frame+1)*32*64*4;at+=4)margin=Math.max(margin,Math.abs(e.flowPixels[at]-128)*.5,Math.abs(e.flowPixels[at+1]-128)*.5);return Math.ceil(margin)+2;});
+  }
+ }
+ function cpuSample(e,f,n,t){
+  preparePixels(e);
   const ctx=backend.canvas.getContext('2d');if(!backend.output)backend.output=ctx.createImageData(256,256);const out=backend.output.data,a=new Float32Array(4),b=new Float32Array(4),v=new Float32Array(4);
+  out.fill(0);
+  const first=e.bounds[f],second=e.bounds[n],margin=e.flowMargin[f];
+  const x0=Math.max(0,Math.floor(Math.min(first[0],second[0])-margin)),x1=Math.min(255,Math.ceil(Math.max(first[2],second[2])+margin));
+  const y0=Math.max(0,Math.floor(Math.min(first[1],second[1])-margin)),y1=Math.min(255,Math.ceil(Math.max(first[3],second[3])+margin));
   let vx=0,vy=0;function vector(x,y,half){if(e.flip)x=255.6666667-x;const gx=Math.max(0,Math.min(31,(x+.5)/8-.5)),gy=Math.max(0,Math.min(31,(y+.5)/8-.5));bilinear(e.flowPixels,64,e.meta.frames*32,half*32+gx,f*32+gy,v);vx=(v[0]-128)*.5*(e.flip?-1:1);vy=(v[1]-128)*.5;}
-  for(let y=0;y<256;y++)for(let x=0;x<256;x++){
+  // A continuous inverse warp keeps every pixel attached to its neighbours.
+  // Independent rectangular tile translations left gaps through the body.
+  for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){
    let ax=x,ay=y,bx=x,by=y;for(let i=0;i<2;i++){vector(ax,ay,0);ax=x-t*vx;ay=y-t*vy;vector(bx,by,1);bx=x-(1-t)*vx;by=y-(1-t)*vy;}
    ax=Math.max(0,Math.min(255,ax));bx=Math.max(0,Math.min(255,bx));bilinear(e.pixels,e.atlas.width,256,f*256+ax,ay,a);bilinear(e.pixels,e.atlas.width,256,n*256+bx,by,b);
    const alpha=a[3]*(1-t)+b[3]*t,index=(y*256+x)*4;out[index+3]=alpha;for(let c=0;c<3;c++)out[index+c]=alpha>0?(a[c]*(1-t)+b[c]*t)*255/alpha:0;
   }ctx.putImageData(backend.output,0,0);return backend.canvas;
  }
+ // Canvas fallback: adjacent triangles share the same sampled vertices.
+ // Unlike independent tile translations, this mesh has no discontinuous cuts.
  function canvasSample(e,f,n,t){
+  preparePixels(e);
   if(!e.bitmapRequested&&typeof createImageBitmap==='function'){e.bitmapRequested=true;createImageBitmap(e.atlas).then(bitmap=>{if(entries.get(e.key)===e)e.bitmap=bitmap;else bitmap.close?.();}).catch(()=>{});}
-  const ctx=backend.canvas.getContext('2d');ctx.clearRect(0,0,256,256);ctx.save();ctx.imageSmoothingEnabled=true;ctx.globalCompositeOperation='lighter';
-  if(!e.bitmap){ctx.globalAlpha=1-t;ctx.drawImage(e.atlas,f*256,0,256,256,0,0,256,256);ctx.globalAlpha=t;ctx.drawImage(e.atlas,n*256,0,256,256,0,0,256,256);ctx.restore();return backend.canvas;}
-  const size=32,values=new Float32Array(4);
-  for(let y=0;y<256;y+=size)for(let x=0;x<256;x+=size){
-   let px=x+size/2,py=y+size/2;if(e.flip)px=255.6666667-px;
-   const gx=Math.max(0,Math.min(31,(px+.5)/8-.5)),gy=Math.max(0,Math.min(31,(py+.5)/8-.5));
-   for(let half=0;half<2;half++){
-    bilinear(e.flowPixels,64,e.meta.frames*32,half*32+gx,f*32+gy,values);
-    const amount=half?1-t:t,dx=(values[0]-128)*.5*(e.flip?-1:1),dy=(values[1]-128)*.5,source=half?n:f;
-    const sx=Math.max(0,Math.min(256-size,x-amount*dx)),sy=Math.max(0,Math.min(256-size,y-amount*dy));
-    ctx.globalAlpha=half?t:1-t;ctx.drawImage(e.bitmap,source*256+sx,sy,size,size,x,y,size,size);
+  const out=backend.canvas.getContext('2d');out.clearRect(0,0,256,256);
+  if(t===0||f===n){out.drawImage(e.atlas,f*256,0,256,256,0,0,256,256);return backend.canvas;}
+  if(!e.bitmap){out.save();out.globalCompositeOperation='lighter';out.globalAlpha=1-t;out.drawImage(e.atlas,f*256,0,256,256,0,0,256,256);out.globalAlpha=t;out.drawImage(e.atlas,n*256,0,256,256,0,0,256,256);out.restore();return backend.canvas;}
+  if(!backend.layers)backend.layers=[canvas(),canvas()];
+  const step=16,first=e.bounds[f],second=e.bounds[n],margin=e.flowMargin[f];
+  const x0=Math.max(0,Math.floor((Math.min(first[0],second[0])-margin)/step)*step),x1=Math.min(256,Math.ceil((Math.max(first[2],second[2])+margin+1)/step)*step);
+  const y0=Math.max(0,Math.floor((Math.min(first[1],second[1])-margin)/step)*step),y1=Math.min(256,Math.ceil((Math.max(first[3],second[3])+margin+1)/step)*step);
+  const values=new Float32Array(4);
+  for(let half=0;half<2;half++){
+   const layer=backend.layers[half],c=layer.getContext('2d'),amount=half?1-t:t,source=half?n:f;
+   c.clearRect(0,0,256,256);
+   const cols=(x1-x0)/step+1,vertices=[];
+   for(let y=y0;y<=y1;y+=step)for(let x=x0;x<=x1;x+=step){
+    let sx=x,sy=y;
+    for(let iteration=0;iteration<2;iteration++){
+     const px=e.flip?255.6666667-sx:sx,gx=Math.max(0,Math.min(31,(px+.5)/8-.5)),gy=Math.max(0,Math.min(31,(sy+.5)/8-.5));
+     bilinear(e.flowPixels,64,e.meta.frames*32,half*32+gx,f*32+gy,values);
+     sx=x-amount*(values[0]-128)*.5*(e.flip?-1:1);sy=y-amount*(values[1]-128)*.5;
+    }vertices.push([x,y,sx,sy]);
    }
-  }ctx.restore();return backend.canvas;
+   function triangle(v0,v1,v2){
+    const ux=v1[2]-v0[2],uy=v1[3]-v0[3],vx=v2[2]-v0[2],vy=v2[3]-v0[3],det=ux*vy-vx*uy;if(Math.abs(det)<.01)return;
+    const dx=v1[0]-v0[0],dy=v1[1]-v0[1],ex=v2[0]-v0[0],ey=v2[1]-v0[1];
+    const a=(dx*vy-ex*uy)/det,b=(dy*vy-ey*uy)/det,cc=(ex*ux-dx*vx)/det,d=(ey*ux-dy*vx)/det;
+    const cx=(v0[0]+v1[0]+v2[0])/3,cy=(v0[1]+v1[1]+v2[1])/3;
+    c.save();c.beginPath();for(const [i,v] of [v0,v1,v2].entries()){const x=cx+(v[0]-cx)*1.05,y=cy+(v[1]-cy)*1.05;i?c.lineTo(x,y):c.moveTo(x,y);}c.closePath();c.clip();
+    c.transform(a,b,cc,d,v0[0]-a*v0[2]-cc*v0[3],v0[1]-b*v0[2]-d*v0[3]);
+    c.drawImage(e.bitmap,source*256,0,256,256,0,0,256,256);c.restore();
+   }
+   for(let y=0;y<(y1-y0)/step;y++)for(let x=0;x<cols-1;x++){const i=y*cols+x;triangle(vertices[i],vertices[i+1],vertices[i+cols]);triangle(vertices[i+1],vertices[i+cols+1],vertices[i+cols]);}
+  }
+  out.save();out.globalCompositeOperation='lighter';out.globalAlpha=1-t;out.drawImage(backend.layers[0],0,0);out.globalAlpha=t;out.drawImage(backend.layers[1],0,0);out.restore();return backend.canvas;
  }
  function sample(image,id,state,dir,phase,makeFrame,{loop=false}={}){
   const e=entry(image,id,state,dir,makeFrame);if(!e?.ready)return null;
@@ -85,9 +123,10 @@
  }
  function draw(ctx,image,id,state,dir,phase,p,width,height,options){
   const result=sample(image,id,state,dir,phase,options.makeFrame,options);if(!result)return false;
-  const y=p.y+30-184*height/192,rx=p.x-width,ry=p.y+30-(64+184*2/3)*height*2/256,rw=width*2,rh=height*2;
-  if(options.makeLower){const cutY=y+(options.cut||150)*height/192;ctx.save();ctx.beginPath();ctx.rect(rx,cutY,rw,ry+rh-cutY);ctx.clip();options.makeLower(ctx);ctx.restore();ctx.save();ctx.beginPath();ctx.rect(rx,ry,rw,cutY-ry);ctx.clip();ctx.drawImage(result,rx,ry,rw,rh);ctx.restore();}
-  else ctx.drawImage(result,rx,ry,rw,rh);return true;
+  // One complete pose owns hips, legs, hair and clothing. Never combine it
+  // with a separately registered lower body at a horizontal screen-space cut.
+  const rx=p.x-width,ry=p.y+30-(64+184*2/3)*height*2/256;
+  ctx.drawImage(result,rx,ry,width*2,height*2);return true;
  }
  window.CHERRIFT_ANIMATION_SMOOTHING=Object.freeze({sample,draw,version:VERSION,stats:()=>({cached:entries.size,maxCached:MAX,backend:backend?.gl?'webgl':window.__CHERRIFT_SMOOTH_REFERENCE_CPU__?'cpu-reference':'canvas'})});
 })();

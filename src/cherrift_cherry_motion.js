@@ -25,12 +25,6 @@
     const frames = window.CHERRIFT_CHERRY_GEOMETRY?.[id]?.[state]?.[dir];
     let geometry = frames?.[frame];
     let sourceFrame=frame;
-    if (!p.__smoothSkipGait && state.startsWith('walk') && geometry && window.CHERRIFT_CHERRY_GAIT) {
-      sourceFrame=state === 'walk' ? 0 : frame;
-      const gaitGeometry=frames[sourceFrame];
-      const gait=window.CHERRIFT_CHERRY_GAIT.get(image,id,dir,((p.cherryStrideTime||0)*8)%6,gaitGeometry,sourceFrame);
-      if(gait) {image=gait;frame=0;geometry=gaitGeometry;}
-    }
     if (!geometry) {
       ctx.drawImage(image, frame * 192, 0, 192, 192,
         p.x - 96 * width / 192, p.y + 30 - 184 * height / 192, width, height);
@@ -59,8 +53,7 @@
     const smooth=window.CHERRIFT_ANIMATION_SMOOTHING;
     if(smooth?.draw(ctx,image,id,state,dir,phase,p,width,height,{
       makeFrame:(c,f)=>drawRaw(c,image,id,state,dir,f,{...p,x:96,y:154,__smoothSkipGait:true},192,192),
-      makeLower:state.startsWith('walk')?(c)=>drawRaw(c,image,id,state,dir,frame,p,width,height):null,
-      cut:145,loop:state==='idle'||state==='walk'
+      loop:state==='idle'||state==='walk'
     }))return;
     drawRaw(ctx,image,id,state,dir,frame,p,width,height);
   }

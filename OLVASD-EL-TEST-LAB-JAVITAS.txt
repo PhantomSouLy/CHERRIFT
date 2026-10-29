@@ -1,0 +1,23 @@
+CHERRIFT – teljes pózú animáció / test–láb illesztési javítás
+
+TELEPÍTÉS
+A ZIP tartalmát másold a CHERRIFT projekt gyökerébe, azonos útvonalon felülírva a fájlokat. A meglévő PNG sprite-ok és az assets/player/animation_flow mappa maradjon fent: ez a csomag az előző simítócsomagra épül.
+
+A GitHub b3b16b5 (Succubus Cherry new effects) verziójához készült. Az új Crimson Hunger és Petal Trace effektmodulok, a harci események és a sérülési adatok megmaradnak. Supabase-módosítás nem kell.
+
+JAVÍTÁS
+A korábbi vízszintes felsőtest/láb vágás és a másik pózból kivágott, külön mozgatott lábak helyett az eredeti teljes pózt simítjuk. Ez a Base, Archer, Ninja, Succubus és Sakura Dance renderelőjének közös útja. Az alap idle, az extra idle-k, támadások és skill rajzai is ezt használják. Az eredeti rajzok nem változtak.
+
+Betöltés alatt is egy teljes eredeti képkocka jelenik meg: a korábbi hibás láb-rig nem kerül alá vissza. A friss effektcsomag indexéből hiányzó flow és simító modulbetöltések visszakerültek, külön regressziós teszttel. Minden saját index-query és a manifest buildje egységesen 1029-whole-pose1.
+
+WebGL nélkül a rajzoló közös csúcspontokból álló folytonos hálót használ. A korábbi egymástól függetlenül eltolt négyszögek szélein jelentkező vágások ezért megszűnnek. Ez közelítő Canvas-renderelés, a GPU-változattól apró részletekben eltérhet.
+
+ELLENŐRZÉS
+77 célzott Node-teszt sikeres. Megmaradtak a Crimson Hunger, Petal Trace, skill, lövedék, sebzés, pause és idle regressziók. Külön teszt ellenőrzi, hogy a teljes pózt egyben rajzoljuk, és egy régi alsótest-visszahívás nem vághatja ketté.
+
+A natív Canvas-renderelő 768 járó/járva támadó Succubus- és Sakura-pózt rajzolt nyolc irányban; nincs üres póz. A mellékelt MP4 ebből a renderelőből készült, nem élő játékfelvétel. A két PNG bal, bal-felfelé és lefelé köztes pózokat mutat.
+
+Teljes élő PC/mobil játékteszt és GitHub Actions-futás még szükséges. A forrásközi láb-vágás hibáját ez a csomag kezeli; az eredeti rajzok esetleges anatómiai hibáját nem rajzolja át automatikusan.
+
+FELTÖLTÉS
+Közvetlen GitHub-feltöltés nem történt: a GitHub-kapcsolat 403 Resource not accessible by integration hibával elutasította az írást.
