@@ -8,8 +8,8 @@
  // Subpixel face registration measured from the existing normalized artwork.
  const registration={"right":{"walk":[-0.0,0.5,1.0,1.0,1.0,0.75],"walk_attack":[-3.25,-4.0,-3.5,-3.0,-2.75,-22.75]},"left":{"walk":[-0.0,-0.25,-1.0,-2.0,-1.25,-1.0],"walk_attack":[3.25,4.0,3.75,3.25,2.75,23.0]}};
  const neutral={
-  right:{hip:[93,154],knee:[101,168],sole:[109,182],polygon:[[86,151],[100,150],[105,164],[122,173],[121,185],[105,185],[96,174]]},
-  down_right:{hip:[91,150],knee:[97,166],sole:[104,182],polygon:[[84,148],[99,148],[104,165],[119,178],[118,185],[100,185],[92,174]]},
+  right:{hip:[93,154],knee:[101,165],ankle:[105,174],sole:[109,182],polygon:[[86,151],[100,150],[105,164],[122,173],[121,185],[105,185],[96,174]]},
+  down_right:{hip:[91,150],knee:[97,163],ankle:[101,174],sole:[104,182],polygon:[[84,148],[99,148],[104,165],[119,178],[118,185],[100,185],[92,174]]},
   up_right:{hip:[101,150],knee:[97,166],sole:[92,182],polygon:[[94,148],[109,150],[102,166],[103,180],[95,185],[80,180],[83,167]]}
  };
  const prepared=new WeakMap(),MAX=6,recent=new Map();
@@ -23,7 +23,7 @@
   return [64+(96+(x-fx)*scale)*2/3+(flip?-offset[0]:offset[0]),64+(184+(y-g[1])*scale)*2/3+offset[1]];
  }
  function pose(state,dir,phase,stride){
-  const canonical=mirrors[dir]||dir,poses=data[`${state}/${canonical}`];if(!poses||!Number.isFinite(phase)||!Number.isFinite(stride))return null;
+  const canonical=mirrors[dir]||dir,poses=data[`${state}/${canonical}`];if(canonical==='up_right'||!poses||!Number.isFinite(phase)||!Number.isFinite(stride))return null;
   const pos=state==='walk'?((phase%6)+6)%6:Math.max(0,Math.min(5,phase)),f=Math.floor(pos),n=state==='walk'?(f+1)%6:Math.min(5,f+1),t=pos-f;
   const hips=[0,1].map(i=>{const a=poses[f].hips,b=poses[n].hips,p=point(state,dir,f,a[i*2],a[i*2+1]),q=point(state,dir,n,b[i*2],b[i*2+1]);return p&&q?[p[0]+(q[0]-p[0])*t,p[1]+(q[1]-p[1])*t]:null;});
   if(hips.some(p=>!p))return null;
@@ -39,13 +39,16 @@
   // During ground contact the foot travels backwards relative to Cherry.
   // The raised foot returns forwards. Reversing only the leg clock preserves
   // the existing hair, torso and attack animations.
-  const angle=-stride*Math.PI/3,sign=mirrors[dir]?-1:1,amplitude=canonical==='right'?5.5:canonical==='down_right'?3.8:4.2;
+  const def=neutral[canonical],sourceAnkle=point('walk',dir,0,...def.ankle,false),sourceSole=point('walk',dir,0,...def.sole,false);
+  const bootOffset=[(sourceAnkle[0]-sourceSole[0])*.76,(sourceAnkle[1]-sourceSole[1])*.76];
+  const angle=-stride*Math.PI/3,sign=mirrors[dir]?-1:1,amplitude=canonical==='right'?5:3.8;
   const legs=hips.map((hip,i)=>{
    const a=angle+i*Math.PI,swing=Math.max(0,Math.sin(a)),lift=2.4*swing*swing;
    const sole=[planted[i][0]+Math.cos(a)*amplitude*sign,64+184*2/3-lift+(canonical==='right'?0:i===0?.5:-.5)];
-   const dx=sole[0]-hip[0],dy=sole[1]-hip[1],length=Math.max(1,Math.hypot(dx,dy)),bend=.9*swing;
+   const ankle=[sole[0]+bootOffset[0],sole[1]+bootOffset[1]];
+   const dx=ankle[0]-hip[0],dy=ankle[1]-hip[1],length=Math.max(1,Math.hypot(dx,dy)),bend=.9*swing;
    const knee=[hip[0]+dx*.47+dy/length*bend*sign,hip[1]+dy*.47-dx/length*bend*sign];
-   return {hip,knee,sole};
+   return {hip,knee,ankle,sole};
   });return {frame:f,next:n,fraction:t,legs,bodyShiftX,bodyShiftY};
  }
  function prepare(image,walkImage,state,dir,renderRaw){
@@ -59,10 +62,10 @@
   const def=neutral[canonical],strip=canvas(1152,192),sc=strip.getContext('2d');sc.save();sc.beginPath();
   def.polygon.forEach(([x,y],i)=>{x=flip?193-x:x;i?sc.lineTo(x,y):sc.moveTo(x,y);});sc.closePath();sc.clip();sc.drawImage(walkImage,0,0);sc.restore();
   const leg=canvas(),lc=leg.getContext('2d');lc.save();lc.translate(64,64);lc.scale(2/3,2/3);renderRaw(lc,strip,ID,'walk',dir,0,{x:96,y:154},192,192);lc.restore();
-  const source={hip:point('walk',dir,0,...def.hip,false),knee:point('walk',dir,0,...def.knee,false),sole:point('walk',dir,0,...def.sole,false)};
-  const upper=canvas(),lower=canvas();
-  for(const [piece,y,h] of [[upper,0,source.knee[1]+1.25],[lower,source.knee[1]-1.25,256-source.knee[1]+1.25]]){const c=piece.getContext('2d');c.save();c.beginPath();c.rect(0,y,256,h);c.clip();c.drawImage(leg,0,0);c.restore();}
-  e={walkImage,body,upper,lower,source,out:canvas(),fallback:canvas(),owner:map,dir};map.set(dir,e);recent.set(e,true);
+  const source={hip:point('walk',dir,0,...def.hip,false),knee:point('walk',dir,0,...def.knee,false),ankle:point('walk',dir,0,...def.ankle,false),sole:point('walk',dir,0,...def.sole,false)};
+  const upper=canvas(),lower=canvas(),boot=canvas();
+  for(const [piece,y,h] of [[upper,0,source.knee[1]+1.25],[lower,source.knee[1]-1.25,source.ankle[1]-source.knee[1]+2.5],[boot,source.ankle[1]-1.25,256-source.ankle[1]+1.25]]){const c=piece.getContext('2d');c.save();c.beginPath();c.rect(0,y,256,h);c.clip();c.drawImage(leg,0,0);c.restore();}
+  e={walkImage,body,upper,lower,boot,source,out:canvas(),fallback:canvas(),owner:map,dir};map.set(dir,e);recent.set(e,true);
   while(recent.size>MAX){const oldest=recent.keys().next().value;recent.delete(oldest);oldest.owner.delete(oldest.dir);}return e;
  }
  function bone(c,image,from,to,start,end){
@@ -84,10 +87,12 @@
    c.save();c.translate(64+(mirrors[dir]?-offset[0]:offset[0]),64+offset[1]);c.scale(2/3,2/3);renderRaw(c,e.body,ID,state,dir,plan.frame,{x:96,y:154},192,192);c.restore();body=e.fallback;
   }
   const c=e.out.getContext('2d');c.clearRect(0,0,256,256);
-  for(const i of [1,0]){const leg=plan.legs[i];bone(c,e.upper,e.source.hip,e.source.knee,leg.hip,leg.knee);bone(c,e.lower,e.source.knee,e.source.sole,leg.knee,leg.sole);}
+  for(const i of [1,0]){const leg=plan.legs[i];bone(c,e.upper,e.source.hip,e.source.knee,leg.hip,leg.knee);bone(c,e.lower,e.source.knee,e.source.ankle,leg.knee,leg.ankle);
+   c.save();c.translate(...leg.sole);c.scale(.76,.76);c.drawImage(e.boot,-e.source.sole[0],-e.source.sole[1]);c.restore();}
   c.save();c.translate(plan.bodyShiftX,plan.bodyShiftY);c.drawImage(body,0,0);c.restore();
   ctx.drawImage(e.out,p.x-width,p.y+30-(64+184*2/3)*height*2/256,width*2,height*2);return true;
  }
- window.CHERRIFT_BASE_WALK=Object.freeze({draw,pose,version:'1029-base-proportion3',stats:()=>({cached:recent.size,maxCached:MAX})});
+ window.CHERRIFT_BASE_WALK=Object.freeze({draw,pose,version:'1029-base-art-foot4',stats:()=>({cached:recent.size,maxCached:MAX})});
 })();
+
 
