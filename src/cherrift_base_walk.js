@@ -27,21 +27,26 @@
   const pos=state==='walk'?((phase%6)+6)%6:Math.max(0,Math.min(5,phase)),f=Math.floor(pos),n=state==='walk'?(f+1)%6:Math.min(5,f+1),t=pos-f;
   const hips=[0,1].map(i=>{const a=poses[f].hips,b=poses[n].hips,p=point(state,dir,f,a[i*2],a[i*2+1]),q=point(state,dir,n,b[i*2],b[i*2+1]);return p&&q?[p[0]+(q[0]-p[0])*t,p[1]+(q[1]-p[1])*t]:null;});
   if(hips.some(p=>!p))return null;
-  const offsets=registration[dir]?.[state],bodyShiftX=offsets?offsets[f]+(offsets[n]-offsets[f])*t:0;
-  for(const hip of hips)hip[0]+=bodyShiftX;
+  const offsets=registration[dir]?.[state];
   const reference=data[`walk/${canonical}`][0].hips;
-  const planted=offsets?[point('walk',dir,0,reference[0],reference[1]),point('walk',dir,0,reference[2],reference[3])]:null;
+  const planted=[point('walk',dir,0,reference[0],reference[1]),point('walk',dir,0,reference[2],reference[3])];
+  // Keep the skirt/hip attachment steady without freezing the painted torso.
+  // A small lower resting pelvis restores the original short chibi legs.
+  const bodyShiftX=offsets?offsets[f]+(offsets[n]-offsets[f])*t:
+   (planted[0][0]+planted[1][0]-hips[0][0]-hips[1][0])/2;
+  const bodyShiftY=(planted[0][1]+planted[1][1]-hips[0][1]-hips[1][1])/2+(canonical==='down_right'?3:2);
+  for(const hip of hips){hip[0]+=bodyShiftX;hip[1]+=bodyShiftY;}
   // During ground contact the foot travels backwards relative to Cherry.
   // The raised foot returns forwards. Reversing only the leg clock preserves
   // the existing hair, torso and attack animations.
-  const angle=-stride*Math.PI/3,sign=mirrors[dir]?-1:1,amplitude=canonical==='right'?8:6.7;
+  const angle=-stride*Math.PI/3,sign=mirrors[dir]?-1:1,amplitude=canonical==='right'?5.5:canonical==='down_right'?3.8:4.2;
   const legs=hips.map((hip,i)=>{
-   const a=angle+i*Math.PI,swing=Math.max(0,Math.sin(a)),lift=5.2*swing*swing;
-   const sole=[(planted?planted[i][0]:hip[0])+Math.cos(a)*amplitude*sign,64+184*2/3-lift+(canonical==='right'?0:i===0?.5:-.5)];
-   const dx=sole[0]-hip[0],dy=sole[1]-hip[1],length=Math.max(1,Math.hypot(dx,dy)),bend=3.2*swing;
+   const a=angle+i*Math.PI,swing=Math.max(0,Math.sin(a)),lift=2.4*swing*swing;
+   const sole=[planted[i][0]+Math.cos(a)*amplitude*sign,64+184*2/3-lift+(canonical==='right'?0:i===0?.5:-.5)];
+   const dx=sole[0]-hip[0],dy=sole[1]-hip[1],length=Math.max(1,Math.hypot(dx,dy)),bend=.9*swing;
    const knee=[hip[0]+dx*.47+dy/length*bend*sign,hip[1]+dy*.47-dx/length*bend*sign];
    return {hip,knee,sole};
-  });return {frame:f,next:n,fraction:t,legs,bodyShiftX};
+  });return {frame:f,next:n,fraction:t,legs,bodyShiftX,bodyShiftY};
  }
  function prepare(image,walkImage,state,dir,renderRaw){
   if(typeof document==='undefined'||!walkImage)return null;
@@ -62,7 +67,11 @@
  }
  function bone(c,image,from,to,start,end){
   const ax=to[0]-from[0],ay=to[1]-from[1],bx=end[0]-start[0],by=end[1]-start[1];
-  c.save();c.translate(...start);c.rotate(Math.atan2(by,bx)-Math.atan2(ay,ax));const scale=Math.hypot(bx,by)/Math.max(.1,Math.hypot(ax,ay));c.scale(scale,scale);c.drawImage(image,-from[0],-from[1]);c.restore();
+  // Stretch along the bone only. Uniform scaling made the boots inflate as
+  // the knee moved, producing both oversized feet and a pulsing silhouette.
+  c.save();c.translate(...start);c.rotate(Math.atan2(by,bx));
+  const scale=Math.hypot(bx,by)/Math.max(.1,Math.hypot(ax,ay));
+  c.scale(scale,.76);c.rotate(-Math.atan2(ay,ax));c.drawImage(image,-from[0],-from[1]);c.restore();
  }
  function draw(ctx,image,state,dir,phase,stride,p,width,height,renderRaw,walkImage){
   const smooth=window.CHERRIFT_ANIMATION_SMOOTHING;if(!smooth)return false;
@@ -76,8 +85,9 @@
   }
   const c=e.out.getContext('2d');c.clearRect(0,0,256,256);
   for(const i of [1,0]){const leg=plan.legs[i];bone(c,e.upper,e.source.hip,e.source.knee,leg.hip,leg.knee);bone(c,e.lower,e.source.knee,e.source.sole,leg.knee,leg.sole);}
-  c.save();c.translate(plan.bodyShiftX,0);c.drawImage(body,0,0);c.restore();
+  c.save();c.translate(plan.bodyShiftX,plan.bodyShiftY);c.drawImage(body,0,0);c.restore();
   ctx.drawImage(e.out,p.x-width,p.y+30-(64+184*2/3)*height*2/256,width*2,height*2);return true;
  }
- window.CHERRIFT_BASE_WALK=Object.freeze({draw,pose,version:'1029-base-step-direction2',stats:()=>({cached:recent.size,maxCached:MAX})});
+ window.CHERRIFT_BASE_WALK=Object.freeze({draw,pose,version:'1029-base-proportion3',stats:()=>({cached:recent.size,maxCached:MAX})});
 })();
+

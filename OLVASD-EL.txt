@@ -1,9 +1,9 @@
-CHERRIFT – GM smoke teszt javítása
+Base Cherry – kisebb lábak és nyugodtabb lépés (v3)
 
-Másold a tools/smoke_boot_096.mjs fájlt a repository azonos helyére, felülírva a meglévőt. Az eddigi Base v2 és Training Lane CI javítások maradjanak bent.
+A csomag 4 forrásfájlját másold a CHERRIFT azonos helyére, felülírva a meglévőket. A korábbi Base v2 és CI javítások maradjanak bent. Az index.html és src/cherrift_manifest.json fájlokat együtt cseréld, így az összes böngészős build query egyezik. Ezután frissítsd a játékot.
 
-A gm-phone és gm-returning-session teszt még több mint 16000 virágot várt a kibővített üres sáv mellett. Az új pályán kb. 13000 virág marad. A teszt most a megmaradó sűrű mezőt és minden teljes virágsprite 900 egység magas sávon kívüli helyét ellenőrzi.
+Változások: a hat oldalsó/átlós walk és walk_attack nézet lábai keskenyebbek, rövidebbek. A csont hossza többé nem növeli a láb szélességét. Rövidebb lépés, kisebb térdhajlítás és lábemelés; az átlós talppontok sem követik többé a festett képkockák eltolódását. A csípő és a teljes festett test együtt kapja a stabilizálást. A felsőtest eredeti animációja megmarad. A közvetlen fel/le nézet eredeti rajza változatlan.
 
-Ellenőrzés: szintaxis rendben; a smoke fájlból kiolvasott új ellenőrzés 4 maggal a GitHub aktuális pályakódján sikeres. 8 negatív próba ellenőrzi, hogy a hibás sáv és az üres virágmező elbukjon (összesen 12 ellenőrzés). Teljes alkalmazás-smoke helyben nem futott; a két GitHub Actions eset újrafuttatása szükséges.
+Az eredeti PNG-ket, ruhát, hajat és játékmenetet nem módosítja.
 
-A játék, belépés, skinek és adatbázis kódja változatlan. GitHubra automatikusan nincs feltöltve.
+Ellenőrzés: 44 célzott automatizált teszt sikeres; 576 mozgó póz renderelve, 1248 test–láb csatlakozás vizsgálva, hiányzó csatlakozás nélkül. A mellékelt MP4 renderelt előnézet. Élő PC/mobil játékteszt és teljes GitHub Actions futás még szükséges. GitHubra nincs automatikusan feltöltve.
