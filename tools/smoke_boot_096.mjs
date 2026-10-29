@@ -1338,7 +1338,14 @@ try {
     window.UI.save.selectedStageId="training_test";window.CherriftStorage.save(window.UI.save);
     await window.CHERRIFT_AUTH.flushCloudSave();await window.UI.game.start();
     assert.equal(window.UI.game.mode,"playing");assert(window.UI.game.stage.training);
-    assert.equal(window.UI.game.__reworkArt.world,0);assert(window.UI.game.__reworkMap.flowerCount>16000);
+    assert.equal(window.UI.game.__reworkArt.world,0);
+    const trainingMap=window.UI.game.__reworkMap;
+    assert(trainingMap.flowerCount>10000,"training retains a dense flower field outside the lane");
+    for(const flowers of trainingMap.chunks.values())for(const flower of flowers) {
+      const top=flower.y-flower.drawH*flower.anchor;
+      const bottom=top+flower.drawH;
+      assert(top>450||bottom< -450,"training keeps complete flower sprites outside the full-width dummy lane");
+    }
     assert(window.UI.game.enemies.some(e=>e.isTrainingDummyV094));
     await waitFor(()=>!window.UI.game.__v062StartPromise && document.body.classList.contains("is-playing"),"training fully presented",5000);
     window.UI.game.drawWorld(window.UI.game.ctx);window.UI.quit();
@@ -1591,3 +1598,4 @@ try {
   await closeServerBounded(1500);
   activeWindow = null;
 }
+
