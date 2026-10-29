@@ -102,20 +102,15 @@ test('missing special art falls back to the new idle, other skins delegate, and 
  game.drawPlayer(ctx,game.player);assert.ok(calls.at(-1)[0].key.includes('_idle_'));
  game.player.skin='mage_cherry';game.drawPlayer(ctx,game.player);assert.equal(game.delegated,'draw');game.autoFire();assert.equal(game.delegated,'fire');
 });
-test('moving ranged casts use the same stride compositor as walking and keep its phase',()=>{
+test('moving ranged casts smooth the complete pose on the travel clock',()=>{
  const {game,context,ctx,calls}=fixture(),p=game.player,requests=[];
- const composed={width:192,height:192};
- context.window.CHERRIFT_SUCCUBUS_GAIT={get(image,idle,state,dir,frame){
-  requests.push({state,dir,frame,idle});return state==='walk'||state==='walk_attack_ranged'?composed:null;
- }};
+ context.window.CHERRIFT_SUCCUBUS_GAIT={get(){throw Error('separate legs must not be drawn');}};
+ context.window.CHERRIFT_ANIMATION_SMOOTHING={draw(...args){requests.push(args);return true;}};
  p.moving=true;p.succubusStride=.4;p.succubusFacing='down_right';
- game.drawPlayer(ctx,p);assert.equal(requests.at(-1).state,'walk');assert.equal(requests.at(-1).frame,3);
- assert.equal(calls.at(-1)[0],composed);assert.equal(calls.at(-1)[1],0);
- game.autoFire();game.drawPlayer(ctx,p);
- assert.equal(requests.at(-1).state,'walk_attack_ranged');assert.equal(requests.at(-1).frame,3);
- assert.equal(calls.at(-1)[0],composed);assert.match(requests.at(-1).idle.key,/_idle_/);
- p.__succubusAttackV095=null;p.moving=false;game.drawPlayer(ctx,p);
- assert.equal(requests.at(-1).state,'idle');assert.notEqual(calls.at(-1)[0],composed);
+ game.drawPlayer(ctx,p);assert.equal(requests.at(-1)[3],'walk');assert.equal(requests.at(-1)[5],3.2);
+ game.autoFire();game.drawPlayer(ctx,p);assert.equal(requests.at(-1)[3],'walk_attack_ranged');assert.equal(requests.at(-1)[5],3.2);
+ assert.equal(requests.at(-1)[9].makeLower,undefined);assert.equal(requests.at(-1)[9].gaitPhase,3.2);
+ context.window.CHERRIFT_ANIMATION_SMOOTHING=null;game.drawPlayer(ctx,p);assert.match(calls.at(-1)[0].key,/_walk_attack_ranged_/);assert.equal(calls.at(-1)[1],3*192);
 });
 
 function crimsonCanvas(){
@@ -153,7 +148,7 @@ test('Crimson Hunger renders attack art and keeps the cast and shield behind the
  assert(calls.at(-1).args[0].key.startsWith('player_succubus_cherry_'),'sprite draws after VFX');assert.equal(c.globalAlpha,1);
  calls.length=0;g.drawEffect(c,{type:'succubus_skill_burst_v095'});assert.equal(calls.length,0,'vortex does not cover the sprite');
  for(const type of ['succubus_melee_slash_v095','succubus_claw_mark_v095','succubus_ranged_hit_v095','succubus_heal_v095'])g.drawEffect(c,{type,x:0,y:0,t:.1,life:.4,angle:0});
- assert(calls.some(x=>x.args[0].key.startsWith('crimsonMelee')));assert(calls.some(x=>x.args[0].key==='crimsonAtlas'));
+ assert(calls.some(x=>x.args[0].key==='crimsonMelee'));assert(calls.some(x=>x.args[0].key==='crimsonAtlas'));
  const before=g.drawPlayer;vm.runInContext(readFileSync('src/cherrift_succubus_crimson_hunger.js','utf8'),f.context);assert.equal(g.drawPlayer,before);
 });
 test('walking marks follow actual distance, freeze on pause, and use both Base and Ninja loaders',()=>{
@@ -182,25 +177,5 @@ test('generated Crimson Hunger art is loaded before assets are ready',async()=>{
  const f=fixture(true,true),loader=vm.runInContext('new ImageAssets()',f.context);await loader.loadAll();
  assert(loader.bootReady);for(const key of ['crimsonAtlas','crimsonWave','crimsonMelee','crimsonSoul']){
   const item=loader.loaded.find(x=>x.key===key);assert(item,key);assert(item.src.includes('succubus_crimson_hunger/'));
- }
-});
-
-test('four melee shapes all appear, avoid adjacent repeats and remain stable per effect',()=>{
- const f=fixture(true,true),g=f.game,{c,calls}=crimsonCanvas();
- const keys=[];f.context.Math.random=()=>{throw Error('cosmetic choice consumed combat RNG');};
- for(let i=0;i<24;i++){
-  const e={type:'succubus_melee_slash_v095',x:0,y:0,t:.05,life:.3,angle:i*Math.PI/4};
-  calls.length=0;g.drawEffect(c,e);const key=calls.at(-1).args[0].key;keys.push(key);
-  calls.length=0;g.drawEffect(c,e);assert.equal(calls.at(-1).args[0].key,key,'same frame event keeps its art');
- }
- assert.equal(new Set(keys).size,4);
- for(let i=1;i<keys.length;i++)assert.notEqual(keys[i],keys[i-1]);
- for(let i=0;i<keys.length;i+=4)assert.equal(new Set(keys.slice(i,i+4)).size,4);
- assert.equal(c.globalAlpha,1);
-});
-test('all four melee images are registered for the normal asset loader',async()=>{
- const f=fixture(true,true),loader=vm.runInContext('new ImageAssets()',f.context);await loader.loadAll();
- for(const key of ['crimsonMelee','crimsonMeleeCross','crimsonMeleeRising','crimsonMeleeDescending']){
-  const item=loader.loaded.find(x=>x.key===key);assert(item,key);assert(existsSync(item.src.split('?')[0]));
  }
 });

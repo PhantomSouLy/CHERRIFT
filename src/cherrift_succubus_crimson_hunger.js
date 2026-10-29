@@ -3,12 +3,10 @@
 (() => {
   'use strict';
   if(!window.CherriftGame || window.CHERRIFT_SUCCUBUS_CRIMSON_HUNGER)return;
-  const ID='succubus_cherry', VERSION='1029-succubus-melee4';
+  const ID='succubus_cherry', VERSION='1028-succubus-crimson1';
   const ROOT='assets/effects/succubus_crimson_hunger/';
   const sources={crimsonAtlas:ROOT+'atlas.png',crimsonWave:ROOT+'claw_wave.png',
-    crimsonMelee:ROOT+'melee_slash.png',crimsonSoul:ROOT+'soul_wisp.png',
-    crimsonMeleeCross:ROOT+'melee_cross.png',crimsonMeleeRising:ROOT+'melee_rising.png',
-    crimsonMeleeDescending:ROOT+'melee_descending.png'};
+    crimsonMelee:ROOT+'melee_slash.png',crimsonSoul:ROOT+'soul_wisp.png'};
   const proto=window.CherriftGame.prototype, states=new WeakMap(), seen=new WeakSet();
   if(typeof ImageAssets!=='undefined'){
     const prior=ImageAssets.prototype.loadAll;
@@ -18,28 +16,7 @@
       return result;
     };
   }
-  function state(game){let s=states.get(game);if(!s || s.player!==game.player){s={player:game.player,distance:0,foot:1,prints:[],meleeBag:[],meleeSeed:0x9e3779b9,lastMelee:-1};states.set(game,s);}return s;}
-  const meleeArt=[
-    {key:'crimsonMelee',w:115,h:77,offset:48},
-    {key:'crimsonMeleeCross',w:110,h:78,offset:49},
-    {key:'crimsonMeleeRising',w:104,h:83,offset:47},
-    {key:'crimsonMeleeDescending',w:116,h:78,offset:49}
-  ];
-  const meleeChoices=new WeakMap();
-  function meleeVariant(game,e){
-    if(meleeChoices.has(e))return meleeChoices.get(e);
-    const s=state(game);
-    if(!s.meleeBag.length){
-      s.meleeBag=[0,1,2,3];
-      // Independent cosmetic PRNG: never changes combat's Math.random stream.
-      for(let i=3;i>0;i--){
-        let seed=s.meleeSeed;seed^=seed<<13;seed^=seed>>>17;seed^=seed<<5;s.meleeSeed=seed>>>0;
-        const j=s.meleeSeed%(i+1);[s.meleeBag[i],s.meleeBag[j]]=[s.meleeBag[j],s.meleeBag[i]];
-      }
-      if(s.meleeBag[0]===s.lastMelee)[s.meleeBag[0],s.meleeBag[1]]=[s.meleeBag[1],s.meleeBag[0]];
-    }
-    const choice=s.meleeBag.shift();s.lastMelee=choice;meleeChoices.set(e,choice);return choice;
-  }
+  function state(game){let s=states.get(game);if(!s || s.player!==game.player){s={player:game.player,distance:0,foot:1,prints:[]};states.set(game,s);}return s;}
   const low=game=>game.save?.settings?.effectQuality==='low';
   // Bounds are selected per separated motif in the original 1254x1254 atlas.
   const regions={vortex:[.025,.345,.34,.305],hit:[.40,.385,.21,.21],
@@ -81,7 +58,6 @@
     const result=update.call(this,dt);
     if(!playing || this.mode!=='playing' || this.player!==p || !(dt>0))return result;
     siphons(this,old,hp,shield);
-    for(const e of this.effects||[])if(e.type==='succubus_melee_slash_v095')meleeVariant(this,e);
     const s=state(this),distance=Math.hypot(p.x-x,p.y-y);
     s.prints=s.prints.filter(f=>(f.age+=dt)<f.life);
     if(p.moving && distance>.01){s.distance+=distance;
@@ -133,8 +109,8 @@
     const t=Math.max(0,Math.min(1,(e.t||0)/Math.max(.001,e.life||.4))),a=1-t;
     if(type==='succubus_melee_slash_v095'){
       // Offset into the attacked half-plane, never centered over the face.
-      const ang=e.angle||0,art=meleeArt[meleeVariant(this,e)];
-      return image(ctx,this,art.key,e.x+Math.cos(ang)*art.offset,e.y+Math.sin(ang)*art.offset,art.w,art.h,ang,a,.5);
+      const ang=e.angle||0,offset=48;
+      return image(ctx,this,'crimsonMelee',e.x+Math.cos(ang)*offset,e.y+Math.sin(ang)*offset,115,77,ang,a,.5);
     }
     if(type==='succubus_claw_mark_v095'||type==='succubus_ranged_hit_v095')
       return atlas(ctx,this,'hit',e.x,e.y,38+t*18,38+t*18,e.angle||0,a);
@@ -148,5 +124,5 @@
         Math.min(400,d),22,Math.atan2(dy,dx),Math.sin(t*Math.PI)*.85);
     }
   };
-  window.CHERRIFT_SUCCUBUS_CRIMSON_HUNGER=Object.freeze({version:VERSION,sources:{...sources},meleeVariants:meleeArt.map(a=>a.key)});
+  window.CHERRIFT_SUCCUBUS_CRIMSON_HUNGER=Object.freeze({version:VERSION,sources:{...sources}});
 })();

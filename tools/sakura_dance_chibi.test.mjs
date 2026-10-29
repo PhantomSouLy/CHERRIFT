@@ -59,11 +59,11 @@ test('three idles alternate at random waits, return to default, and interrupt on
  p.sakuraIdleVariant='idle3';game.enemies=[{x:p.x+50,y:p.y+50,hp:1000,r:16}];game.autoFire();assert.equal(p.sakuraIdleVariant,null);
  p.sakuraIdleVariant='idle2';game.skill();assert.equal(p.sakuraIdleVariant,null);
 });
-test('moving attack has independent cast frame and continuous travel phase; pause freezes all clocks',()=>{
- const {game,context,ctx,calls}=fixture(),p=game.player,requests=[];
- const composed={};context.window.CHERRIFT_SAKURA_DANCE_GAIT={get(...args){requests.push(args);return args[2]==='walk'?composed:null;}};
+test('moving attack keeps its whole painted pose; pause freezes cast and travel clocks',()=>{
+ const {game,context,ctx,calls}=fixture(),p=game.player;
+ context.window.CHERRIFT_SAKURA_DANCE_GAIT={get(){throw Error('separate legs must not be drawn');}};
  p.sakuraStride=.4;p.moving=true;game.autoFire();game.drawPlayer(ctx,p);
- assert.equal(requests.at(-1)[2],'walk');assert.equal(requests.at(-1)[4],0);assert.equal(requests.at(-1)[5],3.2);assert.ok(calls.some(c=>c[0]===composed));
+ assert.match(calls.at(-1)[0].key,/_walk_attack_/);assert.equal(calls.at(-1)[1],0);
  game.mode='paused';const t=game.t,cast=p.attackCastTimer;game.update(.5);assert.equal(p.attackCastTimer,cast);assert.equal(game.t,t);assert.equal(p.sakuraStride,.4);
 });
 test('other skins delegate and double initialization cannot stack combat',()=>{
@@ -85,7 +85,7 @@ test('idle, moving torso, attack and skill supply fractional pose clocks to the 
  const {game,context,ctx}=fixture(),p=game.player,seen=[];context.window.CHERRIFT_SAKURA_DANCE_GAIT={get:()=>({})};
  context.window.CHERRIFT_ANIMATION_SMOOTHING={draw(...args){seen.push({state:args[3],phase:args[5],options:args[9]});return true;}};
  p.sakuraIdleVariant='idle2';p.sakuraIdleElapsed=.123;game.drawPlayer(ctx,p);assert.equal(seen.at(-1).state,'idle2');assert.ok(seen.at(-1).phase>0&&seen.at(-1).phase<1);
- p.sakuraIdleVariant=null;p.moving=true;p.sakuraStride=.123;game.drawPlayer(ctx,p);assert.equal(seen.at(-1).state,'walk');assert.ok(seen.at(-1).phase>0&&seen.at(-1).phase<1);assert.equal(typeof seen.at(-1).options.makeLower,'function');
+ p.sakuraIdleVariant=null;p.moving=true;p.sakuraStride=.123;game.drawPlayer(ctx,p);assert.equal(seen.at(-1).state,'walk');assert.ok(seen.at(-1).phase>0&&seen.at(-1).phase<1);assert.equal(seen.at(-1).options.makeLower,undefined);assert.equal(seen.at(-1).options.gaitPhase,p.sakuraStride*8);
  p.moving=false;game.autoFire();p.attackCastTimer=p.attackCastDuration-.05;game.drawPlayer(ctx,p);assert.equal(seen.at(-1).state,'attack');assert.ok(seen.at(-1).phase>0&&seen.at(-1).phase<1);
  game.skill();p.skillCastTimer=p.skillCastDuration-.025;game.drawPlayer(ctx,p);assert.equal(seen.at(-1).state,'skill');assert.ok(seen.at(-1).phase>0&&seen.at(-1).phase<1);
 });

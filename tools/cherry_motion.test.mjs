@@ -41,19 +41,19 @@ test('stride follows real movement, keeps phase on turns, and stops against wall
   p.skin='mage_cherry';delete p.cherryStrideTime;game.movePlayer({x:1,y:0},1);assert.equal(p.cherryStrideTime,undefined);
 });
 
-test('walk attacks retain the cast frame while their legs follow the independent stride',()=>{
-  const {window,motion}=fixture();let gaitArgs,drawArgs;
-  window.CHERRIFT_CHERRY_GAIT={get(...args){gaitArgs=args;return {corrected:true};}};
-  motion.draw({drawImage(...a){drawArgs=a;}},{original:true},'ninja_cherry','walk_attack_ranged','right',4,
+test('walk attacks keep the original complete cast pose while flow data is unavailable',()=>{
+  const {window,motion}=fixture();let args;
+  window.CHERRIFT_CHERRY_GAIT={get(){throw Error('separate legs must not be drawn');}};
+  const image={original:true};motion.draw({drawImage(...a){args=a;}},image,'ninja_cherry','walk_attack_ranged','right',4,
     {x:0,y:0,cherryStrideTime:.14},116,116);
-  assert.equal(gaitArgs[3],1.12,'leg phase');assert.equal(gaitArgs[5],4,'attack pose');assert.equal(drawArgs[0].corrected,true);assert.equal(drawArgs[1],0);
+  assert.equal(args[0],image);assert.equal(args[1],4*192);
 });
-test('shared upper-body interpolation and native stride have independent clocks',()=>{
- const {window,motion}=fixture();let request,gait;
- window.CHERRIFT_CHERRY_GAIT={get(...args){gait=args;return {corrected:true};}};
- const ctx={drawImage(){}};window.CHERRIFT_ANIMATION_SMOOTHING={draw(...args){request=args;args[9].makeFrame(ctx,2);assert.equal(gait,undefined,'raw upper-body provider must not contain the gait');args[9].makeLower(ctx);return true;}};
- motion.draw(ctx,{},'ninja_cherry','walk_attack_ranged','right',4,{x:0,y:0,cherryStrideTime:.14},116,116,4.45);
- assert.equal(request[5],4.45);assert.equal(gait[3],1.12);assert.equal(gait[5],4);assert.equal(request[9].loop,false);
+test('shared interpolation receives a complete fractional pose without a second lower body',()=>{
+ const {window,motion}=fixture();let request,paint;
+ window.CHERRIFT_CHERRY_GAIT={get(){throw Error('separate legs must not be drawn');}};
+ const ctx={drawImage(...a){paint=a;}};window.CHERRIFT_ANIMATION_SMOOTHING={draw(...args){request=args;args[9].makeFrame(ctx,2);return true;}};
+ const image={};motion.draw(ctx,image,'ninja_cherry','walk_attack_ranged','right',4,{x:0,y:0,cherryStrideTime:.14},116,116,4.45);
+ assert.equal(request[5],4.45);assert.equal(paint[0],image);assert.equal(paint[1],2*192);assert.equal(request[9].makeLower,undefined);assert.equal(request[9].loop,false);
 });
 
 test('missing geometry falls back safely, and browser modules load before skin renderers',()=>{

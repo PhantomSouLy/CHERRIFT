@@ -1,0 +1,12 @@
+{
+  "empty": 0,
+  "rendered": 1728,
+  "backend": "llvmpipe (LLVM 20.1.2, 256 bits)",
+  "testsPassed": 84,
+  "liveGameTested": false,
+  "buildId": "1029-grounded-step1",
+  "skinsWithNewGait": [
+    "succubus_cherry",
+    "wuxia_sakura_cherry"
+  ]
+}

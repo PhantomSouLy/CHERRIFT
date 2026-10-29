@@ -1,0 +1,33 @@
+{
+  "directions": [
+    "down",
+    "down_left",
+    "left",
+    "up_left",
+    "up",
+    "up_right",
+    "right",
+    "down_right"
+  ],
+  "states": [
+    [
+      "succubus_cherry",
+      "walk"
+    ],
+    [
+      "succubus_cherry",
+      "walk_attack_ranged"
+    ],
+    [
+      "wuxia_sakura_cherry",
+      "walk"
+    ],
+    [
+      "wuxia_sakura_cherry",
+      "walk_attack"
+    ]
+  ],
+  "renderedPoses": 768,
+  "empty": 0,
+  "backend": "native Canvas mesh; not a live browser game test"
+}

@@ -17711,7 +17711,7 @@ proto.update = function updateV085(dt) {
   }
   this.__shakeV085 = Math.max(0, (this.__shakeV085 || 0) - dt * 18);
   this.__trailTimerV085 = Math.max(0, (this.__trailTimerV085 || 0) - dt);
-  if (player.skin !== "cherry_default" && (speed > player.speed * .75 || player.dashTimer > 0) && this.__trailTimerV085 <= 0) {
+  if (!["cherry_default", "succubus_cherry"].includes(player.skin) && (speed > player.speed * .75 || player.dashTimer > 0) && this.__trailTimerV085 <= 0) {
     this.__trailTimerV085 = .075 / Math.max(.35, quality(this));
     this.effects.push({type:"motionTrailV085", x:player.x-dx*2, y:player.y-dy*2, t:0, life:.28, dash:player.dashTimer>0});
   }

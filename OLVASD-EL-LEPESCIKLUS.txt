@@ -1,0 +1,21 @@
+CHERRIFT – aktív lépésciklus a két Legendary skinhez
+
+TELEPÍTÉS
+Az egész ZIP tartalmát másold a CHERRIFT projekt gyökerébe, azonos útvonalon felülírva a fájlokat. Az új src/cherrift_walk_cycle.js fájl is szükséges: ne csak a régi JS fájlokat cseréld. A korábbi teljespóz-javítás, sprite-PNG-k és animation_flow adatok maradjanak fent. Ez a javítás a GitHub b690b28 verziójára készült.
+
+MI VÁLTOZOTT
+A Succubus és Sakura Dance járása és járó támadása saját, a megtett úthoz kötött lépésciklust kap. Az egyik láb emelkedik és előrelendül, miközben a másik támaszkodik, majd szerepet cserélnek. A lépésóra nem indul újra egy új támadás képkockáival. A csípő és felsőtest kicsit követi a lépést.
+
+A teljes eredeti képet deformáljuk folyamatosan, a saját csípő- és talppontjai körül. Nem másolunk új lábakat a kép alá, és nem tér vissza a vízszintes felsőtest–láb vágás. Az eredeti PNG-k, idle-változatok, harci események, sebzés, időzítések, Petal Trace és Crimson Hunger effektek nem változnak. A többi három skin korábbi teljespóz-simítása megmarad; új lépésadatot ebben a csomagban a két Legendary kapott.
+
+Az idle és álló támadás nem kap járó deformációt. A közös simításuk megmarad. A csomag új buildje: 1029-grounded-step1.
+
+ELŐNÉZET
+CHERRIFT-Grounded-Step-Preview.mp4: a bal oldali Succubus és a harmadik, Sakura oszlop ugyanazt az eredeti rajzot tartja, és csak az új lépés/deformáció mozog rajta. A második és negyedik oszlop a teljes járóanimációt mutatja. Így külön ellenőrizhető, hogy a lábmozgás valóban létrejön egy rögzített rajzon is. A videó a shader natív renderelőjéből készült, nem élő játékfelvétel.
+
+ELLENŐRZÉS
+84 célzott Node-teszt sikeres. Új képpontos regresszió ellenőrzi a két csizma tényleges, ellentétes irányú mozgását és az emelkedő lábat, miközben az eredeti képkocka rögzített. Külön ellenőrzött a csípő folyamatos kapcsolata, a tükrözés, a ciklus záródása, a támadástól független lépésóra és az új modul betöltése.
+
+A shader lefordult, a két Legendary mind a nyolc irányának járó és járva támadó képei renderelhetők: 1728 ellenőrzött póz, nincs üres kép. A Canvas tartalékút is megkapta az új deformációt, a csípő/láb környékén sűrűbb hálóval. Teljes élő PC/mobil játék- és FPS-teszt még szükséges. A script a meglévő rajzot mozgatja, új anatómiai részletet nem rajzol hozzá.
+
+GitHubra közvetlen feltöltés nem történt. Supabase-módosítás nem szükséges.

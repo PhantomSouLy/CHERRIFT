@@ -22,8 +22,10 @@ test('runtime and standalone preview use the same compositor',()=>{
  const html=readFileSync('index.html','utf8');
  assert.ok(html.indexOf('src/cherrift_succubus_gait.js')<html.indexOf('src/cherrift_succubus_chibi.js'));
  const runtime=readFileSync('src/cherrift_succubus_chibi.js','utf8');
- assert.match(runtime,/CHERRIFT_SUCCUBUS_GAIT\?\.get/);
+ assert.match(runtime,/CHERRIFT_ANIMATION_SMOOTHING/);
+ assert.doesNotMatch(runtime,/makeLower/);
  const preview=readFileSync('animation-preview.html','utf8');
- assert.match(preview,/CHERRIFT_SUCCUBUS_GAIT/);
+ assert.match(preview,/CHERRIFT_ANIMATION_SMOOTHING/);
+ assert.doesNotMatch(preview,/makeLower/);
 });
 
