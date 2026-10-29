@@ -5,9 +5,9 @@ import vm from 'node:vm';
 const source=readFileSync('src/cherrift_app.js','utf8');
 const legacy=source.split('/* ===== BEGIN Succubus Cherry legendary runtime integration ===== */')[1].split('/* ===== END Succubus Cherry legendary runtime integration ===== */')[0];
 const patch=readFileSync('src/cherrift_succubus_chibi.js','utf8');
-function fixture(patched=true){
+function fixture(patched=true,crimson=false){
  const config={player:{displayWidth:116,displayHeight:116,skins:{succubus_cherry:{}}},effects:{}};
- class Assets{loadAll(){}loadImage(){}get(){return null}}
+ class Assets{async loadAll(){this.bootReady=true;} async loadImage(key,src){(this.loaded||=[]).push({key,src});return true;}get(){return null}}
  class Game{
   async start(){return true}autoFire(){this.delegated='fire'}skill(){this.delegated='skill'}drawPlayer(){this.delegated='draw'}drawBullet(){}drawEffect(){}updateBullets(){}
   activeSkinConfig(){return config.player.skins[this.player.skin]}
@@ -19,6 +19,7 @@ function fixture(patched=true){
  const context=vm.createContext({window,CherriftGame:Game,CHERRIFT_CONFIG:config,ImageAssets:Assets,Math:Object.assign(Object.create(Math),{random:()=>.25}),console:{info(){}}});
  vm.runInContext(legacy,context);const before=JSON.parse(JSON.stringify(config.player.skins.succubus_cherry));
  if(patched)vm.runInContext(patch,context);
+ if(crimson)vm.runInContext(readFileSync('src/cherrift_succubus_crimson_hunger.js','utf8'),context);
  const game=new Game();Object.assign(game,{mode:'playing',t:0,bullets:[],effects:[],enemies:[{x:400,y:400,r:16,hp:1000}],input:{getMoveVector:()=>({x:0,y:0})},
  player:{skin:'succubus_cherry',x:0,y:0,speed:235,damage:20,hp:80,maxHp:100,soulShield:0,fireTimer:0,fireInterval:.8,skillTimer:0,skillCooldown:8,skillCastTimer:0,attackCastTimer:0,lastDir:'down',moving:false,succubusIdleSeed:123}});
  const calls=[];game.assets={get:key=>({key,width:1152,height:192})};
@@ -104,16 +105,102 @@ test('missing special art falls back to the new idle, other skins delegate, and 
 test('moving ranged casts use the same stride compositor as walking and keep its phase',()=>{
  const {game,context,ctx,calls}=fixture(),p=game.player,requests=[];
  const composed={width:192,height:192};
- context.window.CHERRIFT_SUCCUBUS_GAIT={get(image,idle,state,dir,frame,phase){
-  requests.push({state,dir,frame,idle,phase});return state==='walk'||state==='walk_attack_ranged'?composed:null;
+ context.window.CHERRIFT_SUCCUBUS_GAIT={get(image,idle,state,dir,frame){
+  requests.push({state,dir,frame,idle});return state==='walk'||state==='walk_attack_ranged'?composed:null;
  }};
  p.moving=true;p.succubusStride=.4;p.succubusFacing='down_right';
- game.drawPlayer(ctx,p);assert.equal(requests.at(-1).state,'walk');assert.equal(requests.at(-1).frame,0);assert.equal(requests.at(-1).phase,3.2);
+ game.drawPlayer(ctx,p);assert.equal(requests.at(-1).state,'walk');assert.equal(requests.at(-1).frame,3);
  assert.equal(calls.at(-1)[0],composed);assert.equal(calls.at(-1)[1],0);
  game.autoFire();game.drawPlayer(ctx,p);
- assert.equal(requests.at(-1).state,'walk');assert.equal(requests.at(-1).frame,0);assert.equal(requests.at(-1).phase,3.2);
+ assert.equal(requests.at(-1).state,'walk_attack_ranged');assert.equal(requests.at(-1).frame,3);
  assert.equal(calls.at(-1)[0],composed);assert.match(requests.at(-1).idle.key,/_idle_/);
  p.__succubusAttackV095=null;p.moving=false;game.drawPlayer(ctx,p);
- assert.notEqual(calls.at(-1)[0],composed);
+ assert.equal(requests.at(-1).state,'idle');assert.notEqual(calls.at(-1)[0],composed);
 });
 
+function crimsonCanvas(){
+ const calls=[],stack=[];const c=new Proxy({globalAlpha:1,
+ save(){stack.push(this.globalAlpha);},restore(){this.globalAlpha=stack.pop();},
+ drawImage(...args){calls.push({args,alpha:this.globalAlpha});}},
+ {get:(o,k)=>k in o?o[k]:()=>{}});return {c,calls};
+}
+function combatSnapshot(g){return JSON.parse(JSON.stringify({bullets:g.bullets,hp:g.player.hp,shield:g.player.soulShield,
+ fire:g.player.fireTimer,attack:g.player.attackCastTimer,skill:g.player.skillCastTimer,cooldown:g.player.skillTimer,enemies:g.enemies.map(e=>e.hp)}));}
+test('Crimson Hunger preserves actual melee, ranged, Soul Drain and lifesteal gameplay',()=>{
+ for(const mode of ['ranged','melee','skill']){
+  const a=fixture().game,b=fixture(true,true).game;
+  if(mode==='melee')for(const g of [a,b])g.enemies=[{x:100,y:0,r:16,hp:1000}];
+  for(const g of [a,b])mode==='skill'?g.skill():g.autoFire();
+  for(const dt of [.1,.15,.12,.2]){a.update(dt);b.update(dt);assert.deepEqual(combatSnapshot(b),combatSnapshot(a),`${mode} at ${dt}`);}
+  if(mode==='ranged')assert.equal(b.bullets.length,1);
+  if(mode==='skill')assert.equal(b.bullets.length,6);
+ }
+ const a=fixture().game,b=fixture(true,true).game;
+ for(const g of [a,b]){g.autoFire();g.update(.3);const enemy=g.enemies[0],bullet=g.bullets[0];bullet.x=enemy.x;bullet.y=enemy.y;bullet.vx=0;bullet.vy=0;g.updateBullets(0);}
+ assert.deepEqual(combatSnapshot(b),combatSnapshot(a));assert.equal(b.effects.filter(e=>e.type==='crimsonSiphon').length,1);
+ const full=fixture(true,true).game;full.player.hp=full.player.maxHp;full.autoFire();full.update(.3);
+ Object.assign(full.bullets[0],{x:full.enemies[0].x,y:full.enemies[0].y,vx:0,vy:0});full.updateBullets(0);
+ assert.equal(full.effects.filter(e=>e.type==='crimsonSiphon').length,0,'no drain visual if health and shield do not increase');
+});
+test('Crimson Hunger renders attack art and keeps the cast and shield behind the body',()=>{
+ const f=fixture(true,true),g=f.game,{c,calls}=crimsonCanvas();
+ g.drawBullet(c,{succubusV095:true,style:'succubus_ranged_v095',x:0,y:0,vx:0,vy:-1,life:.5,maxLife:.72});
+ g.drawBullet(c,{succubusV095:true,style:'succubus_soul_v095',x:0,y:0,vx:-1,vy:0,life:1,maxLife:2.35});
+ assert.deepEqual(calls.map(x=>x.args[0].key),['crimsonWave','crimsonSoul']);
+ calls.length=0;g.effects.push({type:'succubus_skill_burst_v095',x:0,y:-12,t:.2,life:.64});
+ g.player.__succubusShieldFxStartV095=0;g.player.__succubusShieldFxUntilV095=1;g.t=.3;
+ g.drawPlayer(c,g.player);assert.equal(calls[0].args[0].key,'crimsonAtlas');assert.equal(calls[1].args[0].key,'crimsonAtlas');
+ assert(calls.at(-1).args[0].key.startsWith('player_succubus_cherry_'),'sprite draws after VFX');assert.equal(c.globalAlpha,1);
+ calls.length=0;g.drawEffect(c,{type:'succubus_skill_burst_v095'});assert.equal(calls.length,0,'vortex does not cover the sprite');
+ for(const type of ['succubus_melee_slash_v095','succubus_claw_mark_v095','succubus_ranged_hit_v095','succubus_heal_v095'])g.drawEffect(c,{type,x:0,y:0,t:.1,life:.4,angle:0});
+ assert(calls.some(x=>x.args[0].key.startsWith('crimsonMelee')));assert(calls.some(x=>x.args[0].key==='crimsonAtlas'));
+ const before=g.drawPlayer;vm.runInContext(readFileSync('src/cherrift_succubus_crimson_hunger.js','utf8'),f.context);assert.equal(g.drawPlayer,before);
+});
+test('walking marks follow actual distance, freeze on pause, and use both Base and Ninja loaders',()=>{
+ const {game:g}=fixture(true,true),{c,calls}=crimsonCanvas();
+ g.input.getMoveVector=()=>({x:1,y:0});for(let i=0;i<5;i++)g.update(.08);
+ g.drawPlayer(c,g.player);assert(calls.filter(x=>x.args[0].key==='crimsonAtlas').length>=1);
+ const prev=calls.length;g.mode='paused';g.update(3);g.drawPlayer(c,g.player);assert(calls.length>prev);
+ g.mode='playing';g.input.getMoveVector=()=>({x:0,y:0});g.update(.6);calls.length=0;g.drawPlayer(c,g.player);
+ assert.equal(calls.filter(x=>x.args[0].key==='crimsonAtlas').length,0);
+ const html=readFileSync('index.html','utf8');assert(html.includes('src/cherrift_base_petal_vfx.js'));
+ assert(html.includes('src/cherrift_ninja_shadow_sakura.js'));assert(html.includes('src/cherrift_succubus_crimson_hunger.js'));
+});
+test('full-health Soul Drain creates the original bounded shield and a single siphon',()=>{
+ const a=fixture().game,b=fixture(true,true).game;
+ for(const g of [a,b]){
+  g.player.hp=100;g.player.soulShield=0;g.skill();g.update(.4);
+  const soul=g.bullets.find(x=>x.launchDelay===0);assert(soul);
+  Object.assign(soul,{x:g.enemies[0].x,y:g.enemies[0].y,vx:0,vy:0});g.updateBullets(0);
+ }
+ assert.deepEqual(combatSnapshot(b),combatSnapshot(a));
+ assert(b.player.soulShield>0);assert(b.player.soulShield<=b.player.maxHp*.15);
+ assert.equal(b.effects.filter(e=>e.type==='crimsonSiphon').length,1);
+});
+
+test('generated Crimson Hunger art is loaded before assets are ready',async()=>{
+ const f=fixture(true,true),loader=vm.runInContext('new ImageAssets()',f.context);await loader.loadAll();
+ assert(loader.bootReady);for(const key of ['crimsonAtlas','crimsonWave','crimsonMelee','crimsonSoul']){
+  const item=loader.loaded.find(x=>x.key===key);assert(item,key);assert(item.src.includes('succubus_crimson_hunger/'));
+ }
+});
+
+test('four melee shapes all appear, avoid adjacent repeats and remain stable per effect',()=>{
+ const f=fixture(true,true),g=f.game,{c,calls}=crimsonCanvas();
+ const keys=[];f.context.Math.random=()=>{throw Error('cosmetic choice consumed combat RNG');};
+ for(let i=0;i<24;i++){
+  const e={type:'succubus_melee_slash_v095',x:0,y:0,t:.05,life:.3,angle:i*Math.PI/4};
+  calls.length=0;g.drawEffect(c,e);const key=calls.at(-1).args[0].key;keys.push(key);
+  calls.length=0;g.drawEffect(c,e);assert.equal(calls.at(-1).args[0].key,key,'same frame event keeps its art');
+ }
+ assert.equal(new Set(keys).size,4);
+ for(let i=1;i<keys.length;i++)assert.notEqual(keys[i],keys[i-1]);
+ for(let i=0;i<keys.length;i+=4)assert.equal(new Set(keys.slice(i,i+4)).size,4);
+ assert.equal(c.globalAlpha,1);
+});
+test('all four melee images are registered for the normal asset loader',async()=>{
+ const f=fixture(true,true),loader=vm.runInContext('new ImageAssets()',f.context);await loader.loadAll();
+ for(const key of ['crimsonMelee','crimsonMeleeCross','crimsonMeleeRising','crimsonMeleeDescending']){
+  const item=loader.loaded.find(x=>x.key===key);assert(item,key);assert(existsSync(item.src.split('?')[0]));
+ }
+});
