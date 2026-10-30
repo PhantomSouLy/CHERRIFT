@@ -1,13 +1,14 @@
-CHERRIFT – Base Cherry járás és talp javítás v2 (2026-10-30)
+CHERRIFT – Base Cherry lábillesztés és talp javítás v3
 
-Telepítés: a ZIP gyökerében található index.html, src és tools fájlokat másold a CHERRIFT repó gyökerébe, a meglévőket felülírva. Ezután commit/push, majd a GitHub Pages frissülése után töltsd újra a játékot.
+Telepítés: a ZIP index.html, src és tools fájljait másold a CHERRIFT repó gyökerébe, a meglévőket felülírva. A .patch fájl alternatív telepítési mód, nem szükséges a fájlmásolás mellett alkalmazni. Commit/push után várd meg a Pages frissülését és töltsd újra a játékot.
 
-Javítások:
-- A fel-balra/fel-jobbra járás és mozgás közbeni támadás is a két váltott lábat mozgató riget használja.
-- A hátsó láb forráskivágása és bokaillesztése a jelenlegi sprite-hoz igazodik.
-- A régi láb/talp eltávolítása az élsimított széleket is törli. A hátsó sprite frissítése óta túlnyúló régi cipőrészleteket külön maszkolja.
-- Új build/cache verzió: 1030-base-rear-sole-fix-2.
+A v2-t követő javítás:
+- A cipő nem kerül több eltérő transzformációval kirajzolt vízszintes darabba. Egy teljes, folytonos lábréteg rajzolódik lábanként, megszüntetve a külön kilógó talprész forrását.
+- A fel-balra és fel-jobbra irányok csípőpontjai a jelenlegi keskenyebb szoknyához kerültek, magasabb csatlakozással.
+- A hátsó szoknya szegélyét nem vágják le a korábbi mérésekből származó felső törlési sorok.
+- A hátsó lábkivágásból kimaradt a másik cipő belelógó széle.
+- Új cache/build verzió: 1030-base-continuous-leg-fix-3.
 
-Ellenőrzés: 26 célzott teszt sikeres, JavaScript-validáció sikeres, képkockás render ellenőrizve mindkét oldalon és hátsó átlóban, járás és mozgó támadás közben. Teljes telefonos játékpróba nem történt. A CSS parser helyi függősége nem volt telepítve, ezért a validátor azt kihagyta.
+Ellenőrzés: 26 célzott teszt sikeres, JavaScript és asset validálás sikeres. Nagyított render és köztes képkockák ellenőrizve járás és mozgó támadás közben, az optikai interpoláció CPU referenciaútvonalán. A telefonos WebGL útvonalon élő játékpróba nem történt. A helyi CSS parser függőség nem volt telepítve, a validátor azt kihagyta.
 
-Nem került közvetlenül feltöltésre a GitHubra. Supabase-módosítás nem szükséges.
+GitHubra közvetlenül nincs feltöltve. Supabase-módosítás nem szükséges.

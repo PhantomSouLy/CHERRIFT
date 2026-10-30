@@ -9,7 +9,7 @@ function fixture(render=false,pixels=()=>new Uint8ClampedArray(192*192*4)){
  const window={CherriftGame:Game},canvases=[];
  const document={createElement(){
   const c={width:256,height:256,ops:[]},ctx={};
-  for(const name of ['save','restore','beginPath','closePath','clip','rect','moveTo','lineTo','translate','rotate','scale','drawImage','clearRect'])
+  for(const name of ['save','restore','beginPath','closePath','clip','rect','moveTo','lineTo','translate','rotate','scale','transform','drawImage','clearRect'])
    ctx[name]=(...args)=>c.ops.push([name,...args]);
   ctx.getImageData=(x,y,width,height)=>({width,height,data:pixels(x,y,width,height)});
   ctx.putImageData=(...args)=>c.ops.push(['putImageData',...args]);
@@ -74,7 +74,7 @@ test('the complete output contains exactly two articulated legs and the intact b
  assert.equal(api.draw(main,{width:1152},{},'x'),false,'unsupported states delegate');
  const image={width:1152},walk={width:1152};
  assert.equal(api.draw(main,image,'walk','left',.6,1.7,{x:400,y:300},110,110,()=>{},walk),true);
- const draws=output.ops.filter(op=>op[0]==='drawImage');assert.equal(draws.length,7);assert.equal(draws.at(-1)[1],body);
+ const draws=output.ops.filter(op=>op[0]==='drawImage');assert.equal(draws.length,3);assert.equal(draws[0][1],draws[1][1],'each leg uses one continuous source image');assert.equal(draws.at(-1)[1],body);
  const plan=api.pose('walk','left',.6,1.7);assert.ok(output.ops.some(op=>op[0]==='translate'&&op[1]===plan.bodyShiftX&&op[2]===plan.bodyShiftY),'the complete painted body receives the same registration as its hip attachments');
  const created=canvases.length;for(let n=0;n<30;n++)api.draw(main,image,'walk','left',n*.1,n*.1,{x:400,y:300},110,110,()=>{},walk);
  assert.equal(canvases.length,created,'warm rendering allocates no canvases');
@@ -85,13 +85,14 @@ test('the shared renderer only routes Base Cherry into this rig and keeps actual
  assert.equal(request[2],'walk_attack');assert.equal(request[5],3.2);assert.equal(request[10],walk);
  request=null;window.CHERRIFT_CHERRY_MOTION.draw({drawImage(){}},image,'archer_cherry','walk','right',0,{x:0,y:0},110,110,0);assert.equal(request,null);
 });
-test('leg width stays small and constant as the knee bends and the leg extends',()=>{
+test('continuous legs keep fixed width and finite nonsingular transforms across the cycle',()=>{
  const {window,api}=fixture(true);window.CHERRIFT_ANIMATION_SMOOTHING={sample:()=>({})};let output;
  const ctx={drawImage:image=>output=image};
- for(const dir of dirs){const image={width:1152};for(let stride=0;stride<6;stride+=.25){
-  api.draw(ctx,image,'walk',dir,0,stride,{x:0,y:0},110,110,()=>{},image);
-  const scales=output.ops.filter(op=>op[0]==='scale');
-  assert.ok(scales.length>=4);for(const scale of scales){assert.equal(scale[2],.76,'transverse width never follows changing bone length');assert.ok(Number.isFinite(scale[1])&&scale[1]>0);}
+ for(const dir of dirs){const image={width:1152};for(let stride=0;stride<6;stride+=.125){
+  api.draw(ctx,image,'walk',dir,stride,stride,{x:0,y:0},110,110,()=>{},image);
+  const transforms=output.ops.filter(op=>op[0]==='transform');
+  assert.equal(transforms.length,2,'one complete transform per leg');
+  for(const [,a,b,c,d,e,f] of transforms){assert.equal(a,.76);assert.ok([a,b,c,d,e,f].every(Number.isFinite));assert.ok(a*d-b*c>0,'no flipped or collapsed limb');}
   output.ops.length=0;
  }}
 });
