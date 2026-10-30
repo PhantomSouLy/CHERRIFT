@@ -10,7 +10,7 @@
  const neutral={
   right:{hip:[93,154],knee:[101,165],ankle:[105,174],sole:[109,182],polygon:[[86,151],[100,150],[105,164],[122,173],[121,185],[105,185],[96,174]]},
   down_right:{hip:[91,150],knee:[97,163],ankle:[101,174],sole:[104,182],polygon:[[84,148],[99,148],[104,165],[119,178],[118,185],[100,185],[92,174]]},
-  up_right:{hip:[101,150],knee:[97,166],sole:[92,182],polygon:[[94,148],[109,150],[102,166],[103,180],[95,185],[80,180],[83,167]]}
+  up_right:{hip:[99,153],knee:[91,165],ankle:[87,174],sole:[88,182],polygon:[[94,152],[106,153],[100,164],[102,180],[96,187],[76,185],[73,170],[84,160]]}
  };
  const prepared=new WeakMap(),MAX=6,recent=new Map();
  function canvas(w=256,h=256){const c=document.createElement('canvas');c.width=w;c.height=h;return c;}
@@ -23,7 +23,7 @@
   return [64+(96+(x-fx)*scale)*2/3+(flip?-offset[0]:offset[0]),64+(184+(y-g[1])*scale)*2/3+offset[1]];
  }
  function pose(state,dir,phase,stride){
-  const canonical=mirrors[dir]||dir,poses=data[`${state}/${canonical}`];if(canonical==='up_right'||!poses||!Number.isFinite(phase)||!Number.isFinite(stride))return null;
+  const canonical=mirrors[dir]||dir,poses=data[`${state}/${canonical}`];if(!poses||!Number.isFinite(phase)||!Number.isFinite(stride))return null;
   const pos=state==='walk'?((phase%6)+6)%6:Math.max(0,Math.min(5,phase)),f=Math.floor(pos),n=state==='walk'?(f+1)%6:Math.min(5,f+1),t=pos-f;
   const hips=[0,1].map(i=>{const a=poses[f].hips,b=poses[n].hips,p=point(state,dir,f,a[i*2],a[i*2+1]),q=point(state,dir,n,b[i*2],b[i*2+1]);return p&&q?[p[0]+(q[0]-p[0])*t,p[1]+(q[1]-p[1])*t]:null;});
   if(hips.some(p=>!p))return null;
@@ -58,7 +58,21 @@
   if(e&&e.walkImage===walkImage){recent.delete(e);recent.set(e,true);return e;}
   const width=image.naturalWidth||image.width;if(width<1152)return null;
   const flip=!!mirrors[dir],body=canvas(width,192),bc=body.getContext('2d');bc.drawImage(image,0,0);
-  for(let f=0;f<6;f++)for(const [x,y,w] of poses[f].runs)bc.clearRect(f*192+(flip?193-x-w:x),y,w,1);
+  for(let f=0;f<6;f++)for(const [x,y,w] of poses[f].runs){
+   // Include the antialiased fringe of the removed legs. Connectivity alone
+   // retains old sole pixels when a one-pixel bridge still joins the skirt.
+   const pad=y>poses[f].hem+2?1:0;
+   bc.clearRect(f*192+(flip?193-x-w:x)-pad,y-pad,w+pad*2,1+pad*2);
+  }
+  // Rear artwork was refreshed after the run masks were measured. Its old
+  // boot now extends beyond those masks; the hair ends above this baseline.
+  if(canonical==='up_right')for(let f=0;f<6;f++){
+   for(let y=156;y<167;y++){
+    const edge=Math.ceil(88-(y-155)*.8),w=192-edge;
+    bc.clearRect(f*192+(flip?1:edge),y,w,1);
+   }
+   bc.clearRect(f*192,167,192,25);
+  }
   // The old masks omit antialiased edge pixels. Keep only lower pixels
   // connected to the upper artwork, so detached old soles cannot be overlaid.
   for(let f=0;f<6;f++){
@@ -110,7 +124,7 @@
   c.save();c.translate(plan.bodyShiftX,plan.bodyShiftY);c.drawImage(body,0,0);c.restore();
   ctx.drawImage(e.out,p.x-width,p.y+30-(64+184*2/3)*height*2/256,width*2,height*2);return true;
  }
- window.CHERRIFT_BASE_WALK=Object.freeze({draw,pose,version:'1030-base-sole-clean1',stats:()=>({cached:recent.size,maxCached:MAX})});
+ window.CHERRIFT_BASE_WALK=Object.freeze({draw,pose,version:'1030-base-rear-sole2',stats:()=>({cached:recent.size,maxCached:MAX})});
 })();
 
 

@@ -1,9 +1,13 @@
-Base Cherry – kisebb lábak és nyugodtabb lépés (v3)
+CHERRIFT – Base Cherry járás és talp javítás v2 (2026-10-30)
 
-A csomag 4 forrásfájlját másold a CHERRIFT azonos helyére, felülírva a meglévőket. A korábbi Base v2 és CI javítások maradjanak bent. Az index.html és src/cherrift_manifest.json fájlokat együtt cseréld, így az összes böngészős build query egyezik. Ezután frissítsd a játékot.
+Telepítés: a ZIP gyökerében található index.html, src és tools fájlokat másold a CHERRIFT repó gyökerébe, a meglévőket felülírva. Ezután commit/push, majd a GitHub Pages frissülése után töltsd újra a játékot.
 
-Változások: a hat oldalsó/átlós walk és walk_attack nézet lábai keskenyebbek, rövidebbek. A csont hossza többé nem növeli a láb szélességét. Rövidebb lépés, kisebb térdhajlítás és lábemelés; az átlós talppontok sem követik többé a festett képkockák eltolódását. A csípő és a teljes festett test együtt kapja a stabilizálást. A felsőtest eredeti animációja megmarad. A közvetlen fel/le nézet eredeti rajza változatlan.
+Javítások:
+- A fel-balra/fel-jobbra járás és mozgás közbeni támadás is a két váltott lábat mozgató riget használja.
+- A hátsó láb forráskivágása és bokaillesztése a jelenlegi sprite-hoz igazodik.
+- A régi láb/talp eltávolítása az élsimított széleket is törli. A hátsó sprite frissítése óta túlnyúló régi cipőrészleteket külön maszkolja.
+- Új build/cache verzió: 1030-base-rear-sole-fix-2.
 
-Az eredeti PNG-ket, ruhát, hajat és játékmenetet nem módosítja.
+Ellenőrzés: 26 célzott teszt sikeres, JavaScript-validáció sikeres, képkockás render ellenőrizve mindkét oldalon és hátsó átlóban, járás és mozgó támadás közben. Teljes telefonos játékpróba nem történt. A CSS parser helyi függősége nem volt telepítve, ezért a validátor azt kihagyta.
 
-Ellenőrzés: 44 célzott automatizált teszt sikeres; 576 mozgó póz renderelve, 1248 test–láb csatlakozás vizsgálva, hiányzó csatlakozás nélkül. A mellékelt MP4 renderelt előnézet. Élő PC/mobil játékteszt és teljes GitHub Actions futás még szükséges. GitHubra nincs automatikusan feltöltve.
+Nem került közvetlenül feltöltésre a GitHubra. Supabase-módosítás nem szükséges.

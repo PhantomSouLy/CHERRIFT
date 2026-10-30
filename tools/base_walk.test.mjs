@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFileSync} from 'node:fs';
 const read=p=>readFileSync(p,'utf8');
-const dirs=['left','right','down_left','down_right'];
+const dirs=['left','right','down_left','down_right','up_left','up_right'];
 function fixture(render=false,pixels=()=>new Uint8ClampedArray(192*192*4)){
  class Game{movePlayer(){}}
  const window={CherriftGame:Game},canvases=[];
@@ -21,7 +21,7 @@ function fixture(render=false,pixels=()=>new Uint8ClampedArray(192*192*4)){
 }
 test('only the six requested side and diagonal walking directions use the new Base rig',()=>{
  const {api}=fixture();for(const state of ['walk','walk_attack'])for(const dir of dirs)assert.ok(api.pose(state,dir,0,0));
- for(const dir of ['up','down','up_left','up_right'])assert.equal(api.pose('walk',dir,0,0),null);
+ for(const dir of ['up','down'])assert.equal(api.pose('walk',dir,0,0),null);
  for(const state of ['idle','idle2','attack','skill'])for(const dir of dirs)assert.equal(api.pose(state,dir,0,0),null);
 });
 test('the two feet exchange front/back positions at half a cycle in every requested direction',()=>{

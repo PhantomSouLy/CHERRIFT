@@ -1,0 +1,301 @@
+diff --git a/index.html b/index.html
+index f716a1e..65cc209 100644
+--- a/index.html
++++ b/index.html
+@@ -7,41 +7,41 @@
+ 
+   <!-- One build id for every first-party browser asset. Bump this value as a
+        unit on every deployed code/style change so a phone cannot mix builds. -->
+-  <link rel="stylesheet" href="assets/cherrift_shell.css?v=1030-audio-ci-fix-1" />
+-  <link rel="stylesheet" href="assets/cherrift_app.css?v=1030-audio-ci-fix-1" />
+-  <link rel="stylesheet" href="assets/cherrift_prebeta.css?v=1030-audio-ci-fix-1" />
+-  <link rel="stylesheet" href="assets/cherrift_prebeta_event.css?v=1030-audio-ci-fix-1" />
+-  <link rel="preload" as="image" href="assets/ui/loading/sakura-path/landscape.webp?v=1030-audio-ci-fix-1" media="(min-width:821px) and (min-height:601px), (min-width:821px) and (pointer:fine)" />
+-  <link rel="preload" as="image" href="assets/loading_mobile_1080x1920.png?v=1030-audio-ci-fix-1" media="(orientation:portrait)" />
+-  <link rel="preload" as="image" href="assets/ui/cherrift_logo.png?v=1030-audio-ci-fix-1" />
+-  <link rel="stylesheet" href="assets/cherrift_boot.css?v=1030-audio-ci-fix-1" />
+-  <link id="cherriftSharedUiCss" rel="stylesheet" href="assets/cherrift_ui.css?v=1030-audio-ci-fix-1" />
+-  <link id="cherriftElementalCss" rel="stylesheet" href="assets/cherrift_elemental.css?v=1030-audio-ci-fix-1" />
+-  <link id="cherriftSkillBuilderCss" rel="stylesheet" href="assets/cherrift_skill_builder.css?v=1030-audio-ci-fix-1" />
+-  <link id="cherriftRuntimeCss" rel="stylesheet" href="assets/cherrift_runtime.css?v=1030-audio-ci-fix-1" />
+-  <link rel="stylesheet" href="assets/cherrift_presentation.css?v=1030-audio-ci-fix-1" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_menu.css?v=1030-audio-ci-fix-1" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_skins.css?v=1030-audio-ci-fix-1" />
+-  <script src="src/cherrift_boot.js?v=1030-audio-ci-fix-1" defer></script>
+-
+-  <link rel="stylesheet" href="assets/cherrift_desktop_gear.css?v=1030-audio-ci-fix-1" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_gacha.css?v=1030-audio-ci-fix-1" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_upgrade.css?v=1030-audio-ci-fix-1" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_world.css?v=1030-audio-ci-fix-1" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_settings.css?v=1030-audio-ci-fix-1" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_profile.css?v=1030-audio-ci-fix-1" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_mail.css?v=1030-audio-ci-fix-1" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_collection.css?v=1030-audio-ci-fix-1" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_shop.css?v=1030-audio-ci-fix-1" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_missions.css?v=1030-audio-ci-fix-1" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_achievements.css?v=1030-audio-ci-fix-1" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_login.css?v=1030-audio-ci-fix-1" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_social.css?v=1030-audio-ci-fix-1" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_loading.css?v=1030-audio-ci-fix-1" />
+-  <link rel="stylesheet" href="assets/cherrift_frame_geometry.css?v=1030-audio-ci-fix-1" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_polish.css?v=1030-audio-ci-fix-1" />
+-  <script src="src/cherrift_desktop_loading.js?v=1030-audio-ci-fix-1"></script>
+-  <link rel="stylesheet" href="assets/cherrift_event_hub.css?v=1030-audio-ci-fix-1" />
++  <link rel="stylesheet" href="assets/cherrift_shell.css?v=1030-base-rear-sole-fix-2" />
++  <link rel="stylesheet" href="assets/cherrift_app.css?v=1030-base-rear-sole-fix-2" />
++  <link rel="stylesheet" href="assets/cherrift_prebeta.css?v=1030-base-rear-sole-fix-2" />
++  <link rel="stylesheet" href="assets/cherrift_prebeta_event.css?v=1030-base-rear-sole-fix-2" />
++  <link rel="preload" as="image" href="assets/ui/loading/sakura-path/landscape.webp?v=1030-base-rear-sole-fix-2" media="(min-width:821px) and (min-height:601px), (min-width:821px) and (pointer:fine)" />
++  <link rel="preload" as="image" href="assets/loading_mobile_1080x1920.png?v=1030-base-rear-sole-fix-2" media="(orientation:portrait)" />
++  <link rel="preload" as="image" href="assets/ui/cherrift_logo.png?v=1030-base-rear-sole-fix-2" />
++  <link rel="stylesheet" href="assets/cherrift_boot.css?v=1030-base-rear-sole-fix-2" />
++  <link id="cherriftSharedUiCss" rel="stylesheet" href="assets/cherrift_ui.css?v=1030-base-rear-sole-fix-2" />
++  <link id="cherriftElementalCss" rel="stylesheet" href="assets/cherrift_elemental.css?v=1030-base-rear-sole-fix-2" />
++  <link id="cherriftSkillBuilderCss" rel="stylesheet" href="assets/cherrift_skill_builder.css?v=1030-base-rear-sole-fix-2" />
++  <link id="cherriftRuntimeCss" rel="stylesheet" href="assets/cherrift_runtime.css?v=1030-base-rear-sole-fix-2" />
++  <link rel="stylesheet" href="assets/cherrift_presentation.css?v=1030-base-rear-sole-fix-2" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_menu.css?v=1030-base-rear-sole-fix-2" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_skins.css?v=1030-base-rear-sole-fix-2" />
++  <script src="src/cherrift_boot.js?v=1030-base-rear-sole-fix-2" defer></script>
++
++  <link rel="stylesheet" href="assets/cherrift_desktop_gear.css?v=1030-base-rear-sole-fix-2" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_gacha.css?v=1030-base-rear-sole-fix-2" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_upgrade.css?v=1030-base-rear-sole-fix-2" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_world.css?v=1030-base-rear-sole-fix-2" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_settings.css?v=1030-base-rear-sole-fix-2" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_profile.css?v=1030-base-rear-sole-fix-2" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_mail.css?v=1030-base-rear-sole-fix-2" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_collection.css?v=1030-base-rear-sole-fix-2" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_shop.css?v=1030-base-rear-sole-fix-2" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_missions.css?v=1030-base-rear-sole-fix-2" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_achievements.css?v=1030-base-rear-sole-fix-2" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_login.css?v=1030-base-rear-sole-fix-2" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_social.css?v=1030-base-rear-sole-fix-2" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_loading.css?v=1030-base-rear-sole-fix-2" />
++  <link rel="stylesheet" href="assets/cherrift_frame_geometry.css?v=1030-base-rear-sole-fix-2" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_polish.css?v=1030-base-rear-sole-fix-2" />
++  <script src="src/cherrift_desktop_loading.js?v=1030-base-rear-sole-fix-2"></script>
++  <link rel="stylesheet" href="assets/cherrift_event_hub.css?v=1030-base-rear-sole-fix-2" />
+ </head>
+ <body class="v060-booting">
+   <section id="bootV060" class="boot-v060" data-boot-phase="loading" aria-live="polite" aria-label="CHERRIFT loading">
+@@ -496,68 +496,68 @@
+ 
+   <!-- Deterministic runtime order. Feature modules own their own screens. -->
+   <script src="vendor/supabase-js-2.110.7.js?v=2.110.7"></script>
+-  <script src="src/cherrift_network_guard.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/supabase_config.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/config.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_world1.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_world2.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_rework_maps.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_world1_assets.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_balance.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_menu_audio.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_online.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_app.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_gunner.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_recovery.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_auth.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_startup_trace.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_gacha.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_live_services.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_account_mail.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_world_ui.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_runtime.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_prebeta.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_prebeta_event.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_event_hub.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_security_ui.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_skin_ui.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_foliage.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_elemental.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_skill_builder.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_presentation.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_desktop_menu.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_desktop_skins.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_desktop_gear.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_desktop_gacha.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_desktop_upgrade.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_desktop_world.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_desktop_settings.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_desktop_profile.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_desktop_mail.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_desktop_collection.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_desktop_shop.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_desktop_missions.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_desktop_achievements.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_desktop_social.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_desktop_login.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_cherry_geometry.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_animation_flow.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_walk_cycle.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_animation_smoothing.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_cherry_gait.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_cherry_shot_alignment.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_cherry_motion.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_base_walk.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_base_cherry.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_base_petal_vfx.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_ninja_chibi.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_ninja_shadow_sakura.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_archer_chibi.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_succubus_gait.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_succubus_chibi.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_succubus_crimson_hunger.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_sakura_dance_gait.js?v=1030-audio-ci-fix-1"></script>
+-  <script src="src/cherrift_sakura_dance_chibi.js?v=1030-audio-ci-fix-1"></script>
++  <script src="src/cherrift_network_guard.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/supabase_config.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/config.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_world1.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_world2.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_rework_maps.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_world1_assets.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_balance.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_menu_audio.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_online.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_app.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_gunner.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_recovery.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_auth.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_startup_trace.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_gacha.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_live_services.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_account_mail.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_world_ui.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_runtime.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_prebeta.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_prebeta_event.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_event_hub.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_security_ui.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_skin_ui.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_foliage.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_elemental.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_skill_builder.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_presentation.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_desktop_menu.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_desktop_skins.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_desktop_gear.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_desktop_gacha.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_desktop_upgrade.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_desktop_world.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_desktop_settings.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_desktop_profile.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_desktop_mail.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_desktop_collection.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_desktop_shop.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_desktop_missions.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_desktop_achievements.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_desktop_social.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_desktop_login.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_cherry_geometry.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_animation_flow.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_walk_cycle.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_animation_smoothing.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_cherry_gait.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_cherry_shot_alignment.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_cherry_motion.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_base_walk.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_base_cherry.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_base_petal_vfx.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_ninja_chibi.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_ninja_shadow_sakura.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_archer_chibi.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_succubus_gait.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_succubus_chibi.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_succubus_crimson_hunger.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_sakura_dance_gait.js?v=1030-base-rear-sole-fix-2"></script>
++  <script src="src/cherrift_sakura_dance_chibi.js?v=1030-base-rear-sole-fix-2"></script>
+ </body>
+ </html>
+ 
+diff --git a/src/cherrift_base_walk.js b/src/cherrift_base_walk.js
+index e117350..627ab87 100644
+--- a/src/cherrift_base_walk.js
++++ b/src/cherrift_base_walk.js
+@@ -10,7 +10,7 @@
+  const neutral={
+   right:{hip:[93,154],knee:[101,165],ankle:[105,174],sole:[109,182],polygon:[[86,151],[100,150],[105,164],[122,173],[121,185],[105,185],[96,174]]},
+   down_right:{hip:[91,150],knee:[97,163],ankle:[101,174],sole:[104,182],polygon:[[84,148],[99,148],[104,165],[119,178],[118,185],[100,185],[92,174]]},
+-  up_right:{hip:[101,150],knee:[97,166],sole:[92,182],polygon:[[94,148],[109,150],[102,166],[103,180],[95,185],[80,180],[83,167]]}
++  up_right:{hip:[99,153],knee:[91,165],ankle:[87,174],sole:[88,182],polygon:[[94,152],[106,153],[100,164],[102,180],[96,187],[76,185],[73,170],[84,160]]}
+  };
+  const prepared=new WeakMap(),MAX=6,recent=new Map();
+  function canvas(w=256,h=256){const c=document.createElement('canvas');c.width=w;c.height=h;return c;}
+@@ -23,7 +23,7 @@
+   return [64+(96+(x-fx)*scale)*2/3+(flip?-offset[0]:offset[0]),64+(184+(y-g[1])*scale)*2/3+offset[1]];
+  }
+  function pose(state,dir,phase,stride){
+-  const canonical=mirrors[dir]||dir,poses=data[`${state}/${canonical}`];if(canonical==='up_right'||!poses||!Number.isFinite(phase)||!Number.isFinite(stride))return null;
++  const canonical=mirrors[dir]||dir,poses=data[`${state}/${canonical}`];if(!poses||!Number.isFinite(phase)||!Number.isFinite(stride))return null;
+   const pos=state==='walk'?((phase%6)+6)%6:Math.max(0,Math.min(5,phase)),f=Math.floor(pos),n=state==='walk'?(f+1)%6:Math.min(5,f+1),t=pos-f;
+   const hips=[0,1].map(i=>{const a=poses[f].hips,b=poses[n].hips,p=point(state,dir,f,a[i*2],a[i*2+1]),q=point(state,dir,n,b[i*2],b[i*2+1]);return p&&q?[p[0]+(q[0]-p[0])*t,p[1]+(q[1]-p[1])*t]:null;});
+   if(hips.some(p=>!p))return null;
+@@ -58,7 +58,21 @@
+   if(e&&e.walkImage===walkImage){recent.delete(e);recent.set(e,true);return e;}
+   const width=image.naturalWidth||image.width;if(width<1152)return null;
+   const flip=!!mirrors[dir],body=canvas(width,192),bc=body.getContext('2d');bc.drawImage(image,0,0);
+-  for(let f=0;f<6;f++)for(const [x,y,w] of poses[f].runs)bc.clearRect(f*192+(flip?193-x-w:x),y,w,1);
++  for(let f=0;f<6;f++)for(const [x,y,w] of poses[f].runs){
++   // Include the antialiased fringe of the removed legs. Connectivity alone
++   // retains old sole pixels when a one-pixel bridge still joins the skirt.
++   const pad=y>poses[f].hem+2?1:0;
++   bc.clearRect(f*192+(flip?193-x-w:x)-pad,y-pad,w+pad*2,1+pad*2);
++  }
++  // Rear artwork was refreshed after the run masks were measured. Its old
++  // boot now extends beyond those masks; the hair ends above this baseline.
++  if(canonical==='up_right')for(let f=0;f<6;f++){
++   for(let y=156;y<167;y++){
++    const edge=Math.ceil(88-(y-155)*.8),w=192-edge;
++    bc.clearRect(f*192+(flip?1:edge),y,w,1);
++   }
++   bc.clearRect(f*192,167,192,25);
++  }
+   // The old masks omit antialiased edge pixels. Keep only lower pixels
+   // connected to the upper artwork, so detached old soles cannot be overlaid.
+   for(let f=0;f<6;f++){
+@@ -110,7 +124,7 @@
+   c.save();c.translate(plan.bodyShiftX,plan.bodyShiftY);c.drawImage(body,0,0);c.restore();
+   ctx.drawImage(e.out,p.x-width,p.y+30-(64+184*2/3)*height*2/256,width*2,height*2);return true;
+  }
+- window.CHERRIFT_BASE_WALK=Object.freeze({draw,pose,version:'1030-base-sole-clean1',stats:()=>({cached:recent.size,maxCached:MAX})});
++ window.CHERRIFT_BASE_WALK=Object.freeze({draw,pose,version:'1030-base-rear-sole2',stats:()=>({cached:recent.size,maxCached:MAX})});
+ })();
+ 
+ 
+diff --git a/src/cherrift_manifest.json b/src/cherrift_manifest.json
+index c79a8ed..12ad67b 100644
+--- a/src/cherrift_manifest.json
++++ b/src/cherrift_manifest.json
+@@ -1,7 +1,7 @@
+ {
+   "runtimeVersion": "0.9.8.3-structured-runtime",
+   "gameVersion": "0.9.5-prebeta.1",
+-  "buildId": "1030-audio-ci-fix-1",
++  "buildId": "1030-base-rear-sole-fix-2",
+   "entrypoints": {
+     "application": "src/cherrift_app.js",
+     "menuAudio": "src/cherrift_menu_audio.js",
+diff --git a/tools/base_walk.test.mjs b/tools/base_walk.test.mjs
+index 8bc3b13..ef0984f 100644
+--- a/tools/base_walk.test.mjs
++++ b/tools/base_walk.test.mjs
+@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
+ import vm from 'node:vm';
+ import {readFileSync} from 'node:fs';
+ const read=p=>readFileSync(p,'utf8');
+-const dirs=['left','right','down_left','down_right'];
++const dirs=['left','right','down_left','down_right','up_left','up_right'];
+ function fixture(render=false,pixels=()=>new Uint8ClampedArray(192*192*4)){
+  class Game{movePlayer(){}}
+  const window={CherriftGame:Game},canvases=[];
+@@ -21,7 +21,7 @@ function fixture(render=false,pixels=()=>new Uint8ClampedArray(192*192*4)){
+ }
+ test('only the six requested side and diagonal walking directions use the new Base rig',()=>{
+  const {api}=fixture();for(const state of ['walk','walk_attack'])for(const dir of dirs)assert.ok(api.pose(state,dir,0,0));
+- for(const dir of ['up','down','up_left','up_right'])assert.equal(api.pose('walk',dir,0,0),null);
++ for(const dir of ['up','down'])assert.equal(api.pose('walk',dir,0,0),null);
+  for(const state of ['idle','idle2','attack','skill'])for(const dir of dirs)assert.equal(api.pose(state,dir,0,0),null);
+ });
+ test('the two feet exchange front/back positions at half a cycle in every requested direction',()=>{
