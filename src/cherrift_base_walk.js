@@ -59,6 +59,24 @@
   const width=image.naturalWidth||image.width;if(width<1152)return null;
   const flip=!!mirrors[dir],body=canvas(width,192),bc=body.getContext('2d');bc.drawImage(image,0,0);
   for(let f=0;f<6;f++)for(const [x,y,w] of poses[f].runs)bc.clearRect(f*192+(flip?193-x-w:x),y,w,1);
+  // The old masks omit antialiased edge pixels. Keep only lower pixels
+  // connected to the upper artwork, so detached old soles cannot be overlaid.
+  for(let f=0;f<6;f++){
+   const pixels=bc.getImageData(f*192,0,192,192),a=pixels.data;
+   const seen=new Uint8Array(192*192),queue=new Int32Array(192*192);let head=0,tail=0;
+   const seedY=Math.min(191,poses[f].hem+2);
+   for(let y=0;y<=seedY;y++)for(let x=0;x<192;x++){
+    const i=y*192+x;if(a[i*4+3]){seen[i]=1;queue[tail++]=i;}
+   }
+   while(head<tail){const i=queue[head++],x=i%192,y=Math.floor(i/192);
+    for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
+     const xx=x+dx,yy=y+dy;if(xx<0||xx>=192||yy<0||yy>=192)continue;
+     const j=yy*192+xx;if(!seen[j]&&a[j*4+3]){seen[j]=1;queue[tail++]=j;}
+    }
+   }
+   for(let i=(seedY+1)*192;i<192*192;i++)if(!seen[i])a.fill(0,i*4,i*4+4);
+   bc.putImageData(pixels,f*192,0);
+  }
   const def=neutral[canonical],strip=canvas(1152,192),sc=strip.getContext('2d');sc.save();sc.beginPath();
   def.polygon.forEach(([x,y],i)=>{x=flip?193-x:x;i?sc.lineTo(x,y):sc.moveTo(x,y);});sc.closePath();sc.clip();sc.drawImage(walkImage,0,0);sc.restore();
   const leg=canvas(),lc=leg.getContext('2d');lc.save();lc.translate(64,64);lc.scale(2/3,2/3);renderRaw(lc,strip,ID,'walk',dir,0,{x:96,y:154},192,192);lc.restore();
@@ -92,7 +110,7 @@
   c.save();c.translate(plan.bodyShiftX,plan.bodyShiftY);c.drawImage(body,0,0);c.restore();
   ctx.drawImage(e.out,p.x-width,p.y+30-(64+184*2/3)*height*2/256,width*2,height*2);return true;
  }
- window.CHERRIFT_BASE_WALK=Object.freeze({draw,pose,version:'1029-base-art-foot4',stats:()=>({cached:recent.size,maxCached:MAX})});
+ window.CHERRIFT_BASE_WALK=Object.freeze({draw,pose,version:'1030-base-sole-clean1',stats:()=>({cached:recent.size,maxCached:MAX})});
 })();
 
 
