@@ -13,6 +13,7 @@ try {
   await db.exec(`create role anon;create role authenticated;create role service_role bypassrls;
     create schema auth;
     create table auth.users(id uuid primary key,created_at timestamptz default now(),raw_user_meta_data jsonb default '{}',email text);
+    create table auth.identities(id uuid primary key default gen_random_uuid(),user_id uuid references auth.users(id),provider text,provider_id text);
     create function auth.uid() returns uuid language sql as $$select null::uuid$$;
     create schema supabase_migrations;
     create table supabase_migrations.schema_migrations(version text primary key,name text,statements text[]);`);
@@ -42,7 +43,7 @@ try {
   await db.query('insert into supabase_migrations.schema_migrations(version,name) values($1,$2)',[correction.slice(0,14),'reconcile_legacy_migration_versions']);
   assert.deepEqual((await db.query('select save_data from public.game_saves')).rows[0].save_data,before);
   const versions=(await db.query('select version from supabase_migrations.schema_migrations order by version')).rows.map(row=>row.version);
-  assert.deepEqual(versions,files.map(file=>file.slice(0,14)));
+  assert.deepEqual(versions,files.filter(file=>file<=correction).map(file=>file.slice(0,14)));
   const rights=await db.query(`select has_table_privilege('authenticated','public.game_saves','UPDATE') as can_write;`);
   assert.equal(rights.rows[0].can_write,false);
   const trigger=await db.query(`select pg_get_triggerdef(oid) as definition from pg_trigger where tgrelid='public.game_saves'::regclass and not tgisinternal;`);

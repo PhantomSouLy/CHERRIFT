@@ -1,7 +1,7 @@
 {
   "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "1029-base-rear-ears5",
+  "buildId": "1030-admin-events-1",
   "entrypoints": {
     "application": "src/cherrift_app.js",
     "menuAudio": "src/cherrift_menu_audio.js",
@@ -47,7 +47,8 @@
     "animationFlow": "src/cherrift_animation_flow.js",
     "animationSmoothing": "src/cherrift_animation_smoothing.js",
     "walkCycle": "src/cherrift_walk_cycle.js",
-    "baseWalk": "src/cherrift_base_walk.js"
+    "baseWalk": "src/cherrift_base_walk.js",
+    "eventHub": "src/cherrift_event_hub.js"
   },
   "stylesheets": {
     "shell": "assets/cherrift_shell.css",
@@ -76,7 +77,8 @@
     "desktopSocial": "assets/cherrift_desktop_social.css",
     "desktopLogin": "assets/cherrift_desktop_login.css",
     "frameGeometry": "assets/cherrift_frame_geometry.css",
-    "desktopPolish": "assets/cherrift_desktop_polish.css"
+    "desktopPolish": "assets/cherrift_desktop_polish.css",
+    "eventHub": "assets/cherrift_event_hub.css"
   },
   "externalConfiguration": [
     "src/config.js",
@@ -208,6 +210,11 @@
     "world2": [
       "src/cherrift_world2.js",
       "assets/map/world2/moonlit/"
+    ],
+    "scheduledEvents": [
+      "src/cherrift_event_hub.js",
+      "assets/cherrift_event_hub.css",
+      "event/"
     ]
   },
   "cleanup": {

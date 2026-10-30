@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "events": [
+    {
+      "id": "closed-beta",
+      "name": "Closed Beta",
+      "category": "limited",
+      "renderer": "closed-beta",
+      "description": "Seven day login rewards, daily missions and the event shop.",
+      "sections": []
+    }
+  ]
+}

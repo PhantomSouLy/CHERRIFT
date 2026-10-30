@@ -36,6 +36,9 @@ jobs:
 
       - name: Validate every tracked file
         run: |
+          npm run events:build
+          git diff --exit-code -- event/catalog.json
+          npm run test:admin
           npm run validate
           npm run test:migrations
           npm run test:menu-audio

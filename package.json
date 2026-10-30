@@ -47,7 +47,9 @@
     "test:succubus-chibi": "node --test tools/succubus_chibi.test.mjs tools/succubus_gait.test.mjs",
     "test:sakura-dance": "node --test tools/sakura_dance_chibi.test.mjs tools/sakura_dance_gait.test.mjs",
     "test:animation-smoothing": "node --test tools/animation_smoothing.test.mjs tools/animation_mirror.test.mjs tools/walk_cycle.test.mjs",
-    "test:training-lane": "node --test tools/training_lane.test.mjs"
+    "test:training-lane": "node --test tools/training_lane.test.mjs",
+    "events:build": "node tools/build_event_catalog.mjs",
+    "test:admin": "node tools/test_admin_center.mjs && node --test tools/admin_events.test.mjs tools/admin_ui.test.mjs"
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.5.11",
