@@ -14,7 +14,7 @@
 
   config.states = Object.fromEntries(Object.entries(FPS).map(([name, fps]) => [name, {
     frames:6, fps, duration:6 / fps, loop:["idle", "walk"].includes(name), pivot:PIVOT,
-    dirs:Object.fromEntries(DIRECTIONS.map(dir => [dir, `${ROOT}/base_cherry_${name}_${dir}.png?v=1029-base-art-foot4`]))
+    dirs:Object.fromEntries(DIRECTIONS.map(dir => [dir, `${ROOT}/base_cherry_${name}_${dir}.png?v=1029-base-rear-ears5`]))
   }]));
   config.attackMovementMode = "mobile";
   config.attackMoveSpeedMultiplier = 1;
@@ -156,7 +156,7 @@
     ctx.restore();
   };
 
-  window.CHERRIFT_BASE_CHERRY = Object.freeze({version:"1029-base-art-foot4", directions:[...DIRECTIONS]});
+  window.CHERRIFT_BASE_CHERRY = Object.freeze({version:"1029-base-rear-ears5", directions:[...DIRECTIONS]});
 })();
 
 
