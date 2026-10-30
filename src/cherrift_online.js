@@ -70,6 +70,11 @@
     try {
       const result = await window.CHERRIFT_AUTH.gameAction(operation, params);
       refresh();
+      if (result && !result.replayed && window.CHERRIFT_AUTH.isCurrentAccount(context)) {
+        const cue = {equip:"equip", unequip:"equip", sell:"sell", dismantle:"scrap", salvage_gear:"scrap"}[operation];
+        if (cue) window.CHERRIFT_MENU_AUDIO?.play(cue);
+        else if (result.rewards?.length) window.CHERRIFT_MENU_AUDIO?.play("reward");
+      }
       return result;
     } catch (error) {
       if (window.CHERRIFT_AUTH.isCurrentAccount(context)) {

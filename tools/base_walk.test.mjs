@@ -4,10 +4,17 @@ import vm from 'node:vm';
 import {readFileSync} from 'node:fs';
 const read=p=>readFileSync(p,'utf8');
 const dirs=['left','right','down_left','down_right'];
-function fixture(render=false){
+function fixture(render=false,pixels=()=>new Uint8ClampedArray(192*192*4)){
  class Game{movePlayer(){}}
  const window={CherriftGame:Game},canvases=[];
- const document={createElement(){const c={width:256,height:256,ops:[]};const ctx={};for(const name of ['save','restore','beginPath','closePath','clip','rect','moveTo','lineTo','translate','rotate','scale','drawImage','clearRect'])ctx[name]=(...args)=>c.ops.push([name,...args]);c.getContext=()=>ctx;canvases.push(c);return c;}};
+ const document={createElement(){
+  const c={width:256,height:256,ops:[]},ctx={};
+  for(const name of ['save','restore','beginPath','closePath','clip','rect','moveTo','lineTo','translate','rotate','scale','drawImage','clearRect'])
+   ctx[name]=(...args)=>c.ops.push([name,...args]);
+  ctx.getImageData=(x,y,width,height)=>({width,height,data:pixels(x,y,width,height)});
+  ctx.putImageData=(...args)=>c.ops.push(['putImageData',...args]);
+  c.getContext=()=>ctx;canvases.push(c);return c;
+ }};
  const context=vm.createContext({window,CherriftGame:Game,...(render?{document}:{})});
  for(const name of ['cherry_geometry','cherry_shot_alignment','animation_flow','base_walk','cherry_motion'])vm.runInContext(read(`src/cherrift_${name}.js`),context);
  return {window,api:window.CHERRIFT_BASE_WALK,canvases};
@@ -109,5 +116,24 @@ test('boot orientation remains independent of the moving shin',()=>{
  const {api}=fixture();for(const dir of dirs)for(const state of ['walk','walk_attack']){
   const ref=api.pose(state,dir,0,0).legs[0],offset=ref.ankle.map((v,i)=>v-ref.sole[i]);
   for(let stride=0;stride<6;stride+=.125)for(const leg of api.pose(state,dir,2.3,stride).legs)for(let i=0;i<2;i++)assert.ok(Math.abs(leg.ankle[i]-leg.sole[i]-offset[i])<1e-8);
+ }
+});
+
+
+test('body cleanup removes detached old sole pixels while retaining connected lower artwork',()=>{
+ const {window,api,canvases}=fixture(true,()=>{
+  const data=new Uint8ClampedArray(192*192*4);
+  for(let y=0;y<=180;y++)data[(y*192+96)*4+3]=255;
+  data[(190*192+10)*4+3]=128;
+  return data;
+ });
+ window.CHERRIFT_ANIMATION_SMOOTHING={sample:()=>({})};
+ const image={width:1152};
+ api.draw({drawImage(){}},image,'walk','right',0,0,{x:0,y:0},110,110,()=>{},image);
+ const writes=canvases.flatMap(c=>c.ops.filter(op=>op[0]==='putImageData'));
+ assert.equal(writes.length,6,'every painted frame is cleaned');
+ for(const [,pixels] of writes){
+  assert.equal(pixels.data[(180*192+96)*4+3],255,'connected artwork remains');
+  assert.equal(pixels.data[(190*192+10)*4+3],0,'detached sole fragment is removed');
  }
 });

@@ -33,9 +33,9 @@ test('WAV files are real short PCM16 stereo cues with no clipping and the hover 
 
 test('Play, normal buttons, back and skin navigation use distinct cues without changing control actions',()=>{
  const f=fixture();try{
- for(const [id,kind] of [['play','play'],['click','click'],['back','back'],['page','page'],['skin','page']]){
+ for(const [id,kind] of [['play','play'],['click','click'],['back','back'],['page','slideRight'],['skin','slideRight']]){
   f.clock(1000+f.played.length*200);assert.equal(f.api.classifyControl(f.q(id)),kind);
-  f.send('click',{target:f.q(id)});assert(f.played.at(-1).src.endsWith('crystal-'+kind+'.wav'));
+  f.send('click',{target:f.q(id)});assert(f.played.at(-1).src.endsWith(({play:'play',click:'click',hover:'hover',back:'click',page:'slide_right',slideLeft:'slide_left',slideRight:'slide_right'}[kind])+'.wav'));
  }
  const count=f.played.length;f.q('click').click();assert.equal(f.played.length,count,'synthetic rerender/keyboard clicks cannot duplicate trusted audio');
  assert.equal(f.api.classifyControl(f.q('off')),null);
@@ -47,7 +47,7 @@ test('disabled, hidden, inert, silent and gameplay HUD controls do not emit UI a
  for(const id of ['disabled','hidden','inert','off'])f.send('click',{target:f.q(id)});
  assert.equal(f.played.length,0);
  f.w.document.body.classList.add('is-playing');f.send('click');assert.equal(f.played.length,0);
- f.send('click',{target:f.q('pause-back')});assert(f.played[0].src.endsWith('crystal-back.wav'));
+ f.send('click',{target:f.q('pause-back')});assert(f.played[0].src.endsWith('click.wav'));
  }finally{f.close()}
 });
 
@@ -67,11 +67,11 @@ test('hover waits for a user gesture, ignores child transitions/touch and cancel
  f.send('pointerover',{pointerType:'mouse',relatedTarget:null});assert.equal(f.timers.size,0);
  f.send('pointerdown');f.send('pointerover',{pointerType:'touch',relatedTarget:null});assert.equal(f.timers.size,0);
  f.send('pointerover',{pointerType:'mouse',relatedTarget:null});assert.equal(f.timers.size,1);
- f.hoverTick();assert(f.played[0].src.endsWith('crystal-hover.wav'));assert.equal(f.played[0].volume,.18);
+ f.hoverTick();assert(f.played[0].src.endsWith('hover.wav'));assert.equal(f.played[0].volume,.18);
  f.send('pointerover',{pointerType:'mouse',relatedTarget:f.q('click')});assert.equal(f.timers.size,0);
  f.send('pointerover',{pointerType:'mouse',relatedTarget:null});f.send('pointerout',{relatedTarget:null});assert.equal(f.timers.size,0);
  f.send('pointerover',{pointerType:'mouse',relatedTarget:null});f.send('click');assert.equal(f.timers.size,0);
- assert(f.played.at(-1).src.endsWith('crystal-click.wav'));
+ assert(f.played.at(-1).src.endsWith('click.wav'));
  }finally{f.close()}
 });
 
@@ -81,8 +81,8 @@ test('rapid events are bounded to five voices and only handled keyboard navigati
  assert(f.sounds.filter(sound=>!sound.paused).length<=5);
  let count=f.played.length;f.clock(5000);
  f.send('keydown',{key:'Escape',defaultPrevented:false});await Promise.resolve();assert.equal(f.played.length,count);
- f.send('keydown',{key:'Escape',defaultPrevented:true});await Promise.resolve();assert(f.played.at(-1).src.endsWith('crystal-back.wav'));
- f.clock(5200);f.send('keydown',{target:f.q('skin'),key:'ArrowRight',defaultPrevented:true});await Promise.resolve();assert(f.played.at(-1).src.endsWith('crystal-page.wav'));
+ f.send('keydown',{key:'Escape',defaultPrevented:true});await Promise.resolve();assert(f.played.at(-1).src.endsWith('click.wav'));
+ f.clock(5200);f.send('keydown',{target:f.q('skin'),key:'ArrowRight',defaultPrevented:true});await Promise.resolve();assert(f.played.at(-1).src.endsWith('slide_right.wav'));
  }finally{f.close()}
 });
 
@@ -95,11 +95,11 @@ test('new desktop buttons remain audible inside pointer-transparent chrome and f
   for(const [selector,kind] of [['[data-wg-action]','play'],['[data-wg-back]','back'],['[data-sp-card]','page']]){
    f.clock(1000+f.played.length*200);const button=layer.querySelector(selector);
    f.send('click',{target:button.firstElementChild||button});
-   assert(f.played.at(-1)?.src.endsWith('crystal-'+kind+'.wav'),selector+' emits '+kind);
+   assert(f.played.at(-1)?.src.endsWith(({play:'play',click:'click',hover:'hover',back:'click',page:'slide_right',slideLeft:'slide_left',slideRight:'slide_right'}[kind])+'.wav'),selector+' emits '+kind);
   }
   const count=f.played.length;f.send('click',{target:layer.querySelector('#blocked-pointer')});assert.equal(f.played.length,count);
   f.send('pointerdown');f.send('pointerover',{target:layer.querySelector('[data-wg-action]'),pointerType:'mouse',relatedTarget:null});
-  f.hoverTick();assert(f.played.at(-1).src.endsWith('crystal-hover.wav'));
+  f.hoverTick();assert(f.played.at(-1).src.endsWith('hover.wav'));
  }finally{f.close()}
 });
 
@@ -107,4 +107,60 @@ test('trusted audio runs before online handlers consume persistent-action clicks
  const index=readFileSync(new URL('../index.html',import.meta.url),'utf8');
  assert(index.indexOf('src/cherrift_menu_audio.js')<index.indexOf('src/cherrift_online.js'));
  const f=fixture();try{f.w.UI.save.settings.soundEnabled=false;f.send('click');assert.equal(f.played.length,0)}finally{f.close()}
+});
+
+
+test('uploaded equipment, sale, scrap and reward cues respect mute and master volume',()=>{
+ const f=fixture();try{
+  for(const [kind,file] of [['equip','armor_equip'],['sell','sell_coin'],['scrap','gear_scraping'],['reward','reward']]){
+   assert(f.api.play(kind));assert(f.played.at(-1).src.endsWith(file+'.wav'));
+   assert.equal(f.played.at(-1).volume,.33);
+   const wav=readFileSync(new URL('../'+f.api.cues[kind].src,import.meta.url));
+   assert.equal(wav.toString('ascii',0,4),'RIFF');assert.equal(wav.toString('ascii',8,12),'WAVE');
+  }
+  f.w.UI.save.settings.muted=true;f.clock(5000);assert.equal(f.api.play('reward'),false);
+ }finally{f.close()}
+});
+
+
+test('online action audio follows server success and stays silent on rejection, replay or account change',async()=>{
+ const f=fixture();try{
+  let response={ok:true},current=true;const context={userId:'player'};
+  f.w.CHERRIFT_AUTH={getState:()=>({mode:'discord',cloudReady:true,onlinePolicy:true}),
+   captureAccount:()=>context,isCurrentAccount:()=>current,gameAction:async()=>{if(response instanceof Error)throw response;return response}};
+  f.w.eval(readFileSync(new URL('../src/cherrift_online.js',import.meta.url),'utf8'));
+  for(const [op,file] of [['equip','armor_equip'],['sell','sell_coin'],['dismantle','gear_scraping'],['salvage_gear','gear_scraping']]){
+   f.clock(1000+f.played.length*200);await f.w.CHERRIFT_ONLINE.perform(op);
+   assert(f.played.at(-1).src.endsWith(file+'.wav'));
+  }
+  response={ok:true,rewards:[{kind:'coins',amount:1}]};
+  await f.w.CHERRIFT_ONLINE.perform('claim_login');assert(f.played.at(-1).src.endsWith('reward.wav'));
+  const count=f.played.length;f.clock(5000);
+  response=new Error('not_enough_coins');await f.w.CHERRIFT_ONLINE.perform('sell');
+  response={ok:true,replayed:true};await f.w.CHERRIFT_ONLINE.perform('equip');
+  f.w.CHERRIFT_AUTH.gameAction=async()=>{current=false;return {ok:true}};
+  await f.w.CHERRIFT_ONLINE.perform('equip');assert.equal(f.played.length,count);
+ }finally{f.close()}
+});
+
+
+test('skin, world and chapter arrows and cards use the actual slide direction',async()=>{
+ const f=fixture();try{
+  for(const attr of ['data-sp-step','data-wg-step','data-world-step','data-chapter-step','data-v093-world-step']){
+   const b=f.w.document.createElement('button');f.q('app').append(b);
+   for(const step of [-1,1]){b.setAttribute(attr,String(step));assert.equal(f.api.classifyControl(b),step<0?'slideLeft':'slideRight')}
+   b.remove();
+  }
+  for(const attr of ['data-v093-skin','data-wg-card','data-wg-pick','data-world-index','data-chapter-index']){
+   const group=f.w.document.createElement('nav');
+   group.innerHTML=`<button ${attr}="0"></button><button ${attr}="1" aria-pressed="true"></button><button ${attr}="2"></button>`;f.q('app').append(group);
+   assert.equal(f.api.classifyControl(group.children[0]),'slideLeft');
+   assert.equal(f.api.classifyControl(group.children[1]),'click');
+   assert.equal(f.api.classifyControl(group.children[2]),'slideRight');group.remove();
+  }
+  f.send('keydown',{target:f.q('skin'),key:'ArrowLeft',defaultPrevented:true});await Promise.resolve();
+  assert(f.played.at(-1).src.endsWith('slide_left.wav'));
+  f.clock(2000);f.api.slide(1);assert(f.played.at(-1).src.endsWith('slide_right.wav'));
+  assert(Object.values(f.api.cues).every(cue=>!cue.src.includes('crystal-')));
+ }finally{f.close()}
 });

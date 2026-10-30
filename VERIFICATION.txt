@@ -1,0 +1,16 @@
+CHERRIFT Audio/CI fix – verification 2026-10-30
+
+PASS npm test (exit 0)
+PASS all 10 boot smoke cases: desktop, wide-desktop, short-desktop,
+phone-portrait, phone-landscape, returning-session, gm-returning-session,
+gm-phone, auth-timeout, cloud-timeout.
+PASS final targeted tests: 34/34 (menu audio, Base walking, desktop world).
+PASS final npm run validate.
+PASS npm run events:build; catalog unchanged.
+PASS npm run test:admin.
+PASS npm run verify:supabase-public: Auth, Discord OAuth redirect,
+15 protected tables, player-api, gm-api, submit-report, CORS and JWT boundary.
+PASS git diff --check.
+
+Direct GitHub upload failed: HTTP 403 Resource not accessible by integration.
+No GitHub branch or database changes were applied.

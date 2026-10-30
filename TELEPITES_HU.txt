@@ -1,0 +1,38 @@
+CHERRIFT – új hangok aktiválása és CI-javítás
+Alap: b221b7357d24374270c48d896aff2bfef34dfc7d (new sounds), main.
+
+TELEPÍTÉS
+1. Csomagold ki a ZIP tartalmát a CHERRIFT projekt gyökerébe.
+2. Engedélyezd az azonos nevű fájlok felülírását.
+3. Commitold és pushold a módosított fájlokat a GitHubra.
+4. A közzététel után frissítsd a játékot. Az első érintés/kattintás feloldja a böngésző hangengedélyét.
+
+A hangfájlok már a repóban vannak, ezért nem ismétlődnek ebben a csomagban.
+SQL vagy Supabase-módosítás nem szükséges.
+
+JAVÍTÁSOK
+- tools/base_walk.test.mjs: a Canvas teszthelyettesítő támogatja a getImageData/putImageData függvényeket.
+- Külön regressziós teszt ellenőrzi a levált talpmaradvány eltávolítását, a csatlakozó képpontok megőrzésével.
+- A játékbeli Base Cherry rajzát nem módosítja ez a csomag.
+- Friss buildazonosító gondoskodik az új böngészős kód letöltéséről.
+
+AKTÍV HANGOK (assets/audio/menu)
+play.wav: Play
+click.wav: kattintás és vissza
+hover.wav: PC rámutatás
+slide_left.wav: balra lapozás
+slide_right.wav: jobbra lapozás
+armor_equip.wav: felszerelés (online levételnél is)
+sell_coin.wav: sikeres eladás
+gear_scraping.wav: sikeres betörés
+reward.wav: jutalom
+
+A crystal-* hangok egyike sem szerepel az aktív hangbekötésekben.
+A Skin Selector, World és Chapter nyilai/kártyái a lapozás tényleges irányát használják.
+A World/Chapter húzásos lapozása is hangot kapott.
+Online eladás/felszerelés/betörés hang csak sikeres szerverválasz után szól.
+Hibás, ismételten visszaadott vagy másik fiókhoz tartozó válasz nem indít művelethangot.
+A némítás és a főhangerő érvényes marad.
+
+ELLENŐRZÉS
+A teszteredményeket a VERIFICATION.txt foglalja össze.

@@ -1,0 +1,10 @@
+{
+  "index.html": "7e2cb052b8b862ae4e8ed6dfcf44a5e8282bbdfabe79ac19c46ab2d3857f8ad0",
+  "src/cherrift_app.js": "1b83028fa95d596c79f48110fab2c4b22116817f624aba79ea4c58c0d9cf4e08",
+  "src/cherrift_manifest.json": "74326f33ef898c86fd756ab547ece03f4ce36ea4206ba154227281d9a31e84a6",
+  "src/cherrift_menu_audio.js": "e66a31b638648ec0a7a8cab5385a6c5585e26cd399814e594d5a1a64427f54af",
+  "src/cherrift_online.js": "3342409400d5421c4fa513baac24150e4e32c55b1be0cbbd5e6d7f2a3336a8b3",
+  "src/cherrift_world_ui.js": "15cdd8fcd31988ca0820cae7566ad50e8811f6255a026119f3317f87c0cb142a",
+  "tools/base_walk.test.mjs": "828440910b609b5361f68eada98c260b2d80cc9c43acf194c4cf3a6c038da4fe",
+  "tools/menu_audio.test.mjs": "3449bdf7852b015700587ac20efe260c08cc68c8c4eecaa1c621927f0cc24379"
+}

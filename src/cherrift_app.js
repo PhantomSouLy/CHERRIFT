@@ -1040,6 +1040,7 @@ window.UI = {
     this.save.inventory.splice(idx, 1);
     if (old) this.save.inventory.push(old);
     this.save.equipped[g.slot] = g;
+    window.CHERRIFT_MENU_AUDIO?.play("equip");
     CherriftStorage.save(this.save);
     this.selectedGear = g;
     this.renderGear();
@@ -4322,6 +4323,7 @@ console.info(`[CHERRIFT] ${VERSION} loaded. Mode: ${enabled ? "ON" : "OFF"}`);
     this.save.inventory.splice(index, 1);
     this.save.coins += value;
     this.save.lootStats.soldItems++;
+    window.CHERRIFT_MENU_AUDIO?.play("sell");
     this.selectedGear = null;
     CherriftStorage.save(this.save);
     this.toast(`Sold for ${value} coins`);
@@ -13880,6 +13882,7 @@ function salvageWeakest(slot) {
   const state = save.arsenal.slots[slot];
   save.bag.materials.gearScrap += scrap;
   state.salvageCount += 1;
+  window.CHERRIFT_MENU_AUDIO?.play("scrap");
   let core = 0;
   if (state.salvageCount % 3 === 0) {
     save.bag.materials.slotCores[slot] += 1;
@@ -15624,6 +15627,7 @@ function bulkSell(){
     const buff=window.CHERRIFT_V080.aggregateBuffs(save),tree=skillBonuses(save);
     coins+=Math.floor(coins*((buff.coin||0)+(tree.coinGain||0)));
     save.inventory=save.inventory.filter(item=>!ids.has(item.id));save.coins+=coins;
+    window.CHERRIFT_MENU_AUDIO?.play("sell");
     runtime.selectedGear.clear();runtime.selectionMode=false;
     saveProgress(`${t("bulkSold")}: ${items.length} · 🪙 ${coins}`);UI.renderGear?.();
   };
@@ -15639,6 +15643,7 @@ function bulkDismantle(){
       scrap+=reward.scrap||0;copper+=reward.copper||0;silver+=reward.silver||0;
       if(reward.silverChance&&Math.random()<reward.silverChance)silver++;
     }
+    window.CHERRIFT_MENU_AUDIO?.play("scrap");
     material.gearScrap+=scrap;material.stones.copper=(material.stones.copper||0)+copper;material.stones.silver=(material.stones.silver||0)+silver;
     save.inventory=save.inventory.filter(item=>!ids.has(item.id));
     runtime.selectedGear.clear();runtime.selectionMode=false;
@@ -16209,6 +16214,7 @@ function ensureRewardSound() {
 }
 
 function playRewardSound() {
+  if (window.CHERRIFT_MENU_AUDIO) return window.CHERRIFT_MENU_AUDIO.play("reward");
   const volume = rewardSoundVolume();
   const sound = ensureRewardSound();
   if (!sound || volume <= 0) return false;

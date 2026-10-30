@@ -1,17 +1,23 @@
-/* Crystal UI audio. One event owner, existing master volume, original WAV cues. */
+/* Crystal UI audio. One event owner, existing master volume, uploaded WAV cues. */
 (() => {
   'use strict';
   if (window.CHERRIFT_MENU_AUDIO) return;
   const cues = Object.freeze({
-    play: Object.freeze({src:'assets/audio/menu/crystal-play.wav', gain:.65, gap:90}),
-    click: Object.freeze({src:'assets/audio/menu/crystal-click.wav', gain:.55, gap:35}),
-    hover: Object.freeze({src:'assets/audio/menu/crystal-hover.wav', gain:.30, gap:110}),
-    back: Object.freeze({src:'assets/audio/menu/crystal-back.wav', gain:.50, gap:65}),
-    page: Object.freeze({src:'assets/audio/menu/crystal-page.wav', gain:.50, gap:65})
+    play: Object.freeze({src:'assets/audio/menu/play.wav', gain:.65, gap:90}),
+    click: Object.freeze({src:'assets/audio/menu/click.wav', gain:.55, gap:35}),
+    hover: Object.freeze({src:'assets/audio/menu/hover.wav', gain:.30, gap:110}),
+    back: Object.freeze({src:'assets/audio/menu/click.wav', gain:.50, gap:65}),
+    page: Object.freeze({src:'assets/audio/menu/slide_right.wav', gain:.50, gap:65}),
+    slideLeft: Object.freeze({src:'assets/audio/menu/slide_left.wav', gain:.50, gap:100}),
+    slideRight: Object.freeze({src:'assets/audio/menu/slide_right.wav', gain:.50, gap:100}),
+    equip: Object.freeze({src:'assets/audio/menu/armor_equip.wav', gain:.55, gap:65}),
+    sell: Object.freeze({src:'assets/audio/menu/sell_coin.wav', gain:.55, gap:65}),
+    scrap: Object.freeze({src:'assets/audio/menu/gear_scraping.wav', gain:.55, gap:65}),
+    reward: Object.freeze({src:'assets/audio/menu/reward.wav', gain:.55, gap:90})
   });
   const selector = 'button,a[href],summary,select,input[type=button],input[type=submit],input[type=reset],input[type=checkbox],input[type=radio],input[type=range],[role=button],[role=menuitem],[role=switch],[data-open],[data-action],[data-node]';
   const playSelector = '[data-wg-action],.crystal-play,[data-chapter-play],[data-world-start],#mobilePlayBtn,#btnPlay,[data-menu-sound="play"]';
-  const pageSelector = '[data-sp-card],[data-wg-card],[data-cc-skin],[data-v093-skin],[data-v093-skin-view],[data-sp-step],[data-wg-step],[data-wg-pick],[data-v093-world-step],[data-v084-skin],[data-rg-step],[data-menu-sound="page"]';
+  const pageSelector = '[data-sp-card],[data-wg-card],[data-cc-skin],[data-v093-skin],[data-v093-skin-view],[data-sp-step],[data-wg-step],[data-wg-pick],[data-v093-world-step],[data-v084-skin],[data-rg-step],[data-world-step],[data-chapter-step],[data-world-index],[data-chapter-index],[data-menu-sound="page"]';
   const pools = new Map(), last = new Map();
   let unlocked = false, hoverTimer = 0, hoverTarget = null, active = [];
 
@@ -24,6 +30,20 @@
     if (Array.from(control.attributes).some(attribute => /^data-(?:.+-)?(?:back|close)$/.test(attribute.name)) ||
         /(?:^|[\s-])(?:back|close)(?:[\s-]|$)/.test(control.className || '') ||
         /^(?:back\b|vissza\b|close\b|bezár)/i.test(control.getAttribute('aria-label') || '')) return 'back';
+    for (const attr of ['data-sp-step','data-wg-step','data-v093-world-step','data-rg-step','data-world-step','data-chapter-step']) {
+      if (control.hasAttribute(attr)) return Number(control.getAttribute(attr)) < 0 ? 'slideLeft' : 'slideRight';
+    }
+    for (const attr of ['data-v093-skin','data-v084-skin','data-wg-card','data-wg-pick','data-world-index','data-chapter-index']) {
+      if (!control.hasAttribute(attr)) continue;
+      const group = Array.from(control.parentElement?.querySelectorAll(`[${attr}]`) || []);
+      const selected = group.find(node => node.classList.contains('active') || node.getAttribute('aria-pressed') === 'true' || node.getAttribute('aria-selected') === 'true');
+      if (selected === control) return 'click';
+      const numeric = attr !== 'data-v093-skin' && attr !== 'data-v084-skin';
+      const before = numeric ? Number(selected?.getAttribute(attr)) : group.indexOf(selected);
+      const after = numeric ? Number(control.getAttribute(attr)) : group.indexOf(control);
+      return selected && after < before ? 'slideLeft' : 'slideRight';
+    }
+    if (control.hasAttribute('data-v093-skin-view')) return 'click';
     if (control.matches(pageSelector)) return 'page';
     return 'click';
   }
@@ -102,12 +122,12 @@
     const control = controlFrom(event.target);
     const paging = ['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].includes(event.key) && control?.matches(pageSelector);
     if (event.key === 'Escape' || paging) queueMicrotask(() => {
-      if (event.defaultPrevented) play(paging ? 'page' : 'back');
+      if (event.defaultPrevented) play(paging ? (['ArrowLeft','ArrowUp','Home'].includes(event.key) ? 'slideLeft' : 'slideRight') : 'back');
     });
   }, true);
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) return;
     clearHover(true); for (const sound of active) sound.pause(); active = [];
   });
-  window.CHERRIFT_MENU_AUDIO = Object.freeze({version:'1.1-crystal-hit-testing', play, classifyControl, cues});
+  window.CHERRIFT_MENU_AUDIO = Object.freeze({version:'1.2-uploaded-cues', play, slide:step => step ? play(step < 0 ? 'slideLeft' : 'slideRight') : false, classifyControl, cues});
 })();

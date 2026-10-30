@@ -350,6 +350,7 @@
     const entries = worldEntries();
     const next = Math.max(0, Math.min(entries.length - 1, number(index)));
     if (next === state.worldIndex) return;
+    window.CHERRIFT_MENU_AUDIO?.slide(next - state.worldIndex);
     state.worldIndex = next;
     renderWorldSelector();
   }
@@ -412,6 +413,7 @@
     const list = worldStages(state.selectedWorld);
     const next = Math.max(0, Math.min(list.length - 1, number(index)));
     if (next === state.chapterIndex) return;
+    window.CHERRIFT_MENU_AUDIO?.slide(next - state.chapterIndex);
     state.chapterIndex = next;
     renderChapterSelector();
   }
