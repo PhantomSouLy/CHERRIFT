@@ -1,0 +1,14 @@
+CHERRIFT – tiszta hátsó kontúrok és egyenes oldalirányú bokák, v5
+
+Ez a teljes javított változat, a v4 javításait is tartalmazza.
+Telepítés: az index.html, src és tools fájlokat másold a CHERRIFT repó gyökerébe, felülírással. Commit/push, Pages frissülés, majd a játék újratöltése szükséges. A preview mappa csak az előnézet, nem kell a játékhoz feltölteni. A .patch alternatív telepítési mód.
+
+Javítások:
+- Up left / up right: képkockánként igazított maszkolás törli a régi cipőből a haj alá kapcsolódó vékony pixelcsíkokat. Járás és mozgó támadás is érintett.
+- Left / right: a bokaszár és a lábszár egy egyenes transzformációt kap. A szétválasztó él a boka és cipő alakjához igazodik, így a korábbi hirtelen törés eltűnik.
+- A cipő orra és talpa megtartja a v4-ben javított stabil, talajhoz igazított helyzetet.
+
+Build: 1030-base-clean-ankles-fix-5.
+25 célzott teszt sikeres. A rétegek illesztését a teljes közös bokaél mentén ellenőrzi a teszt, a járási és mozgó támadási ciklusban egyaránt. Nagyított render, teljes lépésciklus és köztes képkockák ellenőrizve a CPU referencia-interpolációval. A teljes validátor sikeres; a helyi css-tree hiánya miatt a CSS szintaxiselemzést kihagyta. Telefonos/WebGL játékpróba nem történt.
+
+GitHubra közvetlenül nincs feltöltve. Supabase-módosítás nem szükséges.

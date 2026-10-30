@@ -12,9 +12,9 @@
  // Subpixel face registration measured from the existing normalized artwork.
  const registration={"right":{"walk":[-0.0,0.5,1.0,1.0,1.0,0.75],"walk_attack":[-3.25,-4.0,-3.5,-3.0,-2.75,-22.75]},"left":{"walk":[-0.0,-0.25,-1.0,-2.0,-1.25,-1.0],"walk_attack":[3.25,4.0,3.75,3.25,2.75,23.0]}};
  const neutral={
-  right:{hip:[93,154],knee:[101,165],ankle:[105,174],sole:[109,182],polygon:[[86,151],[100,150],[105,164],[122,173],[121,185],[105,185],[96,174]]},
-  down_right:{hip:[91,150],knee:[97,163],ankle:[101,174],sole:[104,182],polygon:[[84,148],[99,148],[104,165],[119,178],[118,185],[100,185],[92,174]]},
-  up_right:{hip:[99,153],knee:[91,165],ankle:[87,174],sole:[88,182],polygon:[[93,152],[102,154],[94,166],[100,179],[96,186],[77,186],[74,171],[85,159]]}
+  right:{ground:[[105,182],[119,177]],hip:[93,154],knee:[101,165],ankle:[105,174],sole:[109,182],polygon:[[86,151],[100,150],[105,164],[122,173],[121,185],[105,185],[96,174]]},
+  down_right:{ground:[[99,183],[113,180]],hip:[91,150],knee:[97,163],ankle:[101,174],sole:[104,182],polygon:[[84,148],[99,148],[104,165],[119,178],[118,185],[100,185],[92,174]]},
+  up_right:{ground:[[79,175],[93,183]],hip:[99,153],knee:[91,165],ankle:[87,174],sole:[88,182],polygon:[[93,152],[102,154],[94,166],[100,179],[96,186],[77,186],[74,171],[85,159]]}
  };
  const prepared=new WeakMap(),MAX=6,recent=new Map();
  function canvas(w=256,h=256){const c=document.createElement('canvas');c.width=w;c.height=h;return c;}
@@ -73,6 +73,13 @@
   // Rear artwork was refreshed after the run masks were measured. Its old
   // boot now extends beyond those masks; the hair ends above this baseline.
   if(canonical==='up_right')for(let f=0;f<6;f++){
+   // The current rear walk/cast art has a narrow old heel under the hair.
+   // Follow each pose's measured heel, rather than retaining that thin strip.
+   const heels=state==='walk_attack'?[75,69,66,64,67,69]:[77,74,73,71,73,73];
+   for(let y=state==='walk_attack'?152:155;y<167;y++){
+    const edge=heels[f]+18-(y-152)*2,w=192-edge;
+    bc.clearRect(f*192+(flip?1:edge),y,w,1);
+   }
    for(let y=156;y<167;y++){
     const edge=Math.ceil(88-(y-155)*.8),w=192-edge;
     bc.clearRect(f*192+(flip?1:edge),y,w,1);
@@ -100,18 +107,42 @@
   const def=neutral[canonical],strip=canvas(1152,192),sc=strip.getContext('2d');sc.save();sc.beginPath();
   def.polygon.forEach(([x,y],i)=>{x=flip?193-x:x;i?sc.lineTo(x,y):sc.moveTo(x,y);});sc.closePath();sc.clip();sc.drawImage(walkImage,0,0);sc.restore();
   const leg=canvas(),lc=leg.getContext('2d');lc.save();lc.translate(64,64);lc.scale(2/3,2/3);renderRaw(lc,strip,ID,'walk',dir,0,{x:96,y:154},192,192);lc.restore();
-  const source={hip:point('walk',dir,0,...def.hip,false),knee:point('walk',dir,0,...def.knee,false),ankle:point('walk',dir,0,...def.ankle,false),sole:point('walk',dir,0,...def.sole,false)};
-  e={walkImage,body,leg,source,out:canvas(),fallback:canvas(),owner:map,dir};map.set(dir,e);recent.set(e,true);
+  const originalHip=point('walk',dir,0,...def.hip,false),originalSole=point('walk',dir,0,...def.sole,false);
+  const ground=def.ground.map(p=>point('walk',dir,0,...p,false));
+  // Rectify the painted sole once. A planted shoe keeps this orientation;
+  // the toe and sole retain that orientation throughout the stride.
+  let angle=-Math.atan2(ground[1][1]-ground[0][1],ground[1][0]-ground[0][0]);
+  if(flip)angle+=Math.PI;
+  const cosine=Math.cos(angle),sine=Math.sin(angle),size=.76;
+  const project=p=>[128+size*(cosine*(p[0]-originalSole[0])-sine*(p[1]-originalSole[1])),184+size*(sine*(p[0]-originalSole[0])+cosine*(p[1]-originalSole[1]))];
+  const flat=canvas(),fc=flat.getContext('2d');fc.translate(128,184);fc.scale(size,size);fc.rotate(angle);fc.translate(-originalSole[0],-originalSole[1]);fc.drawImage(leg,0,0);
+  const source={hip:project(originalHip),sole:[128,184]};
+  // Use the real painted bottom, not the old approximate sole pivot.
+  const pixels=flat.getContext('2d').getImageData(0,0,256,256).data;
+  let bottom=184;for(let y=255;y>=0;y--){let found=false;for(let x=0;x<256;x++)if(pixels[(y*256+x)*4+3]>32){found=true;break;}if(found){bottom=y+1;break;}}
+  source.sole[1]=bottom;
+  source.slope=canonical==='right'?(flip?.6:-.6):0;
+  source.joint=canonical==='right'?source.sole[1]-5:source.hip[1]+(source.sole[1]-source.hip[1])*.42;
+  // The angled side masks let the boot shaft follow the shin. Both
+  // transforms agree on the
+  // shared boundary, so the same toe/heel can never be painted twice apart.
+  const upper=canvas(),foot=canvas();
+  const uc=upper.getContext('2d'),lc2=foot.getContext('2d');
+  const line=x=>source.joint+source.slope*(x-source.sole[0]);
+  uc.save();uc.beginPath();uc.moveTo(0,0);uc.lineTo(256,0);uc.lineTo(256,line(256)+.5);uc.lineTo(0,line(0)+.5);uc.closePath();uc.clip();uc.drawImage(flat,0,0);uc.restore();
+  lc2.save();lc2.beginPath();lc2.moveTo(0,line(0)-.5);lc2.lineTo(256,line(256)-.5);lc2.lineTo(256,256);lc2.lineTo(0,256);lc2.closePath();lc2.clip();lc2.drawImage(flat,0,0);lc2.restore();
+  e={walkImage,body,upper,foot,source,out:canvas(),fallback:canvas(),owner:map,dir};map.set(dir,e);recent.set(e,true);
   while(recent.size>MAX){const oldest=recent.keys().next().value;recent.delete(oldest);oldest.owner.delete(oldest.dir);}return e;
  }
- // Transform one continuous leg. Splitting the shoe across horizontal
- // knee/ankle cuts painted its sole twice at different transforms.
- function drawLeg(c,image,source,target){
-  const dx=source.sole[0]-source.hip[0],dy=source.sole[1]-source.hip[1];
-  const width=.76,vertical=(target.sole[1]-target.hip[1])/dy;
-  const shear=(target.sole[0]-target.hip[0]-width*dx)/dy;
-  c.save();c.transform(width,0,shear,vertical,target.hip[0]-width*source.hip[0]-shear*source.hip[1],target.hip[1]-vertical*source.hip[1]);
-  c.drawImage(image,0,0);c.restore();
+ // The toe/sole mask translates rigidly. The leg and ankle shaft follow
+ // one straight transform that agrees with it on the complete shared edge.
+ function drawLeg(c,upper,foot,source,target){
+  const tx=target.sole[0]-source.sole[0],ty=target.sole[1]-source.sole[1];
+  const slope=source.slope,intercept=source.joint-slope*source.sole[0];
+  const length=intercept+slope*source.hip[0]-source.hip[1];
+  const dx=target.hip[0]-(source.hip[0]+tx),dy=target.hip[1]-(source.hip[1]+ty);
+  c.save();c.transform(1+dx*slope/length,dy*slope/length,-dx/length,1-dy/length,tx+dx*intercept/length,ty+dy*intercept/length);c.drawImage(upper,0,0);c.restore();
+  c.drawImage(foot,tx,ty);
  }
  function draw(ctx,image,state,dir,phase,stride,p,width,height,renderRaw,walkImage){
   const smooth=window.CHERRIFT_ANIMATION_SMOOTHING;if(!smooth)return false;
@@ -124,11 +155,11 @@
    c.save();c.translate(64+(mirrors[dir]?-offset[0]:offset[0]),64+offset[1]);c.scale(2/3,2/3);renderRaw(c,e.body,ID,state,dir,plan.frame,{x:96,y:154},192,192);c.restore();body=e.fallback;
   }
   const c=e.out.getContext('2d');c.clearRect(0,0,256,256);
-  for(const i of [1,0])drawLeg(c,e.leg,e.source,plan.legs[i]);
+  for(const i of [1,0])drawLeg(c,e.upper,e.foot,e.source,plan.legs[i]);
   c.save();c.translate(plan.bodyShiftX,plan.bodyShiftY);c.drawImage(body,0,0);c.restore();
   ctx.drawImage(e.out,p.x-width,p.y+30-(64+184*2/3)*height*2/256,width*2,height*2);return true;
  }
- window.CHERRIFT_BASE_WALK=Object.freeze({draw,pose,version:'1030-base-continuous-leg3',stats:()=>({cached:recent.size,maxCached:MAX})});
+ window.CHERRIFT_BASE_WALK=Object.freeze({draw,pose,version:'1030-base-ankle-contour5',stats:()=>({cached:recent.size,maxCached:MAX})});
 })();
 
 

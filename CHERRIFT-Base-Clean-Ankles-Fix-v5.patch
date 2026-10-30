@@ -1,0 +1,381 @@
+diff --git a/index.html b/index.html
+index c2af370..bc56ecf 100644
+--- a/index.html
++++ b/index.html
+@@ -7,41 +7,41 @@
+ 
+   <!-- One build id for every first-party browser asset. Bump this value as a
+        unit on every deployed code/style change so a phone cannot mix builds. -->
+-  <link rel="stylesheet" href="assets/cherrift_shell.css?v=1030-base-continuous-leg-fix-3" />
+-  <link rel="stylesheet" href="assets/cherrift_app.css?v=1030-base-continuous-leg-fix-3" />
+-  <link rel="stylesheet" href="assets/cherrift_prebeta.css?v=1030-base-continuous-leg-fix-3" />
+-  <link rel="stylesheet" href="assets/cherrift_prebeta_event.css?v=1030-base-continuous-leg-fix-3" />
+-  <link rel="preload" as="image" href="assets/ui/loading/sakura-path/landscape.webp?v=1030-base-continuous-leg-fix-3" media="(min-width:821px) and (min-height:601px), (min-width:821px) and (pointer:fine)" />
+-  <link rel="preload" as="image" href="assets/loading_mobile_1080x1920.png?v=1030-base-continuous-leg-fix-3" media="(orientation:portrait)" />
+-  <link rel="preload" as="image" href="assets/ui/cherrift_logo.png?v=1030-base-continuous-leg-fix-3" />
+-  <link rel="stylesheet" href="assets/cherrift_boot.css?v=1030-base-continuous-leg-fix-3" />
+-  <link id="cherriftSharedUiCss" rel="stylesheet" href="assets/cherrift_ui.css?v=1030-base-continuous-leg-fix-3" />
+-  <link id="cherriftElementalCss" rel="stylesheet" href="assets/cherrift_elemental.css?v=1030-base-continuous-leg-fix-3" />
+-  <link id="cherriftSkillBuilderCss" rel="stylesheet" href="assets/cherrift_skill_builder.css?v=1030-base-continuous-leg-fix-3" />
+-  <link id="cherriftRuntimeCss" rel="stylesheet" href="assets/cherrift_runtime.css?v=1030-base-continuous-leg-fix-3" />
+-  <link rel="stylesheet" href="assets/cherrift_presentation.css?v=1030-base-continuous-leg-fix-3" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_menu.css?v=1030-base-continuous-leg-fix-3" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_skins.css?v=1030-base-continuous-leg-fix-3" />
+-  <script src="src/cherrift_boot.js?v=1030-base-continuous-leg-fix-3" defer></script>
+-
+-  <link rel="stylesheet" href="assets/cherrift_desktop_gear.css?v=1030-base-continuous-leg-fix-3" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_gacha.css?v=1030-base-continuous-leg-fix-3" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_upgrade.css?v=1030-base-continuous-leg-fix-3" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_world.css?v=1030-base-continuous-leg-fix-3" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_settings.css?v=1030-base-continuous-leg-fix-3" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_profile.css?v=1030-base-continuous-leg-fix-3" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_mail.css?v=1030-base-continuous-leg-fix-3" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_collection.css?v=1030-base-continuous-leg-fix-3" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_shop.css?v=1030-base-continuous-leg-fix-3" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_missions.css?v=1030-base-continuous-leg-fix-3" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_achievements.css?v=1030-base-continuous-leg-fix-3" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_login.css?v=1030-base-continuous-leg-fix-3" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_social.css?v=1030-base-continuous-leg-fix-3" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_loading.css?v=1030-base-continuous-leg-fix-3" />
+-  <link rel="stylesheet" href="assets/cherrift_frame_geometry.css?v=1030-base-continuous-leg-fix-3" />
+-  <link rel="stylesheet" href="assets/cherrift_desktop_polish.css?v=1030-base-continuous-leg-fix-3" />
+-  <script src="src/cherrift_desktop_loading.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <link rel="stylesheet" href="assets/cherrift_event_hub.css?v=1030-base-continuous-leg-fix-3" />
++  <link rel="stylesheet" href="assets/cherrift_shell.css?v=1030-base-clean-ankles-fix-5" />
++  <link rel="stylesheet" href="assets/cherrift_app.css?v=1030-base-clean-ankles-fix-5" />
++  <link rel="stylesheet" href="assets/cherrift_prebeta.css?v=1030-base-clean-ankles-fix-5" />
++  <link rel="stylesheet" href="assets/cherrift_prebeta_event.css?v=1030-base-clean-ankles-fix-5" />
++  <link rel="preload" as="image" href="assets/ui/loading/sakura-path/landscape.webp?v=1030-base-clean-ankles-fix-5" media="(min-width:821px) and (min-height:601px), (min-width:821px) and (pointer:fine)" />
++  <link rel="preload" as="image" href="assets/loading_mobile_1080x1920.png?v=1030-base-clean-ankles-fix-5" media="(orientation:portrait)" />
++  <link rel="preload" as="image" href="assets/ui/cherrift_logo.png?v=1030-base-clean-ankles-fix-5" />
++  <link rel="stylesheet" href="assets/cherrift_boot.css?v=1030-base-clean-ankles-fix-5" />
++  <link id="cherriftSharedUiCss" rel="stylesheet" href="assets/cherrift_ui.css?v=1030-base-clean-ankles-fix-5" />
++  <link id="cherriftElementalCss" rel="stylesheet" href="assets/cherrift_elemental.css?v=1030-base-clean-ankles-fix-5" />
++  <link id="cherriftSkillBuilderCss" rel="stylesheet" href="assets/cherrift_skill_builder.css?v=1030-base-clean-ankles-fix-5" />
++  <link id="cherriftRuntimeCss" rel="stylesheet" href="assets/cherrift_runtime.css?v=1030-base-clean-ankles-fix-5" />
++  <link rel="stylesheet" href="assets/cherrift_presentation.css?v=1030-base-clean-ankles-fix-5" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_menu.css?v=1030-base-clean-ankles-fix-5" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_skins.css?v=1030-base-clean-ankles-fix-5" />
++  <script src="src/cherrift_boot.js?v=1030-base-clean-ankles-fix-5" defer></script>
++
++  <link rel="stylesheet" href="assets/cherrift_desktop_gear.css?v=1030-base-clean-ankles-fix-5" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_gacha.css?v=1030-base-clean-ankles-fix-5" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_upgrade.css?v=1030-base-clean-ankles-fix-5" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_world.css?v=1030-base-clean-ankles-fix-5" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_settings.css?v=1030-base-clean-ankles-fix-5" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_profile.css?v=1030-base-clean-ankles-fix-5" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_mail.css?v=1030-base-clean-ankles-fix-5" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_collection.css?v=1030-base-clean-ankles-fix-5" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_shop.css?v=1030-base-clean-ankles-fix-5" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_missions.css?v=1030-base-clean-ankles-fix-5" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_achievements.css?v=1030-base-clean-ankles-fix-5" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_login.css?v=1030-base-clean-ankles-fix-5" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_social.css?v=1030-base-clean-ankles-fix-5" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_loading.css?v=1030-base-clean-ankles-fix-5" />
++  <link rel="stylesheet" href="assets/cherrift_frame_geometry.css?v=1030-base-clean-ankles-fix-5" />
++  <link rel="stylesheet" href="assets/cherrift_desktop_polish.css?v=1030-base-clean-ankles-fix-5" />
++  <script src="src/cherrift_desktop_loading.js?v=1030-base-clean-ankles-fix-5"></script>
++  <link rel="stylesheet" href="assets/cherrift_event_hub.css?v=1030-base-clean-ankles-fix-5" />
+ </head>
+ <body class="v060-booting">
+   <section id="bootV060" class="boot-v060" data-boot-phase="loading" aria-live="polite" aria-label="CHERRIFT loading">
+@@ -496,68 +496,68 @@
+ 
+   <!-- Deterministic runtime order. Feature modules own their own screens. -->
+   <script src="vendor/supabase-js-2.110.7.js?v=2.110.7"></script>
+-  <script src="src/cherrift_network_guard.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/supabase_config.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/config.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_world1.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_world2.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_rework_maps.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_world1_assets.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_balance.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_menu_audio.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_online.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_app.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_gunner.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_recovery.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_auth.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_startup_trace.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_gacha.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_live_services.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_account_mail.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_world_ui.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_runtime.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_prebeta.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_prebeta_event.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_event_hub.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_security_ui.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_skin_ui.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_foliage.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_elemental.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_skill_builder.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_presentation.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_desktop_menu.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_desktop_skins.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_desktop_gear.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_desktop_gacha.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_desktop_upgrade.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_desktop_world.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_desktop_settings.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_desktop_profile.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_desktop_mail.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_desktop_collection.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_desktop_shop.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_desktop_missions.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_desktop_achievements.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_desktop_social.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_desktop_login.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_cherry_geometry.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_animation_flow.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_walk_cycle.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_animation_smoothing.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_cherry_gait.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_cherry_shot_alignment.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_cherry_motion.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_base_walk.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_base_cherry.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_base_petal_vfx.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_ninja_chibi.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_ninja_shadow_sakura.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_archer_chibi.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_succubus_gait.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_succubus_chibi.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_succubus_crimson_hunger.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_sakura_dance_gait.js?v=1030-base-continuous-leg-fix-3"></script>
+-  <script src="src/cherrift_sakura_dance_chibi.js?v=1030-base-continuous-leg-fix-3"></script>
++  <script src="src/cherrift_network_guard.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/supabase_config.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/config.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_world1.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_world2.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_rework_maps.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_world1_assets.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_balance.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_menu_audio.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_online.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_app.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_gunner.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_recovery.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_auth.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_startup_trace.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_gacha.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_live_services.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_account_mail.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_world_ui.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_runtime.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_prebeta.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_prebeta_event.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_event_hub.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_security_ui.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_skin_ui.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_foliage.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_elemental.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_skill_builder.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_presentation.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_desktop_menu.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_desktop_skins.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_desktop_gear.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_desktop_gacha.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_desktop_upgrade.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_desktop_world.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_desktop_settings.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_desktop_profile.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_desktop_mail.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_desktop_collection.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_desktop_shop.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_desktop_missions.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_desktop_achievements.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_desktop_social.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_desktop_login.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_cherry_geometry.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_animation_flow.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_walk_cycle.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_animation_smoothing.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_cherry_gait.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_cherry_shot_alignment.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_cherry_motion.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_base_walk.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_base_cherry.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_base_petal_vfx.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_ninja_chibi.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_ninja_shadow_sakura.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_archer_chibi.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_succubus_gait.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_succubus_chibi.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_succubus_crimson_hunger.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_sakura_dance_gait.js?v=1030-base-clean-ankles-fix-5"></script>
++  <script src="src/cherrift_sakura_dance_chibi.js?v=1030-base-clean-ankles-fix-5"></script>
+ </body>
+ </html>
+ 
+diff --git a/src/cherrift_base_walk.js b/src/cherrift_base_walk.js
+index 28ec693..5c92804 100644
+--- a/src/cherrift_base_walk.js
++++ b/src/cherrift_base_walk.js
+@@ -12,9 +12,9 @@
+  // Subpixel face registration measured from the existing normalized artwork.
+  const registration={"right":{"walk":[-0.0,0.5,1.0,1.0,1.0,0.75],"walk_attack":[-3.25,-4.0,-3.5,-3.0,-2.75,-22.75]},"left":{"walk":[-0.0,-0.25,-1.0,-2.0,-1.25,-1.0],"walk_attack":[3.25,4.0,3.75,3.25,2.75,23.0]}};
+  const neutral={
+-  right:{hip:[93,154],knee:[101,165],ankle:[105,174],sole:[109,182],polygon:[[86,151],[100,150],[105,164],[122,173],[121,185],[105,185],[96,174]]},
+-  down_right:{hip:[91,150],knee:[97,163],ankle:[101,174],sole:[104,182],polygon:[[84,148],[99,148],[104,165],[119,178],[118,185],[100,185],[92,174]]},
+-  up_right:{hip:[99,153],knee:[91,165],ankle:[87,174],sole:[88,182],polygon:[[93,152],[102,154],[94,166],[100,179],[96,186],[77,186],[74,171],[85,159]]}
++  right:{ground:[[105,182],[119,177]],hip:[93,154],knee:[101,165],ankle:[105,174],sole:[109,182],polygon:[[86,151],[100,150],[105,164],[122,173],[121,185],[105,185],[96,174]]},
++  down_right:{ground:[[99,183],[113,180]],hip:[91,150],knee:[97,163],ankle:[101,174],sole:[104,182],polygon:[[84,148],[99,148],[104,165],[119,178],[118,185],[100,185],[92,174]]},
++  up_right:{ground:[[79,175],[93,183]],hip:[99,153],knee:[91,165],ankle:[87,174],sole:[88,182],polygon:[[93,152],[102,154],[94,166],[100,179],[96,186],[77,186],[74,171],[85,159]]}
+  };
+  const prepared=new WeakMap(),MAX=6,recent=new Map();
+  function canvas(w=256,h=256){const c=document.createElement('canvas');c.width=w;c.height=h;return c;}
+@@ -73,6 +73,13 @@
+   // Rear artwork was refreshed after the run masks were measured. Its old
+   // boot now extends beyond those masks; the hair ends above this baseline.
+   if(canonical==='up_right')for(let f=0;f<6;f++){
++   // The current rear walk/cast art has a narrow old heel under the hair.
++   // Follow each pose's measured heel, rather than retaining that thin strip.
++   const heels=state==='walk_attack'?[75,69,66,64,67,69]:[77,74,73,71,73,73];
++   for(let y=state==='walk_attack'?152:155;y<167;y++){
++    const edge=heels[f]+18-(y-152)*2,w=192-edge;
++    bc.clearRect(f*192+(flip?1:edge),y,w,1);
++   }
+    for(let y=156;y<167;y++){
+     const edge=Math.ceil(88-(y-155)*.8),w=192-edge;
+     bc.clearRect(f*192+(flip?1:edge),y,w,1);
+@@ -100,18 +107,42 @@
+   const def=neutral[canonical],strip=canvas(1152,192),sc=strip.getContext('2d');sc.save();sc.beginPath();
+   def.polygon.forEach(([x,y],i)=>{x=flip?193-x:x;i?sc.lineTo(x,y):sc.moveTo(x,y);});sc.closePath();sc.clip();sc.drawImage(walkImage,0,0);sc.restore();
+   const leg=canvas(),lc=leg.getContext('2d');lc.save();lc.translate(64,64);lc.scale(2/3,2/3);renderRaw(lc,strip,ID,'walk',dir,0,{x:96,y:154},192,192);lc.restore();
+-  const source={hip:point('walk',dir,0,...def.hip,false),knee:point('walk',dir,0,...def.knee,false),ankle:point('walk',dir,0,...def.ankle,false),sole:point('walk',dir,0,...def.sole,false)};
+-  e={walkImage,body,leg,source,out:canvas(),fallback:canvas(),owner:map,dir};map.set(dir,e);recent.set(e,true);
++  const originalHip=point('walk',dir,0,...def.hip,false),originalSole=point('walk',dir,0,...def.sole,false);
++  const ground=def.ground.map(p=>point('walk',dir,0,...p,false));
++  // Rectify the painted sole once. A planted shoe keeps this orientation;
++  // the toe and sole retain that orientation throughout the stride.
++  let angle=-Math.atan2(ground[1][1]-ground[0][1],ground[1][0]-ground[0][0]);
++  if(flip)angle+=Math.PI;
++  const cosine=Math.cos(angle),sine=Math.sin(angle),size=.76;
++  const project=p=>[128+size*(cosine*(p[0]-originalSole[0])-sine*(p[1]-originalSole[1])),184+size*(sine*(p[0]-originalSole[0])+cosine*(p[1]-originalSole[1]))];
++  const flat=canvas(),fc=flat.getContext('2d');fc.translate(128,184);fc.scale(size,size);fc.rotate(angle);fc.translate(-originalSole[0],-originalSole[1]);fc.drawImage(leg,0,0);
++  const source={hip:project(originalHip),sole:[128,184]};
++  // Use the real painted bottom, not the old approximate sole pivot.
++  const pixels=flat.getContext('2d').getImageData(0,0,256,256).data;
++  let bottom=184;for(let y=255;y>=0;y--){let found=false;for(let x=0;x<256;x++)if(pixels[(y*256+x)*4+3]>32){found=true;break;}if(found){bottom=y+1;break;}}
++  source.sole[1]=bottom;
++  source.slope=canonical==='right'?(flip?.6:-.6):0;
++  source.joint=canonical==='right'?source.sole[1]-5:source.hip[1]+(source.sole[1]-source.hip[1])*.42;
++  // The angled side masks let the boot shaft follow the shin. Both
++  // transforms agree on the
++  // shared boundary, so the same toe/heel can never be painted twice apart.
++  const upper=canvas(),foot=canvas();
++  const uc=upper.getContext('2d'),lc2=foot.getContext('2d');
++  const line=x=>source.joint+source.slope*(x-source.sole[0]);
++  uc.save();uc.beginPath();uc.moveTo(0,0);uc.lineTo(256,0);uc.lineTo(256,line(256)+.5);uc.lineTo(0,line(0)+.5);uc.closePath();uc.clip();uc.drawImage(flat,0,0);uc.restore();
++  lc2.save();lc2.beginPath();lc2.moveTo(0,line(0)-.5);lc2.lineTo(256,line(256)-.5);lc2.lineTo(256,256);lc2.lineTo(0,256);lc2.closePath();lc2.clip();lc2.drawImage(flat,0,0);lc2.restore();
++  e={walkImage,body,upper,foot,source,out:canvas(),fallback:canvas(),owner:map,dir};map.set(dir,e);recent.set(e,true);
+   while(recent.size>MAX){const oldest=recent.keys().next().value;recent.delete(oldest);oldest.owner.delete(oldest.dir);}return e;
+  }
+- // Transform one continuous leg. Splitting the shoe across horizontal
+- // knee/ankle cuts painted its sole twice at different transforms.
+- function drawLeg(c,image,source,target){
+-  const dx=source.sole[0]-source.hip[0],dy=source.sole[1]-source.hip[1];
+-  const width=.76,vertical=(target.sole[1]-target.hip[1])/dy;
+-  const shear=(target.sole[0]-target.hip[0]-width*dx)/dy;
+-  c.save();c.transform(width,0,shear,vertical,target.hip[0]-width*source.hip[0]-shear*source.hip[1],target.hip[1]-vertical*source.hip[1]);
+-  c.drawImage(image,0,0);c.restore();
++ // The toe/sole mask translates rigidly. The leg and ankle shaft follow
++ // one straight transform that agrees with it on the complete shared edge.
++ function drawLeg(c,upper,foot,source,target){
++  const tx=target.sole[0]-source.sole[0],ty=target.sole[1]-source.sole[1];
++  const slope=source.slope,intercept=source.joint-slope*source.sole[0];
++  const length=intercept+slope*source.hip[0]-source.hip[1];
++  const dx=target.hip[0]-(source.hip[0]+tx),dy=target.hip[1]-(source.hip[1]+ty);
++  c.save();c.transform(1+dx*slope/length,dy*slope/length,-dx/length,1-dy/length,tx+dx*intercept/length,ty+dy*intercept/length);c.drawImage(upper,0,0);c.restore();
++  c.drawImage(foot,tx,ty);
+  }
+  function draw(ctx,image,state,dir,phase,stride,p,width,height,renderRaw,walkImage){
+   const smooth=window.CHERRIFT_ANIMATION_SMOOTHING;if(!smooth)return false;
+@@ -124,11 +155,11 @@
+    c.save();c.translate(64+(mirrors[dir]?-offset[0]:offset[0]),64+offset[1]);c.scale(2/3,2/3);renderRaw(c,e.body,ID,state,dir,plan.frame,{x:96,y:154},192,192);c.restore();body=e.fallback;
+   }
+   const c=e.out.getContext('2d');c.clearRect(0,0,256,256);
+-  for(const i of [1,0])drawLeg(c,e.leg,e.source,plan.legs[i]);
++  for(const i of [1,0])drawLeg(c,e.upper,e.foot,e.source,plan.legs[i]);
+   c.save();c.translate(plan.bodyShiftX,plan.bodyShiftY);c.drawImage(body,0,0);c.restore();
+   ctx.drawImage(e.out,p.x-width,p.y+30-(64+184*2/3)*height*2/256,width*2,height*2);return true;
+  }
+- window.CHERRIFT_BASE_WALK=Object.freeze({draw,pose,version:'1030-base-continuous-leg3',stats:()=>({cached:recent.size,maxCached:MAX})});
++ window.CHERRIFT_BASE_WALK=Object.freeze({draw,pose,version:'1030-base-ankle-contour5',stats:()=>({cached:recent.size,maxCached:MAX})});
+ })();
+ 
+ 
+diff --git a/src/cherrift_manifest.json b/src/cherrift_manifest.json
+index 9a7d95a..11b59af 100644
+--- a/src/cherrift_manifest.json
++++ b/src/cherrift_manifest.json
+@@ -1,7 +1,7 @@
+ {
+   "runtimeVersion": "0.9.8.3-structured-runtime",
+   "gameVersion": "0.9.5-prebeta.1",
+-  "buildId": "1030-base-continuous-leg-fix-3",
++  "buildId": "1030-base-clean-ankles-fix-5",
+   "entrypoints": {
+     "application": "src/cherrift_app.js",
+     "menuAudio": "src/cherrift_menu_audio.js",
+diff --git a/tools/base_walk.test.mjs b/tools/base_walk.test.mjs
+index 98cc980..9606b02 100644
+--- a/tools/base_walk.test.mjs
++++ b/tools/base_walk.test.mjs
+@@ -74,7 +74,7 @@ test('the complete output contains exactly two articulated legs and the intact b
+  assert.equal(api.draw(main,{width:1152},{},'x'),false,'unsupported states delegate');
+  const image={width:1152},walk={width:1152};
+  assert.equal(api.draw(main,image,'walk','left',.6,1.7,{x:400,y:300},110,110,()=>{},walk),true);
+- const draws=output.ops.filter(op=>op[0]==='drawImage');assert.equal(draws.length,3);assert.equal(draws[0][1],draws[1][1],'each leg uses one continuous source image');assert.equal(draws.at(-1)[1],body);
++ const draws=output.ops.filter(op=>op[0]==='drawImage');assert.equal(draws.length,5);assert.equal(draws[0][1],draws[2][1],'the two upper legs share one source');assert.equal(draws[1][1],draws[3][1],'both complete shoes share one source');assert.equal(draws.at(-1)[1],body);
+  const plan=api.pose('walk','left',.6,1.7);assert.ok(output.ops.some(op=>op[0]==='translate'&&op[1]===plan.bodyShiftX&&op[2]===plan.bodyShiftY),'the complete painted body receives the same registration as its hip attachments');
+  const created=canvases.length;for(let n=0;n<30;n++)api.draw(main,image,'walk','left',n*.1,n*.1,{x:400,y:300},110,110,()=>{},walk);
+  assert.equal(canvases.length,created,'warm rendering allocates no canvases');
+@@ -85,14 +85,22 @@ test('the shared renderer only routes Base Cherry into this rig and keeps actual
+  assert.equal(request[2],'walk_attack');assert.equal(request[5],3.2);assert.equal(request[10],walk);
+  request=null;window.CHERRIFT_CHERRY_MOTION.draw({drawImage(){}},image,'archer_cherry','walk','right',0,{x:0,y:0},110,110,0);assert.equal(request,null);
+ });
+-test('continuous legs keep fixed width and finite nonsingular transforms across the cycle',()=>{
+- const {window,api}=fixture(true);window.CHERRIFT_ANIMATION_SMOOTHING={sample:()=>({})};let output;
++test('planted shoes only translate and the upper legs meet their rigid cuff continuously',()=>{
++ const {window,api,canvases}=fixture(true);window.CHERRIFT_ANIMATION_SMOOTHING={sample:()=>({})};let output;
+  const ctx={drawImage:image=>output=image};
+- for(const dir of dirs){const image={width:1152};for(let stride=0;stride<6;stride+=.125){
+-  api.draw(ctx,image,'walk',dir,stride,stride,{x:0,y:0},110,110,()=>{},image);
+-  const transforms=output.ops.filter(op=>op[0]==='transform');
+-  assert.equal(transforms.length,2,'one complete transform per leg');
+-  for(const [,a,b,c,d,e,f] of transforms){assert.equal(a,.76);assert.ok([a,b,c,d,e,f].every(Number.isFinite));assert.ok(a*d-b*c>0,'no flipped or collapsed limb');}
++ for(const state of ['walk','walk_attack'])for(const dir of dirs){const image={width:1152};for(let stride=0;stride<6;stride+=.125){
++  api.draw(ctx,image,state,dir,stride,stride,{x:0,y:0},110,110,()=>{},image);
++  const transforms=output.ops.filter(op=>op[0]==='transform'),draws=output.ops.filter(op=>op[0]==='drawImage');
++  assert.equal(transforms.length,2);assert.equal(draws.length,5);
++  for(let i=0;i<2;i++){
++   const [,a,b,c,d,e,f]=transforms[i];assert.ok([a,b,c,d,e,f].every(Number.isFinite));assert.ok(a*d-b*c>0,'no flipped or collapsed thigh');
++   const upper=draws[i*2][1],foot=draws[i*2+1];
++   const boundary=upper.ops.filter(op=>op[0]==='lineTo').slice(-2);
++   for(const [,x,paddedY] of boundary){const y=paddedY-.5;
++    assert.ok(Math.abs(a*x+c*y+e-(x+foot[2]))<1e-8,'shared ankle edge x has no discontinuity');
++    assert.ok(Math.abs(b*x+d*y+f-(y+foot[3]))<1e-8,'shared ankle edge y has no discontinuity');
++   }
++  }
+   output.ops.length=0;
+  }}
+ });
+@@ -113,14 +121,6 @@ test('new Base module loads after the shared renderer, before Base Cherry, with
+ });
+ 
+ 
+-test('boot orientation remains independent of the moving shin',()=>{
+- const {api}=fixture();for(const dir of dirs)for(const state of ['walk','walk_attack']){
+-  const ref=api.pose(state,dir,0,0).legs[0],offset=ref.ankle.map((v,i)=>v-ref.sole[i]);
+-  for(let stride=0;stride<6;stride+=.125)for(const leg of api.pose(state,dir,2.3,stride).legs)for(let i=0;i<2;i++)assert.ok(Math.abs(leg.ankle[i]-leg.sole[i]-offset[i])<1e-8);
+- }
+-});
+-
+-
+ test('body cleanup removes detached old sole pixels while retaining connected lower artwork',()=>{
+  const {window,api,canvases}=fixture(true,()=>{
+   const data=new Uint8ClampedArray(192*192*4);

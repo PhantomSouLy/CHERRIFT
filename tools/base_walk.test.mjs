@@ -74,7 +74,7 @@ test('the complete output contains exactly two articulated legs and the intact b
  assert.equal(api.draw(main,{width:1152},{},'x'),false,'unsupported states delegate');
  const image={width:1152},walk={width:1152};
  assert.equal(api.draw(main,image,'walk','left',.6,1.7,{x:400,y:300},110,110,()=>{},walk),true);
- const draws=output.ops.filter(op=>op[0]==='drawImage');assert.equal(draws.length,3);assert.equal(draws[0][1],draws[1][1],'each leg uses one continuous source image');assert.equal(draws.at(-1)[1],body);
+ const draws=output.ops.filter(op=>op[0]==='drawImage');assert.equal(draws.length,5);assert.equal(draws[0][1],draws[2][1],'the two upper legs share one source');assert.equal(draws[1][1],draws[3][1],'both complete shoes share one source');assert.equal(draws.at(-1)[1],body);
  const plan=api.pose('walk','left',.6,1.7);assert.ok(output.ops.some(op=>op[0]==='translate'&&op[1]===plan.bodyShiftX&&op[2]===plan.bodyShiftY),'the complete painted body receives the same registration as its hip attachments');
  const created=canvases.length;for(let n=0;n<30;n++)api.draw(main,image,'walk','left',n*.1,n*.1,{x:400,y:300},110,110,()=>{},walk);
  assert.equal(canvases.length,created,'warm rendering allocates no canvases');
@@ -85,14 +85,22 @@ test('the shared renderer only routes Base Cherry into this rig and keeps actual
  assert.equal(request[2],'walk_attack');assert.equal(request[5],3.2);assert.equal(request[10],walk);
  request=null;window.CHERRIFT_CHERRY_MOTION.draw({drawImage(){}},image,'archer_cherry','walk','right',0,{x:0,y:0},110,110,0);assert.equal(request,null);
 });
-test('continuous legs keep fixed width and finite nonsingular transforms across the cycle',()=>{
- const {window,api}=fixture(true);window.CHERRIFT_ANIMATION_SMOOTHING={sample:()=>({})};let output;
+test('planted shoes only translate and the upper legs meet their rigid cuff continuously',()=>{
+ const {window,api,canvases}=fixture(true);window.CHERRIFT_ANIMATION_SMOOTHING={sample:()=>({})};let output;
  const ctx={drawImage:image=>output=image};
- for(const dir of dirs){const image={width:1152};for(let stride=0;stride<6;stride+=.125){
-  api.draw(ctx,image,'walk',dir,stride,stride,{x:0,y:0},110,110,()=>{},image);
-  const transforms=output.ops.filter(op=>op[0]==='transform');
-  assert.equal(transforms.length,2,'one complete transform per leg');
-  for(const [,a,b,c,d,e,f] of transforms){assert.equal(a,.76);assert.ok([a,b,c,d,e,f].every(Number.isFinite));assert.ok(a*d-b*c>0,'no flipped or collapsed limb');}
+ for(const state of ['walk','walk_attack'])for(const dir of dirs){const image={width:1152};for(let stride=0;stride<6;stride+=.125){
+  api.draw(ctx,image,state,dir,stride,stride,{x:0,y:0},110,110,()=>{},image);
+  const transforms=output.ops.filter(op=>op[0]==='transform'),draws=output.ops.filter(op=>op[0]==='drawImage');
+  assert.equal(transforms.length,2);assert.equal(draws.length,5);
+  for(let i=0;i<2;i++){
+   const [,a,b,c,d,e,f]=transforms[i];assert.ok([a,b,c,d,e,f].every(Number.isFinite));assert.ok(a*d-b*c>0,'no flipped or collapsed thigh');
+   const upper=draws[i*2][1],foot=draws[i*2+1];
+   const boundary=upper.ops.filter(op=>op[0]==='lineTo').slice(-2);
+   for(const [,x,paddedY] of boundary){const y=paddedY-.5;
+    assert.ok(Math.abs(a*x+c*y+e-(x+foot[2]))<1e-8,'shared ankle edge x has no discontinuity');
+    assert.ok(Math.abs(b*x+d*y+f-(y+foot[3]))<1e-8,'shared ankle edge y has no discontinuity');
+   }
+  }
   output.ops.length=0;
  }}
 });
@@ -110,14 +118,6 @@ test('new Base module loads after the shared renderer, before Base Cherry, with 
  assert.ok(html.indexOf('src/cherrift_cherry_motion.js')<html.indexOf('src/cherrift_base_walk.js'));
  assert.ok(html.indexOf('src/cherrift_base_walk.js')<html.indexOf('src/cherrift_base_cherry.js'));
  const values=[...html.matchAll(/(?:src|href)=["'](?:src|assets)\/[^"']+\?v=([^"']+)/gi)].map(m=>m[1]);assert.deepEqual([...new Set(values)],[build]);
-});
-
-
-test('boot orientation remains independent of the moving shin',()=>{
- const {api}=fixture();for(const dir of dirs)for(const state of ['walk','walk_attack']){
-  const ref=api.pose(state,dir,0,0).legs[0],offset=ref.ankle.map((v,i)=>v-ref.sole[i]);
-  for(let stride=0;stride<6;stride+=.125)for(const leg of api.pose(state,dir,2.3,stride).legs)for(let i=0;i<2;i++)assert.ok(Math.abs(leg.ankle[i]-leg.sole[i]-offset[i])<1e-8);
- }
 });
 
 

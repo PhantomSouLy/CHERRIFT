@@ -1,7 +1,7 @@
 {
   "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "1030-base-continuous-leg-fix-3",
+  "buildId": "1030-base-clean-ankles-fix-5",
   "entrypoints": {
     "application": "src/cherrift_app.js",
     "menuAudio": "src/cherrift_menu_audio.js",
