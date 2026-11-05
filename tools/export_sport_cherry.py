@@ -1,4 +1,4 @@
-"""Export imagegen Sport atlases and motion vectors without redrawing artwork.
+"""Export complete Sport poses and matching full-pose motion vectors. No limb masks or copied legs.
 Requires Pillow, numpy, scipy and opencv-python-headless.
 Run from any directory: python tools/export_sport_cherry.py
 The source PNGs are preserved. Left views mirror the matching right view.
@@ -18,56 +18,6 @@ ORIGINAL = ['down', 'down_right', 'right', 'up_right', 'up']
 MIRRORS = {'left':'right', 'down_left':'down_right', 'up_left':'up_right'}
 DIRS = ['down', 'down_right', 'right', 'up_right', 'up', 'up_left', 'left', 'down_left']
 FPS = dict(idle=3, idle2=3, walk=8, attack=18, walk_attack=8, skill=16)
-RIGS = {
- 'down':dict(hip=[88,153],sole=[88,182],joint=173,hips=[[88,153],[102,153]],polygon=[[82,151],[93,153],[94,184],[81,184],[82,161]]),
- 'down_right':dict(hip=[95,154],sole=[87,182],joint=172,hips=[[91,153],[103,153]],polygon=[[91,153],[102,154],[97,163],[95,174],[96,181],[80,183],[80,174],[86,164],[89,158]]),
- 'right':dict(hip=[94,151],sole=[96,182],joint=172,hips=[[93,153],[104,153]],polygon=[[88,150],[98,150],[98,163],[100,168],[103,172],[103,180],[99,183],[83,183],[83,171],[88,162]]),
- 'up_right':dict(hip=[105,154],sole=[104,181],joint=172,hips=[[95,155],[106,155]],polygon=[[99,153],[111,152],[109,166],[116,174],[113,183],[97,183],[97,173],[99,163]]),
- 'up':dict(hip=[91,156],sole=[91,182],joint=173,hips=[[88,156],[101,156]],polygon=[[86,154],[95,154],[95,184],[85,184]])
-}
-
-def separate_legs(frames):
-    """Production body masks and native Sport leg textures; no Base mask reuse."""
-    bodies={};pelvis={}
-    for d in ORIGINAL:
-        rig=RIGS[d];neutral=frames[d,'idle'][0]
-        mask=Image.new('L',(192,192));ImageDraw.Draw(mask).polygon([tuple(p) for p in rig['polygon']],fill=255)
-        leg=neutral.copy();leg.putalpha(Image.fromarray(np.minimum(np.array(neutral.getchannel('A')),np.array(mask))))
-        (ART/'rig').mkdir(exist_ok=True);leg.save(ART/'rig'/f'leg_{d}.png')
-        for s in ['walk','walk_attack']:
-            series=[];pelvis[f'{s}/{d}']=[]
-            for f in frames[d,s]:
-                rgba=np.array(f);rgb=rgba[:,:,:3].astype(int);a=rgba[:,:,3]
-                # Pink shorts have blue above green; peach hair does not.
-                yy,xx=np.where((a[122:156,65:130]>100)&(rgb[122:156,65:130,2]>rgb[122:156,65:130,1]+12)&(rgb[122:156,65:130,0]>rgb[122:156,65:130,1]+25))
-                if d in ['up','up_right']:
-                    # The long rear hair deliberately hides the shorts.
-                    hem=157;center=sum(p[0] for p in rig['hips'])/2
-                else:
-                    assert len(xx)>8,(d,s,'shorts not found')
-                    hem=int(np.percentile(yy,95))+122+3
-                    center=float(np.median(xx))+65
-                # Lower-shoe extent is measured below the hanging hair.
-                ys,xs=np.where(a[164:]>40)
-                left,right=int(xs.min())-2,int(xs.max())+3
-                target=Image.new('L',(192,192));draw=ImageDraw.Draw(target)
-                draw.polygon([(center-18,hem),(center+18,hem),(right,164),(right,191),(left,191),(left,164)],fill=255)
-                # Any residual disconnected sole pixels below the hem disappear.
-                rgba[np.array(target)>0]=0
-                labels,n=ndimage.label(rgba[:,:,3]>20)
-                counts=np.bincount(labels.ravel());counts[0]=0
-                keep=ndimage.binary_dilation(labels==counts.argmax(),iterations=1);rgba[~keep]=0
-                series.append(Image.fromarray(rgba))
-                pelvis[f'{s}/{d}'].append([round(center,2),hem])
-            bodies[d,s]=series
-    for d,source in MIRRORS.items():
-        ImageOps.mirror(Image.open(ART/'rig'/f'leg_{source}.png')).save(ART/'rig'/f'leg_{d}.png')
-        for s in ['walk','walk_attack']:bodies[d,s]=[ImageOps.mirror(f) for f in bodies[source,s]]
-    for (d,s),series in bodies.items():
-        strip=Image.new('RGBA',(1152,192))
-        for i,f in enumerate(series):strip.paste(f,(i*192,0))
-        strip.save(ART/'rig'/f'body_{s}_{d}.png')
-    return bodies,pelvis
 
 def clean(cell):
     """Retain the complete character and its soft edge; discard isolated debris."""
@@ -153,7 +103,7 @@ def main():
             frames[d,s]=series
     for d,source in MIRRORS.items():
         for s in STATES:frames[d,s]=[ImageOps.mirror(f) for f in frames[source,s]]
-    bodies,pelvis=separate_legs(frames)
+    whole_pose=json.loads((ROOT/'tools/sport_whole_pose_landmarks.json').read_text())
     (ART/'sheets192').mkdir(exist_ok=True)
     flow_dir=ROOT/'assets/player/animation_flow';flow_dir.mkdir(parents=True,exist_ok=True)
     geometry={}
@@ -170,11 +120,13 @@ def main():
                 geometry[s][d].append([int(yy.min()),int(yy.max()+1),float(np.median(fx))+.5])
             strip.save(ART/'sheets192'/f'sport_cherry_{s}_{d}.png')
         for d in ORIGINAL:
-            name=f'sport_cherry__{s}__{d}.png'
-            flow_texture(bodies.get((d,s),frames[d,s]),s in ['idle','walk']).save(flow_dir/name)
+            name=f'sport_cherry__{s}__{d}'+('__whole4' if s in ['walk','walk_attack'] else '')+'.png'
+            flow_texture(frames[d,{'walk':'idle','walk_attack':'attack'}.get(s,s)],s in ['idle','walk']).save(flow_dir/name)
             metadata[f'sport_cherry/{s}/{d}']=dict(frames=6,offsets=[[0,0]]*6,file=name)
-    (ROOT/'src/cherrift_sport_data.js').write_text('/* Generated by tools/export_sport_cherry.py. Sport data only. */\nObject.assign(window.CHERRIFT_ANIMATION_FLOW ||= {},'+json.dumps(metadata,separators=(',',':'))+');\nObject.assign(window.CHERRIFT_CHERRY_GEOMETRY ||= {},'+json.dumps({'sport_cherry':geometry},separators=(',',':'))+');\nwindow.CHERRIFT_SPORT_RIG='+json.dumps(dict(rigs=RIGS,pelvis=pelvis),separators=(',',':'))+';\n')
-    manifest=dict(id='sport_cherry',referenceCommit='9b3d27f6603fb603d76f6764a1d80d88f885e19c',frameSize=192,pivot=[96,184],individualFrameSize=256,directions=DIRS,mirroredDirections=MIRRORS,states={s:dict(frames=6,fps=FPS[s],duration=6/FPS[s],runtimeDuration=6/18 if s=='walk_attack' else 6/FPS[s],sheets={d:f'sheets192/sport_cherry_{s}_{d}.png' for d in DIRS}) for s in STATES},sources=sources,skill=dict(type='common_shield',shieldSeconds=2,healMaxHpFraction=.10),passive=dict(hpBonus=.02),notes=['Imagegen costume edit of Base sprite references. No Base assets modified.','Left views are mirrored. Runtime optical flow interpolation is required for smooth playback.','Existing Sport splash and icon retained.'])
+    geometry['walk']=geometry['idle']
+    geometry['walk_attack']=geometry['attack']
+    (ROOT/'src/cherrift_sport_data.js').write_text('/* Generated by tools/export_sport_cherry.py. Sport data only. */\nObject.assign(window.CHERRIFT_ANIMATION_FLOW ||= {},'+json.dumps(metadata,separators=(',',':'))+');\nObject.assign(window.CHERRIFT_CHERRY_GEOMETRY ||= {},'+json.dumps({'sport_cherry':geometry},separators=(',',':'))+');\nwindow.CHERRIFT_SPORT_WHOLE_POSE='+json.dumps(whole_pose,separators=(',',':'))+';\n')
+    manifest=dict(id='sport_cherry',referenceCommit='9b3d27f6603fb603d76f6764a1d80d88f885e19c',frameSize=192,pivot=[96,184],individualFrameSize=256,directions=DIRS,mirroredDirections=MIRRORS,states={s:dict(frames=6,fps=FPS[s],duration=6/FPS[s],runtimeDuration=6/18 if s=='walk_attack' else 6/FPS[s],sheets={d:f'sheets192/sport_cherry_{s}_{d}.png' for d in DIRS}) for s in STATES},sources=sources,skill=dict(type='common_shield',shieldSeconds=2,healMaxHpFraction=.10),passive=dict(hpBonus=.02),notes=['Imagegen costume edit of Base sprite references. No Base assets modified.','Left views are mirrored. Runtime optical flow interpolation is required for smooth playback.','Existing Sport splash and icon retained.','Runtime walk uses complete idle poses; walk_attack uses complete attack poses. Continuous directional inverse warp animates original legs.'])
     (ART/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
     board=Image.new('RGB',(1536,1296),'#d5cad4');draw=ImageDraw.Draw(board)
     for row,s in enumerate(STATES):

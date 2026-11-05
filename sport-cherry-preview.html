@@ -9,7 +9,7 @@
 window.CHERRIFT_CONFIG={player:{displayWidth:116,displayHeight:116,skins:{cherry_default:{},sport_cherry:{skillType:'common_shield',passive:{hpBonus:.02}}}}};
 window.CherriftGame=class{movePlayer(){}autoFire(){}skill(){}update(){}drawPlayer(){}drawBullet(){}drawEffect(){}};
 </script>
-<script src="src/cherrift_cherry_geometry.js"></script><script src="src/cherrift_animation_flow.js"></script><script src="src/cherrift_walk_cycle.js"></script><script src="src/cherrift_animation_smoothing.js"></script><script src="src/cherrift_cherry_gait.js"></script><script src="src/cherrift_cherry_shot_alignment.js"></script><script src="src/cherrift_cherry_motion.js"></script><script src="src/cherrift_base_walk.js"></script><script src="src/cherrift_base_cherry.js"></script><script src="src/cherrift_sport_data.js"></script><script src="src/cherrift_sport_gait.js"></script><script src="src/cherrift_sport_cherry.js"></script><script src="src/cherrift_sport_vfx.js"></script>
+<script src="src/cherrift_cherry_geometry.js"></script><script src="src/cherrift_animation_flow.js"></script><script src="src/cherrift_walk_cycle.js"></script><script src="src/cherrift_animation_smoothing.js"></script><script src="src/cherrift_cherry_gait.js"></script><script src="src/cherrift_cherry_shot_alignment.js"></script><script src="src/cherrift_cherry_motion.js"></script><script src="src/cherrift_base_walk.js"></script><script src="src/cherrift_base_cherry.js"></script><script src="src/cherrift_sport_data.js?v=1105-sport-walk-contour6"></script><script src="src/cherrift_sport_gait.js?v=1105-sport-walk-contour6"></script><script src="src/cherrift_sport_cherry.js?v=1105-sport-walk-contour6"></script><script src="src/cherrift_sport_vfx.js?v=1105-sport-walk-contour6"></script>
 <script>
 const dirs=['down','down_right','right','up_right','up','up_left','left','down_left'];
 const states=['idle','idle2','walk','attack','walk_attack','skill'];
@@ -18,7 +18,6 @@ dirs.forEach(d=>dirSelect.add(new Option(d,d)));states.forEach(s=>stateSelect.ad
 const images=new Map(),game=new CherriftGame();game.assets={get:k=>images.get(k)};game.save={settings:{effectQuality:'high'}};
 const load=(key,url)=>new Promise((resolve,reject)=>{const i=new Image();i.onload=()=>{images.set(key,i);resolve()};i.onerror=()=>reject(Error(url));i.src=url;});
 const tasks=[];for(const id of ['cherry_default','sport_cherry'])for(const [s,c]of Object.entries(CHERRIFT_CONFIG.player.skins[id].states))for(const[d,u]of Object.entries(c.dirs))tasks.push(load(`player_${id}_${s}_${d}`,u));
-for(const d of dirs){tasks.push(load(`sportLeg_${d}`,`assets/player/cherry_skins/sport_cherry/rig/leg_${d}.png`));for(const s of ['walk','walk_attack'])tasks.push(load(`sportBody_${s}_${d}`,`assets/player/cherry_skins/sport_cherry/rig/body_${s}_${d}.png`));}
 tasks.push(load('sportCherryAtlas','assets/effects/sport_cherry/sport_atlas.png'));
 const canvas=document.getElementById('view'),ctx=canvas.getContext('2d');let paused=false,clock=0,previous=0;
 document.getElementById('pause').onclick=()=>{paused=!paused;document.getElementById('pause').textContent=paused?'Folytatás':'Szünet'};

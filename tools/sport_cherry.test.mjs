@@ -48,15 +48,12 @@ test('all 30 motion textures exist and Sport modules load after smoothing and Ba
  const context=vm.createContext({window:{}});vm.runInContext(read('src/cherrift_sport_data.js'),context);const entries=Object.entries(context.window.CHERRIFT_ANIMATION_FLOW);assert.equal(entries.length,30);for(const [k,m]of entries){assert.ok(k.startsWith('sport_cherry/'));assert.ok(existsSync('assets/player/animation_flow/'+m.file));}
  const html=read('index.html');for(const n of ['sport_data','sport_cherry','sport_vfx']){assert.equal(html.split(`src/cherrift_${n}.js`).length-1,1);assert.ok(html.indexOf(`src/cherrift_${n}.js`)>html.indexOf('src/cherrift_animation_smoothing.js'));}
 });
-test('Sport native gait alternates feet in every direction, keeps soles fixed during cast-pose changes and closes the cycle',()=>{
- const context=vm.createContext({window:{}});vm.runInContext(read('src/cherrift_sport_data.js'),context);vm.runInContext(read('src/cherrift_sport_gait.js'),context);
+test('Sport whole-pose gait closes the cycle and keeps attack/foot clocks independent',()=>{
+ const context=vm.createContext({window:{}});vm.runInContext(read('src/cherrift_walk_cycle.js'),context);vm.runInContext(read('src/cherrift_sport_data.js'),context);vm.runInContext(read('src/cherrift_sport_gait.js'),context);
  const api=context.window.CHERRIFT_SPORT_GAIT;
  for(const d of ['down','down_right','right','up_right','up','up_left','left','down_left']){
-  const a=api.pose('walk',d,0,0),b=api.pose('walk',d,3,3),c=api.pose('walk',d,6,6);
-  const travel=a.legs.map((leg,i)=>b.legs[i].sole[0]-leg.sole[0]);assert.ok(travel[0]*travel[1]<0,d);
-  for(let i=0;i<2;i++)assert.deepEqual(Array.from(a.legs[i].sole),Array.from(c.legs[i].sole));
-  const left=api.pose('walk_attack',d,0,1.4),right=api.pose('walk_attack',d,4,1.4);
-  for(let i=0;i<2;i++)assert.deepEqual(Array.from(left.legs[i].sole),Array.from(right.legs[i].sole));
-  assert.ok(existsSync(`assets/player/cherry_skins/sport_cherry/rig/leg_${d}.png`));
+  const a=api.pose('walk',d,0,0),b=api.pose('walk',d,6,6);
+  for(let i=0;i<4;i++)assert.ok(Math.abs(a.stride[i]-b.stride[i])<1e-10);
+  assert.deepEqual(Array.from(api.pose('walk_attack',d,0,1.4).stride),Array.from(api.pose('walk_attack',d,4,1.4).stride));
  }
 });

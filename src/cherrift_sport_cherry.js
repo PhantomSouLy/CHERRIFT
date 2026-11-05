@@ -2,14 +2,14 @@
 (() => {
   'use strict';
   if (!window.CherriftGame || !window.CHERRIFT_CONFIG || window.CHERRIFT_SPORT_CHERRY) return;
-  const ID='sport_cherry', BUILD='1030-sport-chibi1';
+  const ID='sport_cherry', BUILD='1105-sport-walk-contour6';
   const ROOT='assets/player/cherry_skins/sport_cherry/sheets192';
   const DIRS=['right','down_right','down','down_left','left','up_left','up','up_right'];
   const FPS={idle:3,idle2:3,walk:8,attack:18,walk_attack:8,skill:16};
   const config=CHERRIFT_CONFIG.player.skins[ID];if(!config)return;
   config.states=Object.fromEntries(Object.entries(FPS).map(([name,fps])=>[name,{
     frames:6,fps,duration:6/fps,loop:name==='idle'||name==='walk',pivot:{x:96,y:184},
-    dirs:Object.fromEntries(DIRS.map(d=>[d,`${ROOT}/sport_cherry_${name}_${d}.png?v=${BUILD}`]))
+    dirs:Object.fromEntries(DIRS.map(d=>[d,`${ROOT}/sport_cherry_${name==='walk'?'idle':name==='walk_attack'?'attack':name}_${d}.png?v=${BUILD}`]))
   }]));
   config.attackMovementMode='mobile';config.attackMoveSpeedMultiplier=1;
   // Keep common_shield, +2% HP, existing cooldown and the shared healing logic.
