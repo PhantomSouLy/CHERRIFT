@@ -1,0 +1,9 @@
+{
+  "directions": 8,
+  "states": 6,
+  "frames": 288,
+  "sheets": 48,
+  "flowTextures": 30,
+  "empty": [],
+  "clipped": []
+}

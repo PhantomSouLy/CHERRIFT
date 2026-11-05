@@ -1,0 +1,41 @@
+<!doctype html><html lang="hu"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sport Cherry • Base reference</title>
+<style>*{box-sizing:border-box}body{margin:0;color:#f9eef5;background:#171320;font:16px system-ui,sans-serif}main{max-width:1050px;margin:auto;padding:28px}header{display:flex;justify-content:space-between;align-items:center;gap:20px}h1{margin:5px 0;font-size:34px}small{color:#eab6cf;letter-spacing:2px}p{color:#c2b5c8;line-height:1.6}select,button{background:#382639;border:1px solid #715369;color:#fff;padding:10px;border-radius:9px;margin:4px}canvas{width:100%;display:block;background:radial-gradient(ellipse at 50% 60%,#524151,#28202f 75%);border:1px solid #715369;border-radius:18px}footer{color:#b9adbf;padding:16px 0;font-size:13px}.controls{margin:15px 0}.badge{color:#f5bfd4;background:#3d2b3c;padding:8px 14px;border-radius:50px}#status{color:#ebc3d5}</style>
+<main><header><div><small>CHERRIFT · CHIBI REWORK</small><h1>Sport Cherry</h1></div><span class="badge">Common · Defensive</span></header>
+<p>A jóváhagyott Base Cherry mellett, azonos kijelzési méretben. Fehér–pink sportfelső, futónadrág, sportcipő. Shield: 2 mp védelem + 10% HP. Passzív: +2% HP.</p>
+<div class="controls"><select id="direction"></select><select id="state"></select><button id="pause">Szünet</button><span id="status">Betöltés…</span></div>
+<canvas id="view" width="960" height="480"></canvas>
+<footer>Ez az előnézet a játékba bekötött renderelő modulokat használja. A képesség időzítését itt az animáció bemutatásához ismételjük. Helyi futtatás: python -m http.server 8000, majd localhost:8000/sport-cherry-preview.html.</footer></main>
+<script>
+window.CHERRIFT_CONFIG={player:{displayWidth:116,displayHeight:116,skins:{cherry_default:{},sport_cherry:{skillType:'common_shield',passive:{hpBonus:.02}}}}};
+window.CherriftGame=class{movePlayer(){}autoFire(){}skill(){}update(){}drawPlayer(){}drawBullet(){}drawEffect(){}};
+</script>
+<script src="src/cherrift_cherry_geometry.js"></script><script src="src/cherrift_animation_flow.js"></script><script src="src/cherrift_walk_cycle.js"></script><script src="src/cherrift_animation_smoothing.js"></script><script src="src/cherrift_cherry_gait.js"></script><script src="src/cherrift_cherry_shot_alignment.js"></script><script src="src/cherrift_cherry_motion.js"></script><script src="src/cherrift_base_walk.js"></script><script src="src/cherrift_base_cherry.js"></script><script src="src/cherrift_sport_data.js"></script><script src="src/cherrift_sport_gait.js"></script><script src="src/cherrift_sport_cherry.js"></script><script src="src/cherrift_sport_vfx.js"></script>
+<script>
+const dirs=['down','down_right','right','up_right','up','up_left','left','down_left'];
+const states=['idle','idle2','walk','attack','walk_attack','skill'];
+const dirSelect=document.getElementById('direction'),stateSelect=document.getElementById('state'),status=document.getElementById('status');
+dirs.forEach(d=>dirSelect.add(new Option(d,d)));states.forEach(s=>stateSelect.add(new Option(s,s)));stateSelect.value='walk';
+const images=new Map(),game=new CherriftGame();game.assets={get:k=>images.get(k)};game.save={settings:{effectQuality:'high'}};
+const load=(key,url)=>new Promise((resolve,reject)=>{const i=new Image();i.onload=()=>{images.set(key,i);resolve()};i.onerror=()=>reject(Error(url));i.src=url;});
+const tasks=[];for(const id of ['cherry_default','sport_cherry'])for(const [s,c]of Object.entries(CHERRIFT_CONFIG.player.skins[id].states))for(const[d,u]of Object.entries(c.dirs))tasks.push(load(`player_${id}_${s}_${d}`,u));
+for(const d of dirs){tasks.push(load(`sportLeg_${d}`,`assets/player/cherry_skins/sport_cherry/rig/leg_${d}.png`));for(const s of ['walk','walk_attack'])tasks.push(load(`sportBody_${s}_${d}`,`assets/player/cherry_skins/sport_cherry/rig/body_${s}_${d}.png`));}
+tasks.push(load('sportCherryAtlas','assets/effects/sport_cherry/sport_atlas.png'));
+const canvas=document.getElementById('view'),ctx=canvas.getContext('2d');let paused=false,clock=0,previous=0;
+document.getElementById('pause').onclick=()=>{paused=!paused;document.getElementById('pause').textContent=paused?'Folytatás':'Szünet'};
+function render(t,d=dirSelect.value,s=stateSelect.value){
+ clock=t;game.t=t;ctx.clearRect(0,0,960,480);
+ ctx.fillStyle='#f2dae6';ctx.font='600 21px system-ui';ctx.textAlign='center';ctx.fillText('Base Cherry · etalon',260,52);ctx.fillText('Sport Cherry',700,52);
+ ctx.fillStyle='#a58caa';ctx.font='14px system-ui';ctx.fillText(d+' / '+s,480,452);
+ for(const[id,x]of[['cherry_default',260],['sport_cherry',700]]){
+  const attack=s.includes('attack'),casting=s==='skill',duration=casting?(id==='sport_cherry'?6/16:6/14):6/18;
+  const elapsed=t%duration;
+  const p={skin:id,x:0,y:0,lastDir:d,baseFacing:d,sportFacing:d,attackDir:d,skillDir:d,moving:s.startsWith('walk'),cherryStrideTime:t,sportStride:t,baseIdleTime:s==='idle2'?6+t%2:0,sportIdleTime:s==='idle2'?6+t%2:0,skillCastDuration:duration,skillCastTimer:casting?duration-elapsed:0,dashTimer:0,commonShieldTimer:casting&&id==='sport_cherry'?2:0};
+  if(attack){p.baseAttack=p.sportAttack={elapsed,duration,fired:true};}
+  ctx.save();ctx.translate(x,350);ctx.scale(2.35,2.35);game.drawPlayer(ctx,p);ctx.restore();
+ }
+ return canvas.toDataURL('image/png');
+}
+window.preview={render,ready:false,game};
+Promise.all(tasks).then(()=>{window.preview.ready=true;status.textContent='8 irány · 6 állapot · simított animáció';requestAnimationFrame(tick)}).catch(e=>{status.textContent='Hiányzó asset: '+e.message;console.error(e)});
+function tick(now){if(previous&&!paused)clock+=(now-previous)/1000;previous=now;render(clock);requestAnimationFrame(tick)}
+</script></html>
