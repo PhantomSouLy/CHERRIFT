@@ -24,22 +24,23 @@
  }
  function release(e){if(!e)return;e.bitmap?.close?.();if(backend?.gl){if(e.texture)backend.gl.deleteTexture(e.texture);if(e.flowTexture)backend.gl.deleteTexture(e.flowTexture);}e.pixels=null;e.flowPixels=null;e.loading=null;}
  const vertex='attribute vec2 position;varying vec2 uv;void main(){uv=vec2((position.x+1.0)*0.5,(1.0-position.y)*0.5);gl_Position=vec4(position,0.0,1.0);}';
- const fragment=`precision highp float;${window.CHERRIFT_WALK_CYCLE?.shader||'vec2 unstep(vec2 p){return p;}'}varying vec2 uv;uniform sampler2D art;uniform sampler2D flow;uniform float frame;uniform float nextFrame;uniform float count;uniform float fraction;uniform float mirrorX;
+ // Resolve movement modifiers at GPU compilation time, after skin modules load.
+ const fragment=motionShader=>`precision highp float;${motionShader}varying vec2 uv;uniform sampler2D art;uniform sampler2D flow;uniform float frame;uniform float nextFrame;uniform float count;uniform float fraction;uniform float mirrorX;
  vec2 vectorAt(float f,float halfIndex,vec2 p){vec2 q=p;if(mirrorX>0.5)q.x=256.6666667/256.0-q.x;q=clamp(q,vec2(0.5/32.0),vec2(31.5/32.0));vec2 v=(texture2D(flow,vec2((halfIndex+q.x)*0.5,(f+q.y)/count)).rg*255.0-128.0)*0.5;if(mirrorX>0.5)v.x=-v.x;return v;}
  vec4 paint(float f,vec2 p){p=clamp(p,vec2(0.5/256.0),vec2(255.5/256.0));return texture2D(art,vec2((f+p.x)/count,p.y));}
  void main(){vec2 base=unstep(uv*256.0)/256.0;vec2 a=base,b=base;for(int i=0;i<2;i++){a=base-fraction*vectorAt(frame,0.0,a)/256.0;b=base-(1.0-fraction)*vectorAt(frame,1.0,b)/256.0;}vec4 ca=paint(frame,a),cb=paint(nextFrame,b);gl_FragColor=mix(ca,cb,fraction);}`;
- function makeBackend(){
+ function makeBackend(motionShader){
   const c=canvas();let gl;
   try{
    gl=c.getContext('webgl',{alpha:true,premultipliedAlpha:true,antialias:false,depth:false,stencil:false,preserveDrawingBuffer:true});
    if(!gl?.getParameter?.(gl.VERSION))throw Error('WebGL unavailable');
    const shader=(type,source)=>{const s=gl.createShader(type);gl.shaderSource(s,source);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s;};
-   const program=gl.createProgram();gl.attachShader(program,shader(gl.VERTEX_SHADER,vertex));gl.attachShader(program,shader(gl.FRAGMENT_SHADER,fragment));gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program));gl.useProgram(program);
+   const program=gl.createProgram();gl.attachShader(program,shader(gl.VERTEX_SHADER,vertex));gl.attachShader(program,shader(gl.FRAGMENT_SHADER,fragment(motionShader)));gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program));gl.useProgram(program);
    const buffer=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW);
    const pos=gl.getAttribLocation(program,'position');gl.enableVertexAttribArray(pos);gl.vertexAttribPointer(pos,2,gl.FLOAT,false,0,0);gl.viewport(0,0,256,256);gl.disable(gl.BLEND);
    const uniforms={};for(const n of ['art','flow','frame','nextFrame','count','fraction','mirrorX','walking','legA','legB','stride','bodyStep','stepRadius'])uniforms[n]=gl.getUniformLocation(program,n);
-   gl.uniform1i(uniforms.art,0);gl.uniform1i(uniforms.flow,1);c.addEventListener?.('webglcontextlost',event=>{event.preventDefault();backend={canvas:canvas(),gl:null};});return {canvas:c,gl,uniforms};
-  }catch{return {canvas:canvas(),gl:null};}
+   gl.uniform1i(uniforms.art,0);gl.uniform1i(uniforms.flow,1);c.addEventListener?.('webglcontextlost',event=>{event.preventDefault();if(backend?.canvas===c)backend={canvas:canvas(),gl:null,motionShader};});return {canvas:c,gl,uniforms,motionShader};
+  }catch{return {canvas:canvas(),gl:null,motionShader};}
  }
  function texture(gl,source,premultiply){const t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,premultiply);gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL,gl.NONE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,source);return t;}
  function glSample(e,f,n,t){const {gl,uniforms:u}=backend;
@@ -138,7 +139,18 @@
   const e=entry(image,id,state,dir,makeFrame);if(!e?.ready)return null;
   const count=e.meta.frames,pos=loop?((phase%count)+count)%count:Math.max(0,Math.min(count-1,phase));const f=Math.floor(pos),n=loop?(f+1)%count:Math.min(count-1,f+1),t=pos-f;
   e.walk=window.CHERRIFT_WALK_CYCLE?.pose(id,state,dir,f,n,t,gaitPhase)||null;
-  if(!backend)backend=makeBackend();return backend.gl?glSample(e,f,n,t):window.__CHERRIFT_SMOOTH_REFERENCE_CPU__?cpuSample(e,f,n,t):canvasSample(e,f,n,t);
+  const motionShader=window.CHERRIFT_WALK_CYCLE?.shader||'vec2 unstep(vec2 p){return p;}';
+  if(!backend||backend.motionShader!==motionShader){
+   // A menu/preload draw can compile WebGL before a later skin installs its
+   // movement modifier. Rebuild against the live shader and invalidate only
+   // GPU handles; retain the full-pose atlases and loaded flow maps.
+   for(const item of entries.values()){
+    if(backend?.gl){if(item.texture)backend.gl.deleteTexture(item.texture);if(item.flowTexture)backend.gl.deleteTexture(item.flowTexture);}
+    item.texture=null;item.flowTexture=null;
+   }
+   backend=makeBackend(motionShader);
+  }
+  return backend.gl?glSample(e,f,n,t):window.__CHERRIFT_SMOOTH_REFERENCE_CPU__?cpuSample(e,f,n,t):canvasSample(e,f,n,t);
  }
  function draw(ctx,image,id,state,dir,phase,p,width,height,options){
   const result=sample(image,id,state,dir,phase,options.makeFrame,options);if(!result)return false;
@@ -149,3 +161,4 @@
  }
  window.CHERRIFT_ANIMATION_SMOOTHING=Object.freeze({sample,draw,version:VERSION,stats:()=>({cached:entries.size,maxCached:MAX,backend:backend?.gl?'webgl':window.__CHERRIFT_SMOOTH_REFERENCE_CPU__?'cpu-reference':'canvas'})});
 })();
+
