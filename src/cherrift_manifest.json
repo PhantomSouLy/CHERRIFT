@@ -1,7 +1,7 @@
 {
   "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "1106-sport-gpu7",
+  "buildId": "1107-school-chibi1",
   "entrypoints": {
     "application": "src/cherrift_app.js",
     "menuAudio": "src/cherrift_menu_audio.js",
@@ -52,7 +52,10 @@
     "sportData": "src/cherrift_sport_data.js",
     "sportCherry": "src/cherrift_sport_cherry.js",
     "sportVfx": "src/cherrift_sport_vfx.js",
-    "sportGait": "src/cherrift_sport_gait.js"
+    "sportGait": "src/cherrift_sport_gait.js",
+    "schoolData": "src/cherrift_school_data.js",
+    "schoolGait": "src/cherrift_school_gait.js",
+    "schoolCherry": "src/cherrift_school_cherry.js"
   },
   "stylesheets": {
     "shell": "assets/cherrift_shell.css",
