@@ -51,7 +51,7 @@
     "events:build": "node tools/build_event_catalog.mjs",
     "test:admin": "node tools/test_admin_center.mjs && node --test tools/admin_events.test.mjs tools/admin_ui.test.mjs",
     "test:sport-cherry": "node --test tools/sport_cherry.test.mjs tools/sport_cherry_gpu_init.test.mjs",
-    "test:school-cherry": "node --test tools/school_cherry.test.mjs"
+    "test:school-cherry": "node --test tools/school_cherry.test.mjs tools/school_vfx.test.mjs"
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.5.11",

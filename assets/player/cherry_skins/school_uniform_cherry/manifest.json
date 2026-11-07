@@ -160,6 +160,14 @@
         1254,
         1254
       ]
+    },
+    {
+      "file": "assets/player/cherry_skins/school_uniform_cherry/sources/right-idle-v2.png",
+      "sha256": "54977553515d0f5eb16cc7f88c1109d31dee10db6702c9789716cf3e04942275",
+      "size": [
+        1536,
+        1024
+      ]
     }
   ],
   "skill": {
@@ -179,5 +187,6 @@
     "Existing School splash, icon and common Hybrid VFX retained.",
     "Runtime walk uses complete idle poses; walk_attack uses complete attack poses. Continuous directional inverse warp animates original legs."
   ],
-  "runtimeDependency": "Approved Sport v7 whole-pose inverse and shader"
+  "revision": "1107-school-burst2",
+  "vfx": "assets/effects/school_cherry/pink_burst_atlas.png"
 }

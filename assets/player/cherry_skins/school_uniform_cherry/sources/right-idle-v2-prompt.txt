@@ -1,0 +1,10 @@
+Use case: precise-object-edit. Built-in Imagegen, transparent output.
+Edit the existing six full School Cherry right-idle figures, 3 columns × 2 rows.
+Preserve hair, face, ears, blouse, skirt, palette, proportions and grid.
+Fix lower legs and brown penny loafers: two distinct whole socked legs and two
+separate shoes, gently staggered in right-facing side view. Far foot back and
+slightly higher, near foot forward and lower. Clean transparent diagonal gap
+between the shoes, no brown sole bridge. Natural knees and ankles, level soles,
+white knee socks connected under the skirt. No copied foot fragments, extra
+limbs, shadows, blur, effects, scenery or labels. Whole figures stay in their cells.
+Reference: existing six 192px side-idle frames assembled into a 3×2 atlas.

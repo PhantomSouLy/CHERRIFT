@@ -52,5 +52,5 @@
    return true;
   }finally{activeTravel=undefined;}
  }
- window.CHERRIFT_SCHOOL_GAIT=Object.freeze({draw,pose,sourceState,version:'1107-school-chibi1'});
+ window.CHERRIFT_SCHOOL_GAIT=Object.freeze({draw,pose,sourceState,version:'1107-school-burst2'});
 })();

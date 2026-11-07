@@ -45,11 +45,11 @@ def place(cell):
     out = Image.new('RGBA',(192,192));out.paste(small,(x,y))
     return out
 
-def figures(atlas):
+def figures(atlas,count=36,columns=6):
     """Locate all 36 full figures; imagegen gutters are not pixel-exact grids."""
     pixels=np.array(atlas);labels,n=ndimage.label(pixels[:,:,3]>=100)
     counts=np.bincount(labels.ravel());indices=np.flatnonzero(counts>=1200);indices=indices[indices!=0]
-    assert len(indices)==36, ('Expected 36 connected characters',len(indices))
+    assert len(indices)==count, ('Unexpected connected character count',len(indices),count)
     result=[]
     for label in indices:
         ys,xs=np.where(labels==label)
@@ -61,7 +61,7 @@ def figures(atlas):
         im=Image.fromarray(rgba);im=im.crop(im.getchannel('A').getbbox())
         result.append((float(xs.mean()),float(ys.mean()),im))
     result.sort(key=lambda v:v[1]);ordered=[]
-    for row in range(6):ordered.extend(sorted(result[row*6:row*6+6],key=lambda v:v[0]))
+    for row in range(count//columns):ordered.extend(sorted(result[row*columns:(row+1)*columns],key=lambda v:v[0]))
     return [v[2] for v in ordered]
 
 def padded(frame):
@@ -101,6 +101,10 @@ def main():
             for col in range(6):
                 series.append(place(extracted[row*6+col]))
             frames[d,s]=series
+    override=ART/'sources/right-idle-v2.png'
+    if override.exists():
+        frames['right','idle']=[place(f) for f in figures(Image.open(override).convert('RGBA'),6,3)]
+        sources.append(dict(file=str(override.relative_to(ROOT)),sha256=hashlib.sha256(override.read_bytes()).hexdigest(),size=list(Image.open(override).size)))
     for d,source in MIRRORS.items():
         for s in STATES:frames[d,s]=[ImageOps.mirror(f) for f in frames[source,s]]
     whole_pose=json.loads((ROOT/'tools/school_whole_pose_landmarks.json').read_text())
@@ -121,6 +125,7 @@ def main():
             strip.save(ART/'sheets192'/f'school_uniform_cherry_{s}_{d}.png')
         for d in ORIGINAL:
             name=f'school_uniform_cherry__{s}__{d}'+('__whole4' if s in ['walk','walk_attack'] else '')+'.png'
+            if override.exists() and d=='right' and s in ['idle','walk']:name=f'school_uniform_cherry__{s}__right__shoes2.png'
             flow_texture(frames[d,{'walk':'idle','walk_attack':'attack'}.get(s,s)],s in ['idle','walk']).save(flow_dir/name)
             metadata[f'school_uniform_cherry/{s}/{d}']=dict(frames=6,offsets=[[0,0]]*6,file=name)
     geometry['walk']=geometry['idle']

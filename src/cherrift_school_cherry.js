@@ -2,7 +2,7 @@
 (() => {
   'use strict';
   if (!window.CherriftGame || !window.CHERRIFT_CONFIG || window.CHERRIFT_SCHOOL_CHERRY) return;
-  const ID='school_uniform_cherry', BUILD='1107-school-chibi1';
+  const ID='school_uniform_cherry', BUILD='1107-school-burst2';
   const ROOT='assets/player/cherry_skins/school_uniform_cherry/sheets192';
   const DIRS=['right','down_right','down','down_left','left','up_left','up','up_right'];
   const FPS={idle:3,idle2:3,walk:8,attack:18,walk_attack:8,skill:16};

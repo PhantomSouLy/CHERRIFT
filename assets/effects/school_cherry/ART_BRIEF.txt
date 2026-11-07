@@ -1,0 +1,8 @@
+Built-in Imagegen, true transparency requested.
+Production 3-column × 2-row transparent VFX component atlas.
+School Cherry Pink Burst: cherry-blossom pink, rose magenta, pearlescent white.
+Six independent elements: circular shockwave ring, dense radial magic flash,
+rising magical wisps, sparkle cluster, circular cherry-blossom sigil, petal sparks.
+Detailed anime game VFX, controlled semitransparent glow, no character, no text,
+no background plate, generous transparent gutters. Six tiles, 512px each.
+The export preserves generated alpha, tapering only the outer 12px cell edges.
