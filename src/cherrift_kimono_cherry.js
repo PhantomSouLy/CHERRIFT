@@ -2,7 +2,7 @@
 (() => {
   'use strict';
   if (!window.CherriftGame || !window.CHERRIFT_CONFIG || window.CHERRIFT_KIMONO_CHERRY) return;
-  const ID='kimono_cherry', BUILD='1107-kimono-step5';
+  const ID='kimono_cherry', BUILD='1107-kimono-color6';
   const ROOT='assets/player/cherry_skins/kimono_cherry/sheets192';
   const DIRS=['right','down_right','down','down_left','left','up_left','up','up_right'];
   const FPS={idle:3,idle2:3,walk:8,attack:18,walk_attack:8,skill:16};

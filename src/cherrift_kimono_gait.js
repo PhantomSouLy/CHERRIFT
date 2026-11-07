@@ -4,6 +4,22 @@
  const ID='kimono_cherry',mirror={left:'right',down_left:'down_right',up_left:'up_right'};
  const vectors={right:[1,0],down_right:[Math.SQRT1_2,Math.SQRT1_2],down:[0,1],down_left:[-Math.SQRT1_2,Math.SQRT1_2],left:[-1,0],up_left:[-Math.SQRT1_2,-Math.SQRT1_2],up:[0,-1],up_right:[Math.SQRT1_2,-Math.SQRT1_2]};
  const sourceState=(state,dir)=>state==='walk'?(['right','left'].includes(dir)?'walk':'idle'):state==='walk_attack'?'attack':null;
+ // Fixed reference palette measured from the accepted right Idle sheet.
+ // Correct RGB once per Walk strip; alpha and every pixel position stay intact.
+ const walkPalette=[[0,1,2,4,5,6,7,9,10,11,12,14,15,16,17,19,20,21,22,23,25,26,27,28,30,31,32,33,35,36,37,38,40,41,42,43,44,46,47,48,49,51,52,53,54,56,57,58,59,61,62,63,64,65,67,68,69,70,72,73,74,75,77,78,79,80,82,83,84,85,87,88,89,90,91,93,94,95,96,98,99,100,101,103,104,105,106,108,109,110,111,112,114,115,116,117,119,120,121,122,124,125,126,127,129,130,131,132,133,135,136,137,138,140,141,142,143,145,146,147,148,150,151,152,153,153,154,155,155,156,157,158,158,159,160,160,161,162,162,163,164,165,165,166,167,167,168,169,169,170,171,172,172,173,174,174,175,176,176,177,178,179,179,180,181,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,200,201,202,202,203,204,205,206,207,207,208,209,210,211,211,212,213,214,214,215,216,216,217,218,219,219,220,221,221,222,222,223,223,224,224,225,225,226,226,227,227,228,229,229,230,230,231,232,232,233,233,234,234,235,236,237,238,239,239,240,241,242,243,244,245,246,248,250,251,253,254,255],[0,2,3,5,6,8,9,11,13,14,16,17,19,20,22,23,25,27,28,30,31,33,34,36,38,39,41,42,44,45,47,48,50,52,53,55,56,58,59,61,62,63,64,66,67,68,69,70,71,72,74,75,76,77,78,79,80,81,83,84,85,86,88,90,92,94,96,98,100,102,104,106,107,108,110,111,112,113,114,115,117,118,119,120,121,122,123,123,124,125,126,127,128,129,130,130,131,132,133,134,134,135,136,136,137,138,139,139,140,141,141,142,143,143,144,145,145,146,147,148,148,149,150,151,151,152,153,154,154,155,156,156,157,157,158,159,159,160,161,161,162,162,163,164,165,165,166,167,168,168,169,170,171,172,172,173,174,175,175,176,177,178,178,179,179,180,181,181,182,183,183,184,184,185,186,186,187,187,188,188,189,189,190,190,191,191,192,193,193,194,194,195,195,196,196,197,197,198,198,199,200,202,203,204,205,207,208,209,210,212,213,214,215,217,218,219,220,221,221,222,223,224,224,225,226,227,227,228,229,230,230,231,232,233,233,234,235,236,237,238,239,240,241,241,242,243,244,245,246,247,248,250,251,252,254,255],[0,2,3,5,7,8,10,12,13,15,17,18,20,21,23,25,26,28,30,31,33,35,36,38,40,41,43,45,46,48,50,51,53,54,56,58,59,61,63,64,66,67,69,70,71,72,74,75,76,77,79,80,81,82,84,85,86,87,89,90,91,93,94,95,97,98,99,101,102,103,104,105,106,108,109,110,111,112,113,114,115,116,116,117,118,119,120,121,122,123,123,124,125,126,127,127,128,129,129,130,131,132,132,133,134,134,135,136,136,137,138,138,139,140,141,141,142,143,144,144,145,146,147,147,148,149,149,150,151,151,152,153,153,154,155,155,156,157,157,158,159,160,160,161,162,162,163,164,165,165,166,167,168,168,169,170,171,171,172,173,174,174,175,176,177,177,178,179,179,180,180,181,182,182,183,183,184,185,185,186,186,187,187,188,189,189,190,190,191,192,192,193,193,194,195,196,197,198,200,201,202,203,204,205,206,207,208,210,211,212,213,214,215,216,216,217,218,219,220,220,221,222,223,224,224,225,226,227,228,228,229,230,231,232,233,234,235,236,237,238,239,240,241,242,243,244,245,246,247,248,249,250,252,253,254,255]];
+ const walkImages=new WeakMap();
+ function walkImage(image){
+  if(!image?.width||!image?.height||typeof document==='undefined')return image;
+  if(walkImages.has(image))return walkImages.get(image);
+  const canvas=document.createElement('canvas');canvas.width=image.width;canvas.height=image.height;
+  const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(image,0,0);
+  const pixels=ctx.getImageData(0,0,canvas.width,canvas.height),data=pixels.data;
+  for(let i=0;i<data.length;i+=4){
+   if(!data[i+3])continue;
+   data[i]=walkPalette[0][data[i]];data[i+1]=walkPalette[1][data[i+1]];data[i+2]=walkPalette[2][data[i+2]];
+  }
+  ctx.putImageData(pixels,0,0);walkImages.set(image,canvas);return canvas;
+ }
  let activeTravel;
  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
  function pose(state,dir,phase,stride,travelDir=dir){
@@ -93,7 +109,7 @@
   }});
  }else return;
  function draw(game,ctx,state,dir,phase,stride,p,width,height){
-  const source=sourceState(state,dir),image=source&&game.assets.get(`player_${ID}_${source}_${dir}`),smooth=window.CHERRIFT_ANIMATION_SMOOTHING;
+  const source=sourceState(state,dir),original=source&&game.assets.get(`player_${ID}_${source}_${dir}`),image=source==='walk'&&original?walkImage(original):original,smooth=window.CHERRIFT_ANIMATION_SMOOTHING;
   if(!image||!smooth||!cycle||!pose(state,dir,phase,stride,p.kimonoFacing||dir))return false;
   activeTravel=p.kimonoFacing||dir;
   try{
@@ -109,5 +125,5 @@
    return true;
   }finally{activeTravel=undefined;}
  }
- window.CHERRIFT_KIMONO_GAIT=Object.freeze({draw,pose,sourceState,version:'1107-kimono-step5'});
+ window.CHERRIFT_KIMONO_GAIT=Object.freeze({draw,pose,sourceState,version:'1107-kimono-color6'});
 })();
