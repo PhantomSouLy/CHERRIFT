@@ -1,0 +1,7 @@
+Built-in image generation. Final selected source: normal walk from neutral, then opposite-foot correction.
+
+PASS 1
+Turn these six standing poses into six consecutive frames of a NORMAL WALK CYCLE in place, facing right. Small relaxed steps in a long kimono. Left foot, right foot, left foot. Both sandals point right and pass each other naturally under the hips. No wide stance, no high knees. Keep the upper body, head, hair, identity and drawing style exactly as the reference. A slight hem swish reveals the alternating sock ankles. Maintain the same 3x2 atlas of six full-body figures, same scale and foot baseline, transparent background.
+
+PASS 2
+Edit ONLY the bottom-middle character's feet and lower kimono hem. All other five figures and every upper body stay unchanged. Bottom-middle needs the OPPOSITE foot lifted compared with top-middle: put the screen-LEFT sandal flat on the ground, and lift the screen-RIGHT sandal slightly forward to the right, only half a sandal height. Show its attached sock ankle under the right edge of the hem. Keep a narrow short natural step, shoe centers one shoe length apart at most, no high knee or kick. Both sandals point right. Preserve same six full figures in 3x2 atlas, style, identity, scale and transparent background.

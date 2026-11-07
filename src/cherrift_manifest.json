@@ -1,7 +1,7 @@
 {
   "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "1107-school-burst2",
+  "buildId": "1107-kimono-step5",
   "entrypoints": {
     "application": "src/cherrift_app.js",
     "menuAudio": "src/cherrift_menu_audio.js",
@@ -56,7 +56,11 @@
     "schoolData": "src/cherrift_school_data.js",
     "schoolGait": "src/cherrift_school_gait.js",
     "schoolCherry": "src/cherrift_school_cherry.js",
-    "schoolVfx": "src/cherrift_school_vfx.js"
+    "schoolVfx": "src/cherrift_school_vfx.js",
+    "kimonoData": "src/cherrift_kimono_data.js",
+    "kimonoGait": "src/cherrift_kimono_gait.js",
+    "kimonoCherry": "src/cherrift_kimono_cherry.js",
+    "commonSkillVfx": "src/cherrift_common_skill_vfx.js"
   },
   "stylesheets": {
     "shell": "assets/cherrift_shell.css",

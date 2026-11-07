@@ -1,0 +1,216 @@
+{
+  "id": "kimono_cherry",
+  "reference": "Approved Base, Sport v7 and School v2",
+  "frameSize": 192,
+  "pivot": [
+    96,
+    184
+  ],
+  "individualFrameSize": 256,
+  "directions": [
+    "down",
+    "down_right",
+    "right",
+    "up_right",
+    "up",
+    "up_left",
+    "left",
+    "down_left"
+  ],
+  "mirroredDirections": {
+    "left": "right",
+    "down_left": "down_right",
+    "up_left": "up_right"
+  },
+  "states": {
+    "idle": {
+      "frames": 6,
+      "fps": 3,
+      "duration": 2.0,
+      "runtimeDuration": 2.0,
+      "sheets": {
+        "down": "sheets192/kimono_cherry_idle_down.png",
+        "down_right": "sheets192/kimono_cherry_idle_down_right.png",
+        "right": "sheets192/kimono_cherry_idle_right.png",
+        "up_right": "sheets192/kimono_cherry_idle_up_right.png",
+        "up": "sheets192/kimono_cherry_idle_up.png",
+        "up_left": "sheets192/kimono_cherry_idle_up_left.png",
+        "left": "sheets192/kimono_cherry_idle_left.png",
+        "down_left": "sheets192/kimono_cherry_idle_down_left.png"
+      }
+    },
+    "idle2": {
+      "frames": 6,
+      "fps": 3,
+      "duration": 2.0,
+      "runtimeDuration": 2.0,
+      "sheets": {
+        "down": "sheets192/kimono_cherry_idle2_down.png",
+        "down_right": "sheets192/kimono_cherry_idle2_down_right.png",
+        "right": "sheets192/kimono_cherry_idle2_right.png",
+        "up_right": "sheets192/kimono_cherry_idle2_up_right.png",
+        "up": "sheets192/kimono_cherry_idle2_up.png",
+        "up_left": "sheets192/kimono_cherry_idle2_up_left.png",
+        "left": "sheets192/kimono_cherry_idle2_left.png",
+        "down_left": "sheets192/kimono_cherry_idle2_down_left.png"
+      }
+    },
+    "walk": {
+      "frames": 6,
+      "fps": 8,
+      "duration": 0.75,
+      "runtimeDuration": 0.75,
+      "sheets": {
+        "down": "sheets192/kimono_cherry_walk_down.png",
+        "down_right": "sheets192/kimono_cherry_walk_down_right.png",
+        "right": "sheets192/kimono_cherry_walk_right.png",
+        "up_right": "sheets192/kimono_cherry_walk_up_right.png",
+        "up": "sheets192/kimono_cherry_walk_up.png",
+        "up_left": "sheets192/kimono_cherry_walk_up_left.png",
+        "left": "sheets192/kimono_cherry_walk_left.png",
+        "down_left": "sheets192/kimono_cherry_walk_down_left.png"
+      }
+    },
+    "attack": {
+      "frames": 6,
+      "fps": 18,
+      "duration": 0.3333333333333333,
+      "runtimeDuration": 0.3333333333333333,
+      "sheets": {
+        "down": "sheets192/kimono_cherry_attack_down.png",
+        "down_right": "sheets192/kimono_cherry_attack_down_right.png",
+        "right": "sheets192/kimono_cherry_attack_right.png",
+        "up_right": "sheets192/kimono_cherry_attack_up_right.png",
+        "up": "sheets192/kimono_cherry_attack_up.png",
+        "up_left": "sheets192/kimono_cherry_attack_up_left.png",
+        "left": "sheets192/kimono_cherry_attack_left.png",
+        "down_left": "sheets192/kimono_cherry_attack_down_left.png"
+      }
+    },
+    "walk_attack": {
+      "frames": 6,
+      "fps": 8,
+      "duration": 0.75,
+      "runtimeDuration": 0.3333333333333333,
+      "sheets": {
+        "down": "sheets192/kimono_cherry_walk_attack_down.png",
+        "down_right": "sheets192/kimono_cherry_walk_attack_down_right.png",
+        "right": "sheets192/kimono_cherry_walk_attack_right.png",
+        "up_right": "sheets192/kimono_cherry_walk_attack_up_right.png",
+        "up": "sheets192/kimono_cherry_walk_attack_up.png",
+        "up_left": "sheets192/kimono_cherry_walk_attack_up_left.png",
+        "left": "sheets192/kimono_cherry_walk_attack_left.png",
+        "down_left": "sheets192/kimono_cherry_walk_attack_down_left.png"
+      }
+    },
+    "skill": {
+      "frames": 6,
+      "fps": 16,
+      "duration": 0.375,
+      "runtimeDuration": 0.375,
+      "sheets": {
+        "down": "sheets192/kimono_cherry_skill_down.png",
+        "down_right": "sheets192/kimono_cherry_skill_down_right.png",
+        "right": "sheets192/kimono_cherry_skill_right.png",
+        "up_right": "sheets192/kimono_cherry_skill_up_right.png",
+        "up": "sheets192/kimono_cherry_skill_up.png",
+        "up_left": "sheets192/kimono_cherry_skill_up_left.png",
+        "left": "sheets192/kimono_cherry_skill_left.png",
+        "down_left": "sheets192/kimono_cherry_skill_down_left.png"
+      }
+    }
+  },
+  "sources": [
+    {
+      "file": "assets/player/cherry_skins/kimono_cherry/sources/down.png",
+      "sha256": "cd6683af076847042ecec33809fe58487e9864b501683357d38f6645af79ebc4",
+      "size": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "file": "assets/player/cherry_skins/kimono_cherry/sources/down_right.png",
+      "sha256": "92f02ecc9ef924cb0dbb4eb489553017a12aca0ec23ba8131c645d86e77f8896",
+      "size": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "file": "assets/player/cherry_skins/kimono_cherry/sources/right.png",
+      "sha256": "163389fc93e98cc42ec58b18a3964bd5c716600f17d6ee9368acfbded61680ec",
+      "size": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "file": "assets/player/cherry_skins/kimono_cherry/sources/up_right.png",
+      "sha256": "bbdb99abc7b03dbe0977279863d6c0e399523ebf1ffc5a7433aa2132cd1d6c62",
+      "size": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "file": "assets/player/cherry_skins/kimono_cherry/sources/up.png",
+      "sha256": "223454e8c255b5c69865e2126bf83f012fe354e570e63f9ae308a751672bde3c",
+      "size": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "file": "assets/player/cherry_skins/kimono_cherry/sources/right-idle-separated.png",
+      "sha256": "27d7d89bca5fce0e9262aca002299b2fcfb4ab9ba13784e996a6d11f880bc79f",
+      "size": [
+        1536,
+        1024
+      ]
+    },
+    {
+      "file": "assets/player/cherry_skins/kimono_cherry/sources/right-attack-step2.png",
+      "sha256": "711d1b6923fdadc36f7b20f387fcad02cea7a93e6ca37522c5e0d8124e20d752",
+      "size": [
+        1536,
+        1024
+      ]
+    },
+    {
+      "file": "assets/player/cherry_skins/kimono_cherry/sources/up_right-step2.png",
+      "sha256": "65d0085735ce591c10f46583a78ae6cdce0c5836d5b320961b76092d90d64909",
+      "size": [
+        1086,
+        1448
+      ]
+    },
+    {
+      "file": "assets/player/cherry_skins/kimono_cherry/sources/right-walk-natural4.png",
+      "sha256": "0bb5d72e668abe69ebddf43efa3802295312452f4debb20f7e8510ea1fba41dc",
+      "size": [
+        1536,
+        1024
+      ]
+    }
+  ],
+  "skill": {
+    "type": "common_heal",
+    "healMaxHpFraction": 0.4,
+    "movementBonus": 0.05,
+    "movementSeconds": 2
+  },
+  "passive": {
+    "movementBonus": 0.01,
+    "hpRecovery": 0.01
+  },
+  "notes": [
+    "Imagegen Kimono costume edit of approved School/Sport sprite references. No Base assets modified.",
+    "Left views are mirrored. Runtime optical flow interpolation is required for smooth playback.",
+    "Existing Kimono splash/icon retained; shared Common Healing art added.",
+    "Runtime walk uses complete idle poses; walk_attack uses complete attack poses. Continuous directional inverse warp animates original legs.",
+    "v4: narrow normal side Walk; short alternating ankle lifts and closed kimono hem; whole authored frames use the travel clock without foot stretching.",
+    "v5: omit source pose 4 from side Walk; evenly time accepted source poses 0,1,2,3,5 over the same travel cycle."
+  ],
+  "buildId": "1107-kimono-step5"
+}
