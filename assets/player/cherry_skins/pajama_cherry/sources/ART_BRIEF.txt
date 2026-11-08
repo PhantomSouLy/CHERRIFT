@@ -1,0 +1,25 @@
+CHERRIFT Pajama Cherry — built-in image generation source brief
+
+References: accepted Base Cherry chibi proportions and pastel peach-pink palette;
+existing Pajama Cherry front/profile/rear outfit sprites from PhantomSouLy/CHERRIFT.
+Outfit: oversized pastel-pink sweatshirt with white bunny-face and tiny cherry
+motif, scalloped pink sleep shorts, pink-white striped socks with pompoms,
+plush bunny slippers. Preserve long loose hair, brown eyes with heart highlights,
+bunny ears, loop ahoge, pink front strand visible only in front-facing views.
+
+Five authored views: front/down, front three-quarter/down_right, right profile,
+rear three-quarter/up_right, straight rear/up. Opposite directions are mirrored.
+Each source is a 6 columns x 6 rows transparent full-body atlas:
+Idle, sleepy Idle2, short alternating Walk, ranged Attack, Walk Attack, Shield Cast.
+Every row contains six consecutive whole-body poses. No projectile or shield
+painted on sprite; the existing Common/Sport VFX supplies the shared Shield.
+
+Constraints: matching head scale, fixed ear height and hip alignment, generous
+gutters, no clipped ears/hair/hands/slippers; small normal steps with complete
+legs, no high kicks, wide stance, merged slippers, extra limbs, or bent toe-only
+motion. Soft unchanged pastel colors, no background, grid, text, glow or shadow.
+Rear views hide eyes/face/front graphic and show plain fur ear backs.
+
+Export keeps each complete original figure and its alpha, removes only isolated
+background residue, registers ears, exports ordinary RGBA PNGs and motion maps.
+The original image-generation sources are included unchanged.

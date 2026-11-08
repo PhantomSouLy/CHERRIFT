@@ -1,7 +1,7 @@
 {
   "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "1107-kimono-visible7",
+  "buildId": "1107-pajama2",
   "entrypoints": {
     "application": "src/cherrift_app.js",
     "menuAudio": "src/cherrift_menu_audio.js",
@@ -60,7 +60,9 @@
     "kimonoData": "src/cherrift_kimono_data.js",
     "kimonoGait": "src/cherrift_kimono_gait.js",
     "kimonoCherry": "src/cherrift_kimono_cherry.js",
-    "commonSkillVfx": "src/cherrift_common_skill_vfx.js"
+    "commonSkillVfx": "src/cherrift_common_skill_vfx.js",
+    "pajamaData": "src/cherrift_pajama_data.js",
+    "pajamaCherry": "src/cherrift_pajama_cherry.js"
   },
   "stylesheets": {
     "shell": "assets/cherrift_shell.css",

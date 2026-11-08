@@ -14,7 +14,7 @@
     "test:gunner": "node --test tools/gunner.test.mjs",
     "test:base-cherry": "node --test tools/base_cherry.test.mjs tools/base_petal_vfx.test.mjs tools/base_walk.test.mjs",
     "catalog:build": "node tools/build_game_catalog.mjs",
-    "test": "npm run validate && npm run test:migrations && npm run test:menu-audio && npm run test:boot-start && npm run test:cherry-art && npm run test:cosmetics && npm run test:world1 && npm run test:world2 && npm run test:desktop && npm run audit && npm run test:recovery && npm run test:integrity && npm run test:online-api && npm run test:gunner && npm run test:base-cherry && npm run test:ninja-chibi && npm run test:archer-chibi && npm run test:cherry-motion && npm run test:succubus-chibi && npm run test:mobile-gameplay && npm run smoke:supabase-lock && npm run smoke && npm run test:sakura-dance && npm run test:animation-smoothing && npm run test:training-lane && npm run test:sport-cherry && npm run test:school-cherry && npm run test:kimono-cherry",
+    "test": "npm run validate && npm run test:migrations && npm run test:menu-audio && npm run test:boot-start && npm run test:cherry-art && npm run test:cosmetics && npm run test:world1 && npm run test:world2 && npm run test:desktop && npm run audit && npm run test:recovery && npm run test:integrity && npm run test:online-api && npm run test:gunner && npm run test:base-cherry && npm run test:ninja-chibi && npm run test:archer-chibi && npm run test:cherry-motion && npm run test:succubus-chibi && npm run test:mobile-gameplay && npm run smoke:supabase-lock && npm run smoke && npm run test:sakura-dance && npm run test:animation-smoothing && npm run test:training-lane && npm run test:sport-cherry && npm run test:school-cherry && npm run test:kimono-cherry && npm run test:pajama-cherry",
     "test:menu-audio": "node --test tools/menu_audio.test.mjs",
     "test:boot-start": "node --test tools/boot_start.test.mjs",
     "test:cherry-art": "node --test tools/cherry_ui_art.test.mjs",
@@ -52,7 +52,8 @@
     "test:admin": "node tools/test_admin_center.mjs && node --test tools/admin_events.test.mjs tools/admin_ui.test.mjs",
     "test:sport-cherry": "node --test tools/sport_cherry.test.mjs tools/sport_cherry_gpu_init.test.mjs",
     "test:school-cherry": "node --test tools/school_cherry.test.mjs tools/school_vfx.test.mjs",
-    "test:kimono-cherry": "node --test tools/kimono_cherry.test.mjs tools/common_skill_vfx.test.mjs"
+    "test:kimono-cherry": "node --test tools/kimono_cherry.test.mjs tools/common_skill_vfx.test.mjs",
+    "test:pajama-cherry": "node --test tools/pajama_cherry.test.mjs"
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.5.11",

@@ -1,0 +1,173 @@
+{
+  "id": "pajama_cherry",
+  "buildId": "1107-pajama2",
+  "frameSize": 192,
+  "pivot": [
+    96,
+    184
+  ],
+  "individualFrameSize": 256,
+  "directions": [
+    "down",
+    "down_right",
+    "right",
+    "up_right",
+    "up",
+    "up_left",
+    "left",
+    "down_left"
+  ],
+  "mirrors": {
+    "left": "right",
+    "down_left": "down_right",
+    "up_left": "up_right"
+  },
+  "states": {
+    "idle": {
+      "frames": 6,
+      "fps": 3,
+      "duration": 2.0,
+      "sheets": {
+        "down": "sheets192/pajama_cherry_idle_down.png",
+        "down_right": "sheets192/pajama_cherry_idle_down_right.png",
+        "right": "sheets192/pajama_cherry_idle_right.png",
+        "up_right": "sheets192/pajama_cherry_idle_up_right.png",
+        "up": "sheets192/pajama_cherry_idle_up.png",
+        "up_left": "sheets192/pajama_cherry_idle_up_left.png",
+        "left": "sheets192/pajama_cherry_idle_left.png",
+        "down_left": "sheets192/pajama_cherry_idle_down_left.png"
+      }
+    },
+    "idle2": {
+      "frames": 6,
+      "fps": 3,
+      "duration": 2.0,
+      "sheets": {
+        "down": "sheets192/pajama_cherry_idle2_down.png",
+        "down_right": "sheets192/pajama_cherry_idle2_down_right.png",
+        "right": "sheets192/pajama_cherry_idle2_right.png",
+        "up_right": "sheets192/pajama_cherry_idle2_up_right.png",
+        "up": "sheets192/pajama_cherry_idle2_up.png",
+        "up_left": "sheets192/pajama_cherry_idle2_up_left.png",
+        "left": "sheets192/pajama_cherry_idle2_left.png",
+        "down_left": "sheets192/pajama_cherry_idle2_down_left.png"
+      }
+    },
+    "walk": {
+      "frames": 6,
+      "fps": 8,
+      "duration": 0.75,
+      "sheets": {
+        "down": "sheets192/pajama_cherry_walk_down.png",
+        "down_right": "sheets192/pajama_cherry_walk_down_right.png",
+        "right": "sheets192/pajama_cherry_walk_right.png",
+        "up_right": "sheets192/pajama_cherry_walk_up_right.png",
+        "up": "sheets192/pajama_cherry_walk_up.png",
+        "up_left": "sheets192/pajama_cherry_walk_up_left.png",
+        "left": "sheets192/pajama_cherry_walk_left.png",
+        "down_left": "sheets192/pajama_cherry_walk_down_left.png"
+      }
+    },
+    "attack": {
+      "frames": 6,
+      "fps": 18,
+      "duration": 0.3333333333333333,
+      "sheets": {
+        "down": "sheets192/pajama_cherry_attack_down.png",
+        "down_right": "sheets192/pajama_cherry_attack_down_right.png",
+        "right": "sheets192/pajama_cherry_attack_right.png",
+        "up_right": "sheets192/pajama_cherry_attack_up_right.png",
+        "up": "sheets192/pajama_cherry_attack_up.png",
+        "up_left": "sheets192/pajama_cherry_attack_up_left.png",
+        "left": "sheets192/pajama_cherry_attack_left.png",
+        "down_left": "sheets192/pajama_cherry_attack_down_left.png"
+      }
+    },
+    "walk_attack": {
+      "frames": 6,
+      "fps": 18,
+      "duration": 0.3333333333333333,
+      "sheets": {
+        "down": "sheets192/pajama_cherry_walk_attack_down.png",
+        "down_right": "sheets192/pajama_cherry_walk_attack_down_right.png",
+        "right": "sheets192/pajama_cherry_walk_attack_right.png",
+        "up_right": "sheets192/pajama_cherry_walk_attack_up_right.png",
+        "up": "sheets192/pajama_cherry_walk_attack_up.png",
+        "up_left": "sheets192/pajama_cherry_walk_attack_up_left.png",
+        "left": "sheets192/pajama_cherry_walk_attack_left.png",
+        "down_left": "sheets192/pajama_cherry_walk_attack_down_left.png"
+      }
+    },
+    "skill": {
+      "frames": 6,
+      "fps": 16,
+      "duration": 0.375,
+      "sheets": {
+        "down": "sheets192/pajama_cherry_skill_down.png",
+        "down_right": "sheets192/pajama_cherry_skill_down_right.png",
+        "right": "sheets192/pajama_cherry_skill_right.png",
+        "up_right": "sheets192/pajama_cherry_skill_up_right.png",
+        "up": "sheets192/pajama_cherry_skill_up.png",
+        "up_left": "sheets192/pajama_cherry_skill_up_left.png",
+        "left": "sheets192/pajama_cherry_skill_left.png",
+        "down_left": "sheets192/pajama_cherry_skill_down_left.png"
+      }
+    }
+  },
+  "sources": [
+    {
+      "file": "assets/player/cherry_skins/pajama_cherry/sources/down.png",
+      "sha256": "925224b2384a8b64ea678e271621b7c350197fcfc34ffe3f8abd9c8a79ca1e0b"
+    },
+    {
+      "file": "assets/player/cherry_skins/pajama_cherry/sources/walk/down.png",
+      "sha256": "8fb828694b928817a0275ceb774e322ff6ab702a197369f0a415d20def205bbb"
+    },
+    {
+      "file": "assets/player/cherry_skins/pajama_cherry/sources/down_right.png",
+      "sha256": "7c84b9c02464f780af24f8bb0ec087f0296e0e57fb534a3d5b576167506181f7"
+    },
+    {
+      "file": "assets/player/cherry_skins/pajama_cherry/sources/walk/down_right.png",
+      "sha256": "c60f973f9629fdbd227be49712b735be30cc7546e7420c26a70499052df88fc9"
+    },
+    {
+      "file": "assets/player/cherry_skins/pajama_cherry/sources/right.png",
+      "sha256": "2efcf714e1927ac957259fcb0a968a219dd73455c14c46c7a4a33e98d313a569"
+    },
+    {
+      "file": "assets/player/cherry_skins/pajama_cherry/sources/walk/right.png",
+      "sha256": "f094cb2492a24e10cdeeab51c4d1884050093ff1350dd04614da21bd4c601ecb"
+    },
+    {
+      "file": "assets/player/cherry_skins/pajama_cherry/sources/up_right.png",
+      "sha256": "3dbf472179d075a5c3a8231801d8b86797b114e0156836df0b7e03877464cfe3"
+    },
+    {
+      "file": "assets/player/cherry_skins/pajama_cherry/sources/walk/up_right.png",
+      "sha256": "0914475de60b0c502ccc50f179c00d935b993e2ddf752699d63f042cc6b45ec1"
+    },
+    {
+      "file": "assets/player/cherry_skins/pajama_cherry/sources/up.png",
+      "sha256": "32a9407152f45c13ae03e1b379a3a61f7f48ed076ffdd4d39082f8e067009a36"
+    },
+    {
+      "file": "assets/player/cherry_skins/pajama_cherry/sources/walk/up.png",
+      "sha256": "ec3cf49779a1b5363fc7571d94e296bb9cc773d82d03f0709a731d82b460b8b7"
+    }
+  ],
+  "passive": {
+    "hpBonus": 0.02
+  },
+  "skill": {
+    "type": "common_shield",
+    "seconds": 2,
+    "healMaxHpFraction": 0.1,
+    "visual": "existing shared Sport shield"
+  },
+  "notes": [
+    "Complete authored poses, original RGB and alpha.",
+    "All left directions mirror right frames.",
+    "No runtime palette canvas or separate limb cutouts."
+  ]
+}
