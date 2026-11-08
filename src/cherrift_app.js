@@ -17570,6 +17570,7 @@ function normalizeSettings(save) {
   }
   if (!["off", "low", "full"].includes(save.settings.cameraMotion)) save.settings.cameraMotion = "full";
   if (!["off", "low", "full"].includes(save.settings.screenShake)) save.settings.screenShake = "low";
+  if (!["off", "on"].includes(save.settings.environmentPerformance)) save.settings.environmentPerformance = "off";
   save.settings.combatSounds ??= true;
   return save;
 }
@@ -17587,6 +17588,7 @@ function ensureSettings() {
   const display = document.querySelector('[data-v060-settings-page="display"]');
   const gameplay = display;
   addSetting(display, "effectQuality", UI.save?.settings?.language === "en" ? "Graphics quality" : "Grafikai minőség", UI.save?.settings?.language === "en" ? "World1 textures and effect detail" : "World1 képfelbontás és effektrészletesség", [["low", "Low"], ["medium", "Medium"], ["high", "High"]]);
+  addSetting(display, "environmentPerformance", UI.save?.settings?.language === "en" ? "Environment performance mode" : "Környezeti animációk teljesítménykímélése", UI.save?.settings?.language === "en" ? "OFF: animated plants and drifting leaves. ON: static plants, no leaf effects." : "OFF: mozgó növények és szálló levelek. ON: statikus növények, levéleffektek nélkül.", [["off", "OFF"], ["on", "ON"]]);
   addSetting(display, "cameraMotion", "Camera motion", "Speed zoom, dash kick and look-ahead", [["off", "Off"], ["low", "Low"], ["full", "Full"]]);
   addSetting(gameplay, "screenShake", "Screen shake", "Impact feedback without moving the HUD", [["off", "Off"], ["low", "Low"], ["full", "Full"]]);
   const sound = id("combatSoundsV085") || document.createElement("label");
@@ -17597,6 +17599,7 @@ function ensureSettings() {
   }
   const settings = UI.save?.settings || {};
   if (id("effectQualityV085")) id("effectQualityV085").value = settings.effectQuality;
+  if (id("environmentPerformanceV085")) id("environmentPerformanceV085").value = settings.environmentPerformance;
   if (id("cameraMotionV085")) id("cameraMotionV085").value = settings.cameraMotion;
   if (id("screenShakeV085")) id("screenShakeV085").value = settings.screenShake;
   if (id("combatSoundsV085")) id("combatSoundsV085").checked = settings.combatSounds !== false;
@@ -17614,6 +17617,13 @@ function bindSettings() {
   document.documentElement.dataset.v085Settings = "1";
   document.addEventListener("change", event => {
     if (event.target.id === "effectQualityV085") saveSetting("effectQuality", event.target.value);
+    if (event.target.id === "environmentPerformanceV085") {
+      saveSetting("environmentPerformance", event.target.value);
+      if (UI.game) {
+        UI.game.__cherriftFoliage?.active.clear();
+        UI.game.__cherriftNeedsRender = true;
+      }
+    }
     if (event.target.id === "cameraMotionV085") saveSetting("cameraMotion", event.target.value);
     if (event.target.id === "screenShakeV085") saveSetting("screenShake", event.target.value);
     if (event.target.id === "combatSoundsV085") saveSetting("combatSounds", event.target.checked);

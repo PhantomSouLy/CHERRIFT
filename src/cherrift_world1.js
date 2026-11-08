@@ -84,7 +84,9 @@
   function build(game,seed=game.__meadowSeed) {
     seed ??= (game.__meadowSeed=freshSeed());
     game.__meadowSeed=seed;
-    const random=randomFor(`${seed}:${game.stage?.id || 'world_1'}`),half=boundary();
+    // Chapter-independent candidates let the preview compare density without
+    // moving the existing objects. Fresh runs still receive fresh seeds.
+    const random=randomFor(`${seed}:${worldId===1?'world_1_1':game.stage?.id || 'world_1'}`),half=boundary();
     const result=[],solid=[];
     function add(key,x,y,exterior=false) {
       const s=objects[key],scale=.88+random()*.24,h=s.h*scale,w=s.w*scale;
@@ -96,7 +98,7 @@
       return o;
     }
     for(const [key,s] of Object.entries(objects).filter(([,s])=>s.solid)) {
-      for(let i=0;i<s.count;i++) {
+      for(let i=0;i<(worldId===1?Math.ceil(s.count*(key.startsWith('tree')?2:1.35)):s.count);i++) {
         for(let tries=0;tries<120;tries++) {
           const x=(random()*2-1)*(half-140),y=(random()*2-1)*(half-140);
           if(Math.hypot(x,y)<340 || lane(x,y))continue;
@@ -107,7 +109,7 @@
       }
     }
     for(const [key,s] of Object.entries(objects).filter(([,s])=>!s.solid)) {
-      for(let i=0;i<s.count;i++) {
+      for(let i=0;i<(worldId===1?Math.ceil(s.count*2.3):s.count);i++) {
         const near=solid[Math.floor(random()*solid.length)],angle=random()*Math.PI*2;
         const clustered=i%3!==0 && near;
         const x=clustered?near.x+Math.cos(angle)*(65+random()*85):(random()*2-1)*(half-45);
@@ -117,19 +119,21 @@
     }
     // Real scenery continues beyond the collision boundary under the dark veil.
     const keys=['tree1','tree2','tree3','bush1','bush2','rock1','rock2','log','flower1'];
-    for(let i=0;i<190;i++) {
+    for(let i=0;i<(worldId===1?240:190);i++) {
       const side=i%4,along=(random()*2-1)*(half+650),depth=half+70+random()*600;
       add(keys[Math.floor(random()*keys.length)],side<2?(side===0?-depth:depth):along,side>=2?(side===2?-depth:depth):along,true);
     }
     const patches=Array.from({length:65},()=>({x:(random()*2-1)*(half+500),y:(random()*2-1)*(half+500),r:70+random()*100,phase:random()}));
-    game.obstacles=result;game.__cherriftCleanSolidObjects=solid;
-    game.__cherriftCleanWorld=worldId;game.__meadow={seed,patches,worldId};
+    const active=worldId===1?selectChapterObjects(result,densityFor(game)):result;
+    game.obstacles=active;game.__cherriftCleanSolidObjects=worldId===1?active.filter(o=>o.solid):solid;
+    game.__cherriftCleanWorld=worldId;game.__meadow={seed,patches,worldId,chapter:chapterFor(game),density:densityFor(game)};
     game.__meadow.fireflies=night?Array.from({length:900},()=>({
       x:(random()*2-1)*(half+450),y:(random()*2-1)*(half+450),
       phase:random()*Math.PI*2,speed:.10+random()*.13,rank:random(),radius:28+random()*32
     })):[];
+    if (worldId===1) buildEnvironment(game,random,game.obstacles);
     window.CHERRIFT_REACTIVE_FOLIAGE?.refresh?.(game);
-    return result;
+    return game.obstacles;
   }
   function collides(game,x=game.player?.x,y=game.player?.y) {
     if(!game.player)return false;
@@ -180,7 +184,10 @@
     const hides=game.player && [game.player,...(game.enemies||[])].some(actor=>
       o.objectKey.startsWith('tree') && actor.y<o.y && actor.y>top && Math.abs(actor.x-o.x)<o.drawW*.43);
     c.save();c.globalAlpha=hides?.40:1;
-    c.drawImage(im,Math.round(left),Math.round(top),o.drawW,o.drawH);c.restore();
+    if (environmentEnabled(game) && /^(tree|bush|flower|grass)/.test(o.objectKey)) {
+      drawWindObject(game,c,o,im,left,top);
+    } else c.drawImage(im,Math.round(left),Math.round(top),o.drawW,o.drawH);
+    c.restore();
   }
   function drawEdge(game,c) {
     const b=boundary(),zoom=game.zoom||1,vw=game.w/zoom+20,vh=game.h/zoom+20;
@@ -212,6 +219,7 @@
     for(const o of visible)if(groundObject(o))game.drawObstacle(c,o);
     const sorted=visible.filter(o=>!groundObject(o)).sort((a,b)=>(a.y||0)-(b.y||0));
     for(const o of sorted)game.drawObj(c,o);
+    if(worldId===1)drawEnvironment(game,c);
     if(night)drawFireflies(game,c);
     drawEdge(game,c);c.restore();
   }
@@ -244,6 +252,111 @@
     }
     c.restore();
   }
+  // Living Meadow v3: all ambient motion follows gameplay time, never a timer.
+  function chapterFor(game) {
+    const stage=game?.stage || game?.getSelectedStage?.() || {};
+    const raw=Number(stage.index || String(stage.id || '').match(/_(\d+)$/)?.[1]) || 1;
+    return Math.max(1,Math.min(5,Math.floor(raw)));
+  }
+  function densityFor(game) {
+    return worldId===1?[.40,.52,.70,.86,1][chapterFor(game)-1]:1;
+  }
+  function selectChapterObjects(objects,density) {
+    const totals=new Map(),seen=new Map();
+    const key=o=>`${o.exterior?'edge':'field'}:${o.objectKey}`;
+    for(const o of objects)totals.set(key(o),(totals.get(key(o))||0)+1);
+    return objects.filter(o=>{
+      const k=key(o),ordinal=(seen.get(k)||0)+1;seen.set(k,ordinal);
+      return ordinal<=Math.ceil(totals.get(k)*density);
+    });
+  }
+  const reduceEnvironment=matchMedia('(prefers-reduced-motion: reduce)');
+  function environmentEnabled(game) {
+    return worldId===1 && game?.save?.settings?.environmentPerformance!=='on' &&
+      !game?.save?.settings?.reducedMotion && !reduceEnvironment.matches;
+  }
+  function windAt(time,x=0,y=0) {
+    // A broad travelling gust keeps neighbours related without synchronised bobbing.
+    const t=Number(time)||0;
+    const gust=(.5+.5*Math.sin(t*.31-x*.0014-y*.0007))**3;
+    return (.48+.62*gust)*(Math.sin(t*1.35-x*.003+y*.001)*.72+
+      Math.sin(t*2.17+x*.0017+y*.0023)*.28)+.20*gust;
+  }
+  function drawWindObject(game,c,o,im,left,top) {
+    const wind=windAt(game.t,o.x,o.y),phase=Number(o.phase)||0;
+    const ripple=Math.sin((Number(game.t)||0)*1.8+phase)*.12;
+    if(o.objectKey.startsWith('tree')) {
+      // Horizontal affine bands bend only the crown. The lower 36% is unchanged.
+      // This reuses the original RGBA art with no generated replacement or colour filter.
+      const bands=profile(game)==='low'?6:10;
+      const bend=(wind+ripple)*o.drawH*.046;
+      const shift=y=>bend*Math.max(0,1-y/.64)**1.65;
+      for(let i=0;i<bands;i++) {
+        const sy=Math.round(i*im.height/bands),ey=Math.round((i+1)*im.height/bands);
+        const a=sy/im.height,b=ey/im.height,dy=a*o.drawH,dh=(b-a)*o.drawH;
+        const dx=shift(a),slope=(shift(b)-dx)/dh;
+        c.save();c.transform(1,0,slope,1,left+dx,top+dy);
+        // Sample the whole image behind overlapping clips. Cropping the source
+        // into strips produces visible horizontal seams with scaled textures.
+        c.beginPath();c.rect(-8,-.65,o.drawW+16,dh+1.30);c.clip();
+        c.drawImage(im,0,-dy,o.drawW,o.drawH);c.restore();
+      }
+      return;
+    }
+    const bush=o.objectKey.startsWith('bush');
+    const angle=(wind+ripple)*(bush?.050:.110);
+    c.translate(o.x,o.y);c.rotate(angle);c.transform(1,0,(wind+ripple)*(bush?.024:.045),1,0,0);
+    c.drawImage(im,-o.drawW/2,-o.drawH*o.anchor,o.drawW,o.drawH);
+  }
+  function buildEnvironment(game,random,objects) {
+    const trees=objects.filter(o=>o.objectKey.startsWith('tree')&&!o.exterior);
+    // Fixed-size records are generated once. No per-frame spawning or allocation.
+    game.__meadow.leaves=trees.flatMap((tree,index)=>Array.from({length:4},(_,i)=>({
+      x:tree.x+(random()-.5)*tree.drawW*.7,
+      y:tree.y-tree.drawH*(.52+random()*.20),
+      delay:random()*8+i*.31,period:11+random()*10,duration:4.5+random()*2,
+      drift:80+random()*105,fall:35+random()*65,phase:random()*Math.PI*2,
+      size:4.5+random()*2.8,rank:random(),colour:(index+i)%3
+    })));
+  }
+  const leafSprites=[];
+  function leafSprite(index) {
+    if(leafSprites[index])return leafSprites[index];
+    const sprite=document.createElement('canvas');sprite.width=40;sprite.height=24;
+    const c=sprite.getContext('2d');
+    c.fillStyle=['#9ebc50','#d3c86b','#78a94d'][index];
+    c.beginPath();c.moveTo(3,13);c.bezierCurveTo(13,-1,30,2,37,10);
+    c.bezierCurveTo(28,22,13,24,3,13);c.fill();
+    c.strokeStyle='rgba(68,99,40,.65)';c.lineWidth=1.2;
+    c.beginPath();c.moveTo(3,13);c.quadraticCurveTo(21,12,36,10);c.stroke();
+    leafSprites[index]=sprite;return sprite;
+  }
+  function leafPosition(p,time=0) {
+    const elapsed=Number(time)-p.delay;
+    if(elapsed<0)return null;
+    const age=elapsed%p.period;
+    if(age>p.duration)return null;
+    const progress=age/p.duration;
+    return {x:p.x+progress*p.drift+Math.sin(age*2+p.phase)*8,
+      y:p.y+progress*p.fall+Math.sin(age*1.5+p.phase)*6,
+      angle:p.phase+age*1.9,scaleY:.35+.65*Math.abs(Math.cos(age*2.1+p.phase)),
+      alpha:Math.min(1,progress*7,(1-progress)*5)*.88};
+  }
+  function drawEnvironment(game,c) {
+    if(!environmentEnabled(game))return;
+    const tier=profile(game),limit=tier==='low'?8:tier==='medium'?15:22;
+    const fraction=tier==='low'?.4:tier==='medium'?.72:1;
+    let drawn=0;
+    for(const p of game.__meadow?.leaves||[]) {
+      if(p.rank>fraction || !inView(game,p,190))continue;
+      const pos=leafPosition(p,game.t);if(!pos || !inView(game,pos,20))continue;
+      c.save();c.translate(pos.x,pos.y);c.rotate(pos.angle);c.scale(1,pos.scaleY);
+      c.globalAlpha=pos.alpha;
+      c.drawImage(leafSprite(p.colour),-p.size/2,-p.size*.30,p.size,p.size*.60);
+      c.restore();if(++drawn>=limit)break;
+    }
+  }
+
   function applyResolution(game) {
     if(!isWorld(game)||!game.canvas||!game.ctx)return;
     const dpr=Math.min(window.devicePixelRatio||1,PROFILES[profile(game)].dpr);
@@ -260,7 +373,7 @@
   }
   document.addEventListener('change',settingsChanged);
   return Object.freeze({version:night?'1.0-moonlit-meadow':'1.0-sunlit-meadow',spec,splash:SPLASH,profiles:PROFILES,profile,isWorld,boundary,
-    load,prepare,selectArt,build,collides,drawGround,drawObject,drawWorld,applyResolution,shouldDraw,lane,fireflyPosition,drawFireflies});
+    load,prepare,selectArt,build,collides,drawGround,drawObject,drawWorld,applyResolution,shouldDraw,lane,fireflyPosition,drawFireflies,environmentEnabled,windAt,drawEnvironment,leafPosition,chapterFor,densityFor});
   }
   window.CHERRIFT_CREATE_MEADOW=createMeadow;
   window.CHERRIFT_WORLD1=createMeadow(1,'assets/map/world1/meadow/');

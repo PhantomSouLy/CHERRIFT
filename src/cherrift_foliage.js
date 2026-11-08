@@ -126,7 +126,8 @@
 
   function updateFoliage(game){
     if ((game.mode !== "playing" && !document.body.classList.contains("is-playing")) || !game.player) return;
-    if (game.__meadow && [1,2].includes(game.stage?.world) && game.save?.settings?.effectQuality === "low") {
+    if (game.save?.settings?.environmentPerformance === "on" ||
+        (game.__meadow && [1,2].includes(game.stage?.world) && game.save?.settings?.effectQuality === "low")) {
       game.__cherriftFoliage?.active.clear();
       return;
     }
@@ -219,6 +220,11 @@
   const previousDrawObstacle = proto.drawObstacle;
   proto.drawObstacle = function drawReactiveFoliage(context, object){
     const controller = this.__cherriftFoliage;
+    // Also gate drawing immediately when a setting changes while paused.
+    if (this.save?.settings?.environmentPerformance === "on") {
+      controller?.active.clear();
+      return previousDrawObstacle.call(this, context, object);
+    }
     const state = controller?.active?.get(object);
     if (!state) return previousDrawObstacle.call(this, context, object);
 
