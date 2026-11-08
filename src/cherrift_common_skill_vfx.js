@@ -3,7 +3,7 @@
 (() => {
  'use strict';
  if(!window.CherriftGame||window.CHERRIFT_COMMON_SKILL_VFX)return;
- const KEY='commonHealingAtlas',SOURCE='assets/effects/common_healing/healing_atlas.png?v=1107-kimono-healing1';
+ const KEY='commonHealingAtlas',SOURCE='assets/effects/common_healing/healing_atlas.png?v=1107-kimono-visible7';
  if(typeof ImageAssets!=='undefined'){
   const load=ImageAssets.prototype.loadAll;
   ImageAssets.prototype.loadAll=async function(...args){const r=await load.apply(this,args);await this.loadImage(KEY,SOURCE);return r;};
@@ -39,20 +39,20 @@
   const img=game.assets.get(KEY);if(!img)return false;
   const t=clamp(Number(e.t||0)/Math.max(.001,e.life||.95),0,1);if(t>=1)return true;
   const target=e.healTarget===game.player?e.healTarget:null,x=target?.x??e.x,y=(target?.y??(e.y+18))+20;
-  const low=game.save?.settings?.effectQuality==='low',rise=1-Math.pow(1-t,2),fade=Math.pow(1-t,1.2),size=98+rise*45;
-  c.save();c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';
+  const low=game.save?.settings?.effectQuality==='low',rise=1-Math.pow(1-t,2),fade=Math.pow(1-t,.65),size=98+rise*45;
+  c.save();c.globalAlpha=1;c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';
   if(layer!=='front'){
-   stamp(c,img,4,x,y,size*1.18,size*.72,-t*.2,.58*fade);
-   stamp(c,img,0,x,y,size,size*.58,t*.12,.85*fade);
+   stamp(c,img,4,x,y,size*1.18,size*.72,-t*.2,.95*fade);
+   stamp(c,img,0,x,y,size,size*.58,t*.12,1*fade);
   }
   if(layer!=='ground'){
    // Rounded mint recovery light rather than the Hybrid's outward explosion.
-   stamp(c,img,1,x,y-28-t*9,58+rise*18,58+rise*18,0,.65*Math.pow(1-t,2));
+   stamp(c,img,1,x,y-28-t*9,58+rise*18,58+rise*18,0,.95*Math.pow(1-t,1.1));
    if(!low){
-    stamp(c,img,2,x,y-48-rise*22,98,116+rise*20,-t*.18,.48*fade);
+    stamp(c,img,2,x,y-48-rise*22,98,116+rise*20,-t*.18,.8*fade);
     for(let i=0;i<8;i++){
      const a=i*Math.PI/4+t*.9,r=24+rise*18,px=x+Math.cos(a)*r,py=y-22+Math.sin(a)*12-rise*(32+i%3*8);
-     stamp(c,img,i%3===0?5:3,px,py,11+i%3*3,11+i%3*3,t*.35,fade*.75);
+     stamp(c,img,i%3===0?5:3,px,py,11+i%3*3,11+i%3*3,t*.35,fade);
     }
    }
   }
@@ -82,10 +82,10 @@
    window.CHERRIFT_SPORT_VFX.shield(this,c,p);
   }else result=draw.call(this,c,p);
   if(type==='common_heal'&&p.commonSpeedBuffTimer>0&&this.save?.settings?.effectQuality!=='low'){
-   const img=this.assets.get(KEY);if(img){const age=this.t||0,alpha=Math.min(1,p.commonSpeedBuffTimer/.25)*.42;
+   const img=this.assets.get(KEY);if(img){const age=this.t||0,alpha=Math.min(1,p.commonSpeedBuffTimer/.25)*.65;
     for(let i=0;i<3;i++){const a=age*2+i*Math.PI*2/3;stamp(c,img,3,p.x+Math.cos(a)*24,p.y-5+Math.sin(a)*12,11,11,0,alpha);}
    }
   }return result;
  };
- window.CHERRIFT_COMMON_SKILL_VFX=Object.freeze({version:'1107-kimono-healing1',healing,assetKey:KEY,source:SOURCE});
+ window.CHERRIFT_COMMON_SKILL_VFX=Object.freeze({version:'1107-kimono-visible7',healing,assetKey:KEY,source:SOURCE});
 })();

@@ -211,7 +211,8 @@
     "Runtime walk uses complete idle poses; walk_attack uses complete attack poses. Continuous directional inverse warp animates original legs.",
     "v4: narrow normal side Walk; short alternating ankle lifts and closed kimono hem; whole authored frames use the travel clock without foot stretching.",
     "v5: omit source pose 4 from side Walk; evenly time accepted source poses 0,1,2,3,5 over the same travel cycle.",
-    "v6: cached RGB palette normalization for plain side Walk only, calibrated to accepted right Idle. Alpha and source poses are untouched."
+    "v6: cached RGB palette normalization for plain side Walk only, calibrated to accepted right Idle. Alpha and source poses are untouched.",
+    "v7: ordinary precolored Walk PNGs replace runtime canvas normalization; stronger Common Healing art with independent alpha restored after render."
   ],
-  "buildId": "1107-kimono-color6"
+  "buildId": "1107-kimono-visible7"
 }

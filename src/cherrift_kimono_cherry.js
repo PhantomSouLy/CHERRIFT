@@ -2,14 +2,14 @@
 (() => {
   'use strict';
   if (!window.CherriftGame || !window.CHERRIFT_CONFIG || window.CHERRIFT_KIMONO_CHERRY) return;
-  const ID='kimono_cherry', BUILD='1107-kimono-color6';
+  const ID='kimono_cherry', BUILD='1107-kimono-visible7';
   const ROOT='assets/player/cherry_skins/kimono_cherry/sheets192';
   const DIRS=['right','down_right','down','down_left','left','up_left','up','up_right'];
   const FPS={idle:3,idle2:3,walk:8,attack:18,walk_attack:8,skill:16};
   const config=CHERRIFT_CONFIG.player.skins[ID];if(!config)return;
   config.states=Object.fromEntries(Object.entries(FPS).map(([name,fps])=>[name,{
     frames:6,fps,duration:6/fps,loop:name==='idle'||name==='walk',pivot:{x:96,y:184},
-    dirs:Object.fromEntries(DIRS.map(d=>[d,`${ROOT}/kimono_cherry_${name==='walk'?(['right','left'].includes(d)?'walk':'idle'):name==='walk_attack'?'attack':name}_${d}.png?v=${BUILD}`]))
+    dirs:Object.fromEntries(DIRS.map(d=>[d,`${ROOT}/kimono_cherry_${name==='walk'?(['right','left'].includes(d)?'walk_color7':'idle'):name==='walk_attack'?'attack':name}_${d}.png?v=${BUILD}`]))
   }]));
   config.attackMovementMode='mobile';config.attackMoveSpeedMultiplier=1;
   // Keep common_heal, +1% movement/+1% recovery, 40% heal and 2s speed buff.
