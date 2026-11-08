@@ -211,6 +211,7 @@
     c.save();c.translate(game.w/2+(Math.random()-.5)*shake,game.h/2+(Math.random()-.5)*shake);
     c.scale(zoom,zoom);c.translate(-game.camera.x,-game.camera.y);
     drawGround(game,c,zoom);
+    window.CHERRIFT_LIGHTING?.ground(game,c);
     const all=[...(game.obstacles||[]),...(game.pickups||[]),...(game.enemies||[]),...(game.bullets||[]),...(game.effects||[])];
     if(game.player)all.push(game.player);
     const visible=all.filter(o=>inView(game,o,240));
