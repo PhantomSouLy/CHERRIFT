@@ -73,7 +73,21 @@
  function install(){const p=window.CherriftGame?.prototype;if(!p||p.__sharedLighting)return;p.__sharedLighting=true;const old=p.drawWorld;p.drawWorld=function(c,...a){const r=old.call(this,c,...a);finish(this,c);return r};const gd=p.drawGround;if(gd)p.drawGround=function(c,...a){const r=gd.call(this,c,...a);ground(this,c);return r};capture(p,'drawPlayer');capture(p,'drawEnemy');}
  function sync(){const root=document.querySelector('[data-v060-settings-page="display"]'),ui=window.UI;if(!root||!ui?.save)return;const hu=ui.save.settings?.language!=='en';ui.save.settings||={};const s=ui.save.settings;for(const [key,title,options] of [['shadowQuality',hu?'Árnyékok':'Shadow',['off','low','medium','high']],['globalLight',hu?'Globális fény':'Global Light',['low','high']]]){if(!options.includes(s[key]))s[key]=key==='shadowQuality'?'medium':'high';let el=document.getElementById(key+'Shared');if(!el){const row=document.createElement('label');row.className='setting-line-v060';row.dataset.i18nIgnore='true';row.innerHTML=`<span><b>${title}</b><small>${hu?'Azonnal érvényes grafikai beállítás':'Changes apply immediately'}</small></span><select id="${key}Shared">${options.map(v=>`<option value="${v}">${v.toUpperCase()}</option>`).join('')}</select>`;root.appendChild(row);el=row.querySelector('select')}if(el.value!==s[key])el.value=s[key]}}
  document.addEventListener('change',e=>{const key=e.target?.id==='shadowQualityShared'?'shadowQuality':e.target?.id==='globalLightShared'?'globalLight':null;if(!key||!window.UI?.save)return;window.UI.save.settings[key]=e.target.value;window.CherriftStorage?.save?.(window.UI.save);if(window.UI.game)window.UI.game.__cherriftNeedsRender=true;});
- function start(){install();sync();if(document.body)new MutationObserver(()=>sync()).observe(document.body,{childList:true,subtree:true});}
+ // Settings are route-owned. Watching every body mutation can create a
+ // feedback loop with other modules that rebuild/decorate the settings screen.
+ let syncQueued=false;
+ function scheduleSync(){if(syncQueued)return;syncQueued=true;queueMicrotask(()=>{syncQueued=false;sync()});}
+ function bindSettingsLifecycle(){
+  const ui=window.UI;if(!ui)return;
+  for(const key of ['init','open']){
+   const original=ui[key];if(typeof original!=='function'||original.__LightingSettingsSync)continue;
+   const wrapped=function(...args){const result=original.apply(this,args);scheduleSync();if(result&&typeof result.then==='function')result.then(scheduleSync,scheduleSync);return result};
+   wrapped.__LightingSettingsSync=true;ui[key]=wrapped;
+  }
+ }
+ function start(){install();bindSettingsLifecycle();scheduleSync();}
+ for(const event of ['cherrift:savechange','cherrift:languagechange'])window.addEventListener(event,scheduleSync);
+ window.addEventListener('cherrift:runtime-clean-ready',()=>{bindSettingsLifecycle();scheduleSync()});
  window.CHERRIFT_LIGHTING=Object.freeze({version:'1.0',ground,finish,settings,sun,lightFor,registerWorld:(id,value)=>configs.set(Number(id),{...value}),inspect:()=>({masksCreated:maskCount,glowCache:glows.size}),install});
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
  window.addEventListener('cherrift:runtime-clean-ready',install);

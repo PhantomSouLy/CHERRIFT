@@ -76,7 +76,21 @@
  function install(){const p=window.CherriftGame?.prototype;if(!p||p.__biomeEnvironment)return;p.__biomeEnvironment=true;const u=p.update;if(u)p.update=function(dt,...args){const r=u.call(this,dt,...args);update(this,dt);return r};const d=p.drawWorld;if(d)p.drawWorld=function(c,...args){const r=d.call(this,c,...args);atmosphere(this,c);return r};const gd=p.drawGround;if(gd)p.drawGround=function(c,...args){const r=gd.call(this,c,...args);ground(this,c);return r};}
  function sync(){const ui=window.UI,root=document.querySelector('[data-v060-settings-page="display"]');if(!ui?.save||!root)return;ui.save.settings||={};let el=document.getElementById('environmentDetailShared');if(!el){const row=document.createElement('label');row.className='setting-line-v060';row.dataset.i18nIgnore='true';row.innerHTML='<span><b>Környezeti részletesség / Environment detail</b><small>Talajreakció, ködfoltok és apró környezeti mozgások</small></span><select id="environmentDetailShared"><option value="off">OFF</option><option value="low">LOW</option><option value="high">HIGH</option></select>';root.appendChild(row);el=row.querySelector('select')}const q=quality({save:ui.save});if(el.value!==q)el.value=q;}
  document.addEventListener('change',e=>{if(e.target?.id!=='environmentDetailShared'||!window.UI?.save)return;const g=window.UI.game;window.UI.save.settings.environmentDetail=e.target.value;window.CherriftStorage?.save?.(window.UI.save);if(g){state(g).particles.length=0;g.__cherriftNeedsRender=true}});
- function start(){install();sync();if(document.body)new MutationObserver(sync).observe(document.body,{subtree:true,childList:true})}
+ // Settings are route-owned. Watching every body mutation can create a
+ // feedback loop with other modules that rebuild/decorate the settings screen.
+ let syncQueued=false;
+ function scheduleSync(){if(syncQueued)return;syncQueued=true;queueMicrotask(()=>{syncQueued=false;sync()});}
+ function bindSettingsLifecycle(){
+  const ui=window.UI;if(!ui)return;
+  for(const key of ['init','open']){
+   const original=ui[key];if(typeof original!=='function'||original.__EnvironmentSettingsSync)continue;
+   const wrapped=function(...args){const result=original.apply(this,args);scheduleSync();if(result&&typeof result.then==='function')result.then(scheduleSync,scheduleSync);return result};
+   wrapped.__EnvironmentSettingsSync=true;ui[key]=wrapped;
+  }
+ }
+ function start(){install();bindSettingsLifecycle();scheduleSync();}
+ for(const event of ['cherrift:savechange','cherrift:languagechange'])window.addEventListener(event,scheduleSync);
+ window.addEventListener('cherrift:runtime-clean-ready',()=>{bindSettingsLifecycle();scheduleSync()});
  window.CHERRIFT_ENVIRONMENT=Object.freeze({version:'1.0',ground,atmosphere,update,install,quality,biome,registerWorld:(id,p)=>custom.set(Number(id),{...p}),inspect:g=>({particles:state(g).particles.length,biome:biome(g).name,quality:quality(g),fogCache:fogSprites.size})});
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();window.addEventListener('cherrift:runtime-clean-ready',install);
 })();
