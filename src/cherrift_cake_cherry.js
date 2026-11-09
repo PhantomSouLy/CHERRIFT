@@ -1,9 +1,10 @@
-/* Cake Cherry: Base-reference eight-direction chibi; existing Hybrid rules. */
+/* Fresh complete imagegen Cake poses. Base target-facing and combat timing;
+   continuous distance-driven Walk/WalkAttack cycles, no sliced or warped legs. */
 (() => {
   'use strict';
   if (!window.CherriftGame || !window.CHERRIFT_CONFIG || window.CHERRIFT_CAKE_CHERRY) return;
-  const ID='cake_deliver_cherry', BUILD='1109-cake2';
-  const ROOT='assets/player/cherry_skins/cake_deliver_cherry/sheets192';
+  const ID='cake_deliver_cherry', BUILD='1110-cake5-diagonal';
+  const ROOT='assets/player/cherry_skins/cake_deliver_cherry_rebuilt/sheets192';
   const DIRS=['right','down_right','down','down_left','left','up_left','up','up_right'];
   const FPS={idle:3,idle2:3,walk:8,attack:18,walk_attack:8,skill:16};
   const config=CHERRIFT_CONFIG.player.skins[ID];if(!config)return;
@@ -12,6 +13,18 @@
     dirs:Object.fromEntries(DIRS.map(d=>[d,`${ROOT}/cake_deliver_cherry_${name}_${d}.png?v=${BUILD}`]))
   }]));
   config.attackMovementMode='mobile';config.attackMoveSpeedMultiplier=1;
+  // Each cast row contains six complete walking poses. This 6x6 grid provides
+  // independent cast and gait clocks without cutting or replacing body parts.
+  const CAST_STATES=Array.from({length:6},(_,i)=>`walk_cast${i}`);
+  if(typeof ImageAssets!=='undefined'){
+    const load=ImageAssets.prototype.loadAll;
+    ImageAssets.prototype.loadAll=async function loadCakeCastGrid(...args){
+      const original=load.apply(this,args);
+      const all=await Promise.all([original,...CAST_STATES.flatMap(state=>DIRS.map(dir=>
+        this.loadImage(`player_${ID}_${state}_${dir}`,`${ROOT}/cake_deliver_cherry_${state}_${dir}.png?v=${BUILD}`)))]);
+      return all[0];
+    };
+  }
   // Keep Common Hybrid: +1% ATK/+1% HP, Pink Burst damage, knockback and speed buff.
   const proto=CherriftGame.prototype;
   const facing=(x,y,fallback='down')=>Math.hypot(x,y)<.04?fallback:DIRS[(Math.round(Math.atan2(y,x)/(Math.PI/4))+8)%8];
@@ -68,28 +81,40 @@
     return result;
   };
   function raw(ctx,image,frame,p,width,height){
-    ctx.drawImage(image,frame*192,0,192,192,p.x-96*width/192,p.y+30-184*height/192,width,height);
+    const cell=image.naturalHeight||image.height||192;
+    ctx.drawImage(image,frame*cell,0,cell,cell,p.x-96*width/192,p.y+30-184*height/192,width,height);
   }
   const draw=proto.drawPlayer;
   proto.drawPlayer=function drawCake(ctx,p){
     if(p?.skin!==ID)return draw.call(this,ctx,p);
     const cast=p.skillCastTimer>0,attack=!cast&&p.cakeAttack,idle=p.cakeIdleTime||0;
     const state=cast?'skill':attack?(p.moving?'walk_attack':'attack'):p.moving?'walk':idle%8>=6?'idle2':'idle';
-    const d=cast?p.skillDir:p.moving?(p.cakeFacing||p.lastDir):attack?p.attackDir:p.cakeFacing||p.lastDir;
+    const d=cast?p.skillDir:attack?p.attackDir:p.cakeFacing||p.lastDir;
     const dir=DIRS.includes(d)?d:'down';
-    const image=this.assets.get(key(state,dir))||this.assets.get(key('idle',dir))||this.assets.get(key('idle','down'));if(!image)return;
+    let renderState=state;
+    if(state==='walk_attack')renderState=CAST_STATES[Math.min(5,Math.floor(attack.elapsed/attack.duration*6))];
+    let image=this.assets.get(key(renderState,dir));
+    if(!image){renderState=state;image=this.assets.get(key(state,dir));}
+    image=image||this.assets.get(key('idle',dir))||this.assets.get(key('idle','down'));if(!image)return;
     const elapsed=cast?Math.max(0,(p.skillCastDuration||config.states.skill.duration)-p.skillCastTimer):state==='idle2'?idle%8-6:this.t||0;
+    // The complete pose's row follows the shot cast; its column follows travel.
     const phase=state==='walk_attack'?((p.cakeStride||0)*8)%6:attack?Math.min(5,attack.elapsed/attack.duration*6):cast||state==='idle2'?Math.min(5,elapsed*FPS[state]):state==='walk'?((p.cakeStride||0)*8)%6:(elapsed*FPS[state])%6;
     const width=(CHERRIFT_CONFIG.player.displayWidth||116)*.95,height=(CHERRIFT_CONFIG.player.displayHeight||116)*.95;
     ctx.save();ctx.globalAlpha*=.2;ctx.fillStyle='#000';ctx.beginPath();ctx.ellipse(p.x,p.y+25,26,8,0,0,Math.PI*2);ctx.fill();ctx.restore();
     ctx.save();ctx.globalAlpha=1;ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+    // Inspect the authored walking poses directly. Canvas imageSmoothing only
+    // scales one complete image; no temporal blend, flow or leg rig is applied.
+    if(state==='walk'||state==='walk_attack'){
+      raw(ctx,image,Math.floor(phase),p,width,height);
+      ctx.restore();return;
+    }
     const smooth=window.CHERRIFT_ANIMATION_SMOOTHING;
-    if(!smooth?.draw(ctx,image,ID,state,dir,phase,p,width,height,{
+    if(!smooth?.draw(ctx,image,ID,renderState,dir,phase,p,width,height,{
       loop:state==='idle'||state==='walk'||state==='walk_attack',gaitPhase:(p.cakeStride||0)*8,
       makeFrame:(c,f)=>raw(c,image,f,{x:96,y:154},192,192)
     }))raw(ctx,image,Math.floor(phase),p,width,height);
     ctx.restore();
   };
-  window.CHERRIFT_CAKE_CHERRY=Object.freeze({version:BUILD,directions:[...DIRS]});
+  window.CHERRIFT_CAKE_CHERRY=Object.freeze({version:BUILD,directions:[...DIRS],movingCastStates:[...CAST_STATES]});
 })();
 
