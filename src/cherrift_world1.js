@@ -212,6 +212,7 @@
     c.scale(zoom,zoom);c.translate(-game.camera.x,-game.camera.y);
     drawGround(game,c,zoom);
     window.CHERRIFT_LIGHTING?.ground(game,c);
+    window.CHERRIFT_ENVIRONMENT?.ground(game,c);
     const all=[...(game.obstacles||[]),...(game.pickups||[]),...(game.enemies||[]),...(game.bullets||[]),...(game.effects||[])];
     if(game.player)all.push(game.player);
     const visible=all.filter(o=>inView(game,o,240));

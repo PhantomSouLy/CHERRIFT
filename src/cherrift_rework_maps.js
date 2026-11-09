@@ -122,6 +122,7 @@
     function drawWorld(g,c) {
       g.zoom=Math.max(1.05,Math.min(1.72,Number(g.__cameraZoomV085)||Number(g.zoom)||1.14));
       c.save();c.translate(g.w/2,g.h/2);c.scale(g.zoom,g.zoom);c.translate(-g.camera.x,-g.camera.y);drawGround(g,c,g.zoom);window.CHERRIFT_LIGHTING?.ground(g,c);
+window.CHERRIFT_ENVIRONMENT?.ground(g,c);
       const all=[...(g.obstacles||[]),...visibleFlowers(g),...(g.pickups||[]),...(g.enemies||[]),...(g.bullets||[]),...(g.effects||[])];if(g.player)all.push(g.player);
       const floor=o=>o.reworkMap&&!o.flower&&!o.solid&&/grass|bones|pebbles|rubble|moss/.test(o.objectKey);
       const view=all.filter(o=>visible(g,o));for(const o of view)if(floor(o))drawObject(g,c,o);
