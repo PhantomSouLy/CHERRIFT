@@ -12,6 +12,15 @@
   7:{name:'dark-ruins',dust:'#8d839c',fog:'#a7a0ba',haze:.075,life:'wisp'}
  };
  const custom=new Map(),states=new WeakMap(),fogSprites=new Map();
+ const creatureImages=new Map();
+ function creatureImage(kind){
+  if(creatureImages.has(kind))return creatureImages.get(kind);
+  const entry={image:new Image(),ready:false};creatureImages.set(kind,entry);
+  entry.image.onload=()=>{entry.ready=true;window.UI?.game&&(window.UI.game.__cherriftNeedsRender=true)};
+  entry.image.onerror=()=>{entry.ready=false};
+  entry.image.src=`assets/effects/environment/${kind}-painted.webp?v=1109-painted-nature2`;
+  return entry;
+ }
  const reduced=matchMedia('(prefers-reduced-motion: reduce)');
  const finite=(n,d=0)=>Number.isFinite(Number(n))?Number(n):d;
  function quality(g){const v=g?.save?.settings?.environmentDetail;return ['off','low','high'].includes(v)?v:'low'}
@@ -27,18 +36,33 @@
   for(let i=s.particles.length-1;i>=0;i--){const a=s.particles[i];a.age+=dt;if(a.age>=a.life){s.particles.splice(i,1);continue}a.x+=a.vx*dt;a.y+=a.vy*dt;a.vx*=Math.exp(-dt*2);a.vy*=Math.exp(-dt*2)}
   // Position changes drive steps: idle animations never emit. Teleports reset the stride.
   if(d>350){s.travel=0;return}if(d<.01)return;
-  const high=quality(g)==='high',dash=finite(p.dashTimer)>0||d/dt>500,spacing=dash?16:26;
-  s.travel+=d;const cap=high?110:36,amount=Math.min(dash?5:2,Math.floor(s.travel/spacing));if(!amount)return;s.travel%=spacing;
-  const b=biome(g),nx=dx/d,ny=dy/d;
-  for(let n=0;n<amount;n++)for(let k=0;k<(high?(dash?3:2):1);k++){
+  const high=quality(g)==='high',dash=finite(p.dashTimer)>0||d/dt>500;
+  const b=biome(g),grass=b.life==='butterfly'||b.life==='seed';
+  // Grass blades stay close to the feet. Walking is deliberately much quieter than dashing.
+  const spacing=grass?(dash?22:42):(dash?16:26);
+  s.travel+=d;const cap=grass?(high?44:16):(high?110:36),amount=Math.min(dash?4:1,Math.floor(s.travel/spacing));if(!amount)return;s.travel%=spacing;
+  if(grass){
+   const surface=g.groundSurfaceAt?.(x,y)||p.surface;
+   if(surface&&!['grass','vegetation','savanna'].includes(surface))return;
+   if((g.obstacles||[]).some(o=>/rock|stone|stump|log/i.test(String(o.objectKey||o.kind||''))&&Math.abs(o.x-x)<finite(o.rx,15)+7&&Math.abs(o.y-y)<finite(o.ry,9)+7))return;
+  }
+  const nx=dx/d,ny=dy/d;
+  for(let n=0;n<amount;n++)for(let k=0;k<(grass?(dash&&high?2:1):(high?(dash?3:2):1));k++){
    if(s.particles.length>=cap)s.particles.shift();
-   const seed=++s.serial,a=Math.sin(seed*12.9898)*43758.5453,f=a-Math.floor(a),side=(seed%2?1:-1),spread=(f-.5)*18;
-   s.particles.push({x:x-dx*(n+.5)/amount-ny*spread,y:y-dy*(n+.5)/amount+nx*spread+7,vx:-nx*(dash?65:15)-ny*side*(10+f*18),vy:-ny*(dash?45:10)+nx*side*(7+f*12)-8,age:0,life:dash?.55+f*.30:.40+f*.25,size:(dash?4:2.5)+f*3,color:b.dust,grass:b.life==='butterfly'||b.life==='seed',angle:f*Math.PI});
+   const seed=++s.serial,a=Math.sin(seed*12.9898)*43758.5453,f=a-Math.floor(a),side=(seed%2?1:-1),spread=grass?side*(2+f*3):(f-.5)*18;
+   s.particles.push({x:x-dx*(n+.5)/amount-ny*spread,y:y-dy*(n+.5)/amount+nx*spread+5,
+    vx:grass?-nx*(dash?24:5)-ny*side*5:-nx*(dash?65:15)-ny*side*(10+f*18),
+    vy:grass?-ny*(dash?16:4)+nx*side*3:-ny*(dash?45:10)+nx*side*(7+f*12)-8,
+    age:0,life:grass?(dash?.28+f*.14:.18+f*.10):(dash?.55+f*.30:.40+f*.25),
+    size:grass?(dash?2.5+f*1.4:1.6+f*.9):(dash?4:2.5)+f*3,
+    color:grass?['#657f43','#84994f','#a8ad63'][seed%3]:b.dust,grass,angle:f*Math.PI,turn:side*(dash?2:.7)});
   }
  }
  function view(g,o,margin=80){const z=g.zoom||1,c=g.camera||{x:0,y:0};return Math.abs(o.x-c.x)<g.w/z/2+margin&&Math.abs(o.y-c.y)<g.h/z/2+margin}
  function ground(g,c){if(!allowed(g))return;const s=state(g);if(!motion(g))return;
-  c.save();for(const a of s.particles){if(!view(g,a))continue;const fade=1-a.age/a.life;c.globalAlpha=fade*(a.grass?.50:.20);c.fillStyle=a.color;c.save();c.translate(a.x,a.y);c.rotate(a.angle);c.beginPath();c.ellipse(0,0,a.size*(a.grass?.45:1.6),a.size*(a.grass?1:.65),0,0,Math.PI*2);c.fill();c.restore()}c.restore();
+  c.save();for(const a of s.particles){if(!view(g,a))continue;const fade=1-a.age/a.life;c.globalAlpha=fade*(a.grass?.62:.20);c.save();c.translate(a.x,a.y);c.rotate(a.angle+(a.turn||0)*a.age);
+   if(a.grass){c.strokeStyle=a.color;c.lineWidth=.7;c.lineCap='round';c.beginPath();c.moveTo(0,0);c.quadraticCurveTo(a.size*.35,-a.size*.65,a.size*.20,-a.size*1.6);c.stroke()}
+   else{c.fillStyle=a.color;c.beginPath();c.ellipse(0,0,a.size*1.6,a.size*.65,0,0,Math.PI*2);c.fill()}c.restore()}c.restore();
  }
  function fogSprite(color){if(!/^#[0-9a-f]{6}$/i.test(color))color='#a9b4bb';if(fogSprites.has(color))return fogSprites.get(color);if(fogSprites.size>=12)fogSprites.delete(fogSprites.keys().next().value);const im=document.createElement('canvas');im.width=im.height=128;const c=im.getContext('2d'),r=c.createRadialGradient(64,64,0,64,64,64);r.addColorStop(0,color+'b0');r.addColorStop(.45,color+'60');r.addColorStop(1,color+'00');c.fillStyle=r;c.fillRect(0,0,128,128);fogSprites.set(color,im);return im}
  function hash(x,y,salt){const v=Math.sin(x*127.1+y*311.7+salt*74.7)*43758.5453;return v-Math.floor(v)}
@@ -65,7 +89,14 @@
     const px=g.w/2+(wx-cam.x)*z,py=g.h/2+(wy-cam.y)*z;
     c.save();c.translate(px,py);c.scale(z,z);c.globalAlpha=.4+.2*Math.sin(time+r*6);
     if(b.life==='butterfly'||b.life==='moth'){
-     const wing=1.5+Math.abs(Math.sin(time*8+r*8))*2.5;c.fillStyle=b.life==='moth'?'#c7c7ba':['#e8c66d','#c7a5d8','#e5e4b9'][Math.floor(r*9)%3];c.beginPath();c.ellipse(-wing/2,0,wing,2.5,-.35,0,7);c.ellipse(wing/2,0,wing,2.5,.35,0,7);c.fill();c.fillStyle='#65554c';c.fillRect(-.5,-2,1,4);
+     const sprite=creatureImage(b.life);
+     if(sprite.ready){
+      const flap=.28+.72*Math.abs(Math.sin(time*(b.life==='moth'?10:7)+r*8));
+      const size=(b.life==='moth'?19:22)*( .90+r*.25 );
+      c.globalAlpha=.85;c.rotate(Math.sin(time*.3+r*6)*.35+r*6);
+      // The painted sprite is fixed; horizontal squash supplies smooth wingbeats.
+      c.scale(flap,1);c.drawImage(sprite.image,-size/2,-size/2,size,size);
+     }
     }else if(b.life==='sand'||b.life==='seed'){
      c.strokeStyle=b.dust;c.lineWidth=1;c.beginPath();c.moveTo(-4,0);c.lineTo(4+Math.sin(time+r)*2,1);c.stroke();
     }else{c.fillStyle=b.life==='wisp'?'#c5a3e2':b.life==='ember'?'#cb8c98':'#b9c3bc';c.beginPath();c.arc(0,0,b.life==='wisp'?1.8:1,0,7);c.fill()}
@@ -91,6 +122,6 @@
  function start(){install();bindSettingsLifecycle();scheduleSync();}
  for(const event of ['cherrift:savechange','cherrift:languagechange'])window.addEventListener(event,scheduleSync);
  window.addEventListener('cherrift:runtime-clean-ready',()=>{bindSettingsLifecycle();scheduleSync()});
- window.CHERRIFT_ENVIRONMENT=Object.freeze({version:'1.0',ground,atmosphere,update,install,quality,biome,registerWorld:(id,p)=>custom.set(Number(id),{...p}),inspect:g=>({particles:state(g).particles.length,biome:biome(g).name,quality:quality(g),fogCache:fogSprites.size})});
+ window.CHERRIFT_ENVIRONMENT=Object.freeze({version:'1.1-painted-nature',ground,atmosphere,update,install,quality,biome,registerWorld:(id,p)=>custom.set(Number(id),{...p}),inspect:g=>({particles:state(g).particles.length,biome:biome(g).name,quality:quality(g),fogCache:fogSprites.size})});
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();window.addEventListener('cherrift:runtime-clean-ready',install);
 })();
