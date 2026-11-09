@@ -1,7 +1,7 @@
 {
   "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "1109-painted-nature2",
+  "buildId": "1109-cake2",
   "entrypoints": {
     "application": "src/cherrift_app.js",
     "menuAudio": "src/cherrift_menu_audio.js",
@@ -63,7 +63,9 @@
     "commonSkillVfx": "src/cherrift_common_skill_vfx.js",
     "pajamaData": "src/cherrift_pajama_data.js",
     "pajamaCherry": "src/cherrift_pajama_cherry.js",
-    "environment": "src/cherrift_environment.js"
+    "environment": "src/cherrift_environment.js",
+    "cakeData": "src/cherrift_cake_data.js",
+    "cakeCherry": "src/cherrift_cake_cherry.js"
   },
   "stylesheets": {
     "shell": "assets/cherrift_shell.css",

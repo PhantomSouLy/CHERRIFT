@@ -1,0 +1,484 @@
+{
+  "down": {
+    "hip": 148,
+    "ankle": 169,
+    "stridePixels": 2.5,
+    "liftPixels": 2,
+    "footRotationDegrees": 0,
+    "source": "original-idle-frame-0",
+    "sourceRGBModified": false,
+    "spec": {
+      "l": 81,
+      "r": 111,
+      "split": 96,
+      "dx": 0,
+      "dy": 1
+    },
+    "phases": [
+      {
+        "frame": 0,
+        "near": {
+          "advance": -2.5,
+          "lift": 0,
+          "swing": true
+        },
+        "far": {
+          "advance": 2.5,
+          "lift": 0,
+          "swing": false
+        }
+      },
+      {
+        "frame": 1,
+        "near": {
+          "advance": -0.8333333333333326,
+          "lift": -1.7320508075688776,
+          "swing": true
+        },
+        "far": {
+          "advance": 0.8333333333333348,
+          "lift": 0,
+          "swing": false
+        }
+      },
+      {
+        "frame": 2,
+        "near": {
+          "advance": 0.8333333333333326,
+          "lift": -1.732050807568878,
+          "swing": true
+        },
+        "far": {
+          "advance": -0.8333333333333326,
+          "lift": 0,
+          "swing": false
+        }
+      },
+      {
+        "frame": 3,
+        "near": {
+          "advance": 2.5,
+          "lift": 0,
+          "swing": false
+        },
+        "far": {
+          "advance": -2.5,
+          "lift": 0,
+          "swing": true
+        }
+      },
+      {
+        "frame": 4,
+        "near": {
+          "advance": 0.8333333333333348,
+          "lift": 0,
+          "swing": false
+        },
+        "far": {
+          "advance": -0.8333333333333348,
+          "lift": -1.7320508075688763,
+          "swing": true
+        }
+      },
+      {
+        "frame": 5,
+        "near": {
+          "advance": -0.8333333333333348,
+          "lift": 0,
+          "swing": false
+        },
+        "far": {
+          "advance": 0.8333333333333348,
+          "lift": -1.7320508075688765,
+          "swing": true
+        }
+      }
+    ]
+  },
+  "down_right": {
+    "hip": 148,
+    "ankle": 169,
+    "stridePixels": 2.5,
+    "liftPixels": 2,
+    "footRotationDegrees": 0,
+    "source": "original-idle-frame-0",
+    "sourceRGBModified": false,
+    "spec": {
+      "l": 84,
+      "r": 112,
+      "split": 97,
+      "footSplit": 100,
+      "dx": 0.7071067811865476,
+      "dy": 0.7071067811865476
+    },
+    "phases": [
+      {
+        "frame": 0,
+        "near": {
+          "advance": -2.5,
+          "lift": 0,
+          "swing": true
+        },
+        "far": {
+          "advance": 2.5,
+          "lift": 0,
+          "swing": false
+        }
+      },
+      {
+        "frame": 1,
+        "near": {
+          "advance": -0.8333333333333326,
+          "lift": -1.7320508075688776,
+          "swing": true
+        },
+        "far": {
+          "advance": 0.8333333333333348,
+          "lift": 0,
+          "swing": false
+        }
+      },
+      {
+        "frame": 2,
+        "near": {
+          "advance": 0.8333333333333326,
+          "lift": -1.732050807568878,
+          "swing": true
+        },
+        "far": {
+          "advance": -0.8333333333333326,
+          "lift": 0,
+          "swing": false
+        }
+      },
+      {
+        "frame": 3,
+        "near": {
+          "advance": 2.5,
+          "lift": 0,
+          "swing": false
+        },
+        "far": {
+          "advance": -2.5,
+          "lift": 0,
+          "swing": true
+        }
+      },
+      {
+        "frame": 4,
+        "near": {
+          "advance": 0.8333333333333348,
+          "lift": 0,
+          "swing": false
+        },
+        "far": {
+          "advance": -0.8333333333333348,
+          "lift": -1.7320508075688763,
+          "swing": true
+        }
+      },
+      {
+        "frame": 5,
+        "near": {
+          "advance": -0.8333333333333348,
+          "lift": 0,
+          "swing": false
+        },
+        "far": {
+          "advance": 0.8333333333333348,
+          "lift": -1.7320508075688765,
+          "swing": true
+        }
+      }
+    ]
+  },
+  "right": {
+    "hip": 148,
+    "ankle": 169,
+    "stridePixels": 2.5,
+    "liftPixels": 2,
+    "footRotationDegrees": 0,
+    "source": "original-idle-frame-0",
+    "sourceRGBModified": false,
+    "spec": {
+      "l": 87,
+      "r": 113,
+      "split": 100,
+      "footSplit": 106,
+      "dx": 1,
+      "dy": 0
+    },
+    "phases": [
+      {
+        "frame": 0,
+        "near": {
+          "advance": -2.5,
+          "lift": 0,
+          "swing": true
+        },
+        "far": {
+          "advance": 2.5,
+          "lift": 0,
+          "swing": false
+        }
+      },
+      {
+        "frame": 1,
+        "near": {
+          "advance": -0.8333333333333326,
+          "lift": -1.7320508075688776,
+          "swing": true
+        },
+        "far": {
+          "advance": 0.8333333333333348,
+          "lift": 0,
+          "swing": false
+        }
+      },
+      {
+        "frame": 2,
+        "near": {
+          "advance": 0.8333333333333326,
+          "lift": -1.732050807568878,
+          "swing": true
+        },
+        "far": {
+          "advance": -0.8333333333333326,
+          "lift": 0,
+          "swing": false
+        }
+      },
+      {
+        "frame": 3,
+        "near": {
+          "advance": 2.5,
+          "lift": 0,
+          "swing": false
+        },
+        "far": {
+          "advance": -2.5,
+          "lift": 0,
+          "swing": true
+        }
+      },
+      {
+        "frame": 4,
+        "near": {
+          "advance": 0.8333333333333348,
+          "lift": 0,
+          "swing": false
+        },
+        "far": {
+          "advance": -0.8333333333333348,
+          "lift": -1.7320508075688763,
+          "swing": true
+        }
+      },
+      {
+        "frame": 5,
+        "near": {
+          "advance": -0.8333333333333348,
+          "lift": 0,
+          "swing": false
+        },
+        "far": {
+          "advance": 0.8333333333333348,
+          "lift": -1.7320508075688765,
+          "swing": true
+        }
+      }
+    ]
+  },
+  "up_right": {
+    "hip": 148,
+    "ankle": 169,
+    "stridePixels": 2.5,
+    "liftPixels": 2,
+    "footRotationDegrees": 0,
+    "source": "original-idle-frame-0",
+    "sourceRGBModified": false,
+    "spec": {
+      "l": 79,
+      "r": 109,
+      "split": 90.5,
+      "dx": 0.7071067811865476,
+      "dy": -0.7071067811865476
+    },
+    "phases": [
+      {
+        "frame": 0,
+        "near": {
+          "advance": -2.5,
+          "lift": 0,
+          "swing": true
+        },
+        "far": {
+          "advance": 2.5,
+          "lift": 0,
+          "swing": false
+        }
+      },
+      {
+        "frame": 1,
+        "near": {
+          "advance": -0.8333333333333326,
+          "lift": -1.7320508075688776,
+          "swing": true
+        },
+        "far": {
+          "advance": 0.8333333333333348,
+          "lift": 0,
+          "swing": false
+        }
+      },
+      {
+        "frame": 2,
+        "near": {
+          "advance": 0.8333333333333326,
+          "lift": -1.732050807568878,
+          "swing": true
+        },
+        "far": {
+          "advance": -0.8333333333333326,
+          "lift": 0,
+          "swing": false
+        }
+      },
+      {
+        "frame": 3,
+        "near": {
+          "advance": 2.5,
+          "lift": 0,
+          "swing": false
+        },
+        "far": {
+          "advance": -2.5,
+          "lift": 0,
+          "swing": true
+        }
+      },
+      {
+        "frame": 4,
+        "near": {
+          "advance": 0.8333333333333348,
+          "lift": 0,
+          "swing": false
+        },
+        "far": {
+          "advance": -0.8333333333333348,
+          "lift": -1.7320508075688763,
+          "swing": true
+        }
+      },
+      {
+        "frame": 5,
+        "near": {
+          "advance": -0.8333333333333348,
+          "lift": 0,
+          "swing": false
+        },
+        "far": {
+          "advance": 0.8333333333333348,
+          "lift": -1.7320508075688765,
+          "swing": true
+        }
+      }
+    ]
+  },
+  "up": {
+    "hip": 148,
+    "ankle": 169,
+    "stridePixels": 2.5,
+    "liftPixels": 2,
+    "footRotationDegrees": 0,
+    "source": "original-idle-frame-0",
+    "sourceRGBModified": false,
+    "spec": {
+      "l": 82,
+      "r": 108,
+      "split": 95,
+      "dx": 0,
+      "dy": -1
+    },
+    "phases": [
+      {
+        "frame": 0,
+        "near": {
+          "advance": -2.5,
+          "lift": 0,
+          "swing": true
+        },
+        "far": {
+          "advance": 2.5,
+          "lift": 0,
+          "swing": false
+        }
+      },
+      {
+        "frame": 1,
+        "near": {
+          "advance": -0.8333333333333326,
+          "lift": -1.7320508075688776,
+          "swing": true
+        },
+        "far": {
+          "advance": 0.8333333333333348,
+          "lift": 0,
+          "swing": false
+        }
+      },
+      {
+        "frame": 2,
+        "near": {
+          "advance": 0.8333333333333326,
+          "lift": -1.732050807568878,
+          "swing": true
+        },
+        "far": {
+          "advance": -0.8333333333333326,
+          "lift": 0,
+          "swing": false
+        }
+      },
+      {
+        "frame": 3,
+        "near": {
+          "advance": 2.5,
+          "lift": 0,
+          "swing": false
+        },
+        "far": {
+          "advance": -2.5,
+          "lift": 0,
+          "swing": true
+        }
+      },
+      {
+        "frame": 4,
+        "near": {
+          "advance": 0.8333333333333348,
+          "lift": 0,
+          "swing": false
+        },
+        "far": {
+          "advance": -0.8333333333333348,
+          "lift": -1.7320508075688763,
+          "swing": true
+        }
+      },
+      {
+        "frame": 5,
+        "near": {
+          "advance": -0.8333333333333348,
+          "lift": 0,
+          "swing": false
+        },
+        "far": {
+          "advance": 0.8333333333333348,
+          "lift": -1.7320508075688765,
+          "swing": true
+        }
+      }
+    ]
+  }
+}

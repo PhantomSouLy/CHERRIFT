@@ -1,0 +1,154 @@
+{
+  "id": "cake_deliver_cherry",
+  "buildId": "1109-cake2",
+  "frameSize": 192,
+  "pivot": [
+    96,
+    184
+  ],
+  "individualFrameSize": 256,
+  "directions": [
+    "down",
+    "down_right",
+    "right",
+    "up_right",
+    "up",
+    "up_left",
+    "left",
+    "down_left"
+  ],
+  "mirrors": {
+    "left": "right",
+    "down_left": "down_right",
+    "up_left": "up_right"
+  },
+  "states": {
+    "idle": {
+      "frames": 6,
+      "fps": 3,
+      "duration": 2.0,
+      "sheets": {
+        "down": "sheets192/cake_deliver_cherry_idle_down.png",
+        "down_right": "sheets192/cake_deliver_cherry_idle_down_right.png",
+        "right": "sheets192/cake_deliver_cherry_idle_right.png",
+        "up_right": "sheets192/cake_deliver_cherry_idle_up_right.png",
+        "up": "sheets192/cake_deliver_cherry_idle_up.png",
+        "up_left": "sheets192/cake_deliver_cherry_idle_up_left.png",
+        "left": "sheets192/cake_deliver_cherry_idle_left.png",
+        "down_left": "sheets192/cake_deliver_cherry_idle_down_left.png"
+      }
+    },
+    "idle2": {
+      "frames": 6,
+      "fps": 3,
+      "duration": 2.0,
+      "sheets": {
+        "down": "sheets192/cake_deliver_cherry_idle2_down.png",
+        "down_right": "sheets192/cake_deliver_cherry_idle2_down_right.png",
+        "right": "sheets192/cake_deliver_cherry_idle2_right.png",
+        "up_right": "sheets192/cake_deliver_cherry_idle2_up_right.png",
+        "up": "sheets192/cake_deliver_cherry_idle2_up.png",
+        "up_left": "sheets192/cake_deliver_cherry_idle2_up_left.png",
+        "left": "sheets192/cake_deliver_cherry_idle2_left.png",
+        "down_left": "sheets192/cake_deliver_cherry_idle2_down_left.png"
+      }
+    },
+    "walk": {
+      "frames": 6,
+      "fps": 8,
+      "duration": 0.75,
+      "sheets": {
+        "down": "sheets192/cake_deliver_cherry_walk_down.png",
+        "down_right": "sheets192/cake_deliver_cherry_walk_down_right.png",
+        "right": "sheets192/cake_deliver_cherry_walk_right.png",
+        "up_right": "sheets192/cake_deliver_cherry_walk_up_right.png",
+        "up": "sheets192/cake_deliver_cherry_walk_up.png",
+        "up_left": "sheets192/cake_deliver_cherry_walk_up_left.png",
+        "left": "sheets192/cake_deliver_cherry_walk_left.png",
+        "down_left": "sheets192/cake_deliver_cherry_walk_down_left.png"
+      }
+    },
+    "attack": {
+      "frames": 6,
+      "fps": 18,
+      "duration": 0.3333333333333333,
+      "sheets": {
+        "down": "sheets192/cake_deliver_cherry_attack_down.png",
+        "down_right": "sheets192/cake_deliver_cherry_attack_down_right.png",
+        "right": "sheets192/cake_deliver_cherry_attack_right.png",
+        "up_right": "sheets192/cake_deliver_cherry_attack_up_right.png",
+        "up": "sheets192/cake_deliver_cherry_attack_up.png",
+        "up_left": "sheets192/cake_deliver_cherry_attack_up_left.png",
+        "left": "sheets192/cake_deliver_cherry_attack_left.png",
+        "down_left": "sheets192/cake_deliver_cherry_attack_down_left.png"
+      }
+    },
+    "walk_attack": {
+      "frames": 6,
+      "fps": 8,
+      "duration": 0.75,
+      "sheets": {
+        "down": "sheets192/cake_deliver_cherry_walk_attack_down.png",
+        "down_right": "sheets192/cake_deliver_cherry_walk_attack_down_right.png",
+        "right": "sheets192/cake_deliver_cherry_walk_attack_right.png",
+        "up_right": "sheets192/cake_deliver_cherry_walk_attack_up_right.png",
+        "up": "sheets192/cake_deliver_cherry_walk_attack_up.png",
+        "up_left": "sheets192/cake_deliver_cherry_walk_attack_up_left.png",
+        "left": "sheets192/cake_deliver_cherry_walk_attack_left.png",
+        "down_left": "sheets192/cake_deliver_cherry_walk_attack_down_left.png"
+      }
+    },
+    "skill": {
+      "frames": 6,
+      "fps": 16,
+      "duration": 0.375,
+      "sheets": {
+        "down": "sheets192/cake_deliver_cherry_skill_down.png",
+        "down_right": "sheets192/cake_deliver_cherry_skill_down_right.png",
+        "right": "sheets192/cake_deliver_cherry_skill_right.png",
+        "up_right": "sheets192/cake_deliver_cherry_skill_up_right.png",
+        "up": "sheets192/cake_deliver_cherry_skill_up.png",
+        "up_left": "sheets192/cake_deliver_cherry_skill_up_left.png",
+        "left": "sheets192/cake_deliver_cherry_skill_left.png",
+        "down_left": "sheets192/cake_deliver_cherry_skill_down_left.png"
+      }
+    }
+  },
+  "sources": [
+    {
+      "file": "assets/player/cherry_skins/cake_deliver_cherry/sources/down.png",
+      "sha256": "55a5124bfa560a882b5e8c8818b78fa125b3c22c821cac042ed4ca5e0e507ca8"
+    },
+    {
+      "file": "assets/player/cherry_skins/cake_deliver_cherry/sources/down_right.png",
+      "sha256": "3e482128043bd271cf78eeebd5c1f0d546c50ff2cc7f3138a5543f561487a013"
+    },
+    {
+      "file": "assets/player/cherry_skins/cake_deliver_cherry/sources/right.png",
+      "sha256": "e1c7d72ccc68200cd90f5b9a1c9e05bb0be7fff6dcfce8d526d9508775b252ca"
+    },
+    {
+      "file": "assets/player/cherry_skins/cake_deliver_cherry/sources/up_right.png",
+      "sha256": "c260e6c3403825d52df9bb1622e9b18e5f49ddfff44093ca38616ae67fc13ec6"
+    },
+    {
+      "file": "assets/player/cherry_skins/cake_deliver_cherry/sources/up.png",
+      "sha256": "fa089e3c0732ef659ff6e715da9acaea279970598f60c9c63dd468a8a92b9dfc"
+    }
+  ],
+  "passive": {
+    "attackBonus": 0.01,
+    "hpBonus": 0.01
+  },
+  "skill": {
+    "type": "common_pink_burst",
+    "speedBonus": 0.05,
+    "speedSeconds": 1,
+    "visual": "existing shared Hybrid Pink Burst"
+  },
+  "notes": [
+    "Imagegen source poses; natural short-step lower-body mesh; Walk upper body equals Idle exactly.",
+    "All left directions mirror right frames.",
+    "Walk and WalkAttack use the same phase and leg pixels; no runtime recoloring or gait restart."
+  ]
+}
