@@ -1,4 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import vm from 'node:vm';import{readFileSync,existsSync}from'node:fs';
+test('all first-party HTML build queries match the runtime manifest (CI contract)',()=>{const build=JSON.parse(readFileSync('src/cherrift_manifest.json','utf8')).buildId;const values=[...readFileSync('index.html','utf8').matchAll(/(?:src|href)=["'](?:src|assets)\/[^"']+\?v=([^"']+)/gi)].map(m=>m[1]);assert.ok(values.length);assert.deepEqual([...new Set(values)],[build]);});
 const read=p=>readFileSync(p,'utf8');
 function fixture(){
  const skins={cake_deliver_cherry:{skillType:'common_pink_burst',passive:{attackBonus:.01,hpBonus:.01},burstRadius:185,burstDamageMult:2.4,knockbackDistance:112},school_uniform_cherry:{skillType:'common_pink_burst'},cherry_default:{sentinel:true}},config={worldSize:4000,player:{skins,displayWidth:116,displayHeight:116}};
