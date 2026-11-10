@@ -3,7 +3,7 @@
 (() => {
   'use strict';
   if (!window.CherriftGame || !window.CHERRIFT_CONFIG || window.CHERRIFT_CAKE_CHERRY) return;
-  const ID='cake_deliver_cherry', BUILD='1110-cake5-diagonal';
+  const ID='cake_deliver_cherry', BUILD='1110-cake8-walkears';
   const ROOT='assets/player/cherry_skins/cake_deliver_cherry_rebuilt/sheets192';
   const DIRS=['right','down_right','down','down_left','left','up_left','up','up_right'];
   const FPS={idle:3,idle2:3,walk:8,attack:18,walk_attack:8,skill:16};
