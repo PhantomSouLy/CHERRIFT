@@ -1,0 +1,29 @@
+# GitHub Pages builds this branch with Jekyll. Publish runtime files, not art
+# working copies. These exclusions do not delete anything from the repository.
+include:
+  - vendor
+exclude:
+  - node_modules
+  - vendor/bundle
+  - vendor/cache
+  - vendor/gems
+  - vendor/ruby
+  - Gemfile
+  - Gemfile.lock
+  - gemfiles
+  - .sass-cache
+  - .jekyll-cache
+  - docs
+  - tools
+  - supabase
+  - verification
+  - local-preview
+  - preview
+  - '*.patch'
+  - '*.mp4'
+  - '*-Check.png'
+  - '*-check.png'
+  - 'assets/player/cherry_skins/*/sources'
+  - 'assets/player/cherry_skins/*/frames256'
+  - 'assets/player/cherry_skins/*/preview.gif'
+  - 'assets/player/skins/*/previews'

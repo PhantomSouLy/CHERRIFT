@@ -36,6 +36,7 @@ jobs:
 
       - name: Validate every tracked file
         run: |
+          python tools/check_pages_payload.py
           npm run events:build
           git diff --exit-code -- event/catalog.json
           npm run test:admin
