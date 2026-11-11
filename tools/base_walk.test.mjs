@@ -12,7 +12,7 @@ function fixture(colors=false){
  const window={CherriftGame:Game,CHERRIFT_CONFIG:config,
   CHERRIFT_BASE_WALK:{draw(){throw Error('retired rig');}},
   CHERRIFT_ANIMATION_SMOOTHING:{draw(){throw Error('whole frames must not warp');}}};
- const context=vm.createContext({window,CherriftGame:Game,CHERRIFT_CONFIG:config,...(colors?{OffscreenCanvas:class{constructor(w,h){this.width=w;this.height=h;}toDataURL(){return this;}getContext(){const out=this;return {filter:'none',save(){},restore(){},beginPath(){},rect(){},clip(){},clearRect(){},drawImage(image){out.source=image;out.colorFilter=this.filter;}};}},Image:class{set src(canvas){Object.assign(this,{width:canvas.width,height:canvas.height,colorFilter:canvas.colorFilter});this.onload();}}}:{})});
+ const context=vm.createContext({window,CherriftGame:Game,CHERRIFT_CONFIG:config,...(colors?{OffscreenCanvas:class{constructor(w,h){this.width=w;this.height=h;}toDataURL(){return this;}getContext(){const out=this;return {filter:'none',getImageData(){const data=new Uint8ClampedArray(192*out.height*4);data.set([240,167,160,255,255,255,255,200,250,211,181,160,180,117,82,128,240,167,160,0]);data.set([220,135,146,128],170*192*4);return {data};},putImageData(pixels,x){(out.paletteWrites??=[]).push({x,data:pixels.data});},save(){},restore(){},beginPath(){},rect(){},clip(){},clearRect(){},drawImage(image){out.source=image;out.colorFilter=this.filter;}};}},Image:class{set src(canvas){Object.assign(this,{width:canvas.width,height:canvas.height,colorFilter:canvas.colorFilter,paletteWrites:canvas.paletteWrites});this.onload();}}}:{})});
  for(const n of ['cherry_geometry','cherry_shot_alignment','cherry_motion','base_cherry'])vm.runInContext(read(`src/cherrift_${n}.js`),context);
  const game=new Game();game.player={skin:'cherry_default',x:0,y:0,speed:235,moving:true,fireTimer:0,fireInterval:.42};game.mode='playing';game.t=0;
  const sheets=new Map();game.assets={get:key=>{if(!sheets.has(key))sheets.set(key,{key,width:1152,height:192});return sheets.get(key);}};
@@ -62,4 +62,14 @@ test('Walk color matching is isolated to the four requested directions and never
  Object.assign(p,{moving:true,baseFacing:'right',baseAttack:null,skillCastTimer:0});
  game.assets={get:key=>key.includes('_idle_')?{key,width:1152,height:192}:null};
  game.drawPlayer(ctx,p);assert.ok(draws.at(-1).a[0].key.includes('_idle_'));assert.equal(draws.at(-1).filter,'brightness(0.98)');
+});
+
+test('passing palette keeps alpha, skin, eyes and white details intact and targets only slots 1 and 4',()=>{
+ const {game,ctx,draws}=fixture(true);game.player.baseFacing='right';game.drawPlayer(ctx,game.player);
+ const writes=draws.at(-1).a[0].paletteWrites;assert.deepEqual(writes.map(w=>w.x),[192,768]);
+ for(const {data} of writes){
+  assert.ok(data[1]<160&&data[2]<153,'pink midtones must match the darker retained poses');
+  assert.deepEqual(Array.from(data.slice(4,20)),[255,255,255,200,250,211,181,160,180,117,82,128,240,167,160,0]);
+  assert.equal(data[3],255);const boot=170*192*4;assert.ok(data[boot]<218);assert.equal(data[boot+3],128);
+ }
 });

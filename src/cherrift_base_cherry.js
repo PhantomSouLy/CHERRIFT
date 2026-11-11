@@ -20,6 +20,44 @@
   });
   const walkColorCache = new WeakMap();
   const primedAssets = new WeakSet();
+  // The two passing poses came from a lighter source atlas. Match their pink
+  // material tones to the other four poses, after the shared Idle palette grade.
+  const PASSING_CURVES = [[[0,0],[185,178],[201,194],[210,207],[222,219],[236,234],[245,244],[248,247],[250,250],[251,251],[253,252],[255,255]],[[0,0],[98,84],[110,95],[117,104],[135,120],[155,143],[170,159],[180,169],[187,176],[192,182],[195,189],[204,206],[255,255]],[[0,0],[95,80],[106,91],[114,100],[131,115],[149,137],[164,151],[173,160],[180,167],[184,173],[188,180],[196,195],[255,255]]];
+  const PASSING_LUT = PASSING_CURVES.map(curve => Uint8Array.from({length:256}, (_, value) => {
+    let i = 1;
+    while (i < curve.length - 1 && value > curve[i][0]) i++;
+    const [x0,y0] = curve[i - 1], [x1,y1] = curve[i];
+    return Math.round(y0 + (y1 - y0) * (value - x0) / (x1 - x0));
+  }));
+  function smoothRange(low, high, value) {
+    const t = Math.max(0, Math.min(1, (value - low) / (high - low)));
+    return t * t * (3 - 2 * t);
+  }
+  function matchPassingColors(color, facing, height) {
+    if (facing !== "right" && facing !== "left") return;
+    if (!color.getImageData || !color.putImageData) return;
+    for (const frame of [1,4]) {
+      const pixels = color.getImageData(frame * 192, 0, 192, height);
+      const data = pixels.data;
+      const bootOffset = frame === 1 ? [13,11,13] : [5,3,3];
+      for (let i = 0; i < data.length; i += 4) {
+        if (!data[i + 3]) continue;
+        const r = data[i], g = data[i + 1], b = data[i + 2];
+        // Pink hair/clothing only: retain neutral whites, warm skin and eyes.
+        const weight = smoothRange(20,55,r - Math.min(g,b)) * (1 - smoothRange(12,24,g - b));
+        if (!weight) continue;
+        const row = Math.floor(i / (192 * 4));
+        const boot = weight * smoothRange(150,162,row) * smoothRange(3,10,b - g);
+        for (let channel = 0; channel < 3; channel++) {
+          const value = data[i + channel];
+          const strength = channel === 0 ? .4 : .9;
+          data[i + channel] = Math.round(value + strength * weight * (PASSING_LUT[channel][value] - value)
+            - boot * bootOffset[channel]);
+        }
+      }
+      color.putImageData(pixels, frame * 192, 0);
+    }
+  }
   function colorMatchedWalk(image, facing, ctx) {
     const filter = WALK_COLOR[facing];
     if (!filter) return image;
@@ -51,6 +89,7 @@
       }
     }
     color.filter = "none";
+    matchPassingColors(color, facing, height);
     if (!walkColorCache.has(image)) walkColorCache.set(image, new Map());
     const entry = {image};
     walkColorCache.get(image).set(filter, entry);
@@ -68,7 +107,7 @@
 
   config.states = Object.fromEntries(Object.entries(FPS).map(([name, fps]) => [name, {
     frames:6, fps, duration:6 / fps, loop:["idle", "walk", "walk_attack"].includes(name), pivot:PIVOT,
-    dirs:Object.fromEntries(DIRECTIONS.map(dir => [dir, `${ROOT}/base_cherry_${name}_${dir}.png?v=1111-base6-forward-step`]))
+    dirs:Object.fromEntries(DIRECTIONS.map(dir => [dir, `${ROOT}/base_cherry_${name}_${dir}.png?v=1111-base7-steady-color`]))
   }]));
   config.attackMovementMode = "mobile";
   config.attackMoveSpeedMultiplier = 1;
@@ -231,7 +270,7 @@
     ctx.restore();
   };
 
-  window.CHERRIFT_BASE_CHERRY = Object.freeze({version:"1111-base6-forward-step", directions:[...DIRECTIONS]});
+  window.CHERRIFT_BASE_CHERRY = Object.freeze({version:"1111-base7-steady-color", directions:[...DIRECTIONS]});
 })();
 
 

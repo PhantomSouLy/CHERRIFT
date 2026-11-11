@@ -1,0 +1,41 @@
+{
+  "directions": [
+    "right",
+    "left"
+  ],
+  "framesZeroBased": [
+    1,
+    4
+  ],
+  "referenceFramesZeroBased": [
+    0,
+    2,
+    3,
+    5
+  ],
+  "curveStrengthRGB": [
+    0.4,
+    0.9,
+    0.9
+  ],
+  "materialProtection": "neutral whites and warm skin/eyes gated by chroma and green-minus-blue",
+  "pinkBootTransitionRows": [
+    150,
+    162
+  ],
+  "bootOffsetsRGB": {
+    "frame1": [
+      13,
+      11,
+      13
+    ],
+    "frame4": [
+      5,
+      3,
+      3
+    ]
+  },
+  "curvesAreAppliedAfter": "existing v6 fixed shared Idle palette filter",
+  "runs": "once per loaded side Walk atlas, not per animation tick",
+  "alphaWritten": false
+}
