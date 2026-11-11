@@ -1,0 +1,163 @@
+{
+  "source": "complete imagegen figures",
+  "bodyPartComposition": false,
+  "recoloredPixels": false,
+  "states": [
+    "walk"
+  ],
+  "directions": {
+    "right": {
+      "uniformScale": 0.37410071942446044,
+      "registration": [
+        [
+          28,
+          184,
+          91.5
+        ],
+        [
+          28,
+          184,
+          91.5
+        ],
+        [
+          28,
+          184,
+          91.5
+        ],
+        [
+          28,
+          184,
+          91.5
+        ],
+        [
+          28,
+          184,
+          91.5
+        ],
+        [
+          28,
+          184,
+          91.5
+        ]
+      ],
+      "frames": 6
+    },
+    "left": {
+      "uniformScale": 0.37410071942446044,
+      "registration": [
+        [
+          28,
+          184,
+          100.5
+        ],
+        [
+          28,
+          184,
+          100.5
+        ],
+        [
+          28,
+          184,
+          100.5
+        ],
+        [
+          28,
+          184,
+          100.5
+        ],
+        [
+          28,
+          184,
+          100.5
+        ],
+        [
+          28,
+          184,
+          100.5
+        ]
+      ],
+      "frames": 6
+    },
+    "down_right": {
+      "uniformScale": 0.36705882352941177,
+      "registration": [
+        [
+          28,
+          184,
+          81.5
+        ],
+        [
+          28,
+          184,
+          81.5
+        ],
+        [
+          28,
+          184,
+          81.5
+        ],
+        [
+          28,
+          184,
+          81.5
+        ],
+        [
+          28,
+          184,
+          81.5
+        ],
+        [
+          28,
+          184,
+          81.5
+        ]
+      ],
+      "frames": 6
+    },
+    "down_left": {
+      "uniformScale": 0.36705882352941177,
+      "registration": [
+        [
+          28,
+          184,
+          110.5
+        ],
+        [
+          28,
+          184,
+          110.5
+        ],
+        [
+          28,
+          184,
+          110.5
+        ],
+        [
+          28,
+          184,
+          110.5
+        ],
+        [
+          28,
+          184,
+          110.5
+        ],
+        [
+          28,
+          184,
+          110.5
+        ]
+      ],
+      "frames": 6
+    }
+  },
+  "frames": 24,
+  "rightPassingFrames": {
+    "frames": [
+      1,
+      4
+    ],
+    "source": "right-passing.png",
+    "selection": "complete original figure; no leg compositing"
+  }
+}

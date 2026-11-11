@@ -1,7 +1,7 @@
 {
   "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "1110-cake13-alternating-walk",
+  "buildId": "1111-base6-forward-step",
   "entrypoints": {
     "application": "src/cherrift_app.js",
     "menuAudio": "src/cherrift_menu_audio.js",
@@ -47,7 +47,6 @@
     "animationFlow": "src/cherrift_animation_flow.js",
     "animationSmoothing": "src/cherrift_animation_smoothing.js",
     "walkCycle": "src/cherrift_walk_cycle.js",
-    "baseWalk": "src/cherrift_base_walk.js",
     "eventHub": "src/cherrift_event_hub.js",
     "sportData": "src/cherrift_sport_data.js",
     "sportCherry": "src/cherrift_sport_cherry.js",

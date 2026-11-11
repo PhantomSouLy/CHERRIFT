@@ -1,0 +1,22 @@
+{
+  "generation": "built-in imagegen, source atlas identity and pose guides",
+  "selection": {
+    "frame3": "opposite.png figure0",
+    "frame4": "opposite.png figure1",
+    "frame5": "passing.png figure2"
+  },
+  "untouchedFrames": [
+    0,
+    1,
+    2
+  ],
+  "mirrors": "whole poses +1px origin",
+  "bodyPartComposition": false,
+  "uniformScaling": "one uniform scale for opposite source group, one whole-figure scale for passing source",
+  "knownLimitation": "perceptual anatomy is reviewed visually; unit tests do not prove it",
+  "offlinePixelRecoloring": false,
+  "runtimeWholeCellColorMatch": {
+    "frames3and4": "saturate(0.95) brightness(1.015) before retained v5 grade",
+    "frame5": "saturate(1.04) brightness(0.996) before retained v5 grade"
+  }
+}

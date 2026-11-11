@@ -1,0 +1,13 @@
+{
+  "input": "../whole-walk-v3/down_right.png",
+  "selectedGeneratedSource": "down_right.png",
+  "generation": "built-in imagegen precise boot yaw edit, original atlas referenced",
+  "runtimeChanges": [
+    "walk/down_right",
+    "walk/down_left"
+  ],
+  "exporter": "tools/export_base_walk_v4.py",
+  "fullFigurePacking": true,
+  "limbComposition": false,
+  "recoloring": false
+}

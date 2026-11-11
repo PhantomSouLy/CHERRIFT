@@ -1,0 +1,47 @@
+{
+  "build": "1111-base5-palette",
+  "baselineHead": "670a39be8ae0021114158e7fc3cda6e34d358688",
+  "changes": "runtime color matching only for Walk right, left, down_right, down_left",
+  "baseStripsByteIdenticalToV4": 48,
+  "geometryByteIdenticalToV4": true,
+  "nativeGradedFrames": 24,
+  "nativeOtherFramesByteIdentical": 264,
+  "nativeRenderedAlphaMaxDifference": 0,
+  "sourceAndCachedAlphaMaxDifference": 0,
+  "targetedTestsPassed": 22,
+  "targetedTestsFailed": 0,
+  "sourceValidation": "PASS: 165 JavaScript, 34 CSS, 210 source files",
+  "pagesRuntimeReferences": "PASS; sources excluded",
+  "offlineHTML": "PASS: 48 canvases, pause, step, reversible v4/v5 comparison",
+  "freshPhoneGameplayTest": false,
+  "paletteMeasurement": {
+    "right": {
+      "parameters": [
+        1.0299999774245492,
+        0.9400008367946899,
+        0.9712759349974366,
+        1.9608553639182629
+      ],
+      "filter": "saturate(0.97128) hue-rotate(1.96086deg) contrast(0.94000) brightness(1.03000)",
+      "hairQuantileMeanAbsoluteRGBErrorBefore": 3.125,
+      "hairQuantileMeanAbsoluteRGBErrorAfter": 1.608798990128948,
+      "reference": "same direction original Idle, all six frames, opaque hair pixels"
+    },
+    "down_right": {
+      "parameters": [
+        1.0299999513552862,
+        0.9990829700531292,
+        0.8991377516550237,
+        5.297663121638041
+      ],
+      "filter": "saturate(0.89914) hue-rotate(5.29766deg) contrast(0.99908) brightness(1.03000)",
+      "hairQuantileMeanAbsoluteRGBErrorBefore": 5.458333333333333,
+      "hairQuantileMeanAbsoluteRGBErrorAfter": 3.250239771823878,
+      "reference": "same direction original Idle, all six frames, opaque hair pixels"
+    }
+  },
+  "limitations": [
+    "Canvas 2D filter and PNG data URL decoding required for color grade; otherwise original v4 artwork remains visible",
+    "Color distribution matching reduces drift, not an assertion that different poses have identical pixel colors"
+  ]
+}

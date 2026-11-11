@@ -1,0 +1,83 @@
+{
+  "source": "complete imagegen figures",
+  "bodyPartComposition": false,
+  "recoloredPixels": false,
+  "states": [
+    "walk"
+  ],
+  "directions": {
+    "down_right": {
+      "uniformScale": 0.3627906976744186,
+      "registration": [
+        [
+          28,
+          184,
+          81.5
+        ],
+        [
+          28,
+          184,
+          81.5
+        ],
+        [
+          28,
+          184,
+          81.5
+        ],
+        [
+          28,
+          184,
+          81.5
+        ],
+        [
+          28,
+          184,
+          81.5
+        ],
+        [
+          28,
+          184,
+          81.5
+        ]
+      ],
+      "frames": 6
+    },
+    "down_left": {
+      "uniformScale": 0.3627906976744186,
+      "registration": [
+        [
+          28,
+          184,
+          110.5
+        ],
+        [
+          28,
+          184,
+          110.5
+        ],
+        [
+          28,
+          184,
+          110.5
+        ],
+        [
+          28,
+          184,
+          110.5
+        ],
+        [
+          28,
+          184,
+          110.5
+        ],
+        [
+          28,
+          184,
+          110.5
+        ]
+      ],
+      "frames": 6
+    }
+  },
+  "frames": 12
+}

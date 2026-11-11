@@ -42,7 +42,7 @@ function fixture(quality='high') {
     createLinearGradient(){return {addColorStop(){}};},createRadialGradient(){return {addColorStop(){}};}};
   for(const name of ['translate','rotate','beginPath','moveTo','lineTo','quadraticCurveTo','bezierCurveTo','fill','stroke','arc','ellipse'])c[name]=()=>{};
   g.assets={get:key=>key==='basePetalTraceAtlas'?{width:1536,height:1024,isAtlas:true}:{width:1152,height:192}};
-  window.CHERRIFT_CHERRY_MOTION={draw:(ctx,image,id,state,dir,frame,p)=>ctx.drawImage(p)};
+  window.CHERRIFT_CHERRY_MOTION={renderPose:(ctx,image,id,state,dir,frame,p)=>ctx.drawImage(p)};
   return {g,window,c,drawn,textures,context,AssetLoader};
 }
 test('one timed Petal Trace shot uses the unchanged projectile stats and actual collision damage',()=>{

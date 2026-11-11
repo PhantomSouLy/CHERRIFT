@@ -1,0 +1,26 @@
+{
+  "right": {
+    "parameters": [
+      1.0299999774245492,
+      0.9400008367946899,
+      0.9712759349974366,
+      1.9608553639182629
+    ],
+    "filter": "saturate(0.97128) hue-rotate(1.96086deg) contrast(0.94000) brightness(1.03000)",
+    "hairQuantileMeanAbsoluteRGBErrorBefore": 3.125,
+    "hairQuantileMeanAbsoluteRGBErrorAfter": 1.608798990128948,
+    "reference": "same direction original Idle, all six frames, opaque hair pixels"
+  },
+  "down_right": {
+    "parameters": [
+      1.0299999513552862,
+      0.9990829700531292,
+      0.8991377516550237,
+      5.297663121638041
+    ],
+    "filter": "saturate(0.89914) hue-rotate(5.29766deg) contrast(0.99908) brightness(1.03000)",
+    "hairQuantileMeanAbsoluteRGBErrorBefore": 5.458333333333333,
+    "hairQuantileMeanAbsoluteRGBErrorAfter": 3.250239771823878,
+    "reference": "same direction original Idle, all six frames, opaque hair pixels"
+  }
+}

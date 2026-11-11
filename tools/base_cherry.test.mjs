@@ -5,7 +5,7 @@ import vm from "node:vm";
 
 function fixture() {
   class Game {
-    movePlayer(v, dt) { this.player.x += v.x * dt; }
+    movePlayer(v, dt) { if(this.blocked)return; this.player.x += v.x * this.player.speed * dt; this.player.y += v.y * this.player.speed * dt; }
     autoFire() { this.delegated = "fire"; }
     skill() {
       const p = this.player;
@@ -29,7 +29,7 @@ function fixture() {
   const game = new Game();
   Object.assign(game, {mode:"playing", t:0, bullets:[], enemies:[{x:100, y:-100}],
     input:{getMoveVector:()=>({x:0,y:0})},
-    player:{skin:"cherry_default", x:0,y:0, moving:false,lastDir:"down",fireTimer:0,
+    player:{skin:"cherry_default", x:0,y:0,speed:235, moving:false,lastDir:"down",fireTimer:0,
       fireInterval:.42,damage:20,bulletSpeed:560,skillTimer:0,skillCastTimer:0}});
   const calls = [];
   game.assets = {get:key=>({key,width:1152,height:192})};
@@ -53,7 +53,7 @@ test("all 48 configured strips exist, are 1152x192 and have six frames", () => {
   assert.ok(html.indexOf('src/cherrift_base_cherry.js') > html.indexOf('src/cherrift_app.js'));
 });
 
-test("moving attacks fire once, preserve walk direction and switch sheets without resetting the cast", () => {
+test("moving attacks fire once, preserve walk direction and keep the gait independent of the cast", () => {
   const {game,ctx,calls} = fixture(); const p=game.player;
   p.moving=true; game.movePlayer({x:-1,y:1},.01); game.autoFire();
   assert.equal(p.baseFacing,"down_left"); assert.equal(p.attackDir,"up_right");
@@ -61,7 +61,7 @@ test("moving attacks fire once, preserve walk direction and switch sheets withou
   assert.equal(game.bullets.length,1); assert.equal(game.bullets[0].dmg,20);
   assert.ok(calls.at(-1)[0].key.endsWith("walk_attack_up_right"));
   const sourceX=calls.at(-1)[1]; p.moving=false; game.drawPlayer(ctx,p);
-  assert.ok(calls.at(-1)[0].key.endsWith("attack_up_right")); assert.equal(calls.at(-1)[1],sourceX);
+  assert.ok(calls.at(-1)[0].key.endsWith("attack_up_right")); assert.equal(calls.at(-1)[1],3*192); assert.equal(sourceX,0);
   game.autoFire(); game.update(.1); assert.equal(game.bullets.length,1);
   game.mode="paused"; const elapsed=p.baseAttack.elapsed;game.update(.2);assert.equal(p.baseAttack.elapsed,elapsed);
   game.mode="playing";game.update(.2);assert.equal(p.baseAttack,null);assert.equal(game.bullets.length,1);

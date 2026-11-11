@@ -1,0 +1,29 @@
+{
+  "walk_right": {
+    "main": "right.png",
+    "mainFrames": [
+      0,
+      2,
+      3,
+      5
+    ],
+    "passing": "right-passing.png",
+    "passingFrames": [
+      1,
+      4
+    ]
+  },
+  "walk_down_right": {
+    "main": "down_right.png",
+    "mainFrames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  "leftPairs": "mirror of complete figures, +1px registration compensation",
+  "method": "whole-pose selection only, no body part composition"
+}

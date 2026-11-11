@@ -59,8 +59,9 @@ test('all five refreshed skins and all their registered states have motion data;
  for(const meta of Object.values(maps)){assert.equal(meta.offsets.length,meta.frames);assert.ok(existsSync('assets/player/animation_flow/'+meta.file));pairs+=meta.frames;}assert.equal(pairs,1060);
 });
 test('render adapters use the shared fractional sampler and leave gameplay outside the interpolation engine',()=>{
- for(const file of ['base_cherry','archer_chibi','ninja_chibi'])assert.match(readFileSync(`src/cherrift_${file}.js`,'utf8'),/width,height,phase/);
+ for(const file of ['archer_chibi','ninja_chibi'])assert.match(readFileSync(`src/cherrift_${file}.js`,'utf8'),/width,height,phase/);
  for(const file of ['sakura_dance_chibi','succubus_chibi'])assert.match(readFileSync(`src/cherrift_${file}.js`,'utf8'),/CHERRIFT_ANIMATION_SMOOTHING/);
+ assert.match(readFileSync('src/cherrift_base_cherry.js','utf8'),/CHERRIFT_CHERRY_MOTION\?\.renderPose/);
  assert.doesNotMatch(code,/damageEnemy|Math\.random|fireTimer\s*=|skillTimer\s*=/);
 });
 

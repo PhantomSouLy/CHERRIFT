@@ -1,0 +1,116 @@
+{
+  "method": "complete authored poses, uniform directional scale, ear/root registration",
+  "limbComposition": false,
+  "recoloredPixels": false,
+  "sheets": {
+    "walk/right": {
+      "frames": 6,
+      "directionalScale": 0.5208681135225376,
+      "anchor": [
+        91.5,
+        184
+      ],
+      "earTargetX": 100.5
+    },
+    "walk/left": {
+      "frames": 6,
+      "directionalScale": 0.5208681135225376,
+      "anchor": [
+        100.5,
+        184
+      ],
+      "earTargetX": 91.5
+    },
+    "walk_attack/right": {
+      "frames": 6,
+      "directionalScale": 0.5208681135225376,
+      "anchor": [
+        91.5,
+        184
+      ],
+      "earTargetX": 100.5
+    },
+    "walk_attack/left": {
+      "frames": 6,
+      "directionalScale": 0.5208681135225376,
+      "anchor": [
+        100.5,
+        184
+      ],
+      "earTargetX": 91.5
+    },
+    "walk/down_right": {
+      "frames": 6,
+      "directionalScale": 0.5234899328859061,
+      "anchor": [
+        81.5,
+        184
+      ],
+      "earTargetX": 110.5
+    },
+    "walk/down_left": {
+      "frames": 6,
+      "directionalScale": 0.5234899328859061,
+      "anchor": [
+        110.5,
+        184
+      ],
+      "earTargetX": 81.5
+    },
+    "walk_attack/down_right": {
+      "frames": 6,
+      "directionalScale": 0.5234899328859061,
+      "anchor": [
+        81.5,
+        184
+      ],
+      "earTargetX": 110.5
+    },
+    "walk_attack/down_left": {
+      "frames": 6,
+      "directionalScale": 0.5234899328859061,
+      "anchor": [
+        110.5,
+        184
+      ],
+      "earTargetX": 81.5
+    },
+    "walk/up_right": {
+      "frames": 6,
+      "directionalScale": 0.52,
+      "anchor": [
+        95.0,
+        184
+      ],
+      "earTargetX": 97.0
+    },
+    "walk/up_left": {
+      "frames": 6,
+      "directionalScale": 0.52,
+      "anchor": [
+        97.0,
+        184
+      ],
+      "earTargetX": 95.0
+    },
+    "walk_attack/up_right": {
+      "frames": 6,
+      "directionalScale": 0.52,
+      "anchor": [
+        95.0,
+        184
+      ],
+      "earTargetX": 97.0
+    },
+    "walk_attack/up_left": {
+      "frames": 6,
+      "directionalScale": 0.52,
+      "anchor": [
+        97.0,
+        184
+      ],
+      "earTargetX": 95.0
+    }
+  },
+  "sourceSubstitutions": []
+}

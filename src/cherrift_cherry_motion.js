@@ -3,7 +3,7 @@
 (() => {
   'use strict';
   if (!window.CherriftGame || window.CHERRIFT_CHERRY_MOTION) return;
-  const ids = new Set(['cherry_default', 'archer_cherry', 'ninja_cherry']);
+  const ids = new Set(['archer_cherry', 'ninja_cherry']);
   const proto = CherriftGame.prototype;
   const move = proto.movePlayer;
   proto.movePlayer = function moveCherryWithStride(v, dt) {
@@ -50,7 +50,6 @@
       p.x - footX * w / 192, p.y + 30 - bottom * h / 192, w, h);
   }
   function draw(ctx,image,id,state,dir,frame,p,width,height,phase=frame,resources={}){
-    if(id==='cherry_default'&&window.CHERRIFT_BASE_WALK?.draw(ctx,image,state,dir,phase,(p.cherryStrideTime||0)*8,p,width,height,drawRaw,resources.walkImage||(state==='walk'?image:null)))return;
     const smooth=window.CHERRIFT_ANIMATION_SMOOTHING;
     if(smooth?.draw(ctx,image,id,state,dir,phase,p,width,height,{
       makeFrame:(c,f)=>drawRaw(c,image,id,state,dir,f,{...p,x:96,y:154,__smoothSkipGait:true},192,192),

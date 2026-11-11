@@ -1,0 +1,73 @@
+{
+  "changedStrips": [
+    "base_cherry_walk_down_left.png",
+    "base_cherry_walk_down_right.png"
+  ],
+  "untouchedStrips": 46,
+  "replacedFullPoses": [
+    {
+      "direction": "base_cherry_walk_down_left",
+      "frame": 3,
+      "bounds": [
+        59,
+        27,
+        166,
+        185
+      ]
+    },
+    {
+      "direction": "base_cherry_walk_down_left",
+      "frame": 4,
+      "bounds": [
+        59,
+        27,
+        166,
+        184
+      ]
+    },
+    {
+      "direction": "base_cherry_walk_down_left",
+      "frame": 5,
+      "bounds": [
+        53,
+        27,
+        161,
+        185
+      ]
+    },
+    {
+      "direction": "base_cherry_walk_down_right",
+      "frame": 3,
+      "bounds": [
+        27,
+        27,
+        134,
+        185
+      ]
+    },
+    {
+      "direction": "base_cherry_walk_down_right",
+      "frame": 4,
+      "bounds": [
+        27,
+        27,
+        134,
+        184
+      ]
+    },
+    {
+      "direction": "base_cherry_walk_down_right",
+      "frame": 5,
+      "bounds": [
+        32,
+        27,
+        140,
+        185
+      ]
+    }
+  ],
+  "firstHalf": "RGBA exact",
+  "otherGeometry": "unchanged",
+  "mirror": "RGBA exact, 1px pivot compensation",
+  "review": "visual direction and stance review; not automatic anatomy proof"
+}

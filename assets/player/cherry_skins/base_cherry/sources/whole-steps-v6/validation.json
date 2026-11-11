@@ -1,0 +1,96 @@
+{
+  "build": "1111-base6-forward-step",
+  "baselineHead": "670a39be8ae0021114158e7fc3cda6e34d358688",
+  "scope": "Walk down_right/down_left frames 3,4,5 (zero based), complete replacement poses",
+  "targetedTests": {
+    "passed": 22,
+    "failed": 0
+  },
+  "sourceValidation": "PASS: 165 JavaScript / 34 CSS / 210 source files",
+  "pagesReferences": "PASS, development sources excluded; runtime payload 551.5MiB",
+  "reproducibleExporter": "PASS, same PNG bytes after rerun",
+  "art": {
+    "changedStrips": [
+      "base_cherry_walk_down_left.png",
+      "base_cherry_walk_down_right.png"
+    ],
+    "untouchedStrips": 46,
+    "replacedFullPoses": [
+      {
+        "direction": "base_cherry_walk_down_left",
+        "frame": 3,
+        "bounds": [
+          59,
+          27,
+          166,
+          185
+        ]
+      },
+      {
+        "direction": "base_cherry_walk_down_left",
+        "frame": 4,
+        "bounds": [
+          59,
+          27,
+          166,
+          184
+        ]
+      },
+      {
+        "direction": "base_cherry_walk_down_left",
+        "frame": 5,
+        "bounds": [
+          53,
+          27,
+          161,
+          185
+        ]
+      },
+      {
+        "direction": "base_cherry_walk_down_right",
+        "frame": 3,
+        "bounds": [
+          27,
+          27,
+          134,
+          185
+        ]
+      },
+      {
+        "direction": "base_cherry_walk_down_right",
+        "frame": 4,
+        "bounds": [
+          27,
+          27,
+          134,
+          184
+        ]
+      },
+      {
+        "direction": "base_cherry_walk_down_right",
+        "frame": 5,
+        "bounds": [
+          32,
+          27,
+          140,
+          185
+        ]
+      }
+    ],
+    "firstHalf": "RGBA exact",
+    "otherGeometry": "unchanged",
+    "mirror": "RGBA exact, 1px pivot compensation",
+    "review": "visual direction and stance review; not automatic anatomy proof"
+  },
+  "nativePreview": {
+    "changedFullPoses": 6,
+    "unchangedRenderedFrames": 282,
+    "liveCanvases": 48,
+    "comparison": "reversible and synchronized",
+    "controls": "pause and step pass",
+    "jsErrors": []
+  },
+  "reviewMethod": "complete-pose visual comparison of thigh, knee, ankle and toe direction plus synchronized full cycle; automated checks do not prove anatomy",
+  "newPhoneGameplayTest": false,
+  "previousVersionsRequired": false
+}

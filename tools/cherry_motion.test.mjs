@@ -10,7 +10,7 @@ function fixture(){
   const window={CherriftGame:Game};
   const context=vm.createContext({window,CherriftGame:Game,Math});
   for(const name of ['geometry','motion']) vm.runInContext(readFileSync(`src/cherrift_cherry_${name}.js`,'utf8'),context);
-  const game=new Game();game.player={skin:'cherry_default',x:10,y:20,speed:235};
+  const game=new Game();game.player={skin:'archer_cherry',x:10,y:20,speed:235};
   return {window,context,game,motion:window.CHERRIFT_CHERRY_MOTION};
 }
 

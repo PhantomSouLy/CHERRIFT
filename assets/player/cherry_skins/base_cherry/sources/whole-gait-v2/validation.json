@@ -1,0 +1,406 @@
+{
+  "build": "1111-base2-painted-steps",
+  "changedSheets": [
+    "base_cherry_walk_up_left.png",
+    "base_cherry_walk_down_left.png",
+    "base_cherry_walk_down_right.png",
+    "base_cherry_walk_attack_up_left.png",
+    "base_cherry_walk_attack_left.png",
+    "base_cherry_walk_left.png",
+    "base_cherry_walk_attack_down_left.png",
+    "base_cherry_walk_attack_down_right.png",
+    "base_cherry_walk_attack_up_right.png",
+    "base_cherry_walk_up_right.png",
+    "base_cherry_walk_attack_right.png",
+    "base_cherry_walk_right.png"
+  ],
+  "completeFrames": 72,
+  "alphaSafeMarginErrors": [],
+  "mirrors": "exact RGBA mirror +1px anchor compensation",
+  "lowerPoseDifference": {
+    "walk/right": 21.890975560897434,
+    "walk_attack/right": 22.267928685897434,
+    "walk/down_right": 20.918018830128204,
+    "walk_attack/down_right": 19.028395432692307,
+    "walk/up_right": 19.682942708333332,
+    "walk_attack/up_right": 20.163711939102566,
+    "walk/left": 21.890975560897434,
+    "walk_attack/left": 22.267928685897434,
+    "walk/down_left": 20.918018830128204,
+    "walk_attack/down_left": 19.028395432692307,
+    "walk/up_left": 19.682942708333332,
+    "walk_attack/up_left": 20.163711939102566
+  },
+  "hairMedianRGB": {
+    "walk/right/0": [
+      246.0,
+      161.0,
+      157.0
+    ],
+    "walk/right/1": [
+      245.0,
+      163.0,
+      157.0
+    ],
+    "walk/right/2": [
+      246.0,
+      162.0,
+      157.0
+    ],
+    "walk/right/3": [
+      247.0,
+      164.0,
+      160.0
+    ],
+    "walk/right/4": [
+      247.0,
+      164.0,
+      159.0
+    ],
+    "walk/right/5": [
+      247.0,
+      164.0,
+      160.0
+    ],
+    "walk_attack/right/0": [
+      246.0,
+      163.0,
+      157.0
+    ],
+    "walk_attack/right/1": [
+      247.0,
+      164.0,
+      159.0
+    ],
+    "walk_attack/right/2": [
+      246.0,
+      162.0,
+      157.0
+    ],
+    "walk_attack/right/3": [
+      246.0,
+      163.0,
+      159.0
+    ],
+    "walk_attack/right/4": [
+      247.0,
+      165.0,
+      161.0
+    ],
+    "walk_attack/right/5": [
+      247.0,
+      164.0,
+      160.0
+    ],
+    "walk/down_right/0": [
+      244.0,
+      168.0,
+      161.0
+    ],
+    "walk/down_right/1": [
+      244.0,
+      168.0,
+      161.0
+    ],
+    "walk/down_right/2": [
+      244.0,
+      168.0,
+      161.0
+    ],
+    "walk/down_right/3": [
+      247.0,
+      167.0,
+      162.0
+    ],
+    "walk/down_right/4": [
+      246.0,
+      167.0,
+      162.0
+    ],
+    "walk/down_right/5": [
+      246.0,
+      166.0,
+      161.0
+    ],
+    "walk_attack/down_right/0": [
+      245.0,
+      166.0,
+      160.0
+    ],
+    "walk_attack/down_right/1": [
+      244.0,
+      165.0,
+      159.0
+    ],
+    "walk_attack/down_right/2": [
+      244.0,
+      166.0,
+      160.0
+    ],
+    "walk_attack/down_right/3": [
+      247.0,
+      168.0,
+      163.0
+    ],
+    "walk_attack/down_right/4": [
+      247.0,
+      169.0,
+      163.0
+    ],
+    "walk_attack/down_right/5": [
+      247.0,
+      168.0,
+      163.0
+    ],
+    "walk/up_right/0": [
+      238.0,
+      157.0,
+      151.0
+    ],
+    "walk/up_right/1": [
+      238.0,
+      157.0,
+      151.5
+    ],
+    "walk/up_right/2": [
+      238.0,
+      156.0,
+      151.0
+    ],
+    "walk/up_right/3": [
+      240.0,
+      162.0,
+      157.0
+    ],
+    "walk/up_right/4": [
+      240.0,
+      162.0,
+      157.0
+    ],
+    "walk/up_right/5": [
+      240.0,
+      161.0,
+      156.0
+    ],
+    "walk_attack/up_right/0": [
+      239.0,
+      157.0,
+      151.0
+    ],
+    "walk_attack/up_right/1": [
+      237.0,
+      154.0,
+      149.0
+    ],
+    "walk_attack/up_right/2": [
+      238.0,
+      155.0,
+      150.0
+    ],
+    "walk_attack/up_right/3": [
+      241.0,
+      162.0,
+      157.0
+    ],
+    "walk_attack/up_right/4": [
+      241.0,
+      161.0,
+      156.0
+    ],
+    "walk_attack/up_right/5": [
+      241.0,
+      162.0,
+      156.0
+    ],
+    "walk/left/0": [
+      246.0,
+      161.0,
+      157.0
+    ],
+    "walk/left/1": [
+      245.0,
+      163.0,
+      157.0
+    ],
+    "walk/left/2": [
+      246.0,
+      162.0,
+      157.0
+    ],
+    "walk/left/3": [
+      247.0,
+      164.0,
+      160.0
+    ],
+    "walk/left/4": [
+      247.0,
+      164.0,
+      159.0
+    ],
+    "walk/left/5": [
+      247.0,
+      164.0,
+      160.0
+    ],
+    "walk_attack/left/0": [
+      246.0,
+      163.0,
+      157.0
+    ],
+    "walk_attack/left/1": [
+      247.0,
+      164.0,
+      159.0
+    ],
+    "walk_attack/left/2": [
+      246.0,
+      162.0,
+      157.0
+    ],
+    "walk_attack/left/3": [
+      246.0,
+      163.0,
+      159.0
+    ],
+    "walk_attack/left/4": [
+      247.0,
+      165.0,
+      161.0
+    ],
+    "walk_attack/left/5": [
+      247.0,
+      164.0,
+      160.0
+    ],
+    "walk/down_left/0": [
+      244.0,
+      168.0,
+      161.0
+    ],
+    "walk/down_left/1": [
+      244.0,
+      168.0,
+      161.0
+    ],
+    "walk/down_left/2": [
+      244.0,
+      168.0,
+      161.0
+    ],
+    "walk/down_left/3": [
+      247.0,
+      167.0,
+      162.0
+    ],
+    "walk/down_left/4": [
+      246.0,
+      167.0,
+      162.0
+    ],
+    "walk/down_left/5": [
+      246.0,
+      166.0,
+      161.0
+    ],
+    "walk_attack/down_left/0": [
+      245.0,
+      166.0,
+      160.0
+    ],
+    "walk_attack/down_left/1": [
+      244.0,
+      165.0,
+      159.0
+    ],
+    "walk_attack/down_left/2": [
+      244.0,
+      166.0,
+      160.0
+    ],
+    "walk_attack/down_left/3": [
+      247.0,
+      168.0,
+      163.0
+    ],
+    "walk_attack/down_left/4": [
+      247.0,
+      169.0,
+      163.0
+    ],
+    "walk_attack/down_left/5": [
+      247.0,
+      168.0,
+      163.0
+    ],
+    "walk/up_left/0": [
+      238.0,
+      157.0,
+      151.0
+    ],
+    "walk/up_left/1": [
+      238.0,
+      157.0,
+      151.5
+    ],
+    "walk/up_left/2": [
+      238.0,
+      156.0,
+      151.0
+    ],
+    "walk/up_left/3": [
+      240.0,
+      162.0,
+      157.0
+    ],
+    "walk/up_left/4": [
+      240.0,
+      162.0,
+      157.0
+    ],
+    "walk/up_left/5": [
+      240.0,
+      161.0,
+      156.0
+    ],
+    "walk_attack/up_left/0": [
+      239.0,
+      157.0,
+      151.0
+    ],
+    "walk_attack/up_left/1": [
+      237.0,
+      154.0,
+      149.0
+    ],
+    "walk_attack/up_left/2": [
+      238.0,
+      155.0,
+      150.0
+    ],
+    "walk_attack/up_left/3": [
+      241.0,
+      162.0,
+      157.0
+    ],
+    "walk_attack/up_left/4": [
+      241.0,
+      161.0,
+      156.0
+    ],
+    "walk_attack/up_left/5": [
+      241.0,
+      162.0,
+      156.0
+    ]
+  },
+  "bodyPartComposition": false,
+  "runtimeWarp": false,
+  "sourceRef": "Base Cherry existing artwork; built-in imagegen edits of whole poses",
+  "baseTests": 15,
+  "sharedMotionTests": 6,
+  "animationTests": 17,
+  "sourceValidation": "PASS",
+  "offlineHtml": "PASS: 48 native canvases, v1/v2 pixel comparison, reversible toggle, pause, step",
+  "remoteHead": "670a39be8ae0021114158e7fc3cda6e34d358688",
+  "pagesPayload": "Pages payload: 943.2 -> 551.5 MiB (-41.5%); 2129 development files excluded; runtime references OK"
+}

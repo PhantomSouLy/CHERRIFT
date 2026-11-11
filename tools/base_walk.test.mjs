@@ -3,138 +3,63 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFileSync} from 'node:fs';
 const read=p=>readFileSync(p,'utf8');
-const dirs=['left','right','down_left','down_right','up_left','up_right'];
-function fixture(render=false,pixels=()=>new Uint8ClampedArray(192*192*4)){
- class Game{movePlayer(){}}
- const window={CherriftGame:Game},canvases=[];
- const document={createElement(){
-  const c={width:256,height:256,ops:[]},ctx={};
-  for(const name of ['save','restore','beginPath','closePath','clip','rect','moveTo','lineTo','translate','rotate','scale','transform','drawImage','clearRect'])
-   ctx[name]=(...args)=>c.ops.push([name,...args]);
-  ctx.getImageData=(x,y,width,height)=>({width,height,data:pixels(x,y,width,height)});
-  ctx.putImageData=(...args)=>c.ops.push(['putImageData',...args]);
-  c.getContext=()=>ctx;canvases.push(c);return c;
- }};
- const context=vm.createContext({window,CherriftGame:Game,...(render?{document}:{})});
- for(const name of ['cherry_geometry','cherry_shot_alignment','animation_flow','base_walk','cherry_motion'])vm.runInContext(read(`src/cherrift_${name}.js`),context);
- return {window,api:window.CHERRIFT_BASE_WALK,canvases};
+function fixture(colors=false){
+ class Game{
+  movePlayer(v,dt){if(this.blocked)return;this.player.x+=v.x*235*dt;this.player.y+=v.y*235*dt;}
+  autoFire(){} skill(){} update(){} drawPlayer(){} nearest(){return {x:400,y:200};}
+ }
+ const config={player:{skins:{cherry_default:{}},displayWidth:116,displayHeight:116}};
+ const window={CherriftGame:Game,CHERRIFT_CONFIG:config,
+  CHERRIFT_BASE_WALK:{draw(){throw Error('retired rig');}},
+  CHERRIFT_ANIMATION_SMOOTHING:{draw(){throw Error('whole frames must not warp');}}};
+ const context=vm.createContext({window,CherriftGame:Game,CHERRIFT_CONFIG:config,...(colors?{OffscreenCanvas:class{constructor(w,h){this.width=w;this.height=h;}toDataURL(){return this;}getContext(){const out=this;return {filter:'none',save(){},restore(){},beginPath(){},rect(){},clip(){},clearRect(){},drawImage(image){out.source=image;out.colorFilter=this.filter;}};}},Image:class{set src(canvas){Object.assign(this,{width:canvas.width,height:canvas.height,colorFilter:canvas.colorFilter});this.onload();}}}:{})});
+ for(const n of ['cherry_geometry','cherry_shot_alignment','cherry_motion','base_cherry'])vm.runInContext(read(`src/cherrift_${n}.js`),context);
+ const game=new Game();game.player={skin:'cherry_default',x:0,y:0,speed:235,moving:true,fireTimer:0,fireInterval:.42};game.mode='playing';game.t=0;
+ const sheets=new Map();game.assets={get:key=>{if(!sheets.has(key))sheets.set(key,{key,width:1152,height:192});return sheets.get(key);}};
+ const draws=[],stack=[],ctx={globalAlpha:.4,filter:'none',save(){stack.push({alpha:this.globalAlpha,filter:this.filter});},restore(){const saved=stack.pop();this.globalAlpha=saved.alpha;this.filter=saved.filter;},beginPath(){},ellipse(){},fill(){},drawImage(...a){draws.push({a,alpha:this.globalAlpha,filter:this.filter});}};
+ return {window,game,ctx,draws};
 }
-test('only the six requested side and diagonal walking directions use the new Base rig',()=>{
- const {api}=fixture();for(const state of ['walk','walk_attack'])for(const dir of dirs)assert.ok(api.pose(state,dir,0,0));
- for(const dir of ['up','down'])assert.equal(api.pose('walk',dir,0,0),null);
- for(const state of ['idle','idle2','attack','skill'])for(const dir of dirs)assert.equal(api.pose(state,dir,0,0),null);
-});
-test('the two feet exchange front/back positions at half a cycle in every requested direction',()=>{
- const {api}=fixture();for(const dir of dirs){const a=api.pose('walk',dir,0,0),b=api.pose('walk',dir,0,3);
-  const travel=a.legs.map((leg,i)=>b.legs[i].sole[0]-leg.sole[0]);
-  assert.ok(travel[0]*travel[1]<0,`${dir}: the feet must travel in opposite phases`);
-  for(const distance of travel)assert.ok(Math.abs(distance)>7&&Math.abs(distance)<=11,'short readable steps without the previous wide sweep');
+test('all eight directions and all six states draw exactly one complete square pose without rig or flow',()=>{
+ const {window,game,ctx,draws}=fixture(),p=game.player;
+ for(const dir of window.CHERRIFT_BASE_CHERRY.directions)for(const state of ['idle','idle2','walk','attack','walk_attack','skill'])for(let f=0;f<6;f++){
+  Object.assign(p,{moving:state==='walk'||state==='walk_attack',baseFacing:dir,attackDir:dir,skillDir:dir,baseStride:(f+.1)/8,baseIdleTime:state==='idle2'?6+(f+.1)/3:0,skillCastDuration:6/14,skillCastTimer:state==='skill'?(6-f-.1)/14:0,baseAttack:state.includes('attack')?{elapsed:(f+.1)/18,duration:6/18}:null});game.t=(f+.1)/3;
+  const n=draws.length;game.drawPlayer(ctx,p);assert.equal(draws.length,n+1);
+  const {a,alpha}=draws.at(-1);assert.ok(a[0].key.endsWith(`${state}_${dir}`));assert.equal(a[1],f*192);assert.equal(a[2],0);assert.equal(a[3],192);assert.equal(a[4],192);assert.equal(a[7],a[8]);assert.equal(alpha,1);assert.equal(ctx.globalAlpha,.4);
  }
 });
-test('grounded feet move backwards and raised feet return forwards in all six directions',()=>{
- const {api}=fixture();for(const dir of dirs){const facing=dir.includes('left')?-1:1,base=api.pose('walk',dir,0,0);
-  for(const phase of [.5,1,2,2.5,3.5,4,5,5.5]){
-   const a=api.pose('walk',dir,0,phase),b=api.pose('walk',dir,0,phase+.01);
-   for(let i=0;i<2;i++){const velocity=(b.legs[i].sole[0]-a.legs[i].sole[0])*facing;
-    const grounded=Math.abs(a.legs[i].sole[1]-base.legs[i].sole[1])<1e-8;
-    assert.ok(grounded?velocity<0:velocity>0,`${dir}: incorrect ${grounded?'stance':'swing'} direction at ${phase}`);
-   }
-  }
- }
+test('travel clock survives turns, cast start/end, blocked movement and dash',()=>{
+ const {game,ctx,draws}=fixture(),p=game.player;
+ game.movePlayer({x:1,y:0},.2);assert.equal(p.baseStride,.2);
+ game.autoFire();game.drawPlayer(ctx,p);assert.equal(draws.at(-1).a[1],192);
+ p.baseAttack.elapsed=.3;game.drawPlayer(ctx,p);assert.equal(draws.at(-1).a[1],192);
+ game.movePlayer({x:0,y:-1},.2);assert.equal(p.baseStride,.4);
+ p.baseAttack=null;game.drawPlayer(ctx,p);assert.equal(draws.at(-1).a[1],3*192);
+ game.blocked=true;game.movePlayer({x:1,y:0},1);assert.equal(p.baseStride,.4);
+ game.blocked=false;p.dashTimer=.1;game.movePlayer({x:1,y:0},1);assert.equal(p.baseStride,.4);
 });
-test('soles keep a fixed registration while the painted cast poses change',()=>{
- const {api}=fixture();for(const dir of dirs)for(const state of ['walk','walk_attack']){
-  const first=api.pose(state,dir,0,1.17);
-  for(let f=0;f<=5;f+=.125){const p=api.pose(state,dir,f,1.17);for(let i=0;i<2;i++)assert.ok(Math.abs(first.legs[i].sole[0]-p.legs[i].sole[0])<1e-8,'painted pose changes must not shake the foot support');}
- }
+test('dash copies retain ghost opacity while the main sprite is fully opaque',()=>{
+ const {game,ctx,draws}=fixture();ctx.globalAlpha=.12;game.drawPlayer(ctx,{...game.player});assert.equal(draws.at(-1).alpha,.12);
+ game.drawPlayer(ctx,game.player);assert.equal(draws.at(-1).alpha,1);assert.equal(ctx.globalAlpha,.12);
 });
-test('both axes of body registration stay continuous across frame and loop edges',()=>{
- const {api}=fixture();for(const dir of dirs){
-  for(let f=1;f<6;f++){const a=api.pose('walk',dir,f-.00001,1),b=api.pose('walk',dir,f+.00001,1);for(const axis of ['bodyShiftX','bodyShiftY'])assert.ok(Math.abs(a[axis]-b[axis])<.001);}
-  const a=api.pose('walk',dir,5.99999,1),b=api.pose('walk',dir,.00001,1);for(const axis of ['bodyShiftX','bodyShiftY'])assert.ok(Math.abs(a[axis]-b[axis])<.001);
- }
-});
-test('feet lift alternately while both hip attachments stay on the same painted pose',()=>{
- const {api}=fixture();for(const dir of dirs){const a=api.pose('walk',dir,0,1.5),b=api.pose('walk',dir,0,4.5);
-  assert.ok(b.legs[0].sole[1]<a.legs[0].sole[1]-2);assert.ok(a.legs[1].sole[1]<b.legs[1].sole[1]-2);
-  for(let i=0;i<2;i++)assert.deepEqual(Array.from(a.legs[i].hip),Array.from(b.legs[i].hip));
- }
-});
-test('the continuous cycle closes, and moving attack art cannot restart the leg cycle',()=>{
- const {api}=fixture();for(const dir of dirs){const a=api.pose('walk',dir,0,0),b=api.pose('walk',dir,0,6);
-  for(let i=0;i<2;i++)for(let k=0;k<2;k++)assert.ok(Math.abs(a.legs[i].sole[k]-b.legs[i].sole[k])<1e-8);
-  const p=api.pose('walk_attack',dir,1.2,2.4),q=api.pose('walk_attack',dir,4.7,2.4);
-  for(let i=0;i<2;i++){assert.ok(Math.abs(p.legs[i].sole[0]-q.legs[i].sole[0])<1e-8);assert.equal(p.legs[i].sole[1],q.legs[i].sole[1]);}
- }
-});
-test('the complete output contains exactly two articulated legs and the intact body is drawn last',()=>{
- const {window,api,canvases}=fixture(true),body={name:'interpolated painted body'};
- window.CHERRIFT_ANIMATION_SMOOTHING={sample:()=>body};let output;
- const main={drawImage(image,...args){output=image;assert.equal(args[0],290);},clip(){throw Error('no horizontal world-space cut');}};
- assert.equal(api.draw(main,{width:1152},{},'x'),false,'unsupported states delegate');
- const image={width:1152},walk={width:1152};
- assert.equal(api.draw(main,image,'walk','left',.6,1.7,{x:400,y:300},110,110,()=>{},walk),true);
- const draws=output.ops.filter(op=>op[0]==='drawImage');assert.equal(draws.length,5);assert.equal(draws[0][1],draws[2][1],'the two upper legs share one source');assert.equal(draws[1][1],draws[3][1],'both complete shoes share one source');assert.equal(draws.at(-1)[1],body);
- const plan=api.pose('walk','left',.6,1.7);assert.ok(output.ops.some(op=>op[0]==='translate'&&op[1]===plan.bodyShiftX&&op[2]===plan.bodyShiftY),'the complete painted body receives the same registration as its hip attachments');
- const created=canvases.length;for(let n=0;n<30;n++)api.draw(main,image,'walk','left',n*.1,n*.1,{x:400,y:300},110,110,()=>{},walk);
- assert.equal(canvases.length,created,'warm rendering allocates no canvases');
-});
-test('the shared renderer only routes Base Cherry into this rig and keeps actual-travel timing',()=>{
- const {window}=fixture();let request;window.CHERRIFT_BASE_WALK={draw(...args){request=args;return true;}};
- const image={},walk={};window.CHERRIFT_CHERRY_MOTION.draw({},image,'cherry_default','walk_attack','right',4,{x:0,y:0,cherryStrideTime:.4},110,110,4.2,{walkImage:walk});
- assert.equal(request[2],'walk_attack');assert.equal(request[5],3.2);assert.equal(request[10],walk);
- request=null;window.CHERRIFT_CHERRY_MOTION.draw({drawImage(){}},image,'archer_cherry','walk','right',0,{x:0,y:0},110,110,0);assert.equal(request,null);
-});
-test('planted shoes only translate and the upper legs meet their rigid cuff continuously',()=>{
- const {window,api,canvases}=fixture(true);window.CHERRIFT_ANIMATION_SMOOTHING={sample:()=>({})};let output;
- const ctx={drawImage:image=>output=image};
- for(const state of ['walk','walk_attack'])for(const dir of dirs){const image={width:1152};for(let stride=0;stride<6;stride+=.125){
-  api.draw(ctx,image,state,dir,stride,stride,{x:0,y:0},110,110,()=>{},image);
-  const transforms=output.ops.filter(op=>op[0]==='transform'),draws=output.ops.filter(op=>op[0]==='drawImage');
-  assert.equal(transforms.length,2);assert.equal(draws.length,5);
-  for(let i=0;i<2;i++){
-   const [,a,b,c,d,e,f]=transforms[i];assert.ok([a,b,c,d,e,f].every(Number.isFinite));assert.ok(a*d-b*c>0,'no flipped or collapsed thigh');
-   const upper=draws[i*2][1],foot=draws[i*2+1];
-   const boundary=upper.ops.filter(op=>op[0]==='lineTo').slice(-2);
-   for(const [,x,paddedY] of boundary){const y=paddedY-.5;
-    assert.ok(Math.abs(a*x+c*y+e-(x+foot[2]))<1e-8,'shared ankle edge x has no discontinuity');
-    assert.ok(Math.abs(b*x+d*y+f-(y+foot[3]))<1e-8,'shared ankle edge y has no discontinuity');
-   }
-  }
-  output.ops.length=0;
- }}
-});
-test('hip height and diagonal pelvis stay steady without freezing the painted animation',()=>{
- const {api}=fixture();for(const dir of dirs)for(const state of ['walk','walk_attack']){
-  const reference=api.pose(state,dir,0,0);const center=p=>p.legs.reduce((sum,leg)=>sum+leg.hip[1],0)/2;
-  for(let phase=0;phase<6;phase+=.125){const p=api.pose(state,dir,phase,phase);
-   assert.ok(Math.abs(center(p)-center(reference))<1e-8,'no changing leg length from a bobbing pelvis');
-   assert.ok(p.legs.every(leg=>leg.sole[1]<=64+184*2/3+.5));
-  }
- }
-});
-test('new Base module loads after the shared renderer, before Base Cherry, with one cache build',()=>{
- const html=read('index.html'),build=JSON.parse(read('src/cherrift_manifest.json')).buildId;
- assert.ok(html.indexOf('src/cherrift_cherry_motion.js')<html.indexOf('src/cherrift_base_walk.js'));
- assert.ok(html.indexOf('src/cherrift_base_walk.js')<html.indexOf('src/cherrift_base_cherry.js'));
- const values=[...html.matchAll(/(?:src|href)=["'](?:src|assets)\/[^"']+\?v=([^"']+)/gi)].map(m=>m[1]);assert.deepEqual([...new Set(values)],[build]);
+test('retired Base rig is absent from boot and shared routing; builds stay consistent',()=>{
+ const html=read('index.html'),manifest=JSON.parse(read('src/cherrift_manifest.json'));
+ assert.ok(!html.includes('src/cherrift_base_walk.js'));assert.equal(manifest.entrypoints.baseWalk,undefined);
+ assert.ok(!read('src/cherrift_cherry_motion.js').includes('CHERRIFT_BASE_WALK'));
+ assert.ok(html.indexOf('src/cherrift_cherry_motion.js')<html.indexOf('src/cherrift_base_cherry.js'));
+ const values=[...html.matchAll(/(?:src|href)=["'](?:src|assets)\/[^"']+\?v=([^"']+)/gi)].map(m=>m[1]);assert.deepEqual([...new Set(values)],[manifest.buildId]);
 });
 
-
-test('body cleanup removes detached old sole pixels while retaining connected lower artwork',()=>{
- const {window,api,canvases}=fixture(true,()=>{
-  const data=new Uint8ClampedArray(192*192*4);
-  for(let y=0;y<=180;y++)data[(y*192+96)*4+3]=255;
-  data[(190*192+10)*4+3]=128;
-  return data;
- });
- window.CHERRIFT_ANIMATION_SMOOTHING={sample:()=>({})};
- const image={width:1152};
- api.draw({drawImage(){}},image,'walk','right',0,0,{x:0,y:0},110,110,()=>{},image);
- const writes=canvases.flatMap(c=>c.ops.filter(op=>op[0]==='putImageData'));
- assert.equal(writes.length,6,'every painted frame is cleaned');
- for(const [,pixels] of writes){
-  assert.equal(pixels.data[(180*192+96)*4+3],255,'connected artwork remains');
-  assert.equal(pixels.data[(190*192+10)*4+3],0,'detached sole fragment is removed');
+test('Walk color matching is isolated to the four requested directions and never leaks into Idle, casts or fallback art',()=>{
+ const {game,ctx,draws}=fixture(true),p=game.player;
+ const graded=new Set(['left','right','down_left','down_right']);
+ for(const facing of ['left','right','down_left','down_right','down','up','up_left','up_right'])for(const state of ['idle','walk','walk_attack','attack','skill']){
+  Object.assign(p,{moving:state==='walk'||state==='walk_attack',baseFacing:facing,attackDir:facing,skillDir:facing,baseAttack:state.includes('attack')?{elapsed:.1,duration:6/18}:null,skillCastTimer:state==='skill'?.1:0});
+  ctx.filter='brightness(0.98)';game.drawPlayer(ctx,p);
+  const grade=draws.at(-1).a[0].colorFilter;
+  assert.equal(!!grade,state==='walk'&&graded.has(facing));
+  assert.equal(draws.at(-1).filter,'brightness(0.98)');assert.equal(ctx.filter,'brightness(0.98)');assert.equal(ctx.globalAlpha,.4);
  }
+ Object.assign(p,{moving:true,baseFacing:'right',baseAttack:null,skillCastTimer:0});
+ game.assets={get:key=>key.includes('_idle_')?{key,width:1152,height:192}:null};
+ game.drawPlayer(ctx,p);assert.ok(draws.at(-1).a[0].key.includes('_idle_'));assert.equal(draws.at(-1).filter,'brightness(0.98)');
 });

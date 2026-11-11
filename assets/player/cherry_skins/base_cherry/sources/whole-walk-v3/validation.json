@@ -1,0 +1,367 @@
+{
+  "build": "1111-base3-clear-walk",
+  "changedComparedToV2": [
+    "base_cherry_walk_down_left.png",
+    "base_cherry_walk_down_right.png",
+    "base_cherry_walk_left.png",
+    "base_cherry_walk_right.png"
+  ],
+  "unchangedBaseStrips": 44,
+  "checkedFullFrames": 24,
+  "unrelatedGeometry": "unchanged",
+  "mirrors": "RGBA exact +1px pivot compensation",
+  "gaitMetrics": {
+    "right": {
+      "lowestSoleBandXRelativeToRoot": [
+        0.8046875,
+        -0.29844961240310397,
+        5.892592592592592,
+        10.860655737704917,
+        0.477099236641223,
+        8.575268817204304
+      ],
+      "wholeForwardBootXRelativeToRoot": [
+        20.477777777777774,
+        -2.6875,
+        15.268924302788847,
+        16.661184210526315,
+        -3.8848167539266996,
+        19.581712062256813
+      ],
+      "alphaBounds": [
+        [
+          12,
+          28,
+          126,
+          185
+        ],
+        [
+          13,
+          28,
+          126,
+          186
+        ],
+        [
+          12,
+          28,
+          126,
+          185
+        ],
+        [
+          12,
+          28,
+          126,
+          185
+        ],
+        [
+          13,
+          28,
+          126,
+          186
+        ],
+        [
+          13,
+          28,
+          126,
+          185
+        ]
+      ]
+    },
+    "left": {
+      "lowestSoleBandXRelativeToRoot": [
+        -0.8046875,
+        0.29844961240310397,
+        -5.892592592592592,
+        -10.860655737704917,
+        -0.477099236641223,
+        -8.575268817204304
+      ],
+      "wholeForwardBootXRelativeToRoot": [
+        -20.477777777777774,
+        2.6875,
+        -15.268924302788847,
+        -16.661184210526315,
+        3.8848167539266996,
+        -19.581712062256813
+      ],
+      "alphaBounds": [
+        [
+          67,
+          28,
+          181,
+          185
+        ],
+        [
+          67,
+          28,
+          180,
+          186
+        ],
+        [
+          67,
+          28,
+          181,
+          185
+        ],
+        [
+          67,
+          28,
+          181,
+          185
+        ],
+        [
+          67,
+          28,
+          180,
+          186
+        ],
+        [
+          67,
+          28,
+          180,
+          185
+        ]
+      ]
+    },
+    "down_right": {
+      "lowestSoleBandXRelativeToRoot": [
+        20.220588235294116,
+        10.850649350649348,
+        19.804347826086953,
+        -3.5864197530864175,
+        -0.6624999999999943,
+        4.513157894736835
+      ],
+      "wholeForwardBootXRelativeToRoot": [
+        18.11924686192468,
+        6.6549295774647845,
+        18.199152542372886,
+        16.879032258064512,
+        13.933333333333337,
+        3.224252491694358
+      ],
+      "alphaBounds": [
+        [
+          24,
+          28,
+          136,
+          187
+        ],
+        [
+          18,
+          28,
+          131,
+          185
+        ],
+        [
+          19,
+          28,
+          132,
+          186
+        ],
+        [
+          27,
+          28,
+          135,
+          185
+        ],
+        [
+          28,
+          28,
+          135,
+          185
+        ],
+        [
+          26,
+          28,
+          134,
+          185
+        ]
+      ]
+    },
+    "down_left": {
+      "lowestSoleBandXRelativeToRoot": [
+        -20.220588235294116,
+        -10.850649350649348,
+        -19.804347826086953,
+        3.5864197530864175,
+        0.6624999999999943,
+        -4.513157894736835
+      ],
+      "wholeForwardBootXRelativeToRoot": [
+        -18.11924686192468,
+        -6.6549295774647845,
+        -18.199152542372886,
+        -16.879032258064512,
+        -13.933333333333337,
+        -3.224252491694358
+      ],
+      "alphaBounds": [
+        [
+          57,
+          28,
+          169,
+          187
+        ],
+        [
+          62,
+          28,
+          175,
+          185
+        ],
+        [
+          61,
+          28,
+          174,
+          186
+        ],
+        [
+          58,
+          28,
+          166,
+          185
+        ],
+        [
+          58,
+          28,
+          165,
+          185
+        ],
+        [
+          59,
+          28,
+          167,
+          185
+        ]
+      ]
+    }
+  },
+  "hairMedianRGB": {
+    "right/0": [
+      248.0,
+      158.0,
+      152.0
+    ],
+    "right/1": [
+      248.0,
+      169.0,
+      164.0
+    ],
+    "right/2": [
+      247.0,
+      156.0,
+      151.0
+    ],
+    "right/3": [
+      248.0,
+      157.0,
+      151.0
+    ],
+    "right/4": [
+      248.0,
+      168.0,
+      164.0
+    ],
+    "right/5": [
+      248.0,
+      156.0,
+      151.0
+    ],
+    "left/0": [
+      248.0,
+      158.0,
+      152.0
+    ],
+    "left/1": [
+      248.0,
+      169.0,
+      164.0
+    ],
+    "left/2": [
+      247.0,
+      156.0,
+      151.0
+    ],
+    "left/3": [
+      248.0,
+      157.0,
+      151.0
+    ],
+    "left/4": [
+      248.0,
+      168.0,
+      164.0
+    ],
+    "left/5": [
+      248.0,
+      156.0,
+      151.0
+    ],
+    "down_right/0": [
+      241.0,
+      162.0,
+      156.0
+    ],
+    "down_right/1": [
+      240.0,
+      162.0,
+      156.0
+    ],
+    "down_right/2": [
+      241.0,
+      162.0,
+      156.0
+    ],
+    "down_right/3": [
+      241.0,
+      161.0,
+      156.0
+    ],
+    "down_right/4": [
+      241.0,
+      161.0,
+      156.0
+    ],
+    "down_right/5": [
+      242.0,
+      161.0,
+      156.0
+    ],
+    "down_left/0": [
+      241.0,
+      162.0,
+      156.0
+    ],
+    "down_left/1": [
+      240.0,
+      162.0,
+      156.0
+    ],
+    "down_left/2": [
+      241.0,
+      162.0,
+      156.0
+    ],
+    "down_left/3": [
+      241.0,
+      161.0,
+      156.0
+    ],
+    "down_left/4": [
+      241.0,
+      161.0,
+      156.0
+    ],
+    "down_left/5": [
+      242.0,
+      161.0,
+      156.0
+    ]
+  },
+  "bodyPartComposition": false,
+  "scriptedRecoloring": false,
+  "tests": "PASS 21 targeted tests",
+  "validation": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\n\n> cherrift@0.9.5-prebeta.1 validate\n> node tools/validate.mjs\n\nValidated 165 JavaScript files, 34 CSS files and 210 source files.\nAsset migration aliases, canonical art dimensions, runtime dependencies and syntax are valid.",
+  "offlineHtml": "PASS: 48 native live canvases, v2/v3 comparison, reversible toggle, pause, step",
+  "pagesPayload": "Pages payload: 949.0 -> 551.5 MiB (-41.9%); 2139 development files excluded; runtime references OK"
+}

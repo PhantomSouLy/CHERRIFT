@@ -1,0 +1,194 @@
+{
+  "build": "1111-base4-fixed-heading",
+  "changedComparedToV3": [
+    "base_cherry_walk_down_left.png",
+    "base_cherry_walk_down_right.png"
+  ],
+  "unchangedBaseStrips": 46,
+  "checkedFullFrames": 12,
+  "unrelatedGeometry": "unchanged",
+  "mirrors": "RGBA exact +1px pivot compensation",
+  "gaitMetrics": {
+    "down_right": {
+      "lowestSoleBandXRelativeToRoot": [
+        20.71111111111111,
+        12.109195402298852,
+        20.80337078651685,
+        1.8414634146341484,
+        1.9874999999999972,
+        8.066666666666663
+      ],
+      "wholeForwardBootXRelativeToRoot": [
+        18.652542372881356,
+        7.094501718213053,
+        18.661157024793383,
+        15.768041237113408,
+        13.958333333333329,
+        4.785234899328856
+      ],
+      "alphaBounds": [
+        [
+          24,
+          28,
+          135,
+          185
+        ],
+        [
+          18,
+          28,
+          131,
+          185
+        ],
+        [
+          20,
+          28,
+          133,
+          185
+        ],
+        [
+          27,
+          28,
+          135,
+          185
+        ],
+        [
+          28,
+          28,
+          135,
+          185
+        ],
+        [
+          27,
+          28,
+          135,
+          185
+        ]
+      ]
+    },
+    "down_left": {
+      "lowestSoleBandXRelativeToRoot": [
+        -20.71111111111111,
+        -12.109195402298852,
+        -20.80337078651685,
+        -1.8414634146341484,
+        -1.9874999999999972,
+        -8.066666666666663
+      ],
+      "wholeForwardBootXRelativeToRoot": [
+        -18.652542372881356,
+        -7.094501718213053,
+        -18.661157024793383,
+        -15.768041237113408,
+        -13.958333333333329,
+        -4.785234899328856
+      ],
+      "alphaBounds": [
+        [
+          58,
+          28,
+          169,
+          185
+        ],
+        [
+          62,
+          28,
+          175,
+          185
+        ],
+        [
+          60,
+          28,
+          173,
+          185
+        ],
+        [
+          58,
+          28,
+          166,
+          185
+        ],
+        [
+          58,
+          28,
+          165,
+          185
+        ],
+        [
+          58,
+          28,
+          166,
+          185
+        ]
+      ]
+    }
+  },
+  "hairMedianRGB": {
+    "down_right/0": [
+      244.0,
+      155.0,
+      154.0
+    ],
+    "down_right/1": [
+      244.0,
+      154.0,
+      153.0
+    ],
+    "down_right/2": [
+      244.0,
+      154.0,
+      153.0
+    ],
+    "down_right/3": [
+      244.0,
+      155.0,
+      153.0
+    ],
+    "down_right/4": [
+      245.0,
+      155.0,
+      153.0
+    ],
+    "down_right/5": [
+      245.0,
+      155.0,
+      153.0
+    ],
+    "down_left/0": [
+      244.0,
+      155.0,
+      154.0
+    ],
+    "down_left/1": [
+      244.0,
+      154.0,
+      153.0
+    ],
+    "down_left/2": [
+      244.0,
+      154.0,
+      153.0
+    ],
+    "down_left/3": [
+      244.0,
+      155.0,
+      153.0
+    ],
+    "down_left/4": [
+      245.0,
+      155.0,
+      153.0
+    ],
+    "down_left/5": [
+      245.0,
+      155.0,
+      153.0
+    ]
+  },
+  "bodyPartComposition": false,
+  "scriptedRecoloring": false,
+  "manualReview": {
+    "target": "boot yaw across both support phases",
+    "method": "all six whole figures inspected, native old/new frames compared",
+    "limitation": "not an automatic proof of anatomical correctness or a new phone gameplay test"
+  }
+}
