@@ -1,6 +1,6 @@
 {
   "id": "sport_cherry",
-  "referenceCommit": "9b3d27f6603fb603d76f6764a1d80d88f885e19c",
+  "referenceCommit": "831da88dac3eec14eec0da7cf8be40e0b0b0e1b7",
   "frameSize": 192,
   "pivot": [
     96,
@@ -37,7 +37,8 @@
         "up_left": "sheets192/sport_cherry_idle_up_left.png",
         "left": "sheets192/sport_cherry_idle_left.png",
         "down_left": "sheets192/sport_cherry_idle_down_left.png"
-      }
+      },
+      "loop": true
     },
     "idle2": {
       "frames": 6,
@@ -53,7 +54,8 @@
         "up_left": "sheets192/sport_cherry_idle2_up_left.png",
         "left": "sheets192/sport_cherry_idle2_left.png",
         "down_left": "sheets192/sport_cherry_idle2_down_left.png"
-      }
+      },
+      "loop": false
     },
     "walk": {
       "frames": 6,
@@ -69,7 +71,8 @@
         "up_left": "sheets192/sport_cherry_walk_up_left.png",
         "left": "sheets192/sport_cherry_walk_left.png",
         "down_left": "sheets192/sport_cherry_walk_down_left.png"
-      }
+      },
+      "loop": true
     },
     "attack": {
       "frames": 6,
@@ -85,13 +88,14 @@
         "up_left": "sheets192/sport_cherry_attack_up_left.png",
         "left": "sheets192/sport_cherry_attack_left.png",
         "down_left": "sheets192/sport_cherry_attack_down_left.png"
-      }
+      },
+      "loop": false
     },
     "walk_attack": {
       "frames": 6,
       "fps": 8,
       "duration": 0.75,
-      "runtimeDuration": 0.3333333333333333,
+      "runtimeDuration": 0.75,
       "sheets": {
         "down": "sheets192/sport_cherry_walk_attack_down.png",
         "down_right": "sheets192/sport_cherry_walk_attack_down_right.png",
@@ -101,7 +105,8 @@
         "up_left": "sheets192/sport_cherry_walk_attack_up_left.png",
         "left": "sheets192/sport_cherry_walk_attack_left.png",
         "down_left": "sheets192/sport_cherry_walk_attack_down_left.png"
-      }
+      },
+      "loop": true
     },
     "skill": {
       "frames": 6,
@@ -117,7 +122,8 @@
         "up_left": "sheets192/sport_cherry_skill_up_left.png",
         "left": "sheets192/sport_cherry_skill_left.png",
         "down_left": "sheets192/sport_cherry_skill_down_left.png"
-      }
+      },
+      "loop": false
     }
   },
   "sources": [
@@ -171,8 +177,71 @@
     "hpBonus": 0.02
   },
   "notes": [
-    "Imagegen costume edit of Base sprite references. No Base assets modified.",
-    "Left views are mirrored. Runtime optical flow interpolation is required for smooth playback.",
-    "Existing Sport splash and icon retained."
+    "v2 corrects Sport crop top/shorts and sleeveless arms in up-left/up-right Idle/Idle2/Attack/Skill and up Attack/Skill; other standing strips retained.",
+    "Complete authored Walk/WalkAttack poses replace old idle/attack aliases and inverse-warp gait.",
+    "Down-diagonal loops use original complete alternating contacts and new complete low passing poses, with whole-character sole alignment; no limb edits or warping. Walking follows actual travel independently of projectile timing.",
+    "Left directions mirror complete right figures. Registration only translates/scales the full cell.",
+    "Existing defensive passive, Common Shield and Sport VFX retained."
+  ],
+  "wholeGaitSources": [
+    {
+      "file": "assets/player/cherry_skins/sport_cherry/sources/whole-gait-v1/down.png",
+      "sha256": "75880324e6afd4299685f31947b74938f090429dbac12b56c9660a8ed5b7f33d"
+    },
+    {
+      "file": "assets/player/cherry_skins/sport_cherry/sources/whole-gait-v1/down_right.png",
+      "sha256": "a703c64808d99532e9c9a1d90bb93b4f1c15a67182bca30d074d29609a21d700"
+    },
+    {
+      "file": "assets/player/cherry_skins/sport_cherry/sources/whole-gait-v1/right.png",
+      "sha256": "818bb9e46b007abcc625b625561fb4cdb9ca4c0ddc8e2294023c1a35eef53d55"
+    },
+    {
+      "file": "assets/player/cherry_skins/sport_cherry/sources/whole-gait-v1/up_right.png",
+      "sha256": "d07ca95493a7b75d01c4cb47b71258f6ca7c6d78a82dbd5e91b0531899c47096"
+    },
+    {
+      "file": "assets/player/cherry_skins/sport_cherry/sources/whole-gait-v1/up.png",
+      "sha256": "3431c1b285e7f7bb3be0f80eceb3887665b8b35005402babf8a8c32b4f923a59"
+    }
+  ],
+  "renderer": "complete-pose-distance-clock-v1",
+  "wholeRefinements": [
+    {
+      "file": "assets/player/cherry_skins/sport_cherry/sources/whole-refine-v2/down_right_passing.png",
+      "sha256": "26164669a8caec2204194f28d0cc3d1f28f77d512014c96dd45858adbc24d4bb"
+    },
+    {
+      "file": "assets/player/cherry_skins/sport_cherry/sources/whole-refine-v2/palette_idle_down.png",
+      "sha256": "16de17865649993e537870503585c7867317fdf02b9f91787e8d01daad4bf093"
+    },
+    {
+      "file": "assets/player/cherry_skins/sport_cherry/sources/whole-refine-v2/palette_idle_down_right.png",
+      "sha256": "e74fd397274148e4ecdc28bafea097de8561000fef78d0d0a6de82ff89bbb58e"
+    },
+    {
+      "file": "assets/player/cherry_skins/sport_cherry/sources/whole-refine-v2/palette_idle_right.png",
+      "sha256": "16cea425a8f363022731eaa9a71f1c6f51e422c9e18525c4e5b588b856a2e29d"
+    },
+    {
+      "file": "assets/player/cherry_skins/sport_cherry/sources/whole-refine-v2/palette_idle_up.png",
+      "sha256": "88160c26e72faed2a8e96c65542cf435e5855c3e6af83e0083c631ac5fecac2b"
+    },
+    {
+      "file": "assets/player/cherry_skins/sport_cherry/sources/whole-refine-v2/palette_idle_up_right.png",
+      "sha256": "995d0258b5febf2cf863da255599428b7c46ab27ff738a0e06b46f78f67dea0b"
+    },
+    {
+      "file": "assets/player/cherry_skins/sport_cherry/sources/whole-refine-v2/up_cast.png",
+      "sha256": "f670830f13f326f12c9fa28faeb8c2c1b59078d9f5513951bc5ff8fdc0eb0a79"
+    },
+    {
+      "file": "assets/player/cherry_skins/sport_cherry/sources/whole-refine-v2/up_right_cast.png",
+      "sha256": "b501bf0e2ff5dba10ca2e3ab5069a29c2ad62574722482c054a31f0457bbfe6c"
+    },
+    {
+      "file": "assets/player/cherry_skins/sport_cherry/sources/whole-refine-v2/up_right_idle.png",
+      "sha256": "8d97dcba56e9ea578776af69f218afca8c6c087f2854636916f0fd0b9477e3e4"
+    }
   ]
 }

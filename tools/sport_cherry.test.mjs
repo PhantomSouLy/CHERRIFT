@@ -29,9 +29,10 @@ test('48 real sheets are wired in eight directions without altering Base config 
  const c=config.player.skins.sport_cherry;assert.equal(c.skillType,'common_shield');assert.equal(c.passive.hpBonus,.02);
  let count=0;for(const s of Object.values(c.states)){assert.equal(s.frames,6);assert.equal(Object.keys(s.dirs).length,8);for(const u of Object.values(s.dirs)){const p=u.split('?')[0];assert.ok(existsSync(p));const b=readFileSync(p);assert.equal(b.readUInt32BE(16),1152);assert.equal(b.readUInt32BE(20),192);count++;}}assert.equal(count,48);
 });
-test('moving cast fires once at its event, keeps travel facing and shares standing/moving attack clock',()=>{
+test('moving cast fires once at its event, keeps travel facing and keeps an independent travel clock while switching moving/standing artwork',()=>{
  const {game,ctx,calls}=fixture();const p=game.player;p.moving=true;game.movePlayer({x:-1,y:1},.01);game.autoFire();game.update(.1);assert.equal(game.bullets.length,0);game.update(.06);assert.equal(game.bullets.length,1);assert.equal(p.sportFacing,'down_left');assert.equal(p.attackDir,'up_right');
- game.drawPlayer(ctx,p);const x=calls.at(-1)[1];assert.match(calls.at(-1)[0].key,/walk_attack_up_right$/);p.moving=false;game.drawPlayer(ctx,p);assert.equal(calls.at(-1)[1],x);assert.match(calls.at(-1)[0].key,/attack_up_right$/);
+ p.sportStride=3/8;game.drawPlayer(ctx,p);assert.equal(calls.at(-1)[1],3*192);assert.match(calls.at(-1)[0].key,/walk_attack_up_right$/);
+ const elapsed=p.sportAttack.elapsed;p.moving=false;game.drawPlayer(ctx,p);assert.equal(p.sportAttack.elapsed,elapsed);assert.equal(calls.at(-1)[1],2*192);assert.match(calls.at(-1)[0].key,/attack_up_right$/);
  game.autoFire();game.update(.1);assert.equal(game.bullets.length,1);assert.equal(game.bullets[0].style,'sport_bloom_v1');assert.equal(game.bullets[0].dmg,20);assert.equal(game.bullets[0].r,8);
 });
 test('real Common Shield heals 10%, caps HP, grants 2s shield, keeps cooldown, cancels pending shot and does not dash',()=>{
@@ -44,16 +45,18 @@ test('walking phase follows actual travel, remains stable at walls and cast swit
 test('dead targets emit no projectile and other skins delegate',()=>{
  const {game,ctx}=fixture();game.autoFire();game.enemies[0].dead=true;game.update(.2);assert.equal(game.bullets.length,0);game.player.skin='other';game.autoFire();assert.equal(game.delegated,'fire');game.drawPlayer(ctx,game.player);assert.equal(game.delegated,'draw');game.skill();assert.equal(game.delegated,'skill');
 });
-test('all 30 motion textures exist and Sport modules load after smoothing and Base without duplicate scripts',()=>{
- const context=vm.createContext({window:{}});vm.runInContext(read('src/cherrift_sport_data.js'),context);const entries=Object.entries(context.window.CHERRIFT_ANIMATION_FLOW);assert.equal(entries.length,30);for(const [k,m]of entries){assert.ok(k.startsWith('sport_cherry/'));assert.ok(existsSync('assets/player/animation_flow/'+m.file));}
+test('only real state sheets load; the inverse-warp module is retired from boot',()=>{
+ const {config}=fixture();for(const [state,c] of Object.entries(config.player.skins.sport_cherry.states))for(const [dir,url] of Object.entries(c.dirs))assert.match(url,new RegExp('sport_cherry_'+state+'_'+dir+'\\.png\\?'));
  const html=read('index.html');for(const n of ['sport_data','sport_cherry','sport_vfx']){assert.equal(html.split(`src/cherrift_${n}.js`).length-1,1);assert.ok(html.indexOf(`src/cherrift_${n}.js`)>html.indexOf('src/cherrift_animation_smoothing.js'));}
+ assert.ok(!html.includes('src/cherrift_sport_gait.js'));assert.ok(!Object.values(JSON.parse(read('src/cherrift_manifest.json')).entrypoints).includes('src/cherrift_sport_gait.js'));
 });
-test('Sport whole-pose gait closes the cycle and keeps attack/foot clocks independent',()=>{
- const context=vm.createContext({window:{}});vm.runInContext(read('src/cherrift_walk_cycle.js'),context);vm.runInContext(read('src/cherrift_sport_data.js'),context);vm.runInContext(read('src/cherrift_sport_gait.js'),context);
- const api=context.window.CHERRIFT_SPORT_GAIT;
+test('Walk and WalkAttack advance through all six full poses independently of cast timing',()=>{
+ const {game,ctx,calls}=fixture(),p=game.player;p.moving=true;
  for(const d of ['down','down_right','right','up_right','up','up_left','left','down_left']){
-  const a=api.pose('walk',d,0,0),b=api.pose('walk',d,6,6);
-  for(let i=0;i<4;i++)assert.ok(Math.abs(a.stride[i]-b.stride[i])<1e-10);
-  assert.deepEqual(Array.from(api.pose('walk_attack',d,0,1.4).stride),Array.from(api.pose('walk_attack',d,4,1.4).stride));
+  p.sportFacing=p.attackDir=d;
+  for(const attacking of [false,true])for(let i=0;i<12;i++){
+   p.sportStride=(i+.2)/8;p.sportAttack=attacking?{elapsed:.01,duration:6/18}:null;
+   game.drawPlayer(ctx,p);const a=calls.at(-1);assert.match(a[0].key,new RegExp((attacking?'walk_attack':'walk')+'_'+d+'$'));assert.equal(a[1],i%6*192);assert.deepEqual(a.slice(2,5),[0,192,192]);
+  }
  }
 });

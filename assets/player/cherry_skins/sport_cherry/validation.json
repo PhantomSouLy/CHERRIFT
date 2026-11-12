@@ -1,9 +1,3197 @@
 {
-  "directions": 8,
   "states": 6,
+  "directions": 8,
   "frames": 288,
   "sheets": 48,
-  "flowTextures": 30,
+  "forwardDiagonalContacts": {
+    "walk": [
+      118.0,
+      112.0,
+      107.0,
+      107.0,
+      107.0,
+      118.0
+    ],
+    "walk_attack": [
+      113.0,
+      108.0,
+      95.0,
+      95.0,
+      104.0,
+      113.0
+    ]
+  },
+  "flowTexturesRequired": 0,
   "empty": [],
-  "clipped": []
+  "clipped": [],
+  "framesChecked": [
+    {
+      "state": "idle",
+      "direction": "down",
+      "frame": 0,
+      "bounds": [
+        35,
+        28,
+        159,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "down",
+      "frame": 1,
+      "bounds": [
+        35,
+        28,
+        159,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "down",
+      "frame": 2,
+      "bounds": [
+        34,
+        28,
+        159,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "down",
+      "frame": 3,
+      "bounds": [
+        35,
+        28,
+        160,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "down",
+      "frame": 4,
+      "bounds": [
+        34,
+        28,
+        158,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "down",
+      "frame": 5,
+      "bounds": [
+        35,
+        28,
+        159,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "down",
+      "frame": 0,
+      "bounds": [
+        36,
+        28,
+        161,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "down",
+      "frame": 1,
+      "bounds": [
+        32,
+        28,
+        159,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "down",
+      "frame": 2,
+      "bounds": [
+        38,
+        28,
+        161,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "down",
+      "frame": 3,
+      "bounds": [
+        31,
+        28,
+        160,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "down",
+      "frame": 4,
+      "bounds": [
+        33,
+        28,
+        158,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "down",
+      "frame": 5,
+      "bounds": [
+        36,
+        28,
+        162,
+        184
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "down",
+      "frame": 0,
+      "bounds": [
+        34,
+        28,
+        159,
+        186
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "down",
+      "frame": 1,
+      "bounds": [
+        33,
+        28,
+        155,
+        187
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "down",
+      "frame": 2,
+      "bounds": [
+        32,
+        28,
+        154,
+        181
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "down",
+      "frame": 3,
+      "bounds": [
+        35,
+        28,
+        158,
+        183
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "down",
+      "frame": 4,
+      "bounds": [
+        35,
+        28,
+        157,
+        183
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "down",
+      "frame": 5,
+      "bounds": [
+        33,
+        28,
+        157,
+        181
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "down",
+      "frame": 0,
+      "bounds": [
+        29,
+        28,
+        155,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "down",
+      "frame": 1,
+      "bounds": [
+        34,
+        28,
+        163,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "down",
+      "frame": 2,
+      "bounds": [
+        30,
+        28,
+        159,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "down",
+      "frame": 3,
+      "bounds": [
+        41,
+        28,
+        166,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "down",
+      "frame": 4,
+      "bounds": [
+        38,
+        28,
+        166,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "down",
+      "frame": 5,
+      "bounds": [
+        43,
+        28,
+        164,
+        184
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "down",
+      "frame": 0,
+      "bounds": [
+        31,
+        28,
+        158,
+        186
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "down",
+      "frame": 1,
+      "bounds": [
+        33,
+        28,
+        157,
+        185
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "down",
+      "frame": 2,
+      "bounds": [
+        32,
+        28,
+        157,
+        184
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "down",
+      "frame": 3,
+      "bounds": [
+        32,
+        28,
+        157,
+        185
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "down",
+      "frame": 4,
+      "bounds": [
+        33,
+        28,
+        157,
+        183
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "down",
+      "frame": 5,
+      "bounds": [
+        33,
+        28,
+        157,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "down",
+      "frame": 0,
+      "bounds": [
+        30,
+        28,
+        172,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "down",
+      "frame": 1,
+      "bounds": [
+        20,
+        28,
+        159,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "down",
+      "frame": 2,
+      "bounds": [
+        24,
+        28,
+        169,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "down",
+      "frame": 3,
+      "bounds": [
+        6,
+        28,
+        157,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "down",
+      "frame": 4,
+      "bounds": [
+        35,
+        28,
+        178,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "down",
+      "frame": 5,
+      "bounds": [
+        32,
+        28,
+        169,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "down_right",
+      "frame": 0,
+      "bounds": [
+        40,
+        28,
+        159,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "down_right",
+      "frame": 1,
+      "bounds": [
+        33,
+        28,
+        153,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "down_right",
+      "frame": 2,
+      "bounds": [
+        34,
+        28,
+        153,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "down_right",
+      "frame": 3,
+      "bounds": [
+        34,
+        28,
+        155,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "down_right",
+      "frame": 4,
+      "bounds": [
+        32,
+        28,
+        154,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "down_right",
+      "frame": 5,
+      "bounds": [
+        33,
+        28,
+        153,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "down_right",
+      "frame": 0,
+      "bounds": [
+        31,
+        28,
+        153,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "down_right",
+      "frame": 1,
+      "bounds": [
+        31,
+        28,
+        153,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "down_right",
+      "frame": 2,
+      "bounds": [
+        30,
+        28,
+        152,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "down_right",
+      "frame": 3,
+      "bounds": [
+        32,
+        28,
+        156,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "down_right",
+      "frame": 4,
+      "bounds": [
+        25,
+        28,
+        151,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "down_right",
+      "frame": 5,
+      "bounds": [
+        31,
+        28,
+        153,
+        184
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "down_right",
+      "frame": 0,
+      "bounds": [
+        42,
+        31,
+        154,
+        186
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "down_right",
+      "frame": 1,
+      "bounds": [
+        43,
+        33,
+        153,
+        185
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "down_right",
+      "frame": 2,
+      "bounds": [
+        42,
+        31,
+        154,
+        186
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "down_right",
+      "frame": 3,
+      "bounds": [
+        42,
+        31,
+        154,
+        186
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "down_right",
+      "frame": 4,
+      "bounds": [
+        44,
+        33,
+        154,
+        185
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "down_right",
+      "frame": 5,
+      "bounds": [
+        42,
+        31,
+        154,
+        186
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "down_right",
+      "frame": 0,
+      "bounds": [
+        18,
+        28,
+        138,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "down_right",
+      "frame": 1,
+      "bounds": [
+        15,
+        28,
+        141,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "down_right",
+      "frame": 2,
+      "bounds": [
+        14,
+        28,
+        143,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "down_right",
+      "frame": 3,
+      "bounds": [
+        10,
+        28,
+        152,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "down_right",
+      "frame": 4,
+      "bounds": [
+        11,
+        28,
+        137,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "down_right",
+      "frame": 5,
+      "bounds": [
+        24,
+        28,
+        142,
+        184
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "down_right",
+      "frame": 0,
+      "bounds": [
+        36,
+        28,
+        161,
+        186
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "down_right",
+      "frame": 1,
+      "bounds": [
+        37,
+        31,
+        160,
+        185
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "down_right",
+      "frame": 2,
+      "bounds": [
+        39,
+        30,
+        154,
+        186
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "down_right",
+      "frame": 3,
+      "bounds": [
+        39,
+        30,
+        154,
+        186
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "down_right",
+      "frame": 4,
+      "bounds": [
+        41,
+        32,
+        154,
+        185
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "down_right",
+      "frame": 5,
+      "bounds": [
+        36,
+        28,
+        161,
+        186
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "down_right",
+      "frame": 0,
+      "bounds": [
+        16,
+        28,
+        141,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "down_right",
+      "frame": 1,
+      "bounds": [
+        13,
+        28,
+        141,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "down_right",
+      "frame": 2,
+      "bounds": [
+        10,
+        28,
+        143,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "down_right",
+      "frame": 3,
+      "bounds": [
+        6,
+        28,
+        140,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "down_right",
+      "frame": 4,
+      "bounds": [
+        12,
+        28,
+        143,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "down_right",
+      "frame": 5,
+      "bounds": [
+        22,
+        28,
+        149,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "right",
+      "frame": 0,
+      "bounds": [
+        23,
+        28,
+        135,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "right",
+      "frame": 1,
+      "bounds": [
+        23,
+        28,
+        135,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "right",
+      "frame": 2,
+      "bounds": [
+        23,
+        28,
+        135,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "right",
+      "frame": 3,
+      "bounds": [
+        22,
+        28,
+        136,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "right",
+      "frame": 4,
+      "bounds": [
+        22,
+        28,
+        136,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "right",
+      "frame": 5,
+      "bounds": [
+        23,
+        28,
+        135,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "right",
+      "frame": 0,
+      "bounds": [
+        23,
+        28,
+        136,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "right",
+      "frame": 1,
+      "bounds": [
+        23,
+        28,
+        136,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "right",
+      "frame": 2,
+      "bounds": [
+        23,
+        28,
+        138,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "right",
+      "frame": 3,
+      "bounds": [
+        24,
+        28,
+        138,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "right",
+      "frame": 4,
+      "bounds": [
+        23,
+        28,
+        135,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "right",
+      "frame": 5,
+      "bounds": [
+        24,
+        28,
+        135,
+        184
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "right",
+      "frame": 0,
+      "bounds": [
+        18,
+        28,
+        134,
+        187
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "right",
+      "frame": 1,
+      "bounds": [
+        21,
+        28,
+        133,
+        188
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "right",
+      "frame": 2,
+      "bounds": [
+        18,
+        28,
+        133,
+        186
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "right",
+      "frame": 3,
+      "bounds": [
+        18,
+        28,
+        133,
+        187
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "right",
+      "frame": 4,
+      "bounds": [
+        19,
+        28,
+        133,
+        188
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "right",
+      "frame": 5,
+      "bounds": [
+        16,
+        28,
+        132,
+        187
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "right",
+      "frame": 0,
+      "bounds": [
+        22,
+        28,
+        137,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "right",
+      "frame": 1,
+      "bounds": [
+        15,
+        28,
+        134,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "right",
+      "frame": 2,
+      "bounds": [
+        12,
+        28,
+        134,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "right",
+      "frame": 3,
+      "bounds": [
+        11,
+        28,
+        140,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "right",
+      "frame": 4,
+      "bounds": [
+        6,
+        28,
+        141,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "right",
+      "frame": 5,
+      "bounds": [
+        24,
+        28,
+        137,
+        184
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "right",
+      "frame": 0,
+      "bounds": [
+        11,
+        28,
+        140,
+        182
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "right",
+      "frame": 1,
+      "bounds": [
+        12,
+        28,
+        139,
+        182
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "right",
+      "frame": 2,
+      "bounds": [
+        17,
+        28,
+        132,
+        182
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "right",
+      "frame": 3,
+      "bounds": [
+        18,
+        28,
+        132,
+        182
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "right",
+      "frame": 4,
+      "bounds": [
+        17,
+        28,
+        142,
+        182
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "right",
+      "frame": 5,
+      "bounds": [
+        16,
+        28,
+        139,
+        182
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "right",
+      "frame": 0,
+      "bounds": [
+        15,
+        28,
+        138,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "right",
+      "frame": 1,
+      "bounds": [
+        16,
+        28,
+        137,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "right",
+      "frame": 2,
+      "bounds": [
+        6,
+        28,
+        141,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "right",
+      "frame": 3,
+      "bounds": [
+        6,
+        28,
+        149,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "right",
+      "frame": 4,
+      "bounds": [
+        6,
+        28,
+        140,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "right",
+      "frame": 5,
+      "bounds": [
+        19,
+        28,
+        136,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "up_right",
+      "frame": 0,
+      "bounds": [
+        19,
+        28,
+        127,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "up_right",
+      "frame": 1,
+      "bounds": [
+        19,
+        28,
+        127,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "up_right",
+      "frame": 2,
+      "bounds": [
+        20,
+        28,
+        127,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "up_right",
+      "frame": 3,
+      "bounds": [
+        19,
+        28,
+        126,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "up_right",
+      "frame": 4,
+      "bounds": [
+        20,
+        28,
+        127,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "up_right",
+      "frame": 5,
+      "bounds": [
+        19,
+        28,
+        126,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "up_right",
+      "frame": 0,
+      "bounds": [
+        19,
+        28,
+        127,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "up_right",
+      "frame": 1,
+      "bounds": [
+        19,
+        28,
+        127,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "up_right",
+      "frame": 2,
+      "bounds": [
+        19,
+        28,
+        127,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "up_right",
+      "frame": 3,
+      "bounds": [
+        20,
+        28,
+        127,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "up_right",
+      "frame": 4,
+      "bounds": [
+        19,
+        28,
+        126,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "up_right",
+      "frame": 5,
+      "bounds": [
+        19,
+        28,
+        127,
+        184
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "up_right",
+      "frame": 0,
+      "bounds": [
+        15,
+        28,
+        126,
+        184
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "up_right",
+      "frame": 1,
+      "bounds": [
+        15,
+        28,
+        126,
+        183
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "up_right",
+      "frame": 2,
+      "bounds": [
+        16,
+        28,
+        126,
+        184
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "up_right",
+      "frame": 3,
+      "bounds": [
+        16,
+        28,
+        126,
+        184
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "up_right",
+      "frame": 4,
+      "bounds": [
+        16,
+        28,
+        126,
+        184
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "up_right",
+      "frame": 5,
+      "bounds": [
+        16,
+        28,
+        126,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "up_right",
+      "frame": 0,
+      "bounds": [
+        16,
+        28,
+        128,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "up_right",
+      "frame": 1,
+      "bounds": [
+        16,
+        28,
+        128,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "up_right",
+      "frame": 2,
+      "bounds": [
+        16,
+        28,
+        140,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "up_right",
+      "frame": 3,
+      "bounds": [
+        16,
+        28,
+        150,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "up_right",
+      "frame": 4,
+      "bounds": [
+        16,
+        28,
+        149,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "up_right",
+      "frame": 5,
+      "bounds": [
+        16,
+        28,
+        128,
+        184
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "up_right",
+      "frame": 0,
+      "bounds": [
+        15,
+        28,
+        140,
+        184
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "up_right",
+      "frame": 1,
+      "bounds": [
+        14,
+        28,
+        139,
+        184
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "up_right",
+      "frame": 2,
+      "bounds": [
+        16,
+        28,
+        140,
+        184
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "up_right",
+      "frame": 3,
+      "bounds": [
+        16,
+        28,
+        140,
+        184
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "up_right",
+      "frame": 4,
+      "bounds": [
+        16,
+        28,
+        140,
+        184
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "up_right",
+      "frame": 5,
+      "bounds": [
+        16,
+        28,
+        140,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "up_right",
+      "frame": 0,
+      "bounds": [
+        10,
+        28,
+        130,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "up_right",
+      "frame": 1,
+      "bounds": [
+        7,
+        28,
+        130,
+        183
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "up_right",
+      "frame": 2,
+      "bounds": [
+        7,
+        28,
+        131,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "up_right",
+      "frame": 3,
+      "bounds": [
+        6,
+        28,
+        135,
+        183
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "up_right",
+      "frame": 4,
+      "bounds": [
+        6,
+        28,
+        128,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "up_right",
+      "frame": 5,
+      "bounds": [
+        6,
+        28,
+        128,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "up",
+      "frame": 0,
+      "bounds": [
+        31,
+        28,
+        162,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "up",
+      "frame": 1,
+      "bounds": [
+        32,
+        28,
+        163,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "up",
+      "frame": 2,
+      "bounds": [
+        34,
+        28,
+        163,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "up",
+      "frame": 3,
+      "bounds": [
+        32,
+        28,
+        162,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "up",
+      "frame": 4,
+      "bounds": [
+        31,
+        28,
+        162,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "up",
+      "frame": 5,
+      "bounds": [
+        31,
+        28,
+        162,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "up",
+      "frame": 0,
+      "bounds": [
+        28,
+        28,
+        163,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "up",
+      "frame": 1,
+      "bounds": [
+        32,
+        28,
+        166,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "up",
+      "frame": 2,
+      "bounds": [
+        30,
+        28,
+        158,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "up",
+      "frame": 3,
+      "bounds": [
+        33,
+        28,
+        165,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "up",
+      "frame": 4,
+      "bounds": [
+        29,
+        28,
+        161,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "up",
+      "frame": 5,
+      "bounds": [
+        30,
+        28,
+        164,
+        184
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "up",
+      "frame": 0,
+      "bounds": [
+        37,
+        28,
+        151,
+        184
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "up",
+      "frame": 1,
+      "bounds": [
+        39,
+        28,
+        152,
+        184
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "up",
+      "frame": 2,
+      "bounds": [
+        40,
+        28,
+        152,
+        184
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "up",
+      "frame": 3,
+      "bounds": [
+        39,
+        28,
+        151,
+        184
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "up",
+      "frame": 4,
+      "bounds": [
+        40,
+        28,
+        153,
+        184
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "up",
+      "frame": 5,
+      "bounds": [
+        39,
+        28,
+        152,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "up",
+      "frame": 0,
+      "bounds": [
+        31,
+        28,
+        160,
+        186
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "up",
+      "frame": 1,
+      "bounds": [
+        30,
+        28,
+        159,
+        185
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "up",
+      "frame": 2,
+      "bounds": [
+        30,
+        28,
+        160,
+        186
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "up",
+      "frame": 3,
+      "bounds": [
+        30,
+        28,
+        161,
+        185
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "up",
+      "frame": 4,
+      "bounds": [
+        31,
+        28,
+        163,
+        185
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "up",
+      "frame": 5,
+      "bounds": [
+        30,
+        28,
+        160,
+        186
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "up",
+      "frame": 0,
+      "bounds": [
+        37,
+        28,
+        151,
+        184
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "up",
+      "frame": 1,
+      "bounds": [
+        39,
+        28,
+        152,
+        184
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "up",
+      "frame": 2,
+      "bounds": [
+        40,
+        28,
+        152,
+        184
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "up",
+      "frame": 3,
+      "bounds": [
+        39,
+        28,
+        154,
+        184
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "up",
+      "frame": 4,
+      "bounds": [
+        39,
+        28,
+        152,
+        184
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "up",
+      "frame": 5,
+      "bounds": [
+        39,
+        28,
+        152,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "up",
+      "frame": 0,
+      "bounds": [
+        30,
+        28,
+        160,
+        183
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "up",
+      "frame": 1,
+      "bounds": [
+        28,
+        28,
+        161,
+        183
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "up",
+      "frame": 2,
+      "bounds": [
+        25,
+        28,
+        161,
+        183
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "up",
+      "frame": 3,
+      "bounds": [
+        23,
+        28,
+        166,
+        183
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "up",
+      "frame": 4,
+      "bounds": [
+        25,
+        28,
+        161,
+        183
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "up",
+      "frame": 5,
+      "bounds": [
+        30,
+        28,
+        161,
+        183
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "up_left",
+      "frame": 0,
+      "bounds": [
+        65,
+        28,
+        173,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "up_left",
+      "frame": 1,
+      "bounds": [
+        65,
+        28,
+        173,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "up_left",
+      "frame": 2,
+      "bounds": [
+        65,
+        28,
+        172,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "up_left",
+      "frame": 3,
+      "bounds": [
+        66,
+        28,
+        173,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "up_left",
+      "frame": 4,
+      "bounds": [
+        65,
+        28,
+        172,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "up_left",
+      "frame": 5,
+      "bounds": [
+        66,
+        28,
+        173,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "up_left",
+      "frame": 0,
+      "bounds": [
+        65,
+        28,
+        173,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "up_left",
+      "frame": 1,
+      "bounds": [
+        65,
+        28,
+        173,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "up_left",
+      "frame": 2,
+      "bounds": [
+        65,
+        28,
+        173,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "up_left",
+      "frame": 3,
+      "bounds": [
+        65,
+        28,
+        172,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "up_left",
+      "frame": 4,
+      "bounds": [
+        66,
+        28,
+        173,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "up_left",
+      "frame": 5,
+      "bounds": [
+        65,
+        28,
+        173,
+        184
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "up_left",
+      "frame": 0,
+      "bounds": [
+        66,
+        28,
+        177,
+        184
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "up_left",
+      "frame": 1,
+      "bounds": [
+        66,
+        28,
+        177,
+        183
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "up_left",
+      "frame": 2,
+      "bounds": [
+        66,
+        28,
+        176,
+        184
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "up_left",
+      "frame": 3,
+      "bounds": [
+        66,
+        28,
+        176,
+        184
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "up_left",
+      "frame": 4,
+      "bounds": [
+        66,
+        28,
+        176,
+        184
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "up_left",
+      "frame": 5,
+      "bounds": [
+        66,
+        28,
+        176,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "up_left",
+      "frame": 0,
+      "bounds": [
+        64,
+        28,
+        176,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "up_left",
+      "frame": 1,
+      "bounds": [
+        64,
+        28,
+        176,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "up_left",
+      "frame": 2,
+      "bounds": [
+        52,
+        28,
+        176,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "up_left",
+      "frame": 3,
+      "bounds": [
+        42,
+        28,
+        176,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "up_left",
+      "frame": 4,
+      "bounds": [
+        43,
+        28,
+        176,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "up_left",
+      "frame": 5,
+      "bounds": [
+        64,
+        28,
+        176,
+        184
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "up_left",
+      "frame": 0,
+      "bounds": [
+        52,
+        28,
+        177,
+        184
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "up_left",
+      "frame": 1,
+      "bounds": [
+        53,
+        28,
+        178,
+        184
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "up_left",
+      "frame": 2,
+      "bounds": [
+        52,
+        28,
+        176,
+        184
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "up_left",
+      "frame": 3,
+      "bounds": [
+        52,
+        28,
+        176,
+        184
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "up_left",
+      "frame": 4,
+      "bounds": [
+        52,
+        28,
+        176,
+        184
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "up_left",
+      "frame": 5,
+      "bounds": [
+        52,
+        28,
+        176,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "up_left",
+      "frame": 0,
+      "bounds": [
+        62,
+        28,
+        182,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "up_left",
+      "frame": 1,
+      "bounds": [
+        62,
+        28,
+        185,
+        183
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "up_left",
+      "frame": 2,
+      "bounds": [
+        61,
+        28,
+        185,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "up_left",
+      "frame": 3,
+      "bounds": [
+        57,
+        28,
+        186,
+        183
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "up_left",
+      "frame": 4,
+      "bounds": [
+        64,
+        28,
+        186,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "up_left",
+      "frame": 5,
+      "bounds": [
+        64,
+        28,
+        186,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "left",
+      "frame": 0,
+      "bounds": [
+        57,
+        28,
+        169,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "left",
+      "frame": 1,
+      "bounds": [
+        57,
+        28,
+        169,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "left",
+      "frame": 2,
+      "bounds": [
+        57,
+        28,
+        169,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "left",
+      "frame": 3,
+      "bounds": [
+        56,
+        28,
+        170,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "left",
+      "frame": 4,
+      "bounds": [
+        56,
+        28,
+        170,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "left",
+      "frame": 5,
+      "bounds": [
+        57,
+        28,
+        169,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "left",
+      "frame": 0,
+      "bounds": [
+        56,
+        28,
+        169,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "left",
+      "frame": 1,
+      "bounds": [
+        56,
+        28,
+        169,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "left",
+      "frame": 2,
+      "bounds": [
+        54,
+        28,
+        169,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "left",
+      "frame": 3,
+      "bounds": [
+        54,
+        28,
+        168,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "left",
+      "frame": 4,
+      "bounds": [
+        57,
+        28,
+        169,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "left",
+      "frame": 5,
+      "bounds": [
+        57,
+        28,
+        168,
+        184
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "left",
+      "frame": 0,
+      "bounds": [
+        58,
+        28,
+        174,
+        187
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "left",
+      "frame": 1,
+      "bounds": [
+        59,
+        28,
+        171,
+        188
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "left",
+      "frame": 2,
+      "bounds": [
+        59,
+        28,
+        174,
+        186
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "left",
+      "frame": 3,
+      "bounds": [
+        59,
+        28,
+        174,
+        187
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "left",
+      "frame": 4,
+      "bounds": [
+        59,
+        28,
+        173,
+        188
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "left",
+      "frame": 5,
+      "bounds": [
+        60,
+        28,
+        176,
+        187
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "left",
+      "frame": 0,
+      "bounds": [
+        55,
+        28,
+        170,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "left",
+      "frame": 1,
+      "bounds": [
+        58,
+        28,
+        177,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "left",
+      "frame": 2,
+      "bounds": [
+        58,
+        28,
+        180,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "left",
+      "frame": 3,
+      "bounds": [
+        52,
+        28,
+        181,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "left",
+      "frame": 4,
+      "bounds": [
+        51,
+        28,
+        186,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "left",
+      "frame": 5,
+      "bounds": [
+        55,
+        28,
+        168,
+        184
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "left",
+      "frame": 0,
+      "bounds": [
+        52,
+        28,
+        181,
+        182
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "left",
+      "frame": 1,
+      "bounds": [
+        53,
+        28,
+        180,
+        182
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "left",
+      "frame": 2,
+      "bounds": [
+        60,
+        28,
+        175,
+        182
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "left",
+      "frame": 3,
+      "bounds": [
+        60,
+        28,
+        174,
+        182
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "left",
+      "frame": 4,
+      "bounds": [
+        50,
+        28,
+        175,
+        182
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "left",
+      "frame": 5,
+      "bounds": [
+        53,
+        28,
+        176,
+        182
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "left",
+      "frame": 0,
+      "bounds": [
+        54,
+        28,
+        177,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "left",
+      "frame": 1,
+      "bounds": [
+        55,
+        28,
+        176,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "left",
+      "frame": 2,
+      "bounds": [
+        51,
+        28,
+        186,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "left",
+      "frame": 3,
+      "bounds": [
+        43,
+        28,
+        186,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "left",
+      "frame": 4,
+      "bounds": [
+        52,
+        28,
+        186,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "left",
+      "frame": 5,
+      "bounds": [
+        56,
+        28,
+        173,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "down_left",
+      "frame": 0,
+      "bounds": [
+        33,
+        28,
+        152,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "down_left",
+      "frame": 1,
+      "bounds": [
+        39,
+        28,
+        159,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "down_left",
+      "frame": 2,
+      "bounds": [
+        39,
+        28,
+        158,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "down_left",
+      "frame": 3,
+      "bounds": [
+        37,
+        28,
+        158,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "down_left",
+      "frame": 4,
+      "bounds": [
+        38,
+        28,
+        160,
+        184
+      ]
+    },
+    {
+      "state": "idle",
+      "direction": "down_left",
+      "frame": 5,
+      "bounds": [
+        39,
+        28,
+        159,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "down_left",
+      "frame": 0,
+      "bounds": [
+        39,
+        28,
+        161,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "down_left",
+      "frame": 1,
+      "bounds": [
+        39,
+        28,
+        161,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "down_left",
+      "frame": 2,
+      "bounds": [
+        40,
+        28,
+        162,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "down_left",
+      "frame": 3,
+      "bounds": [
+        36,
+        28,
+        160,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "down_left",
+      "frame": 4,
+      "bounds": [
+        41,
+        28,
+        167,
+        184
+      ]
+    },
+    {
+      "state": "idle2",
+      "direction": "down_left",
+      "frame": 5,
+      "bounds": [
+        39,
+        28,
+        161,
+        184
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "down_left",
+      "frame": 0,
+      "bounds": [
+        38,
+        31,
+        150,
+        186
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "down_left",
+      "frame": 1,
+      "bounds": [
+        39,
+        33,
+        149,
+        185
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "down_left",
+      "frame": 2,
+      "bounds": [
+        38,
+        31,
+        150,
+        186
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "down_left",
+      "frame": 3,
+      "bounds": [
+        38,
+        31,
+        150,
+        186
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "down_left",
+      "frame": 4,
+      "bounds": [
+        38,
+        33,
+        148,
+        185
+      ]
+    },
+    {
+      "state": "walk",
+      "direction": "down_left",
+      "frame": 5,
+      "bounds": [
+        38,
+        31,
+        150,
+        186
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "down_left",
+      "frame": 0,
+      "bounds": [
+        54,
+        28,
+        174,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "down_left",
+      "frame": 1,
+      "bounds": [
+        51,
+        28,
+        177,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "down_left",
+      "frame": 2,
+      "bounds": [
+        49,
+        28,
+        178,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "down_left",
+      "frame": 3,
+      "bounds": [
+        40,
+        28,
+        182,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "down_left",
+      "frame": 4,
+      "bounds": [
+        55,
+        28,
+        181,
+        184
+      ]
+    },
+    {
+      "state": "attack",
+      "direction": "down_left",
+      "frame": 5,
+      "bounds": [
+        50,
+        28,
+        168,
+        184
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "down_left",
+      "frame": 0,
+      "bounds": [
+        31,
+        28,
+        156,
+        186
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "down_left",
+      "frame": 1,
+      "bounds": [
+        32,
+        31,
+        155,
+        185
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "down_left",
+      "frame": 2,
+      "bounds": [
+        38,
+        30,
+        153,
+        186
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "down_left",
+      "frame": 3,
+      "bounds": [
+        38,
+        30,
+        153,
+        186
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "down_left",
+      "frame": 4,
+      "bounds": [
+        38,
+        32,
+        151,
+        185
+      ]
+    },
+    {
+      "state": "walk_attack",
+      "direction": "down_left",
+      "frame": 5,
+      "bounds": [
+        31,
+        28,
+        156,
+        186
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "down_left",
+      "frame": 0,
+      "bounds": [
+        51,
+        28,
+        176,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "down_left",
+      "frame": 1,
+      "bounds": [
+        51,
+        28,
+        179,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "down_left",
+      "frame": 2,
+      "bounds": [
+        49,
+        28,
+        182,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "down_left",
+      "frame": 3,
+      "bounds": [
+        52,
+        28,
+        186,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "down_left",
+      "frame": 4,
+      "bounds": [
+        49,
+        28,
+        180,
+        184
+      ]
+    },
+    {
+      "state": "skill",
+      "direction": "down_left",
+      "frame": 5,
+      "bounds": [
+        43,
+        28,
+        170,
+        184
+      ]
+    }
+  ]
 }

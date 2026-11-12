@@ -2,24 +2,58 @@
 (() => {
   'use strict';
   if (!window.CherriftGame || !window.CHERRIFT_CONFIG || window.CHERRIFT_SPORT_CHERRY) return;
-  const ID='sport_cherry', BUILD='1105-sport-walk-contour6';
+  const ID='sport_cherry', BUILD='1111-sport2-costume-gait';
   const ROOT='assets/player/cherry_skins/sport_cherry/sheets192';
   const DIRS=['right','down_right','down','down_left','left','up_left','up','up_right'];
   const FPS={idle:3,idle2:3,walk:8,attack:18,walk_attack:8,skill:16};
   const config=CHERRIFT_CONFIG.player.skins[ID];if(!config)return;
   config.states=Object.fromEntries(Object.entries(FPS).map(([name,fps])=>[name,{
-    frames:6,fps,duration:6/fps,loop:name==='idle'||name==='walk',pivot:{x:96,y:184},
-    dirs:Object.fromEntries(DIRS.map(d=>[d,`${ROOT}/sport_cherry_${name==='walk'?'idle':name==='walk_attack'?'attack':name}_${d}.png?v=${BUILD}`]))
+    frames:6,fps,duration:6/fps,loop:['idle','walk','walk_attack'].includes(name),pivot:{x:96,y:184},
+    dirs:Object.fromEntries(DIRS.map(d=>[d,`${ROOT}/sport_cherry_${name}_${d}.png?v=${BUILD}`]))
   }]));
   config.attackMovementMode='mobile';config.attackMoveSpeedMultiplier=1;
   // Keep common_shield, +2% HP, existing cooldown and the shared healing logic.
+  // One fixed Idle palette per complete corrected strip. Cache once, preserving
+  // alpha and neutral whites/skin/eyes; no per-frame tint or gameplay pixel reads.
+  const paletteCache=new WeakMap(),primedAssets=new WeakSet();
+  const smoothRange=(lo,hi,value)=>{const t=Math.max(0,Math.min(1,(value-lo)/(hi-lo)));return t*t*(3-2*t);};
+  function paletteMatched(image,state,dir,ctx){
+    const curves=window.CHERRIFT_SPORT_PALETTE?.[state]?.[dir];if(!curves)return image;
+    const cached=paletteCache.get(image);if(cached)return cached.image;
+    const owner=ctx.canvas?.ownerDocument||(typeof document==='undefined'?null:document);
+    const canvas=owner?.createElement('canvas')||(typeof OffscreenCanvas==='function'?new OffscreenCanvas(1152,192):null);
+    if(!canvas)return image;canvas.width=1152;canvas.height=192;
+    const c=canvas.getContext('2d');if(!c?.getImageData||!c.putImageData)return image;
+    c.drawImage(image,0,0);const pixels=c.getImageData(0,0,1152,192),data=pixels.data;
+    const makeLut=curves=>curves.map(curve=>Uint8Array.from({length:256},(_,value)=>{
+      let j=1;while(j<curve.length-1&&value>curve[j][0])j++;
+      const [x0,y0]=curve[j-1],[x1,y1]=curve[j];return Math.round(y0+(y1-y0)*(value-x0)/(x1-x0));
+    }));
+    const lut=makeLut(curves),second=window.CHERRIFT_SPORT_PALETTE_PASSING?.[state]?.[dir];
+    const alternate=second?makeLut(second):null;
+    for(let i=0;i<data.length;i+=4){
+      if(!data[i+3])continue;const r=data[i],g=data[i+1],b=data[i+2];
+      const weight=smoothRange(30,55,r-Math.min(g,b))*(1-smoothRange(12,24,g-b));
+      if(!weight)continue;
+      // The new full passing poses occupy slots 1 and 4. Retained contact
+      // poses keep their original-source palette, including repeated contacts.
+      const frame=Math.floor(i/4%1152/192),active=alternate&&(frame===1||frame===4)?alternate:lut;
+      for(let channel=0;channel<3;channel++){const value=data[i+channel];data[i+channel]=Math.round(value+weight*(active[channel][value]-value));}
+    }
+    c.putImageData(pixels,0,0);const entry={image:canvas};paletteCache.set(image,entry);
+    // Use the same decoded PNG sampling path as the source for stable outlines.
+    if(typeof Image==='function'&&typeof canvas.toDataURL==='function'){
+      const decoded=new Image();decoded.onload=()=>{entry.image=decoded;};decoded.src=canvas.toDataURL('image/png');
+    }
+    return entry.image;
+  }
   const proto=CherriftGame.prototype;
   const facing=(x,y,fallback='down')=>Math.hypot(x,y)<.04?fallback:DIRS[(Math.round(Math.atan2(y,x)/(Math.PI/4))+8)%8];
   const key=(s,d)=>`player_${ID}_${s}_${d}`;
   const move=proto.movePlayer;
   proto.movePlayer=function moveSport(v,dt){
     const p=this.player,x=p?.x,y=p?.y;const result=move.call(this,v,dt);
-    if(p===this.player&&p?.skin===ID&&dt>0){
+    if(p===this.player&&p?.skin===ID&&dt>0&&!(p.dashTimer>0)){
       const distance=Math.hypot(p.x-x,p.y-y);
       p.sportStride=(p.sportStride||0)+Math.min(dt,distance/Math.max(1,p.speed||235));
       if(Math.hypot(v.x,v.y)>.04)p.sportFacing=facing(v.x,v.y,p.sportFacing);
@@ -75,22 +109,31 @@
   const draw=proto.drawPlayer;
   proto.drawPlayer=function drawSport(ctx,p){
     if(p?.skin!==ID)return draw.call(this,ctx,p);
+    if(!primedAssets.has(this.assets)){
+      let ready=true;for(const [state,dirs] of Object.entries(window.CHERRIFT_SPORT_PALETTE||{}))for(const dir of Object.keys(dirs)){
+        const image=this.assets.get(key(state,dir));if(image)paletteMatched(image,state,dir,ctx);else ready=false;
+      }if(ready)primedAssets.add(this.assets);
+    }
     const cast=p.skillCastTimer>0,attack=!cast&&p.sportAttack,idle=p.sportIdleTime||0;
     const state=cast?'skill':attack?(p.moving?'walk_attack':'attack'):p.moving?'walk':idle%8>=6?'idle2':'idle';
     const d=cast?p.skillDir:attack?p.attackDir:p.sportFacing||p.lastDir;
     const dir=DIRS.includes(d)?d:'down';
-    const image=this.assets.get(key(state,dir))||this.assets.get(key('idle',dir))||this.assets.get(key('idle','down'));if(!image)return;
+    const requested=this.assets.get(key(state,dir));
+    let image=requested||this.assets.get(key('idle',dir))||this.assets.get(key('idle','down'));if(!image)return;
+    if(requested)image=paletteMatched(image,state,dir,ctx);
     const elapsed=cast?Math.max(0,(p.skillCastDuration||config.states.skill.duration)-p.skillCastTimer):state==='idle2'?idle%8-6:this.t||0;
-    const phase=attack?Math.min(5,attack.elapsed/attack.duration*6):cast||state==='idle2'?Math.min(5,elapsed*FPS[state]):state==='walk'?((p.sportStride||0)*8)%6:(elapsed*FPS[state])%6;
+    // Gait follows travel in both moving states; starting a shot never restarts it.
+    const walking=state==='walk'||state==='walk_attack';
+    const phase=walking?((p.sportStride||0)*FPS.walk)%6:attack?Math.min(5,attack.elapsed/attack.duration*6):cast||state==='idle2'?Math.min(5,elapsed*FPS[state]):(elapsed*FPS[state])%6;
     const width=(CHERRIFT_CONFIG.player.displayWidth||116)*.95,height=(CHERRIFT_CONFIG.player.displayHeight||116)*.95;
     ctx.save();ctx.globalAlpha*=.2;ctx.fillStyle='#000';ctx.beginPath();ctx.ellipse(p.x,p.y+25,26,8,0,0,Math.PI*2);ctx.fill();ctx.restore();
-    ctx.save();ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
-    const smooth=window.CHERRIFT_ANIMATION_SMOOTHING;
-    const gaitDrawn=state.startsWith('walk')&&window.CHERRIFT_SPORT_GAIT?.draw(this,ctx,state,dir,phase,(p.sportStride||0)*8,p,width,height);
-    if(!gaitDrawn&&!smooth?.draw(ctx,image,ID,state,dir,phase,p,width,height,{
-      loop:state==='idle'||state==='walk',gaitPhase:(p.sportStride||0)*8,
-      makeFrame:(c,f)=>raw(c,image,f,{x:96,y:154},192,192)
-    }))raw(ctx,image,Math.floor(phase),p,width,height);
+    ctx.save();ctx.globalAlpha=p===this.player?1:ctx.globalAlpha;
+    ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+    // Only translate/scale a complete authored cell, exactly as Base Cherry.
+    // No leg rig, inverse warp, mesh or optical-flow blending in any state.
+    const frame=Math.floor(phase);
+    if(window.CHERRIFT_CHERRY_MOTION?.renderPose)window.CHERRIFT_CHERRY_MOTION.renderPose(ctx,image,ID,state,dir,frame,p,width,height);
+    else raw(ctx,image,frame,p,width,height);
     ctx.restore();
     window.CHERRIFT_SPORT_VFX?.shield(this,ctx,p);
   };

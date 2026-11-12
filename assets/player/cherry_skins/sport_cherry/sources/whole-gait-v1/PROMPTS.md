@@ -1,0 +1,23 @@
+# Sport Cherry whole-gait v1 — selected generation records
+
+Built-in image generation with transparent background. Every selected source is a complete 2-row × 6-column atlas. Original atlases are retained in the parent sources folder. Base pose guides came from the accepted Base v7 strips at the baseline commit documented in the manifest. Reference images were inspected before generation.
+
+## Common production specification / prompt set
+
+Identity-preserving game sprite sheet. Sport Cherry is the authority for exact character, clothing, palette, soft warm outline and proportions. Approved Base Cherry animation supplies POSES ONLY. Make TWO ROWS x SIX COLUMNS of complete SPORT figures, row1 Walk, row2 Walk Attack. Copy the corresponding six individual pose phases from the guide, including opposite anatomical foot leading on the second half. Do not copy frozen Sport leg positions. Every figure wears white/pink sports crop top and SEPARATE white-trim pink SHORTS, striped socks and PINK SNEAKERS. NO skirt/dress, chest bow, Base boots or Mary Janes in any cell. Preserve long voluminous peach-pink flowing hair, single curled ahoge, bunny ears and amber eyes exactly as original Sport. Preserve original pastel colors and soft thin outlines, head/body proportions, stable head level and ground baseline. Ordinary low-clearance small forward steps, support sole flat, shoes point with the face; no high kick, running, tiptoe, backward toe, crossed knees or twisted ankle. Bottom row keeps the same six moving leg phases with natural casting hand/elbow/wrist. Generous transparent gutters, complete figures entirely inside cells, true alpha, no labels or floor shadows.
+
+## Direction-specific inputs and selected outputs
+
+- `right.png`: original Sport right Idle/Walk/WalkAttack reference plus accepted Base right Walk/WalkAttack pose guide. Faces screen RIGHT throughout. Selected second full-pose attempt; first attempt was rejected for unclear gait.
+- `up_right.png`: original Sport up-right reference plus accepted Base up-right pose guide. Rear three-quarter UP RIGHT; show solid outer ear backs with no white inner tufts visible. No broken elbow/wrist; naturally bent arms for Walk and casting arm for Walk Attack.
+- `down.png`: original Sport down reference plus accepted Base down pose guide. Symmetric front camera, DOWN toward viewer; preserve white inner ear tufts, amber eyes and face. Parallel feet throughout the alternating steps.
+- `up.png`: original Sport up reference plus accepted Base up pose guide. Symmetric rear camera, UP away from viewer; solid pink backs of ears, no face or white inner ear surface visible. Alternating soles/contacts copied from the corresponding guide phases.
+- `down_right.png`: approved Base down-right pose guide first, original Sport costume reference second. Three-quarter front DOWN RIGHT; preserve exact guide knee/ankle/contact orientation, opposite leg leading on columns4–6. An initial generated version was rejected because it copied the frozen source gait. The next version had correct pose diversity but incorrect dress artwork in the lower row, so it received the following targeted correction.
+
+## Down-right final correction prompt
+
+Precise object edit, production sprite correction. Image1 is EDIT TARGET, twelve figures, 2 rows x6 cols. Image2 original SPORT CHERRY is COSTUME authority. KEEP image1's twelve full-body poses, leg positions, arms, forward down-right direction, face, hair and colors. Change ONLY wrong clothing in the entire BOTTOM row: every bottom-row figure MUST wear the exact same SPORT CROP TOP and separate PINK SHORTS with white edging as top row/image2. Remove the dress/skirt/bow now incorrectly appearing in bottom row. No dress or skirt or chest bow should exist ANYWHERE. Keep six distinct alternating gait phases exactly, do not merge feet, don't change the leading leg in any cell. Top row unchanged. Every figure has striped sport socks and pink sneakers matching original Sport. Soft original Sport colors and outlines identical top and bottom. Preserve true alpha transparency and all full figures, 2x6 sheet; no background, no text or effects. This is ONLY a bottom-row costume correction, not a pose or direction change.
+
+## Export selection
+
+Only complete connected figures are packed. Runtime left/up-left/down-left are mirrored whole figures; no independent feet or limbs. Down-right Walk's final wide pose is excluded from the runtime sequence in favor of a held full passing pose. Runtime palette matching is fixed per full six-cell strip and derives from the unchanged original Idle pink material. Source PNGs stay unchanged.
