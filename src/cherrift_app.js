@@ -17587,7 +17587,7 @@ function ensureSettings() {
   normalizeSettings(UI.save);
   const display = document.querySelector('[data-v060-settings-page="display"]');
   const gameplay = display;
-  addSetting(display, "effectQuality", UI.save?.settings?.language === "en" ? "Graphics quality" : "Grafikai minőség", UI.save?.settings?.language === "en" ? "World1 textures and effect detail" : "World1 képfelbontás és effektrészletesség", [["low", "Low"], ["medium", "Medium"], ["high", "High"]]);
+  addSetting(display, "effectQuality", UI.save?.settings?.language === "en" ? "Graphics quality" : "Grafikai minőség", UI.save?.settings?.language === "en" ? "PC main menu, world textures and effect detail" : "PC-s főmenü, pályatextúrák és effektrészletesség", [["low", "Low"], ["medium", "Medium"], ["high", "High"]]);
   addSetting(display, "environmentPerformance", UI.save?.settings?.language === "en" ? "Environment performance mode" : "Környezeti animációk teljesítménykímélése", UI.save?.settings?.language === "en" ? "OFF: animated plants and drifting leaves. ON: static plants, no leaf effects." : "OFF: mozgó növények és szálló levelek. ON: statikus növények, levéleffektek nélkül.", [["off", "OFF"], ["on", "ON"]]);
   addSetting(display, "cameraMotion", "Camera motion", "Speed zoom, dash kick and look-ahead", [["off", "Off"], ["low", "Low"], ["full", "Full"]]);
   addSetting(gameplay, "screenShake", "Screen shake", "Impact feedback without moving the HUD", [["off", "Off"], ["low", "Low"], ["full", "Full"]]);

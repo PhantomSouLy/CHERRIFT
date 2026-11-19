@@ -8,7 +8,27 @@
  body.crystal-desktop.crystal-lobby #menu>:not(#crystalDesktopMenu){display:none!important}
  body.crystal-desktop.crystal-lobby #globalRailV060,body.crystal-desktop.crystal-lobby #desktopSubnavV0933,body.crystal-desktop.crystal-lobby #resourceBarV082,body.crystal-desktop.crystal-lobby #crDesktopEnergy{display:none!important}
  body.crystal-desktop #crystalDesktopMenu{display:block;position:absolute;inset:0;isolation:isolate;font-family:Georgia,'Times New Roman',serif;color:#ffeffa;font-size:clamp(10px,.85vw,17px);--crystal-pink:#ff95ce;--parallax-x:0px;--parallax-y:0px}
- .crystal-desktop .crystal-scenery{position:absolute;inset:-12px;z-index:-3;background:url('ui/backgrounds/crystal-realm-pc.webp') center/cover no-repeat;transform:translate3d(var(--parallax-x),var(--parallax-y),0);will-change:transform}
+ .crystal-desktop #crystalDesktopMenu{
+  --menu-landscape:url('ui/main-menu-quality/high/landscape.webp');
+  --menu-foreground:url('ui/main-menu-quality/high/foreground.webp');
+  --menu-event-art:url('ui/main-menu-quality/high/event.webp');
+  --menu-journey-art:url('ui/main-menu-quality/high/journey.webp');
+ }
+ .crystal-desktop #crystalDesktopMenu[data-quality="medium"]{
+  --menu-landscape:url('ui/main-menu-quality/medium/landscape.webp');
+  --menu-foreground:url('ui/main-menu-quality/medium/foreground.webp');
+  --menu-event-art:url('ui/main-menu-quality/medium/event.webp');
+  --menu-journey-art:url('ui/main-menu-quality/medium/journey.webp');
+ }
+ .crystal-desktop #crystalDesktopMenu[data-quality="low"]{
+  --menu-landscape:url('ui/main-menu-quality/low/landscape.webp');
+  --menu-foreground:url('ui/main-menu-quality/low/foreground.webp');
+  --menu-event-art:url('ui/main-menu-quality/low/event.webp');
+  --menu-journey-art:url('ui/main-menu-quality/low/journey.webp');
+ }
+ .crystal-desktop .crystal-scenery{position:absolute;inset:-12px;z-index:-3;background:var(--cherrift-landscape,var(--menu-landscape)) center/cover no-repeat;transform:translate3d(var(--parallax-x),var(--parallax-y),0);will-change:transform}
+ .crystal-desktop #crystalDesktopMenu[data-quality="medium"] .crystal-scenery{transform:translate3d(calc(var(--parallax-x) * .5),calc(var(--parallax-y) * .5),0)}
+ .crystal-desktop #crystalDesktopMenu[data-quality="low"] .crystal-scenery{transform:none;will-change:auto}
  .crystal-desktop .crystal-brand{position:absolute;left:2.4%;top:2.6%;width:33%;filter:drop-shadow(0 3px 12px #210726)}
  .crystal-desktop .crystal-brand>img{width:100%;height:clamp(130px,23vh,260px);object-fit:contain;object-position:left}
  .crystal-desktop .crystal-brand p{font:10px/1.8 system-ui,sans-serif;letter-spacing:.32em;margin:0 0 0 2%;color:#f8ceeb}.crystal-desktop .crystal-brand p span{display:block;font-size:8px;letter-spacing:.28em}
@@ -35,13 +55,23 @@
  .crystal-desktop .crystal-news{position:absolute;left:2.4%;right:2.4%;bottom:6.5%;height:16.8%;display:grid;grid-template-columns:1.18fr 1.52fr .68fr;gap:1.2%;transform:rotate(-.3deg)}
  .crystal-desktop .crystal-news>button{position:relative;overflow:hidden;min-width:0;text-align:left;cursor:pointer;border:1px solid #f6a1d698;border-radius:0;background:#1b1027e6;color:#ffeafa;padding:1.2vw 1.5vw;box-shadow:inset 0 0 0 3px #1d0c2580,0 0 18px #fc6bc02b;transition:filter 150ms,transform 150ms;clip-path:polygon(0 0,96% 0,100% 100%,2% 100%)}
  .crystal-desktop .crystal-news>button:hover{filter:brightness(1.18);transform:translateY(-4px)}.crystal-desktop .crystal-news small{display:block;font:clamp(8px,.65vw,13px)/1.4 system-ui,sans-serif;letter-spacing:.16em;margin-bottom:.8vh;color:#efafd3}.crystal-desktop .crystal-news b{display:block;font:500 clamp(18px,2.1vw,40px)/1.1 Georgia,serif;letter-spacing:.015em}.crystal-desktop .crystal-news span{display:block;font:clamp(8px,.7vw,14px)/1.6 system-ui,sans-serif;margin-top:.6vh;color:#e5bddc}.crystal-desktop .crystal-news i{position:absolute;right:7%;bottom:13%;font-style:normal;font-size:25px;color:#ffbef0}
- .crystal-desktop .crystal-news .crystal-news-event{background:linear-gradient(90deg,#1e102aed 8%,#3215317a),url('map/world1/world1_splashart_1.png') center/cover}.crystal-desktop .crystal-news-event b{max-width:64%;font-size:clamp(22px,2.4vw,46px)}
+ .crystal-desktop .crystal-news .crystal-news-event{background:linear-gradient(90deg,#1e102aed 8%,#3215317a),var(--menu-event-art) center/cover}.crystal-desktop .crystal-news-event b{max-width:64%;font-size:clamp(22px,2.4vw,46px)}
  .crystal-desktop .crystal-news-update{display:grid;grid-template-columns:1.15fr .85fr 1.2fr;gap:1vw;align-items:center}.crystal-desktop .crystal-news-update img{width:100%;height:11vh;object-fit:cover;border:1px solid #cb8ed080}.crystal-desktop .crystal-news-update b{font-size:clamp(15px,1.5vw,29px);overflow-wrap:anywhere}.crystal-desktop .crystal-news-update span{font-size:clamp(8px,.65vw,13px)}.crystal-desktop .crystal-news-update p{font:clamp(8px,.73vw,14px)/1.7 system-ui,sans-serif;color:#cdb6ce;margin:0;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
- .crystal-desktop .crystal-news .crystal-news-journey{background:linear-gradient(120deg,#351647f2,#68285899),url('ui/backgrounds/02_background_pc.png') center/cover}.crystal-desktop .crystal-news-journey b{font-size:clamp(16px,1.65vw,32px)}
+ .crystal-desktop .crystal-news .crystal-news-journey{background:linear-gradient(120deg,#351647f2,#68285899),var(--menu-journey-art) center/cover}.crystal-desktop .crystal-news-journey b{font-size:clamp(16px,1.65vw,32px)}
  .crystal-desktop .crystal-footer{position:absolute;left:2.7%;right:2.7%;bottom:1.6%;display:flex;align-items:center;justify-content:space-between;font:clamp(7px,.55vw,11px)/1.5 system-ui,sans-serif;letter-spacing:.08em;color:#cba7c8}.crystal-desktop .crystal-footer nav{display:flex;gap:1.2vw}.crystal-desktop .crystal-footer button{border:0;background:none;color:#dfc8de;padding:4px 0;font:inherit;cursor:pointer}.crystal-desktop .crystal-footer button:hover{color:#ffbce8}.crystal-desktop .crystal-footer b{font-weight:400}
  .crystal-desktop button:focus-visible{outline:2px solid #ffd4f2;outline-offset:4px}.crystal-desktop button:disabled{opacity:.45;cursor:default}
  .crystal-desktop .crystal-atmosphere{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:2}.crystal-desktop .crystal-atmosphere i{position:absolute;top:-6%;left:var(--x);width:clamp(5px,.6vw,12px);height:clamp(8px,1vw,19px);background:linear-gradient(130deg,#ffe0f6,#ee5da9 70%,#9f276f);border-radius:90% 10% 75% 20%;opacity:0;animation:crystal-petal var(--duration) linear var(--delay) infinite;box-shadow:0 0 9px #ff6ec160}
  .crystal-desktop .crystal-atmosphere i:nth-child(4n){width:3px;height:3px;border-radius:50%;background:#d5c1ff;box-shadow:0 0 10px #e1c4ff;animation-duration:24s}
+ .crystal-desktop #crystalDesktopMenu[data-quality="medium"] .crystal-atmosphere i:nth-child(n+11),
+ .crystal-desktop #crystalDesktopMenu[data-quality="low"] .crystal-atmosphere i:nth-child(n+5){display:none}
+ .crystal-desktop #crystalDesktopMenu[data-quality="medium"] .crystal-button>img{filter:drop-shadow(0 3px 4px #0008)}
+ .crystal-desktop #crystalDesktopMenu[data-quality="medium"] .crystal-news>button{box-shadow:inset 0 0 0 3px #1d0c2580,0 0 8px #fc6bc020}
+ .crystal-desktop #crystalDesktopMenu[data-quality="low"] .crystal-button>img{filter:none}
+ .crystal-desktop #crystalDesktopMenu[data-quality="low"] .crystal-button:is(:hover,:focus-visible){filter:brightness(1.12)}
+ .crystal-desktop #crystalDesktopMenu[data-quality="low"] .crystal-button::after{display:none}
+ .crystal-desktop #crystalDesktopMenu[data-quality="low"] .crystal-news>button{box-shadow:inset 0 0 0 3px #1d0c2580}
+ .crystal-desktop #crystalDesktopMenu[data-quality="low"] .crystal-atmosphere i{box-shadow:none}
+ .crystal-desktop #crystalDesktopMenu[data-quality="low"] .crystal-update-dialog::backdrop{backdrop-filter:none}
  .crystal-desktop .crystal-update-dialog{position:fixed;inset:0;margin:auto;width:min(620px,80vw);padding:42px;border:1px solid #f8a6d6;background:#1b1028f5;color:#f9e6f6;box-shadow:0 0 65px #e265b94a;font-family:system-ui,sans-serif}.crystal-desktop .crystal-update-dialog::backdrop{background:#100719ad;backdrop-filter:blur(8px)}.crystal-desktop .crystal-update-dialog h2{font:italic 36px Georgia,serif}.crystal-desktop .crystal-update-dialog small{letter-spacing:.2em;color:#f0abd6}.crystal-desktop .crystal-update-dialog p{line-height:1.8;color:#d5bdd7}.crystal-desktop .crystal-dialog-close{position:absolute;right:12px;top:8px;background:none;border:0;color:#ffd4ee;font-size:30px;cursor:pointer}
  /* Existing PC panels retain their layouts and handlers, with a matching shell. */
  body.crystal-desktop:not(.is-playing):not(.crystal-lobby) #app>.panel{background-image:linear-gradient(110deg,#100a1add,#1d1029e0),url('ui/backgrounds/crystal-realm-pc.webp')!important;background-size:cover!important;background-position:center!important;border-color:#d790c54d!important}

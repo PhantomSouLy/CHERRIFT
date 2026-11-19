@@ -6,6 +6,11 @@
   const desktop = () => matchMedia('(min-width:821px)').matches &&
     !((navigator.maxTouchPoints > 0 || matchMedia('(pointer:coarse)').matches) && innerHeight <= 600);
   const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const menuQuality = () => {
+    const quality = window.UI?.save?.settings?.effectQuality;
+    return quality === 'low' || quality === 'medium' ? quality : 'high';
+  };
+  const artUrl = (name, quality) => `assets/ui/main-menu-quality/${quality}/${name}.webp`;
   const copy = (hu,en) => window.UI?.save?.settings?.language === 'en' ? en : hu;
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const main = [
@@ -21,28 +26,30 @@
   const num = n => Math.max(0, Math.floor(Number(n) || 0)).toLocaleString();
   function create() {
     root = document.createElement('div'); root.id = 'crystalDesktopMenu'; root.dataset.i18nIgnore = 'true';
+    root.dataset.quality = menuQuality();
     root.innerHTML = `
       <div class="crystal-scenery" aria-hidden="true"></div>
       <div class="crystal-atmosphere" aria-hidden="true">${Array.from({length:18},(_,i)=>`<i style="--n:${i};--x:${(i*47+9)%100}%;--delay:-${i*1.7}s;--duration:${15+i%6*2}s"></i>`).join('')}</div>
-      <header class="crystal-brand"><img src="assets/ui/cherrift_logo.png" alt="CHERRIFT"><p>SAKURA ✦ RIFT <span>ALWAYS WITH YOU.</span></p></header>
+      <header class="crystal-brand"><img data-menu-art="logo" alt="CHERRIFT"><p>SAKURA ✦ RIFT <span>ALWAYS WITH YOU.</span></p></header>
       <div class="crystal-world-poem" aria-hidden="true">Different<br>Worlds<br><em>Same Wishes.</em><span>✧</span></div>
       <header class="crystal-topbar" aria-label="Player and currencies">
         <button class="crystal-profile" data-crystal-route="profileV082"><span class="crystal-profile-art" aria-hidden="true"></span><span><b data-crystal-value="profile"></b><small data-crystal-value="level"></small></span></button>
-        <div class="crystal-wallet"><span title="Coin"><img src="assets/items/coin.png" alt="Coin"><b data-crystal-value="coins"></b></span><span title="Bloom Gem"><img src="assets/items/blossom_gem.png" alt="Bloom Gem"><b data-crystal-value="gems"></b></span><span title="Sakura Essence"><img src="assets/items/sakura_potion.png" alt="Sakura Essence"><b data-crystal-value="essence"></b></span><span title="Gear Scrap"><img src="assets/items/scraps.png" alt="Gear Scrap"><b data-crystal-value="scrap"></b></span><button title="Energy" class="crystal-energy" data-crystal-energy><span aria-hidden="true">⚡</span><b data-crystal-value="energy"></b></button></div>
+        <div class="crystal-wallet"><span title="Coin"><img data-menu-art="coin" alt="Coin"><b data-crystal-value="coins"></b></span><span title="Bloom Gem"><img data-menu-art="blossom_gem" alt="Bloom Gem"><b data-crystal-value="gems"></b></span><span title="Sakura Essence"><img data-menu-art="sakura_potion" alt="Sakura Essence"><b data-crystal-value="essence"></b></span><span title="Gear Scrap"><img data-menu-art="scraps" alt="Gear Scrap"><b data-crystal-value="scrap"></b></span><button title="Energy" class="crystal-energy" data-crystal-energy><span aria-hidden="true">⚡</span><b data-crystal-value="energy"></b></button></div>
         <button class="crystal-tool" data-crystal-tool="mail" aria-label="Mail">✉<em class="mail-badge-v063" data-v063-mail-count></em></button>
         <button class="crystal-tool" data-crystal-route="settings" aria-label="Settings">⚙</button>
       </header>
       <nav class="crystal-navigation" aria-label="Main menu">
-        ${main.map(([route,label,art,hu,en])=>`<button class="crystal-button crystal-${art}" data-crystal-route="${route}"><img src="assets/ui/buttons/crystal-${art}-pc.webp" alt="" draggable="false"><span class="crystal-button-copy"><b>${label}</b><small data-crystal-copy="${art}">${esc(copy(hu,en))}</small></span><i aria-hidden="true">›</i></button>`).join('')}
+        ${main.map(([route,label,art,hu,en])=>`<button class="crystal-button crystal-${art}" data-crystal-route="${route}"><img data-menu-art="button-${art}" alt="" draggable="false"><span class="crystal-button-copy"><b>${label}</b><small data-crystal-copy="${art}">${esc(copy(hu,en))}</small></span><i aria-hidden="true">›</i></button>`).join('')}
         <div class="crystal-secondary">${[['shopV082','SHOP','◇'],['dailyQuests','MISSIONS','✧'],['eventHubPrebeta','EVENTS','❀'],['achievements','ACHIEVEMENTS','♛']].map(([route,label,icon])=>`<button data-crystal-route="${route}"><i aria-hidden="true">${icon}</i><span>${label}<small data-crystal-status="${route}"></small></span></button>`).join('')}</div>
       </nav>
       <section class="crystal-news" aria-label="News and updates">
         <button class="crystal-news-event" data-crystal-route="eventHubPrebeta"><small data-crystal-value="eventLabel"></small><b data-crystal-value="eventTitle"></b><span data-crystal-value="eventProgress"></span><i aria-hidden="true">›</i></button>
-        <button class="crystal-news-update" data-crystal-updates><div><small>LATEST UPDATES</small><b data-crystal-value="version"></b><span data-crystal-value="updateTitle"></span></div><img src="assets/map/world1/meadow/splash.webp" alt=""><p data-crystal-value="updateCopy"></p><i aria-hidden="true">›</i></button>
+        <button class="crystal-news-update" data-crystal-updates><div><small>LATEST UPDATES</small><b data-crystal-value="version"></b><span data-crystal-value="updateTitle"></span></div><img data-menu-art="update" alt=""><p data-crystal-value="updateCopy"></p><i aria-hidden="true">›</i></button>
         <button class="crystal-news-journey" data-crystal-route="worlds"><small>CHERRIFT</small><b data-crystal-value="stage"></b><span data-crystal-value="journey"></span><i aria-hidden="true">✧</i></button>
       </section>
       <footer class="crystal-footer"><nav aria-label="Community and support"><button data-crystal-route="socialV082">COMMUNITY</button><button data-crystal-route="loginRewards">LOGIN REWARDS</button><button data-crystal-route="playerUpgrade">UPGRADE</button><button data-crystal-route="bagV082">INVENTORY</button><button data-r5-menu-tool="twitch">TWITCH</button><button data-r5-menu-tool="web">WEB</button><button data-r5-menu-tool="feedback">FEEDBACK</button><button data-r5-menu-tool="bug">BUG REPORT</button></nav><span>© 2026 CHERRIFT · <b data-crystal-value="build"></b></span></footer>
       <dialog class="crystal-update-dialog" aria-labelledby="crystalUpdateTitle"><button class="crystal-dialog-close" aria-label="Close">×</button><small>LATEST UPDATES</small><h2 id="crystalUpdateTitle"></h2><strong data-crystal-dialog-version></strong><p data-crystal-dialog-copy></p></dialog>`;
+    refreshArt();
     $('menu')?.append(root);
     root.addEventListener('click', click);
     root.addEventListener('pointerover', event => {
@@ -75,14 +82,40 @@
       sync();
     },reduced()?0:130);
   }
+  function refreshArt() {
+    const quality = root.dataset.quality;
+    for (const image of root.querySelectorAll('img[data-menu-art]')) {
+      const src = artUrl(image.dataset.menuArt, quality);
+      if (image.getAttribute('src') !== src) image.setAttribute('src', src);
+    }
+  }
   function refresh() {
     if (!root || !desktop()) return;
+    const quality = menuQuality();
+    if (root.dataset.quality !== quality) root.dataset.quality = quality;
     const save=window.UI?.save || {};
     const source=$('railProfileIconV082'), art=root.querySelector('.crystal-profile-art');
-    if(source && art.dataset.signature!==source.innerHTML){
-      art.dataset.signature=source.innerHTML;art.replaceChildren(...Array.from(source.childNodes,node=>node.cloneNode(true)));
-      art.querySelectorAll('[id]').forEach(node=>node.removeAttribute('id'));
+    if (source && art.dataset.signature !== source.innerHTML) {
+      art.dataset.signature = source.innerHTML;
+      art.replaceChildren(...Array.from(source.childNodes, node => node.cloneNode(true)));
+      art.querySelectorAll('[id]').forEach(node => node.removeAttribute('id'));
+      for (const image of art.querySelectorAll('img[src]')) {
+        const original = image.getAttribute('src');
+        const path = original.replace(/^\.\//, '').split(/[?#]/, 1)[0];
+        const frame = path.match(/^assets\/player\/frames\/(frame[\w]+)\.png$/);
+        const portrait = path.match(/^assets\/(?:ui\/skins\/cherry_ui_skins\/optimized|player\/skins\/[\w]+)\/([\w]+_icon(?:_1)?)\.(?:jpg|png|webp)$/);
+        const thumb = path.match(/^assets\/ui\/skin_thumbs\/([\w]+)\.webp$/);
+        if (!frame && !portrait && !thumb) continue;
+        if (frame) image.dataset.menuArt = `frame-${frame[1]}`;
+        if (portrait) image.dataset.menuArt = `portrait-${portrait[1]}`;
+        if (thumb) image.dataset.menuArt = `thumb-${thumb[1]}`;
+        image.addEventListener('error', () => {
+          delete image.dataset.menuArt;
+          image.setAttribute('src', original);
+        }, {once:true});
+      }
     }
+    refreshArt();
     set('profile', $('railProfileNameV082')?.textContent || save.profile?.name || 'Guest');
     set('level',`${copy('Szint','Level')} ${save.account?.level || 1}`);
     set('essence',num(save.sakuraEssence));set('scrap',num(save.bag?.materials?.gearScrap ?? save.gearScrap ?? save.scrap));
@@ -143,10 +176,13 @@
   }
   window.addEventListener('resize',()=>{if(frame)cancelAnimationFrame(frame);frame=0;sync();});
   document.addEventListener('pointermove',event=>{
-    if(!desktop() || reduced() || !document.body.classList.contains('crystal-lobby') || document.hidden || !root)return;
+    if(!desktop() || reduced() || !document.body.classList.contains('crystal-lobby') || document.hidden || !root || root.dataset.quality === 'low')return;
     px=(event.clientX/innerWidth-.5)*10;py=(event.clientY/innerHeight-.5)*8;
     if(!parallaxFrame)parallaxFrame=requestAnimationFrame(()=>{parallaxFrame=0;root?.style.setProperty('--parallax-x',`${px}px`);root?.style.setProperty('--parallax-y',`${py}px`);});
   },{passive:true});
+  document.addEventListener('change', event => {
+    if (event.target.id === 'effectQualityV085') queue();
+  });
   for(const event of ['cherrift:savechange','cherrift:languagechange','cherrift:eventchange','cherrift:prebeta-event-ready','cherrift:prebeta-ready'])window.addEventListener(event,queue);
   window.addEventListener('cherrift:runtime-clean-ready',start,{once:true});
   window.CHERRIFT_DESKTOP_MENU=Object.freeze({sync,refresh,isDesktop:desktop});

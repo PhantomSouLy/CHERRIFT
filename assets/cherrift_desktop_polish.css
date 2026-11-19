@@ -11,8 +11,8 @@
  html body.crystal-desktop .crystal-play .crystal-button-copy b{color:#4b163b!important;font-size:clamp(50px,min(6vw,10vh),140px)!important}
 
  /* A replaceable landscape moves behind a fixed transparent ornament. */
- html body.crystal-desktop .crystal-scenery{background-image:var(--cherrift-landscape,url('ui/backgrounds/crystal-landscape-pc.webp'));inset:-16px;mask-image:linear-gradient(90deg,#000 25%,#000b 45%,transparent 67%)}
- html body.crystal-desktop #crystalDesktopMenu::before{content:'';position:absolute;inset:0;z-index:-2;pointer-events:none;background:url('ui/backgrounds/crystal-foreground-pc.webp') center/cover no-repeat}
+ html body.crystal-desktop .crystal-scenery{inset:-16px;mask-image:linear-gradient(90deg,#000 25%,#000b 45%,transparent 67%)}
+ html body.crystal-desktop #crystalDesktopMenu::before{content:'';position:absolute;inset:0;z-index:-2;pointer-events:none;background:var(--menu-foreground) center/cover no-repeat}
  html body.crystal-desktop #crystalDesktopMenu::after{content:'';position:absolute;inset:0;z-index:-4;pointer-events:none;background:radial-gradient(ellipse at 80% 35%,#2a153c,#120a20 75%)}
  body.crystal-world-selector .wg-scene{background:#170e25!important}
  html body.crystal-desktop:not(.is-playing):not(.crystal-world-selector) #app>:is(#gear,#skins,#playerUpgrade,#socialV082,#loginRewards).panel,

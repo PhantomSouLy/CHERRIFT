@@ -1,7 +1,7 @@
 {
   "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "1119-school-whole1",
+  "buildId": "1119-main-menu-quality-v2",
   "entrypoints": {
     "application": "src/cherrift_app.js",
     "menuAudio": "src/cherrift_menu_audio.js",
@@ -52,6 +52,7 @@
     "sportCherry": "src/cherrift_sport_cherry.js",
     "sportVfx": "src/cherrift_sport_vfx.js",
     "schoolData": "src/cherrift_school_data.js",
+    "schoolGait": "src/cherrift_school_gait.js",
     "schoolCherry": "src/cherrift_school_cherry.js",
     "schoolVfx": "src/cherrift_school_vfx.js",
     "kimonoData": "src/cherrift_kimono_data.js",

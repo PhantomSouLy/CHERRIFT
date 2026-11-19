@@ -75,3 +75,56 @@ test('unchanged desktop sync does not rewrite body classes or wake global observ
     observer.disconnect();
   }finally{f.close();}
 });
+test('desktop menu follows the graphics setting after a change or cloud save update',async()=>{
+  const f=fixture();try{
+    const expectedArt = ['logo', 'coin', 'blossom_gem', 'sakura_potion', 'scraps',
+      'button-play', 'button-cherry', 'button-gear', 'button-collection', 'button-settings', 'update'];
+    function assertArt(quality) {
+      assert.equal(f.root().dataset.quality, quality);
+      const images = [...f.root().querySelectorAll('img[data-menu-art]')];
+      assert.deepEqual(images.map(image => image.dataset.menuArt), expectedArt);
+      for (const image of images) {
+        assert.equal(image.getAttribute('src'), `assets/ui/main-menu-quality/${quality}/${image.dataset.menuArt}.webp`);
+      }
+    }
+    assertArt('high');
+    const select=f.w.document.createElement('select');
+    select.id='effectQualityV085';
+    f.w.document.body.append(select);
+    f.w.document.addEventListener('change',()=>{f.w.UI.save.settings.effectQuality='low';});
+    select.dispatchEvent(new f.w.Event('change',{bubbles:true}));
+    await pause();
+    assertArt('low');
+    f.w.UI.save.settings.effectQuality='medium';
+    f.w.dispatchEvent(new f.w.Event('cherrift:savechange'));
+    await pause();
+    assertArt('medium');
+    f.w.UI.save.settings.effectQuality='invalid';
+    f.w.CHERRIFT_DESKTOP_MENU.refresh();
+    assertArt('high');
+  }finally{f.close();}
+});
+
+test('menu avatar and frame follow the chosen quality and keep custom sources available',()=>{
+  const f=fixture();try{
+    const rail = f.w.document.createElement('span');
+    rail.id = 'railProfileIconV082';
+    rail.innerHTML = '<span><img src="assets/ui/skin_thumbs/base_cherry.webp?v=test"><img src="assets/player/frames/frame0lvl.png"></span>';
+    f.w.document.body.append(rail);
+    f.w.UI.save.settings.effectQuality = 'medium';
+    f.w.CHERRIFT_DESKTOP_MENU.refresh();
+    const images = () => [...f.root().querySelectorAll('.crystal-profile-art img')];
+    const sources = () => images().map(image => image.getAttribute('src'));
+    assert.deepEqual(sources(), ['assets/ui/main-menu-quality/medium/thumb-base_cherry.webp',
+      'assets/ui/main-menu-quality/medium/frame-frame0lvl.webp']);
+    f.w.UI.save.settings.effectQuality = 'low';
+    f.w.CHERRIFT_DESKTOP_MENU.refresh();
+    assert.match(sources()[0], /\/low\/thumb-base_cherry/);
+    images()[0].dispatchEvent(new f.w.Event('error'));
+    assert.equal(sources()[0], 'assets/ui/skin_thumbs/base_cherry.webp?v=test');
+    rail.querySelector('img').src = 'https://cdn.discordapp.com/avatars/123/example.png';
+    f.w.CHERRIFT_DESKTOP_MENU.refresh();
+    assert.equal(sources()[0], 'https://cdn.discordapp.com/avatars/123/example.png');
+    assert.match(sources()[1], /\/low\/frame-frame0lvl/);
+  }finally{f.close();}
+});
