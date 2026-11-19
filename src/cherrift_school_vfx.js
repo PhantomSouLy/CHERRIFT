@@ -31,37 +31,41 @@
   const t=clamp(Number(e.t||0)/Math.max(.001,e.life||.72),0,1),r=e.r||185;
   if(t>=1)return true;
   const low=game.save?.settings?.effectQuality==='low';
-  const spread=1-Math.pow(1-clamp(t/.66,0,1),3),fade=Math.pow(1-t,1.3),diameter=r*2;
-  c.save();c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';
-  // The sigil describes the original circular damage footprint at cast position.
+  const spread=1-Math.pow(1-clamp(t/.72,0,1),3);
+  const fade=1-clamp((t-.18)/.82,0,1),diameter=r*2;
+  c.save();
+  c.globalAlpha=1;c.globalCompositeOperation='source-over';
+  c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';
   if(layer!=='front'){
-  stamp(c,img,4,e.x,e.y,diameter,diameter,t*.24,.42*fade);
-  stamp(c,img,0,e.x,e.y,diameter*(.24+.76*spread),diameter*(.24+.76*spread),0,.95*fade);
+   stamp(c,img,4,e.x,e.y,diameter,diameter,t*.24,.66*fade);
+   const size=diameter*(.34+.66*spread);
+   stamp(c,img,0,e.x,e.y,size,size,0,fade);
   }
   if(layer!=='ground'){
-  // Brief central bloom and rising wisps, followed by the expanding petal wave.
-  stamp(c,img,1,e.x,e.y-8,52+diameter*.30*spread,52+diameter*.30*spread,t*.12,Math.pow(1-t,3)*.9);
-  if(!low){
-   stamp(c,img,2,e.x,e.y-16-t*24,80+spread*100,80+spread*110,-t*.35,.28*fade);
-   const count=12;
+   const waveRadius=r*(.22+.78*spread);
+   // The solid crest stays readable over the training dirt and in Low quality.
+   c.beginPath();c.arc(e.x,e.y,waveRadius,0,Math.PI*2);
+   c.globalAlpha=.9*fade;c.lineWidth=9;c.strokeStyle='#ed317f';c.stroke();
+   c.lineWidth=3;c.strokeStyle='#ffe0f0';c.stroke();
+   c.globalAlpha=1;
+   const bloomSize=72+diameter*.32*spread;
+   stamp(c,img,1,e.x,e.y-8,bloomSize,bloomSize,t*.12,fade);
+   if(!low)stamp(c,img,2,e.x,e.y-16-t*24,90+spread*100,90+spread*110,-t*.35,.54*fade);
+   const count=low?6:12;
    for(let i=0;i<count;i++){
-    const angle=i*Math.PI*2/count+.21,reach=r*(.18+.8*spread),x=e.x+Math.cos(angle)*reach,y=e.y+Math.sin(angle)*reach;
-    const size=12+(i%3)*4;
-    stamp(c,img,i%3===0?5:3,x,y-t*(10+i%3*6),size,size,angle+t*(i%2?1:-1),fade*.85);
+    const angle=i*Math.PI*2/count+.21;
+    const x=e.x+Math.cos(angle)*waveRadius,y=e.y+Math.sin(angle)*waveRadius;
+    const size=18+(i%3)*5;
+    stamp(c,img,i%3===0?5:3,x,y-t*(10+i%3*6),size,size,angle+t*(i%2?1:-1),fade);
    }
-  }
   }
   c.restore();return true;
  }
- const ground=proto.drawGround;
- proto.drawGround=function schoolBurstGround(...args){
-  const r=ground?.apply(this,args);
-  for(const e of this.effects||[])if(e.schoolPinkBurst)burst(this,args[0],e,'ground');
-  return r;
- };
  const effect=proto.drawEffect;
  proto.drawEffect=function schoolBurstEffect(c,e){
-  if(e?.schoolPinkBurst&&burst(this,c,e,'front'))return;
+  // Meadow and Training use their own ground renderer, so draw the whole
+  // burst through the world effect pass they share with the other maps.
+  if(e?.schoolPinkBurst&&burst(this,c,e))return;
   if(e?.schoolBurstPulse&&this.assets.get(KEY))return;
   return effect.call(this,c,e);
  };
@@ -77,5 +81,5 @@
    }
   }return r;
  };
- window.CHERRIFT_SCHOOL_VFX=Object.freeze({version:'1107-school-burst2',burst,assetKey:KEY,source:SOURCE});
+ window.CHERRIFT_SCHOOL_VFX=Object.freeze({version:'1119-school-burst3',burst,assetKey:KEY,source:SOURCE});
 })();

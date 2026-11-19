@@ -2,7 +2,7 @@
 (() => {
   'use strict';
   if (!window.CherriftGame || !window.CHERRIFT_CONFIG || window.CHERRIFT_SCHOOL_CHERRY) return;
-  const ID='school_uniform_cherry', BUILD='1119-school-whole1';
+  const ID='school_uniform_cherry', BUILD='1119-school-visible2';
   const ROOT='assets/player/cherry_skins/school_uniform_cherry/sheets192';
   const DIRS=['right','down_right','down','down_left','left','up_left','up','up_right'];
   const FPS={idle:3,idle2:3,walk:8,attack:18,walk_attack:8,skill:16};
@@ -13,37 +13,24 @@
   }]));
   config.attackMovementMode='mobile';config.attackMoveSpeedMultiplier=1;
   // Keep common_pink_burst, +1% ATK/+1% HP, cooldown, damage and knockback.
-  const paletteCache=new WeakMap();
-  const smoothRange=(lo,hi,value)=>{const t=Math.max(0,Math.min(1,(value-lo)/(hi-lo)));return t*t*(3-2*t);};
-  function paletteMatched(image,state,dir,ctx){
-    const curves=window.CHERRIFT_SCHOOL_PALETTE?.[state]?.[dir];if(!curves)return image;
-    const cached=paletteCache.get(image);if(cached)return cached.image;
-    const owner=ctx.canvas?.ownerDocument||(typeof document==='undefined'?null:document);
-    const canvas=owner?.createElement('canvas')||(typeof OffscreenCanvas==='function'?new OffscreenCanvas(1152,192):null);
-    if(!canvas)return image;canvas.width=1152;canvas.height=192;
-    const c=canvas.getContext('2d');if(!c?.getImageData||!c.putImageData)return image;
-    c.drawImage(image,0,0);const pixels=c.getImageData(0,0,1152,192),data=pixels.data;
-    const makeLut=curves=>curves.map(curve=>Uint8Array.from({length:256},(_,value)=>{
-      let j=1;while(j<curve.length-1&&value>curve[j][0])j++;
-      const [x0,y0]=curve[j-1],[x1,y1]=curve[j];return Math.round(y0+(y1-y0)*(value-x0)/(x1-x0));
-    }));
-    const lut=makeLut(curves);
-    for(let i=0;i<data.length;i+=4){
-      if(!data[i+3])continue;const r=data[i],g=data[i+1],b=data[i+2];
-      const weight=smoothRange(30,55,r-Math.min(g,b))*(1-smoothRange(12,24,g-b));
-      if(!weight)continue;
-      for(let channel=0;channel<3;channel++){const value=data[i+channel];data[i+channel]=Math.round(value+weight*(lut[channel][value]-value));}
-    }
-    c.putImageData(pixels,0,0);const entry={image:canvas};paletteCache.set(image,entry);
-    // Use the same decoded PNG sampling path as the source for stable outlines.
-    if(typeof Image==='function'&&typeof canvas.toDataURL==='function'){
-      const decoded=new Image();decoded.onload=()=>{entry.image=decoded;};decoded.src=canvas.toDataURL('image/png');
-    }
-    return entry.image;
-  }
   const proto=CherriftGame.prototype;
   const facing=(x,y,fallback='down')=>Math.hypot(x,y)<.04?fallback:DIRS[(Math.round(Math.atan2(y,x)/(Math.PI/4))+8)%8];
   const key=(s,d)=>`player_${ID}_${s}_${d}`;
+  const attemptedRecovery=new WeakMap();
+  const isSheet=image=>(image?.naturalWidth??image?.width)===1152
+    && (image?.naturalHeight??image?.height)===192;
+
+  function recoverSheet(assets,state,dir){
+    if(!assets.loadImage)return;
+    const assetKey=key(state,dir);
+    let attempts=attemptedRecovery.get(assets);
+    if(!attempts)attemptedRecovery.set(assets,attempts=new Set());
+    if(attempts.has(assetKey))return;
+    attempts.add(assetKey);
+    // Retry a failed versioned image via the underlying static path once.
+    const src=config.states[state].dirs[dir].split('?')[0];
+    void assets.loadImage(assetKey,src).catch(()=>false);
+  }
   const move=proto.movePlayer;
   proto.movePlayer=function moveSchool(v,dt){
     const p=this.player,x=p?.x,y=p?.y;const result=move.call(this,v,dt);
@@ -81,6 +68,10 @@
     const a=p.schoolAttack;
     if(a){
       a.elapsed=Math.min(a.duration,a.elapsed+Math.max(0,dt));
+      if(!a.fired&&a.target&&!a.target.dead){
+        p.attackDir=facing(a.target.x-p.x,a.target.y-p.y,p.attackDir);
+        if(!p.moving)p.schoolFacing=p.attackDir;
+      }
       if(!a.fired&&a.elapsed>=2.5/FPS.attack){
         a.fired=true;
         if(a.target&&!a.target.dead){
@@ -104,26 +95,37 @@
     const cast=p.skillCastTimer>0,attack=!cast&&p.schoolAttack,idle=p.schoolIdleTime||0;
     const state=cast?'skill':attack?(p.moving?'walk_attack':'attack'):p.moving?'walk':idle%8>=6?'idle2':'idle';
     const walking=state==='walk'||state==='walk_attack';
-    // Keep the moving body facing its travel direction. The shot still targets
-    // the selected enemy and fires on the independent attack clock.
-    const d=cast?p.skillDir:walking?p.schoolFacing||p.lastDir:attack?p.attackDir:p.schoolFacing||p.lastDir;
+    // Walk attack shares the travel clock, but its pose faces the shot.
+    const d=cast?p.skillDir:attack?p.attackDir:p.schoolFacing||p.lastDir;
     const dir=DIRS.includes(d)?d:'down';
     let renderState=state,renderDir=dir;
     let image=this.assets.get(key(state,dir));
-    if(!image){
+    if(!isSheet(image)){
+      recoverSheet(this.assets,state,dir);
       renderState='idle';
-      image=this.assets.get(key('idle',dir));
-      if(!image){renderDir='down';image=this.assets.get(key('idle','down'));}
+      for(const idleDir of new Set([dir,'down',...DIRS])){
+        const idleImage=this.assets.get(key('idle',idleDir));
+        if(isSheet(idleImage)){
+          renderDir=idleDir;
+          image=idleImage;
+          break;
+        }
+      }
+      if(!isSheet(image)){
+        recoverSheet(this.assets,'idle','down');
+        return draw.call(this,ctx,p);
+      }
     }
-    if(!image)return;
-    if(walking&&renderState===state)image=paletteMatched(image,state,dir,ctx);
     const elapsed=cast?Math.max(0,(p.skillCastDuration||config.states.skill.duration)-p.skillCastTimer):state==='idle2'?idle%8-6:this.t||0;
     const phase=walking?((p.schoolStride||0)*FPS.walk)%6:attack?Math.min(5,attack.elapsed/attack.duration*6):cast||state==='idle2'?Math.min(5,elapsed*FPS[state]):(elapsed*FPS[state])%6;
-    const frame=renderState===state?Math.floor(phase):0;
+    const frame=renderState===state&&Number.isFinite(phase)?Math.floor(phase):0;
     const width=(CHERRIFT_CONFIG.player.displayWidth||116)*.95,height=(CHERRIFT_CONFIG.player.displayHeight||116)*.95;
     ctx.save();ctx.globalAlpha*=.2;ctx.fillStyle='#000';ctx.beginPath();ctx.ellipse(p.x,p.y+25,26,8,0,0,Math.PI*2);ctx.fill();ctx.restore();
     ctx.save();
-    if(p===this.player)ctx.globalAlpha=1;
+    if(p===this.player){
+      ctx.globalAlpha=1;
+      ctx.globalCompositeOperation='source-over';
+    }
     ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
     if(window.CHERRIFT_CHERRY_MOTION?.renderPose){
       window.CHERRIFT_CHERRY_MOTION.renderPose(ctx,image,ID,renderState,renderDir,frame,p,width,height);

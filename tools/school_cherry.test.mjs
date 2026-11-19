@@ -30,9 +30,9 @@ test('48 real sheets are wired in eight directions without altering Base config 
  const c=config.player.skins.school_uniform_cherry;assert.equal(c.skillType,'common_pink_burst');assert.equal(c.passive.hpBonus,.01);
  let count=0;for(const s of Object.values(c.states)){assert.equal(s.frames,6);assert.equal(Object.keys(s.dirs).length,8);for(const u of Object.values(s.dirs)){const p=u.split('?')[0];assert.ok(existsSync(p));const b=readFileSync(p);assert.equal(b.readUInt32BE(16),1152);assert.equal(b.readUInt32BE(20),192);count++;}}assert.equal(count,48);
 });
-test('moving cast fires once at its event, keeps travel facing and keeps the step clock separate from the standing attack',()=>{
+test('moving cast fires once at its event, faces the enemy while keeping the step clock separate from the standing attack',()=>{
  const {game,ctx,calls}=fixture();const p=game.player;p.moving=true;game.movePlayer({x:-1,y:1},.01);game.autoFire();game.update(.1);assert.equal(game.bullets.length,0);game.update(.06);assert.equal(game.bullets.length,1);assert.equal(p.schoolFacing,'down_left');assert.equal(p.attackDir,'up_right');
- game.drawPlayer(ctx,p);assert.equal(calls.at(-1)[1],0);assert.match(calls.at(-1)[0].key,/walk_attack_down_left$/);p.moving=false;game.drawPlayer(ctx,p);assert.equal(calls.at(-1)[1],2*192);assert.match(calls.at(-1)[0].key,/attack_up_right$/);
+ game.drawPlayer(ctx,p);assert.equal(calls.at(-1)[1],0);assert.match(calls.at(-1)[0].key,/walk_attack_up_right$/);p.moving=false;game.drawPlayer(ctx,p);assert.equal(calls.at(-1)[1],2*192);assert.match(calls.at(-1)[0].key,/attack_up_right$/);
  game.autoFire();game.update(.1);assert.equal(game.bullets.length,1);assert.equal(game.bullets[0].style,'common_attack_v091');assert.equal(game.bullets[0].dmg,20);assert.equal(game.bullets[0].r,8);
 });
 test('real Pink Burst preserves damage, knockback, 5% speed for 1s and cooldown; cancels the pending shot',()=>{
@@ -61,13 +61,14 @@ test('School loads its distinct authored states and the old School warp is absen
  assert.equal(Object.keys(context.window.CHERRIFT_CHERRY_GEOMETRY.school_uniform_cherry).length,6);
 });
 
-test('all moving directions sample six whole cells using travel even when a shot targets behind',()=>{
+test('all moving directions sample six whole cells using the same stride clock for walk and aimed shots',()=>{
  const {game,ctx,calls}=fixture();
  const p=game.player;
  p.moving=true;
- p.attackDir='up';
  for(const dir of ['right','down_right','down','down_left','left','up_left','up','up_right']){
   p.schoolFacing=dir;
+  const dirs=['right','down_right','down','down_left','left','up_left','up','up_right'];
+  p.attackDir=dirs[(dirs.indexOf(dir)+4)%dirs.length];
   for(const attack of [false,true]){
    p.schoolAttack=attack?{elapsed:.2,duration:1/3}:null;
    const state=attack?'walk_attack':'walk';
@@ -77,9 +78,71 @@ test('all moving directions sample six whole cells using travel even when a shot
     game.drawPlayer(ctx,p);
     assert.equal(calls.length,before+1);
     const [image,...source]=calls.at(-1);
-    assert.equal(image.key,`player_school_uniform_cherry_${state}_${dir}`);
+    assert.equal(image.key,`player_school_uniform_cherry_${state}_${attack?p.attackDir:dir}`);
     assert.deepEqual(source.slice(0,4),[(step%6)*192,0,192,192]);
    }
   }
  }
+});
+
+test('missing School strips recover once and render an available School idle while loading', async () => {
+ const {game,ctx,calls}=fixture();
+ const key=(state,dir)=>`player_school_uniform_cherry_${state}_${dir}`;
+ const idle={key:key('idle','up'),width:1152,height:192};
+ const assets=new Map([[idle.key,idle],[key('walk','down_left'),{naturalWidth:0,naturalHeight:0}]]);
+ const requests=[];
+ let finish;
+ game.assets={
+  get:assetKey=>assets.get(assetKey),
+  loadImage(assetKey,url){
+   requests.push(url);
+   return new Promise(resolve=>{finish=()=>{
+    assets.set(assetKey,{key:assetKey,width:1152,height:192});
+    resolve(true);
+   };});
+  }
+ };
+ Object.assign(game.player,{moving:true,schoolFacing:'down_left',schoolStride:.25});
+ game.drawPlayer(ctx,game.player);
+ game.drawPlayer(ctx,game.player);
+ assert.equal(calls.at(-1)[0],idle);
+ assert.equal(calls.at(-1)[1],0);
+ assert.deepEqual(requests,[
+  'assets/player/cherry_skins/school_uniform_cherry/sheets192/school_uniform_cherry_walk_down_left.png'
+ ]);
+ finish();
+ game.drawPlayer(ctx,game.player);
+ assert.equal(calls.at(-1)[0].key,key('walk','down_left'));
+ assert.equal(calls.at(-1)[1],2*192);
+});
+
+test('an unavailable School atlas delegates to the underlying player renderer',()=>{
+ const {game,ctx}=fixture();
+ game.assets={get:()=>null};
+ game.drawPlayer(ctx,game.player);
+ assert.equal(game.delegated,'draw');
+});
+
+test('aim follows the target until the projectile releases and then returns to travel facing',()=>{
+ const {game,ctx,calls}=fixture();
+ const p=game.player,target=game.enemies[0];
+ p.moving=true;
+ game.movePlayer({x:1,y:0},.25);
+ game.autoFire();
+ target.x=p.x-100;
+ target.y=p.y;
+ game.update(.16);
+ assert.equal(p.attackDir,'left');
+ assert.equal(p.schoolFacing,'right');
+ assert.equal(game.bullets[0].vx,-p.bulletSpeed);
+ game.drawPlayer(ctx,p);
+ assert.equal(calls.at(-1)[1],2*192);
+ assert.match(calls.at(-1)[0].key,/walk_attack_left$/);
+ target.x=p.x+100;
+ game.update(.05);
+ assert.equal(p.attackDir,'left');
+ game.update(.15);
+ game.drawPlayer(ctx,p);
+ assert.equal(calls.at(-1)[1],2*192);
+ assert.match(calls.at(-1)[0].key,/walk_right$/);
 });

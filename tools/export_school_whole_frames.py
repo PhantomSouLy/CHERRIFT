@@ -41,12 +41,31 @@ def pack(figure, scale, head_x):
     return cell
 
 
+def match_palette(strip, color_curves):
+    pixels = np.asarray(strip).copy()
+    rgb = pixels[..., :3].astype(float)
+    red, green, blue = np.moveaxis(rgb, -1, 0)
+
+    def smooth_range(low, high, values):
+        t = np.clip((values - low) / (high - low), 0, 1)
+        return t * t * (3 - 2 * t)
+
+    weight = smooth_range(30, 55, red - np.minimum(green, blue))
+    weight *= 1 - smooth_range(12, 24, green - blue)
+    weight *= pixels[..., 3] != 0
+    for channel, curve in enumerate(color_curves):
+        values = rgb[..., channel]
+        anchors, targets = np.array(curve).T
+        mapped = np.floor(np.interp(values, anchors, targets) + .5)
+        pixels[..., channel] = np.floor(values + weight * (mapped - values) + .5)
+    return Image.fromarray(pixels)
+
+
 def main():
     frames = {(s, d): unpack(sheet(s, d)) for s in STATES for d in DIRS}
     changed = set()
     sources = []
     geometry = {s: {} for s in STATES}
-    colors = {s: {} for s in MOVING}
     selection = json.loads((SOURCE / 'selection.json').read_text())
     for direction, options in selection.items():
         head_x = np.median([ear(f)[1] for f in frames['idle', direction]])
@@ -78,8 +97,8 @@ def main():
                 strip = Image.new('RGBA', (1152, 192))
                 for i, cell in enumerate(series):
                     strip.paste(cell, (192 * i, 0))
-                strip.save(sheet(state, direction), optimize=True)
-                colors[state][direction] = curves(palette(series), palette(idle))
+                color_curves = curves(palette(series), palette(idle))
+                match_palette(strip, color_curves).save(sheet(state, direction), optimize=True)
             if state in MOVING:
                 offsets = []
                 for cell in series:
@@ -95,14 +114,12 @@ def main():
                 box = cell.getchannel('A').getbbox()
                 assert box and min(box[:2]) > 0 and max(box[2:]) < 192, (state, direction, i, box)
     data = ROOT / 'src/cherrift_school_data.js'
-    data.write_text('/* School authored pose registration and fixed gait palette. */\n'
+    data.write_text('/* School authored pose registration. */\n'
                     + 'Object.assign(window.CHERRIFT_CHERRY_GEOMETRY ||= {},'
-                    + json.dumps({ID: geometry}, separators=(',', ':')) + ');\n'
-                    + 'window.CHERRIFT_SCHOOL_PALETTE='
-                    + json.dumps(colors, separators=(',', ':')) + ';\n')
+                    + json.dumps({ID: geometry}, separators=(',', ':')) + ');\n')
     manifest = ART / 'manifest.json'
     config = json.loads(manifest.read_text())
-    config.update(buildId='1119-school-whole1', wholeGaitSources=sources,
+    config.update(buildId='1119-school-visible2', wholeGaitSources=sources,
                   renderer='complete-pose-distance-clock')
     config['notes'] = [
         'Walk and Walk Attack use complete School poses in eight directions.',

@@ -191,7 +191,7 @@
   ],
   "revision": "1107-school-burst2",
   "vfx": "assets/effects/school_cherry/pink_burst_atlas.png",
-  "buildId": "1119-school-whole1",
+  "buildId": "1119-school-visible2",
   "wholeGaitSources": [
     {
       "file": "assets/player/cherry_skins/school_uniform_cherry/sources/whole-gait-v1/right.png",
