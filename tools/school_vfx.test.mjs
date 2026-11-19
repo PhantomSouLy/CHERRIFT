@@ -27,9 +27,9 @@ test('the effect pass draws the whole burst at the cast origin, including the br
  game.save.settings.effectQuality='low';
  game.drawEffect(c,e);
  assert.equal(calls.length,9);
- assert.deepEqual(strokes.map(s=>s.width),[9,3]);
+ assert.deepEqual(strokes.map(s=>s.width),[7,2.5]);
  assert.deepEqual(strokes[0].circle.slice(0,2),[e.x,e.y]);
- assert.ok(strokes[0].alpha>.85);
+ assert.ok(strokes[0].alpha>=.8);
  game.assets.get=()=>null;
  game.drawEffect(c,e);
  assert.equal(game.delegatedEffect,true);

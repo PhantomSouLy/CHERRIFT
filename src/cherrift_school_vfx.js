@@ -22,7 +22,7 @@
   // Tag the effect emitted by the real successful skill. Never emit another
   // damage event or infer success from a timer that may already be active.
   for(const e of (this.effects||[]).slice(start)){
-   if(e.type==='commonHybridBurstV091'){e.schoolPinkBurst=true;e.life=.72;}
+   if(e.type==='commonHybridBurstV091'){e.schoolPinkBurst=true;e.schoolBurstSoft=true;e.life=.72;}
    else if(e.type==='skillPulseV085')e.schoolBurstPulse=true;
   }return r;
  };
@@ -30,26 +30,26 @@
   const img=game.assets.get(KEY);if(!img)return false;
   const t=clamp(Number(e.t||0)/Math.max(.001,e.life||.72),0,1),r=e.r||185;
   if(t>=1)return true;
-  const low=game.save?.settings?.effectQuality==='low';
+  const low=game.save?.settings?.effectQuality==='low',soft=e.schoolBurstSoft;
   const spread=1-Math.pow(1-clamp(t/.72,0,1),3);
   const fade=1-clamp((t-.18)/.82,0,1),diameter=r*2;
   c.save();
   c.globalAlpha=1;c.globalCompositeOperation='source-over';
   c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';
   if(layer!=='front'){
-   stamp(c,img,4,e.x,e.y,diameter,diameter,t*.24,.66*fade);
+   stamp(c,img,4,e.x,e.y,diameter,diameter,t*.24,(soft?.56:.66)*fade);
    const size=diameter*(.34+.66*spread);
-   stamp(c,img,0,e.x,e.y,size,size,0,fade);
+   stamp(c,img,0,e.x,e.y,size,size,0,(soft?.89:1)*fade);
   }
   if(layer!=='ground'){
    const waveRadius=r*(.22+.78*spread);
    // The solid crest stays readable over the training dirt and in Low quality.
    c.beginPath();c.arc(e.x,e.y,waveRadius,0,Math.PI*2);
-   c.globalAlpha=.9*fade;c.lineWidth=9;c.strokeStyle='#ed317f';c.stroke();
-   c.lineWidth=3;c.strokeStyle='#ffe0f0';c.stroke();
+   c.globalAlpha=(soft?.85:.9)*fade;c.lineWidth=soft?7:9;c.strokeStyle='#ed317f';c.stroke();
+   c.lineWidth=soft?2.5:3;c.strokeStyle='#ffe0f0';c.stroke();
    c.globalAlpha=1;
    const bloomSize=72+diameter*.32*spread;
-   stamp(c,img,1,e.x,e.y-8,bloomSize,bloomSize,t*.12,fade);
+   stamp(c,img,1,e.x,e.y-8,bloomSize,bloomSize,t*.12,(soft?.91:1)*fade);
    if(!low)stamp(c,img,2,e.x,e.y-16-t*24,90+spread*100,90+spread*110,-t*.35,.54*fade);
    const count=low?6:12;
    for(let i=0;i<count;i++){
@@ -81,5 +81,5 @@
    }
   }return r;
  };
- window.CHERRIFT_SCHOOL_VFX=Object.freeze({version:'1119-school-burst3',burst,assetKey:KEY,source:SOURCE});
+ window.CHERRIFT_SCHOOL_VFX=Object.freeze({version:'1119-school-burst4',burst,assetKey:KEY,source:SOURCE});
 })();

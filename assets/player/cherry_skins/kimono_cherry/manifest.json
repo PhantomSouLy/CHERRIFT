@@ -69,7 +69,8 @@
         "up_left": "sheets192/kimono_cherry_walk_up_left.png",
         "left": "sheets192/kimono_cherry_walk_left.png",
         "down_left": "sheets192/kimono_cherry_walk_down_left.png"
-      }
+      },
+      "loop": true
     },
     "attack": {
       "frames": 6,
@@ -91,7 +92,7 @@
       "frames": 6,
       "fps": 8,
       "duration": 0.75,
-      "runtimeDuration": 0.3333333333333333,
+      "runtimeDuration": 0.75,
       "sheets": {
         "down": "sheets192/kimono_cherry_walk_attack_down.png",
         "down_right": "sheets192/kimono_cherry_walk_attack_down_right.png",
@@ -101,7 +102,8 @@
         "up_left": "sheets192/kimono_cherry_walk_attack_up_left.png",
         "left": "sheets192/kimono_cherry_walk_attack_left.png",
         "down_left": "sheets192/kimono_cherry_walk_attack_down_left.png"
-      }
+      },
+      "loop": true
     },
     "skill": {
       "frames": 6,
@@ -205,14 +207,45 @@
     "hpRecovery": 0.01
   },
   "notes": [
-    "Imagegen Kimono costume edit of approved School/Sport sprite references. No Base assets modified.",
-    "Left views are mirrored. Runtime optical flow interpolation is required for smooth playback.",
-    "Existing Kimono splash/icon retained; shared Common Healing art added.",
-    "Runtime walk uses complete idle poses; walk_attack uses complete attack poses. Continuous directional inverse warp animates original legs.",
-    "v4: narrow normal side Walk; short alternating ankle lifts and closed kimono hem; whole authored frames use the travel clock without foot stretching.",
-    "v5: omit source pose 4 from side Walk; evenly time accepted source poses 0,1,2,3,5 over the same travel cycle.",
-    "v6: cached RGB palette normalization for plain side Walk only, calibrated to accepted right Idle. Alpha and source poses are untouched.",
-    "v7: ordinary precolored Walk PNGs replace runtime canvas normalization; stronger Common Healing art with independent alpha restored after render."
+    "Walk and Walk Attack use their own complete Kimono strips in eight directions.",
+    "Side and rear-diagonal Walk use the new narrow-step poses. Left views mirror right views.",
+    "Both moving states share the stride clock. Attack facing follows the target until release.",
+    "Existing Common Healing and Kimono passive use the existing combat rules."
   ],
-  "buildId": "1107-kimono-visible7"
+  "buildId": "1119-kimono-whole1",
+  "renderer": "complete-pose-distance-clock",
+  "wholeWalkSources": [
+    {
+      "file": "assets/player/cherry_skins/kimono_cherry/sources/whole-walk-v1/right.png",
+      "sha256": "88326fc9f9247102c8e875830707169b0af5b00006da28f421632f83df81691d",
+      "size": [
+        1263,
+        1246
+      ],
+      "frameOrder": [
+        1,
+        0,
+        0,
+        3,
+        2,
+        2
+      ]
+    },
+    {
+      "file": "assets/player/cherry_skins/kimono_cherry/sources/whole-walk-v1/up_right.png",
+      "sha256": "8402875ed3f9a017104e1806082bd60ff0dc721deaf5a40129aea8d8d53bfde0",
+      "size": [
+        1246,
+        1263
+      ],
+      "frameOrder": [
+        1,
+        0,
+        0,
+        3,
+        2,
+        2
+      ]
+    }
+  ]
 }

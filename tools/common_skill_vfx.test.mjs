@@ -9,7 +9,7 @@ function fixture(id='kimono_cherry'){
  const context=vm.createContext({window,CherriftGame:Game,ImageAssets:Assets,CHERRIFT_CONFIG:config,prototype:Game.prototype,COMMON:Object.fromEntries(Object.entries(ids).map(([id,[archetype]])=>[id,{archetype}])),previousSkill:Game.prototype.skill,clamp:(v,a,b)=>Math.max(a,Math.min(b,v)),vectorFromDirection:()=>({x:0,y:1})});
  const app=read('src/cherrift_app.js'),start=app.indexOf('  prototype.skill = function skillV091'),end=app.indexOf('\n  };',start)+5;vm.runInContext(app.slice(start,end),context);vm.runInContext(read('src/cherrift_school_vfx.js'),context);vm.runInContext(read('src/cherrift_common_skill_vfx.js'),context);
  const game=new Game();Object.assign(game,{player:{skin:id,x:0,y:0,skillTimer:0,skillCooldown:8,damage:20,lastDir:'down',hp:40,maxHp:100},enemies:[{x:100,y:0,hp:100}],effects:[],assets:{get:()=>({width:1536,height:1024})},save:{settings:{}},t:0});
- const calls=[],stack=[];const c={globalAlpha:.6,imageSmoothingEnabled:false,save(){stack.push(this.globalAlpha);},restore(){this.globalAlpha=stack.pop();},translate(){},rotate(){},drawImage(...a){calls.push(a);}};return{game,c,calls,Assets,sharedShieldCalls};
+ const calls=[],stack=[];const c={globalAlpha:.6,imageSmoothingEnabled:false,save(){stack.push(this.globalAlpha);},restore(){this.globalAlpha=stack.pop();},translate(){},rotate(){},beginPath(){},arc(){},stroke(){},drawImage(...a){calls.push(a);}};return{game,c,calls,Assets,sharedShieldCalls};
 }
 test('the actual Common healer restores 40% max HP, caps HP, keeps cooldown and +5% speed for 2 seconds for every healer',()=>{
  for(const id of ['kimono_cherry','another_common_healer']){
@@ -24,11 +24,11 @@ test('Sport and Pajama keep identical existing shield mechanics and share the ac
 });
 test('School and Cake keep the original Hybrid AoE and receive the same Pink Burst tags',()=>{
  for(const id of ['school_uniform_cherry','cake_deliver_cherry']){
-  const{game,c,calls}=fixture(id);game.skill();const burst=game.effects.find(e=>e.schoolPinkBurst);burst.t=.15;game.drawGround(c);game.drawEffect(c,burst);assert.ok(calls.length>=15);assert.equal(game.enemies[0].hp,52);assert.ok(game.enemies[0].x>100);assert.equal(game.player.commonSpeedBuffRate,.05);assert.equal(game.player.commonSpeedBuffTimer,1);assert.equal(game.effects.filter(e=>e.schoolPinkBurst).length,1);assert.equal(game.effects.find(e=>e.schoolPinkBurst).life,.72);
+  const{game,c,calls}=fixture(id);game.skill();const burst=game.effects.find(e=>e.schoolPinkBurst);burst.t=.15;game.drawEffect(c,burst);assert.equal(burst.schoolBurstSoft,id==='school_uniform_cherry'?true:undefined);assert.ok(calls.length>=15);assert.equal(game.enemies[0].hp,52);assert.ok(game.enemies[0].x>100);assert.equal(game.player.commonSpeedBuffRate,.05);assert.equal(game.player.commonSpeedBuffTimer,1);assert.equal(game.effects.filter(e=>e.schoolPinkBurst).length,1);assert.equal(game.effects.find(e=>e.schoolPinkBurst).life,.72);
  }
 });
 test('Healing renders from actual atlas, follows the healed player, reduces layers on low and falls back when missing',()=>{
- const{game,c,calls}=fixture();game.skill();const e=game.effects.find(e=>e.commonHealing);e.t=.2;game.player.x=120;game.drawGround(c);game.drawEffect(c,e);assert.ok(calls.length>=12);assert.equal(c.globalAlpha,.6);calls.length=0;game.save.settings.effectQuality='low';game.drawGround(c);game.drawEffect(c,e);assert.equal(calls.length,3);game.assets.get=()=>null;game.drawEffect(c,e);assert.equal(game.delegatedEffect,true);
+ const{game,c,calls}=fixture();game.skill();const e=game.effects.find(e=>e.commonHealing);e.t=.2;game.player.x=120;game.drawEffect(c,e);assert.ok(calls.length>=12);assert.equal(c.globalAlpha,.6);calls.length=0;game.save.settings.effectQuality='low';game.drawEffect(c,e);assert.equal(calls.length,3);game.assets.get=()=>null;game.drawEffect(c,e);assert.equal(game.delegatedEffect,true);
 });
 test('other effects delegate and the common Healing atlas preloads through normal assets',async()=>{
  const{game,c,Assets}=fixture();game.drawEffect(c,{type:'other'});assert.equal(game.delegatedEffect,true);const a=new Assets();assert.equal(await a.loadAll(),42);assert.equal(a.loaded.k,'commonHealingAtlas');assert.match(a.loaded.p,/common_healing\/healing_atlas.png/);

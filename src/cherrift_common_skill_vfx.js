@@ -58,15 +58,9 @@
   }
   c.restore();return true;
  }
- const ground=proto.drawGround;
- proto.drawGround=function commonHealingGround(...args){
-  const result=ground?.apply(this,args);
-  for(const e of this.effects||[])if(e.commonHealing)healing(this,args[0],e,'ground');
-  return result;
- };
  const effect=proto.drawEffect;
  proto.drawEffect=function commonHealingEffect(c,e){
-  if(e?.commonHealing&&healing(this,c,e,'front'))return;
+  if(e?.commonHealing&&healing(this,c,e))return;
   if(e?.commonHealingPulse&&this.assets.get(KEY))return;
   return effect.call(this,c,e);
  };

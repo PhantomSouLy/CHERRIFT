@@ -1,7 +1,7 @@
 {
   "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "1119-school-combat3",
+  "buildId": "1119-kimono-whole1",
   "entrypoints": {
     "application": "src/cherrift_app.js",
     "menuAudio": "src/cherrift_menu_audio.js",
@@ -54,8 +54,6 @@
     "schoolData": "src/cherrift_school_data.js",
     "schoolCherry": "src/cherrift_school_cherry.js",
     "schoolVfx": "src/cherrift_school_vfx.js",
-    "kimonoData": "src/cherrift_kimono_data.js",
-    "kimonoGait": "src/cherrift_kimono_gait.js",
     "kimonoCherry": "src/cherrift_kimono_cherry.js",
     "commonSkillVfx": "src/cherrift_common_skill_vfx.js",
     "pajamaData": "src/cherrift_pajama_data.js",
