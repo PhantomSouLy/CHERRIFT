@@ -69,7 +69,8 @@
         "up_left": "sheets192/school_uniform_cherry_walk_up_left.png",
         "left": "sheets192/school_uniform_cherry_walk_left.png",
         "down_left": "sheets192/school_uniform_cherry_walk_down_left.png"
-      }
+      },
+      "loop": true
     },
     "attack": {
       "frames": 6,
@@ -91,7 +92,7 @@
       "frames": 6,
       "fps": 8,
       "duration": 0.75,
-      "runtimeDuration": 0.3333333333333333,
+      "runtimeDuration": 0.75,
       "sheets": {
         "down": "sheets192/school_uniform_cherry_walk_attack_down.png",
         "down_right": "sheets192/school_uniform_cherry_walk_attack_down_right.png",
@@ -101,7 +102,8 @@
         "up_left": "sheets192/school_uniform_cherry_walk_attack_up_left.png",
         "left": "sheets192/school_uniform_cherry_walk_attack_left.png",
         "down_left": "sheets192/school_uniform_cherry_walk_attack_down_left.png"
-      }
+      },
+      "loop": true
     },
     "skill": {
       "frames": 6,
@@ -182,11 +184,35 @@
     "hpBonus": 0.01
   },
   "notes": [
-    "Imagegen School costume edit of approved Sport sprite references. No Base assets modified.",
-    "Left views are mirrored. Runtime optical flow interpolation is required for smooth playback.",
-    "Existing School splash, icon and common Hybrid VFX retained.",
-    "Runtime walk uses complete idle poses; walk_attack uses complete attack poses. Continuous directional inverse warp animates original legs."
+    "Walk and Walk Attack use complete School poses in eight directions.",
+    "Only the whole sprite is registered. No limb masks, optical flow or gait deformation.",
+    "Both moving states follow travel independently of the projectile event.",
+    "Standing art and Pink Burst VFX are retained."
   ],
   "revision": "1107-school-burst2",
-  "vfx": "assets/effects/school_cherry/pink_burst_atlas.png"
+  "vfx": "assets/effects/school_cherry/pink_burst_atlas.png",
+  "buildId": "1119-school-whole1",
+  "wholeGaitSources": [
+    {
+      "file": "assets/player/cherry_skins/school_uniform_cherry/sources/whole-gait-v1/right.png",
+      "sha256": "ae4a43b04aa9e6f916772288a906c1f8e364d60423b7d379458e87520cfc5501"
+    },
+    {
+      "file": "assets/player/cherry_skins/school_uniform_cherry/sources/whole-gait-v1/side-opposite.png",
+      "sha256": "9c7457ccb839d1d7fe1cbe4b161d66f7d9761da7104725ac0b5a523d168be93a"
+    },
+    {
+      "file": "assets/player/cherry_skins/school_uniform_cherry/sources/whole-gait-v1/down_right.png",
+      "sha256": "18e4482873d23cb5a44be8129a3344af5f9781caaeb5d17cf649a90f3d1b8a67"
+    },
+    {
+      "file": "assets/player/cherry_skins/school_uniform_cherry/sources/whole-gait-v1/down-cast.png",
+      "sha256": "6d793ea2a33220864161b7da2ff1d5cabb9cff011a3ac9ba5d0e52251fdf3b42"
+    },
+    {
+      "file": "assets/player/cherry_skins/school_uniform_cherry/sources/whole-gait-v1/up_right.png",
+      "sha256": "a91f374cf11f961510886a7f02ecdc55454b807f0dd128724574cc7c49aab298"
+    }
+  ],
+  "renderer": "complete-pose-distance-clock"
 }

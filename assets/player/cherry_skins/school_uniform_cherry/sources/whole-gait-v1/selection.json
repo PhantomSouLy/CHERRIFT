@@ -1,0 +1,88 @@
+{
+  "right": {
+    "sources": [
+      [
+        "right.png",
+        6
+      ],
+      [
+        "side-opposite.png",
+        3
+      ]
+    ],
+    "states": {
+      "walk": [
+        0,
+        1,
+        2,
+        12,
+        4,
+        14
+      ],
+      "walk_attack": [
+        8,
+        7,
+        6,
+        15,
+        10,
+        16
+      ]
+    }
+  },
+  "down_right": {
+    "sources": [
+      [
+        "down_right.png",
+        6
+      ],
+      [
+        "down-cast.png",
+        3
+      ]
+    ],
+    "states": {
+      "walk": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        1
+      ],
+      "walk_attack": [
+        12,
+        13,
+        14,
+        9,
+        10,
+        13
+      ]
+    }
+  },
+  "up_right": {
+    "sources": [
+      [
+        "up_right.png",
+        6
+      ]
+    ],
+    "states": {
+      "walk": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "walk_attack": [
+        8,
+        6,
+        7,
+        9,
+        10,
+        11
+      ]
+    }
+  }
+}

@@ -2,24 +2,52 @@
 (() => {
   'use strict';
   if (!window.CherriftGame || !window.CHERRIFT_CONFIG || window.CHERRIFT_SCHOOL_CHERRY) return;
-  const ID='school_uniform_cherry', BUILD='1107-school-burst2';
+  const ID='school_uniform_cherry', BUILD='1119-school-whole1';
   const ROOT='assets/player/cherry_skins/school_uniform_cherry/sheets192';
   const DIRS=['right','down_right','down','down_left','left','up_left','up','up_right'];
   const FPS={idle:3,idle2:3,walk:8,attack:18,walk_attack:8,skill:16};
   const config=CHERRIFT_CONFIG.player.skins[ID];if(!config)return;
   config.states=Object.fromEntries(Object.entries(FPS).map(([name,fps])=>[name,{
-    frames:6,fps,duration:6/fps,loop:name==='idle'||name==='walk',pivot:{x:96,y:184},
-    dirs:Object.fromEntries(DIRS.map(d=>[d,`${ROOT}/school_uniform_cherry_${name==='walk'?'idle':name==='walk_attack'?'attack':name}_${d}.png?v=${BUILD}`]))
+    frames:6,fps,duration:6/fps,loop:['idle','walk','walk_attack'].includes(name),pivot:{x:96,y:184},
+    dirs:Object.fromEntries(DIRS.map(d=>[d,`${ROOT}/school_uniform_cherry_${name}_${d}.png?v=${BUILD}`]))
   }]));
   config.attackMovementMode='mobile';config.attackMoveSpeedMultiplier=1;
   // Keep common_pink_burst, +1% ATK/+1% HP, cooldown, damage and knockback.
+  const paletteCache=new WeakMap();
+  const smoothRange=(lo,hi,value)=>{const t=Math.max(0,Math.min(1,(value-lo)/(hi-lo)));return t*t*(3-2*t);};
+  function paletteMatched(image,state,dir,ctx){
+    const curves=window.CHERRIFT_SCHOOL_PALETTE?.[state]?.[dir];if(!curves)return image;
+    const cached=paletteCache.get(image);if(cached)return cached.image;
+    const owner=ctx.canvas?.ownerDocument||(typeof document==='undefined'?null:document);
+    const canvas=owner?.createElement('canvas')||(typeof OffscreenCanvas==='function'?new OffscreenCanvas(1152,192):null);
+    if(!canvas)return image;canvas.width=1152;canvas.height=192;
+    const c=canvas.getContext('2d');if(!c?.getImageData||!c.putImageData)return image;
+    c.drawImage(image,0,0);const pixels=c.getImageData(0,0,1152,192),data=pixels.data;
+    const makeLut=curves=>curves.map(curve=>Uint8Array.from({length:256},(_,value)=>{
+      let j=1;while(j<curve.length-1&&value>curve[j][0])j++;
+      const [x0,y0]=curve[j-1],[x1,y1]=curve[j];return Math.round(y0+(y1-y0)*(value-x0)/(x1-x0));
+    }));
+    const lut=makeLut(curves);
+    for(let i=0;i<data.length;i+=4){
+      if(!data[i+3])continue;const r=data[i],g=data[i+1],b=data[i+2];
+      const weight=smoothRange(30,55,r-Math.min(g,b))*(1-smoothRange(12,24,g-b));
+      if(!weight)continue;
+      for(let channel=0;channel<3;channel++){const value=data[i+channel];data[i+channel]=Math.round(value+weight*(lut[channel][value]-value));}
+    }
+    c.putImageData(pixels,0,0);const entry={image:canvas};paletteCache.set(image,entry);
+    // Use the same decoded PNG sampling path as the source for stable outlines.
+    if(typeof Image==='function'&&typeof canvas.toDataURL==='function'){
+      const decoded=new Image();decoded.onload=()=>{entry.image=decoded;};decoded.src=canvas.toDataURL('image/png');
+    }
+    return entry.image;
+  }
   const proto=CherriftGame.prototype;
   const facing=(x,y,fallback='down')=>Math.hypot(x,y)<.04?fallback:DIRS[(Math.round(Math.atan2(y,x)/(Math.PI/4))+8)%8];
   const key=(s,d)=>`player_${ID}_${s}_${d}`;
   const move=proto.movePlayer;
   proto.movePlayer=function moveSchool(v,dt){
     const p=this.player,x=p?.x,y=p?.y;const result=move.call(this,v,dt);
-    if(p===this.player&&p?.skin===ID&&dt>0){
+    if(p===this.player&&p?.skin===ID&&dt>0&&!(p.dashTimer>0)){
       const distance=Math.hypot(p.x-x,p.y-y);
       p.schoolStride=(p.schoolStride||0)+Math.min(dt,distance/Math.max(1,p.speed||235));
       if(Math.hypot(v.x,v.y)>.04)p.schoolFacing=facing(v.x,v.y,p.schoolFacing);
@@ -75,20 +103,31 @@
     if(p?.skin!==ID)return draw.call(this,ctx,p);
     const cast=p.skillCastTimer>0,attack=!cast&&p.schoolAttack,idle=p.schoolIdleTime||0;
     const state=cast?'skill':attack?(p.moving?'walk_attack':'attack'):p.moving?'walk':idle%8>=6?'idle2':'idle';
-    const d=cast?p.skillDir:attack?p.attackDir:p.schoolFacing||p.lastDir;
+    const walking=state==='walk'||state==='walk_attack';
+    // Keep the moving body facing its travel direction. The shot still targets
+    // the selected enemy and fires on the independent attack clock.
+    const d=cast?p.skillDir:walking?p.schoolFacing||p.lastDir:attack?p.attackDir:p.schoolFacing||p.lastDir;
     const dir=DIRS.includes(d)?d:'down';
-    const image=this.assets.get(key(state,dir))||this.assets.get(key('idle',dir))||this.assets.get(key('idle','down'));if(!image)return;
+    let renderState=state,renderDir=dir;
+    let image=this.assets.get(key(state,dir));
+    if(!image){
+      renderState='idle';
+      image=this.assets.get(key('idle',dir));
+      if(!image){renderDir='down';image=this.assets.get(key('idle','down'));}
+    }
+    if(!image)return;
+    if(walking&&renderState===state)image=paletteMatched(image,state,dir,ctx);
     const elapsed=cast?Math.max(0,(p.skillCastDuration||config.states.skill.duration)-p.skillCastTimer):state==='idle2'?idle%8-6:this.t||0;
-    const phase=attack?Math.min(5,attack.elapsed/attack.duration*6):cast||state==='idle2'?Math.min(5,elapsed*FPS[state]):state==='walk'?((p.schoolStride||0)*8)%6:(elapsed*FPS[state])%6;
+    const phase=walking?((p.schoolStride||0)*FPS.walk)%6:attack?Math.min(5,attack.elapsed/attack.duration*6):cast||state==='idle2'?Math.min(5,elapsed*FPS[state]):(elapsed*FPS[state])%6;
+    const frame=renderState===state?Math.floor(phase):0;
     const width=(CHERRIFT_CONFIG.player.displayWidth||116)*.95,height=(CHERRIFT_CONFIG.player.displayHeight||116)*.95;
     ctx.save();ctx.globalAlpha*=.2;ctx.fillStyle='#000';ctx.beginPath();ctx.ellipse(p.x,p.y+25,26,8,0,0,Math.PI*2);ctx.fill();ctx.restore();
-    ctx.save();ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
-    const smooth=window.CHERRIFT_ANIMATION_SMOOTHING;
-    const gaitDrawn=state.startsWith('walk')&&window.CHERRIFT_SCHOOL_GAIT?.draw(this,ctx,state,dir,phase,(p.schoolStride||0)*8,p,width,height);
-    if(!gaitDrawn&&!smooth?.draw(ctx,image,ID,state,dir,phase,p,width,height,{
-      loop:state==='idle'||state==='walk',gaitPhase:(p.schoolStride||0)*8,
-      makeFrame:(c,f)=>raw(c,image,f,{x:96,y:154},192,192)
-    }))raw(ctx,image,Math.floor(phase),p,width,height);
+    ctx.save();
+    if(p===this.player)ctx.globalAlpha=1;
+    ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+    if(window.CHERRIFT_CHERRY_MOTION?.renderPose){
+      window.CHERRIFT_CHERRY_MOTION.renderPose(ctx,image,ID,renderState,renderDir,frame,p,width,height);
+    }else raw(ctx,image,frame,p,width,height);
     ctx.restore();
   };
   window.CHERRIFT_SCHOOL_CHERRY=Object.freeze({version:BUILD,directions:[...DIRS]});
