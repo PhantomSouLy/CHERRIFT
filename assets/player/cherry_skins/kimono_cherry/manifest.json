@@ -208,11 +208,12 @@
   },
   "notes": [
     "Walk and Walk Attack use their own complete Kimono strips in eight directions.",
-    "Side and rear-diagonal Walk use the new narrow-step poses. Left views mirror right views.",
+    "Side and diagonal Walk use compact full-figure steps. Left views mirror right views.",
+    "Forward-diagonal contacts and passing poses use smaller sandals and share the existing walk cadence.",
     "Both moving states share the stride clock. Attack facing follows the target until release.",
     "Existing Common Healing and Kimono passive use the existing combat rules."
   ],
-  "buildId": "1119-kimono-whole1",
+  "buildId": "1119-kimono-whole2",
   "renderer": "complete-pose-distance-clock",
   "wholeWalkSources": [
     {
@@ -237,6 +238,22 @@
       "size": [
         1246,
         1263
+      ],
+      "frameOrder": [
+        1,
+        0,
+        0,
+        3,
+        2,
+        2
+      ]
+    },
+    {
+      "file": "assets/player/cherry_skins/kimono_cherry/sources/whole-walk-v1/down_right.png",
+      "sha256": "90442f918ccc38f2f9d3745fdfe81036a7691288798d6e696d6d4c7a36b3975a",
+      "size": [
+        1312,
+        1199
       ],
       "frameOrder": [
         1,

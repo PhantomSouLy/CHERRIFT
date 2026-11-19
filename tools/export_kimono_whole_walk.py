@@ -21,7 +21,7 @@ def sheet(state, direction):
 
 def main():
     sources = []
-    for direction, mirror in (('right', 'left'), ('up_right', 'up_left')):
+    for direction, mirror in (('right', 'left'), ('up_right', 'up_left'), ('down_right', 'down_left')):
         source = SOURCES / f'{direction}.png'
         figures = extract(source, cols=2)
         idle = unpack(sheet('idle', direction))
@@ -48,12 +48,13 @@ def main():
 
     manifest_path = ART / 'manifest.json'
     manifest = json.loads(manifest_path.read_text())
-    manifest['buildId'] = '1119-kimono-whole1'
+    manifest['buildId'] = '1119-kimono-whole2'
     manifest['renderer'] = 'complete-pose-distance-clock'
     manifest['wholeWalkSources'] = sources
     manifest['notes'] = [
         'Walk and Walk Attack use their own complete Kimono strips in eight directions.',
-        'Side and rear-diagonal Walk use the new narrow-step poses. Left views mirror right views.',
+        'Side and diagonal Walk use compact full-figure steps. Left views mirror right views.',
+        'Forward-diagonal contacts and passing poses use smaller sandals and share the existing walk cadence.',
         'Both moving states share the stride clock. Attack facing follows the target until release.',
         'Existing Common Healing and Kimono passive use the existing combat rules.',
     ]
