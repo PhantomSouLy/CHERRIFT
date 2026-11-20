@@ -56,6 +56,8 @@
     "schoolVfx": "src/cherrift_school_vfx.js",
     "kimonoCherry": "src/cherrift_kimono_cherry.js",
     "commonSkillVfx": "src/cherrift_common_skill_vfx.js",
+    "fairyCherry": "src/cherrift_fairy_cherry.js",
+    "fairyVfx": "src/cherrift_fairy_vfx.js",
     "pajamaCherry": "src/cherrift_pajama_cherry.js",
     "environment": "src/cherrift_environment.js",
     "cakeData": "src/cherrift_cake_data.js",
