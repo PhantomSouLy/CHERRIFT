@@ -1,6 +1,6 @@
 {
   "id": "pajama_cherry",
-  "buildId": "1107-pajama2",
+  "buildId": "1122-pajama-diagonals",
   "frameSize": 192,
   "pivot": [
     96,
@@ -36,7 +36,8 @@
         "up_left": "sheets192/pajama_cherry_idle_up_left.png",
         "left": "sheets192/pajama_cherry_idle_left.png",
         "down_left": "sheets192/pajama_cherry_idle_down_left.png"
-      }
+      },
+      "loop": true
     },
     "idle2": {
       "frames": 6,
@@ -51,7 +52,8 @@
         "up_left": "sheets192/pajama_cherry_idle2_up_left.png",
         "left": "sheets192/pajama_cherry_idle2_left.png",
         "down_left": "sheets192/pajama_cherry_idle2_down_left.png"
-      }
+      },
+      "loop": false
     },
     "walk": {
       "frames": 6,
@@ -66,7 +68,8 @@
         "up_left": "sheets192/pajama_cherry_walk_up_left.png",
         "left": "sheets192/pajama_cherry_walk_left.png",
         "down_left": "sheets192/pajama_cherry_walk_down_left.png"
-      }
+      },
+      "loop": true
     },
     "attack": {
       "frames": 6,
@@ -81,12 +84,13 @@
         "up_left": "sheets192/pajama_cherry_attack_up_left.png",
         "left": "sheets192/pajama_cherry_attack_left.png",
         "down_left": "sheets192/pajama_cherry_attack_down_left.png"
-      }
+      },
+      "loop": false
     },
     "walk_attack": {
       "frames": 6,
-      "fps": 18,
-      "duration": 0.3333333333333333,
+      "fps": 8,
+      "duration": 0.75,
       "sheets": {
         "down": "sheets192/pajama_cherry_walk_attack_down.png",
         "down_right": "sheets192/pajama_cherry_walk_attack_down_right.png",
@@ -96,7 +100,8 @@
         "up_left": "sheets192/pajama_cherry_walk_attack_up_left.png",
         "left": "sheets192/pajama_cherry_walk_attack_left.png",
         "down_left": "sheets192/pajama_cherry_walk_attack_down_left.png"
-      }
+      },
+      "loop": true
     },
     "skill": {
       "frames": 6,
@@ -111,7 +116,8 @@
         "up_left": "sheets192/pajama_cherry_skill_up_left.png",
         "left": "sheets192/pajama_cherry_skill_left.png",
         "down_left": "sheets192/pajama_cherry_skill_down_left.png"
-      }
+      },
+      "loop": false
     }
   },
   "sources": [
@@ -166,8 +172,74 @@
     "visual": "existing shared Sport shield"
   },
   "notes": [
-    "Complete authored poses, original RGB and alpha.",
-    "All left directions mirror right frames.",
-    "No runtime palette canvas or separate limb cutouts."
-  ]
+    "All six runtime animation states use newly drawn full figures.",
+    "Left-facing directions mirror the corresponding right-facing sheets.",
+    "Both moving states follow traveled distance.",
+    "The forward diagonals use separate six-pose walk and attack atlases.",
+    "The legacy sources and 256px individual frames are archived."
+  ],
+  "sourceAtlasCount": 15,
+  "redrawSources": [
+    {
+      "file": "source_sheets/act_down.png",
+      "sha256": "6a531a6079c8ee5f16f45961a449a9e7c93eeff8d4c1445cb9a0bb0ac36d1cd8"
+    },
+    {
+      "file": "source_sheets/walk_down.png",
+      "sha256": "9ba6456ecbc83419cced59745d0307349195709174d5a776f95d2a7695f52689"
+    },
+    {
+      "file": "source_sheets/act_down_right.png",
+      "sha256": "93aa8ff39ff27894157a09f43eae2406023d30b239a39e1929008955bd12431f"
+    },
+    {
+      "file": "source_sheets/extra_down_right.png",
+      "sha256": "224362aa144c759a2560a4ae73431f4da8d0e5555e7c64d3943ef9b2be86a4ba"
+    },
+    {
+      "file": "source_sheets/act_right.png",
+      "sha256": "2bfdc42f76421e5daf71b726418d71e48a0ec61048a32e5b495667362f035f87"
+    },
+    {
+      "file": "source_sheets/extra_right.png",
+      "sha256": "a8abc0221e1afc9175d7362dd06b2d47b0deb9fd45e759b31bb551884fd94ab7"
+    },
+    {
+      "file": "source_sheets/act_up_right.png",
+      "sha256": "b2da0f11b1447d52214df84b8f4da7cf447bcad1b4f7166c1febca2ecedfa6bf"
+    },
+    {
+      "file": "source_sheets/extra_up_right.png",
+      "sha256": "c61b377aeff0e1eecf3a7547d05b16948caea9c1c669ca4ba57e50f607388242"
+    },
+    {
+      "file": "source_sheets/act_up.png",
+      "sha256": "0c85a225fdf51bd3959da920a0161ff9471f64589d3016f43da80e806707a91a"
+    },
+    {
+      "file": "source_sheets/walk_up.png",
+      "sha256": "0a92cf079cbe1258c0ec41344d410e595cf2d4756dfafab2eb9b050aa949ff5e"
+    },
+    {
+      "file": "source_sheets/diagonal_walk.png",
+      "sha256": "98270011b07cd7a0e99d7f2aeff14d73565a1b0a19b1b8bef8203f33dec89bac"
+    },
+    {
+      "file": "source_sheets/diagonal_walk_pass.png",
+      "sha256": "cd91f07d5332a10cc7439a92fe5f9e75d088a8335fe093cc967d71396ee53179"
+    },
+    {
+      "file": "source_sheets/diagonal_attack.png",
+      "sha256": "915dadf370cffdb086388e26c8fdb3f0a7677ffd893b35740dd11f7aacad2f78"
+    },
+    {
+      "file": "source_sheets/diagonal_walk_attack.png",
+      "sha256": "9c4ad419ee55b27a08a237dfd02ecf69fbd4ce26ccfb81e7d2d900c2115e4d12"
+    },
+    {
+      "file": "source_sheets/diagonal_walk_attack_alternate.png",
+      "sha256": "c3a0c11d28bedca9c92d7f9e5922a5ae618331e4481d50467a396ade9d596359"
+    }
+  ],
+  "renderer": "complete-pose-distance-clock"
 }

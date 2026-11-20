@@ -3,7 +3,7 @@
   "states": 6,
   "frames": 288,
   "sheets": 48,
-  "flowTextures": 30,
+  "redrawnSheets": 48,
   "empty": [],
   "clipped": []
 }

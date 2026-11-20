@@ -2,13 +2,13 @@
 (() => {
   'use strict';
   if (!window.CherriftGame || !window.CHERRIFT_CONFIG || window.CHERRIFT_PAJAMA_CHERRY) return;
-  const ID='pajama_cherry', BUILD='1107-pajama2';
+  const ID='pajama_cherry', BUILD='1122-pajama-diagonals';
   const ROOT='assets/player/cherry_skins/pajama_cherry/sheets192';
   const DIRS=['right','down_right','down','down_left','left','up_left','up','up_right'];
-  const FPS={idle:3,idle2:3,walk:8,attack:18,walk_attack:18,skill:16};
+  const FPS={idle:3,idle2:3,walk:8,attack:18,walk_attack:8,skill:16};
   const config=CHERRIFT_CONFIG.player.skins[ID];if(!config)return;
   config.states=Object.fromEntries(Object.entries(FPS).map(([name,fps])=>[name,{
-    frames:6,fps,duration:6/fps,loop:name==='idle'||name==='walk',pivot:{x:96,y:184},
+    frames:6,fps,duration:6/fps,loop:['idle','walk','walk_attack'].includes(name),pivot:{x:96,y:184},
     dirs:Object.fromEntries(DIRS.map(d=>[d,`${ROOT}/pajama_cherry_${name}_${d}.png?v=${BUILD}`]))
   }]));
   config.attackMovementMode='mobile';config.attackMoveSpeedMultiplier=1;
@@ -53,6 +53,10 @@
     const a=p.pajamaAttack;
     if(a){
       a.elapsed=Math.min(a.duration,a.elapsed+Math.max(0,dt));
+      if(!a.fired&&a.target&&!a.target.dead){
+        p.attackDir=facing(a.target.x-p.x,a.target.y-p.y,p.attackDir);
+        if(!p.moving)p.pajamaFacing=p.attackDir;
+      }
       if(!a.fired&&a.elapsed>=2.5/FPS.attack){
         a.fired=true;
         if(a.target&&!a.target.dead){
@@ -77,17 +81,25 @@
     const state=cast?'skill':attack?(p.moving?'walk_attack':'attack'):p.moving?'walk':idle%8>=6?'idle2':'idle';
     const d=cast?p.skillDir:attack?p.attackDir:p.pajamaFacing||p.lastDir;
     const dir=DIRS.includes(d)?d:'down';
-    const image=this.assets.get(key(state,dir))||this.assets.get(key('idle',dir))||this.assets.get(key('idle','down'));if(!image)return;
+    const image=this.assets.get(key(state,dir));
+    const sheet=image||this.assets.get(key('idle',dir))||this.assets.get(key('idle','down'));
+    if(!sheet)return draw.call(this,ctx,p);
     const elapsed=cast?Math.max(0,(p.skillCastDuration||config.states.skill.duration)-p.skillCastTimer):state==='idle2'?idle%8-6:this.t||0;
-    const phase=attack?Math.min(5,attack.elapsed/attack.duration*6):cast||state==='idle2'?Math.min(5,elapsed*FPS[state]):state==='walk'?((p.pajamaStride||0)*8)%6:(elapsed*FPS[state])%6;
+    const walking=state==='walk'||state==='walk_attack';
+    const phase=walking?((p.pajamaStride||0)*FPS.walk)%6
+      :attack?Math.min(5,attack.elapsed/attack.duration*6)
+      :cast||state==='idle2'?Math.min(5,elapsed*FPS[state])
+      :(elapsed*FPS[state])%6;
+    const frame=image&&Number.isFinite(phase)?Math.floor(phase):0;
     const width=(CHERRIFT_CONFIG.player.displayWidth||116)*.95,height=(CHERRIFT_CONFIG.player.displayHeight||116)*.95;
     ctx.save();ctx.globalAlpha*=.2;ctx.fillStyle='#000';ctx.beginPath();ctx.ellipse(p.x,p.y+25,26,8,0,0,Math.PI*2);ctx.fill();ctx.restore();
-    ctx.save();ctx.globalAlpha=1;ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
-    const smooth=window.CHERRIFT_ANIMATION_SMOOTHING;
-    if(!smooth?.draw(ctx,image,ID,state,dir,phase,p,width,height,{
-      loop:state==='idle'||state==='walk',gaitPhase:(p.pajamaStride||0)*8,
-      makeFrame:(c,f)=>raw(c,image,f,{x:96,y:154},192,192)
-    }))raw(ctx,image,Math.floor(phase),p,width,height);
+    ctx.save();
+    if(p===this.player){
+      ctx.globalAlpha=1;
+      ctx.globalCompositeOperation='source-over';
+    }
+    ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+    raw(ctx,sheet,frame,p,width,height);
     ctx.restore();
   };
   window.CHERRIFT_PAJAMA_CHERRY=Object.freeze({version:BUILD,directions:[...DIRS]});
