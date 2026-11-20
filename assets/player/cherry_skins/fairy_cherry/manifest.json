@@ -1,0 +1,112 @@
+{
+  "id": "fairy_cherry",
+  "frameSize": 192,
+  "pivot": [
+    96,
+    180
+  ],
+  "directions": [
+    "down",
+    "down_right",
+    "right",
+    "up_right",
+    "up",
+    "down_left",
+    "left",
+    "up_left"
+  ],
+  "mirroredDirections": {
+    "down_left": "down_right",
+    "left": "right",
+    "up_left": "up_right"
+  },
+  "states": {
+    "idle": {
+      "frames": 4,
+      "fps": 4,
+      "duration": 1.0,
+      "sheets": {
+        "down": "sheets192/fairy_cherry_idle_down.png",
+        "down_right": "sheets192/fairy_cherry_idle_down_right.png",
+        "right": "sheets192/fairy_cherry_idle_right.png",
+        "up_right": "sheets192/fairy_cherry_idle_up_right.png",
+        "up": "sheets192/fairy_cherry_idle_up.png",
+        "down_left": "sheets192/fairy_cherry_idle_down_left.png",
+        "left": "sheets192/fairy_cherry_idle_left.png",
+        "up_left": "sheets192/fairy_cherry_idle_up_left.png"
+      }
+    },
+    "walk": {
+      "frames": 6,
+      "fps": 9,
+      "duration": 0.6666666666666666,
+      "sheets": {
+        "down": "sheets192/fairy_cherry_walk_down.png",
+        "down_right": "sheets192/fairy_cherry_walk_down_right.png",
+        "right": "sheets192/fairy_cherry_walk_right.png",
+        "up_right": "sheets192/fairy_cherry_walk_up_right.png",
+        "up": "sheets192/fairy_cherry_walk_up.png",
+        "down_left": "sheets192/fairy_cherry_walk_down_left.png",
+        "left": "sheets192/fairy_cherry_walk_left.png",
+        "up_left": "sheets192/fairy_cherry_walk_up_left.png"
+      }
+    },
+    "attack": {
+      "frames": 6,
+      "fps": 18,
+      "duration": 0.3333333333333333,
+      "sheets": {
+        "down": "sheets192/fairy_cherry_attack_down.png",
+        "down_right": "sheets192/fairy_cherry_attack_down_right.png",
+        "right": "sheets192/fairy_cherry_attack_right.png",
+        "up_right": "sheets192/fairy_cherry_attack_up_right.png",
+        "up": "sheets192/fairy_cherry_attack_up.png",
+        "down_left": "sheets192/fairy_cherry_attack_down_left.png",
+        "left": "sheets192/fairy_cherry_attack_left.png",
+        "up_left": "sheets192/fairy_cherry_attack_up_left.png"
+      }
+    },
+    "walk_attack": {
+      "frames": 6,
+      "fps": 18,
+      "duration": 0.3333333333333333,
+      "sheets": {
+        "down": "sheets192/fairy_cherry_walk_attack_down.png",
+        "down_right": "sheets192/fairy_cherry_walk_attack_down_right.png",
+        "right": "sheets192/fairy_cherry_walk_attack_right.png",
+        "up_right": "sheets192/fairy_cherry_walk_attack_up_right.png",
+        "up": "sheets192/fairy_cherry_walk_attack_up.png",
+        "down_left": "sheets192/fairy_cherry_walk_attack_down_left.png",
+        "left": "sheets192/fairy_cherry_walk_attack_left.png",
+        "up_left": "sheets192/fairy_cherry_walk_attack_up_left.png"
+      }
+    },
+    "skill": {
+      "frames": 6,
+      "fps": 12,
+      "duration": 0.5,
+      "sheets": {
+        "down": "sheets192/fairy_cherry_skill_down.png",
+        "down_right": "sheets192/fairy_cherry_skill_down_right.png",
+        "right": "sheets192/fairy_cherry_skill_right.png",
+        "up_right": "sheets192/fairy_cherry_skill_up_right.png",
+        "up": "sheets192/fairy_cherry_skill_up.png",
+        "down_left": "sheets192/fairy_cherry_skill_down_left.png",
+        "left": "sheets192/fairy_cherry_skill_left.png",
+        "up_left": "sheets192/fairy_cherry_skill_up_left.png"
+      }
+    }
+  },
+  "vfx": {
+    "projectile": {
+      "path": "assets/effects/fairy_cherry/fairy_bloom_orb.png",
+      "frames": 4,
+      "frameSize": 128
+    },
+    "skill": {
+      "path": "assets/effects/fairy_cherry/fairy_magic_burst.png",
+      "frames": 8,
+      "frameSize": 256
+    }
+  }
+}
