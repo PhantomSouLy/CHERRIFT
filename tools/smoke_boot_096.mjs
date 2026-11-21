@@ -1335,6 +1335,7 @@ try {
     // End through the native path so the next run exercises server acknowledgement again.
     window.UI.quit();await window.CHERRIFT_AUTH.flushCloudSave();
     await waitFor(()=>window.UI.save.security?.online?.run?.ended,"first server run closed",5000);
+    window.UI.save.selectedSkin="fairy_cherry";
     window.UI.save.selectedStageId="training_test";window.CherriftStorage.save(window.UI.save);
     await window.CHERRIFT_AUTH.flushCloudSave();await window.UI.game.start();
     assert.equal(window.UI.game.mode,"playing");assert(window.UI.game.stage.training);
@@ -1348,7 +1349,15 @@ try {
     }
     assert(window.UI.game.enemies.some(e=>e.isTrainingDummyV094));
     await waitFor(()=>!window.UI.game.__v062StartPromise && document.body.classList.contains("is-playing"),"training fully presented",5000);
-    window.UI.game.drawWorld(window.UI.game.ctx);window.UI.quit();
+    const trainingGame=window.UI.game;
+    assert.equal(trainingGame.player.skin,"fairy_cherry","Training Test spawns the equipped Fairy Cherry");
+    trainingGame.drawWorld(trainingGame.ctx);
+    await waitFor(
+      () => trainingGame.time >= 1 && document.getElementById("timer")?.textContent !== "00:00",
+      "Training Test keeps rendering and the HUD clock advances",
+      8000
+    );
+    window.UI.quit();
     await waitFor(()=>window.UI.save.security?.online?.run?.ended,"training server run closed",5000);
     await window.CHERRIFT_AUTH.flushCloudSave();
 

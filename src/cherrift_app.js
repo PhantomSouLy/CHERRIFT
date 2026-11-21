@@ -1318,7 +1318,11 @@ window.UI = {
   }
   function hideBoot(){ id("bootPreloaderV040")?.classList.add("hidden"); document.body.classList.remove("preloading-v040"); }
 
-  function setText(nodeId, value){ const el=id(nodeId); if(el) el.textContent=value; }
+  function setText(nodeId, value) {
+    const element = id(nodeId);
+    const text = String(value ?? "");
+    if (element && element.textContent !== text) element.textContent = text;
+  }
   function rewardText(obj){ const p=[]; if(obj?.coins) p.push(`+${obj.coins} coins`); if(obj?.keys) p.push(`+${obj.keys} key`); return p.join(" · ") || "-"; }
   function currentStage(save=UI.save){ normalizeSave(save); return STAGES.find(s=>s.id===save.selectedStageId)||STAGES[0]; }
   function stageIndex(stageId){ return Math.max(0, STAGES.findIndex(s=>s.id===stageId)); }
@@ -1346,10 +1350,12 @@ window.UI = {
   function updateBossHud(game){
     const hud=id("bossHudV040") || createBossHud();
     const boss=(game.enemies||[]).find(e=>e.isBoss && !e.dead);
-    if(!boss){ hud.classList.remove("show"); return; }
-    hud.querySelector(".boss-name").textContent = boss.name || "Mini Boss";
+    hud.classList.toggle("show", Boolean(boss));
+    if (!boss) return;
+    const label = hud.querySelector(".boss-name");
+    const name = boss.name || "Mini Boss";
+    if (label.textContent !== name) label.textContent = name;
     hud.querySelector(".boss-bar i").style.width = `${clamp(boss.hp/boss.maxHp*100,0,100)}%`;
-    hud.classList.add("show");
   }
   function isFullscreen(){ return !!(document.fullscreenElement || document.webkitFullscreenElement); }
   function isMobileLike(){ const w=window.visualViewport?.width||window.innerWidth||0; const h=window.visualViewport?.height||window.innerHeight||0; return Math.min(w,h)<=820; }
@@ -1499,7 +1505,16 @@ window.UI = {
       const stage=game?.stage||currentStage(this.save); if(!stage) return;
       setText("stageHudName",stage.name); setText("stageHudGoal",`${Math.min(game.kills||0,stage.goalKills)}/${stage.goalKills}`);
       const raid=id("raidWarningV040")||createRaidWarning();
-      if(game.stageState?.raidBannerTimer>0){ raid.querySelector("b").textContent=game.stageState.raidBoss?"MINI BOSS":"RAID INCOMING"; raid.querySelector("small").textContent=game.stageState.raidText||"Wave approaching"; raid.classList.add("show"); } else raid.classList.remove("show");
+      const raidActive = game.stageState?.raidBannerTimer > 0;
+      raid.classList.toggle("show", raidActive);
+      if (raidActive) {
+        const title = raid.querySelector("b");
+        const message = raid.querySelector("small");
+        const titleText = game.stageState.raidBoss ? "MINI BOSS" : "RAID INCOMING";
+        const messageText = game.stageState.raidText || "Wave approaching";
+        if (title.textContent !== titleText) title.textContent = titleText;
+        if (message.textContent !== messageText) message.textContent = messageText;
+      }
     };
     UI.showStageClear = function(game,info={}){
       const stage=game.stage; setText("stageClearTitle","STAGE CLEAR!"); setText("stageClearSubtitle",`${stage.name} · ${stage.title} · ${this.fmt(game.time)} · ${game.kills}/${stage.goalKills} defeated`);
@@ -1509,10 +1524,15 @@ window.UI = {
     UI.hideStageClear = function(){ id("stageClearModal")?.classList.add("hidden"); };
     UI.updateHUD = function(game){
       const p=game.player; if(!p) return;
-      id("hpFill").style.width=`${Math.max(0,p.hp/p.maxHp*100)}%`; setText("hpText",`HP ${Math.ceil(Math.max(0,p.hp))}/${Math.ceil(p.maxHp)}`);
+      id("hpFill").style.width=`${Math.max(0,p.hp/p.maxHp*100)}%`;
+      const shield = Math.max(0, Number(p.soulShield) || 0);
+      const totalHp = Math.ceil(Math.max(0, Number(p.hp) || 0) + shield);
+      setText("hpText", `HP ${totalHp}/${Math.ceil(Number(p.maxHp) || 0)}`);
       id("xpFill").style.width=`${Math.min(100,p.xp/p.xpNext*100)}%`; setText("xpText",`LV ${p.level} XP ${p.xp}/${p.xpNext}`);
       setText("timer",this.fmt(game.time)); setText("runCoins",game.runCoins);
-      const skill=id("skill"), cd=id("cooldown"); if(p.skillTimer>0){ skill.classList.add("cooldown"); cd.textContent=p.skillTimer.toFixed(1); } else { skill.classList.remove("cooldown"); cd.textContent=""; }
+      const coolingDown = p.skillTimer > 0;
+      id("skill").classList.toggle("cooldown", coolingDown);
+      setText("cooldown", coolingDown ? p.skillTimer.toFixed(1) : "");
       this.updateStageHUD(game); updateBossHud(game);
     };
     UI.showLevelUp = function(game){ const list=id("upgrades"); if(!list) return; list.innerHTML=""; [...CHERRIFT_DATA.upgrades].sort(()=>Math.random()-.5).slice(0,3).forEach(up=>{ const btn=document.createElement("button"); btn.className="upgrade-card"; btn.innerHTML=`<strong>${up.name}</strong><span>${up.desc}</span>`; bindClick(btn,()=>game.applyUpgrade(up)); list.appendChild(btn); }); id("levelModal")?.classList.remove("hidden"); };
@@ -21646,7 +21666,8 @@ function updateHudStars(game) {
     host.appendChild(line);
   }
   const current = game.__runEscrowV0931?.currentStar || runStar(game);
-  if (line) line.textContent = `${"★".repeat(current)}${"☆".repeat(STAR_CAP - current)}`;
+  const stars = `${"★".repeat(current)}${"☆".repeat(STAR_CAP - current)}`;
+  if (line && line.textContent !== stars) line.textContent = stars;
 }
 
 function commitRunCheckpoint(game, star, silent = false) {
@@ -21870,10 +21891,6 @@ function patchHud() {
       if (shieldFill) {
         shieldFill.style.width = `${clamp(shield / Math.max(1, Number(player?.maxHp) || 1) * 100, 0, 100)}%`;
         shieldFill.classList.toggle("show", shield > .01);
-      }
-      if (player && id("hpText")) {
-        const total = Math.ceil(Math.max(0, Number(player.hp) || 0) + shield);
-        id("hpText").textContent = `HP ${total}/${Math.ceil(Number(player.maxHp) || 0)}`;
       }
       updateHudStars(game);
       return result;
@@ -23306,15 +23323,13 @@ function ensureTrainingPanel() {
 }
 function hideTrainingPanel() { ensureTrainingPanel().classList.add("hidden"); }
 function showTrainingPanel(game) {
-  const panel = ensureTrainingPanel();
-  panel.classList.remove("hidden");
   game.trainingStatsV094 = {current:0,total:0,lastHitAt:0};
-  updateTrainingPanel(game, true);
+  updateTrainingPanel(game);
 }
-function updateTrainingPanel(game, force = false) {
+function updateTrainingPanel(game) {
   const panel = ensureTrainingPanel();
-  if (!game.stage?.training) { panel.classList.add("hidden"); return; }
-  panel.classList.remove("hidden");
+  panel.classList.toggle("hidden", !game.stage?.training);
+  if (!game.stage?.training) return;
   const stats = game.trainingStatsV094 || (game.trainingStatsV094 = {current:0,total:0,lastHitAt:0});
   const now = performance.now();
   const elapsed = stats.lastHitAt ? (now - stats.lastHitAt) / 1000 : 0;
@@ -23322,9 +23337,15 @@ function updateTrainingPanel(game, force = false) {
     stats.current = 0; stats.total = 0; stats.lastHitAt = 0;
   }
   const current = q("[data-v094-current]", panel), total = q("[data-v094-total]", panel), reset = q("[data-v094-reset]", panel);
-  if (force || current?.textContent !== String(Math.round(stats.current))) current && (current.textContent = Math.round(stats.current).toLocaleString());
-  if (force || total?.textContent !== String(Math.round(stats.total))) total && (total.textContent = Math.round(stats.total).toLocaleString());
-  if (reset) reset.textContent = stats.lastHitAt ? copy(`${Math.max(0,10-elapsed).toFixed(1)} mp múlva reset`, `Reset in ${Math.max(0,10-elapsed).toFixed(1)}s`) : copy("Üss rá a méréshez", "Hit it to start");
+  const currentText = Math.round(stats.current).toLocaleString();
+  const totalText = Math.round(stats.total).toLocaleString();
+  const remaining = Math.max(0, 10 - elapsed).toFixed(1);
+  const resetText = stats.lastHitAt
+    ? copy(`${remaining} mp múlva reset`, `Reset in ${remaining}s`)
+    : copy("Üss rá a méréshez", "Hit it to start");
+  if (current && current.textContent !== currentText) current.textContent = currentText;
+  if (total && total.textContent !== totalText) total.textContent = totalText;
+  if (reset && reset.textContent !== resetText) reset.textContent = resetText;
 }
 function createTrainingDummy(game) {
   const dummy = {
@@ -23442,7 +23463,7 @@ function patchGame() {
         this.effects.push({type:"damageText",x:enemy.x+(Math.random()-.5)*18,y:enemy.y-enemy.r-8,value:Math.max(1,Math.round(amount)),t:0,life:.48,big:amount>(this.player?.damage||20)*1.45});
       }
       this.effects.push({type:"dummyHitV094",x:enemy.x,y:enemy.y,t:0,life:.22});
-      updateTrainingPanel(this, true);
+      updateTrainingPanel(this);
       return;
     }
 
