@@ -118,7 +118,7 @@
     context.globalAlpha *= .22;
     context.fillStyle = "#000";
     context.beginPath();
-    context.ellipse(player.x, player.y + 25, 26, 8, 0, Math.PI * 2);
+    context.ellipse(player.x, player.y + 25, 26, 8, 0, 0, Math.PI * 2);
     context.fill();
     context.restore();
     context.drawImage(sprite, frame * size, 0, size, size,
