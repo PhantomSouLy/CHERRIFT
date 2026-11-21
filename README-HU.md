@@ -1,15 +1,29 @@
-# CHERRIFT · Fairy Cherry v3
+# Beastclaw Cherry v2
 
-Fairy Cherry nyolc irányban kap új idle, walk, attack, walk attack és Magic Burst animációt. Az export 192 × 192 pixeles, átlátszó képkockákból áll. A balra néző irányok a megfelelő jobbra néző irányok tükörképei.
+A Beastclaw Rare skin sprite-frissítése a játék jelenlegi splash artja alapján.
+A készlet 40 átlátszó, vízszintes PNG stripet tartalmaz. Egy képkocka 192 × 192 px.
+Az Idle 4, a Walk, Attack, Walk Attack és Savage Rend 6 képkockás, nyolc irányban.
+A három balos irány a megfelelő jobbos animáció tükrözése.
 
-A Fairy Bloom Orb és a Magic Burst a `assets/effects/fairy_cherry/` mappában található. A lövedék négy képkockás, a Magic Burst nyolc képkockás. A Magic Burst középpontja a cast eredeti helyén marad.
+A v2 a hátulnézeti fehér fülpamacsot eltávolítja az Up, Up-Left és Up-Right
+irányból mind az öt animációban. A többi irány sprite-jai bájtra azonosak a v1-gyel.
+
+A v2 a hátulnézeti fehér fülpamacsot eltávolítja az Up, Up-Left és Up-Right
+irányból mind az öt animációban. A többi irány sprite-jai bájtra azonosak a v1-gyel.
 
 ## Telepítés
 
-Másold az `assets` és a `src` mappát, valamint az `activate-fairy.py` fájlt a CHERRIFT gyökerébe. A gyökérmappából futtasd a `python activate-fairy.py` parancsot. A szkript az aktuális buildazonosítóval hozzáadja a két modult az `index.html`-hez és a runtime manifesthez. Újrafuttatható.
+A csomag alapja a PhantomSouLy/CHERRIFT 82f5bd5 commitja, amelynek buildje
+1123-training-hud. GitHub Desktopban húzd le ezt a verziót vagy egy kompatibilis
+állapotot. A csomag gyökeréből az `index.html`, `src` és `assets` elemeket másold
+a CHERRIFT repo gyökerébe. A mappák tartalmát egyesítsd. A csomag frissíti az
+`index.html` és a `src/cherrift_manifest.json` fájlt, és felveszi a Beastclaw
+modult és sprite-okat. Ha azóta külön módosítottad az indexet vagy a manifestet,
+a felülírás előtt nézd meg a GitHub Desktopban a fájlok eltéréseit.
 
-Az előnézetben mind az öt animáció és a két külön VFX kiválasztható.
+Ezután a játékban equipeld Beastclaw Cherryt, lépj be a Training Testre, és
+próbáld ki az átlós mozgást, a mozgás közbeni közelharci támadást és a Savage
+Rend skillt. A csomag a jelenlegi splash artot, sebzést, hatótávot, cooldownokat,
+előretörést és meglévő harci effekteket használja.
 
-## Képgenerálás
-
-A képek a CHERRIFT jelenlegi sprite-ját és Fairy Cherry splash artját követik. A generált sprite-ok külön pózokban mutatják a légzést, az alternáló lépéseket, az álló és mozgás közbeni orbcastot, valamint a Magic Burst kitáruló kézmozdulatát. A VFX külön promptból készült, mentazöld szélívekkel, rózsaszín virágszirmokkal és halvány arany szikrákkal.
+Az animációk GIF-ben a `preview` mappában is megtekinthetők.
