@@ -1,7 +1,7 @@
 {
   "runtimeVersion": "0.9.8.3-structured-runtime",
   "gameVersion": "0.9.5-prebeta.1",
-  "buildId": "1122-pajama-diagonals",
+  "buildId": "1125-beastclaw-rear-ears",
   "entrypoints": {
     "application": "src/cherrift_app.js",
     "menuAudio": "src/cherrift_menu_audio.js",
@@ -58,6 +58,7 @@
     "commonSkillVfx": "src/cherrift_common_skill_vfx.js",
     "fairyCherry": "src/cherrift_fairy_cherry.js",
     "fairyVfx": "src/cherrift_fairy_vfx.js",
+    "beastclawCherry": "src/cherrift_beastclaw_cherry.js",
     "pajamaCherry": "src/cherrift_pajama_cherry.js",
     "environment": "src/cherrift_environment.js",
     "cakeData": "src/cherrift_cake_data.js",
